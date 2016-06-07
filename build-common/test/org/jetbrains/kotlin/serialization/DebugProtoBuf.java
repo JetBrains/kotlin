@@ -6,13 +6,13 @@ package org.jetbrains.kotlin.serialization;
 public final class DebugProtoBuf {
   private DebugProtoBuf() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
   }
   /**
    * Protobuf enum {@code org.jetbrains.kotlin.serialization.Modality}
    */
   public enum Modality
-      implements com.google.protobuf.ProtocolMessageEnum {
+      implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
     /**
      * <code>FINAL = 0;</code>
      *
@@ -69,27 +69,27 @@ public final class DebugProtoBuf {
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<Modality>
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modality>
         internalGetValueMap() {
       return internalValueMap;
     }
-    private static com.google.protobuf.Internal.EnumLiteMap<Modality>
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modality>
         internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<Modality>() {
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modality>() {
             public Modality findValueByNumber(int number) {
               return Modality.valueOf(number);
             }
           };
 
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
       return getDescriptor().getValues().get(index);
     }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptorForType() {
       return getDescriptor();
     }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(0);
     }
@@ -97,7 +97,7 @@ public final class DebugProtoBuf {
     private static final Modality[] VALUES = values();
 
     public static Modality valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
           "EnumValueDescriptor is not for this type.");
@@ -120,7 +120,7 @@ public final class DebugProtoBuf {
    * Protobuf enum {@code org.jetbrains.kotlin.serialization.Visibility}
    */
   public enum Visibility
-      implements com.google.protobuf.ProtocolMessageEnum {
+      implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
     /**
      * <code>INTERNAL = 0;</code>
      *
@@ -195,27 +195,27 @@ public final class DebugProtoBuf {
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<Visibility>
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Visibility>
         internalGetValueMap() {
       return internalValueMap;
     }
-    private static com.google.protobuf.Internal.EnumLiteMap<Visibility>
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Visibility>
         internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<Visibility>() {
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Visibility>() {
             public Visibility findValueByNumber(int number) {
               return Visibility.valueOf(number);
             }
           };
 
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
       return getDescriptor().getValues().get(index);
     }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptorForType() {
       return getDescriptor();
     }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(1);
     }
@@ -223,7 +223,7 @@ public final class DebugProtoBuf {
     private static final Visibility[] VALUES = values();
 
     public static Visibility valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
           "EnumValueDescriptor is not for this type.");
@@ -246,7 +246,7 @@ public final class DebugProtoBuf {
    * Protobuf enum {@code org.jetbrains.kotlin.serialization.MemberKind}
    */
   public enum MemberKind
-      implements com.google.protobuf.ProtocolMessageEnum {
+      implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
     /**
      * <code>DECLARATION = 0;</code>
      *
@@ -303,27 +303,27 @@ public final class DebugProtoBuf {
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<MemberKind>
         internalGetValueMap() {
       return internalValueMap;
     }
-    private static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<MemberKind>
         internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<MemberKind>() {
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<MemberKind>() {
             public MemberKind findValueByNumber(int number) {
               return MemberKind.valueOf(number);
             }
           };
 
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
       return getDescriptor().getValues().get(index);
     }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptorForType() {
       return getDescriptor();
     }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(2);
     }
@@ -331,7 +331,7 @@ public final class DebugProtoBuf {
     private static final MemberKind[] VALUES = values();
 
     public static MemberKind valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
           "EnumValueDescriptor is not for this type.");
@@ -351,7 +351,7 @@ public final class DebugProtoBuf {
   }
 
   public interface StringTableOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     // repeated string string = 1;
     /**
@@ -370,21 +370,21 @@ public final class DebugProtoBuf {
     /**
      * <code>repeated string string = 1;</code>
      */
-    com.google.protobuf.ByteString
+    org.jetbrains.kotlin.protobuf.ByteString
         getStringBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.StringTable}
    */
   public static final class StringTable extends
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
       implements StringTableOrBuilder {
     // Use StringTable.newBuilder() to construct.
-    private StringTable(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private StringTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private StringTable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private StringTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final StringTable defaultInstance;
     public static StringTable getDefaultInstance() {
@@ -395,20 +395,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private StringTable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -426,7 +426,7 @@ public final class DebugProtoBuf {
             }
             case 10: {
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                string_ = new com.google.protobuf.LazyStringArrayList();
+                string_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000001;
               }
               string_.add(input.readBytes());
@@ -434,49 +434,49 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          string_ = new com.google.protobuf.UnmodifiableLazyStringList(string_);
+          string_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(string_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_StringTable_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<StringTable> PARSER =
-        new com.google.protobuf.AbstractParser<StringTable>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<StringTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<StringTable>() {
       public StringTable parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new StringTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<StringTable> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<StringTable> getParserForType() {
       return PARSER;
     }
 
     // repeated string string = 1;
     public static final int STRING_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList string_;
+    private org.jetbrains.kotlin.protobuf.LazyStringList string_;
     /**
      * <code>repeated string string = 1;</code>
      */
@@ -499,13 +499,13 @@ public final class DebugProtoBuf {
     /**
      * <code>repeated string string = 1;</code>
      */
-    public com.google.protobuf.ByteString
+    public org.jetbrains.kotlin.protobuf.ByteString
         getStringBytes(int index) {
       return string_.getByteString(index);
     }
 
     private void initFields() {
-      string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -516,7 +516,7 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       for (int i = 0; i < string_.size(); i++) {
@@ -534,7 +534,7 @@ public final class DebugProtoBuf {
       {
         int dataSize = 0;
         for (int i = 0; i < string_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeBytesSizeNoTag(string_.getByteString(i));
         }
         size += dataSize;
@@ -553,24 +553,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(java.io.InputStream input)
@@ -579,7 +579,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -589,18 +589,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -614,7 +614,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -622,14 +622,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.StringTable}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
        implements org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTableOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_StringTable_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -642,12 +642,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
       private static Builder create() {
@@ -656,7 +656,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -665,7 +665,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor;
       }
@@ -686,7 +686,7 @@ public final class DebugProtoBuf {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          string_ = new com.google.protobuf.UnmodifiableLazyStringList(
+          string_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(
               string_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
@@ -695,7 +695,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable)other);
         } else {
@@ -725,13 +725,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.StringTable) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -744,10 +744,10 @@ public final class DebugProtoBuf {
       private int bitField0_;
 
       // repeated string string = 1;
-      private com.google.protobuf.LazyStringList string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private org.jetbrains.kotlin.protobuf.LazyStringList string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureStringIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          string_ = new com.google.protobuf.LazyStringArrayList(string_);
+          string_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(string_);
           bitField0_ |= 0x00000001;
          }
       }
@@ -773,7 +773,7 @@ public final class DebugProtoBuf {
       /**
        * <code>repeated string string = 1;</code>
        */
-      public com.google.protobuf.ByteString
+      public org.jetbrains.kotlin.protobuf.ByteString
           getStringBytes(int index) {
         return string_.getByteString(index);
       }
@@ -817,7 +817,7 @@ public final class DebugProtoBuf {
        * <code>repeated string string = 1;</code>
        */
       public Builder clearString() {
-        string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
@@ -826,7 +826,7 @@ public final class DebugProtoBuf {
        * <code>repeated string string = 1;</code>
        */
       public Builder addStringBytes(
-          com.google.protobuf.ByteString value) {
+          org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -848,7 +848,7 @@ public final class DebugProtoBuf {
   }
 
   public interface QualifiedNameTableOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     // repeated .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
     /**
@@ -879,14 +879,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable}
    */
   public static final class QualifiedNameTable extends
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
       implements QualifiedNameTableOrBuilder {
     // Use QualifiedNameTable.newBuilder() to construct.
-    private QualifiedNameTable(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private QualifiedNameTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private QualifiedNameTable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private QualifiedNameTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final QualifiedNameTable defaultInstance;
     public static QualifiedNameTable getDefaultInstance() {
@@ -897,20 +897,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private QualifiedNameTable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -936,10 +936,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -949,35 +949,35 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<QualifiedNameTable> PARSER =
-        new com.google.protobuf.AbstractParser<QualifiedNameTable>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<QualifiedNameTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<QualifiedNameTable>() {
       public QualifiedNameTable parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new QualifiedNameTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<QualifiedNameTable> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<QualifiedNameTable> getParserForType() {
       return PARSER;
     }
 
     public interface QualifiedNameOrBuilder
-        extends com.google.protobuf.MessageOrBuilder {
+        extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
       // optional int32 parent_qualified_name = 1 [default = -1];
       /**
@@ -1021,14 +1021,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName}
      */
     public static final class QualifiedName extends
-        com.google.protobuf.GeneratedMessage
+        org.jetbrains.kotlin.protobuf.GeneratedMessage
         implements QualifiedNameOrBuilder {
       // Use QualifiedName.newBuilder() to construct.
-      private QualifiedName(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      private QualifiedName(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
         this.unknownFields = builder.getUnknownFields();
       }
-      private QualifiedName(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+      private QualifiedName(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
       private static final QualifiedName defaultInstance;
       public static QualifiedName getDefaultInstance() {
@@ -1039,20 +1039,20 @@ public final class DebugProtoBuf {
         return defaultInstance;
       }
 
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
       @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
+      public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
           getUnknownFields() {
         return this.unknownFields;
       }
       private QualifiedName(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
+        org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+            org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
         try {
           boolean done = false;
           while (!done) {
@@ -1091,40 +1091,40 @@ public final class DebugProtoBuf {
               }
             }
           }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           throw e.setUnfinishedMessage(this);
         } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
       }
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.Builder.class);
       }
 
-      public static com.google.protobuf.Parser<QualifiedName> PARSER =
-          new com.google.protobuf.AbstractParser<QualifiedName>() {
+      public static org.jetbrains.kotlin.protobuf.Parser<QualifiedName> PARSER =
+          new org.jetbrains.kotlin.protobuf.AbstractParser<QualifiedName>() {
         public QualifiedName parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return new QualifiedName(input, extensionRegistry);
         }
       };
 
       @java.lang.Override
-      public com.google.protobuf.Parser<QualifiedName> getParserForType() {
+      public org.jetbrains.kotlin.protobuf.Parser<QualifiedName> getParserForType() {
         return PARSER;
       }
 
@@ -1132,7 +1132,7 @@ public final class DebugProtoBuf {
        * Protobuf enum {@code org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind}
        */
       public enum Kind
-          implements com.google.protobuf.ProtocolMessageEnum {
+          implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
         /**
          * <code>CLASS = 0;</code>
          */
@@ -1172,27 +1172,27 @@ public final class DebugProtoBuf {
           }
         }
 
-        public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+        public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>
             internalGetValueMap() {
           return internalValueMap;
         }
-        private static com.google.protobuf.Internal.EnumLiteMap<Kind>
+        private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>
             internalValueMap =
-              new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
+              new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>() {
                 public Kind findValueByNumber(int number) {
                   return Kind.valueOf(number);
                 }
               };
 
-        public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
             getValueDescriptor() {
           return getDescriptor().getValues().get(index);
         }
-        public final com.google.protobuf.Descriptors.EnumDescriptor
+        public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
             getDescriptorForType() {
           return getDescriptor();
         }
-        public static final com.google.protobuf.Descriptors.EnumDescriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.getDescriptor().getEnumTypes().get(0);
         }
@@ -1200,7 +1200,7 @@ public final class DebugProtoBuf {
         private static final Kind[] VALUES = values();
 
         public static Kind valueOf(
-            com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+            org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
           if (desc.getType() != getDescriptor()) {
             throw new java.lang.IllegalArgumentException(
               "EnumValueDescriptor is not for this type.");
@@ -1294,7 +1294,7 @@ public final class DebugProtoBuf {
         return true;
       }
 
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
+      public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -1316,15 +1316,15 @@ public final class DebugProtoBuf {
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32Size(1, parentQualifiedName_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32Size(2, shortName_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeEnumSize(3, kind_.getNumber());
         }
         size += getUnknownFields().getSerializedSize();
@@ -1340,24 +1340,24 @@ public final class DebugProtoBuf {
       }
 
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
           byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(java.io.InputStream input)
@@ -1366,7 +1366,7 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -1376,18 +1376,18 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseDelimitedFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
-          com.google.protobuf.CodedInputStream input)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return PARSER.parseFrom(input);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -1401,7 +1401,7 @@ public final class DebugProtoBuf {
 
       @java.lang.Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
@@ -1409,14 +1409,14 @@ public final class DebugProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder>
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
          implements org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor;
         }
 
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
             internalGetFieldAccessorTable() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
@@ -1429,12 +1429,12 @@ public final class DebugProtoBuf {
         }
 
         private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
         private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           }
         }
         private static Builder create() {
@@ -1456,7 +1456,7 @@ public final class DebugProtoBuf {
           return create().mergeFrom(buildPartial());
         }
 
-        public com.google.protobuf.Descriptors.Descriptor
+        public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor;
         }
@@ -1494,7 +1494,7 @@ public final class DebugProtoBuf {
           return result;
         }
 
-        public Builder mergeFrom(com.google.protobuf.Message other) {
+        public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
           if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName) {
             return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName)other);
           } else {
@@ -1527,13 +1527,13 @@ public final class DebugProtoBuf {
         }
 
         public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
             parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName) e.getUnfinishedMessage();
             throw e;
           } finally {
@@ -1728,7 +1728,7 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       for (int i = 0; i < qualifiedName_.size(); i++) {
@@ -1744,7 +1744,7 @@ public final class DebugProtoBuf {
 
       size = 0;
       for (int i = 0; i < qualifiedName_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, qualifiedName_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
@@ -1760,24 +1760,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(java.io.InputStream input)
@@ -1786,7 +1786,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -1796,18 +1796,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -1821,7 +1821,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -1829,14 +1829,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
        implements org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTableOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1849,12 +1849,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getQualifiedNameFieldBuilder();
         }
       }
@@ -1877,7 +1877,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor;
       }
@@ -1910,7 +1910,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable)other);
         } else {
@@ -1940,7 +1940,7 @@ public final class DebugProtoBuf {
               qualifiedName_ = other.qualifiedName_;
               bitField0_ = (bitField0_ & ~0x00000001);
               qualifiedNameBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getQualifiedNameFieldBuilder() : null;
             } else {
               qualifiedNameBuilder_.addAllMessages(other.qualifiedName_);
@@ -1962,13 +1962,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -1990,7 +1990,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder> qualifiedNameBuilder_;
 
       /**
@@ -2205,11 +2205,11 @@ public final class DebugProtoBuf {
            getQualifiedNameBuilderList() {
         return getQualifiedNameFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder> 
           getQualifiedNameFieldBuilder() {
         if (qualifiedNameBuilder_ == null) {
-          qualifiedNameBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          qualifiedNameBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedName.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder>(
                   qualifiedName_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -2232,7 +2232,7 @@ public final class DebugProtoBuf {
   }
 
   public interface AnnotationOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     // required int32 id = 1;
     /**
@@ -2273,14 +2273,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation}
    */
   public static final class Annotation extends
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
       implements AnnotationOrBuilder {
     // Use Annotation.newBuilder() to construct.
-    private Annotation(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Annotation(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Annotation(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Annotation(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Annotation defaultInstance;
     public static Annotation getDefaultInstance() {
@@ -2291,20 +2291,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Annotation(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -2335,10 +2335,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
@@ -2348,35 +2348,35 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Annotation> PARSER =
-        new com.google.protobuf.AbstractParser<Annotation>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Annotation> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Annotation>() {
       public Annotation parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Annotation(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Annotation> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Annotation> getParserForType() {
       return PARSER;
     }
 
     public interface ArgumentOrBuilder
-        extends com.google.protobuf.MessageOrBuilder {
+        extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
       // required int32 name_id = 1;
       /**
@@ -2406,14 +2406,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument}
      */
     public static final class Argument extends
-        com.google.protobuf.GeneratedMessage
+        org.jetbrains.kotlin.protobuf.GeneratedMessage
         implements ArgumentOrBuilder {
       // Use Argument.newBuilder() to construct.
-      private Argument(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      private Argument(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
         this.unknownFields = builder.getUnknownFields();
       }
-      private Argument(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+      private Argument(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
       private static final Argument defaultInstance;
       public static Argument getDefaultInstance() {
@@ -2424,20 +2424,20 @@ public final class DebugProtoBuf {
         return defaultInstance;
       }
 
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
       @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
+      public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
           getUnknownFields() {
         return this.unknownFields;
       }
       private Argument(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
+        org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+            org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
         try {
           boolean done = false;
           while (!done) {
@@ -2473,45 +2473,45 @@ public final class DebugProtoBuf {
               }
             }
           }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           throw e.setUnfinishedMessage(this);
         } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
       }
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Builder.class);
       }
 
-      public static com.google.protobuf.Parser<Argument> PARSER =
-          new com.google.protobuf.AbstractParser<Argument>() {
+      public static org.jetbrains.kotlin.protobuf.Parser<Argument> PARSER =
+          new org.jetbrains.kotlin.protobuf.AbstractParser<Argument>() {
         public Argument parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return new Argument(input, extensionRegistry);
         }
       };
 
       @java.lang.Override
-      public com.google.protobuf.Parser<Argument> getParserForType() {
+      public org.jetbrains.kotlin.protobuf.Parser<Argument> getParserForType() {
         return PARSER;
       }
 
       public interface ValueOrBuilder
-          extends com.google.protobuf.MessageOrBuilder {
+          extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
         // optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;
         /**
@@ -2646,14 +2646,14 @@ public final class DebugProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument.Value}
        */
       public static final class Value extends
-          com.google.protobuf.GeneratedMessage
+          org.jetbrains.kotlin.protobuf.GeneratedMessage
           implements ValueOrBuilder {
         // Use Value.newBuilder() to construct.
-        private Value(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        private Value(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
           super(builder);
           this.unknownFields = builder.getUnknownFields();
         }
-        private Value(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+        private Value(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
         private static final Value defaultInstance;
         public static Value getDefaultInstance() {
@@ -2664,20 +2664,20 @@ public final class DebugProtoBuf {
           return defaultInstance;
         }
 
-        private final com.google.protobuf.UnknownFieldSet unknownFields;
+        private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
         @java.lang.Override
-        public final com.google.protobuf.UnknownFieldSet
+        public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
             getUnknownFields() {
           return this.unknownFields;
         }
         private Value(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           initFields();
           int mutable_bitField0_ = 0;
-          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-              com.google.protobuf.UnknownFieldSet.newBuilder();
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+              org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
           try {
             boolean done = false;
             while (!done) {
@@ -2757,10 +2757,10 @@ public final class DebugProtoBuf {
                 }
               }
             }
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
             throw e.setUnfinishedMessage(this);
           } catch (java.io.IOException e) {
-            throw new com.google.protobuf.InvalidProtocolBufferException(
+            throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
                 e.getMessage()).setUnfinishedMessage(this);
           } finally {
             if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
@@ -2770,30 +2770,30 @@ public final class DebugProtoBuf {
             makeExtensionsImmutable();
           }
         }
-        public static final com.google.protobuf.Descriptors.Descriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor;
         }
 
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
             internalGetFieldAccessorTable() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
                   org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder.class);
         }
 
-        public static com.google.protobuf.Parser<Value> PARSER =
-            new com.google.protobuf.AbstractParser<Value>() {
+        public static org.jetbrains.kotlin.protobuf.Parser<Value> PARSER =
+            new org.jetbrains.kotlin.protobuf.AbstractParser<Value>() {
           public Value parsePartialFrom(
-              com.google.protobuf.CodedInputStream input,
-              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-              throws com.google.protobuf.InvalidProtocolBufferException {
+              org.jetbrains.kotlin.protobuf.CodedInputStream input,
+              org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
             return new Value(input, extensionRegistry);
           }
         };
 
         @java.lang.Override
-        public com.google.protobuf.Parser<Value> getParserForType() {
+        public org.jetbrains.kotlin.protobuf.Parser<Value> getParserForType() {
           return PARSER;
         }
 
@@ -2801,7 +2801,7 @@ public final class DebugProtoBuf {
          * Protobuf enum {@code org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type}
          */
         public enum Type
-            implements com.google.protobuf.ProtocolMessageEnum {
+            implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
           /**
            * <code>BYTE = 0;</code>
            */
@@ -2931,27 +2931,27 @@ public final class DebugProtoBuf {
             }
           }
 
-          public static com.google.protobuf.Internal.EnumLiteMap<Type>
+          public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Type>
               internalGetValueMap() {
             return internalValueMap;
           }
-          private static com.google.protobuf.Internal.EnumLiteMap<Type>
+          private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Type>
               internalValueMap =
-                new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+                new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Type>() {
                   public Type findValueByNumber(int number) {
                     return Type.valueOf(number);
                   }
                 };
 
-          public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
               getValueDescriptor() {
             return getDescriptor().getValues().get(index);
           }
-          public final com.google.protobuf.Descriptors.EnumDescriptor
+          public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
               getDescriptorForType() {
             return getDescriptor();
           }
-          public static final com.google.protobuf.Descriptors.EnumDescriptor
+          public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
               getDescriptor() {
             return org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.getDescriptor().getEnumTypes().get(0);
           }
@@ -2959,7 +2959,7 @@ public final class DebugProtoBuf {
           private static final Type[] VALUES = values();
 
           public static Type valueOf(
-              com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+              org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
             if (desc.getType() != getDescriptor()) {
               throw new java.lang.IllegalArgumentException(
                 "EnumValueDescriptor is not for this type.");
@@ -3201,7 +3201,7 @@ public final class DebugProtoBuf {
           return true;
         }
 
-        public void writeTo(com.google.protobuf.CodedOutputStream output)
+        public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                             throws java.io.IOException {
           getSerializedSize();
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -3241,39 +3241,39 @@ public final class DebugProtoBuf {
 
           size = 0;
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeEnumSize(1, type_.getNumber());
           }
           if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeSInt64Size(2, intValue_);
           }
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeFloatSize(3, floatValue_);
           }
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeDoubleSize(4, doubleValue_);
           }
           if (((bitField0_ & 0x00000010) == 0x00000010)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32Size(5, stringValue_);
           }
           if (((bitField0_ & 0x00000020) == 0x00000020)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32Size(6, classId_);
           }
           if (((bitField0_ & 0x00000040) == 0x00000040)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32Size(7, enumValueId_);
           }
           if (((bitField0_ & 0x00000080) == 0x00000080)) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(8, annotation_);
           }
           for (int i = 0; i < arrayElement_.size(); i++) {
-            size += com.google.protobuf.CodedOutputStream
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(9, arrayElement_.get(i));
           }
           size += getUnknownFields().getSerializedSize();
@@ -3289,24 +3289,24 @@ public final class DebugProtoBuf {
         }
 
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
-            com.google.protobuf.ByteString data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.ByteString data)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return PARSER.parseFrom(data);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
-            com.google.protobuf.ByteString data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.ByteString data,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return PARSER.parseFrom(data, extensionRegistry);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(byte[] data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return PARSER.parseFrom(data);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
             byte[] data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return PARSER.parseFrom(data, extensionRegistry);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(java.io.InputStream input)
@@ -3315,7 +3315,7 @@ public final class DebugProtoBuf {
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
             java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           return PARSER.parseFrom(input, extensionRegistry);
         }
@@ -3325,18 +3325,18 @@ public final class DebugProtoBuf {
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseDelimitedFrom(
             java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           return PARSER.parseDelimitedFrom(input, extensionRegistry);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
-            com.google.protobuf.CodedInputStream input)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input)
             throws java.io.IOException {
           return PARSER.parseFrom(input);
         }
         public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parseFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           return PARSER.parseFrom(input, extensionRegistry);
         }
@@ -3350,7 +3350,7 @@ public final class DebugProtoBuf {
 
         @java.lang.Override
         protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
           Builder builder = new Builder(parent);
           return builder;
         }
@@ -3358,14 +3358,14 @@ public final class DebugProtoBuf {
          * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument.Value}
          */
         public static final class Builder extends
-            com.google.protobuf.GeneratedMessage.Builder<Builder>
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
            implements org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder {
-          public static final com.google.protobuf.Descriptors.Descriptor
+          public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
               getDescriptor() {
             return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor;
           }
 
-          protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
               internalGetFieldAccessorTable() {
             return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
@@ -3378,12 +3378,12 @@ public final class DebugProtoBuf {
           }
 
           private Builder(
-              com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+              org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
             super(parent);
             maybeForceBuilderInitialization();
           }
           private void maybeForceBuilderInitialization() {
-            if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
               getAnnotationFieldBuilder();
               getArrayElementFieldBuilder();
             }
@@ -3427,7 +3427,7 @@ public final class DebugProtoBuf {
             return create().mergeFrom(buildPartial());
           }
 
-          public com.google.protobuf.Descriptors.Descriptor
+          public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
               getDescriptorForType() {
             return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor;
           }
@@ -3498,7 +3498,7 @@ public final class DebugProtoBuf {
             return result;
           }
 
-          public Builder mergeFrom(com.google.protobuf.Message other) {
+          public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
             if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value) {
               return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value)other);
             } else {
@@ -3552,7 +3552,7 @@ public final class DebugProtoBuf {
                   arrayElement_ = other.arrayElement_;
                   bitField0_ = (bitField0_ & ~0x00000100);
                   arrayElementBuilder_ = 
-                    com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                    org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                        getArrayElementFieldBuilder() : null;
                 } else {
                   arrayElementBuilder_.addAllMessages(other.arrayElement_);
@@ -3580,13 +3580,13 @@ public final class DebugProtoBuf {
           }
 
           public Builder mergeFrom(
-              com.google.protobuf.CodedInputStream input,
-              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              org.jetbrains.kotlin.protobuf.CodedInputStream input,
+              org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value parsedMessage = null;
             try {
               parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
               parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value) e.getUnfinishedMessage();
               throw e;
             } finally {
@@ -3874,7 +3874,7 @@ public final class DebugProtoBuf {
 
           // optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;
           private org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation annotation_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance();
-          private com.google.protobuf.SingleFieldBuilder<
+          private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> annotationBuilder_;
           /**
            * <code>optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
@@ -3975,11 +3975,11 @@ public final class DebugProtoBuf {
           /**
            * <code>optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
            */
-          private com.google.protobuf.SingleFieldBuilder<
+          private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
               getAnnotationFieldBuilder() {
             if (annotationBuilder_ == null) {
-              annotationBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              annotationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
                   org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder>(
                       annotation_,
                       getParentForChildren(),
@@ -3999,7 +3999,7 @@ public final class DebugProtoBuf {
              }
           }
 
-          private com.google.protobuf.RepeatedFieldBuilder<
+          private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> arrayElementBuilder_;
 
           /**
@@ -4214,11 +4214,11 @@ public final class DebugProtoBuf {
                getArrayElementBuilderList() {
             return getArrayElementFieldBuilder().getBuilderList();
           }
-          private com.google.protobuf.RepeatedFieldBuilder<
+          private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> 
               getArrayElementFieldBuilder() {
             if (arrayElementBuilder_ == null) {
-              arrayElementBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              arrayElementBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
                   org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder>(
                       arrayElement_,
                       ((bitField0_ & 0x00000100) == 0x00000100),
@@ -4304,7 +4304,7 @@ public final class DebugProtoBuf {
         return true;
       }
 
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
+      public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -4323,11 +4323,11 @@ public final class DebugProtoBuf {
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32Size(1, nameId_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeMessageSize(2, value_);
         }
         size += getUnknownFields().getSerializedSize();
@@ -4343,24 +4343,24 @@ public final class DebugProtoBuf {
       }
 
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
           byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(java.io.InputStream input)
@@ -4369,7 +4369,7 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -4379,18 +4379,18 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseDelimitedFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
-          com.google.protobuf.CodedInputStream input)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return PARSER.parseFrom(input);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -4404,7 +4404,7 @@ public final class DebugProtoBuf {
 
       @java.lang.Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
@@ -4412,14 +4412,14 @@ public final class DebugProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder>
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
          implements org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.ArgumentOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor;
         }
 
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
             internalGetFieldAccessorTable() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
@@ -4432,12 +4432,12 @@ public final class DebugProtoBuf {
         }
 
         private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
         private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
             getValueFieldBuilder();
           }
         }
@@ -4462,7 +4462,7 @@ public final class DebugProtoBuf {
           return create().mergeFrom(buildPartial());
         }
 
-        public com.google.protobuf.Descriptors.Descriptor
+        public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor;
         }
@@ -4500,7 +4500,7 @@ public final class DebugProtoBuf {
           return result;
         }
 
-        public Builder mergeFrom(com.google.protobuf.Message other) {
+        public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
           if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument) {
             return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument)other);
           } else {
@@ -4538,13 +4538,13 @@ public final class DebugProtoBuf {
         }
 
         public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
             parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument) e.getUnfinishedMessage();
             throw e;
           } finally {
@@ -4591,7 +4591,7 @@ public final class DebugProtoBuf {
 
         // required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;
         private org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value value_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance();
-        private com.google.protobuf.SingleFieldBuilder<
+        private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> valueBuilder_;
         /**
          * <code>required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;</code>
@@ -4692,11 +4692,11 @@ public final class DebugProtoBuf {
         /**
          * <code>required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;</code>
          */
-        private com.google.protobuf.SingleFieldBuilder<
+        private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> 
             getValueFieldBuilder() {
           if (valueBuilder_ == null) {
-            valueBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            valueBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
                 org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.ValueOrBuilder>(
                     value_,
                     getParentForChildren(),
@@ -4793,7 +4793,7 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -4812,11 +4812,11 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, id_);
       }
       for (int i = 0; i < argument_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
@@ -4832,24 +4832,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(java.io.InputStream input)
@@ -4858,7 +4858,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -4868,18 +4868,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -4893,7 +4893,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -4901,14 +4901,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
        implements org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -4921,12 +4921,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getArgumentFieldBuilder();
         }
       }
@@ -4951,7 +4951,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor;
       }
@@ -4990,7 +4990,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation)other);
         } else {
@@ -5023,7 +5023,7 @@ public final class DebugProtoBuf {
               argument_ = other.argument_;
               bitField0_ = (bitField0_ & ~0x00000002);
               argumentBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getArgumentFieldBuilder() : null;
             } else {
               argumentBuilder_.addAllMessages(other.argument_);
@@ -5049,13 +5049,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -5110,7 +5110,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.ArgumentOrBuilder> argumentBuilder_;
 
       /**
@@ -5325,11 +5325,11 @@ public final class DebugProtoBuf {
            getArgumentBuilderList() {
         return getArgumentFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.ArgumentOrBuilder> 
           getArgumentFieldBuilder() {
         if (argumentBuilder_ == null) {
-          argumentBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          argumentBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.ArgumentOrBuilder>(
                   argument_,
                   ((bitField0_ & 0x00000002) == 0x00000002),
@@ -5352,7 +5352,7 @@ public final class DebugProtoBuf {
   }
 
   public interface TypeOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Type> {
 
     // repeated .org.jetbrains.kotlin.serialization.Type.Argument argument = 2;
@@ -5508,14 +5508,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
    */
   public static final class Type extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Type> implements TypeOrBuilder {
     // Use Type.newBuilder() to construct.
-    private Type(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, ?> builder) {
+    private Type(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Type(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Type(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Type defaultInstance;
     public static Type getDefaultInstance() {
@@ -5526,20 +5526,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Type(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -5626,10 +5626,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -5639,35 +5639,35 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Type> PARSER =
-        new com.google.protobuf.AbstractParser<Type>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Type> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Type>() {
       public Type parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Type(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Type> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Type> getParserForType() {
       return PARSER;
     }
 
     public interface ArgumentOrBuilder
-        extends com.google.protobuf.MessageOrBuilder {
+        extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
       // optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];
       /**
@@ -5719,14 +5719,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Type.Argument}
      */
     public static final class Argument extends
-        com.google.protobuf.GeneratedMessage
+        org.jetbrains.kotlin.protobuf.GeneratedMessage
         implements ArgumentOrBuilder {
       // Use Argument.newBuilder() to construct.
-      private Argument(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      private Argument(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
         this.unknownFields = builder.getUnknownFields();
       }
-      private Argument(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+      private Argument(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
       private static final Argument defaultInstance;
       public static Argument getDefaultInstance() {
@@ -5737,20 +5737,20 @@ public final class DebugProtoBuf {
         return defaultInstance;
       }
 
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
       @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
+      public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
           getUnknownFields() {
         return this.unknownFields;
       }
       private Argument(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
+        org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+            org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
         try {
           boolean done = false;
           while (!done) {
@@ -5797,40 +5797,40 @@ public final class DebugProtoBuf {
               }
             }
           }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           throw e.setUnfinishedMessage(this);
         } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
       }
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_Argument_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.Builder.class);
       }
 
-      public static com.google.protobuf.Parser<Argument> PARSER =
-          new com.google.protobuf.AbstractParser<Argument>() {
+      public static org.jetbrains.kotlin.protobuf.Parser<Argument> PARSER =
+          new org.jetbrains.kotlin.protobuf.AbstractParser<Argument>() {
         public Argument parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return new Argument(input, extensionRegistry);
         }
       };
 
       @java.lang.Override
-      public com.google.protobuf.Parser<Argument> getParserForType() {
+      public org.jetbrains.kotlin.protobuf.Parser<Argument> getParserForType() {
         return PARSER;
       }
 
@@ -5838,7 +5838,7 @@ public final class DebugProtoBuf {
        * Protobuf enum {@code org.jetbrains.kotlin.serialization.Type.Argument.Projection}
        */
       public enum Projection
-          implements com.google.protobuf.ProtocolMessageEnum {
+          implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
         /**
          * <code>IN = 0;</code>
          */
@@ -5887,27 +5887,27 @@ public final class DebugProtoBuf {
           }
         }
 
-        public static com.google.protobuf.Internal.EnumLiteMap<Projection>
+        public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Projection>
             internalGetValueMap() {
           return internalValueMap;
         }
-        private static com.google.protobuf.Internal.EnumLiteMap<Projection>
+        private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Projection>
             internalValueMap =
-              new com.google.protobuf.Internal.EnumLiteMap<Projection>() {
+              new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Projection>() {
                 public Projection findValueByNumber(int number) {
                   return Projection.valueOf(number);
                 }
               };
 
-        public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
             getValueDescriptor() {
           return getDescriptor().getValues().get(index);
         }
-        public final com.google.protobuf.Descriptors.EnumDescriptor
+        public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
             getDescriptorForType() {
           return getDescriptor();
         }
-        public static final com.google.protobuf.Descriptors.EnumDescriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.getDescriptor().getEnumTypes().get(0);
         }
@@ -5915,7 +5915,7 @@ public final class DebugProtoBuf {
         private static final Projection[] VALUES = values();
 
         public static Projection valueOf(
-            com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+            org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
           if (desc.getType() != getDescriptor()) {
             throw new java.lang.IllegalArgumentException(
               "EnumValueDescriptor is not for this type.");
@@ -6021,7 +6021,7 @@ public final class DebugProtoBuf {
         return true;
       }
 
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
+      public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -6043,15 +6043,15 @@ public final class DebugProtoBuf {
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeEnumSize(1, projection_.getNumber());
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeMessageSize(2, type_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32Size(3, typeId_);
         }
         size += getUnknownFields().getSerializedSize();
@@ -6067,24 +6067,24 @@ public final class DebugProtoBuf {
       }
 
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
           byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(java.io.InputStream input)
@@ -6093,7 +6093,7 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -6103,18 +6103,18 @@ public final class DebugProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseDelimitedFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
-          com.google.protobuf.CodedInputStream input)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return PARSER.parseFrom(input);
       }
       public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -6128,7 +6128,7 @@ public final class DebugProtoBuf {
 
       @java.lang.Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
@@ -6136,14 +6136,14 @@ public final class DebugProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.Type.Argument}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder>
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
          implements org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.ArgumentOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
+        public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor;
         }
 
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
             internalGetFieldAccessorTable() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_Argument_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
@@ -6156,12 +6156,12 @@ public final class DebugProtoBuf {
         }
 
         private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
         private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
             getTypeFieldBuilder();
           }
         }
@@ -6188,7 +6188,7 @@ public final class DebugProtoBuf {
           return create().mergeFrom(buildPartial());
         }
 
-        public com.google.protobuf.Descriptors.Descriptor
+        public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
           return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor;
         }
@@ -6230,7 +6230,7 @@ public final class DebugProtoBuf {
           return result;
         }
 
-        public Builder mergeFrom(com.google.protobuf.Message other) {
+        public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
           if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument) {
             return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument)other);
           } else {
@@ -6265,13 +6265,13 @@ public final class DebugProtoBuf {
         }
 
         public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
             parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument) e.getUnfinishedMessage();
             throw e;
           } finally {
@@ -6321,7 +6321,7 @@ public final class DebugProtoBuf {
 
         // optional .org.jetbrains.kotlin.serialization.Type type = 2;
         private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-        private com.google.protobuf.SingleFieldBuilder<
+        private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> typeBuilder_;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
@@ -6458,11 +6458,11 @@ public final class DebugProtoBuf {
          * When projection is STAR, no type is written, otherwise type must be specified
          * </pre>
          */
-        private com.google.protobuf.SingleFieldBuilder<
+        private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
             getTypeFieldBuilder() {
           if (typeBuilder_ == null) {
-            typeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            typeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
                 org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                     type_,
                     getParentForChildren(),
@@ -6778,10 +6778,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Type>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       for (int i = 0; i < argument_.size(); i++) {
@@ -6825,43 +6825,43 @@ public final class DebugProtoBuf {
 
       size = 0;
       for (int i = 0; i < argument_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(3, nullable_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(4, flexibleTypeCapabilitiesId_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, flexibleUpperBound_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(6, className_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(7, typeParameter_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(8, flexibleUpperBoundId_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(9, typeParameterName_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(10, outerType_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(11, outerTypeId_);
       }
       size += extensionsSerializedSize();
@@ -6878,24 +6878,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(java.io.InputStream input)
@@ -6904,7 +6904,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -6914,18 +6914,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -6939,7 +6939,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -6947,14 +6947,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -6967,12 +6967,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getArgumentFieldBuilder();
           getFlexibleUpperBoundFieldBuilder();
           getOuterTypeFieldBuilder();
@@ -7023,7 +7023,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_descriptor;
       }
@@ -7102,7 +7102,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Type) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Type)other);
         } else {
@@ -7132,7 +7132,7 @@ public final class DebugProtoBuf {
               argument_ = other.argument_;
               bitField0_ = (bitField0_ & ~0x00000001);
               argumentBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getArgumentFieldBuilder() : null;
             } else {
               argumentBuilder_.addAllMessages(other.argument_);
@@ -7198,13 +7198,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Type parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Type) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -7226,7 +7226,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.ArgumentOrBuilder> argumentBuilder_;
 
       /**
@@ -7441,11 +7441,11 @@ public final class DebugProtoBuf {
            getArgumentBuilderList() {
         return getArgumentFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.ArgumentOrBuilder> 
           getArgumentFieldBuilder() {
         if (argumentBuilder_ == null) {
-          argumentBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          argumentBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.ArgumentOrBuilder>(
                   argument_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -7544,7 +7544,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type flexibleUpperBound_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> flexibleUpperBoundBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
@@ -7645,11 +7645,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getFlexibleUpperBoundFieldBuilder() {
         if (flexibleUpperBoundBuilder_ == null) {
-          flexibleUpperBoundBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          flexibleUpperBoundBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   flexibleUpperBound_,
                   getParentForChildren(),
@@ -7825,7 +7825,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type outerType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> outerTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
@@ -7926,11 +7926,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getOuterTypeFieldBuilder() {
         if (outerTypeBuilder_ == null) {
-          outerTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          outerTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   outerType_,
                   getParentForChildren(),
@@ -7985,7 +7985,7 @@ public final class DebugProtoBuf {
   }
 
   public interface TypeParameterOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<TypeParameter> {
 
     // required int32 id = 1;
@@ -8071,14 +8071,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeParameter}
    */
   public static final class TypeParameter extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         TypeParameter> implements TypeParameterOrBuilder {
     // Use TypeParameter.newBuilder() to construct.
-    private TypeParameter(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, ?> builder) {
+    private TypeParameter(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private TypeParameter(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private TypeParameter(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final TypeParameter defaultInstance;
     public static TypeParameter getDefaultInstance() {
@@ -8089,20 +8089,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private TypeParameter(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -8175,10 +8175,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
@@ -8191,30 +8191,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeParameter_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<TypeParameter> PARSER =
-        new com.google.protobuf.AbstractParser<TypeParameter>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<TypeParameter> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<TypeParameter>() {
       public TypeParameter parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new TypeParameter(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<TypeParameter> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<TypeParameter> getParserForType() {
       return PARSER;
     }
 
@@ -8222,7 +8222,7 @@ public final class DebugProtoBuf {
      * Protobuf enum {@code org.jetbrains.kotlin.serialization.TypeParameter.Variance}
      */
     public enum Variance
-        implements com.google.protobuf.ProtocolMessageEnum {
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
       /**
        * <code>IN = 0;</code>
        */
@@ -8262,27 +8262,27 @@ public final class DebugProtoBuf {
         }
       }
 
-      public static com.google.protobuf.Internal.EnumLiteMap<Variance>
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Variance>
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<Variance>
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Variance>
           internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Variance>() {
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Variance>() {
               public Variance findValueByNumber(int number) {
                 return Variance.valueOf(number);
               }
             };
 
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
         return getDescriptor().getValues().get(index);
       }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
         return getDescriptor();
       }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.getDescriptor().getEnumTypes().get(0);
       }
@@ -8290,7 +8290,7 @@ public final class DebugProtoBuf {
       private static final Variance[] VALUES = values();
 
       public static Variance valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
         if (desc.getType() != getDescriptor()) {
           throw new java.lang.IllegalArgumentException(
             "EnumValueDescriptor is not for this type.");
@@ -8468,10 +8468,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -8503,29 +8503,29 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, id_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(3, reified_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeEnumSize(4, variance_.getNumber());
       }
       for (int i = 0; i < upperBound_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, upperBound_.get(i));
       }
       {
         int dataSize = 0;
         for (int i = 0; i < upperBoundId_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(upperBoundId_.get(i));
         }
         size += dataSize;
@@ -8545,24 +8545,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(java.io.InputStream input)
@@ -8571,7 +8571,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -8581,18 +8581,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -8606,7 +8606,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -8614,14 +8614,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeParameter}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -8634,12 +8634,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getUpperBoundFieldBuilder();
         }
       }
@@ -8672,7 +8672,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor;
       }
@@ -8728,7 +8728,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter)other);
         } else {
@@ -8770,7 +8770,7 @@ public final class DebugProtoBuf {
               upperBound_ = other.upperBound_;
               bitField0_ = (bitField0_ & ~0x00000010);
               upperBoundBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getUpperBoundFieldBuilder() : null;
             } else {
               upperBoundBuilder_.addAllMessages(other.upperBound_);
@@ -8815,13 +8815,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -8978,7 +8978,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> upperBoundBuilder_;
 
       /**
@@ -9193,11 +9193,11 @@ public final class DebugProtoBuf {
            getUpperBoundBuilderList() {
         return getUpperBoundFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getUpperBoundFieldBuilder() {
         if (upperBoundBuilder_ == null) {
-          upperBoundBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          upperBoundBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   upperBound_,
                   ((bitField0_ & 0x00000010) == 0x00000010),
@@ -9286,7 +9286,7 @@ public final class DebugProtoBuf {
   }
 
   public interface ClassOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Class> {
 
     // optional int32 flags = 1 [default = 6];
@@ -9535,14 +9535,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Class}
    */
   public static final class Class extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Class> implements ClassOrBuilder {
     // Use Class.newBuilder() to construct.
-    private Class(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Class, ?> builder) {
+    private Class(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Class, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Class(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Class(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Class defaultInstance;
     public static Class getDefaultInstance() {
@@ -9553,20 +9553,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Class(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -9702,10 +9702,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
@@ -9736,30 +9736,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Class> PARSER =
-        new com.google.protobuf.AbstractParser<Class>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Class> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Class>() {
       public Class parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Class(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Class> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Class> getParserForType() {
       return PARSER;
     }
 
@@ -9767,7 +9767,7 @@ public final class DebugProtoBuf {
      * Protobuf enum {@code org.jetbrains.kotlin.serialization.Class.Kind}
      */
     public enum Kind
-        implements com.google.protobuf.ProtocolMessageEnum {
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
       /**
        * <code>CLASS = 0;</code>
        *
@@ -9851,27 +9851,27 @@ public final class DebugProtoBuf {
         }
       }
 
-      public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<Kind>
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>
           internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Kind>() {
               public Kind findValueByNumber(int number) {
                 return Kind.valueOf(number);
               }
             };
 
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
         return getDescriptor().getValues().get(index);
       }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
         return getDescriptor();
       }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.getDescriptor().getEnumTypes().get(0);
       }
@@ -9879,7 +9879,7 @@ public final class DebugProtoBuf {
       private static final Kind[] VALUES = values();
 
       public static Kind valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
         if (desc.getType() != getDescriptor()) {
           throw new java.lang.IllegalArgumentException(
             "EnumValueDescriptor is not for this type.");
@@ -10326,10 +10326,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Class>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -10387,71 +10387,71 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, flags_);
       }
       {
         int dataSize = 0;
         for (int i = 0; i < supertypeId_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(supertypeId_.get(i));
         }
         size += dataSize;
         if (!getSupertypeIdList().isEmpty()) {
           size += 1;
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32SizeNoTag(dataSize);
         }
         supertypeIdMemoizedSerializedSize = dataSize;
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(3, fqName_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(4, companionObjectName_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, typeParameter_.get(i));
       }
       for (int i = 0; i < supertype_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(6, supertype_.get(i));
       }
       {
         int dataSize = 0;
         for (int i = 0; i < nestedClassName_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(nestedClassName_.get(i));
         }
         size += dataSize;
         if (!getNestedClassNameList().isEmpty()) {
           size += 1;
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32SizeNoTag(dataSize);
         }
         nestedClassNameMemoizedSerializedSize = dataSize;
       }
       for (int i = 0; i < constructor_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(8, constructor_.get(i));
       }
       for (int i = 0; i < function_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(9, function_.get(i));
       }
       for (int i = 0; i < property_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(10, property_.get(i));
       }
       for (int i = 0; i < enumEntry_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(13, enumEntry_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
@@ -10468,24 +10468,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(java.io.InputStream input)
@@ -10494,7 +10494,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -10504,18 +10504,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -10529,7 +10529,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -10537,14 +10537,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Class}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Class, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.ClassOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -10557,12 +10557,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getTypeParameterFieldBuilder();
           getSupertypeFieldBuilder();
           getConstructorFieldBuilder();
@@ -10637,7 +10637,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_descriptor;
       }
@@ -10747,7 +10747,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Class) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Class)other);
         } else {
@@ -10786,7 +10786,7 @@ public final class DebugProtoBuf {
               typeParameter_ = other.typeParameter_;
               bitField0_ = (bitField0_ & ~0x00000008);
               typeParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getTypeParameterFieldBuilder() : null;
             } else {
               typeParameterBuilder_.addAllMessages(other.typeParameter_);
@@ -10812,7 +10812,7 @@ public final class DebugProtoBuf {
               supertype_ = other.supertype_;
               bitField0_ = (bitField0_ & ~0x00000010);
               supertypeBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getSupertypeFieldBuilder() : null;
             } else {
               supertypeBuilder_.addAllMessages(other.supertype_);
@@ -10858,7 +10858,7 @@ public final class DebugProtoBuf {
               constructor_ = other.constructor_;
               bitField0_ = (bitField0_ & ~0x00000080);
               constructorBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getConstructorFieldBuilder() : null;
             } else {
               constructorBuilder_.addAllMessages(other.constructor_);
@@ -10884,7 +10884,7 @@ public final class DebugProtoBuf {
               function_ = other.function_;
               bitField0_ = (bitField0_ & ~0x00000100);
               functionBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getFunctionFieldBuilder() : null;
             } else {
               functionBuilder_.addAllMessages(other.function_);
@@ -10910,7 +10910,7 @@ public final class DebugProtoBuf {
               property_ = other.property_;
               bitField0_ = (bitField0_ & ~0x00000200);
               propertyBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getPropertyFieldBuilder() : null;
             } else {
               propertyBuilder_.addAllMessages(other.property_);
@@ -10936,7 +10936,7 @@ public final class DebugProtoBuf {
               enumEntry_ = other.enumEntry_;
               bitField0_ = (bitField0_ & ~0x00000400);
               enumEntryBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getEnumEntryFieldBuilder() : null;
             } else {
               enumEntryBuilder_.addAllMessages(other.enumEntry_);
@@ -11006,13 +11006,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Class parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Class) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -11173,7 +11173,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> typeParameterBuilder_;
 
       /**
@@ -11388,11 +11388,11 @@ public final class DebugProtoBuf {
            getTypeParameterBuilderList() {
         return getTypeParameterFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
           getTypeParameterFieldBuilder() {
         if (typeParameterBuilder_ == null) {
-          typeParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          typeParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder>(
                   typeParameter_,
                   ((bitField0_ & 0x00000008) == 0x00000008),
@@ -11413,7 +11413,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> supertypeBuilder_;
 
       /**
@@ -11628,11 +11628,11 @@ public final class DebugProtoBuf {
            getSupertypeBuilderList() {
         return getSupertypeFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getSupertypeFieldBuilder() {
         if (supertypeBuilder_ == null) {
-          supertypeBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          supertypeBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   supertype_,
                   ((bitField0_ & 0x00000010) == 0x00000010),
@@ -11785,7 +11785,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> constructorBuilder_;
 
       /**
@@ -12000,11 +12000,11 @@ public final class DebugProtoBuf {
            getConstructorBuilderList() {
         return getConstructorFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> 
           getConstructorFieldBuilder() {
         if (constructorBuilder_ == null) {
-          constructorBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          constructorBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder>(
                   constructor_,
                   ((bitField0_ & 0x00000080) == 0x00000080),
@@ -12025,7 +12025,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder> functionBuilder_;
 
       /**
@@ -12240,11 +12240,11 @@ public final class DebugProtoBuf {
            getFunctionBuilderList() {
         return getFunctionFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder> 
           getFunctionFieldBuilder() {
         if (functionBuilder_ == null) {
-          functionBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          functionBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder>(
                   function_,
                   ((bitField0_ & 0x00000100) == 0x00000100),
@@ -12265,7 +12265,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder> propertyBuilder_;
 
       /**
@@ -12480,11 +12480,11 @@ public final class DebugProtoBuf {
            getPropertyBuilderList() {
         return getPropertyFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder> 
           getPropertyFieldBuilder() {
         if (propertyBuilder_ == null) {
-          propertyBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          propertyBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder>(
                   property_,
                   ((bitField0_ & 0x00000200) == 0x00000200),
@@ -12505,7 +12505,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntryOrBuilder> enumEntryBuilder_;
 
       /**
@@ -12720,11 +12720,11 @@ public final class DebugProtoBuf {
            getEnumEntryBuilderList() {
         return getEnumEntryFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntryOrBuilder> 
           getEnumEntryFieldBuilder() {
         if (enumEntryBuilder_ == null) {
-          enumEntryBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          enumEntryBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntryOrBuilder>(
                   enumEntry_,
                   ((bitField0_ & 0x00000400) == 0x00000400),
@@ -12737,7 +12737,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> typeTableBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -12838,11 +12838,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> 
           getTypeTableFieldBuilder() {
         if (typeTableBuilder_ == null) {
-          typeTableBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          typeTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder>(
                   typeTable_,
                   getParentForChildren(),
@@ -12864,7 +12864,7 @@ public final class DebugProtoBuf {
   }
 
   public interface PackageOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Package> {
 
     // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
@@ -12935,14 +12935,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Package}
    */
   public static final class Package extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Package> implements PackageOrBuilder {
     // Use Package.newBuilder() to construct.
-    private Package(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Package, ?> builder) {
+    private Package(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Package, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Package(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Package(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Package defaultInstance;
     public static Package getDefaultInstance() {
@@ -12953,20 +12953,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Package(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -13013,10 +13013,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -13029,30 +13029,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Package_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Package.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Package.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Package> PARSER =
-        new com.google.protobuf.AbstractParser<Package>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Package> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Package>() {
       public Package parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Package(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Package> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Package> getParserForType() {
       return PARSER;
     }
 
@@ -13187,10 +13187,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Package>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       for (int i = 0; i < function_.size(); i++) {
@@ -13213,15 +13213,15 @@ public final class DebugProtoBuf {
 
       size = 0;
       for (int i = 0; i < function_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, function_.get(i));
       }
       for (int i = 0; i < property_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, property_.get(i));
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
@@ -13238,24 +13238,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(java.io.InputStream input)
@@ -13264,7 +13264,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -13274,18 +13274,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -13299,7 +13299,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -13307,14 +13307,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Package}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Package, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.PackageOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Package_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -13327,12 +13327,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getFunctionFieldBuilder();
           getPropertyFieldBuilder();
           getTypeTableFieldBuilder();
@@ -13369,7 +13369,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Package_descriptor;
       }
@@ -13421,7 +13421,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Package) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Package)other);
         } else {
@@ -13451,7 +13451,7 @@ public final class DebugProtoBuf {
               function_ = other.function_;
               bitField0_ = (bitField0_ & ~0x00000001);
               functionBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getFunctionFieldBuilder() : null;
             } else {
               functionBuilder_.addAllMessages(other.function_);
@@ -13477,7 +13477,7 @@ public final class DebugProtoBuf {
               property_ = other.property_;
               bitField0_ = (bitField0_ & ~0x00000002);
               propertyBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getPropertyFieldBuilder() : null;
             } else {
               propertyBuilder_.addAllMessages(other.property_);
@@ -13519,13 +13519,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Package parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Package) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -13547,7 +13547,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder> functionBuilder_;
 
       /**
@@ -13762,11 +13762,11 @@ public final class DebugProtoBuf {
            getFunctionBuilderList() {
         return getFunctionFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder> 
           getFunctionFieldBuilder() {
         if (functionBuilder_ == null) {
-          functionBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          functionBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder>(
                   function_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -13787,7 +13787,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder> propertyBuilder_;
 
       /**
@@ -14002,11 +14002,11 @@ public final class DebugProtoBuf {
            getPropertyBuilderList() {
         return getPropertyFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder> 
           getPropertyFieldBuilder() {
         if (propertyBuilder_ == null) {
-          propertyBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          propertyBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder>(
                   property_,
                   ((bitField0_ & 0x00000002) == 0x00000002),
@@ -14019,7 +14019,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> typeTableBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -14120,11 +14120,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> 
           getTypeTableFieldBuilder() {
         if (typeTableBuilder_ == null) {
-          typeTableBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          typeTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder>(
                   typeTable_,
                   getParentForChildren(),
@@ -14146,7 +14146,7 @@ public final class DebugProtoBuf {
   }
 
   public interface TypeTableOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     // repeated .org.jetbrains.kotlin.serialization.Type type = 1;
     /**
@@ -14197,14 +14197,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeTable}
    */
   public static final class TypeTable extends
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
       implements TypeTableOrBuilder {
     // Use TypeTable.newBuilder() to construct.
-    private TypeTable(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private TypeTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private TypeTable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private TypeTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final TypeTable defaultInstance;
     public static TypeTable getDefaultInstance() {
@@ -14215,20 +14215,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private TypeTable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -14259,10 +14259,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -14272,30 +14272,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeTable_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<TypeTable> PARSER =
-        new com.google.protobuf.AbstractParser<TypeTable>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<TypeTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<TypeTable>() {
       public TypeTable parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new TypeTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<TypeTable> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<TypeTable> getParserForType() {
       return PARSER;
     }
 
@@ -14381,7 +14381,7 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       for (int i = 0; i < type_.size(); i++) {
@@ -14400,11 +14400,11 @@ public final class DebugProtoBuf {
 
       size = 0;
       for (int i = 0; i < type_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, type_.get(i));
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, firstNullable_);
       }
       size += getUnknownFields().getSerializedSize();
@@ -14420,24 +14420,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(java.io.InputStream input)
@@ -14446,7 +14446,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -14456,18 +14456,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -14481,7 +14481,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -14489,14 +14489,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeTable}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
        implements org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeTable_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -14509,12 +14509,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getTypeFieldBuilder();
         }
       }
@@ -14539,7 +14539,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor;
       }
@@ -14578,7 +14578,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable)other);
         } else {
@@ -14608,7 +14608,7 @@ public final class DebugProtoBuf {
               type_ = other.type_;
               bitField0_ = (bitField0_ & ~0x00000001);
               typeBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getTypeFieldBuilder() : null;
             } else {
               typeBuilder_.addAllMessages(other.type_);
@@ -14633,13 +14633,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -14661,7 +14661,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> typeBuilder_;
 
       /**
@@ -14876,11 +14876,11 @@ public final class DebugProtoBuf {
            getTypeBuilderList() {
         return getTypeFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getTypeFieldBuilder() {
         if (typeBuilder_ == null) {
-          typeBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          typeBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   type_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -14956,7 +14956,7 @@ public final class DebugProtoBuf {
   }
 
   public interface ConstructorOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Constructor> {
 
     // optional int32 flags = 1 [default = 6];
@@ -15012,14 +15012,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Constructor}
    */
   public static final class Constructor extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Constructor> implements ConstructorOrBuilder {
     // Use Constructor.newBuilder() to construct.
-    private Constructor(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, ?> builder) {
+    private Constructor(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Constructor(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Constructor(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Constructor defaultInstance;
     public static Constructor getDefaultInstance() {
@@ -15030,20 +15030,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Constructor(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -15074,10 +15074,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
@@ -15087,30 +15087,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Constructor> PARSER =
-        new com.google.protobuf.AbstractParser<Constructor>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Constructor> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Constructor>() {
       public Constructor parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Constructor(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Constructor> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Constructor> getParserForType() {
       return PARSER;
     }
 
@@ -15204,10 +15204,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -15227,11 +15227,11 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, flags_);
       }
       for (int i = 0; i < valueParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, valueParameter_.get(i));
       }
       size += extensionsSerializedSize();
@@ -15248,24 +15248,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(java.io.InputStream input)
@@ -15274,7 +15274,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -15284,18 +15284,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -15309,7 +15309,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -15317,14 +15317,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Constructor}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -15337,12 +15337,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getValueParameterFieldBuilder();
         }
       }
@@ -15367,7 +15367,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor;
       }
@@ -15406,7 +15406,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor)other);
         } else {
@@ -15439,7 +15439,7 @@ public final class DebugProtoBuf {
               valueParameter_ = other.valueParameter_;
               bitField0_ = (bitField0_ & ~0x00000002);
               valueParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getValueParameterFieldBuilder() : null;
             } else {
               valueParameterBuilder_.addAllMessages(other.valueParameter_);
@@ -15466,13 +15466,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -15555,7 +15555,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> valueParameterBuilder_;
 
       /**
@@ -15770,11 +15770,11 @@ public final class DebugProtoBuf {
            getValueParameterBuilderList() {
         return getValueParameterFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
           getValueParameterFieldBuilder() {
         if (valueParameterBuilder_ == null) {
-          valueParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          valueParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder>(
                   valueParameter_,
                   ((bitField0_ & 0x00000002) == 0x00000002),
@@ -15797,7 +15797,7 @@ public final class DebugProtoBuf {
   }
 
   public interface FunctionOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Function> {
 
     // optional int32 flags = 9 [default = 6];
@@ -15972,14 +15972,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Function}
    */
   public static final class Function extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Function> implements FunctionOrBuilder {
     // Use Function.newBuilder() to construct.
-    private Function(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, ?> builder) {
+    private Function(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Function(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Function(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Function defaultInstance;
     public static Function getDefaultInstance() {
@@ -15990,20 +15990,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Function(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -16101,10 +16101,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
@@ -16117,30 +16117,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Function_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Function> PARSER =
-        new com.google.protobuf.AbstractParser<Function>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Function> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Function>() {
       public Function parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Function(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Function> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Function> getParserForType() {
       return PARSER;
     }
 
@@ -16448,10 +16448,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
@@ -16495,43 +16495,43 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, returnType_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, typeParameter_.get(i));
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, receiverType_);
       }
       for (int i = 0; i < valueParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(6, valueParameter_.get(i));
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(7, returnTypeId_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(8, receiverTypeId_);
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(9, flags_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
@@ -16548,24 +16548,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(java.io.InputStream input)
@@ -16574,7 +16574,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -16584,18 +16584,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -16609,7 +16609,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -16617,14 +16617,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Function}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Function_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -16637,12 +16637,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getReturnTypeFieldBuilder();
           getTypeParameterFieldBuilder();
           getReceiverTypeFieldBuilder();
@@ -16703,7 +16703,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Function_descriptor;
       }
@@ -16791,7 +16791,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Function) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Function)other);
         } else {
@@ -16836,7 +16836,7 @@ public final class DebugProtoBuf {
               typeParameter_ = other.typeParameter_;
               bitField0_ = (bitField0_ & ~0x00000020);
               typeParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getTypeParameterFieldBuilder() : null;
             } else {
               typeParameterBuilder_.addAllMessages(other.typeParameter_);
@@ -16868,7 +16868,7 @@ public final class DebugProtoBuf {
               valueParameter_ = other.valueParameter_;
               bitField0_ = (bitField0_ & ~0x00000100);
               valueParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getValueParameterFieldBuilder() : null;
             } else {
               valueParameterBuilder_.addAllMessages(other.valueParameter_);
@@ -16926,13 +16926,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Function parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Function) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -17097,7 +17097,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> returnTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
@@ -17198,11 +17198,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getReturnTypeFieldBuilder() {
         if (returnTypeBuilder_ == null) {
-          returnTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          returnTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   returnType_,
                   getParentForChildren(),
@@ -17255,7 +17255,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> typeParameterBuilder_;
 
       /**
@@ -17470,11 +17470,11 @@ public final class DebugProtoBuf {
            getTypeParameterBuilderList() {
         return getTypeParameterFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
           getTypeParameterFieldBuilder() {
         if (typeParameterBuilder_ == null) {
-          typeParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          typeParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder>(
                   typeParameter_,
                   ((bitField0_ & 0x00000020) == 0x00000020),
@@ -17487,7 +17487,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> receiverTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
@@ -17588,11 +17588,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getReceiverTypeFieldBuilder() {
         if (receiverTypeBuilder_ == null) {
-          receiverTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          receiverTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   receiverType_,
                   getParentForChildren(),
@@ -17645,7 +17645,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> valueParameterBuilder_;
 
       /**
@@ -17860,11 +17860,11 @@ public final class DebugProtoBuf {
            getValueParameterBuilderList() {
         return getValueParameterFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
           getValueParameterFieldBuilder() {
         if (valueParameterBuilder_ == null) {
-          valueParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          valueParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder>(
                   valueParameter_,
                   ((bitField0_ & 0x00000100) == 0x00000100),
@@ -17877,7 +17877,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> typeTableBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -17978,11 +17978,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder> 
           getTypeTableFieldBuilder() {
         if (typeTableBuilder_ == null) {
-          typeTableBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          typeTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder>(
                   typeTable_,
                   getParentForChildren(),
@@ -18004,7 +18004,7 @@ public final class DebugProtoBuf {
   }
 
   public interface PropertyOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Property> {
 
     // optional int32 flags = 11 [default = 518];
@@ -18194,14 +18194,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Property}
    */
   public static final class Property extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         Property> implements PropertyOrBuilder {
     // Use Property.newBuilder() to construct.
-    private Property(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, ?> builder) {
+    private Property(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Property(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Property(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final Property defaultInstance;
     public static Property getDefaultInstance() {
@@ -18212,20 +18212,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private Property(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -18325,10 +18325,10 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
@@ -18338,30 +18338,30 @@ public final class DebugProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Property_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Property> PARSER =
-        new com.google.protobuf.AbstractParser<Property>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Property> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Property>() {
       public Property parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Property(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Property> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Property> getParserForType() {
       return PARSER;
     }
 
@@ -18680,10 +18680,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
@@ -18730,47 +18730,47 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, returnType_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, typeParameter_.get(i));
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, receiverType_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(6, setterValueParameter_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(7, getterFlags_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(8, setterFlags_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(9, returnTypeId_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(10, receiverTypeId_);
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(11, flags_);
       }
       size += extensionsSerializedSize();
@@ -18787,24 +18787,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(java.io.InputStream input)
@@ -18813,7 +18813,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -18823,18 +18823,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -18848,7 +18848,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -18856,14 +18856,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Property}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Property_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -18876,12 +18876,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getReturnTypeFieldBuilder();
           getTypeParameterFieldBuilder();
           getReceiverTypeFieldBuilder();
@@ -18939,7 +18939,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Property_descriptor;
       }
@@ -19026,7 +19026,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Property) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Property)other);
         } else {
@@ -19071,7 +19071,7 @@ public final class DebugProtoBuf {
               typeParameter_ = other.typeParameter_;
               bitField0_ = (bitField0_ & ~0x00000020);
               typeParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getTypeParameterFieldBuilder() : null;
             } else {
               typeParameterBuilder_.addAllMessages(other.typeParameter_);
@@ -19135,13 +19135,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Property parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Property) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -19310,7 +19310,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> returnTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
@@ -19411,11 +19411,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getReturnTypeFieldBuilder() {
         if (returnTypeBuilder_ == null) {
-          returnTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          returnTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   returnType_,
                   getParentForChildren(),
@@ -19468,7 +19468,7 @@ public final class DebugProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> typeParameterBuilder_;
 
       /**
@@ -19683,11 +19683,11 @@ public final class DebugProtoBuf {
            getTypeParameterBuilderList() {
         return getTypeParameterFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
           getTypeParameterFieldBuilder() {
         if (typeParameterBuilder_ == null) {
-          typeParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          typeParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder>(
                   typeParameter_,
                   ((bitField0_ & 0x00000020) == 0x00000020),
@@ -19700,7 +19700,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> receiverTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
@@ -19801,11 +19801,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getReceiverTypeFieldBuilder() {
         if (receiverTypeBuilder_ == null) {
-          receiverTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          receiverTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   receiverType_,
                   getParentForChildren(),
@@ -19850,7 +19850,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter setterValueParameter_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> setterValueParameterBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;</code>
@@ -19951,11 +19951,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
           getSetterValueParameterFieldBuilder() {
         if (setterValueParameterBuilder_ == null) {
-          setterValueParameterBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          setterValueParameterBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder>(
                   setterValueParameter_,
                   getParentForChildren(),
@@ -20079,7 +20079,7 @@ public final class DebugProtoBuf {
   }
 
   public interface ValueParameterOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<ValueParameter> {
 
     // optional int32 flags = 1 [default = 0];
@@ -20170,14 +20170,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.ValueParameter}
    */
   public static final class ValueParameter extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         ValueParameter> implements ValueParameterOrBuilder {
     // Use ValueParameter.newBuilder() to construct.
-    private ValueParameter(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, ?> builder) {
+    private ValueParameter(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private ValueParameter(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private ValueParameter(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final ValueParameter defaultInstance;
     public static ValueParameter getDefaultInstance() {
@@ -20188,20 +20188,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private ValueParameter(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -20265,40 +20265,40 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<ValueParameter> PARSER =
-        new com.google.protobuf.AbstractParser<ValueParameter>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<ValueParameter> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<ValueParameter>() {
       public ValueParameter parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new ValueParameter(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<ValueParameter> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<ValueParameter> getParserForType() {
       return PARSER;
     }
 
@@ -20464,10 +20464,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -20499,27 +20499,27 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, flags_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, type_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, varargElementType_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(5, typeId_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(6, varargElementTypeId_);
       }
       size += extensionsSerializedSize();
@@ -20536,24 +20536,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(java.io.InputStream input)
@@ -20562,7 +20562,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -20572,18 +20572,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -20597,7 +20597,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -20605,14 +20605,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.ValueParameter}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -20625,12 +20625,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getTypeFieldBuilder();
           getVarargElementTypeFieldBuilder();
         }
@@ -20668,7 +20668,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor;
       }
@@ -20726,7 +20726,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter)other);
         } else {
@@ -20785,13 +20785,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -20903,7 +20903,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type type = 3;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> typeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 3;</code>
@@ -21004,11 +21004,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getTypeFieldBuilder() {
         if (typeBuilder_ == null) {
-          typeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          typeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   type_,
                   getParentForChildren(),
@@ -21053,7 +21053,7 @@ public final class DebugProtoBuf {
 
       // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type varargElementType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> varargElementTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
@@ -21154,11 +21154,11 @@ public final class DebugProtoBuf {
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
           getVarargElementTypeFieldBuilder() {
         if (varargElementTypeBuilder_ == null) {
-          varargElementTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          varargElementTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
                   varargElementType_,
                   getParentForChildren(),
@@ -21213,7 +21213,7 @@ public final class DebugProtoBuf {
   }
 
   public interface EnumEntryOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<EnumEntry> {
 
     // optional int32 name = 1;
@@ -21230,14 +21230,14 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.EnumEntry}
    */
   public static final class EnumEntry extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage<
         EnumEntry> implements EnumEntryOrBuilder {
     // Use EnumEntry.newBuilder() to construct.
-    private EnumEntry(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, ?> builder) {
+    private EnumEntry(org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private EnumEntry(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private EnumEntry(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
     private static final EnumEntry defaultInstance;
     public static EnumEntry getDefaultInstance() {
@@ -21248,20 +21248,20 @@ public final class DebugProtoBuf {
       return defaultInstance;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
         getUnknownFields() {
       return this.unknownFields;
     }
     private EnumEntry(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -21284,40 +21284,40 @@ public final class DebugProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<EnumEntry> PARSER =
-        new com.google.protobuf.AbstractParser<EnumEntry>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<EnumEntry> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<EnumEntry>() {
       public EnumEntry parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new EnumEntry(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<EnumEntry> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<EnumEntry> getParserForType() {
       return PARSER;
     }
 
@@ -21354,10 +21354,10 @@ public final class DebugProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      com.google.protobuf.GeneratedMessage
+      org.jetbrains.kotlin.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry>.ExtensionWriter extensionWriter =
           newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -21374,7 +21374,7 @@ public final class DebugProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, name_);
       }
       size += extensionsSerializedSize();
@@ -21391,24 +21391,24 @@ public final class DebugProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(java.io.InputStream input)
@@ -21417,7 +21417,7 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -21427,18 +21427,18 @@ public final class DebugProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -21452,7 +21452,7 @@ public final class DebugProtoBuf {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -21460,14 +21460,14 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.EnumEntry}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableBuilder<
           org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntryOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -21480,12 +21480,12 @@ public final class DebugProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
       private static Builder create() {
@@ -21503,7 +21503,7 @@ public final class DebugProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public com.google.protobuf.Descriptors.Descriptor
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor;
       }
@@ -21533,7 +21533,7 @@ public final class DebugProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(com.google.protobuf.Message other) {
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
         if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry) {
           return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry)other);
         } else {
@@ -21561,13 +21561,13 @@ public final class DebugProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -21623,97 +21623,97 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.EnumEntry)
   }
 
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_StringTable_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Annotation_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Type_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Type_Argument_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_TypeParameter_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Class_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Package_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_TypeTable_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Function_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Property_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable;
 
-  public static com.google.protobuf.Descriptors.FileDescriptor
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -21840,115 +21840,115 @@ public final class DebugProtoBuf {
       "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
       "ZED\020\003B\017B\rDebugProtoBuf"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
+    org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
+      new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+        public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
+            org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
           internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor =
             getDescriptor().getMessageTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_StringTable_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor,
               new java.lang.String[] { "String", });
           internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor,
               new java.lang.String[] { "QualifiedName", });
           internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_QualifiedNameTable_QualifiedName_descriptor,
               new java.lang.String[] { "ParentQualifiedName", "ShortName", "Kind", });
           internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor =
             getDescriptor().getMessageTypes().get(2);
           internal_static_org_jetbrains_kotlin_serialization_Annotation_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor,
               new java.lang.String[] { "Id", "Argument", });
           internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_Annotation_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor,
               new java.lang.String[] { "NameId", "Value", });
           internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Annotation_Argument_Value_descriptor,
               new java.lang.String[] { "Type", "IntValue", "FloatValue", "DoubleValue", "StringValue", "ClassId", "EnumValueId", "Annotation", "ArrayElement", });
           internal_static_org_jetbrains_kotlin_serialization_Type_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Type_descriptor,
               new java.lang.String[] { "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "FlexibleUpperBoundId", "ClassName", "TypeParameter", "TypeParameterName", "OuterType", "OuterTypeId", });
           internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_Type_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_Type_Argument_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor,
               new java.lang.String[] { "Projection", "Type", "TypeId", });
           internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_org_jetbrains_kotlin_serialization_TypeParameter_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_TypeParameter_descriptor,
               new java.lang.String[] { "Id", "Name", "Reified", "Variance", "UpperBound", "UpperBoundId", });
           internal_static_org_jetbrains_kotlin_serialization_Class_descriptor =
             getDescriptor().getMessageTypes().get(5);
           internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Class_descriptor,
               new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "SupertypeId", "NestedClassName", "Constructor", "Function", "Property", "EnumEntry", "TypeTable", });
           internal_static_org_jetbrains_kotlin_serialization_Package_descriptor =
             getDescriptor().getMessageTypes().get(6);
           internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Package_descriptor,
               new java.lang.String[] { "Function", "Property", "TypeTable", });
           internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor =
             getDescriptor().getMessageTypes().get(7);
           internal_static_org_jetbrains_kotlin_serialization_TypeTable_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor,
               new java.lang.String[] { "Type", "FirstNullable", });
           internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor =
             getDescriptor().getMessageTypes().get(8);
           internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor,
               new java.lang.String[] { "Flags", "ValueParameter", });
           internal_static_org_jetbrains_kotlin_serialization_Function_descriptor =
             getDescriptor().getMessageTypes().get(9);
           internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Function_descriptor,
               new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ValueParameter", "TypeTable", });
           internal_static_org_jetbrains_kotlin_serialization_Property_descriptor =
             getDescriptor().getMessageTypes().get(10);
           internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Property_descriptor,
               new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "SetterValueParameter", "GetterFlags", "SetterFlags", });
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor =
             getDescriptor().getMessageTypes().get(11);
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor,
               new java.lang.String[] { "Flags", "Name", "Type", "TypeId", "VarargElementType", "VarargElementTypeId", });
           internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor =
             getDescriptor().getMessageTypes().get(12);
           internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor,
               new java.lang.String[] { "Name", });
-          com.google.protobuf.ExtensionRegistry registry =
-            com.google.protobuf.ExtensionRegistry.newInstance();
+          org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
+            org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
@@ -21968,9 +21968,9 @@ public final class DebugProtoBuf {
           return registry;
         }
       };
-    com.google.protobuf.Descriptors.FileDescriptor
+    org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
           org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.getDescriptor(),
         }, assigner);
   }

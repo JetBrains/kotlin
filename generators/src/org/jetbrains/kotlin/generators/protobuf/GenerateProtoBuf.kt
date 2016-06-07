@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.generators.protobuf
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
+import com.intellij.util.LineSeparator
 import java.io.File
 import java.util.regex.Pattern
 
@@ -104,6 +105,32 @@ private fun execProtoc(protoPath: String, outPath: String) {
     if (processOutput.stderr.isNotEmpty()) {
         throw AssertionError(processOutput.stderr)
     }
+
+    renamePackages(protoPath, outPath)
+}
+
+private fun renamePackages(protoPath: String, outPath: String) {
+    fun List<String>.findValue(regex: Regex): String? =
+            mapNotNull { line ->
+                regex.find(line)?.groupValues?.get(1)
+            }.singleOrNull()
+
+    val protoFileContents = File(protoPath).readLines()
+    val packageName = protoFileContents.findValue("package ([\\w.]+);".toRegex())
+                      ?: error("No package directive found in $protoPath")
+    val className = protoFileContents.findValue("option java_outer_classname = \"(\\w+)\";".toRegex())
+                    ?: error("No java_outer_classname option found in $protoPath")
+
+    val javaFile = File(outPath, "${packageName.replace('.', '/')}/$className.java")
+    if (!javaFile.exists()) {
+        throw AssertionError("File does not exist: $javaFile")
+    }
+
+    javaFile.writeText(
+            javaFile.readLines().map { line ->
+                line.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
+            }.joinToString(LineSeparator.getSystemLineSeparator().separatorString)
+    )
 }
 
 private fun modifyAndExecProtoc(protoPath: ProtoPath) {

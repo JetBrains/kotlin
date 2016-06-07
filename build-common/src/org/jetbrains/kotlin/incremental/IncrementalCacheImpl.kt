@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.google.protobuf.MessageLite
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.SmartList
 import com.intellij.util.io.BooleanDataDescriptor
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf

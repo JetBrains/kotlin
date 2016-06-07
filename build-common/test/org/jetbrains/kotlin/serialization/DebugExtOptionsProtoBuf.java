@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.serialization;
 public final class DebugExtOptionsProtoBuf {
   private DebugExtOptionsProtoBuf() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.skipInComparison);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
@@ -17,9 +17,9 @@ public final class DebugExtOptionsProtoBuf {
    * <code>extend .google.protobuf.FieldOptions { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      com.google.protobuf.DescriptorProtos.FieldOptions,
-      java.lang.Boolean> skipInComparison = com.google.protobuf.GeneratedMessage
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> skipInComparison = org.jetbrains.kotlin.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
@@ -28,9 +28,9 @@ public final class DebugExtOptionsProtoBuf {
    * <code>extend .google.protobuf.FieldOptions { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      com.google.protobuf.DescriptorProtos.FieldOptions,
-      java.lang.Boolean> nameIdInTable = com.google.protobuf.GeneratedMessage
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> nameIdInTable = org.jetbrains.kotlin.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
@@ -39,9 +39,9 @@ public final class DebugExtOptionsProtoBuf {
    * <code>extend .google.protobuf.FieldOptions { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      com.google.protobuf.DescriptorProtos.FieldOptions,
-      java.lang.Boolean> fqNameIdInTable = com.google.protobuf.GeneratedMessage
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> fqNameIdInTable = org.jetbrains.kotlin.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
@@ -50,18 +50,18 @@ public final class DebugExtOptionsProtoBuf {
    * <code>extend .google.protobuf.FieldOptions { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      com.google.protobuf.DescriptorProtos.FieldOptions,
-      java.lang.Boolean> stringIdInTable = com.google.protobuf.GeneratedMessage
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> stringIdInTable = org.jetbrains.kotlin.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
 
-  public static com.google.protobuf.Descriptors.FileDescriptor
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -76,10 +76,10 @@ public final class DebugExtOptionsProtoBuf {
       "able\022\035.google.protobuf.FieldOptions\030\323\206\003 " +
       "\001(\010B\031B\027DebugExtOptionsProtoBuf"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
+    org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
+      new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+        public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
+            org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
           skipInComparison.internalInit(descriptor.getExtensions().get(0));
           nameIdInTable.internalInit(descriptor.getExtensions().get(1));
@@ -88,10 +88,10 @@ public final class DebugExtOptionsProtoBuf {
           return null;
         }
       };
-    com.google.protobuf.Descriptors.FileDescriptor
+    org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.google.protobuf.DescriptorProtos.getDescriptor(),
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.protobuf.DescriptorProtos.getDescriptor(),
         }, assigner);
   }
 

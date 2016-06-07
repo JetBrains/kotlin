@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import com.google.protobuf.ByteString
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import com.google.protobuf.MessageLite
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 
