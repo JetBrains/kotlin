@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 
-import java.io.OutputStream;
+import java.io.OutputStream
 
-public interface StringTable {
-    int getStringIndex(@NotNull String string);
+interface StringTable {
+    fun getStringIndex(string: String): Int
 
-    int getFqNameIndex(@NotNull ClassifierDescriptorWithTypeParameters descriptor);
+    fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int
 
-    void serializeTo(@NotNull OutputStream output);
+    fun serializeTo(output: OutputStream)
 }

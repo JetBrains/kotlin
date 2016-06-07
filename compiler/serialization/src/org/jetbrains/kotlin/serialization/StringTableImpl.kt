@@ -14,131 +14,118 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.serialization
 
-import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.Interner;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.Interner
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.IOException
+import java.io.OutputStream
 
-import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
+import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
 
-public class StringTableImpl implements StringTable {
-    private static final class FqNameProto {
-        public final QualifiedName.Builder fqName;
+class StringTableImpl : StringTable {
+    private class FqNameProto(val fqName: QualifiedName.Builder) {
 
-        public FqNameProto(@NotNull QualifiedName.Builder fqName) {
-            this.fqName = fqName;
+        override fun hashCode(): Int {
+            var result = 13
+            result = 31 * result + fqName.parentQualifiedName
+            result = 31 * result + fqName.shortName
+            result = 31 * result + fqName.kind.hashCode()
+            return result
         }
 
-        @Override
-        public int hashCode() {
-            int result = 13;
-            result = 31 * result + fqName.getParentQualifiedName();
-            result = 31 * result + fqName.getShortName();
-            result = 31 * result + fqName.getKind().hashCode();
-            return result;
-        }
+        override fun equals(obj: Any?): Boolean {
+            if (obj == null || javaClass != obj.javaClass) return false
 
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            QualifiedName.Builder other = ((FqNameProto) obj).fqName;
-            return fqName.getParentQualifiedName() == other.getParentQualifiedName()
-                   && fqName.getShortName() == other.getShortName()
-                   && fqName.getKind() == other.getKind();
+            val other = (obj as FqNameProto).fqName
+            return fqName.parentQualifiedName == other.parentQualifiedName
+                   && fqName.shortName == other.shortName
+                   && fqName.kind == other.kind
         }
     }
 
-    private final Interner<String> strings = new Interner<String>();
-    private final Interner<FqNameProto> qualifiedNames = new Interner<FqNameProto>();
+    private val strings = Interner<String>()
+    private val qualifiedNames = Interner<FqNameProto>()
 
-    public int getSimpleNameIndex(@NotNull Name name) {
-        return getStringIndex(name.asString());
+    fun getSimpleNameIndex(name: Name): Int {
+        return getStringIndex(name.asString())
     }
 
-    @Override
-    public int getStringIndex(@NotNull String string) {
-        return strings.intern(string);
+    override fun getStringIndex(string: String): Int {
+        return strings.intern(string)
     }
 
-    @Override
-    public int getFqNameIndex(@NotNull ClassifierDescriptorWithTypeParameters descriptor) {
+    override fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int {
         if (ErrorUtils.isError(descriptor)) {
-            throw new IllegalStateException("Cannot get FQ name of error class: " + descriptor);
+            throw IllegalStateException("Cannot get FQ name of error class: " + descriptor)
         }
 
-        QualifiedName.Builder builder = QualifiedName.newBuilder();
-        builder.setKind(QualifiedName.Kind.CLASS);
+        val builder = QualifiedName.newBuilder()
+        builder.kind = QualifiedName.Kind.CLASS
 
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            FqName packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
-            if (!packageFqName.isRoot()) {
-                builder.setParentQualifiedName(getPackageFqNameIndex(packageFqName));
+        val containingDeclaration = descriptor.containingDeclaration
+        if (containingDeclaration is PackageFragmentDescriptor) {
+            val packageFqName = containingDeclaration.fqName
+            if (!packageFqName.isRoot) {
+                builder.parentQualifiedName = getPackageFqNameIndex(packageFqName)
             }
         }
-        else if (containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
-            builder.setParentQualifiedName(getFqNameIndex(outerClass));
+        else if (containingDeclaration is ClassDescriptor) {
+            builder.parentQualifiedName = getFqNameIndex(containingDeclaration)
         }
         else {
-            throw new IllegalStateException("Cannot get FQ name of local class: " + descriptor);
+            throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
         }
 
-        builder.setShortName(getStringIndex(descriptor.getName().asString()));
+        builder.shortName = getStringIndex(descriptor.name.asString())
 
-        return qualifiedNames.intern(new FqNameProto(builder));
+        return qualifiedNames.intern(FqNameProto(builder))
     }
 
-    public int getPackageFqNameIndex(@NotNull FqName fqName) {
-        int result = -1;
-        for (Name segment : fqName.pathSegments()) {
-            QualifiedName.Builder builder = QualifiedName.newBuilder();
-            builder.setShortName(getSimpleNameIndex(segment));
+    fun getPackageFqNameIndex(fqName: FqName): Int {
+        var result = -1
+        for (segment in fqName.pathSegments()) {
+            val builder = QualifiedName.newBuilder()
+            builder.shortName = getSimpleNameIndex(segment)
             if (result != -1) {
-                builder.setParentQualifiedName(result);
+                builder.parentQualifiedName = result
             }
-            result = qualifiedNames.intern(new FqNameProto(builder));
+            result = qualifiedNames.intern(FqNameProto(builder))
         }
-        return result;
+        return result
     }
 
-    @NotNull
-    public Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> buildProto() {
-        ProtoBuf.StringTable.Builder strings = ProtoBuf.StringTable.newBuilder();
-        for (String simpleName : this.strings.getAllInternedObjects()) {
-            strings.addString(simpleName);
+    fun buildProto(): Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> {
+        val strings = ProtoBuf.StringTable.newBuilder()
+        for (simpleName in this.strings.allInternedObjects) {
+            strings.addString(simpleName)
         }
 
-        ProtoBuf.QualifiedNameTable.Builder qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder();
-        for (FqNameProto fqName : this.qualifiedNames.getAllInternedObjects()) {
-            qualifiedNames.addQualifiedName(fqName.fqName);
+        val qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder()
+        for (fqName in this.qualifiedNames.allInternedObjects) {
+            qualifiedNames.addQualifiedName(fqName.fqName)
         }
 
-        return new Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable>(strings.build(), qualifiedNames.build());
+        return Pair(strings.build(), qualifiedNames.build())
     }
 
-    @Override
-    public void serializeTo(@NotNull OutputStream output) {
+    override fun serializeTo(output: OutputStream) {
         try {
-            Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> protos = buildProto();
-            protos.getFirst().writeDelimitedTo(output);
-            protos.getSecond().writeDelimitedTo(output);
+            val protos = buildProto()
+            protos.first.writeDelimitedTo(output)
+            protos.second.writeDelimitedTo(output)
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: IOException) {
+            throw rethrow(e)
         }
+
     }
 }

@@ -14,709 +14,650 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.serialization
 
-import com.google.protobuf.MessageLite;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.Interner;
+import com.google.protobuf.MessageLite
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.Interner
+import org.jetbrains.kotlin.utils.rethrow
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.util.*
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+class DescriptorSerializer private constructor(
+        private val containingDeclaration: DeclarationDescriptor?,
+        private val typeParameters: Interner<TypeParameterDescriptor>,
+        private val extension: SerializerExtension,
+        private val typeTable: MutableTypeTable,
+        private val serializeTypeTableToFunction: Boolean) {
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-
-public class DescriptorSerializer {
-    private final DeclarationDescriptor containingDeclaration;
-    private final Interner<TypeParameterDescriptor> typeParameters;
-    private final SerializerExtension extension;
-    private final MutableTypeTable typeTable;
-    private final boolean serializeTypeTableToFunction;
-
-    private DescriptorSerializer(
-            @Nullable DeclarationDescriptor containingDeclaration,
-            @NotNull Interner<TypeParameterDescriptor> typeParameters,
-            @NotNull SerializerExtension extension,
-            @NotNull MutableTypeTable typeTable,
-            boolean serializeTypeTableToFunction
-    ) {
-        this.containingDeclaration = containingDeclaration;
-        this.typeParameters = typeParameters;
-        this.extension = extension;
-        this.typeTable = typeTable;
-        this.serializeTypeTableToFunction = serializeTypeTableToFunction;
-    }
-
-    @NotNull
-    public byte[] serialize(@NotNull MessageLite message) {
+    fun serialize(message: MessageLite): ByteArray {
         try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            getStringTable().serializeTo(result);
-            message.writeTo(result);
-            return result.toByteArray();
+            val result = ByteArrayOutputStream()
+            stringTable.serializeTo(result)
+            message.writeTo(result)
+            return result.toByteArray()
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
-    @NotNull
-    public static DescriptorSerializer createTopLevel(@NotNull SerializerExtension extension) {
-        return new DescriptorSerializer(null, new Interner<TypeParameterDescriptor>(), extension, new MutableTypeTable(), false);
-    }
-
-    @NotNull
-    public static DescriptorSerializer createForLambda(@NotNull SerializerExtension extension) {
-        return new DescriptorSerializer(null, new Interner<TypeParameterDescriptor>(), extension, new MutableTypeTable(), true);
-    }
-
-    @NotNull
-    public static DescriptorSerializer create(@NotNull ClassDescriptor descriptor, @NotNull SerializerExtension extension) {
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        DescriptorSerializer parentSerializer =
-                container instanceof ClassDescriptor
-                ? create((ClassDescriptor) container, extension)
-                : createTopLevel(extension);
-
-        // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
-        // serializing outer classes before nested classes.
-        // Otherwise our interner can get wrong ids because we may serialize classes in any order.
-        DescriptorSerializer serializer = new DescriptorSerializer(
-                descriptor,
-                new Interner<TypeParameterDescriptor>(parentSerializer.typeParameters),
-                parentSerializer.extension,
-                new MutableTypeTable(),
-                false
-        );
-        for (TypeParameterDescriptor typeParameter : descriptor.getDeclaredTypeParameters()) {
-            serializer.typeParameters.intern(typeParameter);
-        }
-        return serializer;
-    }
-
-    @NotNull
-    private DescriptorSerializer createChildSerializer(@NotNull CallableDescriptor callable) {
-        return new DescriptorSerializer(callable, new Interner<TypeParameterDescriptor>(typeParameters), extension, typeTable, false);
-    }
-
-    @NotNull
-    public StringTable getStringTable() {
-        return extension.getStringTable();
-    }
-
-    private boolean useTypeTable() {
-        return extension.shouldUseTypeTable();
-    }
-
-    @NotNull
-    public ProtoBuf.Class.Builder classProto(@NotNull ClassDescriptor classDescriptor) {
-        ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
-
-        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
-                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject(),
-                                        classDescriptor.isData());
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        catch (e: IOException) {
+            throw rethrow(e)
         }
 
-        builder.setFqName(getClassifierId(classDescriptor));
+    }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
-            builder.addTypeParameter(typeParameter(typeParameterDescriptor));
+    private fun createChildSerializer(callable: CallableDescriptor): DescriptorSerializer {
+        return DescriptorSerializer(callable, Interner(typeParameters), extension, typeTable, false)
+    }
+
+    val stringTable: StringTable
+        get() = extension.stringTable
+
+    private fun useTypeTable(): Boolean {
+        return extension.shouldUseTypeTable()
+    }
+
+    fun classProto(classDescriptor: ClassDescriptor): ProtoBuf.Class.Builder {
+        val builder = ProtoBuf.Class.newBuilder()
+
+        val flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality,
+                                        classDescriptor.kind, classDescriptor.isInner, classDescriptor.isCompanionObject,
+                                        classDescriptor.isData)
+        if (flags != builder.flags) {
+            builder.flags = flags
+        }
+
+        builder.fqName = getClassifierId(classDescriptor)
+
+        for (typeParameterDescriptor in classDescriptor.declaredTypeParameters) {
+            builder.addTypeParameter(typeParameter(typeParameterDescriptor))
         }
 
         if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
-            for (KotlinType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+            for (supertype in classDescriptor.typeConstructor.supertypes) {
                 if (useTypeTable()) {
-                    builder.addSupertypeId(typeId(supertype));
+                    builder.addSupertypeId(typeId(supertype))
                 }
                 else {
-                    builder.addSupertype(type(supertype));
+                    builder.addSupertype(type(supertype))
                 }
             }
         }
 
-        for (ConstructorDescriptor descriptor : classDescriptor.getConstructors()) {
-            builder.addConstructor(constructorProto(descriptor));
+        for (descriptor in classDescriptor.constructors) {
+            builder.addConstructor(constructorProto(descriptor))
         }
 
-        for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()))) {
-            if (descriptor instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
-                if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
+        for (descriptor in sort(DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope))) {
+            if (descriptor is CallableMemberDescriptor) {
+                if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
 
-                if (descriptor instanceof PropertyDescriptor) {
-                    builder.addProperty(propertyProto((PropertyDescriptor) descriptor));
+                if (descriptor is PropertyDescriptor) {
+                    builder.addProperty(propertyProto(descriptor))
                 }
-                else if (descriptor instanceof FunctionDescriptor) {
-                    builder.addFunction(functionProto((FunctionDescriptor) descriptor));
+                else if (descriptor is FunctionDescriptor) {
+                    builder.addFunction(functionProto(descriptor))
                 }
             }
         }
 
-        for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
-            if (descriptor instanceof TypeAliasDescriptor) {
-                builder.addTypeAlias(typeAliasProto((TypeAliasDescriptor) descriptor));
+        for (descriptor in sort(DescriptorUtils.getAllDescriptors(classDescriptor.unsubstitutedInnerClassesScope))) {
+            if (descriptor is TypeAliasDescriptor) {
+                builder.addTypeAlias(typeAliasProto(descriptor))
             }
             else {
-                int name = getSimpleNameIndex(descriptor.getName());
+                val name = getSimpleNameIndex(descriptor.name)
                 if (isEnumEntry(descriptor)) {
-                    builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
+                    builder.addEnumEntry(enumEntryProto(descriptor as ClassDescriptor))
                 }
                 else {
-                    builder.addNestedClassName(name);
+                    builder.addNestedClassName(name)
                 }
             }
         }
 
-        ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
+        val companionObjectDescriptor = classDescriptor.companionObjectDescriptor
         if (companionObjectDescriptor != null) {
-            builder.setCompanionObjectName(getSimpleNameIndex(companionObjectDescriptor.getName()));
+            builder.companionObjectName = getSimpleNameIndex(companionObjectDescriptor.name)
         }
 
-        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        val typeTableProto = typeTable.serialize()
         if (typeTableProto != null) {
-            builder.setTypeTable(typeTableProto);
+            builder.typeTable = typeTableProto
         }
 
-        extension.serializeClass(classDescriptor, builder);
+        extension.serializeClass(classDescriptor, builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.Property.Builder propertyProto(@NotNull PropertyDescriptor descriptor) {
-        ProtoBuf.Property.Builder builder = ProtoBuf.Property.newBuilder();
+    fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder {
+        val builder = ProtoBuf.Property.newBuilder()
 
-        DescriptorSerializer local = createChildSerializer(descriptor);
+        val local = createChildSerializer(descriptor)
 
-        boolean hasGetter = false;
-        boolean hasSetter = false;
-        boolean lateInit = descriptor.isLateInit();
-        boolean isConst = descriptor.isConst();
+        var hasGetter = false
+        var hasSetter = false
+        val lateInit = descriptor.isLateInit
+        val isConst = descriptor.isConst
 
-        ConstantValue<?> compileTimeConstant = descriptor.getCompileTimeInitializer();
-        boolean hasConstant = !(compileTimeConstant == null || compileTimeConstant instanceof NullValue);
+        val compileTimeConstant = descriptor.compileTimeInitializer
+        val hasConstant = !(compileTimeConstant == null || compileTimeConstant is NullValue)
 
-        boolean hasAnnotations = !descriptor.getAnnotations().getAllAnnotations().isEmpty();
+        val hasAnnotations = !descriptor.annotations.getAllAnnotations().isEmpty()
 
-        int propertyFlags = Flags.getAccessorFlags(
+        val propertyFlags = Flags.getAccessorFlags(
                 hasAnnotations,
-                descriptor.getVisibility(),
-                descriptor.getModality(),
+                descriptor.visibility,
+                descriptor.modality,
                 false,
-                false
-        );
+                false)
 
-        PropertyGetterDescriptor getter = descriptor.getGetter();
+        val getter = descriptor.getGetter()
         if (getter != null) {
-            hasGetter = true;
-            int accessorFlags = getAccessorFlags(getter);
+            hasGetter = true
+            val accessorFlags = getAccessorFlags(getter!!)
             if (accessorFlags != propertyFlags) {
-                builder.setGetterFlags(accessorFlags);
+                builder.getterFlags = accessorFlags
             }
         }
 
-        PropertySetterDescriptor setter = descriptor.getSetter();
+        val setter = descriptor.getSetter()
         if (setter != null) {
-            hasSetter = true;
-            int accessorFlags = getAccessorFlags(setter);
+            hasSetter = true
+            val accessorFlags = getAccessorFlags(setter!!)
             if (accessorFlags != propertyFlags) {
-                builder.setSetterFlags(accessorFlags);
+                builder.setterFlags = accessorFlags
             }
 
-            if (!setter.isDefault()) {
-                DescriptorSerializer setterLocal = local.createChildSerializer(setter);
-                for (ValueParameterDescriptor valueParameterDescriptor : setter.getValueParameters()) {
-                    builder.setSetterValueParameter(setterLocal.valueParameter(valueParameterDescriptor));
+            if (!setter!!.isDefault()) {
+                val setterLocal = local.createChildSerializer(setter!!)
+                for (valueParameterDescriptor in setter!!.getValueParameters()) {
+                    builder.setSetterValueParameter(setterLocal.valueParameter(valueParameterDescriptor))
                 }
             }
         }
 
-        int flags = Flags.getPropertyFlags(
-                hasAnnotations, descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(), descriptor.isVar(),
-                hasGetter, hasSetter, hasConstant, isConst, lateInit
-        );
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        val flags = Flags.getPropertyFlags(
+                hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
+                hasGetter, hasSetter, hasConstant, isConst, lateInit)
+        if (flags != builder.flags) {
+            builder.flags = flags
         }
 
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
+        builder.name = getSimpleNameIndex(descriptor.name)
 
         if (useTypeTable()) {
-            builder.setReturnTypeId(local.typeId(descriptor.getType()));
+            builder.returnTypeId = local.typeId(descriptor.type)
         }
         else {
-            builder.setReturnType(local.type(descriptor.getType()));
+            builder.setReturnType(local.type(descriptor.type))
         }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
+        for (typeParameterDescriptor in descriptor.typeParameters) {
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor))
         }
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        val receiverParameter = descriptor.extensionReceiverParameter
         if (receiverParameter != null) {
             if (useTypeTable()) {
-                builder.setReceiverTypeId(local.typeId(receiverParameter.getType()));
+                builder.receiverTypeId = local.typeId(receiverParameter.type)
             }
             else {
-                builder.setReceiverType(local.type(receiverParameter.getType()));
+                builder.setReceiverType(local.type(receiverParameter.type))
             }
         }
 
-        extension.serializeProperty(descriptor, builder);
+        extension.serializeProperty(descriptor, builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.Function.Builder functionProto(@NotNull FunctionDescriptor descriptor) {
-        ProtoBuf.Function.Builder builder = ProtoBuf.Function.newBuilder();
+    fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder {
+        val builder = ProtoBuf.Function.newBuilder()
 
-        DescriptorSerializer local = createChildSerializer(descriptor);
+        val local = createChildSerializer(descriptor)
 
-        int flags = Flags.getFunctionFlags(
-                hasAnnotations(descriptor), descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(),
-                descriptor.isOperator(), descriptor.isInfix(), descriptor.isInline(), descriptor.isTailrec(),
-                descriptor.isExternal(), descriptor.isSuspend()
-        );
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        val flags = Flags.getFunctionFlags(
+                hasAnnotations(descriptor), descriptor.visibility, descriptor.modality, descriptor.kind,
+                descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec,
+                descriptor.isExternal, descriptor.isSuspend
+        )
+        if (flags != builder.flags) {
+            builder.flags = flags
         }
 
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
+        builder.name = getSimpleNameIndex(descriptor.name)
 
         if (useTypeTable()) {
             //noinspection ConstantConditions
-            builder.setReturnTypeId(local.typeId(descriptor.getReturnType()));
+            builder.returnTypeId = local.typeId(descriptor.returnType!!)
         }
         else {
             //noinspection ConstantConditions
-            builder.setReturnType(local.type(descriptor.getReturnType()));
+            builder.setReturnType(local.type(descriptor.returnType!!))
         }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
+        for (typeParameterDescriptor in descriptor.typeParameters) {
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor))
         }
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        val receiverParameter = descriptor.extensionReceiverParameter
         if (receiverParameter != null) {
             if (useTypeTable()) {
-                builder.setReceiverTypeId(local.typeId(receiverParameter.getType()));
+                builder.receiverTypeId = local.typeId(receiverParameter.type)
             }
             else {
-                builder.setReceiverType(local.type(receiverParameter.getType()));
+                builder.setReceiverType(local.type(receiverParameter.type))
             }
         }
 
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+        for (valueParameterDescriptor in descriptor.valueParameters) {
+            builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
         if (serializeTypeTableToFunction) {
-            ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+            val typeTableProto = typeTable.serialize()
             if (typeTableProto != null) {
-                builder.setTypeTable(typeTableProto);
+                builder.typeTable = typeTableProto
             }
         }
 
-        extension.serializeFunction(descriptor, builder);
+        extension.serializeFunction(descriptor, builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.Constructor.Builder constructorProto(@NotNull ConstructorDescriptor descriptor) {
-        ProtoBuf.Constructor.Builder builder = ProtoBuf.Constructor.newBuilder();
+    fun constructorProto(descriptor: ConstructorDescriptor): ProtoBuf.Constructor.Builder {
+        val builder = ProtoBuf.Constructor.newBuilder()
 
-        DescriptorSerializer local = createChildSerializer(descriptor);
+        val local = createChildSerializer(descriptor)
 
-        int flags = Flags.getConstructorFlags(hasAnnotations(descriptor), descriptor.getVisibility(), !descriptor.isPrimary());
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        val flags = Flags.getConstructorFlags(hasAnnotations(descriptor), descriptor.visibility, !descriptor.isPrimary)
+        if (flags != builder.flags) {
+            builder.flags = flags
         }
 
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+        for (valueParameterDescriptor in descriptor.valueParameters) {
+            builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
-        extension.serializeConstructor(descriptor, builder);
+        extension.serializeConstructor(descriptor, builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.TypeAlias.Builder typeAliasProto(@NotNull TypeAliasDescriptor descriptor) {
-        ProtoBuf.TypeAlias.Builder builder = ProtoBuf.TypeAlias.newBuilder();
+    fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
+        val builder = ProtoBuf.TypeAlias.newBuilder()
 
-        int flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), descriptor.getVisibility());
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), descriptor.visibility)
+        if (flags != builder.flags) {
+            builder.flags = flags
         }
 
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
+        builder.name = getSimpleNameIndex(descriptor.name)
 
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getDeclaredTypeParameters()) {
-            builder.addTypeParameter(typeParameter(typeParameterDescriptor));
+        for (typeParameterDescriptor in descriptor.declaredTypeParameters) {
+            builder.addTypeParameter(typeParameter(typeParameterDescriptor))
         }
 
-        SimpleType underlyingType = descriptor.getUnderlyingType();
+        val underlyingType = descriptor.underlyingType
         if (useTypeTable()) {
-            builder.setUnderlyingTypeId(typeId(underlyingType));
+            builder.underlyingTypeId = typeId(underlyingType)
         }
         else {
-            builder.setUnderlyingType(type(underlyingType));
+            builder.setUnderlyingType(type(underlyingType))
         }
 
-        SimpleType expandedType = descriptor.getExpandedType();
+        val expandedType = descriptor.expandedType
         if (useTypeTable()) {
-            builder.setExpandedTypeId(typeId(expandedType));
+            builder.expandedTypeId = typeId(expandedType)
         }
         else {
-            builder.setExpandedType(type(expandedType));
+            builder.setExpandedType(type(expandedType))
         }
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.EnumEntry.Builder enumEntryProto(@NotNull ClassDescriptor descriptor) {
-        ProtoBuf.EnumEntry.Builder builder = ProtoBuf.EnumEntry.newBuilder();
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
-        extension.serializeEnumEntry(descriptor, builder);
-        return builder;
+    fun enumEntryProto(descriptor: ClassDescriptor): ProtoBuf.EnumEntry.Builder {
+        val builder = ProtoBuf.EnumEntry.newBuilder()
+        builder.name = getSimpleNameIndex(descriptor.name)
+        extension.serializeEnumEntry(descriptor, builder)
+        return builder
     }
 
-    private static int getAccessorFlags(@NotNull PropertyAccessorDescriptor accessor) {
-        return Flags.getAccessorFlags(
-                hasAnnotations(accessor),
-                accessor.getVisibility(),
-                accessor.getModality(),
-                !accessor.isDefault(),
-                accessor.isExternal()
-        );
-    }
+    private fun valueParameter(descriptor: ValueParameterDescriptor): ProtoBuf.ValueParameter.Builder {
+        val builder = ProtoBuf.ValueParameter.newBuilder()
 
-    @NotNull
-    private ProtoBuf.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
-        ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
-
-        int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
-                                                 descriptor.isCrossinline(), descriptor.isNoinline(), descriptor.isCoroutine());
-        if (flags != builder.getFlags()) {
-            builder.setFlags(flags);
+        val flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
+                                                 descriptor.isCrossinline, descriptor.isNoinline, descriptor.isCoroutine)
+        if (flags != builder.flags) {
+            builder.flags = flags
         }
 
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
+        builder.name = getSimpleNameIndex(descriptor.name)
 
         if (useTypeTable()) {
-            builder.setTypeId(typeId(descriptor.getType()));
+            builder.typeId = typeId(descriptor.type)
         }
         else {
-            builder.setType(type(descriptor.getType()));
+            builder.setType(type(descriptor.type))
         }
 
-        KotlinType varargElementType = descriptor.getVarargElementType();
+        val varargElementType = descriptor.varargElementType
         if (varargElementType != null) {
             if (useTypeTable()) {
-                builder.setVarargElementTypeId(typeId(varargElementType));
+                builder.varargElementTypeId = typeId(varargElementType)
             }
             else {
-                builder.setVarargElementType(type(varargElementType));
+                builder.setVarargElementType(type(varargElementType))
             }
         }
 
-        extension.serializeValueParameter(descriptor, builder);
+        extension.serializeValueParameter(descriptor, builder)
 
-        return builder;
+        return builder
     }
 
-    private ProtoBuf.TypeParameter.Builder typeParameter(TypeParameterDescriptor typeParameter) {
-        ProtoBuf.TypeParameter.Builder builder = ProtoBuf.TypeParameter.newBuilder();
+    private fun typeParameter(typeParameter: TypeParameterDescriptor): ProtoBuf.TypeParameter.Builder {
+        val builder = ProtoBuf.TypeParameter.newBuilder()
 
-        builder.setId(getTypeParameterId(typeParameter));
+        builder.id = getTypeParameterId(typeParameter)
 
-        builder.setName(getSimpleNameIndex(typeParameter.getName()));
+        builder.name = getSimpleNameIndex(typeParameter.name)
 
-        if (typeParameter.isReified() != builder.getReified()) {
-            builder.setReified(typeParameter.isReified());
+        if (typeParameter.isReified != builder.reified) {
+            builder.reified = typeParameter.isReified
         }
 
-        ProtoBuf.TypeParameter.Variance variance = variance(typeParameter.getVariance());
-        if (variance != builder.getVariance()) {
-            builder.setVariance(variance);
+        val variance = variance(typeParameter.variance)
+        if (variance != builder.variance) {
+            builder.variance = variance
         }
-        extension.serializeTypeParameter(typeParameter, builder);
+        extension.serializeTypeParameter(typeParameter, builder)
 
-        List<KotlinType> upperBounds = typeParameter.getUpperBounds();
-        if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;
+        val upperBounds = typeParameter.upperBounds
+        if (upperBounds.size == 1 && KotlinBuiltIns.isDefaultBound(upperBounds.single())) return builder
 
-        for (KotlinType upperBound : upperBounds) {
+        for (upperBound in upperBounds) {
             if (useTypeTable()) {
-                builder.addUpperBoundId(typeId(upperBound));
+                builder.addUpperBoundId(typeId(upperBound))
             }
             else {
-                builder.addUpperBound(type(upperBound));
+                builder.addUpperBound(type(upperBound))
             }
         }
 
-        return builder;
+        return builder
     }
 
-    private static ProtoBuf.TypeParameter.Variance variance(Variance variance) {
-        switch (variance) {
-            case INVARIANT:
-                return ProtoBuf.TypeParameter.Variance.INV;
-            case IN_VARIANCE:
-                return ProtoBuf.TypeParameter.Variance.IN;
-            case OUT_VARIANCE:
-                return ProtoBuf.TypeParameter.Variance.OUT;
-        }
-        throw new IllegalStateException("Unknown variance: " + variance);
+    private fun typeId(type: KotlinType): Int {
+        return typeTable[type(type)]
     }
 
-    private int typeId(@NotNull KotlinType type) {
-        return typeTable.get(type(type));
-    }
+    private fun type(type: KotlinType): ProtoBuf.Type.Builder {
+        val builder = ProtoBuf.Type.newBuilder()
 
-    @NotNull
-    private ProtoBuf.Type.Builder type(@NotNull KotlinType type) {
-        ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
-
-        if (type.isError()) {
-            extension.serializeErrorType(type, builder);
-            return builder;
+        if (type.isError) {
+            extension.serializeErrorType(type, builder)
+            return builder
         }
 
-        if (FlexibleTypesKt.isFlexible(type)) {
-            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+        if (type.isFlexible()) {
+            val flexibleType = type.asFlexibleType()
 
-            ProtoBuf.Type.Builder lowerBound = type(flexibleType.getLowerBound());
-            ProtoBuf.Type.Builder upperBound = type(flexibleType.getUpperBound());
+            val lowerBound = type(flexibleType.lowerBound)
+            val upperBound = type(flexibleType.upperBound)
             extension.serializeFlexibleType(flexibleType, lowerBound, upperBound);
             if (useTypeTable()) {
-                lowerBound.setFlexibleUpperBoundId(typeTable.get(upperBound));
+                lowerBound.flexibleUpperBoundId = typeTable[upperBound]
             }
             else {
-                lowerBound.setFlexibleUpperBound(upperBound);
+                lowerBound.setFlexibleUpperBound(upperBound)
             }
-            return lowerBound;
+            return lowerBound
         }
 
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor) {
-            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
-            assert possiblyInnerType != null : "possiblyInnerType should not be null in case of class";
+        val descriptor = type.constructor.declarationDescriptor
+        if (descriptor is ClassDescriptor) {
+            val possiblyInnerType = type.buildPossiblyInnerType() ?: error("possiblyInnerType should not be null in case of class")
 
-            fillFromPossiblyInnerType(builder, possiblyInnerType);
+            fillFromPossiblyInnerType(builder, possiblyInnerType)
         }
-        else if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) descriptor;
-            if (typeParameter.getContainingDeclaration() == containingDeclaration) {
-                builder.setTypeParameterName(getSimpleNameIndex(typeParameter.getName()));
+        else if (descriptor is TypeParameterDescriptor) {
+            if (descriptor.containingDeclaration === containingDeclaration) {
+                builder.typeParameterName = getSimpleNameIndex(descriptor.name)
             }
             else {
-                builder.setTypeParameter(getTypeParameterId(typeParameter));
+                builder.typeParameter = getTypeParameterId(descriptor)
             }
 
-            assert type.getArguments().isEmpty() : "Found arguments for type constructor build on type parameter: " + descriptor;
+            assert(type.arguments.isEmpty()) { "Found arguments for type constructor build on type parameter: " + descriptor }
         }
-        else if (descriptor instanceof TypeAliasDescriptor) {
-            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
-            assert possiblyInnerType != null : "possiblyInnerType should not be null in case of type alias";
-            fillFromPossiblyInnerType(builder, possiblyInnerType);
-        }
-
-        if (type.isMarkedNullable() != builder.getNullable()) {
-            builder.setNullable(type.isMarkedNullable());
+        else if (descriptor is TypeAliasDescriptor) {
+            val possiblyInnerType = type.buildPossiblyInnerType() ?: error("possiblyInnerType should not be null in case of type alias")
+            fillFromPossiblyInnerType(builder, possiblyInnerType)
         }
 
-        AbbreviatedType abbreviatedType = SpecialTypesKt.getAbbreviatedType(type);
-        if (abbreviatedType != null) {
+        if (type.isMarkedNullable != builder.nullable) {
+            builder.nullable = type.isMarkedNullable
+        }
+
+        val abbreviation = type.getAbbreviatedType()?.abbreviation
+        if (abbreviation != null) {
             if (useTypeTable()) {
-                builder.setAbbreviatedTypeId(typeId(abbreviatedType.getAbbreviation()));
+                builder.abbreviatedTypeId = typeId(abbreviation)
             }
             else {
-                builder.setAbbreviatedType(type(abbreviatedType.getAbbreviation()));
+                builder.setAbbreviatedType(type(abbreviation))
             }
         }
 
-        extension.serializeType(type, builder);
+        extension.serializeType(type, builder)
 
-        return builder;
+        return builder
     }
 
-    private void fillFromPossiblyInnerType(
-            @NotNull ProtoBuf.Type.Builder builder,
-            @NotNull PossiblyInnerType type
-    ) {
-        ClassifierDescriptorWithTypeParameters classifierDescriptor = type.getClassifierDescriptor();
-        int classifierId = getClassifierId(classifierDescriptor);
-        if (classifierDescriptor instanceof ClassDescriptor) {
-            builder.setClassName(classifierId);
+    private fun fillFromPossiblyInnerType(
+            builder: ProtoBuf.Type.Builder,
+            type: PossiblyInnerType) {
+        val classifierDescriptor = type.classifierDescriptor
+        val classifierId = getClassifierId(classifierDescriptor)
+        if (classifierDescriptor is ClassDescriptor) {
+            builder.className = classifierId
         }
-        else if (classifierDescriptor instanceof TypeAliasDescriptor) {
-            builder.setTypeAliasName(classifierId);
-        }
-
-        for (TypeProjection projection : type.getArguments()) {
-            builder.addArgument(typeArgument(projection));
+        else if (classifierDescriptor is TypeAliasDescriptor) {
+            builder.typeAliasName = classifierId
         }
 
-        if (type.getOuterType() != null) {
-            ProtoBuf.Type.Builder outerBuilder = ProtoBuf.Type.newBuilder();
-            fillFromPossiblyInnerType(outerBuilder, type.getOuterType());
+        for (projection in type.arguments) {
+            builder.addArgument(typeArgument(projection))
+        }
+
+        if (type.outerType != null) {
+            val outerBuilder = ProtoBuf.Type.newBuilder()
+            fillFromPossiblyInnerType(outerBuilder, type.outerType!!)
             if (useTypeTable()) {
-                builder.setOuterTypeId(typeTable.get(outerBuilder));
+                builder.outerTypeId = typeTable[outerBuilder]
             }
             else {
-                builder.setOuterType(outerBuilder);
+                builder.setOuterType(outerBuilder)
             }
 
         }
     }
 
-    @NotNull
-    private ProtoBuf.Type.Argument.Builder typeArgument(@NotNull TypeProjection typeProjection) {
-        ProtoBuf.Type.Argument.Builder builder = ProtoBuf.Type.Argument.newBuilder();
+    private fun typeArgument(typeProjection: TypeProjection): ProtoBuf.Type.Argument.Builder {
+        val builder = ProtoBuf.Type.Argument.newBuilder()
 
-        if (typeProjection.isStarProjection()) {
-            builder.setProjection(ProtoBuf.Type.Argument.Projection.STAR);
+        if (typeProjection.isStarProjection) {
+            builder.projection = ProtoBuf.Type.Argument.Projection.STAR
         }
         else {
-            ProtoBuf.Type.Argument.Projection projection = projection(typeProjection.getProjectionKind());
+            val projection = projection(typeProjection.projectionKind)
 
-            if (projection != builder.getProjection()) {
-                builder.setProjection(projection);
+            if (projection != builder.projection) {
+                builder.projection = projection
             }
 
             if (useTypeTable()) {
-                builder.setTypeId(typeId(typeProjection.getType()));
+                builder.typeId = typeId(typeProjection.type)
             }
             else {
-                builder.setType(type(typeProjection.getType()));
+                builder.setType(type(typeProjection.type))
             }
         }
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.Package.Builder packageProto(@NotNull Collection<PackageFragmentDescriptor> fragments) {
-        return packageProto(fragments, null);
-    }
+    @JvmOverloads fun packageProto(
+            fragments: Collection<PackageFragmentDescriptor>,
+            skip: Function1<DeclarationDescriptor, Boolean>? = null): ProtoBuf.Package.Builder {
+        val builder = ProtoBuf.Package.newBuilder()
 
-    @NotNull
-    public ProtoBuf.Package.Builder packageProto(
-            @NotNull Collection<PackageFragmentDescriptor> fragments,
-            @Nullable Function1<DeclarationDescriptor, Boolean> skip
-    ) {
-        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
-
-        Collection<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
-        for (PackageFragmentDescriptor fragment : fragments) {
-            members.addAll(DescriptorUtils.getAllDescriptors(fragment.getMemberScope()));
+        val members = ArrayList<DeclarationDescriptor>()
+        for (fragment in fragments) {
+            members.addAll(DescriptorUtils.getAllDescriptors(fragment.getMemberScope()))
         }
 
-        for (DeclarationDescriptor declaration : sort(members)) {
-            if (skip != null && skip.invoke(declaration)) continue;
+        for (declaration in sort(members)) {
+            if (skip != null && skip.invoke(declaration)) continue
 
-            if (declaration instanceof PropertyDescriptor) {
-                builder.addProperty(propertyProto((PropertyDescriptor) declaration));
+            if (declaration is PropertyDescriptor) {
+                builder.addProperty(propertyProto(declaration))
             }
-            else if (declaration instanceof FunctionDescriptor) {
-                builder.addFunction(functionProto((FunctionDescriptor) declaration));
+            else if (declaration is FunctionDescriptor) {
+                builder.addFunction(functionProto(declaration))
             }
         }
 
-        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        val typeTableProto = typeTable.serialize()
         if (typeTableProto != null) {
-            builder.setTypeTable(typeTableProto);
+            builder.typeTable = typeTableProto
         }
 
-        extension.serializePackage(builder);
+        extension.serializePackage(builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    public ProtoBuf.Package.Builder packagePartProto(@NotNull Collection<DeclarationDescriptor> members) {
-        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
+    fun packagePartProto(members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
+        val builder = ProtoBuf.Package.newBuilder()
 
-        for (DeclarationDescriptor declaration : sort(members)) {
-            if (declaration instanceof PropertyDescriptor) {
-                builder.addProperty(propertyProto((PropertyDescriptor) declaration));
+        for (declaration in sort(members)) {
+            if (declaration is PropertyDescriptor) {
+                builder.addProperty(propertyProto(declaration))
             }
-            else if (declaration instanceof FunctionDescriptor) {
-                builder.addFunction(functionProto((FunctionDescriptor) declaration));
+            else if (declaration is FunctionDescriptor) {
+                builder.addFunction(functionProto(declaration))
             }
-            else if (declaration instanceof TypeAliasDescriptor) {
-                builder.addTypeAlias(typeAliasProto((TypeAliasDescriptor) declaration));
+            else if (declaration is TypeAliasDescriptor) {
+                builder.addTypeAlias(typeAliasProto(declaration))
             }
         }
 
-        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        val typeTableProto = typeTable.serialize()
         if (typeTableProto != null) {
-            builder.setTypeTable(typeTableProto);
+            builder.typeTable = typeTableProto
         }
 
-        extension.serializePackage(builder);
+        extension.serializePackage(builder)
 
-        return builder;
+        return builder
     }
 
-    @NotNull
-    private static ProtoBuf.Type.Argument.Projection projection(@NotNull Variance projectionKind) {
-        switch (projectionKind) {
-            case INVARIANT:
-                return ProtoBuf.Type.Argument.Projection.INV;
-            case IN_VARIANCE:
-                return ProtoBuf.Type.Argument.Projection.IN;
-            case OUT_VARIANCE:
-                return ProtoBuf.Type.Argument.Projection.OUT;
+    private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int {
+        return stringTable.getFqNameIndex(descriptor)
+    }
+
+    private fun getSimpleNameIndex(name: Name): Int {
+        return stringTable.getStringIndex(name.asString())
+    }
+
+    private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int {
+        return typeParameters.intern(descriptor)
+    }
+
+    companion object {
+        @JvmStatic
+        fun createTopLevel(extension: SerializerExtension): DescriptorSerializer {
+            return DescriptorSerializer(null, Interner<TypeParameterDescriptor>(), extension, MutableTypeTable(), false)
         }
-        throw new IllegalStateException("Unknown projectionKind: " + projectionKind);
-    }
 
-    private int getClassifierId(@NotNull ClassifierDescriptorWithTypeParameters descriptor) {
-        return getStringTable().getFqNameIndex(descriptor);
-    }
+        @JvmStatic
+        fun createForLambda(extension: SerializerExtension): DescriptorSerializer {
+            return DescriptorSerializer(null, Interner<TypeParameterDescriptor>(), extension, MutableTypeTable(), true)
+        }
 
-    private int getSimpleNameIndex(@NotNull Name name) {
-        return getStringTable().getStringIndex(name.asString());
-    }
+        @JvmStatic
+        fun create(descriptor: ClassDescriptor, extension: SerializerExtension): DescriptorSerializer {
+            val container = descriptor.containingDeclaration
+            val parentSerializer = if (container is ClassDescriptor)
+                create(container, extension)
+            else
+                createTopLevel(extension)
 
-    private int getTypeParameterId(@NotNull TypeParameterDescriptor descriptor) {
-        return typeParameters.intern(descriptor);
-    }
+            // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
+            // serializing outer classes before nested classes.
+            // Otherwise our interner can get wrong ids because we may serialize classes in any order.
+            val serializer = DescriptorSerializer(
+                    descriptor,
+                    Interner(parentSerializer.typeParameters),
+                    parentSerializer.extension,
+                    MutableTypeTable(),
+                    false)
+            for (typeParameter in descriptor.declaredTypeParameters) {
+                serializer.typeParameters.intern(typeParameter)
+            }
+            return serializer
+        }
 
-    private static boolean hasAnnotations(Annotated descriptor) {
-        return !descriptor.getAnnotations().isEmpty();
-    }
+        private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int {
+            return Flags.getAccessorFlags(
+                    hasAnnotations(accessor),
+                    accessor.visibility,
+                    accessor.modality,
+                    !accessor.isDefault,
+                    accessor.isExternal)
+        }
 
-    @NotNull
-    public static <T extends DeclarationDescriptor> List<T> sort(@NotNull Collection<T> descriptors) {
-        List<T> result = new ArrayList<T>(descriptors);
-        //NOTE: the exact comparator does matter here
-        Collections.sort(result, MemberComparator.INSTANCE);
-        return result;
+        private fun variance(variance: Variance): ProtoBuf.TypeParameter.Variance {
+            when (variance) {
+                Variance.INVARIANT -> return ProtoBuf.TypeParameter.Variance.INV
+                Variance.IN_VARIANCE -> return ProtoBuf.TypeParameter.Variance.IN
+                Variance.OUT_VARIANCE -> return ProtoBuf.TypeParameter.Variance.OUT
+            }
+            throw IllegalStateException("Unknown variance: " + variance)
+        }
 
+        private fun projection(projectionKind: Variance): ProtoBuf.Type.Argument.Projection {
+            when (projectionKind) {
+                Variance.INVARIANT -> return ProtoBuf.Type.Argument.Projection.INV
+                Variance.IN_VARIANCE -> return ProtoBuf.Type.Argument.Projection.IN
+                Variance.OUT_VARIANCE -> return ProtoBuf.Type.Argument.Projection.OUT
+            }
+            throw IllegalStateException("Unknown projectionKind: " + projectionKind)
+        }
+
+        private fun hasAnnotations(descriptor: Annotated): Boolean {
+            return !descriptor.annotations.isEmpty()
+        }
+
+        fun <T : DeclarationDescriptor> sort(descriptors: Collection<T>): List<T> {
+            val result = ArrayList(descriptors)
+            //NOTE: the exact comparator does matter here
+            Collections.sort(result, MemberComparator.INSTANCE)
+            return result
+
+        }
     }
 }
