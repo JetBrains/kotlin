@@ -197,6 +197,9 @@
         <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
         <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
+        <!-- Protocol Buffers -->
+        <get-protobuf-and-rename-packages/>
+
         <!-- ant 1.8.2 -->
         <get-ant-library version="1.8.2" folderName="ant-1.8"/>
 
@@ -236,14 +239,10 @@
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
              dest="${dependencies}/asm5-src.zip"/>
-        <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
         <!-- Junit Sources -->
         <get-maven-library prefix="junit" lib="junit" version="4.12" bin="false"/>
         <get-maven-library prefix="org/hamcrest" lib="hamcrest-core" version="1.3" bin="false"/>
-
-        <!-- Protocol Buffers -->
-        <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
 
         <!-- Android SDK platform -->
         <ant antfile="download_android_sdk.xml" target="download_android_sdk"/>
@@ -328,17 +327,6 @@
         <download-or-build-markdown-parser/>
     </target>
 
-    <macrodef name="build-protobuf-java-lite">
-        <sequential>
-            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
-                <arg value="-script"/>
-                <arg value="${generators}/infrastructure/build-protobuf-lite.kts"/>
-                <arg value="${basedir}/ideaSDK/lib/protobuf-2.5.0.jar"/>
-                <arg value="${dependencies}/protobuf-2.5.0-lite.jar"/>
-            </exec>
-        </sequential>
-    </macrodef>
-
     <macrodef name="download-or-build-markdown-parser">
         <sequential>
             <download_teamcity_artifact
@@ -406,30 +394,71 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="get-asm-sources-and-rename-packages">
-        <attribute name="asm.version"/>
+    <macrodef name="get-protobuf-and-rename-packages">
         <sequential>
-            <!-- Download ASM sources -->
-            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="@{asm.version}" bin="false"/>
+            <macrodef name="rename-packages-in-binaries">
+                <attribute name="target.jar"/>
+                <attribute name="source.jar"/>
 
-            <!-- Rename packages in the sources -->
-            <delete dir="${dependencies}/download/asm-src" failonerror="false"/>
-            <unzip src="${dependencies}/download/asm-debug-all-@{asm.version}-sources.jar" dest="${dependencies}/download/asm-src">
-                <patternset>
-                    <include name="**/*"/>
-                </patternset>
-            </unzip>
+                <sequential>
+                    <delete file="@{target.jar}" failonerror="false"/>
+                    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${dependencies}/jarjar.jar"/>
+                    <jarjar jarfile="@{target.jar}" filesonly="true">
+                        <zipfileset src="@{source.jar}">
+                            <exclude name="META-INF/maven/com.google.protobuf/protobuf-java/pom.properties"/>
+                        </zipfileset>
+                        <rule pattern="com.google.protobuf.**" result="org.jetbrains.kotlin.protobuf.@1"/>
+                    </jarjar>
+                </sequential>
+            </macrodef>
 
-            <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.org.objectweb.asm" flags="g">
-                <fileset dir="${dependencies}/download/asm-src/">
-                    <include name="**/*.java"/>
-                </fileset>
-            </replaceregexp>
+            <macrodef name="rename-packages-in-sources">
+                <attribute name="target.jar"/>
+                <attribute name="source.jar"/>
 
-            <move file="${dependencies}/download/asm-src/org/objectweb/asm"
-                  tofile="${dependencies}/download/asm-src/org/jetbrains/org/objectweb/asm"/>
+                <sequential>
+                    <local name="tmp.src"/>
+                    <property name="tmp.src" value="${dependencies}/download/protobuf-src"/>
 
-            <zip destfile="${dependencies}/jetbrains-asm-all-@{asm.version}-src.zip" basedir="${dependencies}/download/asm-src"/>
+                    <delete dir="${tmp.src}" failonerror="false"/>
+                    <unzip src="@{source.jar}" dest="${tmp.src}">
+                        <patternset includes="**/*"/>
+                    </unzip>
+
+                    <replaceregexp match="com\.google\.protobuf" replace="org.jetbrains.kotlin.protobuf" flags="g">
+                        <fileset dir="${tmp.src}/" includes="**/*.java"/>
+                    </replaceregexp>
+
+                    <move file="${tmp.src}/com/google/protobuf"
+                          tofile="${tmp.src}/org/jetbrains/kotlin/protobuf"/>
+
+                    <delete file="@{target.jar}" failonerror="false"/>
+                    <zip destfile="@{target.jar}" basedir="${tmp.src}"/>
+                </sequential>
+            </macrodef>
+
+            <!-- Download protobuf and rename packages -->
+            <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0"/>
+            <delete file="${dependencies}/protobuf-java-2.5.0.jar"/>
+            <delete file="${dependencies}/protobuf-java-2.5.0-sources.jar"/>
+
+            <rename-packages-in-binaries
+                source.jar="${dependencies}/download/protobuf-java-2.5.0.jar"
+                target.jar="${dependencies}/protobuf-2.5.0.jar"
+            />
+
+            <rename-packages-in-sources
+                source.jar="${dependencies}/download/protobuf-java-2.5.0-sources.jar"
+                target.jar="${dependencies}/protobuf-2.5.0-sources.jar"
+            />
+
+            <!-- Build protobuf lite jar -->
+            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
+                <arg value="-script"/>
+                <arg value="${generators}/infrastructure/build-protobuf-lite.kts"/>
+                <arg value="${dependencies}/protobuf-2.5.0.jar"/>
+                <arg value="${dependencies}/protobuf-2.5.0-lite.jar"/>
+            </exec>
         </sequential>
     </macrodef>
 
@@ -683,8 +712,6 @@
                 <mkdir dir="@{sources}"/>
                 <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true" failonerror="false"/>
             </sequential>
-
-            <build-protobuf-java-lite/>
         </sequential>
     </macrodef>
 
