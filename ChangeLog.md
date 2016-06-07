@@ -3,6 +3,16 @@
 <!-- Find: ([^\[/])(KT-\d+) -->
 <!-- Replace: $1[$2](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.0.2-IJ145-8 - Kotlin Plugin Update for Idea 2016.1 and 2016.2
+
+### IDE
+
+- [KT-12232](https://youtrack.jetbrains.com/issue/KT-12232) Fix "File copy should be non-physical and non-event-system-enabled!" error during completion in evaluate expression
+- [KT-12440](https://youtrack.jetbrains.com/issue/KT-12440) Removing unused parameter results in Exception "Refactorings should not be started inside write action"
+- [KT-12436](https://youtrack.jetbrains.com/issue/KT-12436) "Replace explicit parameter with it": java.lang.Exception at BaseRefactoringProcessor.run()
+- More fixes for "Refactorings should not be started inside write action" error in different refactoring actions
+- Fix compatibility problems with bundled Android plugin
+
 ## 1.0.2
 
 ### Compiler
