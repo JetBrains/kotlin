@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -57,7 +58,16 @@ class TypeAliasExpansion private constructor(
 }
 
 fun KotlinType.dependsOnTypeAliasParameters(): Boolean =
-        TypeUtils.contains(this) { type ->
-            val constructorDeclaration = type.constructor.declarationDescriptor
-            constructorDeclaration is TypeParameterDescriptor && constructorDeclaration.containingDeclaration is TypeAliasDescriptor
+        TypeUtils.contains(this) {
+            it.constructor.declarationDescriptor?.isTypeAliasParameter() ?: false
+        }
+
+fun ClassifierDescriptor.isTypeAliasParameter(): Boolean =
+        this is TypeParameterDescriptor && containingDeclaration is TypeAliasDescriptor
+
+fun KotlinType.requiresTypeAliasExpansion(): Boolean =
+        TypeUtils.contains(this) {
+            it.constructor.declarationDescriptor?.let {
+                it is TypeAliasDescriptor || it is TypeParameterDescriptor
+            }
         }
