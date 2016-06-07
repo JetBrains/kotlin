@@ -24463,8 +24463,8 @@ public final class DebugProtoBuf {
       "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
       "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017" +
       "\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDE" +
-      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDebugProt" +
-      "oBuf\210\001\000"
+      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProt" +
+      "oBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
