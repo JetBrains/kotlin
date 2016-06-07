@@ -2328,6 +2328,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AsWithOtherParameter.kt")
+            public void testAsWithOtherParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsWithOtherParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constants.kt")
             public void testConstants() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/constants.kt");
