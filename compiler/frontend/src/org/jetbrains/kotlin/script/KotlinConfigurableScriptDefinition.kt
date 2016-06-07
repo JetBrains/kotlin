@@ -47,8 +47,8 @@ data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, va
     override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
         config.superclassParamsMapping.map { Name.identifier(it) }
 
-    override fun isScript(file: VirtualFile): Boolean =
-            Regex(config.fileNameMatch).matches(file.name)
+    override fun <TF> isScript(file: TF): Boolean =
+            Regex(config.fileNameMatch).matches(getFileName(file))
 
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 

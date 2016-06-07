@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import java.util.*
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -48,11 +49,11 @@ class KotlinScriptDefinitionProvider {
         }
     }
 
-    fun findScriptDefinition(file: VirtualFile?): KotlinScriptDefinition? = definitionsLock.read {
-        file?.let { file -> definitions.firstOrNull { it.isScript(file) } }
+    fun<TF> findScriptDefinition(file: TF): KotlinScriptDefinition? = definitionsLock.read {
+        definitions.firstOrNull { it.isScript(file) }
     }
 
-    fun isScript(file: VirtualFile?): Boolean = findScriptDefinition(file) != null
+    fun<TF> isScript(file: TF): Boolean = findScriptDefinition(file) != null
 
     fun subscribeOnDefinitionsChanged(handler: () -> Unit): Unit {
         handlersLock.write { notificationHandlers.add(handler) }

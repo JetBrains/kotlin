@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcr
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import java.io.File
 import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
@@ -38,12 +40,21 @@ interface KotlinScriptDefinition {
     fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
     fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> = emptyList()
-    fun isScript(file: VirtualFile): Boolean
+    fun <TF> isScript(file: TF): Boolean
     fun getScriptName(script: KtScript): Name
     fun getScriptDependenciesClasspath(): List<String> = emptyList()
 }
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
+
+fun <TF> getFileExtension(file: TF) = PathUtil.getFileExtension(getFileName(file))
+
+fun <TF> getFileName(file: TF): String = when (file) {
+    is PsiFile -> file.originalFile.name
+    is VirtualFile -> file.name
+    is File -> file.name
+    else -> throw IllegalArgumentException("Unsupported file type $file")
+}
 
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")
@@ -53,8 +64,8 @@ object StandardScriptDefinition : KotlinScriptDefinition {
     override fun getScriptName(script: KtScript): Name =
             ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun isScript(file: VirtualFile): Boolean =
-        PathUtil.getFileExtension(file.name) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
+    override fun <TF> isScript(file: TF): Boolean =
+        getFileExtension(file) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
 
     // NOTE: for now we treat .kts files as if they have 'args: Array<String>' parameter
     // this is not supposed to be final design

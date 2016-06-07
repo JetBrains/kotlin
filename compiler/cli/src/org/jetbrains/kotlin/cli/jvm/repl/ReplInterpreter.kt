@@ -239,7 +239,7 @@ class ReplInterpreter(
 
             override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
 
-            override fun isScript(file: VirtualFile): Boolean = StandardScriptDefinition.isScript(file)
+            override fun <TF> isScript(file: TF): Boolean = StandardScriptDefinition.isScript(file)
 
             override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
         }
