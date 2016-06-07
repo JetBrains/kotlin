@@ -1619,12 +1619,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.mark(labelBeforeLastExpression);
             }
 
+            // Note that this result value is potentially unused (in case of handleResult coroutine call)
             StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
                 answer = result;
                 StackValue handleResultValue = !(possiblyLabeledStatement instanceof KtReturnExpression)
-                                               ? genControllerHandleResultCallIfNeeded(possiblyLabeledStatement, result)
+                                               ? genControllerHandleResultCallIfNeeded(possiblyLabeledStatement, possiblyLabeledStatement)
                                                : null;
                 if (handleResultValue != null) {
                     answer = handleResultValue;
@@ -1652,7 +1653,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable StackValue valueToReturn) {
+    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression valueToReturn) {
         ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(RETURN_HANDLE_RESULT_RESOLVED_CALL, callOwner);
 
         if (resolvedCall != null) {
@@ -1663,7 +1664,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 tempVariables.put(argumentExpression, StackValue.unit());
             }
             else {
-                tempVariables.put(argumentExpression, valueToReturn);
+                assert valueToReturn != null : "valueReturn expected to be not null for non-unit types";
+                tempVariables.put(argumentExpression, gen(valueToReturn));
             }
 
             tempVariables.put(
@@ -1967,7 +1969,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : ExpressionCodegen.this.returnType;
                 StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : null;
-                StackValue handleResultValue = genControllerHandleResultCallIfNeeded(expression, valueToReturn);
+                StackValue handleResultValue = genControllerHandleResultCallIfNeeded(expression, returnedExpression);
 
                 if (handleResultValue != null) {
                     handleResultValue.put(Type.VOID_TYPE, v);
