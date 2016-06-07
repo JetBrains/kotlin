@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.generators.protobuf
 
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import java.io.File
 import java.util.regex.Pattern
@@ -29,7 +30,7 @@ import java.util.regex.Pattern
 // * You can also download source and build it yourself (https://code.google.com/p/protobuf/downloads/list)
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
-val PROTOC_EXE = "protoc"
+private const val PROTOC_EXE = "protoc"
 
 class ProtoPath(val file: String) {
     val outPath: String = File(file).parent
@@ -80,8 +81,8 @@ fun main(args: Array<String>) {
     }
 }
 
-fun checkVersion() {
-    val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, "--version"), null)
+private fun checkVersion() {
+    val processOutput = ExecUtil.execAndGetOutput(GeneralCommandLine(PROTOC_EXE, "--version"))
 
     val version = processOutput.stdout.trim()
     if (version.isEmpty()) {
@@ -92,15 +93,20 @@ fun checkVersion() {
     }
 }
 
-fun execProtoc(protoPath: String, outPath: String) {
-    val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") + PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }, null)
+private fun execProtoc(protoPath: String, outPath: String) {
+    val commandLine = GeneralCommandLine(
+            listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
+            PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
+    )
+    println("running $commandLine")
+    val processOutput = ExecUtil.execAndGetOutput(commandLine)
     print(processOutput.stdout)
     if (processOutput.stderr.isNotEmpty()) {
         throw AssertionError(processOutput.stderr)
     }
 }
 
-fun modifyAndExecProtoc(protoPath: ProtoPath) {
+private fun modifyAndExecProtoc(protoPath: ProtoPath) {
     val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
     debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
@@ -108,7 +114,7 @@ fun modifyAndExecProtoc(protoPath: ProtoPath) {
     execProtoc(debugProtoFile.path, "build-common/test")
 }
 
-fun modifyForDebug(protoPath: ProtoPath): String {
+private fun modifyForDebug(protoPath: ProtoPath): String {
     var text = File(protoPath.file).readText()
             .replace("option java_outer_classname = \"${protoPath.className}\"",
                      "option java_outer_classname = \"${protoPath.debugClassName}\"") // give different name for class
