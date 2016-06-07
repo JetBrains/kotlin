@@ -75,9 +75,8 @@ class TypeResolver(
     }
 
     fun resolveExpandedTypeForTypeAlias(typeAliasDescriptor: TypeAliasDescriptor): KotlinType {
-        val typeAliasExpansion = createTypeAliasExpansion(null, typeAliasDescriptor, emptyList())
-        val expandedType = expandTypeAlias(typeAliasExpansion, TypeAliasExpansionReportStrategy.DEFAULT, Annotations.EMPTY, 0,
-                                           withAbbreviatedType = false)
+        val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
+        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
         return expandedType
     }
 
@@ -424,12 +423,6 @@ class TypeResolver(
         return type(resultingType)
     }
 
-    private fun KotlinType.dependsOnTypeAliasParameters(): Boolean =
-            TypeUtils.contains(this) { type ->
-                val constructorDeclaration = type.constructor.declarationDescriptor
-                constructorDeclaration is TypeParameterDescriptor && constructorDeclaration.containingDeclaration is TypeAliasDescriptor
-            }
-
     private fun resolveTypeForTypeAlias(
             c: TypeResolutionContext,
             annotations: Annotations,
@@ -479,8 +472,8 @@ class TypeResolver(
             type(abbreviatedType)
         }
         else {
-            val typeAliasExpansion = createTypeAliasExpansion(null, descriptor, arguments)
-            val expandedType = expandTypeAlias(typeAliasExpansion, reportStrategy, annotations, 0)
+            val typeAliasExpansion = TypeAliasExpansion.create(null, descriptor, arguments)
+            val expandedType = TypeAliasExpander(reportStrategy).expand(typeAliasExpansion, annotations)
             type(expandedType)
         }
     }
@@ -493,7 +486,6 @@ class TypeResolver(
             typeParameters: List<TypeParameterDescriptor>,
             typeArguments: List<KtTypeProjection>
     ) : TypeAliasExpansionReportStrategy {
-        constructor (trace: BindingTrace, typeAliasDescriptor: TypeAliasDescriptor) : this(trace, null, null, typeAliasDescriptor, emptyList(), emptyList())
 
         private val mappedArguments = typeParameters.zip(typeArguments).toMap()
 
@@ -532,172 +524,7 @@ class TypeResolver(
         }
     }
 
-    private class TypeAliasExpansion(
-            val parent: TypeAliasExpansion?,
-            val descriptor: TypeAliasDescriptor,
-            val arguments: List<TypeProjection>,
-            val mapping: Map<TypeParameterDescriptor, TypeProjection>
-    ) {
-        fun getReplacement(constructor: TypeConstructor): TypeProjection? {
-            val descriptor = constructor.declarationDescriptor
-            return if (descriptor is TypeParameterDescriptor)
-                mapping[descriptor]
-            else
-                null
-        }
 
-        fun isRecursion(descriptor: TypeAliasDescriptor): Boolean =
-                this.descriptor == descriptor || (parent?.isRecursion(descriptor) ?: false)
-    }
-
-    private fun createTypeAliasExpansion(
-            parent: TypeAliasExpansion?,
-            typeAliasDescriptor: TypeAliasDescriptor,
-            arguments: List<TypeProjection>
-    ): TypeAliasExpansion {
-        val typeParameters = typeAliasDescriptor.typeConstructor.parameters.map { it.original as TypeParameterDescriptor }
-        val mappedArguments = typeParameters.zip(arguments).toMap()
-        return TypeAliasExpansion(parent, typeAliasDescriptor, arguments, mappedArguments)
-    }
-
-    private fun expandTypeAlias(
-            typeAliasExpansion: TypeAliasExpansion,
-            reportStrategy: TypeAliasExpansionReportStrategy,
-            annotations: Annotations,
-            recursionDepth: Int,
-            withAbbreviatedType: Boolean = true
-    ): KotlinType {
-        val originalProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
-        val expandedProjection = expandTypeProjectionForTypeAlias(originalProjection, typeAliasExpansion, null, reportStrategy, recursionDepth)
-        val expandedType = expandedProjection.type
-
-        if (expandedType.isError) return expandedType
-
-        assert(expandedProjection.projectionKind == Variance.INVARIANT) {
-            "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
-        }
-
-        return if (withAbbreviatedType) {
-            val abbreviatedType = KotlinTypeImpl.create(annotations,
-                                                        typeAliasExpansion.descriptor.typeConstructor,
-                                                        originalProjection.type.isMarkedNullable,
-                                                        typeAliasExpansion.arguments,
-                                                        MemberScope.Empty)
-
-            expandedType.withAbbreviatedType(abbreviatedType)
-        }
-        else {
-            expandedType
-        }
-    }
-
-    private fun expandTypeProjectionForTypeAlias(
-            originalProjection: TypeProjection,
-            typeAliasExpansion: TypeAliasExpansion,
-            typeParameterDescriptor: TypeParameterDescriptor?,
-            reportStrategy: TypeAliasExpansionReportStrategy,
-            recursionDepth: Int
-    ): TypeProjection {
-        assertRecursionDepth(recursionDepth) {
-            "Too deep recursion while expanding type alias ${typeAliasExpansion.descriptor}"
-        }
-
-        val originalType = originalProjection.type
-
-        val typeAliasArgument = typeAliasExpansion.getReplacement(originalType.constructor)
-
-        if (typeAliasArgument == null) {
-            return substituteNonArgumentTypeForTypeAlias(originalProjection, typeAliasExpansion, reportStrategy, recursionDepth)
-        }
-
-        val originalVariance =
-                if (originalProjection.projectionKind != Variance.INVARIANT)
-                    originalProjection.projectionKind
-                else if (typeParameterDescriptor != null)
-                    typeParameterDescriptor.variance
-                else
-                    Variance.INVARIANT
-
-        val argumentVariance = typeAliasArgument.projectionKind
-
-        val substitutedVariance =
-                if (argumentVariance == Variance.INVARIANT)
-                    originalVariance
-                else if (originalVariance == Variance.INVARIANT || originalVariance == argumentVariance)
-                    argumentVariance
-                else if (typeAliasArgument.isStarProjection)
-                    argumentVariance
-                else {
-                    if (originalVariance != argumentVariance && !typeAliasArgument.isStarProjection) {
-                        reportStrategy.conflictingProjection(typeAliasExpansion.descriptor, typeParameterDescriptor, originalType)
-                    }
-                    argumentVariance
-                }
-
-        val substitutedType = TypeUtils.makeNullableIfNeeded(typeAliasArgument.type, originalType.isMarkedNullable)
-
-        return TypeProjectionImpl(substitutedVariance, substitutedType)
-    }
-
-    private fun substituteNonArgumentTypeForTypeAlias(
-            originalProjection: TypeProjection,
-            typeAliasExpansion: TypeAliasExpansion,
-            reportStrategy: TypeAliasExpansionReportStrategy,
-            recursionDepth: Int
-    ): TypeProjection {
-        val type = originalProjection.type
-        val typeConstructor = type.constructor
-        val typeDescriptor = typeConstructor.declarationDescriptor
-
-        when (typeDescriptor) {
-            is TypeParameterDescriptor -> {
-                return originalProjection
-            }
-            is TypeAliasDescriptor -> {
-                if (typeAliasExpansion.isRecursion(typeDescriptor)) {
-                    reportStrategy.recursiveTypeAlias(typeDescriptor)
-                    return TypeProjectionImpl(Variance.INVARIANT, ErrorUtils.createErrorType("Recursive type alias: ${typeDescriptor.name}"))
-                }
-
-                val expandedArguments = type.arguments.mapIndexed { i, typeAliasArgument ->
-                    expandTypeProjectionForTypeAlias(typeAliasArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
-                }
-
-                val nestedExpansion = createTypeAliasExpansion(typeAliasExpansion, typeDescriptor, expandedArguments)
-
-                val expandedType = expandTypeAlias(nestedExpansion, reportStrategy, type.annotations, recursionDepth + 1)
-
-                return TypeProjectionImpl(originalProjection.projectionKind, expandedType.withAbbreviatedType(type))
-            }
-            else -> {
-                val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
-                    expandTypeProjectionForTypeAlias(originalArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
-                }
-
-                val substitutedType = type.replace(newArguments = substitutedArguments)
-
-                checkTypeArgumentsSubstitutionInTypeAliasExpansion(type, substitutedType, reportStrategy)
-
-                return TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
-            }
-        }
-    }
-
-    private fun checkTypeArgumentsSubstitutionInTypeAliasExpansion(
-            unsubstitutedType: KotlinType,
-            substitutedType: KotlinType,
-            reportStrategy: TypeAliasExpansionReportStrategy
-    ) {
-        val typeSubstitutor = TypeSubstitutor.create(substitutedType)
-
-        substitutedType.arguments.forEachIndexed { i, substitutedArgument ->
-            if (!substitutedArgument.type.dependsOnTypeAliasParameters()) {
-                val unsubstitutedArgument = unsubstitutedType.arguments[i]
-                val typeParameter = unsubstitutedType.constructor.parameters[i]
-                DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
-            }
-        }
-    }
 
     private fun createErrorTypeForTypeConstructor(
             c: TypeResolutionContext,
@@ -901,14 +728,6 @@ class TypeResolver(
     }
 
     companion object {
-        private const val MAX_RECURSION_DEPTH = 100
-
-        private inline fun assertRecursionDepth(recursionDepth: Int, lazyMessage: () -> String) {
-            if (recursionDepth > MAX_RECURSION_DEPTH) {
-                throw AssertionError(lazyMessage())
-            }
-        }
-
         @JvmStatic fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
             return when (projectionKind) {
                 KtProjectionKind.IN -> IN_VARIANCE

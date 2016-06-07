@@ -26,7 +26,7 @@ interface TypeAliasExpansionReportStrategy {
     fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor)
     fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor)
 
-    object DEFAULT : TypeAliasExpansionReportStrategy {
+    object DO_NOTHING : TypeAliasExpansionReportStrategy {
         override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {}
         override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, expandingType: KotlinType) {}
         override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {}
