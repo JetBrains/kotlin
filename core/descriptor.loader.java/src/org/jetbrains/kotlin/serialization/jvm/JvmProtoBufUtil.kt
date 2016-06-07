@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.jvm
 
-import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf

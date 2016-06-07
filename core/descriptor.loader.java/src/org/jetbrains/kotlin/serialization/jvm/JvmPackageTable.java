@@ -6,10 +6,10 @@ package org.jetbrains.kotlin.serialization.jvm;
 public final class JvmPackageTable {
   private JvmPackageTable() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
+      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
   }
   public interface PackageTableOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     // repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;
     /**
@@ -30,10 +30,10 @@ public final class JvmPackageTable {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
    */
   public static final class PackageTable extends
-      com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
       implements PackageTableOrBuilder {
     // Use PackageTable.newBuilder() to construct.
-    private PackageTable(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private PackageTable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
 
     }
@@ -49,9 +49,9 @@ public final class JvmPackageTable {
     }
 
     private PackageTable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
       try {
@@ -79,10 +79,10 @@ public final class JvmPackageTable {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -91,18 +91,18 @@ public final class JvmPackageTable {
         makeExtensionsImmutable();
       }
     }
-    public static com.google.protobuf.Parser<PackageTable> PARSER =
-        new com.google.protobuf.AbstractParser<PackageTable>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<PackageTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<PackageTable>() {
       public PackageTable parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new PackageTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PackageTable> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<PackageTable> getParserForType() {
       return PARSER;
     }
 
@@ -160,7 +160,7 @@ public final class JvmPackageTable {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       for (int i = 0; i < packageParts_.size(); i++) {
@@ -175,7 +175,7 @@ public final class JvmPackageTable {
 
       size = 0;
       for (int i = 0; i < packageParts_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, packageParts_.get(i));
       }
       memoizedSerializedSize = size;
@@ -190,24 +190,24 @@ public final class JvmPackageTable {
     }
 
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(java.io.InputStream input)
@@ -216,7 +216,7 @@ public final class JvmPackageTable {
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -226,18 +226,18 @@ public final class JvmPackageTable {
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -253,7 +253,7 @@ public final class JvmPackageTable {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable, Builder>
         implements org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTableOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable.newBuilder()
@@ -327,13 +327,13 @@ public final class JvmPackageTable {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageTable) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -482,7 +482,7 @@ public final class JvmPackageTable {
   }
 
   public interface PackagePartsOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     // required string package_fq_name = 1;
     /**
@@ -496,7 +496,7 @@ public final class JvmPackageTable {
     /**
      * <code>required string package_fq_name = 1;</code>
      */
-    com.google.protobuf.ByteString
+    org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes();
 
     // repeated string class_name = 2;
@@ -516,17 +516,17 @@ public final class JvmPackageTable {
     /**
      * <code>repeated string class_name = 2;</code>
      */
-    com.google.protobuf.ByteString
+    org.jetbrains.kotlin.protobuf.ByteString
         getClassNameBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
    */
   public static final class PackageParts extends
-      com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
       implements PackagePartsOrBuilder {
     // Use PackageParts.newBuilder() to construct.
-    private PackageParts(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private PackageParts(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
 
     }
@@ -542,9 +542,9 @@ public final class JvmPackageTable {
     }
 
     private PackageParts(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
       try {
@@ -569,7 +569,7 @@ public final class JvmPackageTable {
             }
             case 18: {
               if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                className_ = new com.google.protobuf.LazyStringArrayList();
+                className_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000002;
               }
               className_.add(input.readBytes());
@@ -577,30 +577,30 @@ public final class JvmPackageTable {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new com.google.protobuf.UnmodifiableLazyStringList(className_);
+          className_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(className_);
         }
         makeExtensionsImmutable();
       }
     }
-    public static com.google.protobuf.Parser<PackageParts> PARSER =
-        new com.google.protobuf.AbstractParser<PackageParts>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<PackageParts> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<PackageParts>() {
       public PackageParts parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new PackageParts(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PackageParts> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<PackageParts> getParserForType() {
       return PARSER;
     }
 
@@ -622,8 +622,8 @@ public final class JvmPackageTable {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         if (bs.isValidUtf8()) {
           packageFqName_ = s;
@@ -634,23 +634,23 @@ public final class JvmPackageTable {
     /**
      * <code>required string package_fq_name = 1;</code>
      */
-    public com.google.protobuf.ByteString
+    public org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes() {
       java.lang.Object ref = packageFqName_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         packageFqName_ = b;
         return b;
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
       }
     }
 
     // repeated string class_name = 2;
     public static final int CLASS_NAME_FIELD_NUMBER = 2;
-    private com.google.protobuf.LazyStringList className_;
+    private org.jetbrains.kotlin.protobuf.LazyStringList className_;
     /**
      * <code>repeated string class_name = 2;</code>
      */
@@ -673,14 +673,14 @@ public final class JvmPackageTable {
     /**
      * <code>repeated string class_name = 2;</code>
      */
-    public com.google.protobuf.ByteString
+    public org.jetbrains.kotlin.protobuf.ByteString
         getClassNameBytes(int index) {
       return className_.getByteString(index);
     }
 
     private void initFields() {
       packageFqName_ = "";
-      className_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -695,7 +695,7 @@ public final class JvmPackageTable {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -713,13 +713,13 @@ public final class JvmPackageTable {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBytesSize(1, getPackageFqNameBytes());
       }
       {
         int dataSize = 0;
         for (int i = 0; i < className_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeBytesSizeNoTag(className_.getByteString(i));
         }
         size += dataSize;
@@ -737,24 +737,24 @@ public final class JvmPackageTable {
     }
 
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(java.io.InputStream input)
@@ -763,7 +763,7 @@ public final class JvmPackageTable {
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -773,18 +773,18 @@ public final class JvmPackageTable {
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -800,7 +800,7 @@ public final class JvmPackageTable {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts, Builder>
         implements org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.newBuilder()
@@ -818,7 +818,7 @@ public final class JvmPackageTable {
         super.clear();
         packageFqName_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
-        className_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
@@ -848,7 +848,7 @@ public final class JvmPackageTable {
         }
         result.packageFqName_ = packageFqName_;
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new com.google.protobuf.UnmodifiableLazyStringList(
+          className_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(
               className_);
           bitField0_ = (bitField0_ & ~0x00000002);
         }
@@ -886,13 +886,13 @@ public final class JvmPackageTable {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -918,7 +918,7 @@ public final class JvmPackageTable {
       public java.lang.String getPackageFqName() {
         java.lang.Object ref = packageFqName_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+          java.lang.String s = ((org.jetbrains.kotlin.protobuf.ByteString) ref)
               .toStringUtf8();
           packageFqName_ = s;
           return s;
@@ -929,17 +929,17 @@ public final class JvmPackageTable {
       /**
        * <code>required string package_fq_name = 1;</code>
        */
-      public com.google.protobuf.ByteString
+      public org.jetbrains.kotlin.protobuf.ByteString
           getPackageFqNameBytes() {
         java.lang.Object ref = packageFqName_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           packageFqName_ = b;
           return b;
         } else {
-          return (com.google.protobuf.ByteString) ref;
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
         }
       }
       /**
@@ -968,7 +968,7 @@ public final class JvmPackageTable {
        * <code>required string package_fq_name = 1;</code>
        */
       public Builder setPackageFqNameBytes(
-          com.google.protobuf.ByteString value) {
+          org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -979,10 +979,10 @@ public final class JvmPackageTable {
       }
 
       // repeated string class_name = 2;
-      private com.google.protobuf.LazyStringList className_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private org.jetbrains.kotlin.protobuf.LazyStringList className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureClassNameIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new com.google.protobuf.LazyStringArrayList(className_);
+          className_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(className_);
           bitField0_ |= 0x00000002;
          }
       }
@@ -1008,7 +1008,7 @@ public final class JvmPackageTable {
       /**
        * <code>repeated string class_name = 2;</code>
        */
-      public com.google.protobuf.ByteString
+      public org.jetbrains.kotlin.protobuf.ByteString
           getClassNameBytes(int index) {
         return className_.getByteString(index);
       }
@@ -1052,7 +1052,7 @@ public final class JvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        */
       public Builder clearClassName() {
-        className_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         
         return this;
@@ -1061,7 +1061,7 @@ public final class JvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        */
       public Builder addClassNameBytes(
-          com.google.protobuf.ByteString value) {
+          org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
