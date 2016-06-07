@@ -24,7 +24,7 @@
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
-    <property name="protobuf.jar" value="${idea.sdk}/lib/protobuf-2.5.0.jar"/>
+    <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.5.0.jar"/>
     <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
 
@@ -674,10 +674,10 @@
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${bootstrap.kotlin.test}"/>
+                <pathelement path="${protobuf.jar}"/>
                 <pathelement path="${idea.sdk}/lib/junit-4.12.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-build-common.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${protobuf.jar}"/>
             </classpath>
         </javac2>
 
@@ -687,7 +687,6 @@
             <fileset dir="${output}/classes/kotlin-build-common-test"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset src="${protobuf.jar}"/>
-            <rule pattern="com.google.**" result="org.jetbrains.kotlin.com.google.@1"/>
             <rule pattern="com.intellij.**" result="org.jetbrains.kotlin.com.intellij.@1"/>
 
             <manifest>
@@ -1008,7 +1007,6 @@
             <jarjar jarfile="${output}/kotlin-reflect-jarjar.jar" filesonly="true" filesetmanifest="merge">
                 <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
                 <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
-                <rule pattern="com.google.protobuf.**" result="kotlin.reflect.jvm.internal.impl.com.google.protobuf.@1"/>
                 <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
             </jarjar>
 

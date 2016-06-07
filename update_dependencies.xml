@@ -699,7 +699,6 @@
                         <file file="@{download.dir.jps-standalone}/jps-model.jar"/>
                         <file file="@{download.dir.jps-standalone}/log4j.jar"/>
                         <file file="@{download.dir.jps-standalone}/nanoxml-2.2.3.jar"/>
-                        <file file="@{download.dir.jps-standalone}/protobuf-2.5.0.jar"/>
                         <file file="@{download.dir.jps-standalone}/trove4j.jar"/>
                         <file file="@{download.dir.jps-standalone}/ui-designer-jps-plugin.jar"/>
                         <file file="@{download.dir.jps-standalone}/util.jar"/>

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.serialization
 
-import com.google.protobuf.ExtensionRegistryLite
-import com.google.protobuf.GeneratedMessageLite.GeneratedExtension
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 
 open class SerializerExtensionProtocol(
         val extensionRegistry: ExtensionRegistryLite,

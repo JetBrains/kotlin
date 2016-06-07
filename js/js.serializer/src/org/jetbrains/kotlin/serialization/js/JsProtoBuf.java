@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.serialization.js;
 public final class JsProtoBuf {
   private JsProtoBuf() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
+      org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.constructorAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.functionAnnotation);
@@ -18,7 +18,7 @@ public final class JsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeParameterAnnotation);
   }
   public interface ClassesOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     // repeated int32 class_name = 1 [packed = true];
     /**
@@ -50,10 +50,10 @@ public final class JsProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Classes}
    */
   public static final class Classes extends
-      com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
       implements ClassesOrBuilder {
     // Use Classes.newBuilder() to construct.
-    private Classes(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private Classes(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
 
     }
@@ -69,9 +69,9 @@ public final class JsProtoBuf {
     }
 
     private Classes(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
       try {
@@ -112,10 +112,10 @@ public final class JsProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -124,18 +124,18 @@ public final class JsProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static com.google.protobuf.Parser<Classes> PARSER =
-        new com.google.protobuf.AbstractParser<Classes>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Classes> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Classes>() {
       public Classes parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Classes(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Classes> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Classes> getParserForType() {
       return PARSER;
     }
 
@@ -187,7 +187,7 @@ public final class JsProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       if (getClassNameList().size() > 0) {
@@ -208,13 +208,13 @@ public final class JsProtoBuf {
       {
         int dataSize = 0;
         for (int i = 0; i < className_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(className_.get(i));
         }
         size += dataSize;
         if (!getClassNameList().isEmpty()) {
           size += 1;
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32SizeNoTag(dataSize);
         }
         classNameMemoizedSerializedSize = dataSize;
@@ -231,24 +231,24 @@ public final class JsProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(java.io.InputStream input)
@@ -257,7 +257,7 @@ public final class JsProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -267,18 +267,18 @@ public final class JsProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -294,7 +294,7 @@ public final class JsProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Classes}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes, Builder>
         implements org.jetbrains.kotlin.serialization.js.JsProtoBuf.ClassesOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes.newBuilder()
@@ -362,13 +362,13 @@ public final class JsProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.js.JsProtoBuf.Classes) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -486,7 +486,7 @@ public final class JsProtoBuf {
   }
 
   public interface LibraryOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     // repeated .org.jetbrains.kotlin.serialization.js.Library.FileEntry entry = 1;
     /**
@@ -507,10 +507,10 @@ public final class JsProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Library}
    */
   public static final class Library extends
-      com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
       implements LibraryOrBuilder {
     // Use Library.newBuilder() to construct.
-    private Library(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private Library(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
 
     }
@@ -526,9 +526,9 @@ public final class JsProtoBuf {
     }
 
     private Library(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
       try {
@@ -556,10 +556,10 @@ public final class JsProtoBuf {
             }
           }
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -568,23 +568,23 @@ public final class JsProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static com.google.protobuf.Parser<Library> PARSER =
-        new com.google.protobuf.AbstractParser<Library>() {
+    public static org.jetbrains.kotlin.protobuf.Parser<Library> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Library>() {
       public Library parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return new Library(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Library> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<Library> getParserForType() {
       return PARSER;
     }
 
     public interface FileEntryOrBuilder
-        extends com.google.protobuf.MessageLiteOrBuilder {
+        extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
       // required string path = 1;
       /**
@@ -598,7 +598,7 @@ public final class JsProtoBuf {
       /**
        * <code>required string path = 1;</code>
        */
-      com.google.protobuf.ByteString
+      org.jetbrains.kotlin.protobuf.ByteString
           getPathBytes();
 
       // required bytes content = 2;
@@ -609,16 +609,16 @@ public final class JsProtoBuf {
       /**
        * <code>required bytes content = 2;</code>
        */
-      com.google.protobuf.ByteString getContent();
+      org.jetbrains.kotlin.protobuf.ByteString getContent();
     }
     /**
      * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Library.FileEntry}
      */
     public static final class FileEntry extends
-        com.google.protobuf.GeneratedMessageLite
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite
         implements FileEntryOrBuilder {
       // Use FileEntry.newBuilder() to construct.
-      private FileEntry(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+      private FileEntry(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
         super(builder);
 
       }
@@ -634,9 +634,9 @@ public final class JsProtoBuf {
       }
 
       private FileEntry(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
         try {
@@ -666,27 +666,27 @@ public final class JsProtoBuf {
               }
             }
           }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           throw e.setUnfinishedMessage(this);
         } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
           makeExtensionsImmutable();
         }
       }
-      public static com.google.protobuf.Parser<FileEntry> PARSER =
-          new com.google.protobuf.AbstractParser<FileEntry>() {
+      public static org.jetbrains.kotlin.protobuf.Parser<FileEntry> PARSER =
+          new org.jetbrains.kotlin.protobuf.AbstractParser<FileEntry>() {
         public FileEntry parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           return new FileEntry(input, extensionRegistry);
         }
       };
 
       @java.lang.Override
-      public com.google.protobuf.Parser<FileEntry> getParserForType() {
+      public org.jetbrains.kotlin.protobuf.Parser<FileEntry> getParserForType() {
         return PARSER;
       }
 
@@ -708,8 +708,8 @@ public final class JsProtoBuf {
         if (ref instanceof java.lang.String) {
           return (java.lang.String) ref;
         } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
+          org.jetbrains.kotlin.protobuf.ByteString bs = 
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
           if (bs.isValidUtf8()) {
             path_ = s;
@@ -720,23 +720,23 @@ public final class JsProtoBuf {
       /**
        * <code>required string path = 1;</code>
        */
-      public com.google.protobuf.ByteString
+      public org.jetbrains.kotlin.protobuf.ByteString
           getPathBytes() {
         java.lang.Object ref = path_;
         if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           path_ = b;
           return b;
         } else {
-          return (com.google.protobuf.ByteString) ref;
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
         }
       }
 
       // required bytes content = 2;
       public static final int CONTENT_FIELD_NUMBER = 2;
-      private com.google.protobuf.ByteString content_;
+      private org.jetbrains.kotlin.protobuf.ByteString content_;
       /**
        * <code>required bytes content = 2;</code>
        */
@@ -746,13 +746,13 @@ public final class JsProtoBuf {
       /**
        * <code>required bytes content = 2;</code>
        */
-      public com.google.protobuf.ByteString getContent() {
+      public org.jetbrains.kotlin.protobuf.ByteString getContent() {
         return content_;
       }
 
       private void initFields() {
         path_ = "";
-        content_ = com.google.protobuf.ByteString.EMPTY;
+        content_ = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -771,7 +771,7 @@ public final class JsProtoBuf {
         return true;
       }
 
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
+      public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -789,11 +789,11 @@ public final class JsProtoBuf {
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeBytesSize(1, getPathBytes());
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeBytesSize(2, content_);
         }
         memoizedSerializedSize = size;
@@ -808,24 +808,24 @@ public final class JsProtoBuf {
       }
 
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ByteString data,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
           byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(java.io.InputStream input)
@@ -834,7 +834,7 @@ public final class JsProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -844,18 +844,18 @@ public final class JsProtoBuf {
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseDelimitedFrom(
           java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseDelimitedFrom(input, extensionRegistry);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
-          com.google.protobuf.CodedInputStream input)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return PARSER.parseFrom(input);
       }
       public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return PARSER.parseFrom(input, extensionRegistry);
       }
@@ -871,7 +871,7 @@ public final class JsProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Library.FileEntry}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
             org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry, Builder>
           implements org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntryOrBuilder {
         // Construct using org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry.newBuilder()
@@ -889,7 +889,7 @@ public final class JsProtoBuf {
           super.clear();
           path_ = "";
           bitField0_ = (bitField0_ & ~0x00000001);
-          content_ = com.google.protobuf.ByteString.EMPTY;
+          content_ = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;
           bitField0_ = (bitField0_ & ~0x00000002);
           return this;
         }
@@ -952,13 +952,13 @@ public final class JsProtoBuf {
         }
 
         public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            org.jetbrains.kotlin.protobuf.CodedInputStream input,
+            org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
           org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
             parsedMessage = (org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry) e.getUnfinishedMessage();
             throw e;
           } finally {
@@ -984,7 +984,7 @@ public final class JsProtoBuf {
         public java.lang.String getPath() {
           java.lang.Object ref = path_;
           if (!(ref instanceof java.lang.String)) {
-            java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            java.lang.String s = ((org.jetbrains.kotlin.protobuf.ByteString) ref)
                 .toStringUtf8();
             path_ = s;
             return s;
@@ -995,17 +995,17 @@ public final class JsProtoBuf {
         /**
          * <code>required string path = 1;</code>
          */
-        public com.google.protobuf.ByteString
+        public org.jetbrains.kotlin.protobuf.ByteString
             getPathBytes() {
           java.lang.Object ref = path_;
           if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
+            org.jetbrains.kotlin.protobuf.ByteString b = 
+                org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
                     (java.lang.String) ref);
             path_ = b;
             return b;
           } else {
-            return (com.google.protobuf.ByteString) ref;
+            return (org.jetbrains.kotlin.protobuf.ByteString) ref;
           }
         }
         /**
@@ -1034,7 +1034,7 @@ public final class JsProtoBuf {
          * <code>required string path = 1;</code>
          */
         public Builder setPathBytes(
-            com.google.protobuf.ByteString value) {
+            org.jetbrains.kotlin.protobuf.ByteString value) {
           if (value == null) {
     throw new NullPointerException();
   }
@@ -1045,7 +1045,7 @@ public final class JsProtoBuf {
         }
 
         // required bytes content = 2;
-        private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
+        private org.jetbrains.kotlin.protobuf.ByteString content_ = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;
         /**
          * <code>required bytes content = 2;</code>
          */
@@ -1055,13 +1055,13 @@ public final class JsProtoBuf {
         /**
          * <code>required bytes content = 2;</code>
          */
-        public com.google.protobuf.ByteString getContent() {
+        public org.jetbrains.kotlin.protobuf.ByteString getContent() {
           return content_;
         }
         /**
          * <code>required bytes content = 2;</code>
          */
-        public Builder setContent(com.google.protobuf.ByteString value) {
+        public Builder setContent(org.jetbrains.kotlin.protobuf.ByteString value) {
           if (value == null) {
     throw new NullPointerException();
   }
@@ -1145,7 +1145,7 @@ public final class JsProtoBuf {
       return true;
     }
 
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
       for (int i = 0; i < entry_.size(); i++) {
@@ -1160,7 +1160,7 @@ public final class JsProtoBuf {
 
       size = 0;
       for (int i = 0; i < entry_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, entry_.get(i));
       }
       memoizedSerializedSize = size;
@@ -1175,24 +1175,24 @@ public final class JsProtoBuf {
     }
 
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
         byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(java.io.InputStream input)
@@ -1201,7 +1201,7 @@ public final class JsProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -1211,18 +1211,18 @@ public final class JsProtoBuf {
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseDelimitedFrom(
         java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
-        com.google.protobuf.CodedInputStream input)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
     public static org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
@@ -1238,7 +1238,7 @@ public final class JsProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Library}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library, Builder>
         implements org.jetbrains.kotlin.serialization.js.JsProtoBuf.LibraryOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.newBuilder()
@@ -1312,13 +1312,13 @@ public final class JsProtoBuf {
       }
 
       public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library) e.getUnfinishedMessage();
           throw e;
         } finally {
@@ -1471,135 +1471,135 @@ public final class JsProtoBuf {
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Class,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> classAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int CONSTRUCTOR_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Constructor,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> constructorAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> constructorAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Constructor.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int FUNCTION_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Function,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> functionAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> functionAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Property,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> propertyAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> propertyAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Property,
-      org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> compileTimeValue = com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> compileTimeValue = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
         null,
         131,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.EnumEntry { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> enumEntryAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> enumEntryAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> parameterAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> parameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Type,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
   public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.TypeParameter { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeParameterAnnotation = com.google.protobuf.GeneratedMessageLite
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeParameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false);
 
   static {

@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.generators.protobuf
 
-import junit.framework.TestCase
-import com.google.protobuf.GeneratedMessage.GeneratedExtension
-import java.lang.reflect.ParameterizedType
-import com.google.protobuf.Descriptors
-import kotlin.test.fail
 import com.google.common.collect.LinkedHashMultimap
+import junit.framework.TestCase
+import org.jetbrains.kotlin.protobuf.Descriptors
+import org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension
 import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
 
 class ProtoBufConsistencyTest : TestCase() {
     fun testExtensionNumbersDoNotIntersect() {

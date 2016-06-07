@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.serialization;
 
-import com.google.protobuf.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.protobuf.Internal;
 
 public class Flags {
     private Flags() {}
