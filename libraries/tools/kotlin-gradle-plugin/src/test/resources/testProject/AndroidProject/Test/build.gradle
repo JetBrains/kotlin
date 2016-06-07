@@ -17,5 +17,5 @@ android {
     }
 
     targetProjectPath ':Android'
-    targetVariant 'debug'
+    targetVariant 'flavor1Debug'
 }
