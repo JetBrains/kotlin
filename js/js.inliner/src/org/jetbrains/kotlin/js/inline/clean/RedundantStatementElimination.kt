@@ -79,54 +79,49 @@ class RedundantStatementElimination(private val root: JsFunction) {
             }
 
             is JsBinaryOperation -> {
-                if (expression.sideEffects == SideEffectKind.AFFECTS_STATE) {
-                    when (expression.operator) {
-                        JsBinaryOperator.BIT_AND,
-                        JsBinaryOperator.BIT_OR,
-                        JsBinaryOperator.BIT_XOR,
-                        JsBinaryOperator.COMMA,
-                        JsBinaryOperator.ADD,
-                        JsBinaryOperator.SUB,
-                        JsBinaryOperator.MUL,
-                        JsBinaryOperator.DIV,
-                        JsBinaryOperator.MOD,
-                        JsBinaryOperator.EQ,
-                        JsBinaryOperator.NEQ,
-                        JsBinaryOperator.REF_EQ,
-                        JsBinaryOperator.REF_NEQ,
-                        JsBinaryOperator.GT,
-                        JsBinaryOperator.GTE,
-                        JsBinaryOperator.LT,
-                        JsBinaryOperator.LTE,
-                        JsBinaryOperator.SHL,
-                        JsBinaryOperator.SHR,
-                        JsBinaryOperator.SHRU -> replace(expression.arg1) + replace(expression.arg2)
+                when (expression.operator) {
+                    JsBinaryOperator.BIT_AND,
+                    JsBinaryOperator.BIT_OR,
+                    JsBinaryOperator.BIT_XOR,
+                    JsBinaryOperator.COMMA,
+                    JsBinaryOperator.ADD,
+                    JsBinaryOperator.SUB,
+                    JsBinaryOperator.MUL,
+                    JsBinaryOperator.DIV,
+                    JsBinaryOperator.MOD,
+                    JsBinaryOperator.EQ,
+                    JsBinaryOperator.NEQ,
+                    JsBinaryOperator.REF_EQ,
+                    JsBinaryOperator.REF_NEQ,
+                    JsBinaryOperator.GT,
+                    JsBinaryOperator.GTE,
+                    JsBinaryOperator.LT,
+                    JsBinaryOperator.LTE,
+                    JsBinaryOperator.SHL,
+                    JsBinaryOperator.SHR,
+                    JsBinaryOperator.SHRU -> replace(expression.arg1) + replace(expression.arg2)
 
-                        JsBinaryOperator.AND,
-                        JsBinaryOperator.OR -> {
-                            val right = replace(expression.arg2)
-                            if (right.isEmpty()) replace(expression.arg1) else listOf(expression)
-                        }
-
-                        JsBinaryOperator.INOP,
-                        JsBinaryOperator.INSTANCEOF -> listOf(expression)
-
-                        JsBinaryOperator.ASG,
-                        JsBinaryOperator.ASG_ADD,
-                        JsBinaryOperator.ASG_SUB,
-                        JsBinaryOperator.ASG_MUL,
-                        JsBinaryOperator.ASG_DIV,
-                        JsBinaryOperator.ASG_MOD,
-                        JsBinaryOperator.ASG_BIT_AND,
-                        JsBinaryOperator.ASG_BIT_OR,
-                        JsBinaryOperator.ASG_BIT_XOR,
-                        JsBinaryOperator.ASG_SHL,
-                        JsBinaryOperator.ASG_SHR,
-                        JsBinaryOperator.ASG_SHRU -> listOf(expression)
+                    JsBinaryOperator.AND,
+                    JsBinaryOperator.OR -> {
+                        val right = replace(expression.arg2)
+                        if (right.isEmpty()) replace(expression.arg1) else listOf(expression)
                     }
-                }
-                else {
-                    listOf(expression)
+
+                    JsBinaryOperator.INOP,
+                    JsBinaryOperator.INSTANCEOF -> listOf(expression)
+
+                    JsBinaryOperator.ASG,
+                    JsBinaryOperator.ASG_ADD,
+                    JsBinaryOperator.ASG_SUB,
+                    JsBinaryOperator.ASG_MUL,
+                    JsBinaryOperator.ASG_DIV,
+                    JsBinaryOperator.ASG_MOD,
+                    JsBinaryOperator.ASG_BIT_AND,
+                    JsBinaryOperator.ASG_BIT_OR,
+                    JsBinaryOperator.ASG_BIT_XOR,
+                    JsBinaryOperator.ASG_SHL,
+                    JsBinaryOperator.ASG_SHR,
+                    JsBinaryOperator.ASG_SHRU -> listOf(expression)
                 }
             }
 
