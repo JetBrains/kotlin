@@ -83,7 +83,7 @@ class ScriptTest {
 
     @Test
     fun testScriptWithScriptDefinition() {
-        val aClass = compileScript("fib.fib.kt", SimpleParamsTestScriptDefinition(".fib.kt", numIntParam()), null)
+        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()), null)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
@@ -213,7 +213,6 @@ class ScriptTest {
                 MessageCollectorUtil.reportException(messageCollector, t)
                 throw t
             }
-
         }
         finally {
             Disposer.dispose(rootDisposable)

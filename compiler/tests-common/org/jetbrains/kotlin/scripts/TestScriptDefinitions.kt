@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.scripts
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
@@ -29,7 +28,7 @@ import kotlin.reflect.KClass
 
 abstract class BaseScriptDefinition (val extension: String, val classpath: List<String>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
-    override fun isScript(file: VirtualFile): Boolean = file.name.endsWith(extension)
+    override fun <TF> isScript(file: TF): Boolean = org.jetbrains.kotlin.script.getFileName(file).endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
     override fun getScriptDependenciesClasspath(): List<String> =
             classpath ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()

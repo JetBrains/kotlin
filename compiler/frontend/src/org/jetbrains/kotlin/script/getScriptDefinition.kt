@@ -24,7 +24,7 @@ fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefini
     KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-    KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.originalFile.virtualFile)
+    KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile)
 
 fun getScriptExtraImports(file: VirtualFile, project: Project): List<KotlinScriptExtraImport>  =
         KotlinScriptExtraImportsProvider.getInstance(project)?.getExtraImports(file) ?: emptyList()
