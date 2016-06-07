@@ -3,7 +3,7 @@
 <!-- Find: ([^\[/])(KT-\d+) -->
 <!-- Replace: $1[$2](https://youtrack.jetbrains.com/issue/$2) -->
 
-## 1.0.2-IJ145-8 - Kotlin Plugin Update for Idea 2016.1 and 2016.2
+## 1.0.2-release-IJ145-10 - Kotlin Plugin Update for Idea 2016.1 and 2016.2
 
 ### IDE
 
