@@ -23,6 +23,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES
 import android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH
 import android.os.Build.VERSION_CODES.JELLY_BEAN
+import android.os.Bundle
 import android.widget.TextView
 
 @Suppress("SENSELESS_COMPARISON", "UNUSED_EXPRESSION", "UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION")
@@ -30,6 +31,9 @@ class ApiCallTest: Activity() {
 
     fun method(chronometer: Chronometer, locator: DOMLocator) {
         chronometer.<error descr="Call requires API level 16 (current min is 1): `setBackground`">setBackground(null)</error>
+
+        // Ok
+        Bundle().getInt("")
 
         // Virtual call
         <error descr="Call requires API level 11 (current min is 1): `getActionBar`">getActionBar()</error> // API 11
