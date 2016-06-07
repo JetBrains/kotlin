@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.types.KotlinType
 
 open class KotlinSerializerExtensionBase(private val protocol: SerializerExtensionProtocol) : SerializerExtension() {
-    private val stringTable = StringTableImpl()
+    override final val stringTable = StringTableImpl()
     private val annotationSerializer = AnnotationSerializer(stringTable)
-
-    override fun getStringTable(): StringTableImpl = stringTable
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
         for (annotation in descriptor.annotations) {

@@ -25,66 +25,62 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Typ
 import org.jetbrains.kotlin.types.ErrorUtils
 
 class AnnotationSerializer(private val stringTable: StringTable) {
-    fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation {
-        return with(ProtoBuf.Annotation.newBuilder()) {
-            val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassDescriptor
-                                  ?: error("Annotation type is not a class: ${annotation.type}")
-            if (ErrorUtils.isError(annotationClass)) {
-                error("Unresolved annotation type: ${annotation.type}")
-            }
-
-            setId(stringTable.getFqNameIndex(annotationClass))
-
-            for ((parameter, value) in annotation.allValueArguments) {
-                val argument = ProtoBuf.Annotation.Argument.newBuilder()
-                argument.setNameId(stringTable.getStringIndex(parameter.name.asString()))
-                argument.setValue(valueProto(value))
-                addArgument(argument)
-            }
-
-            build()
+    fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
+        val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassDescriptor
+                              ?: error("Annotation type is not a class: ${annotation.type}")
+        if (ErrorUtils.isError(annotationClass)) {
+            error("Unresolved annotation type: ${annotation.type}")
         }
-    }
 
-    fun valueProto(constant: ConstantValue<*>): Value.Builder = with(Value.newBuilder()) {
+        id = stringTable.getFqNameIndex(annotationClass)
+
+        for ((parameter, value) in annotation.allValueArguments) {
+            val argument = ProtoBuf.Annotation.Argument.newBuilder()
+            argument.nameId = stringTable.getStringIndex(parameter.name.asString())
+            argument.setValue(valueProto(value))
+            addArgument(argument)
+        }
+    }.build()
+
+    fun valueProto(constant: ConstantValue<*>): Value.Builder = Value.newBuilder().apply {
         constant.accept(object : AnnotationArgumentVisitor<Unit, Unit> {
             override fun visitAnnotationValue(value: AnnotationValue, data: Unit) {
-                setType(Type.ANNOTATION)
-                setAnnotation(serializeAnnotation(value.value))
+                type = Type.ANNOTATION
+                annotation = serializeAnnotation(value.value)
             }
 
             override fun visitArrayValue(value: ArrayValue, data: Unit) {
-                setType(Type.ARRAY)
+                type = Type.ARRAY
                 for (element in value.value) {
                     addArrayElement(valueProto(element).build())
                 }
             }
 
             override fun visitBooleanValue(value: BooleanValue, data: Unit) {
-                setType(Type.BOOLEAN)
+                type = Type.BOOLEAN
                 setIntValue(if (value.value) 1 else 0)
             }
 
             override fun visitByteValue(value: ByteValue, data: Unit) {
-                setType(Type.BYTE)
-                setIntValue(value.value.toLong())
+                type = Type.BYTE
+                intValue = value.value.toLong()
             }
 
             override fun visitCharValue(value: CharValue, data: Unit) {
-                setType(Type.CHAR)
-                setIntValue(value.value.toLong())
+                type = Type.CHAR
+                intValue = value.value.toLong()
             }
 
             override fun visitDoubleValue(value: DoubleValue, data: Unit) {
-                setType(Type.DOUBLE)
-                setDoubleValue(value.value)
+                type = Type.DOUBLE
+                doubleValue = value.value
             }
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
-                setType(Type.ENUM)
+                type = Type.ENUM
                 val enumEntry = value.value
-                setClassId(stringTable.getFqNameIndex(enumEntry.containingDeclaration as ClassDescriptor))
-                setEnumValueId(stringTable.getStringIndex(enumEntry.name.asString()))
+                classId = stringTable.getFqNameIndex(enumEntry.containingDeclaration as ClassDescriptor)
+                enumValueId = stringTable.getStringIndex(enumEntry.name.asString())
             }
 
             override fun visitErrorValue(value: ErrorValue, data: Unit) {
@@ -92,13 +88,13 @@ class AnnotationSerializer(private val stringTable: StringTable) {
             }
 
             override fun visitFloatValue(value: FloatValue, data: Unit) {
-                setType(Type.FLOAT)
-                setFloatValue(value.value)
+                type = Type.FLOAT
+                floatValue = value.value
             }
 
             override fun visitIntValue(value: IntValue, data: Unit) {
-                setType(Type.INT)
-                setIntValue(value.value.toLong())
+                type = Type.INT
+                intValue = value.value.toLong()
             }
 
             override fun visitKClassValue(value: KClassValue?, data: Unit?) {
@@ -107,8 +103,8 @@ class AnnotationSerializer(private val stringTable: StringTable) {
             }
 
             override fun visitLongValue(value: LongValue, data: Unit) {
-                setType(Type.LONG)
-                setIntValue(value.value)
+                type = Type.LONG
+                intValue = value.value
             }
 
             override fun visitNullValue(value: NullValue, data: Unit) {
@@ -116,16 +112,14 @@ class AnnotationSerializer(private val stringTable: StringTable) {
             }
 
             override fun visitShortValue(value: ShortValue, data: Unit) {
-                setType(Type.SHORT)
-                setIntValue(value.value.toLong())
+                type = Type.SHORT
+                intValue = value.value.toLong()
             }
 
             override fun visitStringValue(value: StringValue, data: Unit) {
-                setType(Type.STRING)
-                setStringValue(stringTable.getStringIndex(value.value))
+                type = Type.STRING
+                stringValue = stringTable.getStringIndex(value.value)
             }
         }, Unit)
-
-        this
     }
 }
