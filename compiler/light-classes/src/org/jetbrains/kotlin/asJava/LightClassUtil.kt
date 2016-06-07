@@ -112,6 +112,13 @@ object LightClassUtil {
         return getPsiMethodWrapper(function)
     }
 
+    /**
+     * Returns the light method generated from the parameter of an annotation class.
+     */
+    fun getLightClassMethod(parameter: KtParameter): PsiMethod? {
+        return getPsiMethodWrapper(parameter)
+    }
+
     fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
         return getPsiMethodWrappers(function, true)
     }

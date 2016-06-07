@@ -804,6 +804,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findParameterUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("kotlinAnnotationConstructorParameterUsages.0.kt")
+            public void testKotlinAnnotationConstructorParameterUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinAnnotationConstructorParameterUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinComponentFunctionParameterUsages.0.kt")
             public void testKotlinComponentFunctionParameterUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinComponentFunctionParameterUsages.0.kt");
@@ -1408,6 +1414,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
         public static class FindJavaMethodUsages extends AbstractFindUsagesTest {
             public void testAllFilesPresentInFindJavaMethodUsages() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/java/findJavaMethodUsages"), Pattern.compile("^(.+)\\.0\\.java$"), true);
+            }
+
+            @TestMetadata("ConventionUsages.0.java")
+            public void testConventionUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/ConventionUsages.0.java");
+                doTest(fileName);
             }
 
             @TestMetadata("JKMethodOverrides.0.java")
