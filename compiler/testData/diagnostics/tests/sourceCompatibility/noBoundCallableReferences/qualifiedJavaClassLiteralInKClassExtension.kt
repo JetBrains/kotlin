@@ -1,5 +1,5 @@
 // !LANGUAGE: -BoundCallableReferences
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS
+// !DIAGNOSTICS: -UNCHECKED_CAST
 
 import kotlin.reflect.KClass
 

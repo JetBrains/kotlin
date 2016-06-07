@@ -40,6 +40,11 @@ object CastDiagnosticsUtil {
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
+        if (lhsType.constructor == rhsType.constructor) {
+            if (lhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
+            if (rhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
+        }
+
         if (isFinal(lhsType) || isFinal(rhsType)) return false
         if (isTrait(lhsType) || isTrait(rhsType)) return true
         return false
