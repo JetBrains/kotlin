@@ -138,7 +138,10 @@ class TypeAliasExpander(
 
                 val expandedType = expandRecursively(nestedExpansion, type.annotations, recursionDepth + 1, false)
 
-                return TypeProjectionImpl(originalProjection.projectionKind, expandedType.withAbbreviatedType(type))
+                // 'dynamic' type can't be abbreviated - will be reported separately
+                val typeWithAbbreviation = if (expandedType.isDynamic()) expandedType else expandedType.withAbbreviatedType(type)
+
+                return TypeProjectionImpl(originalProjection.projectionKind, typeWithAbbreviation)
             }
             else -> {
                 val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
