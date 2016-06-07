@@ -43,7 +43,7 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
 
                 val declType = when (declaration) {
                     is KtFunction -> "Function"
-                    is KtProperty -> if (declaration.isLocal) "Variable" else "Property"
+                    is KtProperty -> if (declaration.isLocal) return else "Property"
                     else -> return
                 }
 
@@ -83,6 +83,7 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
         }
 
         fun isReturnTypeFlexible(declaration: KtNamedDeclaration): AnalysisResult {
+            if (declaration is KtProperty && declaration.isLocal) return AnalysisResult(false, false)
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
             val returnType = declaration.getReturnType(context) ?: return AnalysisResult(false, false)
             return AnalysisResult(returnType.isFlexibleRecursive(), returnType.isNullabilityFlexible())

@@ -1556,7 +1556,7 @@
                      language="kotlin"
     />
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.HasPlatformTypeInspection"
-                     displayName="Function, property or variable has platform type"
+                     displayName="Function or property has platform type"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
