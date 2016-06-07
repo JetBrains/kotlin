@@ -1,13 +1,12 @@
 <project name="Kotlin CI Steps" default="none">
-    <import file="common.xml" optional="false"/>
-    <property name="kotlin-home" value="${output}/kotlinc"/>
+    <import file="build.xml" optional="false"/>
 
     <property name="build.number" value="snapshot"/>
     <property name="fail.on.plugin.verifier.error" value="true"/>
 
     <property name="version_substitute_dir" value="${basedir}/versions_temp/"/>
 
-    <property name="artifact.output.path" value="${basedir}/dist/artifacts/ideaPlugin"/>
+    <property name="artifact.output.path" value="${basedir}/dist/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned"/>
@@ -39,49 +38,84 @@
     <echoprop prop="user.home"/>
     <echoprop prop="user.dir"/>
 
-    <macrodef name="run-gradle">
-        <attribute name="tasks" />
-        <attribute name="args" default="" />
+    <target name="cleanupArtifacts">
+        <delete dir="${artifact.output.path}" includes="*"/>
+    </target>
+
+    <macrodef name="substituteVersionInFile">
+        <attribute name="target.file"/>
+        <attribute name="test.string"/>
+        <attribute name="target.file.bk" default="@{target.file}.bk"/>
+        <attribute name="target.file.versioned" default="@{target.file}.versioned"/>
+        <attribute name="token.key" default="snapshot"/>
+        <attribute name="version" default="${build.number}"/>
         <sequential>
-            <java classname="org.gradle.wrapper.GradleWrapperMain"
-                  fork="true"
-                  dir="${basedir}"
-                  failonerror="true"
-                  timeout="4000000"
-                  maxmemory="400m"
-                  taskname="gradle">
-                <classpath>
-                    <pathelement location="${basedir}/gradle/wrapper/gradle-wrapper.jar"/>
-                </classpath>
-                <arg line="--no-daemon" />
-                <arg line="@{tasks}" />
-                <arg line="@{args}" />
-            </java>
+            <!-- Create backup. Backup will be restored after build end. This will allow to rebuild project without renew
+                 plugin.xml from repository. -->
+            <copy file="@{target.file}" tofile="@{target.file.bk}"/>
+
+            <!-- Check that version has correct pattern for substitution -->
+            <copy todir="">
+                <fileset file="@{target.file.bk}">
+                    <contains text="@{test.string}"/>
+                </fileset>
+                <filterchain>
+                    <replacetokens>
+                        <token key="@{token.key}" value="@{version}"/>
+                    </replacetokens>
+                </filterchain>
+                <mergemapper to="@{target.file.versioned}"/>
+            </copy>
+
+            <!-- If file doesn't exist - there's a problem with original plugin.xml. Probably there's a bad pattern used for version -->
+            <copy file="@{target.file.versioned}" tofile="@{target.file}" overwrite="true"/>
+
+            <delete file="@{target.file.versioned}" quiet="true"/>
         </sequential>
     </macrodef>
-
-    <target name="cleanupArtifacts">
-        <run-gradle tasks="cleanupArtifacts" />
-    </target>
-
-    <target name="zip-compiler">
-        <run-gradle tasks="zipCompiler" args="-PdeployVersion=${build.number}" />
-    </target>
-
-    <target name="zip-test-data">
-        <run-gradle tasks="zipTestData" />
-    </target>
 
     <target name="writeCompilerVersionToTemplateFile">
         <!-- empty, version is written in gradle build -->
     </target>
 
     <target name="writePluginVersionToTemplateFile">
-        <run-gradle tasks="writePluginVersion" args="-PpluginVersion=${plugin.xml.version.number}" />
+        <mkdir dir="${version_substitute_dir}"/>
+
+        <substituteVersionInFile
+            target.file="${plugin.xml}"
+            target.file.bk="${plugin.xml.bk}"
+            target.file.versioned="${plugin.xml.versioned}"
+            test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
+            version="${plugin.xml.version.number}"/>
     </target>
 
+    <target name="revertTemplateFiles">
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+        <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
+
+        <delete dir="${version_substitute_dir}" quiet="true"/>
+    </target>
+
+    <target name="pre_build" depends="writeCompilerVersionToTemplateFile, writePluginVersionToTemplateFile, cleanupArtifacts"/>
+
     <target name="zipArtifacts">
-        <run-gradle tasks="zipPlugin" args="-PpluginArtifactDir=${pluginArtifactDir} -PpluginZipPath=${plugin.zip}"/>
+        <macrodef name="zipPlugin">
+            <attribute name="filename"/>
+            <attribute name="prefix" />
+            <attribute name="dir"/>
+
+            <sequential>
+                <zip destfile="@{filename}">
+                    <zipfileset prefix="@{prefix}" dir="@{dir}" excludes="kotlinc/bin/*"/>
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" includes="*.bat"
+                                filemode="644"/>
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" excludes="*.bat"
+                                filemode="755"/>
+                </zip>
+            </sequential>
+        </macrodef>
+
+        <zipPlugin filename="${plugin.zip}" prefix="Kotlin" dir="${artifact.output.path}/${pluginArtifactDir}"/>
     </target>
 
     <macrodef name="print-statistic">
@@ -114,8 +148,66 @@
         <print-file-size-statistic path="${basedir}/libraries/stdlib/js/build/classes/main" file-name="kotlin.meta.js"/>
     </target>
 
+    <target name="post_build" depends="patchXmlForAndroidStudio, zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>
+
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
     </target>
 
+    <property name="teamcity.build.branch" value=""/>
+
+    <condition property="need.remove.artifacts" value="true">
+        <and>
+            <matches pattern="rri?/.*" string="${teamcity.build.branch}"/>
+            <not>
+                <matches pattern="rri?/internal/.*" string="${teamcity.build.branch}"/>
+            </not>
+        </and>
+    </condition>
+
+    <target name="remove_internal_artifacts"
+            description="Remove internal artifacts for rri?/* branches, but store them for rri?/internal/*"
+            if="need.remove.artifacts">
+        <echo message="Remove internal artifacts" />
+
+        <delete failonerror="false" verbose="true">
+            <fileset dir="dist">
+                <include name="kotlin-compiler-before-shrink.jar"/>
+                <include name="kotlin-for-upsource.jar"/>
+                <include name="kotlin-for-upsource-sources.jar"/>
+                <include name="kotlin-test-data.zip"/>
+            </fileset>
+            <fileset dir="out/artifacts/internal">
+                <include name="kotlin-ide-common.jar"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="dont_remove_internal_artifacts" unless="need.remove.artifacts">
+        <echo message="Internal artifacts left untouched"/>
+    </target>
+
+    <macrodef name="patch_plugin_xml">
+        <attribute name="plugin.xml" />
+        <sequential>
+            <replace file="@{plugin.xml}" token="&lt;!-- DEPENDS-ON-AS-PLACEHOLDER --&gt;" value="&lt;depends&gt;com.intellij.modules.androidstudio&lt;/depends&gt;"/>
+        </sequential>
+    </macrodef>
+
+    <target name="patchXmlForAndroidStudio">
+        <unzip src="${artifact.output.path}/Kotlin/lib/kotlin-plugin.jar" dest="tmpAndroidStudio">
+            <patternset>
+                <include name="META-INF/plugin.xml"/>
+            </patternset>
+        </unzip>
+
+        <patch_plugin_xml plugin.xml="tmpAndroidStudio/META-INF/plugin.xml"/>
+
+        <jar destfile="${artifact.output.path}/Kotlin/lib/kotlin-plugin.jar" update="true">
+            <fileset dir="tmpAndroidStudio"/>
+            <file file="META-INF/plugin.xml"/>
+        </jar>
+
+        <delete file="tmpAndroidStudio"/>
+    </target>
 </project>
