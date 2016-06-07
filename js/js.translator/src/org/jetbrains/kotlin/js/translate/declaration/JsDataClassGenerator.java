@@ -51,7 +51,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert propertyDescriptor != null : "Property descriptor is expected to be non-null";
 
         JsFunction functionObject = generateJsMethod(function);
-        JsExpression returnExpression = JsAstUtils.fqnWithoutSideEffects(context.getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
+        JsExpression returnExpression = JsAstUtils.pureFqn(context.getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
         functionObject.getBody().getStatements().add(new JsReturn(returnExpression));
     }
 
