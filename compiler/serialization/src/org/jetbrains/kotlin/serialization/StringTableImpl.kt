@@ -18,22 +18,16 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.utils.Interner
-
-import java.io.IOException
-import java.io.OutputStream
-
 import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.utils.Interner
+import java.io.OutputStream
 
 class StringTableImpl : StringTable {
     private class FqNameProto(val fqName: QualifiedName.Builder) {
-
         override fun hashCode(): Int {
             var result = 13
             result = 31 * result + fqName.parentQualifiedName
@@ -42,47 +36,43 @@ class StringTableImpl : StringTable {
             return result
         }
 
-        override fun equals(obj: Any?): Boolean {
-            if (obj == null || javaClass != obj.javaClass) return false
+        override fun equals(other: Any?): Boolean {
+            if (other == null || other !is FqNameProto) return false
 
-            val other = (obj as FqNameProto).fqName
-            return fqName.parentQualifiedName == other.parentQualifiedName
-                   && fqName.shortName == other.shortName
-                   && fqName.kind == other.kind
+            val otherFqName = other.fqName
+            return fqName.parentQualifiedName == otherFqName.parentQualifiedName
+                   && fqName.shortName == otherFqName.shortName
+                   && fqName.kind == otherFqName.kind
         }
     }
 
     private val strings = Interner<String>()
     private val qualifiedNames = Interner<FqNameProto>()
 
-    fun getSimpleNameIndex(name: Name): Int {
-        return getStringIndex(name.asString())
-    }
+    fun getSimpleNameIndex(name: Name): Int = getStringIndex(name.asString())
 
-    override fun getStringIndex(string: String): Int {
-        return strings.intern(string)
-    }
+    override fun getStringIndex(string: String): Int = strings.intern(string)
 
     override fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int {
         if (ErrorUtils.isError(descriptor)) {
-            throw IllegalStateException("Cannot get FQ name of error class: " + descriptor)
+            throw IllegalStateException("Cannot get FQ name of error class: $descriptor")
         }
 
         val builder = QualifiedName.newBuilder()
         builder.kind = QualifiedName.Kind.CLASS
 
         val containingDeclaration = descriptor.containingDeclaration
-        if (containingDeclaration is PackageFragmentDescriptor) {
-            val packageFqName = containingDeclaration.fqName
-            if (!packageFqName.isRoot) {
-                builder.parentQualifiedName = getPackageFqNameIndex(packageFqName)
+        when (containingDeclaration) {
+            is PackageFragmentDescriptor -> {
+                val packageFqName = containingDeclaration.fqName
+                if (!packageFqName.isRoot) {
+                    builder.parentQualifiedName = getPackageFqNameIndex(packageFqName)
+                }
             }
-        }
-        else if (containingDeclaration is ClassDescriptor) {
-            builder.parentQualifiedName = getFqNameIndex(containingDeclaration)
-        }
-        else {
-            throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
+            is ClassDescriptor -> {
+                builder.parentQualifiedName = getFqNameIndex(containingDeclaration)
+            }
+            else -> throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
         }
 
         builder.shortName = getStringIndex(descriptor.name.asString())
@@ -118,14 +108,8 @@ class StringTableImpl : StringTable {
     }
 
     override fun serializeTo(output: OutputStream) {
-        try {
-            val protos = buildProto()
-            protos.first.writeDelimitedTo(output)
-            protos.second.writeDelimitedTo(output)
-        }
-        catch (e: IOException) {
-            throw rethrow(e)
-        }
-
+        val (strings, qualifiedNames) = buildProto()
+        strings.writeDelimitedTo(output)
+        qualifiedNames.writeDelimitedTo(output)
     }
 }

@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 abstract class SerializerExtension {
     abstract val stringTable: StringTable
 
-    open fun shouldUseTypeTable(): Boolean {
-        return false
-    }
+    open fun shouldUseTypeTable(): Boolean = false
 
     open fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
     }
@@ -58,6 +56,6 @@ abstract class SerializerExtension {
     }
 
     open fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
-        throw IllegalStateException("Cannot serialize error type: " + type)
+        throw IllegalStateException("Cannot serialize error type: $type")
     }
 }
