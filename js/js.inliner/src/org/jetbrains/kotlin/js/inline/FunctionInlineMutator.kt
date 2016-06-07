@@ -98,21 +98,15 @@ private constructor(
         var thisReplacement = getThisReplacement(call)
         if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
 
-        if (thisReplacement.needToAlias()) {
-            val thisName = namingContext.getFreshName(getThisAlias())
-            namingContext.newVar(thisName, thisReplacement)
-            thisReplacement = thisName.makeRef()
-        }
+        val thisName = namingContext.getFreshName(getThisAlias())
+        namingContext.newVar(thisName, thisReplacement)
+        thisReplacement = thisName.makeRef()
 
         replaceThisReference(block, thisReplacement)
     }
 
     private fun processReturns() {
-        val resultReference = getResultReference()
-        if (resultReference != null) {
-            resultExpr = resultReference
-        }
-        assert(resultExpr == null || resultExpr is JsNameRef)
+        resultExpr = getResultReference()
 
         val breakName = namingContext.getFreshName(getBreakLabel())
         this.breakLabel = JsLabel(breakName).apply { synthetic = true }

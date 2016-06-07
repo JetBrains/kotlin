@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 import org.jetbrains.kotlin.js.inline.util.collectUsedNames
+import org.jetbrains.kotlin.js.inline.util.transitiveStaticRef
 
 /**
  * Removes unused local function declarations like:
@@ -55,7 +56,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
 
         val references = collectUsedNames(x)
         references.filterNotNull()
-                  .forEach { tracker.addRemovableReference(name, it) }
+                .forEach { tracker.addRemovableReference(name, it) }
 
         return false
     }
@@ -73,8 +74,28 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     private fun isLocalFunctionDeclaration(jsVar: JsVars.JsVar): Boolean {
         val name = jsVar.name
         val expr = jsVar.initExpression
-        val staticRef = name?.staticRef
 
-        return staticRef != null && staticRef == expr
+        // For the case like this: `b = a; c = b;`, where `a` is a function. In this case we should remove both declaration,
+        // although second one contains 'usage' of `b`.
+        // see `inlineEvaluationOrder/cases/lambdaWithClosure.kt`.
+        if (expr is JsNameRef && (expr.name?.let { tracker.isReferenceToRemovableCandidate(it) } ?: false)) return true
+
+        val staticRef = name?.staticRef
+        return staticRef != null && staticRef == expr && isFunctionReference(expr)
     }
+}
+
+// For RHS of `var a = b;` checks whether *b* is a reference to a function or a closure instantiation, direct or indirect.
+private fun isFunctionReference(expr: JsExpression): Boolean {
+    val qualifier = when (expr) {
+        // `var tmp = foo(closure)`, where `foo` is a closure constructor.
+        is JsInvocation -> expr.qualifier
+
+        // Either alias to another variable that holds function or a lambda without closure.
+        is JsNameRef -> expr
+
+        else -> null
+    }
+
+    return qualifier?.transitiveStaticRef is JsFunction
 }

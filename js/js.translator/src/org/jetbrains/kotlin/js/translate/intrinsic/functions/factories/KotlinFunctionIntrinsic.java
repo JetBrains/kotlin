@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -31,10 +30,10 @@ import java.util.List;
 
 public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
     @NotNull
-    private final JsNameRef function;
+    private final String functionName;
 
     public KotlinFunctionIntrinsic(@NotNull String functionName) {
-        function = JsAstUtils.fqnWithoutSideEffects(functionName, Namer.kotlinObject());
+        this.functionName = functionName;
     }
 
     @NotNull
@@ -44,6 +43,7 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
             @NotNull List<JsExpression> arguments,
             @NotNull TranslationContext context
     ) {
+        JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());
         return new JsInvocation(function, receiver == null ? arguments : TranslationUtils.generateInvocationArguments(receiver, arguments));
     }
 }

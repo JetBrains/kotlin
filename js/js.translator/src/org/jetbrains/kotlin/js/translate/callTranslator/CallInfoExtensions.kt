@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.JsEmptyExpression
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -73,7 +76,16 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
     if (isGetAccess()) {
         return ref
     } else {
-        return if (value !is JsEmptyExpression) JsAstUtils.assignment(ref, value!!) else context.emptyExpression
+        return if (value !is JsEmptyExpression) {
+            // This is useful when passing AST to TemporaryAssignmentElimination. It can bring
+            // property assignment like `obj.propertyName = $tmp` to places where `$tmp` gets its value,
+            // but only when it's sure that no side effects possible.
+            (ref as? HasMetadata)?.let { it.sideEffects = SideEffectKind.PURE }
+            JsAstUtils.assignment(ref, value!!)
+        }
+        else {
+            context.emptyExpression
+        }
     }
 }
 

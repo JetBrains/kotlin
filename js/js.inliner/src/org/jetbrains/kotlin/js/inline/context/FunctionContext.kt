@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.js.inline.context
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.staticRef
-
-import org.jetbrains.kotlin.js.inline.FunctionReader
 import com.google.dart.compiler.backend.js.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
 
 abstract class FunctionContext(
@@ -76,31 +74,19 @@ abstract class FunctionContext(
         if (descriptor != null && descriptor in functionReader) return functionReader[descriptor]
 
         /** remove ending `()` */
-        var callQualifier: JsNode = call.qualifier
-
-        /** remove ending `.call()` */
-        if (isCallInvocation(call)) {
-            callQualifier = (callQualifier as JsNameRef).qualifier!!
+        val callQualifier: JsExpression = if (isCallInvocation(call)) {
+            (call.qualifier as JsNameRef).qualifier!!
         }
-
-        /** in case 4, 5 get ref (reduce 4, 5 to 2, 3 accordingly) */
-        @Suppress("USELESS_CAST") // NB do not remove 'as JsNode' below until KT-10752 is fixed
-        if (callQualifier is JsNameRef) {
-            val staticRef = callQualifier.name?.staticRef
-
-            callQualifier = when (staticRef) {
-                is JsNameRef -> staticRef as JsNode
-                is JsInvocation -> staticRef as JsNode
-                is JsFunction, null -> callQualifier
-                else -> throw AssertionError("Unexpected static reference type ${staticRef.javaClass}")
-            }
+        else {
+            call.qualifier
         }
 
         /** process cases 2, 3 */
-        val qualifier = callQualifier
+        val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
-            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)
+            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
+            is JsFunction -> qualifier
             else -> null
         }
     }

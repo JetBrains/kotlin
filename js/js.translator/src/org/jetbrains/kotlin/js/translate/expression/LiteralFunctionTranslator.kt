@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
-import com.google.dart.compiler.backend.js.ast.metadata.isLocal
-import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -62,13 +60,13 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         }
 
         lambda.isLocal = true
-        return invokingContext.define(descriptor, lambda)
+        return invokingContext.define(descriptor, lambda).apply { sideEffects = SideEffectKind.PURE }
     }
 }
 
 fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
-    val ref = invokingContext.define(descriptor, this)
-    val invocation = JsInvocation(ref)
+    val ref = invokingContext.define(descriptor, this).apply { sideEffects = SideEffectKind.PURE }
+    val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }
 
     val invocationArguments = invocation.arguments
     val functionParameters = this.parameters

@@ -17,22 +17,26 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
-import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
+import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 
-internal class TemporaryVariableElimination(private val root: JsStatement) {
+internal class TemporaryVariableElimination(function: JsFunction) {
+    private val root = function.body
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
     private val inconsistent = mutableSetOf<JsName>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private var hasChanges = false
-    private val namesToProcess = mutableSetOf<JsName>()
+    private val localVariables = function.collectLocalVariables()
     private val statementsToRemove = mutableSetOf<JsNode>()
     private val namesToSubstitute = mutableSetOf<JsName>()
+    private val variablesToRemove = mutableSetOf<JsName>()
 
     fun apply(): Boolean {
         analyze()
@@ -42,8 +46,6 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     }
 
     private fun analyze() {
-        namesToProcess += collectDefinedNames(root)
-
         object : RecursiveJsVisitor() {
             val currentScope = mutableSetOf<JsName>()
             var localVars = mutableSetOf<JsName>()
@@ -52,7 +54,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val (name, value) = assignment
-                    if (name in namesToProcess) {
+                    if (name in localVariables) {
                         assignVariable(name, value)
                         addVar(name)
                         accept(value)
@@ -69,7 +71,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 for (v in x.vars) {
                     val name = v.name
                     val value = v.initExpression
-                    if (value != null && name in namesToProcess) {
+                    if (value != null && name in localVariables) {
                         assignVariable(name, value)
                         addVar(name)
                         accept(value)
@@ -82,7 +84,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
             override fun visitNameRef(nameRef: JsNameRef) {
                 val name = nameRef.name
-                if (name != null && nameRef.qualifier == null && name in namesToProcess) {
+                if (name != null && nameRef.qualifier == null && name in localVariables) {
                     useVariable(name)
                     if (name !in currentScope) {
                         inconsistent += name
@@ -179,14 +181,14 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 }
 
                 super.visitNameRef(nameRef)
-                if (nameRef.qualifier != null && nameRef.sideEffects) {
+                if (nameRef.qualifier != null && nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
 
             override fun visitInvocation(invocation: JsInvocation) {
                 super.visitInvocation(invocation)
-                if (invocation.sideEffects) {
+                if (invocation.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
@@ -241,7 +243,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
             override fun visitArrayAccess(x: JsArrayAccess) {
                 super.visitArrayAccess(x)
-                if (x.sideEffects) {
+                if (x.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
@@ -263,12 +265,19 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                             namesToSubstitute += name
                         }
                         else {
+                            lastAssignedVars.clear()
                             lastAssignedVars += Pair(name, x)
                             sideEffectOccurred = false
                         }
                         return
                     }
+                    else if (shouldConsiderUnused(name)) {
+                        variablesToRemove += name
+                        handleTopLevel(value)
+                        return
+                    }
                 }
+
                 handleTopLevel(expression)
             }
 
@@ -378,11 +387,15 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                                 namesToSubstitute += name
                             }
                             else {
+                                lastAssignedVars.clear()
                                 lastAssignedVars += Pair(name, v)
                                 sideEffectOccurred = false
                             }
                         }
                         else {
+                            if (shouldConsiderUnused(name)) {
+                                variablesToRemove += name
+                            }
                             handleTopLevel(initializer)
                         }
                     }
@@ -428,22 +441,51 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
     private fun cleanUp() {
         object : JsVisitorWithContextImpl() {
-            override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
-                x.vars.removeAll { it in statementsToRemove }
-                if (x.vars.isEmpty()) {
-                    ctx.removeMe()
+            override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
+                if (x.vars.removeAll(statementsToRemove)) {
                     hasChanges = true
-                    return false
                 }
-                return super.visit(x, ctx)
+
+                val ranges = x.vars.splitToRanges { it.name in variablesToRemove }
+                if (ranges.size == 1 && !ranges[0].second) return super.visit(x, ctx)
+
+                hasChanges = true
+                for ((subList, isRemoved) in ranges) {
+                    val initializers = subList.mapNotNull { it.initExpression }
+                    initializers.forEach { accept(it) }
+                    if (isRemoved) {
+                        for (initializer in initializers) {
+                            ctx.addPrevious(JsExpressionStatement(initializer).apply { synthetic = x.synthetic })
+                        }
+                    }
+                    else {
+                        ctx.addPrevious(JsVars(*subList.toTypedArray()).apply { synthetic = x.synthetic })
+                    }
+                }
+                ctx.removeMe()
+                return false
             }
 
-            override fun visit(x: JsExpressionStatement, ctx: JsContext<*>): Boolean {
+            override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
                 if (x in statementsToRemove) {
                     ctx.removeMe()
                     hasChanges = true
                     return false
                 }
+
+                val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
+                if (assignment != null) {
+                    val (name, value) = assignment
+                    if (name in variablesToRemove) {
+                        hasChanges = true
+                        ctx.replaceMe(JsExpressionStatement(value).run {
+                            synthetic = true
+                            accept(this)
+                        })
+                        return false
+                    }
+                }
+
                 return super.visit(x, ctx)
             }
 
@@ -481,16 +523,37 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
         usages[name] = (usages[name] ?: 0) + 1
     }
 
+    private fun shouldConsiderUnused(name: JsName) = definitions[name] == 1 && (usages[name] ?: 0) == 0 && name in temporary
+
     private fun shouldConsiderTemporary(name: JsName): Boolean {
-        if (definitions[name] ?: 0 != 1 || name !in temporary) return false
+        if (definitions[name] != 1 || name !in temporary) return false
 
         val expr = definedValues[name]
-        return (expr != null && isTrivial(expr)) || usages[name] ?: 0 == 1
+        // It's useful to copy trivial expressions when they are used more than once. Example are temporary variables
+        // that receiver another (non-temporary) variables. To prevent code from bloating, we don't treat large value literals
+        // as trivial expressions.
+        return (expr != null && isTrivial(expr)) || usages[name] == 1
     }
 
-    private fun isTrivial(expr: JsExpression) = when (expr) {
-        is JsNameRef -> expr.qualifier == null && (expr.name?.let { definitions[it] ?: 0 <= 1 } ?: false)
-        is JsLiteral.JsValueLiteral -> true
+    private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
+        is JsNameRef -> {
+            val qualifier = expr.qualifier
+            if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
+                true
+            }
+            else {
+                val name = expr.name
+                name in localVariables && when (definitions[name]) {
+                    // Local variables with zero definitions are function parameters. We can relocate and copy them.
+                    null, 0 -> true
+                    1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                    else -> false
+                }
+            }
+        }
+        is JsLiteral.JsValueLiteral -> expr.toString().length < 10
+        is JsInvocation -> expr.sideEffects == SideEffectKind.PURE && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
+        is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression)
         else -> false
     }
 }

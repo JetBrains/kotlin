@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatemen
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
-    private final IdentityHashMap<JsName, JsFunction> functions;
+    private final Map<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
     private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
     private final Set<JsFunction> inProcessFunctions = CollectionUtilsKt.IdentitySet();
@@ -58,7 +58,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
             if (!(node instanceof JsInvocation)) return false;
 
             JsInvocation call = (JsInvocation) node;
-
             return hasToBeInlined(call);
         }
     };
@@ -73,7 +72,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private JsInliner(
-            @NotNull IdentityHashMap<JsName, JsFunction> functions,
+            @NotNull Map<JsName, JsFunction> functions,
             @NotNull FunctionReader functionReader,
             @NotNull DiagnosticSink trace
     ) {
@@ -103,7 +102,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         RemoveUnusedLocalFunctionDeclarationsKt.removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
 
-        new FunctionPostProcessor(function.getBody()).apply();
+        new FunctionPostProcessor(function).apply();
 
         assert inProcessFunctions.contains(function);
         inProcessFunctions.remove(function);
@@ -194,18 +193,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             return;
         }
 
-        resultExpression = accept(resultExpression);
-        JsStatement currentStatement = statementContext.getCurrentNode();
-
-        if (currentStatement instanceof JsExpressionStatement &&
-            ((JsExpressionStatement) currentStatement).getExpression() == call &&
-            (resultExpression == null || !SideEffectUtilsKt.canHaveSideEffect(resultExpression))
-        ) {
-            statementContext.removeMe();
-        }
-        else {
-            context.replaceMe(resultExpression);
-        }
+        context.replaceMe(accept(resultExpression));
     }
 
     @NotNull

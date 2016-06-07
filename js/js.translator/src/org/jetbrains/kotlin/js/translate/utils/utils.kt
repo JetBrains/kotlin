@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -54,4 +55,24 @@ fun generateDelegateCall(
     val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), JsInvocation(overriddenMemberFunctionRef, args))
     functionObject.parameters.addAll(parameters)
     return JsPropertyInitializer(delegateMemberFunctionName.makeRef(), functionObject)
+}
+
+fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
+    if (isEmpty()) return emptyList()
+
+    var lastIndex = 0
+    var lastClass: S = classifier(this[0])
+    val result = mutableListOf<Pair<List<T>, S>>()
+
+    for ((index, e) in asSequence().withIndex().drop(1)) {
+        val cls = classifier(e)
+        if (cls != lastClass) {
+            result += Pair(subList(lastIndex, index), lastClass)
+            lastClass = cls
+            lastIndex = index
+        }
+    }
+
+    result += Pair(subList(lastIndex, size), lastClass)
+    return result
 }

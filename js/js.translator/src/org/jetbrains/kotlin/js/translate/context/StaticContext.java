@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
@@ -45,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
@@ -196,7 +197,7 @@ public final class StaticContext {
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
         JsName packageName = getNameForPackage(packageFqName);
-        return fqnWithoutSideEffects(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
+        return pureFqn(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
     }
 
     @NotNull
@@ -225,7 +226,7 @@ public final class StaticContext {
         FqName fqName = packageFqName;
 
         while (true) {
-            JsNameRef ref = fqnWithoutSideEffects(getNameForPackage(fqName), null);
+            JsNameRef ref = pureFqn(getNameForPackage(fqName), null);
 
             if (qualifier == null) {
                 result = ref;
@@ -640,7 +641,7 @@ public final class StaticContext {
                 descriptor instanceof PackageFragmentDescriptor ||
                 descriptor instanceof ClassDescriptor
             ) {
-                MetadataProperties.setSideEffects((HasMetadata) expression, false);
+                MetadataProperties.setSideEffects((HasMetadata) expression, SideEffectKind.PURE);
             }
         }
         return expression;

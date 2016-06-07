@@ -25,18 +25,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
-import org.jetbrains.kotlin.js.translate.context.DefinitionPlace
-import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
-import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
+import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
@@ -286,7 +287,7 @@ class ClassTranslator private constructor(
                 capturedVars.forEach { nonConstructorUsageTracker.used(it) }
                 val closureArgs = capturedVars.map {
                     val name = nonConstructorUsageTracker.getNameForCapturedDescriptor(it)!!
-                    JsAstUtils.fqnWithoutSideEffects(name, closureQualifier)
+                    JsAstUtils.pureFqn(name, closureQualifier)
                 }
                 callSite.invocationArgs.addAll(0, closureArgs.toList())
             }

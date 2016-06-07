@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.rewriters.LabelNameRefreshingVisitor
@@ -30,14 +31,11 @@ fun aliasArgumentsIfNeeded(
 
     for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.name
-        val replacement =
-                if (arg.needToAlias()) {
-                    val freshName = context.getFreshName(paramName)
-                    context.newVar(freshName, arg)
-                    freshName.makeRef()
-                } else {
-                    arg
-                }
+
+        val replacement = context.getFreshName(paramName).apply {
+            staticRef = arg
+            context.newVar(this, arg)
+        }.makeRef()
 
         context.replaceName(paramName, replacement)
     }
@@ -60,7 +58,7 @@ fun renameLocalNames(
         function: JsFunction
 ) {
     for (name in collectDefinedNames(function.body)) {
-        val freshName = context.getFreshName(name)
+        val freshName = context.getFreshName(name).apply { staticRef = name.staticRef }
         context.replaceName(name, freshName.makeRef())
     }
 }

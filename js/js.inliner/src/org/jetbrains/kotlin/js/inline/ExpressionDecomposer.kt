@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.inline.util.canHaveOwnSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
@@ -62,7 +61,7 @@ internal class ExpressionDecomposer private constructor(
             val decomposer = with (statement) {
                 val extractable = match(canBeExtractedByInliner)
                 val containsExtractable = withParentsOfNodes(extractable)
-                val nodesWithSideEffect = match { it is JsExpression && it.canHaveOwnSideEffect() }
+                val nodesWithSideEffect = match { it !is JsLiteral.JsValueLiteral }
                 val containsNodeWithSideEffect = withParentsOfNodes(nodesWithSideEffect)
 
                 ExpressionDecomposer(scope, containsExtractable, containsNodeWithSideEffect)
@@ -145,7 +144,7 @@ internal class ExpressionDecomposer private constructor(
 
         val tmp = Temporary(arg1)
         addStatement(tmp.variable)
-        var test = if (operator == JsBinaryOperator.OR) not(tmp.nameRef) else tmp.nameRef
+        val test = if (operator == JsBinaryOperator.OR) not(tmp.nameRef) else tmp.nameRef
         val arg2Eval = withNewAdditionalStatements {
             arg2 = accept(arg2)
             addStatement(tmp.assign(arg2))
@@ -169,7 +168,7 @@ internal class ExpressionDecomposer private constructor(
             // Must be (someThingWithSideEffect).x = arg2, because arg1 can have side effect
             assert(arg1 is JsNameRef) { "Valid JavaScript left-hand side must be JsNameRef, got: $this" }
             val arg1AsRef = arg1 as JsNameRef
-            arg1AsRef.qualifier = arg1AsRef.qualifier!!.extractToTemporary()
+            arg1AsRef.qualifier = arg1AsRef.qualifier?.extractToTemporary()
         }
         else {
             arg1 = arg1.extractToTemporary()
@@ -258,14 +257,19 @@ internal class ExpressionDecomposer private constructor(
 
     private fun Callable.process() {
         qualifier = accept(qualifier)
-        var matchedIndices = arguments.indicesOfExtractable
+        val matchedIndices = arguments.indicesOfExtractable
         if (!matchedIndices.hasNext()) return
 
         if (qualifier in containsNodeWithSideEffect) {
             val callee = qualifier as? JsNameRef
             val receiver = callee?.qualifier
 
-            if (callee != null && receiver != null && receiver in containsNodeWithSideEffect) {
+            // Qualifier might be a reference to lambda property. See KT-7674
+            // An exception here is `fn.call()`, which are marked as side effect free. Further recognition of such
+            // case in inliner might be quite difficult, so never extract such call (and other calls marked this way).
+             if ((qualifier !in containsNodeWithSideEffect || (qualifier as? HasMetadata)?.sideEffects == SideEffectKind.PURE) &&
+                 (callee != null && receiver != null && receiver in containsNodeWithSideEffect)
+             ) {
                 val receiverTmp = receiver.extractToTemporary()
                 callee.qualifier = receiverTmp
             }
@@ -317,22 +321,20 @@ internal class ExpressionDecomposer private constructor(
         addStatement(tmp.variable)
         return tmp.nameRef
     }
-    
+
     private inner class Temporary(val value: JsExpression? = null) {
         val name: JsName = scope.declareTemporary()
 
-        val variable: JsVars = newVar(name, value)
+        val variable: JsVars = newVar(name, value).apply {
+            synthetic = true
+            name.staticRef = value
+        }
 
         val nameRef: JsExpression
             get() = name.makeRef()
 
-        init {
-            variable.synthetic = true
-        }
-
         fun assign(value: JsExpression): JsStatement {
-            val statement = JsExpressionStatement(assignment(nameRef, value))
-            statement.synthetic = true
+            val statement = JsExpressionStatement(assignment(nameRef, value)).apply { synthetic = true }
             return statement
         }
     }
