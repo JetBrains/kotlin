@@ -154,7 +154,7 @@
         <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="${compiled.stdlib.js}"/>
     </target>
 
-    <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>
+    <target name="post_build" depends="patchXmlForAndroidStudio, zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
@@ -191,5 +191,29 @@
 
     <target name="dont_remove_internal_artifacts" unless="need.remove.artifacts">
         <echo message="Internal artifacts left untouched"/>
+    </target>
+
+    <macrodef name="patch_plugin_xml">
+        <attribute name="plugin.xml" />
+        <sequential>
+            <replace file="@{plugin.xml}" token="&lt;!-- DEPENDS-ON-AS-PLACEHOLDER --&gt;" value="&lt;depends&gt;com.intellij.modules.androidstudio&lt;/depends&gt;"/>
+        </sequential>
+    </macrodef>
+
+    <target name="patchXmlForAndroidStudio">
+        <unzip src="${artifact.output.path}/Kotlin/lib/kotlin-plugin.jar" dest="tmpAndroidStudio">
+            <patternset>
+                <include name="META-INF/plugin.xml"/>
+            </patternset>
+        </unzip>
+
+        <patch_plugin_xml plugin.xml="tmpAndroidStudio/META-INF/plugin.xml"/>
+
+        <jar destfile="${artifact.output.path}/Kotlin/lib/kotlin-plugin.jar" update="true">
+            <fileset dir="tmpAndroidStudio"/>
+            <file file="META-INF/plugin.xml"/>
+        </jar>
+
+        <delete file="tmpAndroidStudio"/>
     </target>
 </project>
