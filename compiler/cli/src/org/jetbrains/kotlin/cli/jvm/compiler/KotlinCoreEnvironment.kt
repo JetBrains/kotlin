@@ -143,10 +143,10 @@ class KotlinCoreEnvironment private constructor(
                                 if (configuration.get(JVMConfigurationKeys.LOAD_SCRIPT_CONFIGS) ?: false)
                                     loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).let { configs ->
                                         val kotlinEnvVars = generateKotlinScriptClasspathEnvVars(project)
-                                        configs.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition
+                                        configs.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) }
                                     }
                                 else null
-                                ?: listOf(StandardScriptDefinition)
+                                ?: emptyList()
                             })
 
             KotlinScriptExtraImportsProvider.getInstance(project)?.run {
