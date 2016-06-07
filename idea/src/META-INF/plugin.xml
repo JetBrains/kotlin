@@ -21,6 +21,8 @@
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
 
+  <!-- DEPENDS-ON-AS-PLACEHOLDER -->
+
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <!-- CLION-PLUGIN-PLACEHOLDER-START -->
