@@ -112,6 +112,11 @@ class TypeAliasExpander(
             recursionDepth: Int
     ): TypeProjection {
         val type = originalProjection.type
+
+        if (!type.requiresTypeAliasExpansion()) {
+            return originalProjection
+        }
+
         val typeConstructor = type.constructor
         val typeDescriptor = typeConstructor.declarationDescriptor
 
