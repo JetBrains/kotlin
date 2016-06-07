@@ -72,7 +72,7 @@ public class ScriptTest {
             @NotNull KotlinScriptDefinition scriptDefinition
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
-        MessageCollector messageCollector = PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR;
+        MessageCollector messageCollector = new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false);
 
         Disposable rootDisposable = Disposer.newDisposable();
         try {
