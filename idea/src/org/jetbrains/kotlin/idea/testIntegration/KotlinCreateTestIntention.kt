@@ -180,6 +180,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                 NavigationUtil.activateFileWithPsiElement(existingClass)
                             }
                             else {
+                                with(PsiDocumentManager.getInstance(project)) {
+                                    getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }
+                                }
+
                                 JavaToKotlinAction.convertFiles(generatedFile.singletonList(), project, false).singleOrNull()
                             }
                         }
