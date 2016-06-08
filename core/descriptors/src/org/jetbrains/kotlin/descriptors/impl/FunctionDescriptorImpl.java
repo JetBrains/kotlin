@@ -476,21 +476,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name,
                 configuration.preserveSourceElement);
 
-        List<TypeParameterDescriptor> substitutedTypeParameters;
-        final TypeSubstitutor substitutor;
+        List<TypeParameterDescriptor> unsubstitutedTypeParameters =
+                configuration.newTypeParameters == null ? getTypeParameters() : configuration.newTypeParameters;
 
-        if (configuration.newTypeParameters == null) {
-            List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
-            substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
-            substitutor = DescriptorSubstitutor.substituteTypeParameters(
-                    originalTypeParameters, configuration.originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
-            );
-        }
-        else {
-            // They should be already substituted
-            substitutedTypeParameters = configuration.newTypeParameters;
-            substitutor = configuration.originalSubstitutor;
-        }
+        List<TypeParameterDescriptor> substitutedTypeParameters =
+                new ArrayList<TypeParameterDescriptor>(unsubstitutedTypeParameters.size());
+        final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
+                unsubstitutedTypeParameters, configuration.originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
+        );
 
         KotlinType substitutedReceiverParameterType = null;
         if (configuration.newExtensionReceiverParameterType != null) {
