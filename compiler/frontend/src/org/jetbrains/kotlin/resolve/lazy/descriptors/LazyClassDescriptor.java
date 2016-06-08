@@ -273,6 +273,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 LazyClassDescriptor.this, null, Annotations.Companion.getEMPTY(), Name.special("<init-blocks>"),
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE
         ) {
+            {
+                initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                           null, Modality.FINAL, Visibilities.PRIVATE);
+            }
+
             @NotNull
             @Override
             protected FunctionDescriptorImpl createSubstitutedCopy(
