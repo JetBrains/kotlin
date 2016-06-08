@@ -156,7 +156,7 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
-    override val isError: Boolean get() = false
+    override val isError: Boolean get() = delegate.isError // todo should be false?
 
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
 }
