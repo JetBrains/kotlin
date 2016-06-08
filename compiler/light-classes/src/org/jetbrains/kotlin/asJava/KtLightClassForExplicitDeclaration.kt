@@ -252,7 +252,7 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList.typeParameters
 
-    override fun getName(): String = classFqName.shortName().asString()
+    override fun getName(): String? = classFqName.shortName().asString()
 
     override fun getQualifiedName(): String = classFqName.asString()
 
