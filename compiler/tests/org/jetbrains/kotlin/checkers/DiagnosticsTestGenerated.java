@@ -19443,6 +19443,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("conflictingProjections.kt")
+            public void testConflictingProjections() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/conflictingProjections.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionTypeInTypeAlias.kt")
             public void testFunctionTypeInTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/functionTypeInTypeAlias.kt");

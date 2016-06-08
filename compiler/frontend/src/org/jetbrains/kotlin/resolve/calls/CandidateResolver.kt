@@ -595,16 +595,23 @@ class CandidateResolver(
             ktTypeArguments: List<KtTypeProjection>,
             private val trace: BindingTrace
     ) : TypeAliasExpansionReportStrategy {
+        init {
+            assert(!typeAlias.expandedType.isError) { "Incorrect type alias: $typeAlias" }
+        }
+
         private val argumentsMapping = typeAlias.declaredTypeParameters.zip(ktTypeArguments).toMap()
 
         override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {
+            // TODO
         }
 
-        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, expandingType: KotlinType) {
-            // No projections in type alias constructor arguments - can't happen
+        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, substitutedArgument: KotlinType) {
+            // TODO
         }
 
-        override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {}
+        override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {
+            // can't happen in non-error type
+        }
 
         override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
             val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor

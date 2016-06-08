@@ -400,13 +400,11 @@ class TypeResolver(
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
         typeTransformerForTests.transformType(resultingType)?.let { return type(it) }
 
-        if (c.checkBounds) {
+        if (c.checkBounds && !resultingType.dependsOnTypeAliasParameters()) {
             val substitutor = TypeSubstitutor.create(resultingType)
             for (i in parameters.indices) {
                 val parameter = parameters[i]
                 val argument = arguments[i].type
-
-                if (argument.dependsOnTypeAliasParameters()) continue
 
                 val typeReference = collectedArgumentAsTypeProjections.getOrNull(i)?.typeReference
 
@@ -495,7 +493,7 @@ class TypeResolver(
             }
         }
 
-        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, expandingType: KotlinType) {
+        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, substitutedArgument: KotlinType) {
             val argumentElement = typeParameter?.let { mappedArguments[it] }
             if (argumentElement != null && typeParameter != null) {
                 trace.report(CONFLICTING_PROJECTION.on(argumentElement, typeParameter))

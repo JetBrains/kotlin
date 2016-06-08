@@ -96,7 +96,7 @@ class TypeAliasExpander(
                     argumentVariance
                 else {
                     if (originalVariance != argumentVariance && !typeAliasArgument.isStarProjection) {
-                        reportStrategy.conflictingProjection(typeAliasExpansion.descriptor, typeParameterDescriptor, originalType)
+                        reportStrategy.conflictingProjection(typeAliasExpansion.descriptor, typeParameterDescriptor, typeAliasArgument.type)
                     }
                     argumentVariance
                 }

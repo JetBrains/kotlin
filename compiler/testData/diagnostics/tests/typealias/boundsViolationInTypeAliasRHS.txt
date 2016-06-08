@@ -1,14 +1,23 @@
 package
 
-public typealias TCErr = TColl<kotlin.String, kotlin.Any>
-public typealias TCErr2 = TCErr
-public val testCtor1: TColl<kotlin.String, kotlin.Any>
-public val testCtor2: TColl<kotlin.String, kotlin.Any>
-public fun testType1(/*0*/ x: TCErr [= TColl<kotlin.String, kotlin.Any>]): kotlin.Unit
-public fun testType2(/*0*/ x: TCErr2 [= TColl<kotlin.String, kotlin.Any>]): kotlin.Unit
+public typealias TCAlias</*0*/ T, /*1*/ C>  = TC<T, C>
+public typealias TCAliasC</*0*/ C>  = TC<kotlin.Any, C>
+public typealias TCAliasC1</*0*/ C>  = TCAlias<kotlin.Any, C>
+public typealias TCAliasT</*0*/ T>  = TC<T, kotlin.Any>
+public typealias TCAliasT1</*0*/ T>  = TCAlias<T, kotlin.Any>
+public typealias Test1 = TC<kotlin.Any, kotlin.Any>
+public typealias Test10 = TCAliasC1<kotlin.collections.Collection<kotlin.Any>>
+public typealias Test2 = TC<kotlin.Any, kotlin.collections.Collection<kotlin.Any>>
+public typealias Test3 = TCAlias<kotlin.Any, kotlin.Any>
+public typealias Test4 = TCAlias<kotlin.Any, kotlin.collections.Collection<kotlin.Any>>
+public typealias Test5 = TCAliasT<kotlin.Any>
+public typealias Test6 = TCAliasC<kotlin.Any>
+public typealias Test7 = TCAliasC<kotlin.collections.Collection<kotlin.Any>>
+public typealias Test8 = TCAliasT1<kotlin.Any>
+public typealias Test9 = TCAliasC1<kotlin.Any>
 
-public final class TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
-    public constructor TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>>()
+public final class TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
+    public constructor TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
