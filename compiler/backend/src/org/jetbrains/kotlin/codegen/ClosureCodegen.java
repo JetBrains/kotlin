@@ -63,6 +63,7 @@ import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLitera
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -228,10 +229,15 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
+        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(funDescriptor);
+        Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, funDescriptor);
+        assert method != null : "No method for " + funDescriptor;
+        v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
+
         final DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        final ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
+        final ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, new Function1<AnnotationVisitor, Unit>() {
             @Override
@@ -240,6 +246,30 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 return Unit.INSTANCE;
             }
         });
+    }
+
+    /**
+     * Given a function descriptor, creates another function descriptor with type parameters copied from outer context(s).
+     * This is needed because once we're serializing this to a proto, there's no place to store information about external type parameters.
+     */
+    @NotNull
+    private static FunctionDescriptor createFreeLambdaDescriptor(@NotNull FunctionDescriptor descriptor) {
+        FunctionDescriptor.CopyBuilder<? extends FunctionDescriptor> builder = descriptor.newCopyBuilder();
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(0);
+        builder.setTypeParameters(typeParameters);
+
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        while (container != null) {
+            if (container instanceof ClassDescriptor) {
+                typeParameters.addAll(((ClassDescriptor) container).getDeclaredTypeParameters());
+            }
+            else if (container instanceof CallableDescriptor && !(container instanceof ConstructorDescriptor)) {
+                typeParameters.addAll(((CallableDescriptor) container).getTypeParameters());
+            }
+            container = container.getContainingDeclaration();
+        }
+
+        return typeParameters.isEmpty() ? descriptor : builder.build();
     }
 
     @Override

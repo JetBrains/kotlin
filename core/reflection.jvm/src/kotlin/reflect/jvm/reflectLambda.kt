@@ -45,8 +45,8 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module,
-            typeTable = TypeTable(proto.typeTable), containerSource = null, parentTypeDeserializer = null, typeParameters = listOf()
+            moduleData.deserialization, nameResolver, moduleData.module, TypeTable(proto.typeTable),
+            containerSource = null, parentTypeDeserializer = null, typeParameters = proto.typeParameterList
     )
     val descriptor = MemberDeserializer(context).loadFunction(proto)
     @Suppress("UNCHECKED_CAST")
