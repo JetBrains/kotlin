@@ -71,7 +71,7 @@ class FutureController<T> {
         }
     }
 
-    fun handleResult(value: T, c: Continuation<Nothing>) {
+    operator fun handleResult(value: T, c: Continuation<Nothing>) {
         future.complete(value)
     }
 

@@ -83,7 +83,7 @@ fun FakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(
             OperatorNameConventions.COROUTINE_HANDLE_RESULT, callElement, callElement, FakeCallKind.OTHER,
             listOf(firstArgument, continuation))
 
-    if (resolutionResults.isSuccess) {
+    if (resolutionResults.isSuccess && resolutionResults.resultingDescriptor.isOperator) {
         context.trace.record(BindingContext.RETURN_HANDLE_RESULT_RESOLVED_CALL, callElement, resolutionResults.resultingCall)
     }
 }
