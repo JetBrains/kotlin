@@ -89,9 +89,11 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val siblings = element.siblings()
-        val commentSaver = CommentSaver(PsiChildRange(element, siblings.last()), saveLineBreaks = true)
+        val elementCommentSaver = CommentSaver(element)
+        val fullCommentSaver = CommentSaver(PsiChildRange(element, siblings.last()), saveLineBreaks = true)
 
         val toDelete = ArrayList<PsiElement>()
+        var applyFullCommentSaver = true
         var whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
 
@@ -134,8 +136,8 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                     currentIfExpression = currentElseBranch
                 }
                 else {
-                    toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(currentElseBranch))
                     appendElseBlock(currentElseBranch)
+                    applyFullCommentSaver = false
                     break
                 }
             }
@@ -149,7 +151,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         }
 
         val result = element.replace(whenExpression)
-        commentSaver.restore(result)
+        (if (applyFullCommentSaver) fullCommentSaver else elementCommentSaver).restore(result)
         toDelete.forEach {
             it.delete()
         }
