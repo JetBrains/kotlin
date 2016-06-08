@@ -177,18 +177,20 @@ class CoroutineTransformerMethodVisitor(
                 postponedActions.add {
                     with(instructions) {
                         // store variable before suspension call
-                        insertBefore(call, VarInsnNode(Opcodes.ALOAD, 0))
-                        insertBefore(call, VarInsnNode(type.getOpcode(Opcodes.ILOAD), index))
-                        insertBefore(call, coercionInsns(type, normalizedType))
-                        insertBefore(call, FieldInsnNode(Opcodes.PUTFIELD, classBuilder.thisName, fieldName, normalizedType.descriptor))
+                        insertBefore(call, withInstructionAdapter {
+                            load(0, AsmTypes.OBJECT_TYPE)
+                            load(index, type)
+                            StackValue.coerce(type, normalizedType, this)
+                            putfield(classBuilder.thisName, fieldName, normalizedType.descriptor)
+                        })
 
                         // restore variable after suspension call
-                        val nextInsnAfterCall = call.tryCatchBlockEndLabelAfterSuspensionCall.next
-                        insertBefore(nextInsnAfterCall, VarInsnNode(Opcodes.ALOAD, 0))
-                        insertBefore(nextInsnAfterCall,
-                                     FieldInsnNode(Opcodes.GETFIELD, classBuilder.thisName, fieldName, normalizedType.descriptor))
-                        insertBefore(nextInsnAfterCall, coercionInsns(normalizedType, type))
-                        insertBefore(nextInsnAfterCall, VarInsnNode(type.getOpcode(Opcodes.ISTORE), index))
+                        insert(call.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                            load(0, AsmTypes.OBJECT_TYPE)
+                            getfield(classBuilder.thisName, fieldName, normalizedType.descriptor)
+                            StackValue.coerce(normalizedType, type, this)
+                            store(index, type)
+                        })
                     }
                 }
             }
@@ -235,13 +237,13 @@ class CoroutineTransformerMethodVisitor(
                                  FieldInsnNode(
                                          Opcodes.PUTFIELD, classBuilder.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)))
 
-            val nextInsnAfterCall = call.tryCatchBlockEndLabelAfterSuspensionCall.next
 
-            // Exit
-            insertBefore(nextInsnAfterCall, InsnNode(Opcodes.RETURN))
-
-            // Mark place for continuation
-            insertBefore(nextInsnAfterCall, continuationLabel)
+            insert(call.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                // Exit
+                areturn(Type.VOID_TYPE)
+                // Mark place for continuation
+                visitLabel(continuationLabel.label)
+            })
 
             // After suspension point there is always three nodes: L1, NOP, L2
             // And if there are relevant exception handlers, they always start at L2
@@ -318,8 +320,6 @@ class CoroutineTransformerMethodVisitor(
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index
-
-private fun coercionInsns(from: Type, to: Type) = withInstructionAdapter { StackValue.coerce(from, to, this) }
 
 private fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnList {
     val tmpMethodNode = MethodNode()
