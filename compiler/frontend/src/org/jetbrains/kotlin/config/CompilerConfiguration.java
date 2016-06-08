@@ -63,17 +63,12 @@ public class CompilerConfiguration {
     }
 
     @NotNull
-    public <K,V> Map<K,V> getMap(@NotNull CompilerConfigurationKey<Map<K,V>> key) {
-        Map<K,V> data = (Map<K,V>) map.get(key.ideaKey);
-        if (data == null) {
-            return Collections.emptyMap();
-        }
-        else {
-            return Collections.unmodifiableMap(data);
-        }
+    public <K, V> Map<K, V> getMap(@NotNull CompilerConfigurationKey<Map<K, V>> key) {
+        Map<K, V> data = get(key);
+        return data == null ? Collections.<K, V>emptyMap() : data;
     }
 
-    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
+    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @NotNull T value) {
         checkReadOnly();
         map.put(key.ideaKey, value);
     }
@@ -88,14 +83,14 @@ public class CompilerConfiguration {
         list.add(value);
     }
 
-    public <K, V> void put(@NotNull CompilerConfigurationKey<Map<K,V>> key, @NotNull K vkey, @NotNull V value) {
+    public <K, V> void put(@NotNull CompilerConfigurationKey<Map<K, V>> configurationKey, @NotNull K key, @NotNull V value) {
         checkReadOnly();
-        Key<Map<K,V>> ideaKey = key.ideaKey;
+        Key<Map<K, V>> ideaKey = configurationKey.ideaKey;
         if (map.get(ideaKey) == null) {
-            map.put(ideaKey, new HashMap<K,V>());
+            map.put(ideaKey, new HashMap<K, V>());
         }
-        Map<K,V> data = (Map<K,V>) map.get(ideaKey);
-        data.put(vkey, value);
+        Map<K, V> data = (Map<K, V>) map.get(ideaKey);
+        data.put(key, value);
     }
 
     public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {
