@@ -45,8 +45,10 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.*;
+import org.jetbrains.kotlin.utils.SmartList;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -234,15 +236,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @NotNull
     @ReadOnly
-    public Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName, @NotNull final LookupLocation location) {
+    public Collection<ClassifierDescriptor> getTopLevelClassifierDescriptors(@NotNull FqName fqName, @NotNull final LookupLocation location) {
         if (fqName.isRoot()) return Collections.emptyList();
 
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName.parent());
         if (provider == null) return Collections.emptyList();
 
-        return ContainerUtil.mapNotNull(
+        Collection<ClassifierDescriptor> result = new SmartList<ClassifierDescriptor>();
+
+        result.addAll(ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                new Function<KtClassLikeInfo, ClassDescriptor>() {
+                new Function<KtClassLikeInfo, ClassifierDescriptor>() {
                     @Override
                     public ClassDescriptor fun(KtClassLikeInfo classLikeInfo) {
                         if (classLikeInfo instanceof KtClassOrObjectInfo) {
@@ -259,7 +263,19 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                         }
                     }
                 }
-        );
+        ));
+
+        result.addAll(ContainerUtil.map(
+                provider.getTypeAliasDeclarations(fqName.shortName()),
+                new Function<KtTypeAlias, ClassifierDescriptor>() {
+                    @Override
+                    public ClassifierDescriptor fun(KtTypeAlias alias) {
+                        return (ClassifierDescriptor) lazyDeclarationResolver.resolveToDescriptor(alias);
+                    }
+                }
+        ));
+
+        return result;
     }
 
     @Override

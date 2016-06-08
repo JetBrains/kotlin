@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -54,7 +55,7 @@ class DeclarationResolver(
         for (classDescriptor in c.declaredClasses.values) {
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
             for (desc in classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
-                if (desc is ClassDescriptor || desc is PropertyDescriptor) {
+                if (desc is ClassifierDescriptor || desc is PropertyDescriptor) {
                     descriptorMap.put(desc.name, desc)
                 }
             }
@@ -72,7 +73,7 @@ class DeclarationResolver(
             }
             // We mustn't compare PropertyDescriptor with PropertyDescriptor because we do this at OverloadResolver
             for (descriptor in descriptors) {
-                if (descriptor is ClassDescriptor) {
+                if (descriptor is ClassifierDescriptor) {
                     for (descriptor2 in descriptors) {
                         if (descriptor === descriptor2) {
                             continue
@@ -116,7 +117,7 @@ class DeclarationResolver(
         val descriptors = HashSet<DeclarationDescriptor>()
 
         descriptors.addIfNotNull(topLevelDescriptorProvider.getPackageFragment(fqName))
-        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName, location))
+        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassifierDescriptors(fqName, location))
         return descriptors
     }
 }
