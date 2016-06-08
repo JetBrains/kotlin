@@ -1,0 +1,13 @@
+package
+
+public typealias InAlias</*0*/ T>  = In<T>
+public val test1: In<kotlin.String>
+public val test2: In<kotlin.String>
+
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>(/*0*/ x: kotlin.Any)
+    public final val x: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
