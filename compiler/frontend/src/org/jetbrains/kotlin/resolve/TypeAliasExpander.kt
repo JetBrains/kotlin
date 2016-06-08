@@ -36,10 +36,10 @@ class TypeAliasExpander(
             annotations: Annotations,
             recursionDepth: Int,
             withAbbreviatedType: Boolean
-    ): KotlinType {
+    ): SimpleType {
         val originalProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
         val expandedProjection = expandTypeProjection(originalProjection, typeAliasExpansion, null, recursionDepth)
-        val expandedType = expandedProjection.type
+        val expandedType = expandedProjection.type.asSimpleType()
 
         if (expandedType.isError) return expandedType
 
@@ -54,7 +54,7 @@ class TypeAliasExpander(
                                                                originalProjection.type.isMarkedNullable,
                                                                MemberScope.Empty)
 
-            expandedType.withAbbreviatedType(abbreviatedType)
+            expandedType.withAbbreviation(abbreviatedType)
         }
         else {
             expandedType
@@ -111,7 +111,7 @@ class TypeAliasExpander(
             typeAliasExpansion: TypeAliasExpansion,
             recursionDepth: Int
     ): TypeProjection {
-        val type = originalProjection.type
+        val type = originalProjection.type.asSimpleType()
 
         if (type.isError || !type.requiresTypeAliasExpansion()) {
             return originalProjection
@@ -141,7 +141,7 @@ class TypeAliasExpander(
                 val expandedType = expandRecursively(nestedExpansion, type.annotations, recursionDepth + 1, false)
 
                 // 'dynamic' type can't be abbreviated - will be reported separately
-                val typeWithAbbreviation = if (expandedType.isDynamic()) expandedType else expandedType.withAbbreviatedType(type)
+                val typeWithAbbreviation = if (expandedType.isDynamic()) expandedType else expandedType.withAbbreviation(type)
 
                 return TypeProjectionImpl(originalProjection.projectionKind, typeWithAbbreviation)
             }
