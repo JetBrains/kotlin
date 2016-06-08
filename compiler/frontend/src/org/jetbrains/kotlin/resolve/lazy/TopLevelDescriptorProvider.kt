@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
-    fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor>
+    fun getTopLevelClassifierDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassifierDescriptor>
 }
 
 object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
@@ -34,7 +34,7 @@ object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
         shouldNotBeCalled()
     }
 
-    override fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor> {
+    override fun getTopLevelClassifierDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassifierDescriptor> {
         shouldNotBeCalled()
     }
 }

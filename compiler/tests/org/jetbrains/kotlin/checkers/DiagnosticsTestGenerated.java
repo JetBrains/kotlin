@@ -13890,6 +13890,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("TypeAliasVsClass.kt")
+            public void testTypeAliasVsClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/TypeAliasVsClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeParameterWithTwoBounds.kt")
             public void testTypeParameterWithTwoBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/typeParameterWithTwoBounds.kt");
