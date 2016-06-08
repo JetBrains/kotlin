@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.reference.SoftReference
 import org.jetbrains.kotlin.name.FqName
@@ -86,6 +87,21 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
 
     override fun isInQualifiedNew(): Boolean {
         return false
+    }
+
+    override fun getName(): String? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        val aClass = other as KtLightClassForAnonymousDeclaration
+
+        return classOrObject == aClass.classOrObject
+    }
+
+    override fun hashCode(): Int {
+        return classOrObject.hashCode()
     }
 
     companion object {
