@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
+import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.utils.SmartList;
 import org.jetbrains.kotlin.utils.SmartSet;
@@ -520,7 +520,7 @@ public class MethodInliner {
     @NotNull
     private Frame<SourceValue>[] analyzeMethodNodeBeforeInline(@NotNull MethodNode node) {
         try {
-            new MandatoryMethodTransformer().transform("fake", node);
+            new FixStackWithLabelNormalizationMethodTransformer().transform("fake", node);
         }
         catch (Throwable e) {
             throw wrapException(e, node, "couldn't inline method call");

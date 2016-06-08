@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
@@ -74,7 +74,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         // Spill stack to variables before suspension points, try/catch blocks
-        MandatoryMethodTransformer().transform("fake", methodNode)
+        FixStackWithLabelNormalizationMethodTransformer().transform("fake", methodNode)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
