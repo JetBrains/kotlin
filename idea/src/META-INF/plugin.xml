@@ -7,6 +7,8 @@
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
   <idea-version since-build="143.379.11" until-build="162.*"/>
+  
+  <depends>com.intellij.modules.java</depends>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
