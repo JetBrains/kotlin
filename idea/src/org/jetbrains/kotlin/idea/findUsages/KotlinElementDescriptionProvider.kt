@@ -24,7 +24,9 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
+import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.usageView.UsageViewTypeLocation
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -36,7 +38,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
     override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
-        val targetElement = element.unwrapped
+        val targetElement = element.unwrapped ?: element
 
         fun elementKind() = when (targetElement) {
             is KtClass -> if (targetElement.isInterface()) "interface" else "class"
@@ -48,6 +50,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtParameter -> "parameter"
             is KtDestructuringDeclarationEntry -> "variable"
             is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> "property"
+            is KtLightClassForFacade -> "facade class"
             else -> null
         }
 
@@ -62,7 +65,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         if (targetElement !is PsiNamedElement || targetElement.language != KotlinLanguage.INSTANCE) return null
         return when(location) {
             is UsageViewTypeLocation -> elementKind()
-            is UsageViewLongNameLocation -> targetElement.getName()
+            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> targetElement.getName()
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null
