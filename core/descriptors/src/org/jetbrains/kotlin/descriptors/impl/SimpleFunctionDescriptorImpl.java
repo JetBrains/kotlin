@@ -99,14 +99,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             Kind kind,
             boolean copyOverrides
     ) {
-        //noinspection ConstantConditions
-        return newCopyBuilder()
-                    .setOwner(newOwner)
-                    .setModality(modality)
-                    .setVisibility(visibility)
-                    .setKind(kind)
-                    .setCopyOverrides(copyOverrides)
-                    .build();
+        return (SimpleFunctionDescriptor) super.copy(newOwner, modality, visibility, kind, copyOverrides);
     }
 
     @NotNull

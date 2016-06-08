@@ -315,7 +315,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(newCopyBuilder(originalSubstitutor).setOriginal(getOriginal()));
+        return newCopyBuilder(originalSubstitutor).setOriginal(getOriginal()).build();
     }
 
     @Nullable
@@ -689,6 +689,24 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         return substitutedDescriptor;
+    }
+
+    @NotNull
+    @Override
+    public FunctionDescriptor copy(
+            DeclarationDescriptor newOwner,
+            Modality modality,
+            Visibility visibility,
+            Kind kind,
+            boolean copyOverrides
+    ) {
+        return newCopyBuilder()
+                .setOwner(newOwner)
+                .setModality(modality)
+                .setVisibility(visibility)
+                .setKind(kind)
+                .setCopyOverrides(copyOverrides)
+                .build();
     }
 
     @NotNull
