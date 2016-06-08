@@ -662,7 +662,7 @@
         </jar>
     </target>
 
-    <target name="kotlin-build-common-test" depends="kotlin-build-common,kotlin-test">
+    <target name="kotlin-build-common-test">
         <cleandir dir="${output}/classes/kotlin-build-common-test"/>
 
         <javac2 destdir="${output}/classes/kotlin-build-common-test" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
