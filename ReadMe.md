@@ -115,8 +115,8 @@ A nice gentle way to contribute would be to review the [standard library docs](h
 and find classes or functions which are not documented very well and submit a patch.
 
 In particular it'd be great if all functions included a nice example of how to use it such as for the
-<a href="http://kotlinlang.org/api/latest/jvm/stdlib/kotlin/hash-map-of.html">hashMapOf()</a> function.
-This is implemented using the <a href=https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/collections/Maps.kt#L53">@sample</a>
+[`hashMapOf()`](http://kotlinlang.org/api/latest/jvm/stdlib/kotlin/hash-map-of.html) function.
+This is implemented using the [`@sample`](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/collections/Maps.kt#L64)
 macro to include code from a test function. The benefits of this approach are twofold; First, the API's documentation is improved via beneficial examples that help new users and second, the code coverage is increased.
 
 Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
