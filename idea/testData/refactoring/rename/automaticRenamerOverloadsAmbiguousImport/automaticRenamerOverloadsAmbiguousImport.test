@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "lib/lib.kt",
+  "newName": "bar",
+  "withRuntime": "true",
+  "overloadRenamer.onlyPrimaryElement": "true"
+}

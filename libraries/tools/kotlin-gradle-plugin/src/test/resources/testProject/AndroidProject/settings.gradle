@@ -1,1 +1,1 @@
-include ':Android', ':Lib'
+include ':Android', ':Lib', ':Test'

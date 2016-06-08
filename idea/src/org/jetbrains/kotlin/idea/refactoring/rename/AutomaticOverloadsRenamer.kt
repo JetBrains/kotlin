@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,40 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : AutomaticRenamer() {
+    companion object {
+        @get:TestOnly
+        @set:TestOnly
+        internal var PsiElement.elementFilter: ((PsiElement) -> Boolean)? by UserDataProperty(Key.create("ELEMENT_FILTER"))
+    }
+
     init {
-        myElements.addAll(function.getOverloads().filter { it != function })
+        val filter = function.elementFilter
+        function.getOverloads().mapNotNullTo(myElements) {
+            val candidate = it.source.getPsi() as? KtNamedFunction ?: return@mapNotNullTo null
+            if (filter != null && !filter(candidate)) return@mapNotNullTo null
+            if (candidate != function) candidate else null
+        }
         suggestAllNames(function.name, newName)
     }
 
@@ -41,30 +59,26 @@ class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : Au
     override fun isSelectedByDefault(): Boolean = true
 }
 
-private fun KtNamedFunction.getOverloads(): Collection<KtNamedFunction> {
-    val parent = parent
-    when (parent) {
-        is KtFile -> {
-            val module = ModuleUtilCore.findModuleForPsiElement(this)
-            if (module != null) {
-                val searchScope = GlobalSearchScope.moduleScope(module)
-                val fqName = fqName
-                if (fqName != null) {
-                    return KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName.asString(), project, searchScope)
-                }
-            }
-        }
-        is KtClassBody -> {
-            return parent.declarations.filterIsInstance<KtNamedFunction>().filter { it.name == this.name }
-        }
-    }
-    return emptyList()
+private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
+    val name = nameAsName ?: return emptyList()
+    val resolutionFacade = getResolutionFacade()
+    val descriptor = resolutionFacade.resolveToDescriptor(this) as CallableDescriptor
+    val context = resolutionFacade.analyze(this, BodyResolveMode.FULL)
+    val scope = getResolutionScope(context, resolutionFacade)
+    val extensionReceiverClass = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor
+
+    val overloadsFromFunctionScope = scope.getAllAccessibleFunctions(name)
+    if (extensionReceiverClass == null) return overloadsFromFunctionScope
+
+    val overloadsFromExtensionReceiver = extensionReceiverClass.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+    return overloadsFromFunctionScope + overloadsFromExtensionReceiver
 }
 
 class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {
-        return element is KtNamedFunction && element.name != null
-               && (element.parent is KtFile || element.parent is KtClassBody)
+        if (element !is KtNamedFunction) return false
+        if (element.isLocal) return false
+        return element.getOverloads().size > 1
     }
 
     override fun getOptionName() = RefactoringBundle.message("rename.overloads")

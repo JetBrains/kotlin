@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.AbstractCliTest;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -279,7 +280,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         result.throwIfError();
 
         BindingContext bindingContext = result.getBindingContext();
-        AnalyzerWithCompilerReport.Companion.reportDiagnostics(bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        AnalyzerWithCompilerReport.Companion.reportDiagnostics(
+                bindingContext.getDiagnostics(),
+                new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        );
 
         assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
     }

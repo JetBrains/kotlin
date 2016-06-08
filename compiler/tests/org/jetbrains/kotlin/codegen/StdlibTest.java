@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import junit.textui.TestRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -58,7 +59,10 @@ public class StdlibTest extends KotlinTestWithEnvironment {
         JvmContentRootsKt.addJvmClasspathRoot(configuration, junitJar);
 
         ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        configuration.put(
+                CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+                new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        );
 
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }

@@ -17,7 +17,7 @@ class C(private val b: A.B) {
         A.O.Y()
         A.O.foo(A.O.bar)
 
-        with (A.O) {
+        with(A.O) {
             A.Companion.Y()
             foo(bar)
             1.extFoo(1.extBar)

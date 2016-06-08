@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,13 +189,36 @@ public class ConfigLibraryUtil {
         addLibrary(editor, module);
     }
 
-    public static void configureLibrariesByDirective(@NotNull Module module, String rootPath, String fileText) {
-        for (String libraryInfo : InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
+    public static void configureLibraries(@NotNull Module module, String rootPath, List<String> libraryInfos) {
+        for (String libraryInfo : libraryInfos) {
             int i = libraryInfo.indexOf('@');
             String libraryName = libraryInfo.substring(0, i);
             String[] jarPaths = libraryInfo.substring(i + 1).split(";");
             addLibrary(module, libraryName, rootPath, jarPaths);
         }
+    }
+
+    public static void unconfigureLibrariesByName(@NotNull Module module, List<String> libraryNames) {
+        for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext(); ) {
+            String libraryName = iterator.next();
+            if (removeLibrary(module, libraryName)) {
+                iterator.remove();
+            }
+        }
+
+        if (!libraryNames.isEmpty()) throw new AssertionError("Couldn't find the following libraries: " + libraryNames);
+    }
+
+    public static void unconfigureLibrariesByInfo(@NotNull Module module, List<String> libraryInfos) {
+        List<String> libraryNames = new ArrayList<String>();
+        for (String libraryInfo : libraryInfos) {
+            libraryNames.add(libraryInfo.substring(0, libraryInfo.indexOf('@')));
+        }
+        unconfigureLibrariesByName(module, libraryNames);
+    }
+
+    public static void configureLibrariesByDirective(@NotNull Module module, String rootPath, String fileText) {
+        configureLibraries(module, rootPath, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "));
     }
 
     public static void unconfigureLibrariesByDirective(@NotNull Module module, String fileText) {
@@ -207,13 +230,6 @@ public class ConfigLibraryUtil {
             libraryNames.add(libraryName);
         }
 
-        for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext(); ) {
-            String libraryName = iterator.next();
-            if (removeLibrary(module, libraryName)) {
-                iterator.remove();
-            }
-        }
-
-        if (!libraryNames.isEmpty()) throw new AssertionError("Couldn't find the following libraries: " + libraryNames);
+        unconfigureLibrariesByName(module, libraryNames);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class ScriptTest {
             @NotNull KotlinScriptDefinition scriptDefinition
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
-        MessageCollector messageCollector = PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR;
+        MessageCollector messageCollector = new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false);
 
         Disposable rootDisposable = Disposer.newDisposable();
         try {

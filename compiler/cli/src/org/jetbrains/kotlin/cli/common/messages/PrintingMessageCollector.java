@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.PrintStream;
 
 public class PrintingMessageCollector implements MessageCollector {
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR =
-            new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false);
-
     private final boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;

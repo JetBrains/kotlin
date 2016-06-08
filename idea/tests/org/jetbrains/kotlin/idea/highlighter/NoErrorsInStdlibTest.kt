@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
@@ -28,8 +29,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testNoErrors() {
@@ -51,7 +50,7 @@ class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
                     if (errors.isNotEmpty()) {
                         System.err.println("${psiFile.getName()}: ${errors.size} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext.diagnostics, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR
+                                bindingContext.diagnostics, PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
                         )
 
                         totalErrors += errors.size
