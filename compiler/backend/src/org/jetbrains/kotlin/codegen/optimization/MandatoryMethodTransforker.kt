@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransfor
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class MandatoryMethodTransformer : MethodTransformer() {
+class FixStackWithLabelNormalizationMethodTransformer : MethodTransformer() {
     private val labelNormalization = LabelNormalizationMethodTransformer()
     private val fixStack = FixStackMethodTransformer()
 

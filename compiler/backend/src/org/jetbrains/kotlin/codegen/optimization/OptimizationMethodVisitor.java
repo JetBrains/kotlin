@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 public class OptimizationMethodVisitor extends TransformationMethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
 
-    private static final MethodTransformer MANDATORY_METHOD_TRANSFORMER = new MandatoryMethodTransformer();
+    private static final MethodTransformer MANDATORY_METHOD_TRANSFORMER = new FixStackWithLabelNormalizationMethodTransformer();
 
     private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
             new RedundantNullCheckMethodTransformer(),
