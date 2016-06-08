@@ -1576,6 +1576,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ifElseSwallowTail.kt")
+                public void testIfElseSwallowTail() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowTail.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifWithEqualityTests.kt")
                 public void testIfWithEqualityTests() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithEqualityTests.kt");
