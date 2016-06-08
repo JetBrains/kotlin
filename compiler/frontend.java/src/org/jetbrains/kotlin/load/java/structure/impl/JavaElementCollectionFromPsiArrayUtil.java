@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,9 @@ public class JavaElementCollectionFromPsiArrayUtil {
     @NotNull
     private static <Psi, Java> List<Java> convert(@NotNull Iterable<Psi> elements, @NotNull final Factory<Psi, Java> factory) {
         if (!elements.iterator().hasNext()) return Collections.emptyList();
-        return CollectionsKt.map(elements, new Function1<Psi, Java>() {
+
+        // we apply distinct here, because sometimes PsiClass#getMethods() and others can give us duplicate psi methods. see KT-11778.
+        return CollectionsKt.map(CollectionsKt.distinct(elements), new Function1<Psi, Java>() {
             @Override
             public Java invoke(Psi psi) {
                 return factory.create(psi);
