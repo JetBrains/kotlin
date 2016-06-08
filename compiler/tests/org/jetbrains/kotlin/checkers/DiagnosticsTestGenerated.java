@@ -19425,6 +19425,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("boundViolationInTypeAliasConstructor.kt")
+            public void testBoundViolationInTypeAliasConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/boundViolationInTypeAliasConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("boundsViolationInDeepTypeAliasExpansion.kt")
             public void testBoundsViolationInDeepTypeAliasExpansion() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/boundsViolationInDeepTypeAliasExpansion.kt");
