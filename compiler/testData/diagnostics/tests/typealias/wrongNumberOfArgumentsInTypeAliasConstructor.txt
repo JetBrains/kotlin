@@ -1,0 +1,27 @@
+package
+
+public typealias P</*0*/ T1, /*1*/ T2>  = Pair<T1, T2>
+public typealias P2</*0*/ T>  = Pair<T, T>
+public typealias PR</*0*/ T1, /*1*/ T2>  = Pair<T2, T1>
+public val test0: Pair<kotlin.Int, kotlin.Int>
+public val test0p2: Pair<kotlin.Int, kotlin.Int>
+public val test0pr: Pair<kotlin.Int, kotlin.String>
+public val test1: Pair<kotlin.Int, [ERROR : Explicit type argument expected for T2]>
+public val test1p2: Pair<kotlin.Int, kotlin.Int>
+public val test1pr: Pair<[ERROR : Explicit type argument expected for T2], kotlin.Int>
+public val test2: Pair<kotlin.Int, kotlin.Int>
+public val test2p2: Pair<kotlin.Int, kotlin.Int>
+public val test2pr: Pair<kotlin.String, kotlin.Int>
+public val test2pra: Pair<kotlin.Int, kotlin.String>
+public val test3: Pair<kotlin.Int, kotlin.Int>
+public val test3p2: Pair<kotlin.Int, kotlin.Int>
+public val test3pr: Pair<kotlin.String, kotlin.String>
+
+public final class Pair</*0*/ T1, /*1*/ T2> {
+    public constructor Pair</*0*/ T1, /*1*/ T2>(/*0*/ x1: T1, /*1*/ x2: T2)
+    public final val x1: T1
+    public final val x2: T2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

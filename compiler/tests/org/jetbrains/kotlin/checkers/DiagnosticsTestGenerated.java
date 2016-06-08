@@ -19580,6 +19580,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/unsupportedTypeAlias.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("wrongNumberOfArgumentsInTypeAliasConstructor.kt")
+            public void testWrongNumberOfArgumentsInTypeAliasConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/wrongNumberOfArgumentsInTypeAliasConstructor.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/unit")
