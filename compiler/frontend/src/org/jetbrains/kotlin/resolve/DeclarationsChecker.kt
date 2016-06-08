@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -151,6 +152,8 @@ class DeclarationsChecker(
     private fun checkTypeAliasDeclaration(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
         val typeReference = declaration.getTypeReference() ?: return
 
+        checkTypeAliasExpansion(typeAliasDescriptor, declaration)
+
         val expandedType = typeAliasDescriptor.expandedType // TODO refactor type alias expansion
         if (expandedType.isError) return
 
@@ -159,6 +162,40 @@ class DeclarationsChecker(
         if (expandedType.isDynamic() || expandedClassifier is TypeParameterDescriptor) {
             trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, expandedType))
         }
+    }
+
+    private class TypeAliasDeclarationCheckingReportStrategy(
+            private val trace: BindingTrace,
+            typeAliasDescriptor: TypeAliasDescriptor,
+            declaration: KtTypeAlias
+    ) : TypeAliasExpansionReportStrategy {
+        private val typeReference = declaration.getTypeReference()
+                                    ?: throw AssertionError("Incorrect type alias declaration for $typeAliasDescriptor")
+
+        override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {
+            // Do nothing: this should've been reported during type resolution.
+        }
+
+        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, substitutedArgument: KotlinType) {
+            trace.report(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION.on(typeReference, substitutedArgument))
+        }
+
+        override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {
+            trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(typeReference, typeAlias))
+        }
+
+        override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
+            // TODO more precise diagnostics
+            if (!argument.dependsOnTypeAliasParameters() && !bound.dependsOnTypeAliasParameters()) {
+                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(typeReference, bound, argument, typeParameter))
+            }
+        }
+    }
+
+    private fun checkTypeAliasExpansion(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
+        val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
+        val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration)
+        TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
