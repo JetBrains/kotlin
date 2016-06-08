@@ -8,6 +8,8 @@
 
   <idea-version since-build="145.257" until-build="163.*"/>
 
+  <depends>com.intellij.modules.java</depends>
+
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
