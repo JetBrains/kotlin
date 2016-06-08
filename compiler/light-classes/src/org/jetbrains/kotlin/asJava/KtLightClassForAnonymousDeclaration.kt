@@ -14,99 +14,84 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.reference.SoftReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.reference.SoftReference
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 
-import java.util.Collection;
+internal open class KtLightClassForAnonymousDeclaration(name: FqName, classOrObject: KtClassOrObject) : KtLightClassForExplicitDeclaration(name, classOrObject), PsiAnonymousClass {
 
-class KtLightClassForAnonymousDeclaration extends KtLightClassForExplicitDeclaration implements PsiAnonymousClass {
-    private static final Logger LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration.class);
+    private var cachedBaseType: SoftReference<PsiClassType>? = null
 
-    private SoftReference<PsiClassType> cachedBaseType = null;
-
-    KtLightClassForAnonymousDeclaration(@NotNull FqName name, @NotNull KtClassOrObject classOrObject) {
-        super(name, classOrObject);
+    override fun getBaseClassReference(): PsiJavaCodeReferenceElement {
+        return JavaPsiFacade.getElementFactory(classOrObject.project).createReferenceElementByType(baseClassType)
     }
 
-    @NotNull
-    @Override
-    public PsiJavaCodeReferenceElement getBaseClassReference() {
-        return JavaPsiFacade.getElementFactory(getClassOrObject().getProject()).createReferenceElementByType(getBaseClassType());
+    override fun getContainingClass(): PsiClass? {
+        return delegate.containingClass
     }
 
-    @Nullable
-    @Override
-    public PsiClass getContainingClass() {
-        return getDelegate().getContainingClass();
-    }
+    private // return java.lang.Object for recovery
+    val firstSupertypeFQName: String
+        get() {
+            val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
 
-    @NotNull
-    private String getFirstSupertypeFQName() {
-        ClassDescriptor descriptor = getDescriptor();
-        if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
+            val superTypes = descriptor.typeConstructor.supertypes
 
-        Collection<KotlinType> superTypes = descriptor.getTypeConstructor().getSupertypes();
+            if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT
 
-        if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
+            val superType = superTypes.iterator().next()
+            val superClassDescriptor = superType.constructor.declarationDescriptor
 
-        KotlinType superType = superTypes.iterator().next();
-        DeclarationDescriptor superClassDescriptor = superType.getConstructor().getDeclarationDescriptor();
+            if (superClassDescriptor == null) {
+                LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor())
+                return CommonClassNames.JAVA_LANG_OBJECT
+            }
 
-        if (superClassDescriptor == null) {
-            LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor());
-            // return java.lang.Object for recovery
-            return CommonClassNames.JAVA_LANG_OBJECT;
+            return DescriptorUtils.getFqName(superClassDescriptor).asString()
         }
 
-        return DescriptorUtils.getFqName(superClassDescriptor).asString();
-    }
+    @Synchronized override fun getBaseClassType(): PsiClassType {
+        var type: PsiClassType? = null
+        if (cachedBaseType != null) type = cachedBaseType!!.get()
+        if (type != null && type.isValid) return type
 
-    @NotNull
-    @Override
-    public synchronized PsiClassType getBaseClassType() {
-        PsiClassType type = null;
-        if (cachedBaseType != null) type = cachedBaseType.get();
-        if (type != null && type.isValid()) return type;
-
-        String firstSupertypeFQName = getFirstSupertypeFQName();
-        for (PsiClassType superType : getSuperTypes()) {
-            PsiClass superClass = superType.resolve();
-            if (superClass != null && firstSupertypeFQName.equals(superClass.getQualifiedName())) {
-                type = superType;
-                break;
+        val firstSupertypeFQName = firstSupertypeFQName
+        for (superType in superTypes) {
+            val superClass = superType.resolve()
+            if (superClass != null && firstSupertypeFQName == superClass.qualifiedName) {
+                type = superType
+                break
             }
         }
 
         if (type == null) {
-            Project project = getClassOrObject().getProject();
-            type = PsiType.getJavaLangObject(PsiManager.getInstance(project), GlobalSearchScope.allScope(project));
+            val project = classOrObject.project
+            type = PsiType.getJavaLangObject(PsiManager.getInstance(project), GlobalSearchScope.allScope(project))
         }
 
-        cachedBaseType = new SoftReference<PsiClassType>(type);
-        return type;
+        cachedBaseType = SoftReference<PsiClassType>(type)
+        return type
     }
 
-    @Nullable
-    @Override
-    public PsiExpressionList getArgumentList() {
-        return null;
+    override fun getArgumentList(): PsiExpressionList? {
+        return null
     }
 
-    @Override
-    public boolean isInQualifiedNew() {
-        return false;
+    override fun isInQualifiedNew(): Boolean {
+        return false
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
     }
 }
