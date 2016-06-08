@@ -17,18 +17,16 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.reference.SoftReference
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
 
-internal open class KtLightClassForAnonymousDeclaration(name: FqName, classOrObject: KtClassOrObject) : KtLightClassForExplicitDeclaration(name, classOrObject), PsiAnonymousClass {
+internal open class KtLightClassForAnonymousDeclaration(name: FqName,
+                                                        classOrObject: KtClassOrObject) :
+        KtLightClassForExplicitDeclaration(name, classOrObject), PsiAnonymousClass {
 
     private var cachedBaseType: SoftReference<PsiClassType>? = null
 
@@ -40,8 +38,7 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName, classOrObj
         return delegate.containingClass
     }
 
-    private // return java.lang.Object for recovery
-    val firstSupertypeFQName: String
+    private val firstSupertypeFQName: String
         get() {
             val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
 
@@ -54,6 +51,8 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName, classOrObj
 
             if (superClassDescriptor == null) {
                 LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor())
+
+                // return java.lang.Object for recovery
                 return CommonClassNames.JAVA_LANG_OBJECT
             }
 
@@ -83,9 +82,7 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName, classOrObj
         return type
     }
 
-    override fun getArgumentList(): PsiExpressionList? {
-        return null
-    }
+    override fun getArgumentList(): PsiExpressionList? = null
 
     override fun isInQualifiedNew(): Boolean {
         return false
