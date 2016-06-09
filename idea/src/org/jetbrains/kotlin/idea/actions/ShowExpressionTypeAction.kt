@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 
 @Deprecated("Remove once we no longer support IDEA 14.1") class ShowExpressionTypeAction : AnAction() {
@@ -91,7 +92,7 @@ import org.jetbrains.kotlin.types.KotlinType
                 }
             }
 
-            return bindingContext.getType(expression)
+            return expression.getType(bindingContext)
         }
     }
 }
