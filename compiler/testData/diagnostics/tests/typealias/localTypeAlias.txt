@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+public fun </*0*/ T> foo(): kotlin.Unit
