@@ -5,6 +5,8 @@ import java.util.List
 
 public class Collections {
     public static final <T> List<T> emptyList() {
+        return null;
+    }
 }
 
 // FILE: 1.kt
