@@ -18,31 +18,24 @@ package org.jetbrains.kotlin.script
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 
 object ScriptNameUtil {
 
-    fun fileNameWithExtensionStripped(script: KtScript, extension: String): Name {
-        val file = script.getContainingKtFile()
-        return Name.identifier(generateNameByFileName(file.name, extension))
-    }
+    fun fileNameWithExtensionStripped(script: KtScript, vararg extensions: String): Name =
+            Name.identifier(generateNameByFileName(script.getContainingKtFile().name, *extensions))
 
-    fun generateNameByFileName(fileName: String, extension: String): String {
-        var fileName = fileName
-        var index = fileName.lastIndexOf('/')
-        if (index != -1) {
-            fileName = fileName.substring(index + 1)
-        }
-        if (fileName.endsWith(extension)) {
-            fileName = fileName.substring(0, fileName.length - extension.length)
-        }
-        else {
-            index = fileName.indexOf('.')
-            if (index != -1) {
-                fileName = fileName.substring(0, index)
-            }
-        }
-        fileName = Character.toUpperCase(fileName[0]) + if (fileName.length == 0) "" else fileName.substring(1)
-        fileName = fileName.replace('.', '_')
+    fun generateNameByFileName(fileName: String, vararg extensions: String): String {
+        val nameStart = fileName.lastIndexOf('/').let { if (it < 0) 0 else it + 1 }
+        val nameEnd = extensions.asSequence()
+                .map { if (it.startsWith('.')) it else ".$it" }
+                .firstOrNull { fileName.endsWith(it) }
+                ?.let { fileName.length - it.length }
+                ?: fileName.lastIndexOf('.')?.let { if (it < 0) fileName.length else it }
+                ?: fileName.length
         return fileName
+                .substring(nameStart, nameEnd)
+                .replace('.', '_')
+                .capitalize()
     }
 }
