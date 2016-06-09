@@ -20,8 +20,6 @@ import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes
-import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
