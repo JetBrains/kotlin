@@ -129,7 +129,7 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
     }
 
     private fun stopZipFileCache() {
-        callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
+        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
         log.kotlinDebug("ZipFileCache finished successfully")
     }
 
@@ -148,7 +148,7 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
 
     private fun cleanJarCache() {
         log.kotlinDebug("Clean JAR cache")
-        callVoidStaticMethod("com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
         log.kotlinDebug("JAR cache cleared")
     }
 }
