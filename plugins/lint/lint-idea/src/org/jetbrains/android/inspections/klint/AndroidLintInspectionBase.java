@@ -16,6 +16,7 @@ import com.intellij.lang.annotation.ProblemGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -156,6 +157,8 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   private ProblemDescriptor[] computeProblemDescriptors(@NotNull PsiElement psiFile,
                                                         @NotNull InspectionManager manager,
                                                         @NotNull List<ProblemData> problems) {
+    ProgressManager.checkCanceled();
+
     final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
 
     for (ProblemData problemData : problems) {

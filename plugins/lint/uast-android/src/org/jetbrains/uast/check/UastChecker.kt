@@ -19,6 +19,8 @@ import com.android.tools.klint.detector.api.Issue
 import com.android.tools.klint.detector.api.JavaContext
 import com.android.tools.klint.detector.api.Location
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaFile
@@ -41,12 +43,18 @@ interface UastAndroidContext : UastContext {
 
 object UastChecker {
     fun check(project: Project, file: File, context: UastAndroidContext, visitor: UastVisitor) {
+        ProgressManager.checkCanceled()
+
         val vfile = VirtualFileManager.getInstance().findFileByUrl("file://" + file.absolutePath) ?: return
 
         val plugins = context.languagePlugins
         val extendableVisitor = UastExtendableVisitor(visitor, context, plugins.flatMap { it.visitorExtensions })
 
-        ApplicationManager.getApplication().runReadAction {
+        val instance = DumbService.getInstance(project)
+        // Do not check anything in dumb mode
+        if (instance.isDumb) return
+
+        instance.runReadActionInSmartMode {
             val psiFile = PsiManager.getInstance(project).findFile(vfile)
 
             if (psiFile != null) {
@@ -78,6 +86,7 @@ object UastChecker {
             override fun visitCallExpression(node: UCallExpression): Boolean {
                 if (applicableFunctionNames.isNotEmpty()) {
                     if (node.kind == FUNCTION_CALL && node.functionName in applicableFunctionNames) {
+                        ProgressManager.checkCanceled()
                         scanner.visitCall(context, node)
                     }
                 }
@@ -86,6 +95,7 @@ object UastChecker {
                     if (node.kind == CONSTRUCTOR_CALL) {
                         node.resolve(context)?.let { constructor ->
                             if (constructor.getContainingClass()?.fqName in applicableConstructorTypes) {
+                                ProgressManager.checkCanceled()
                                 scanner.visitConstructor(context, node, constructor)
                             }
                         }
@@ -98,6 +108,7 @@ object UastChecker {
             override fun visitClass(node: UClass): Boolean {
                 if (applicableSuperClasses.isNotEmpty()) {
                     if (applicableSuperClasses.any { node.isSubclassOf(it) }) {
+                        ProgressManager.checkCanceled()
                         scanner.visitClass(context, node)
                     }
                 }
@@ -107,6 +118,8 @@ object UastChecker {
 
             override fun visitQualifiedExpression(node: UQualifiedExpression): Boolean {
                 if (appliesToResourcesRefs && node.receiver is UQualifiedExpression) {
+                    ProgressManager.checkCanceled()
+
                     val parentQualifiedExpr = node.receiver as UQualifiedExpression
                     val resourceName = node.selector
                     val resourceType = parentQualifiedExpr.selector

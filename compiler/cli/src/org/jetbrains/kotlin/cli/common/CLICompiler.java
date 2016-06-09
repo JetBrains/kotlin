@@ -45,7 +45,7 @@ import java.util.Properties;
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
-    static {
+    static private void setIdeaIoUseFallback() {
         if (SystemInfo.isWindows) {
             Properties properties = System.getProperties();
 
@@ -217,6 +217,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
                     MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
+                    setIdeaIoUseFallback();
                     ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
                     exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
                 }

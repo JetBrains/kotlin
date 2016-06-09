@@ -96,7 +96,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
         }
 
         UExpression first = node.getValueArguments().get(0);
-        UElement resolved = node.resolve(context);
+        UElement resolved = UastUtils.resolveIfCan(first, context);
         if (resolved instanceof UVariable) {
             // We're passing in a variable to the addJavaScriptInterface method;
             // the variable may be of a more generic type than the actual

@@ -675,18 +675,22 @@
             </classpath>
         </javac2>
 
-        <jar destfile="${kotlin-home}/lib/kotlin-build-common-test.jar">
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
+
+        <jarjar jarfile="${kotlin-home}/lib/kotlin-build-common-test.jar">
             <fileset dir="${output}/classes/kotlin-build-common-test"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <zipfileset src="${protobuf.jar}"/>
+            <rule pattern="com.google.**" result="org.jetbrains.kotlin.com.google.@1"/>
+            <rule pattern="com.intellij.**" result="org.jetbrains.kotlin.com.intellij.@1"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.common}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
-        </jar>
+        </jarjar>
     </target>
 
     <target name="daemon-client">
