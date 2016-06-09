@@ -44,8 +44,8 @@ class DescriptorSerializer private constructor(
         }.toByteArray()
     }
 
-    private fun createChildSerializer(callable: CallableDescriptor): DescriptorSerializer =
-            DescriptorSerializer(callable, Interner(typeParameters), extension, typeTable, serializeTypeTableToFunction = false)
+    private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
+            DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, serializeTypeTableToFunction = false)
 
     val stringTable: StringTable
         get() = extension.stringTable
@@ -277,6 +277,7 @@ class DescriptorSerializer private constructor(
 
     fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
         val builder = ProtoBuf.TypeAlias.newBuilder()
+        val local = createChildSerializer(descriptor)
 
         val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), descriptor.visibility)
         if (flags != builder.flags) {
@@ -286,23 +287,23 @@ class DescriptorSerializer private constructor(
         builder.name = getSimpleNameIndex(descriptor.name)
 
         for (typeParameterDescriptor in descriptor.declaredTypeParameters) {
-            builder.addTypeParameter(typeParameter(typeParameterDescriptor))
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor))
         }
 
         val underlyingType = descriptor.underlyingType
         if (useTypeTable()) {
-            builder.underlyingTypeId = typeId(underlyingType)
+            builder.underlyingTypeId = local.typeId(underlyingType)
         }
         else {
-            builder.setUnderlyingType(type(underlyingType))
+            builder.setUnderlyingType(local.type(underlyingType))
         }
 
         val expandedType = descriptor.expandedType
         if (useTypeTable()) {
-            builder.expandedTypeId = typeId(expandedType)
+            builder.expandedTypeId = local.typeId(expandedType)
         }
         else {
-            builder.setExpandedType(type(expandedType))
+            builder.setExpandedType(local.type(expandedType))
         }
 
         return builder

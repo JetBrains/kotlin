@@ -725,7 +725,7 @@ public class DescriptorResolver {
                     ErrorUtils.createErrorType(name.asString()));
         }
         else if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
-            typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
+            typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
             PsiElement typeAliasKeyword = typeAlias.getTypeAliasKeyword();
             trace.report(UNSUPPORTED_TYPEALIAS.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias));
             typeAliasDescriptor.initialize(
@@ -739,14 +739,13 @@ public class DescriptorResolver {
                     storageManager.createLazyValue(new Function0<SimpleType>() {
                         @Override
                         public SimpleType invoke() {
-                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
+                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
                         }
                     }),
                     storageManager.createLazyValue(new Function0<SimpleType>() {
                         @Override
                         public SimpleType invoke() {
-                            // TODO do not reparse
-                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, false);
+                            return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
                         }
                     }));
         }
