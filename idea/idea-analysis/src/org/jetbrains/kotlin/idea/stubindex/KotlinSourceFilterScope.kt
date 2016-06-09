@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
@@ -73,7 +72,8 @@ class KotlinSourceFilterScope private constructor(
                 includeProjectSourceFiles: Boolean,
                 includeLibrarySourceFiles: Boolean,
                 includeClassFiles: Boolean,
-                project: Project): GlobalSearchScope {
+                project: Project
+        ): GlobalSearchScope {
             if (delegate === GlobalSearchScope.EMPTY_SCOPE) return delegate
 
             if (delegate is KotlinSourceFilterScope) {
