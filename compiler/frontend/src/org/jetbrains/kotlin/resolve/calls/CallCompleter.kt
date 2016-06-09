@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutineBuilderCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
@@ -95,7 +94,6 @@ class CallCompleter(
             symbolUsageValidator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
 
             resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)
-            checkCoroutineBuilderCall(resolvedCall, context, languageFeatureSettings)
         }
 
         if (results.isSingleResult && results.resultingCall.status.isSuccess) {
