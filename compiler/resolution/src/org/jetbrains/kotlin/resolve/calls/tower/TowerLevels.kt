@@ -244,7 +244,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(name: Name, l
     val classifier = getContributedClassifier(name, location)
     return getContributedFunctions(name, location) +
            (getClassWithConstructors(classifier)?.constructors?.filter { it.dispatchReceiverParameter == null } ?: emptyList()) +
-           (classifier?.getTypeAliasConstructors(false) ?: emptyList())
+           (classifier?.getTypeAliasConstructors() ?: emptyList())
 }
 
 private fun ResolutionScope.getContributedVariablesAndObjects(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
@@ -274,7 +274,7 @@ private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDe
 private val ClassDescriptor.canHaveCallableConstructors: Boolean
     get() = !ErrorUtils.isError(this) && !kind.isSingleton
 
-private fun ClassifierDescriptor.getTypeAliasConstructors(inner: Boolean): Collection<ConstructorDescriptor> {
+fun ClassifierDescriptor.getTypeAliasConstructors(): Collection<ConstructorDescriptor> {
     if (this !is TypeAliasDescriptor) return emptyList()
 
     val classDescriptor = this.classDescriptor ?: return emptyList()
@@ -282,10 +282,11 @@ private fun ClassifierDescriptor.getTypeAliasConstructors(inner: Boolean): Colle
 
     val substitutor = this.getTypeSubstitutorForUnderlyingClass() ?: throw AssertionError("classDescriptor should be non-null for $this")
 
-    return classDescriptor.constructors.filter {
-        if (inner) it.dispatchReceiverParameter != null else it.dispatchReceiverParameter == null
-    }.mapNotNull {
-        TypeAliasConstructorDescriptorImpl.create(this, it, substitutor)
+    return classDescriptor.constructors.mapNotNull {
+        if (it.dispatchReceiverParameter == null)
+            TypeAliasConstructorDescriptorImpl.create(this, it, substitutor)
+        else
+            null
     }
 }
 

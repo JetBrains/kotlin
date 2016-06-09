@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -99,14 +100,25 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
         val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
 
-        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values + c.declaredClasses.values, overloadFilter) {
+        collectModulePackageMembersWithSameName(
+                packageMembersByName,
+                c.functions.values + c.declaredClasses.values + c.typeAliases.values,
+                overloadFilter
+        ) {
             scope, name ->
             val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
             val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-            if (classifier is ClassDescriptor && !classifier.kind.isSingleton)
-                functions + classifier.constructors
-            else
-                functions
+            when (classifier) {
+                is ClassDescriptor ->
+                    if (!classifier.kind.isSingleton)
+                        functions + classifier.constructors
+                    else
+                        functions
+                is TypeAliasDescriptor ->
+                    functions + classifier.getTypeAliasConstructors()
+                else ->
+                    functions
+            }
         }
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
