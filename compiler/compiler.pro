@@ -154,3 +154,6 @@ messages/**)
     *** SKIP_DEBUG;
     *** SKIP_FRAMES;
 }
+
+# for kotlin-android-extensions in maven
+-keep class com.intellij.openapi.module.ModuleServiceManager { public *; }

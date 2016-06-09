@@ -8,7 +8,7 @@
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.4</maven.version>
         <surefire-version>2.16</surefire-version>
-        <kotlin.relocated.package>org.jetbrains.kotlin.relocated</kotlin.relocated.package>
+        <kotlin.relocated.package>org.jetbrains.kotlin</kotlin.relocated.package>
     </properties>
 
     <parent>
@@ -141,11 +141,12 @@
                             </filters>
                             <relocations>
                                 <relocation>
+                                    <pattern>com.intellij</pattern>
+                                    <shadedPattern>${kotlin.relocated.package}.com.intellij</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.google</pattern>
                                     <shadedPattern>${kotlin.relocated.package}.com.google</shadedPattern>
-                                    <excludes>
-                                        <exclude>com.google.protobuf.*</exclude>
-                                    </excludes>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.sampullara</pattern>
