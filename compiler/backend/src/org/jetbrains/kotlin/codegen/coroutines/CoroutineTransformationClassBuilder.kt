@@ -67,11 +67,15 @@ class CoroutineTransformerMethodVisitor(
         methodNode.visibleAnnotations.removeAll { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC }
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
-        if (suspensionPoints.isEmpty()) return
 
         for (suspensionPoint in suspensionPoints) {
             splitTryCatchBlocksContainingSuspensionPoint(methodNode, suspensionPoint)
         }
+
+        // Add global exception handler
+        processHandleExceptionCall(methodNode)
+
+        if (suspensionPoints.isEmpty()) return
 
         // Spill stack to variables before suspension points, try/catch blocks
         FixStackWithLabelNormalizationMethodTransformer().transform("fake", methodNode)
@@ -120,7 +124,7 @@ class CoroutineTransformerMethodVisitor(
         val suspensionPoints = mutableListOf<SuspensionPoint>()
 
         for (methodInsn in methodNode.instructions.asSequence().filterIsInstance<MethodInsnNode>()) {
-            if (methodInsn.owner != SUSPENSION_POINT_MARKER_OWNER) continue
+            if (methodInsn.owner != COROUTINE_MARKER_OWNER) continue
 
             when (methodInsn.name) {
                 SUSPENSION_POINT_MARKER_NAME -> {
@@ -130,8 +134,6 @@ class CoroutineTransformerMethodVisitor(
 
                     suspensionPoints.add(SuspensionPoint(methodInsn.next as MethodInsnNode))
                 }
-
-                else -> error("Unexpected suspension point marker kind '${methodInsn.name}'")
             }
         }
 
@@ -317,6 +319,37 @@ class CoroutineTransformerMethodVisitor(
 
         return
     }
+
+    private fun processHandleExceptionCall(methodNode: MethodNode) {
+        val instructions = methodNode.instructions
+        val marker = instructions.toArray().firstOrNull() { it.isHandleExceptionMarker() } ?: return
+
+        assert(instructions.toArray().count { it.isHandleExceptionMarker() } == 1) {
+            "Found more than one handleException markers"
+        }
+
+        val startLabel = LabelNode()
+        val endLabel = LabelNode()
+        instructions.insertBefore(instructions.first, startLabel)
+        instructions.set(marker, endLabel)
+
+        // NOP is necessary to preserve common invariant: first insn of TCB is always NOP
+        instructions.insert(startLabel, InsnNode(Opcodes.NOP))
+        // ASTORE is needed by the same reason
+        val maxVar = methodNode.maxLocals++
+        instructions.insert(endLabel, VarInsnNode(Opcodes.ASTORE, maxVar))
+
+        val exceptionArgument = instructions.toArray().single { it.isHandleExceptionMarkerArgument() }
+        instructions.set(exceptionArgument, VarInsnNode(Opcodes.ALOAD, maxVar))
+
+        methodNode.tryCatchBlocks.add(TryCatchBlockNode(startLabel, endLabel, endLabel, AsmTypes.JAVA_THROWABLE_TYPE.internalName))
+    }
+
+    private fun AbstractInsnNode.isHandleExceptionMarker() =
+            this is MethodInsnNode && this.owner == COROUTINE_MARKER_OWNER && this.name == HANDLE_EXCEPTION_MARKER_NAME
+
+    private fun AbstractInsnNode.isHandleExceptionMarkerArgument() =
+            this is MethodInsnNode && this.owner == COROUTINE_MARKER_OWNER && this.name == HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index
