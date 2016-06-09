@@ -360,6 +360,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return visitClassOrObject(klass);
     }
 
+    @Override
+    public StackValue visitTypeAlias(@NotNull KtTypeAlias typeAlias, StackValue data) {
+        return StackValue.none();
+    }
+
     private StackValue visitClassOrObject(KtClassOrObject declaration) {
         ClassDescriptor descriptor = bindingContext.get(CLASS, declaration);
         assert descriptor != null;
