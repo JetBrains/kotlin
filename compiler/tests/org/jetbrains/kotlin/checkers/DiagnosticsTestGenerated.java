@@ -19539,6 +19539,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localTypeAliasConstructor.kt")
+            public void testLocalTypeAliasConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/localTypeAliasConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/nested.kt");
