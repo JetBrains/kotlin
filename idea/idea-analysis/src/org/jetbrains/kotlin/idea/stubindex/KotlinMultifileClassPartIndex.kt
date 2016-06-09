@@ -28,7 +28,7 @@ class KotlinMultifileClassPartIndex private constructor() : StringStubIndexExten
     override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
-            StubIndex.getElements(KEY, key, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtFile::class.java)
+            StubIndex.getElements(KEY, key, project, scope, KtFile::class.java)
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinMultifileClassPartIndex::class.java)
