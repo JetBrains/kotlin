@@ -131,8 +131,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
     private static <Psi, Java> List<Java> convert(@NotNull Iterable<Psi> elements, @NotNull final Factory<Psi, Java> factory) {
         if (!elements.iterator().hasNext()) return Collections.emptyList();
 
-        // we apply distinct here, because sometimes PsiClass#getMethods() and others can give us duplicate psi methods. see KT-11778.
-        return CollectionsKt.map(CollectionsKt.distinct(elements), new Function1<Psi, Java>() {
+        return CollectionsKt.map(elements, new Function1<Psi, Java>() {
             @Override
             public Java invoke(Psi psi) {
                 return factory.create(psi);
