@@ -57,9 +57,8 @@ object OperatorModifierChecker {
 
         val checkResult = OperatorChecks.checkOperator(functionDescriptor)
         if (checkResult.isSuccess) {
-            if (functionDescriptor.name == OperatorNameConventions.COROUTINE_HANDLE_RESULT
-                    && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)
-            ) {
+            if (functionDescriptor.name in COROUTINE_OPERATOR_NAMES
+                    && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)) {
                 diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.Coroutines))
             }
             return
@@ -73,3 +72,6 @@ object OperatorModifierChecker {
         diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
     }
 }
+
+private val COROUTINE_OPERATOR_NAMES =
+        setOf(OperatorNameConventions.COROUTINE_HANDLE_RESULT, OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION)
