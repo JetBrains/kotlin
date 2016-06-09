@@ -19509,6 +19509,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("illegalTypeInTypeAliasExpansion.kt")
+            public void testIllegalTypeInTypeAliasExpansion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/illegalTypeInTypeAliasExpansion.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("import.kt")
             public void testImport() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/import.kt");
