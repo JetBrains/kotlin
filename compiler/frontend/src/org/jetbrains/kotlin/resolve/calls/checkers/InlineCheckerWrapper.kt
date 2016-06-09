@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
 
-class InlineCheckerWrapper : CallChecker {
-    private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
+class InlineCheckerWrapper : SimpleCallChecker {
+    private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, SimpleCallChecker>>? = null
 
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext) return
@@ -41,7 +41,7 @@ class InlineCheckerWrapper : CallChecker {
         }
     }
 
-    private fun getChecker(descriptor: SimpleFunctionDescriptor): CallChecker {
+    private fun getChecker(descriptor: SimpleFunctionDescriptor): SimpleCallChecker {
         val map = checkersCache?.get() ?: hashMapOf()
         checkersCache = checkersCache ?: WeakReference(map)
         return map.getOrPut(descriptor) { InlineChecker(descriptor) }

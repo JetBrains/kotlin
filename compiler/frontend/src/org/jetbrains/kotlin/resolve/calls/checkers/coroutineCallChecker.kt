@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-object CoroutineSuspendCallChecker : CallChecker {
+object CoroutineSuspendCallChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
         if (!descriptor.isSuspend || descriptor.initialSignatureDescriptor == null) return
@@ -54,4 +54,3 @@ fun checkCoroutineBuilderCall(
                         resolvedCall.call.calleeExpression ?: resolvedCall.call.callElement, LanguageFeature.Coroutines))
     }
 }
-

@@ -85,7 +85,7 @@ class CallCompleter(
 
         if (resolvedCall != null) {
             for (callChecker in callCheckers) {
-                callChecker.check(resolvedCall, context)
+                callChecker.check(resolvedCall, context, languageFeatureSettings)
             }
 
             val element = if (resolvedCall is VariableAsFunctionResolvedCall)

@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class TraitDefaultMethodCallChecker : CallChecker {
+class TraitDefaultMethodCallChecker : SimpleCallChecker {
 
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (getSuperCallExpression(resolvedCall.call) == null) return

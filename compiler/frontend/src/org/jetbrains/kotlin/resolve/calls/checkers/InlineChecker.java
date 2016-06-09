@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -48,7 +49,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.USAGE_IS_NOT_INLINABLE;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalReturns;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage;
 
-class InlineChecker implements CallChecker {
+class InlineChecker implements SimpleCallChecker {
     private final SimpleFunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
     private final boolean isEffectivelyPublicApiFunction;
@@ -64,6 +65,15 @@ class InlineChecker implements CallChecker {
                 inlinableParameters.add(param);
             }
         }
+    }
+
+    @Override
+    public void check(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull BasicCallResolutionContext context,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
+    ) {
+        SimpleCallChecker.DefaultImpls.check(this, resolvedCall, context, languageFeatureSettings);
     }
 
     @Override

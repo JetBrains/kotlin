@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
-class CallReturnsArrayOfNothingChecker : CallChecker {
+class CallReturnsArrayOfNothingChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val returnType = resolvedCall.resultingDescriptor.returnType
 

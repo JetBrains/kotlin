@@ -587,7 +587,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         BasicCallResolutionContext resolutionContext =
                 BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE);
         for (CallChecker checker : components.callCheckers) {
-            checker.check(resolvedCall, resolutionContext);
+            checker.check(resolvedCall, resolutionContext, components.languageFeatureSettings);
         }
 
         components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);

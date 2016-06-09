@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 
-object UnderscoreChecker : DeclarationChecker {
+object UnderscoreChecker : SimpleDeclarationChecker {
 
     fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
         if (identifier == null || identifier.text.isEmpty()) return

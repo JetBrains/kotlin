@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-class InvokeConventionChecker : CallChecker {
+class InvokeConventionChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
             val functionCall = resolvedCall.functionCall

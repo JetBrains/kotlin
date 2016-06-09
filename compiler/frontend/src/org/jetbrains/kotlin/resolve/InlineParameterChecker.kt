@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 
-object InlineParameterChecker : DeclarationChecker {
+object InlineParameterChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {

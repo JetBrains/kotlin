@@ -16,12 +16,29 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 
 interface CallChecker {
+    // TODO: Think about encapsulating these parameters into specific class like CheckerParameters when you're about to add another one
+    fun check(
+            resolvedCall: ResolvedCall<*>,
+            context: BasicCallResolutionContext,
+            languageFeatureSettings: LanguageFeatureSettings
+    )
+}
+
+interface SimpleCallChecker : CallChecker {
+    override fun check(
+            resolvedCall: ResolvedCall<*>,
+            context: BasicCallResolutionContext,
+            languageFeatureSettings: LanguageFeatureSettings
+    ) = check(resolvedCall, context)
+
     fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext)
 }
 

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class LocalFunInlineChecker : DeclarationChecker {
+class LocalFunInlineChecker : SimpleDeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
@@ -50,7 +50,7 @@ class LocalFunInlineChecker : DeclarationChecker {
     }
 }
 
-class PlatformStaticAnnotationChecker : DeclarationChecker {
+class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
@@ -98,7 +98,7 @@ class PlatformStaticAnnotationChecker : DeclarationChecker {
     }
 }
 
-class JvmNameAnnotationChecker : DeclarationChecker {
+class JvmNameAnnotationChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -140,7 +140,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
     }
 }
 
-class VolatileAnnotationChecker : DeclarationChecker {
+class VolatileAnnotationChecker : SimpleDeclarationChecker {
 
     override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
@@ -161,7 +161,7 @@ class VolatileAnnotationChecker : DeclarationChecker {
     }
 }
 
-class SynchronizedAnnotationChecker : DeclarationChecker {
+class SynchronizedAnnotationChecker : SimpleDeclarationChecker {
 
     override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
@@ -176,7 +176,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
     }
 }
 
-class OverloadsAnnotationChecker: DeclarationChecker {
+class OverloadsAnnotationChecker: SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -205,7 +205,7 @@ class OverloadsAnnotationChecker: DeclarationChecker {
     }
 }
 
-class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
+class TypeParameterBoundIsNotArrayChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -225,7 +225,7 @@ class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     }
 }
 
-class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
+class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
