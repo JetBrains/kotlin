@@ -107,6 +107,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("CoroutineSuspensionPoint.kt")
+    public void testCoroutineSuspensionPoint() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/CoroutineSuspensionPoint.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CtrlClickResolve.kt")
     public void testCtrlClickResolve() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/CtrlClickResolve.kt");

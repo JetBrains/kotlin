@@ -40,6 +40,7 @@ fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunc
         setOriginal(newOriginal)
         setValueParameters(valueParameters.subList(0, valueParameters.size - 1))
         setSignatureChange()
+        setPreserveSourceElement()
         putUserData(SUSPENSION_POINT_KEY, true)
     }.build()!!
 }
