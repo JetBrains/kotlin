@@ -156,5 +156,11 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/stream.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("unsupportedFeature.kt")
+        public void testUnsupportedFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/unsupportedFeature.kt");
+            doTest(fileName);
+        }
     }
 }

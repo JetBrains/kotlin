@@ -43,7 +43,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 JvmFieldApplicabilityChecker(),
                 TypeParameterBoundIsNotArrayChecker(),
                 JvmSyntheticApplicabilityChecker(),
-                StrictfpApplicabilityChecker()
+                StrictfpApplicabilityChecker(),
+                AdditionalBuiltInsMemberOverrideDeclarationChecker
         ),
 
         additionalCallCheckers = listOf(
@@ -54,7 +55,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 UnsupportedSyntheticCallableReferenceChecker(),
                 SuperCallWithDefaultArgumentsChecker(),
                 MissingDependencyClassChecker(),
-                ProtectedSyntheticExtensionCallChecker
+                ProtectedSyntheticExtensionCallChecker,
+                AdditionalBuiltInsMembersCallChecker
         ),
 
         additionalTypeCheckers = listOf(

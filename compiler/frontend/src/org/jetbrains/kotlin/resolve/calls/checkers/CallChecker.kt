@@ -48,3 +48,6 @@ interface SimpleCallChecker : CallChecker {
 @Suppress("unused")
 fun CallChecker.isComputingDeferredType(type: KotlinType) =
         type is DeferredType && type.isComputing
+
+val ResolvedCall<*>.elementToReportOn: KtElement
+    get() = call.calleeExpression ?: call.callElement
