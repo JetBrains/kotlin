@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.script.getScriptExtraImports
+import org.jetbrains.kotlin.script.getScriptExternalDependencies
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -73,7 +73,7 @@ class FileScopeFactory(
         val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
 
-        val extraImports = ktImportsFactory.createImportDirectives(getScriptExtraImports(file).flatMap { it.names.map { ImportPath(it) } })
+        val extraImports = ktImportsFactory.createImportDirectives(getScriptExternalDependencies(file).flatMap { it.imports.map { ImportPath(it) } })
         val allImplicitImports = defaultImports + extraImports
 
         val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization

@@ -40,9 +40,6 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager</implementation-class>
-    </component>
   </project-components>
 
   <application-components>
@@ -250,8 +247,11 @@
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptExtraImportsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptExtraImportsProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider"
+                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
                     serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
@@ -293,7 +293,7 @@
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
 
-    <indexedRootsProvider implementation="org.jetbrains.kotlin.idea.script.KotlinScriptDependenciesIndexableSetContributor"/>
+    <indexedRootsProvider implementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesIndexableSetContributor"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -575,7 +575,7 @@
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
-    <java.elementFinder implementation="org.jetbrains.kotlin.idea.script.KotlinScriptDependenciesClassFinder"/>
+    <java.elementFinder implementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache"/>
 
     <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>

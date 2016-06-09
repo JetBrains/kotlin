@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptExtraImport
 import org.jetbrains.kotlin.script.ScriptParameter
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -45,14 +43,14 @@ import java.lang.reflect.InvocationTargetException
 class ScriptTest {
     @Test
     fun testScriptWithParam() {
-        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()), null)
+        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     @Test
     fun testStandardScriptWithParams() {
-        val aClass = compileScript("fib_std.kts", StandardScriptDefinition, null)
+        val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
         val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4", "comment"))
         Assert.assertNotNull(anObj)
@@ -60,7 +58,7 @@ class ScriptTest {
 
     @Test
     fun testStandardScriptWithoutParams() {
-        val aClass = compileScript("fib_std.kts", StandardScriptDefinition, null)
+        val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
         val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
         Assert.assertNotNull(anObj)
@@ -68,7 +66,7 @@ class ScriptTest {
 
     @Test
     fun testScriptWithParamConversion() {
-        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()), null)
+        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
         val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4"))
         Assert.assertNotNull(anObj)
@@ -76,67 +74,67 @@ class ScriptTest {
 
     @Test
     fun testScriptWithPackage() {
-        val aClass = compileScript("fib.pkg.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()), null)
+        val aClass = compileScript("fib.pkg.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     @Test
     fun testScriptWithScriptDefinition() {
-        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()), null)
+        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     @Test
     fun testScriptWithClassParameter() {
-        val aClass = compileScript("fib_cp.kts", ReflectedParamClassTestScriptDefinition(".kts", "param", TestParamClass::class), null, runIsolated = false)
+        val aClass = compileScript("fib_cp.kts", ReflectedParamClassTestScriptDefinition(".kts", "param", TestParamClass::class), runIsolated = false)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
     }
 
     @Test
     fun testScriptWithBaseClass() {
-        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLClass::class), null, runIsolated = false)
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLClass::class), runIsolated = false)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     @Test
     fun testScriptWithBaseClassWithParam() {
-        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassWithParamsTestScriptDefinition(".kts", numIntParam() + numIntParam("passthrough"), TestDSLClassWithParam::class, numIntParam("passthrough")), null, runIsolated = false)
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassWithParamsTestScriptDefinition(".kts", numIntParam() + numIntParam("passthrough"), TestDSLClassWithParam::class, numIntParam("passthrough")), runIsolated = false)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
     }
 
     @Test
     fun testScriptWithInterface() {
-        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLInterface::class), null, runIsolated = false)
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLInterface::class), runIsolated = false)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     @Test
     fun testScriptWithClasspath() {
-        val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), null, runIsolated = true, suppressOutput = true)
+        val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), runIsolated = true, suppressOutput = true)
         Assert.assertNull(aClass1)
 
         val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.contains("kotlin-runtime") || it.contains("junit") }
         Assert.assertFalse(cp.isEmpty())
 
-        val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = cp), null, runIsolated = true)
+        val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = cp), runIsolated = true)
         Assert.assertNotNull(aClass2)
     }
 
     @Test
     fun testScriptWithExtraImports() {
-        val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), extraImport = null, runIsolated = true, suppressOutput = true)
+        val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), runIsolated = true, suppressOutput = true)
         Assert.assertNull(aClass1)
 
         val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.contains("kotlin-runtime") || it.contains("junit") }
         Assert.assertFalse(cp.isEmpty())
 
-        val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), extraImport = SimpleScriptExtraImport(cp), runIsolated = true)
+        val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = cp, extraDependencies = SimpleScriptExtraDependencies(cp)), runIsolated = true)
         Assert.assertNotNull(aClass2)
     }
 
@@ -163,22 +161,20 @@ class ScriptTest {
     private fun compileScript(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
-            extraImport: KotlinScriptExtraImport?,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, extraImport, runIsolated, suppressOutput)
+    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
 
     private fun compileSmokeTestScript(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/integration/smoke/" + scriptPath, scriptDefinition, null, runIsolated, suppressOutput)
+            compileScriptImpl("compiler/testData/integration/smoke/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
-            extraImport: KotlinScriptExtraImport?,
             runIsolated: Boolean,
             suppressOutput: Boolean): Class<*>?
     {
@@ -193,10 +189,6 @@ class ScriptTest {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
-            extraImport?.let {
-                configuration.put(JVMConfigurationKeys.SCRIPTS_EXTRA_IMPORTS, scriptPath, it)
-            }
-            scriptDefinition.getScriptDependenciesClasspath().forEach { configuration.addJvmClasspathRoot(File(it)) }
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

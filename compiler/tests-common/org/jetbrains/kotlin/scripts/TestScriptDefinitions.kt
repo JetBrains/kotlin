@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.scripts
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
@@ -26,15 +27,17 @@ import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
-abstract class BaseScriptDefinition (val extension: String, val classpath: List<String>? = null) : KotlinScriptDefinition {
+abstract class BaseScriptDefinition (val extension: String, val cp: List<String>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
-    override fun <TF> isScript(file: TF): Boolean = org.jetbrains.kotlin.script.getFileName(file).endsWith(extension)
+    override fun <TF> isScript(file: TF): Boolean = getFileName(file).endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
-    override fun getScriptDependenciesClasspath(): List<String> =
-            classpath ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
+    override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? =
+            object : KotlinScriptExternalDependencies {
+                override val classpath = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
+            }
 }
 
-open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<String>? = null)
+open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<String>? = null, val extraDependencies: KotlinScriptExternalDependencies? = null)
     : BaseScriptDefinition(extension, classpath)
 {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
@@ -74,10 +77,10 @@ class StandardWithClasspathScriptDefinition(extension: String, classpath: List<S
             StandardScriptDefinition.getScriptParameters(scriptDescriptor)
 }
 
-class SimpleScriptExtraImport(
+class SimpleScriptExtraDependencies(
         override val classpath: List<String>,
-        override val names: List<String> = emptyList()
-) : KotlinScriptExtraImport
+        override val imports: List<String> = emptyList()
+) : KotlinScriptExternalDependencies
 
 fun classpathFromProperty(): List<String> =
     System.getProperty("java.class.path")?.let {

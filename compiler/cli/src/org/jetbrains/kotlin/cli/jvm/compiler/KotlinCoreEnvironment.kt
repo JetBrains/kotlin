@@ -149,15 +149,9 @@ class KotlinCoreEnvironment private constructor(
                                 ?: emptyList()
                             })
 
-            KotlinScriptExtraImportsProvider.getInstance(project)?.run {
-                configuration.getMap(JVMConfigurationKeys.SCRIPTS_EXTRA_IMPORTS).entries.forEach {
-                    val localFile = applicationEnvironment.localFileSystem.findFileByPath(it.key)
-                                    ?: throw FileNotFoundException("Unable to find target for extra imports: ${it.key}")
-                    preconfigureExtraImports(localFile, kotlin.collections.listOf(it.value))
-                }
-
+            KotlinScriptExternalImportsProvider.getInstance(project)?.run {
                 configuration.addJvmClasspathRoots(
-                        getCombinedClasspathFor(sourceFiles.mapNotNull { src -> src.virtualFile })
+                        getCombinedClasspathFor(sourceFiles)
                                 .map { File(it).canonicalFile }
                                 .distinct())
             }
@@ -416,7 +410,7 @@ class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.project) {
                 val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
                 registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
-                registerService(KotlinScriptExtraImportsProvider::class.java, KotlinScriptExtraImportsProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
+                registerService(KotlinScriptExternalImportsProvider::class.java, KotlinScriptExternalImportsProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
             }

@@ -23,27 +23,22 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.roots.libraries.LibraryTable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.SmartList
 import com.intellij.util.io.URLUtil
-import org.jdom.Element
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptExtraImport
 import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
-import java.io.FileNotFoundException
 import java.lang.reflect.Method
 import java.util.*
 
@@ -297,8 +292,7 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
 }
 
 internal data class ScriptModuleInfo(val project: Project, val module: Module?, val scriptFile: VirtualFile,
-                                     val scriptDefinition: KotlinScriptDefinition,
-                                     val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
+                                     val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
@@ -315,16 +309,17 @@ internal data class ScriptModuleInfo(val project: Project, val module: Module?, 
     private fun dependenciesRoots(): List<VirtualFile> {
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
         val jarfs = StandardFileSystems.jar()
-        return (scriptDefinition.getScriptDependenciesClasspath() + scriptExtraImports.flatMap { it.classpath })
-                .map { File(it).canonicalFile }
-                .distinct()
-                .mapNotNull {
-                    // TODO: ensure that the entries are checked elsewhere, so diagnostics is delivered to a user if files are not correctly specified
-                    if (it.isFile)
-                        jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: null // diag: Classpath entry points to a file that is not a JAR archive
-                    else
-                        StandardFileSystems.local().findFileByPath(it.absolutePath) ?: null // diag: Classpath entry points to a non-existent location
-                }
+        return scriptDefinition.getDependenciesFor(scriptFile, project)?.classpath
+                       ?.map { File(it).canonicalFile }
+                       ?.distinct()
+                       ?.mapNotNull {
+                           // TODO: ensure that the entries are checked elsewhere, so diagnostics is delivered to a user if files are not correctly specified
+                           if (it.isFile)
+                               jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: null // diag: Classpath entry points to a file that is not a JAR archive
+                           else
+                               StandardFileSystems.local().findFileByPath(it.absolutePath) ?: null // diag: Classpath entry points to a non-existent location
+                       }
+               ?: emptyList()
     }
 
     override fun dependencies() =

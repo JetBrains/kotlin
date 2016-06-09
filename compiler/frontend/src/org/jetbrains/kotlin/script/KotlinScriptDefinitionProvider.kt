@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -28,10 +29,8 @@ class KotlinScriptDefinitionProvider {
 
     private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
     private val definitionsLock = java.util.concurrent.locks.ReentrantReadWriteLock()
-    private val notificationHandlers = ArrayList<() -> Unit>()
-    private val handlersLock = java.util.concurrent.locks.ReentrantReadWriteLock()
 
-    fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>): Unit {
+    fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>): Boolean {
         var changed = false
         definitionsLock.read {
             if (newDefinitions != definitions) {
@@ -42,11 +41,7 @@ class KotlinScriptDefinitionProvider {
                 changed = true
             }
         }
-        if (changed) {
-            handlersLock.read {
-                notificationHandlers.forEach { it() }
-            }
-        }
+        return changed
     }
 
     fun<TF> findScriptDefinition(file: TF): KotlinScriptDefinition? = definitionsLock.read {
@@ -54,10 +49,6 @@ class KotlinScriptDefinitionProvider {
     }
 
     fun<TF> isScript(file: TF): Boolean = findScriptDefinition(file) != null
-
-    fun subscribeOnDefinitionsChanged(handler: () -> Unit): Unit {
-        handlersLock.write { notificationHandlers.add(handler) }
-    }
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitionsLock.write {
@@ -69,6 +60,10 @@ class KotlinScriptDefinitionProvider {
         definitionsLock.write {
             definitions.remove(scriptDefinition)
         }
+    }
+
+    fun getAllKnownFileTypes(): Iterable<LanguageFileType> = definitionsLock.read {
+        definitions.map { it.fileType }.distinct()
     }
 
     companion object {
