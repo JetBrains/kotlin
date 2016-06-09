@@ -29,8 +29,8 @@ class KotlinTopLevelTypeAliasFqNameIndex : StringStubIndexExtension<KtTypeAlias>
     override fun get(s: String, project: Project, scope: GlobalSearchScope): Collection<KtTypeAlias> =
             StubIndex.getElements<String, KtTypeAlias>(
                     KEY, s, project,
-                    KotlinSourceFilterScope.sourcesAndLibraries(scope, project),
-                    KtTypeAlias::class.java)
+                    scope, KtTypeAlias::class.java
+            )
 
     companion object {
         val KEY = KotlinIndexUtil.createIndexKey(KotlinTopLevelTypeAliasFqNameIndex::class.java)
