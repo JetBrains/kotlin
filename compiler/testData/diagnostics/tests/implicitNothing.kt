@@ -17,7 +17,7 @@ fun check() {
     <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> null!!
 }
 
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { return }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!

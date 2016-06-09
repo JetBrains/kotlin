@@ -1,0 +1,9 @@
+package
+
+public val foo: kotlin.Int
+public fun test(): kotlin.Int
+public fun test1(): kotlin.Nothing
+public fun test2(): kotlin.Nothing
+public fun test3(/*0*/ a: kotlin.collections.List<kotlin.String>, /*1*/ b: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+public fun test4(): kotlin.Int
+public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
