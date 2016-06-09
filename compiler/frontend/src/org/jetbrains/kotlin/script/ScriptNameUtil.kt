@@ -14,40 +14,35 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script;
+package org.jetbrains.kotlin.script
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtScript
 
-public class ScriptNameUtil {
-    private ScriptNameUtil() {
+object ScriptNameUtil {
+
+    fun fileNameWithExtensionStripped(script: KtScript, extension: String): Name {
+        val file = script.getContainingKtFile()
+        return Name.identifier(generateNameByFileName(file.name, extension))
     }
 
-    @NotNull
-    public static Name fileNameWithExtensionStripped(@NotNull KtScript script, @NotNull String extension) {
-        KtFile file = script.getContainingKtFile();
-        return Name.identifier(generateNameByFileName(file.getName(), extension));
-    }
-
-    @NotNull
-    public static String generateNameByFileName(@NotNull String fileName, @NotNull String extension) {
-        int index = fileName.lastIndexOf('/');
+    fun generateNameByFileName(fileName: String, extension: String): String {
+        var fileName = fileName
+        var index = fileName.lastIndexOf('/')
         if (index != -1) {
-            fileName = fileName.substring(index + 1);
+            fileName = fileName.substring(index + 1)
         }
         if (fileName.endsWith(extension)) {
-            fileName = fileName.substring(0, fileName.length() - extension.length());
+            fileName = fileName.substring(0, fileName.length - extension.length)
         }
         else {
-            index = fileName.indexOf('.');
+            index = fileName.indexOf('.')
             if (index != -1) {
-                fileName = fileName.substring(0, index);
+                fileName = fileName.substring(0, index)
             }
         }
-        fileName = Character.toUpperCase(fileName.charAt(0)) + (fileName.length() == 0 ? "" : fileName.substring(1));
-        fileName = fileName.replace('.', '_');
-        return fileName;
+        fileName = Character.toUpperCase(fileName[0]) + if (fileName.length == 0) "" else fileName.substring(1)
+        fileName = fileName.replace('.', '_')
+        return fileName
     }
 }
