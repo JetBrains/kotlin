@@ -6,11 +6,11 @@ typealias <!REDECLARATION!>SomeClass<!> = Any
 typealias <!REDECLARATION!>SomeClass<!> = Any
 
 class Outer {
-    class <!REDECLARATION!>Nested<!>
+    class <!REDECLARATION, CONFLICTING_OVERLOADS!>Nested<!>
 
-    typealias <!REDECLARATION!>Nested<!> = Any
-    typealias <!REDECLARATION!>Nested<!> = Any
-    typealias <!REDECLARATION!>Nested<!> = Any
+    <!CONFLICTING_OVERLOADS!>typealias <!REDECLARATION!>Nested<!> = Any<!>
+    <!CONFLICTING_OVERLOADS!>typealias <!REDECLARATION!>Nested<!> = Any<!>
+    <!CONFLICTING_OVERLOADS!>typealias <!REDECLARATION!>Nested<!> = Any<!>
 }
 
 // FILE: file2.kt

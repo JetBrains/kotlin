@@ -20,25 +20,30 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
 interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
     val typeAliasDescriptor: TypeAliasDescriptor
+    val underlyingConstructorDescriptor: ConstructorDescriptor
 }
 
 class TypeAliasConstructorDescriptorImpl private constructor(
         override val typeAliasDescriptor: TypeAliasDescriptor,
+        override val underlyingConstructorDescriptor: ConstructorDescriptor,
         containingDeclaration: ClassDescriptor,
-        original: ConstructorDescriptor,
+        original: TypeAliasConstructorDescriptor?,
         annotations: Annotations,
         primary: Boolean,
         kind: Kind,
         source: SourceElement
 ) : TypeAliasConstructorDescriptor,
-        ConstructorDescriptorImpl(containingDeclaration, original, annotations, primary, kind, source)
+        ConstructorDescriptorImpl(containingDeclaration, original, annotations,
+                                  primary, kind, source)
 {
+    override fun getOriginal(): TypeAliasConstructorDescriptor =
+            super.getOriginal() as TypeAliasConstructorDescriptor
+
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasConstructorDescriptor =
             super.substitute(substitutor) as TypeAliasConstructorDescriptor
 
@@ -70,28 +75,31 @@ class TypeAliasConstructorDescriptorImpl private constructor(
         }
         assert(newName == null) { "Renaming type alias constructor: $this" }
         return TypeAliasConstructorDescriptorImpl(
-                typeAliasDescriptor,
+                typeAliasDescriptor, underlyingConstructorDescriptor,
                 newOwner as ClassDescriptor,
-                this, annotations, isPrimary, Kind.DECLARATION,
-                source)
+                this,
+                annotations, isPrimary, Kind.DECLARATION, source)
     }
 
     companion object {
         fun create(
                 typeAliasDescriptor: TypeAliasDescriptor,
-                original: ConstructorDescriptor,
+                underlyingConstructor: ConstructorDescriptor,
                 substitutor: TypeSubstitutor
-        ): TypeAliasConstructorDescriptor? {
-            val descriptor = TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, original.containingDeclaration, original,
-                                                                original.annotations, original.isPrimary, original.kind, original.source)
-            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(descriptor, original.valueParameters, substitutor, false)
-                                  ?: return null
+        ): TypeAliasConstructorDescriptor? = with(underlyingConstructor) {
+            val typeAliasConstructor =
+                    TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, underlyingConstructor, containingDeclaration, null,
+                                                       annotations, isPrimary, kind, typeAliasDescriptor.source)
 
-            descriptor.initialize(valueParameters, original.visibility, typeAliasDescriptor.typeConstructor.parameters)
+            val valueParameters =
+                    FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, valueParameters, substitutor, false)
+                    ?: return null
 
-            descriptor.returnType = substitutor.substitute(original.returnType, Variance.OUT_VARIANCE) ?: return null
+            typeAliasConstructor.initialize(valueParameters, visibility, typeAliasDescriptor.typeConstructor.parameters)
 
-            return descriptor
+            typeAliasConstructor.returnType = substitutor.substitute(returnType, Variance.OUT_VARIANCE) ?: return null
+
+            typeAliasConstructor
         }
     }
 }

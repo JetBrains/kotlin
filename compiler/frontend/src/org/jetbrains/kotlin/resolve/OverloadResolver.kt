@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class OverloadResolver(
@@ -31,7 +33,7 @@ class OverloadResolver(
 ) {
 
     fun checkOverloads(c: BodiesResolveContext) {
-        val inClasses = findConstructorsInNestedClasses(c)
+        val inClasses = findConstructorsInNestedClassesAndTypeAliases(c)
 
         for (entry in c.declaredClasses.entries) {
             checkOverloadsInClass(entry.value, inClasses.get(entry.value))
@@ -39,8 +41,8 @@ class OverloadResolver(
         checkOverloadsInPackages(c)
     }
 
-    private fun findConstructorsInNestedClasses(c: BodiesResolveContext): MultiMap<ClassDescriptor, ConstructorDescriptor> {
-        val constructorsInNestedClasses = MultiMap.create<ClassDescriptor, ConstructorDescriptor>()
+    private fun findConstructorsInNestedClassesAndTypeAliases(c: BodiesResolveContext): MultiMap<ClassDescriptor, ConstructorDescriptor> {
+        val constructorsByOuterClass = MultiMap.create<ClassDescriptor, ConstructorDescriptor>()
 
         for (klass in c.declaredClasses.values) {
             if (klass.kind.isSingleton || klass.name.isSpecial) {
@@ -52,7 +54,7 @@ class OverloadResolver(
                 // TODO: check overload conflicts of functions with constructors in scripts
             }
             else if (containingDeclaration is ClassDescriptor) {
-                constructorsInNestedClasses.putValues(containingDeclaration, klass.constructors)
+                constructorsByOuterClass.putValues(containingDeclaration, klass.constructors)
             }
             else if (!(containingDeclaration is FunctionDescriptor ||
                        containingDeclaration is PropertyDescriptor ||
@@ -61,7 +63,14 @@ class OverloadResolver(
             }
         }
 
-        return constructorsInNestedClasses
+        for (typeAlias in c.typeAliases.values) {
+            val containingDeclaration = typeAlias.containingDeclaration
+            if (containingDeclaration is ClassDescriptor) {
+                constructorsByOuterClass.putValues(containingDeclaration, typeAlias.getTypeAliasConstructors())
+            }
+        }
+
+        return constructorsByOuterClass
     }
 
     private fun checkOverloadsInPackages(c: BodiesResolveContext) {
@@ -82,8 +91,14 @@ class OverloadResolver(
             functionsByName.putValue(function.name, function)
         }
 
-        for (nestedClassConstructor in nestedClassConstructors) {
-            functionsByName.putValue(nestedClassConstructor.containingDeclaration.name, nestedClassConstructor)
+        for (nestedConstructor in nestedClassConstructors) {
+            val name =
+                    if (nestedConstructor is TypeAliasConstructorDescriptor)
+                        nestedConstructor.typeAliasDescriptor.name
+                    else
+                        nestedConstructor.containingDeclaration.name
+
+            functionsByName.putValue(name, nestedConstructor)
         }
 
         for (e in functionsByName.entrySet()) {
