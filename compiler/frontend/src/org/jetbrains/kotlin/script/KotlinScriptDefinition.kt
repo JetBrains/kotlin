@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,18 +38,38 @@ import java.io.File
 import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
-    val name: String
+    val name: String get() = "Kotlin Script"
+
+    // TODO: consider creating separate type (subtype? for kotlin scripts)
+    val fileType: LanguageFileType get() = KotlinFileType.INSTANCE
+
+    fun <TF> isScript(file: TF): Boolean =
+            getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+
+    // TODO: replace these 3 functions with template property
     fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
     fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> = emptyList()
-    fun <TF> isScript(file: TF): Boolean
-    fun getScriptName(script: KtScript): Name
-    fun getScriptDependenciesClasspath(): List<String> = emptyList()
+
+    fun getScriptName(script: KtScript): Name =
+        ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
+
+    fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? = null
+}
+
+interface KotlinScriptExternalDependencies {
+    val classpath: Iterable<String> get() = emptyList()
+    val imports: Iterable<String> get() = emptyList()
+    val sources: Iterable<String> get() = emptyList()
+}
+
+class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScriptExternalDependencies>) : KotlinScriptExternalDependencies {
+    override val classpath: Iterable<String> get() = dependencies.flatMap { it.classpath }
+    override val imports: Iterable<String> get() = dependencies.flatMap { it.imports }
+    override val sources: Iterable<String> get() = dependencies.flatMap { it.sources }
 }
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
-
-fun <TF> getFileExtension(file: TF) = PathUtil.getFileExtension(getFileName(file))
 
 fun <TF> getFileName(file: TF): String = when (file) {
     is PsiFile -> file.originalFile.name
@@ -56,16 +78,15 @@ fun <TF> getFileName(file: TF): String = when (file) {
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
+fun <TF> getFilePath(file: TF): String = when (file) {
+    is PsiFile -> file.originalFile.run { virtualFile?.path ?: name } // TODO: replace name with path of PSI elements
+    is VirtualFile -> file.path
+    is File -> file.canonicalPath
+    else -> throw IllegalArgumentException("Unsupported file type $file")
+}
+
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")
-
-    override val name = "Kotlin Script"
-
-    override fun getScriptName(script: KtScript): Name =
-            ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
-
-    override fun <TF> isScript(file: TF): Boolean =
-        getFileExtension(file) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
 
     // NOTE: for now we treat .kts files as if they have 'args: Array<String>' parameter
     // this is not supposed to be final design

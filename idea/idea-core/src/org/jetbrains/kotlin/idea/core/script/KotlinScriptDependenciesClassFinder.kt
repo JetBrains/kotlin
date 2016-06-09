@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.script
+package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -26,18 +26,19 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleSearchScope
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 class KotlinScriptDependenciesClassFinder(project: Project,
-                                         private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
+                                          private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
     private val myCaches = object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
         override fun create(file: VirtualFile): PackageDirectoryCache? {
 
             val scriptClasspath = kotlinScriptConfigurationManager.getScriptClasspath(file)
-            val v = NonClasspathClassFinder.createCache(scriptClasspath)
+            val v = createCache(scriptClasspath)
             return v
         }
     }

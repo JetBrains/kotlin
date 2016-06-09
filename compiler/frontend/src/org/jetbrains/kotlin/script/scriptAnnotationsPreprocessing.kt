@@ -52,7 +52,8 @@ object SimpleUntypedAst {
                     convert(expression.entries[0])
                 else
                     SimpleUntypedAst.Node.str(name, "")
-//                    convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
+                    // TODO: parse expressions, etc. e.g.:
+                    //      convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
             }
             else -> Node.empty(name)
 
@@ -70,5 +71,11 @@ object SimpleUntypedAst {
             return if (expression != null) convert(expression) else Node.empty(name)
         }
     }
+}
+
+fun parseAnnotation(ann: KtAnnotationEntry): SimpleUntypedAst.Node.list<Any> {
+    val wann = SimpleUntypedAst.KtAnnotationWrapper(ann)
+    val vals = wann.valueArguments
+    return SimpleUntypedAst.Node.list(wann.name, vals)
 }
 

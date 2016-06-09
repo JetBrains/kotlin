@@ -118,7 +118,7 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    override fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): ScriptDependencies? {
+    override fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? {
         if (annotations.none()) return null
         val anns = annotations.map { parseAnnotation(it) }.filter { it.name == depends::class.simpleName }
         val cp = anns.flatMap {
@@ -129,9 +129,8 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
                 }
             }
         }
-        return object : ScriptDependencies {
+        return object : KotlinScriptExternalDependencies {
             override val classpath = cp
-            override val implicitImports = emptyList<String>()
         }
     }
 
@@ -141,30 +140,23 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
                     ?.filter { it.contains("out/test") }
             ?: emptyList()
 
-    override fun invoke(context: Any?): ScriptDependencies? {
-        return object : ScriptDependencies {
+    override fun invoke(context: Any?): KotlinScriptExternalDependencies? {
+        return object : KotlinScriptExternalDependencies {
             override val classpath = classpathFromClassloader()
-            override val implicitImports = emptyList<String>()
         }
     }
 }
 
-fun parseAnnotation(ann: KtAnnotationEntry): SimpleUntypedAst.Node.list<Any> {
-    val wann = SimpleUntypedAst.KtAnnotationWrapper(ann)
-    val vals = wann.valueArguments
-    return SimpleUntypedAst.Node.list(wann.name, vals)
-}
-
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyExtractor(GetTestKotlinScriptDependencies::class)
+@ScriptDependencyResolver(GetTestKotlinScriptDependencies::class)
 abstract class ScriptWithIntParam(num: Int)
 
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyExtractor(GetTestKotlinScriptDependencies::class)
+@ScriptDependencyResolver(GetTestKotlinScriptDependencies::class)
 abstract class ScriptWithClassParam(param: TestParamClass)
 
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyExtractor(GetTestKotlinScriptDependencies::class)
+@ScriptDependencyResolver(GetTestKotlinScriptDependencies::class)
 abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
 
 @Target(AnnotationTarget.FILE)
