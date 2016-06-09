@@ -26,22 +26,22 @@ fun testResultOfLambda2() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return when {
+            return <!TYPE_MISMATCH!>when {
                 true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
                 else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
-            }
+            }<!>
         }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return when {
+            return <!TYPE_MISMATCH!>when {
                 true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
                 else ->
                     when {
                         true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
                         else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
                     }
-            }
+            }<!>
         }
 
 fun testUsage1() =

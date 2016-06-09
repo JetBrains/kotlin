@@ -125,7 +125,7 @@ class FunctionDescriptorResolver(
             builtIns.unitType
         }
         else if (function.hasBody()) {
-            inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scope,
+            descriptorResolver.inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scope,
                                               dataFlowInfo, function, functionDescriptor)
         }
         else {

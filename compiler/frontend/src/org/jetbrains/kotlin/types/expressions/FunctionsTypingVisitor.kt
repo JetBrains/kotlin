@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -39,9 +40,12 @@ import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
@@ -262,6 +266,47 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             // No label => non-local return
             // Either a local return of inner lambda/function or a non-local return
             it.getTargetLabel()?.let { trace.get(BindingContext.LABEL_TARGET, it) } == functionLiteral
+        }
+    }
+
+    fun checkTypesForReturnStatements(function: KtDeclarationWithBody, trace: BindingTrace, actualReturnType: KotlinType) {
+        if (function.hasBlockBody()) return
+        if ((function !is KtNamedFunction || function.typeReference != null)
+            && (function !is KtPropertyAccessor || function.returnTypeReference == null)) return
+
+        val bodyExpression = function.bodyExpression ?: return
+        val returns = ArrayList<KtReturnExpression>()
+
+        // data == false means, that we inside other function, so ours return should be with label
+        bodyExpression.accept(object : KtTreeVisitor<Boolean>() {
+            override fun visitReturnExpression(expression: KtReturnExpression, data: Boolean): Void? {
+                val label = expression.getTargetLabel()
+                if ((label != null && trace[BindingContext.LABEL_TARGET, label] == function)
+                    || (label == null && data)
+                ) {
+                    returns.add(expression)
+                }
+                return super.visitReturnExpression(expression, data)
+            }
+
+            override fun visitNamedFunction(function: KtNamedFunction, data: Boolean): Void? {
+                return super.visitNamedFunction(function, false)
+            }
+        }, true)
+
+        for (returnForCheck in returns) {
+            val expression = returnForCheck.returnedExpression
+            if (expression == null) {
+                if (!actualReturnType.isUnit()) {
+                    trace.report(Errors.RETURN_TYPE_MISMATCH.on(returnForCheck, actualReturnType))
+                }
+                continue
+            }
+
+            val expressionType = trace.getType(expression) ?: continue
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, actualReturnType)) {
+                trace.report(Errors.TYPE_MISMATCH.on(expression, expressionType, actualReturnType))
+            }
         }
     }
 }
