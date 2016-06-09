@@ -74,7 +74,7 @@ public final class DebugExtOptionsProtoBuf {
       ":<\n\023fq_name_id_in_table\022\035.google.protobu" +
       "f.FieldOptions\030\322\206\003 \001(\010:;\n\022string_id_in_t" +
       "able\022\035.google.protobuf.FieldOptions\030\323\206\003 " +
-      "\001(\010B\034B\027DebugExtOptionsProtoBuf\210\001\000"
+      "\001(\010B\031B\027DebugExtOptionsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
