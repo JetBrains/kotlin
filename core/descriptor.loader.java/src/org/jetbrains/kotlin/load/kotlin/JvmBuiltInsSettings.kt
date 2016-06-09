@@ -102,8 +102,8 @@ open class JvmBuiltInsSettings(
                 additionalMember ->
                 val substitutedWithKotlinTypeParameters =
                         additionalMember.substitute(
-                                createMappedTypeParametersSubstitution
-                                (additionalMember.containingDeclaration as ClassDescriptor, classDescriptor).buildSubstitutor()
+                                createMappedTypeParametersSubstitution(
+                                        additionalMember.containingDeclaration as ClassDescriptor, classDescriptor).buildSubstitutor()
                         ) as SimpleFunctionDescriptor
 
                 substitutedWithKotlinTypeParameters.newCopyBuilder().apply {
