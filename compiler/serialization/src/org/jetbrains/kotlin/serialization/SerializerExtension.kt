@@ -14,48 +14,46 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.types.KotlinType
 
-public abstract class SerializerExtension {
-    @NotNull
-    public abstract StringTable getStringTable();
+abstract class SerializerExtension {
+    abstract val stringTable: StringTable
 
-    public boolean shouldUseTypeTable() {
-        return false;
+    open fun shouldUseTypeTable(): Boolean {
+        return false
     }
 
-    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
+    open fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
     }
 
-    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
+    open fun serializePackage(proto: ProtoBuf.Package.Builder) {
     }
 
-    public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {
+    open fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
     }
 
-    public void serializeFunction(@NotNull FunctionDescriptor descriptor, @NotNull ProtoBuf.Function.Builder proto) {
+    open fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
     }
 
-    public void serializeProperty(@NotNull PropertyDescriptor descriptor, @NotNull ProtoBuf.Property.Builder proto) {
+    open fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
     }
 
-    public void serializeEnumEntry(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.EnumEntry.Builder proto) {
+    open fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
     }
 
-    public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
+    open fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
     }
 
-    public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
+    open fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
     }
 
-    public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
+    open fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
     }
 
-    public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
-         throw new IllegalStateException("Cannot serialize error type: " + type);
+    open fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
+        throw IllegalStateException("Cannot serialize error type: " + type)
     }
 }
