@@ -95,7 +95,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                     FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, valueParameters, substitutor, false)
                     ?: return null
 
-            typeAliasConstructor.initialize(valueParameters, visibility, typeAliasDescriptor.typeConstructor.parameters)
+            typeAliasConstructor.initialize(valueParameters, visibility, typeAliasDescriptor.declaredTypeParameters)
 
             typeAliasConstructor.returnType = substitutor.substitute(returnType, Variance.OUT_VARIANCE) ?: return null
 

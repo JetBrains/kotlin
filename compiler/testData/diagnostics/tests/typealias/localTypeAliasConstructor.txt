@@ -1,0 +1,11 @@
+package
+
+public fun </*0*/ T> id(/*0*/ x: T): T
+
+public final class Cell</*0*/ TC> {
+    public constructor Cell</*0*/ TC>(/*0*/ x: TC)
+    public final val x: TC
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
