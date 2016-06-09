@@ -6350,6 +6350,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/platformTypesInspection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PlatformTypesInspection extends AbstractQuickFixTest {
+        public void testAllFilesPresentInPlatformTypesInspection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformTypesInspection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("nestedNoAssertRuntime.kt")
+        public void testNestedNoAssertRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/platformTypesInspection/nestedNoAssertRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedRuntime.kt")
+        public void testNestedRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/platformTypesInspection/nestedRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableAssertRuntime.kt")
+        public void testNullableAssertRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/platformTypesInspection/nullableAssertRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableRuntime.kt")
+        public void testNullableRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/platformTypesInspection/nullableRuntime.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

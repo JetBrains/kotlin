@@ -148,6 +148,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("hasPlatformType/inspectionData/inspections.test")
+        public void testHasPlatformType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/hasPlatformType/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("leakingThis/inspectionData/inspections.test")
         public void testLeakingThis_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/leakingThis/inspectionData/inspections.test");

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.editor.Editor
+import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.inspections.HasPlatformTypeInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
@@ -40,7 +43,9 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
+class SpecifyTypeExplicitlyIntention(
+        private val deduplicate: Boolean = true
+) : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
         if (element.containingFile is KtCodeFragment) return false
         if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
@@ -54,9 +59,18 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
 
         if (element is KtNamedFunction && element.hasBlockBody()) return false
 
+        if (deduplicate && isInspectionApplicable(element, caretOffset)) return false
+
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 
         return true
+    }
+
+    private fun isInspectionApplicable(element: KtCallableDeclaration, offset: Int): Boolean {
+        val key = HighlightDisplayKey.find(HasPlatformTypeInspection.SHORT_NAME)
+        if (!InspectionProjectProfileManager.getInstance(element.project).inspectionProfile.isToolEnabled(key)) return false
+
+        return HasPlatformTypeInspection.isReturnTypeFlexible(element).isFlexible && HasPlatformTypeInspection.isInRange(element, offset)
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
@@ -104,7 +118,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
                             }
                         }
 
-                        object: DelegatingType() {
+                        object : DelegatingType() {
                             override fun getDelegate() = it
                             override val arguments: List<TypeProjection> get() = newArguments
                         }
