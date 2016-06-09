@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -118,8 +120,29 @@ class CoroutineCodegen(
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                                                codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
                                                super.doGenerateBody(codegen, signature)
+                                               generateExceptionHandlingBlock(codegen)
                                            }
                                        })
+    }
+
+    private fun generateExceptionHandlingBlock(codegen: ExpressionCodegen) {
+        val handleExceptionFunction =
+                controllerType.memberScope.getContributedFunctions(
+                        OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION, KotlinLookupLocation(element)).singleOrNull { it.isOperator }
+                        ?: return
+
+        val (resolvedCall, fakeExceptionExpression, fakeThisContinuationException) =
+                createResolvedCallForHandleExceptionCall(element, handleExceptionFunction, (context as ClosureContext).coroutineDescriptor!!)
+
+        codegen.tempVariables.put(fakeExceptionExpression, StackValue.operation(AsmTypes.OBJECT_TYPE) {
+            codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME, "()Ljava/lang/Object;", false)
+        })
+
+        codegen.tempVariables.put(fakeThisContinuationException, codegen.genCoroutineInstanceValueFromResolvedCall(resolvedCall))
+
+        codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_MARKER_NAME, "()V", false)
+        codegen.invokeFunction(resolvedCall, StackValue.none()).put(Type.VOID_TYPE, codegen.v)
+        codegen.v.areturn(Type.VOID_TYPE)
     }
 
     private fun createSynthesizedImplementationByName(

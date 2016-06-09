@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -27,16 +29,21 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 // These classes do not actually exist at runtime
 val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
 
-const val SUSPENSION_POINT_MARKER_OWNER = "kotlin/Markers"
+const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
 const val SUSPENSION_POINT_MARKER_NAME = "suspensionPoint"
+const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
+const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 
 const val COROUTINE_CONTROLLER_FIELD_NAME = "controller"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
@@ -85,6 +92,42 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
             TypeConstructorSubstitution.createByParametersMap(typeArguments.mapValues { it.value.asTypeProjection() }).buildSubstitutor())
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
+}
+
+data class HandleResultCallContext(
+        val resolvedCall: ResolvedCall<*>,
+        val exceptionExpression: KtExpression,
+        val continuationThisExpression: KtExpression
+)
+
+fun createResolvedCallForHandleExceptionCall(
+        callElement: KtElement,
+        handleExceptionFunction: SimpleFunctionDescriptor,
+        coroutineLambdaDescriptor: FunctionDescriptor
+): HandleResultCallContext {
+    val psiFactory = KtPsiFactory(callElement)
+
+    val exceptionArgument = CallMaker.makeValueArgument(psiFactory.createExpression("exception"))
+    val continuationThisArgument = CallMaker.makeValueArgument(psiFactory.createExpression("this"))
+
+    val valueArguments = listOf(exceptionArgument, continuationThisArgument)
+    val call = CallMaker.makeCall(callElement, null, null, null, valueArguments)
+
+    val resolvedCall = ResolvedCallImpl(
+            call,
+            handleExceptionFunction,
+            coroutineLambdaDescriptor.extensionReceiverParameter!!.value, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for handleException resolution"),
+            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
+
+    handleExceptionFunction.valueParameters.zip(valueArguments).forEach {
+        resolvedCall.recordValueArgument(it.first, ExpressionValueArgument(it.second))
+    }
+
+    resolvedCall.setResultingSubstitutor(TypeSubstitutor.EMPTY)
+
+    return HandleResultCallContext(
+            resolvedCall, exceptionArgument.getArgumentExpression()!!, continuationThisArgument.getArgumentExpression()!!)
 }
 
 fun ResolvedCall<*>.isSuspensionPoint() =
