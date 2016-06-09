@@ -1,0 +1,6 @@
+package
+
+public typealias A</*0*/ T>  = kotlin.Array<T>
+public typealias AA</*0*/ T>  = A<A<T>>
+public typealias AAN = AA<kotlin.Nothing>
+public typealias AN = A<kotlin.Nothing>

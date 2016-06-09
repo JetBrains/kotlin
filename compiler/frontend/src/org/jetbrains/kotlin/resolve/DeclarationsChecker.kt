@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import java.util.*
 
@@ -161,6 +162,10 @@ class DeclarationsChecker(
 
         if (expandedType.isDynamic() || expandedClassifier is TypeParameterDescriptor) {
             trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, expandedType))
+        }
+
+        if (TypeUtils.contains(expandedType) { it.isArrayOfNothing()} ) {
+            trace.report(TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE.on(typeReference, expandedType, "Array<Nothing> is illegal"))
         }
     }
 
