@@ -19479,6 +19479,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("capturingTypeParametersFromOuterClass.kt")
+            public void testCapturingTypeParametersFromOuterClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/capturingTypeParametersFromOuterClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("conflictingProjections.kt")
             public void testConflictingProjections() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/conflictingProjections.kt");
