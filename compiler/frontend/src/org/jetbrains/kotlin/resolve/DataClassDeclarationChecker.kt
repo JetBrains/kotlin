@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 
-class DataClassDeclarationChecker : DeclarationChecker {
+class DataClassDeclarationChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,

@@ -237,7 +237,7 @@ public class ModifiersChecker {
                 @NotNull DeclarationDescriptor descriptor
         ) {
             for (DeclarationChecker checker : declarationCheckers) {
-                checker.check(declaration, descriptor, trace, trace.getBindingContext());
+                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageFeatureSettings);
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageFeatureSettings);
         }

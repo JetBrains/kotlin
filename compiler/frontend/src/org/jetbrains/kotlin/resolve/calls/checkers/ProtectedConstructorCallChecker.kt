@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 
-object ProtectedConstructorCallChecker : CallChecker {
+object ProtectedConstructorCallChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.resultingDescriptor as? ConstructorDescriptor ?: return
         val constructorOwner = descriptor.containingDeclaration.original

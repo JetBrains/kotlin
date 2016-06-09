@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 
-object SuspendModifierChecker : DeclarationChecker {
+object SuspendModifierChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -61,7 +61,7 @@ object SuspendModifierChecker : DeclarationChecker {
     }
 }
 
-object CoroutineModifierChecker : DeclarationChecker {
+object CoroutineModifierChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,

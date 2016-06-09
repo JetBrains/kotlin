@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.JvmFieldApplicabilityChecker.Pr
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 
-class JvmFieldApplicabilityChecker : DeclarationChecker {
+class JvmFieldApplicabilityChecker : SimpleDeclarationChecker {
 
     internal enum class Problem(val errorMessage: String) {
         NOT_FINAL("JvmField can only be applied to final property"),

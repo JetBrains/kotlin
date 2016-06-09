@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-class InfixModifierChecker : DeclarationChecker {
+class InfixModifierChecker : SimpleDeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,

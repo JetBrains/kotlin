@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-object ProtectedSyntheticExtensionCallChecker : CallChecker {
+object ProtectedSyntheticExtensionCallChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.resultingDescriptor
 

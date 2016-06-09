@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -33,7 +34,16 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
 
-public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
+public class ReifiedTypeParameterSubstitutionChecker implements SimpleCallChecker {
+    @Override
+    public void check(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull BasicCallResolutionContext context,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
+    ) {
+        SimpleCallChecker.DefaultImpls.check(this, resolvedCall, context, languageFeatureSettings);
+    }
+
     @Override
     public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull BasicCallResolutionContext context) {
         Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();

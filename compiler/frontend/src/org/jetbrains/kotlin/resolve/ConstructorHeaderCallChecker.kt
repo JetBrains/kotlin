@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
-object ConstructorHeaderCallChecker : CallChecker {
+object ConstructorHeaderCallChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val dispatchReceiverClass = resolvedCall.dispatchReceiver.classDescriptorForImplicitReceiver
         val extensionReceiverClass = resolvedCall.extensionReceiver.classDescriptorForImplicitReceiver

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -30,7 +30,7 @@ fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
     return this is FunctionDescriptor && this.isExternal
 }
 
-class NativeFunChecker : DeclarationChecker {
+class NativeFunChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,

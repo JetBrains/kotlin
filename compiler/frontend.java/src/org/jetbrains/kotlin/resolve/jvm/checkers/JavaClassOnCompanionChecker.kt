@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
-class JavaClassOnCompanionChecker : CallChecker {
+class JavaClassOnCompanionChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.resultingDescriptor
         if (descriptor !is PropertyDescriptor || descriptor.name.asString() != "javaClass") return

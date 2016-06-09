@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.expressions.CaptureKind
 
-class CapturingInClosureChecker : CallChecker {
+class CapturingInClosureChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val variableResolvedCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.variableCall else resolvedCall
         val variableDescriptor = variableResolvedCall.resultingDescriptor as? VariableDescriptor

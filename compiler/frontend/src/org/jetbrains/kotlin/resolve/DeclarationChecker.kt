@@ -16,16 +16,34 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 interface DeclarationChecker {
+    // TODO: Think about encapsulating these parameters into specific class like CheckerParameters when you're about to add another one
+    fun check(
+            declaration: KtDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext,
+            languageFeatureSettings: LanguageFeatureSettings
+    )
+}
+
+interface SimpleDeclarationChecker : DeclarationChecker {
+    override fun check(
+            declaration: KtDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext, languageFeatureSettings: LanguageFeatureSettings
+    ) = check(declaration, descriptor, diagnosticHolder, bindingContext)
 
     fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext)
-
+            bindingContext: BindingContext
+    )
 }

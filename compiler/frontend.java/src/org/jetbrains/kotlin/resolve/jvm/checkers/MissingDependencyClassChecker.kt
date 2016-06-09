@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 
-class MissingDependencyClassChecker : CallChecker {
+class MissingDependencyClassChecker : SimpleCallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         for (classId in collectNotFoundClasses(resolvedCall.resultingDescriptor)) {
             context.trace.report(ErrorsJvm.MISSING_DEPENDENCY_CLASS.on(resolvedCall.call.callElement, classId.asSingleFqName()))

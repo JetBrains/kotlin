@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class JsCallChecker(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
-) : CallChecker {
+) : SimpleCallChecker {
 
     companion object {
         private val JS_PATTERN: DescriptorPredicate = PatternBuilder.pattern("kotlin.js.js(String)")
