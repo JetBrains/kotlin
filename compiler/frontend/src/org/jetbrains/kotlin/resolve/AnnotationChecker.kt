@@ -200,6 +200,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
                     else
                         TargetLists.T_TOP_LEVEL_FUNCTION
                 }
+                is KtTypeAlias -> TargetLists.T_TYPEALIAS
                 is KtPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
                 is KtTypeReference -> TargetLists.T_TYPE_REFERENCE
                 is KtFile -> TargetLists.T_FILE
@@ -217,6 +218,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
 
         private object TargetLists {
             val T_CLASSIFIER = targetList(CLASS)
+            val T_TYPEALIAS = targetList(TYPEALIAS)
 
             val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
                 onlyWithUseSiteTarget(PROPERTY_SETTER, VALUE_PARAMETER)

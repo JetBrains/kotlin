@@ -145,7 +145,7 @@ class DeclarationsChecker(
         for ((declaration, typeAliasDescriptor) in bodiesResolveContext.typeAliases.entries) {
             checkTypeAliasDeclaration(typeAliasDescriptor, declaration)
             modifiersChecker.checkModifiersForDeclaration(declaration, typeAliasDescriptor)
-            // TODO exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
+            exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
         }
     }
 

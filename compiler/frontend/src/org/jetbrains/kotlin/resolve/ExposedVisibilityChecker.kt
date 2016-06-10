@@ -52,6 +52,18 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         }
     }
 
+    fun checkTypeAlias(typeAlias: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
+        val expandedType = typeAliasDescriptor.expandedType
+        if (expandedType.isError) return
+
+        val typeAliasVisibility = typeAliasDescriptor.effectiveVisibility()
+        val restricting = expandedType.leastPermissiveDescriptor(typeAliasVisibility)
+        if (restricting != null) {
+            trace.report(Errors.EXPOSED_TYPEALIAS_EXPANDED_TYPE.on(typeAlias.nameIdentifier ?: typeAlias,
+                    typeAliasVisibility, restricting, restricting.effectiveVisibility()))
+        }
+    }
+
     fun checkFunction(function: KtFunction,
                       functionDescriptor: FunctionDescriptor,
                       // for checking situation with modified basic visibility
