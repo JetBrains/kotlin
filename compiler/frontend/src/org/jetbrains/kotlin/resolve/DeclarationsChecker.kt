@@ -718,8 +718,8 @@ class DeclarationsChecker(
 
     private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {
         descriptor.returnType?.let {
+            val target = declaration.nameIdentifier ?: declaration
             if (declaration.typeReference == null) {
-                val target = declaration.nameIdentifier ?: declaration
                 if (it.isNothing() && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                     trace.report(
                             (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
@@ -728,6 +728,11 @@ class DeclarationsChecker(
                 if (it.contains { type -> type.constructor is IntersectionTypeConstructor }) {
                     trace.report(IMPLICIT_INTERSECTION_TYPE.on(target, it))
                 }
+            }
+            else if (it.isNothing() && it is AbbreviatedType) {
+                trace.report(
+                        (if (declaration is KtProperty) ABBREVIATED_NOTHING_PROPERTY_TYPE else ABBREVIATED_NOTHING_RETURN_TYPE).on(target)
+                )
             }
         }
     }

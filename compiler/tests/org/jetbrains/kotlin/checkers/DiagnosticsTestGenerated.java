@@ -19605,6 +19605,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("returnTypeNothingShouldBeSpecifiedExplicitly.kt")
+            public void testReturnTypeNothingShouldBeSpecifiedExplicitly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/returnTypeNothingShouldBeSpecifiedExplicitly.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleTypeAlias.kt")
             public void testSimpleTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/simpleTypeAlias.kt");
