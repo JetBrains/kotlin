@@ -30,7 +30,15 @@ class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
-    override val functionName: String? by lz { resolveCall()?.resultingDescriptor?.name?.asString().orAnonymous() }
+    private val resolvedCall by lz { psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL)) }
+    
+    override val receiverType by lz {
+        val resolvedCall = this.resolvedCall ?: return@lz null
+        val receiver = resolvedCall.extensionReceiver ?: resolvedCall.dispatchReceiver ?: return@lz null
+        KotlinConverter.convert(receiver.type, psi.project, null)
+    }
+    
+    override val functionName: String? by lz { resolvedCall?.resultingDescriptor?.name?.asString().orAnonymous() }
     override fun matchesFunctionName(name: String) = functionName == name
 
     override val functionNameElement by lz { psi.calleeExpression?.let { KotlinConverter.convert(it, this) } }
@@ -56,14 +64,13 @@ class KotlinUFunctionCallExpression(
     override val typeArguments by lz { psi.typeArguments.map { KotlinConverter.convert(it.typeReference, this) } }
 
     override val kind by lz {
-        when (resolveCall()?.resultingDescriptor) {
+        when (resolvedCall?.resultingDescriptor) {
             is ConstructorDescriptor -> UastCallKind.CONSTRUCTOR_CALL
             else -> UastCallKind.FUNCTION_CALL
         }
     }
 
     override fun resolve(context: UastContext): UFunction? {
-        val resolvedCall = resolveCall()
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
         val source = descriptor.toSource() ?: return null
 
@@ -74,9 +81,7 @@ class KotlinUFunctionCallExpression(
         }
 
         return context.convert(source) as? UFunction
-    }
-
-    private fun resolveCall() = psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL))
+    } 
 }
 
 class KotlinUComponentFunctionCallExpression(
@@ -84,14 +89,35 @@ class KotlinUComponentFunctionCallExpression(
         n: Int,
         override val parent: UElement
 ) : UCallExpression, PsiElementBacked {
-    override val valueArgumentCount = 0
-    override val valueArguments = emptyList<UExpression>()
-    override val typeArgumentCount = 0
-    override val typeArguments = emptyList<UType>()
-    override val classReference = null
+    override val receiverType: UType?
+        get() = null
+    
+    override val valueArgumentCount: Int
+        get() = 0
+    
+    override val valueArguments: List<UExpression>
+        get() = emptyList()
+    
+    override val typeArgumentCount: Int
+        get() = 0
+    
+    override val typeArguments: List<UType>
+        get() = emptyList()
+    
+    override val classReference: USimpleReferenceExpression?
+        get() = null
+    
     override val functionName = "component$n"
+    
     override val functionReference by lz { KotlinStringUSimpleReferenceExpression(functionName, this) }
-    override val functionNameElement = null
-    override val kind = UastCallKind.FUNCTION_CALL
-    override fun resolve(context: UastContext) = null
+    
+    override val functionNameElement: UElement?
+        get() = null
+    
+    override val kind: UastCallKind
+        get() = UastCallKind.FUNCTION_CALL
+
+    override fun resolve(context: UastContext): UFunction? {
+        return null
+    }
 }
