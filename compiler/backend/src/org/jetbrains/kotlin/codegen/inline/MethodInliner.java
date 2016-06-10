@@ -120,7 +120,7 @@ public class MethodInliner {
         try {
             transformedNode.accept(visitor);
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             throw wrapException(e, transformedNode, "couldn't inline method call");
         }
 
