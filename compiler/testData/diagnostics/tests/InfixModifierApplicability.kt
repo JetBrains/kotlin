@@ -3,20 +3,25 @@
 class Pair<A, B>(val a: A, val b: B)
 infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
-infix fun String.o1(o: String) = o
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun String.o2(o: String, o2: String? = null) = o
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun String.o3(o: String = "", o2: String? = null) = o
+// OK
+infix fun String.ok1(o: String) {}
+class OkTest {
+    infix fun ok2(o: String) {}
+    infix fun String.ok3(o: String) {}
+}
 
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun w1() {}
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun w2(s: String) {}
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun String.w3() {}
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun String.w4(a: Int, b: Int) {}
-<!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun w5(a: Int, b: Int) {}
+// Errors
+<!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun String.e1(o: String, o2: String? = null) = o
+<!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun String.e2(o: String = "", o2: String? = null) = o
+
+<!INAPPLICABLE_INFIX_MODIFIER(must be a member of an extension function)!>infix<!> fun e3() {}
+<!INAPPLICABLE_INFIX_MODIFIER(must be a member of an extension function)!>infix<!> fun e4(s: String) {}
+<!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun String.e5() {}
+<!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun String.e6(a: Int, b: Int) {}
+<!INAPPLICABLE_INFIX_MODIFIER(must be a member of an extension function)!>infix<!> fun e7(a: Int, b: Int) {}
 
 class Example {
-    infix fun c1(s: String) {}
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun c2(s: String, a: Int = 0) {}
-
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun cw1(s: String, a: Int) {}
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun sw2() {}
+    <!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun e8(s: String, a: Int = 0) {}
+    <!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun e9(s: String, a: Int) {}
+    <!INAPPLICABLE_INFIX_MODIFIER(must have a single value parameter)!>infix<!> fun e10() {}
 }
