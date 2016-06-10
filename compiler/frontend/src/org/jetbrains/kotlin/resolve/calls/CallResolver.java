@@ -301,7 +301,8 @@ public class CallResolver {
                 context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);
         ExpressionReceiver expressionReceiver = ExpressionReceiver.Companion.create(calleeExpression, calleeType, context.trace.getBindingContext());
 
-        Call call = new CallTransformer.CallForImplicitInvoke(context.call.getExplicitReceiver(), expressionReceiver, context.call);
+        Call call = new CallTransformer.CallForImplicitInvoke(context.call.getExplicitReceiver(), expressionReceiver, context.call,
+                                                              false);
         TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call, calleeType);
         return resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
     }

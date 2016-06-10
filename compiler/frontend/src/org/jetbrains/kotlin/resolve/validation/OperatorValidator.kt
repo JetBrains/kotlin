@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,16 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 
 class OperatorValidator : SymbolUsageValidator {
 
@@ -58,6 +59,13 @@ class OperatorValidator : SymbolUsageValidator {
         }
 
         fun isArrayAccessExpression() = jetElement is KtArrayAccessExpression
+
+        if (resolvedCall is VariableAsFunctionResolvedCall && call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
+            val outerCall = call.outerCall
+            if (isConventionCall(outerCall)) {
+                throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. Variable: ${resolvedCall.variableCall.resultingDescriptor}")
+            }
+        }
 
         if (isMultiDeclaration() || isInvokeCall()) {
             if (!functionDescriptor.isOperator && call != null) {
