@@ -55,7 +55,7 @@ object OperatorModifierChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
-        val checkResult = OperatorChecks.checkOperator(functionDescriptor)
+        val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
             if (functionDescriptor.name in COROUTINE_OPERATOR_NAMES
                     && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)) {

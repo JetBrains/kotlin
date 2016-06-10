@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.util.CheckResult
+import org.jetbrains.kotlin.util.InfixChecks
 
 class InfixModifierChecker : SimpleDeclarationChecker {
 
@@ -36,17 +37,9 @@ class InfixModifierChecker : SimpleDeclarationChecker {
         if (!functionDescriptor.isInfix) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.INFIX_KEYWORD) ?: return
 
-        if (!isApplicable(functionDescriptor)) {
-            diagnosticHolder.report(Errors.INAPPLICABLE_INFIX_MODIFIER.on(modifier))
-        }
+        val checkResult = InfixChecks.check(functionDescriptor)
+        if (checkResult !is CheckResult.IllegalSignature) return
+
+        diagnosticHolder.report(Errors.INAPPLICABLE_INFIX_MODIFIER.on(modifier, checkResult.error))
     }
-
-    private fun isApplicable(descriptor: FunctionDescriptor): Boolean {
-        if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) return false
-        if (descriptor.valueParameters.size != 1) return false
-
-        val singleParameter = descriptor.valueParameters.first()
-        return !singleParameter.hasDefaultValue() && singleParameter.varargElementType == null
-    }
-
 }
