@@ -50,8 +50,9 @@ class CoroutineCodegen(
         parentCodegen: MemberCodegen<*>,
         classBuilder: ClassBuilder,
         private val continuationSuperType: KotlinType,
-        private val controllerType: KotlinType
+        private val coroutineLambdaDescriptor: FunctionDescriptor
 ) : ClosureCodegen(state, element, null, closureContext, null, strategy, parentCodegen, classBuilder) {
+    private val controllerType = coroutineLambdaDescriptor.controllerTypeIfCoroutine!!
 
     override fun generateClosureBody() {
         v.newField(
@@ -63,6 +64,14 @@ class CoroutineCodegen(
                 JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
                 COROUTINE_LABEL_FIELD_NAME,
                 Type.INT_TYPE.descriptor, null, null)
+
+        for (parameter in funDescriptor.valueParameters) {
+            v.newField(
+                    OtherOrigin(parameter),
+                    Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL,
+                    COROUTINE_LAMBDA_PARAMETER_PREFIX + parameter.index,
+                    typeMapper.mapType(parameter.type).descriptor, null, null)
+        }
 
         val classDescriptor = closureContext.contextDescriptor
 
@@ -77,6 +86,15 @@ class CoroutineCodegen(
 
                 with(codegen.v) {
                     setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
+
+                    for (parameter in funDescriptor.valueParameters) {
+                        // 0 - this
+                        // 1 - controller
+                        val parametersIndexShift = 2
+                        AsmUtil.genAssignInstanceFieldFromParam(
+                                parameter.getFieldInfoForCoroutineLambdaParameter(), parametersIndexShift + parameter.index, this)
+                    }
+
                     load(0, AsmTypes.OBJECT_TYPE)
                     areturn(AsmTypes.OBJECT_TYPE)
                 }
@@ -119,11 +137,29 @@ class CoroutineCodegen(
                                        object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                                                codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
+                                               codegen.initializeCoroutineParameters()
                                                super.doGenerateBody(codegen, signature)
                                                generateExceptionHandlingBlock(codegen)
                                            }
                                        })
     }
+
+    private fun ExpressionCodegen.initializeCoroutineParameters() {
+        for (parameter in coroutineLambdaDescriptor.valueParameters) {
+            val mappedType = typeMapper.mapType(parameter.type)
+            val newIndex = myFrameMap.enter(parameter, mappedType)
+
+            StackValue.field(parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false))
+                    .put(mappedType, v)
+            v.store(newIndex, mappedType)
+        }
+    }
+
+    private fun ValueParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
+            FieldInfo.createForHiddenField(
+                    typeMapper.mapClass(closureContext.thisDescriptor),
+                    typeMapper.mapType(returnType!!),
+                    COROUTINE_LAMBDA_PARAMETER_PREFIX + index)
 
     private fun generateExceptionHandlingBlock(codegen: ExpressionCodegen) {
         val handleExceptionFunction =
@@ -132,7 +168,7 @@ class CoroutineCodegen(
                         ?: return
 
         val (resolvedCall, fakeExceptionExpression, fakeThisContinuationException) =
-                createResolvedCallForHandleExceptionCall(element, handleExceptionFunction, (context as ClosureContext).coroutineDescriptor!!)
+                createResolvedCallForHandleExceptionCall(element, handleExceptionFunction, coroutineLambdaDescriptor)
 
         codegen.tempVariables.put(fakeExceptionExpression, StackValue.operation(AsmTypes.OBJECT_TYPE) {
             codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME, "()Ljava/lang/Object;", false)
@@ -228,7 +264,9 @@ class CoroutineCodegen(
                             descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper),
                     FunctionGenerationStrategy.FunctionDefault(state, declaration), expressionCodegen.parentCodegen, classBuilder,
                     continuationSupertype,
-                    originalCoroutineLambdaDescriptor.controllerTypeIfCoroutine!!)
+                    originalCoroutineLambdaDescriptor)
         }
     }
 }
+
+private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"
