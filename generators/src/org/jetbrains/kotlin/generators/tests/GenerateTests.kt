@@ -380,6 +380,10 @@ fun main(args: Array<String>) {
         testClass<AbstractJava8WriteSignatureTest>() {
             model("codegen/java8/writeSignature")
         }
+
+        testClass<AbstractWriteFlagsTest>() {
+            model("codegen/java8/writeFlags")
+        }
     }
 
     testGroup("idea/tests", "idea/testData") {
