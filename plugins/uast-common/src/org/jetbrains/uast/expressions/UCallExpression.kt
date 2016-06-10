@@ -21,6 +21,8 @@ import org.jetbrains.uast.visitor.UastVisitor
  * Represents a call expression (function call, constructor call, array initializer).
  */
 interface UCallExpression : UExpression, UResolvable {
+    val receiverType: UType?
+    
     /**
      * Returns the call kind.
      */

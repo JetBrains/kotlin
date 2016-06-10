@@ -51,6 +51,11 @@ class PropertyAsCallAndroidUastVisitorExtension : UastVisitorExtension {
             override val parent = element.parent
             override val psi = ktElement
 
+            override val receiverType by lz {
+                val type = (resolvedCall.extensionReceiver ?: resolvedCall.dispatchReceiver)?.type ?: return@lz null
+                KotlinConverter.convert(type, psi.project, null)
+            }
+            
             override val functionReference = KotlinNameUSimpleReferenceExpression(
                     expr.psi, expr.identifier, expr.parent, accessorDescriptor)
 
