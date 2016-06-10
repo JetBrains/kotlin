@@ -38,6 +38,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     TYPE("type usage", false),
     EXPRESSION("expression", false),           // includes FUNCTION_LITERAL, OBJECT_LITERAL
     FILE("file", false),
+    TYPEALIAS("typealias"),                    // TODO support typealias as annotation target
 
     TYPE_PROJECTION("type projection", false),
     STAR_PROJECTION("star projection", false),

@@ -19491,6 +19491,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("exposedExpandedType.kt")
+            public void testExposedExpandedType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/exposedExpandedType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionTypeInTypeAlias.kt")
             public void testFunctionTypeInTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/functionTypeInTypeAlias.kt");
