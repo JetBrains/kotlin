@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
 class TypeResolver(
@@ -402,7 +403,7 @@ class TypeResolver(
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
         typeTransformerForTests.transformType(resultingType)?.let { return type(it) }
 
-        if (c.checkBounds && !resultingType.dependsOnTypeAliasParameters()) {
+        if (shouldCheckBounds(c, resultingType)) {
             val substitutor = TypeSubstitutor.create(resultingType)
             for (i in parameters.indices) {
                 val parameter = parameters[i]
@@ -421,6 +422,14 @@ class TypeResolver(
         }
 
         return type(resultingType)
+    }
+
+    private fun shouldCheckBounds(c: TypeResolutionContext, inType: KotlinType): Boolean {
+        if (!c.checkBounds) return false
+        if (inType.containsTypeAliasParameters()) return false
+        if (c.abbreviated && inType.containsTypeAliases()) return false
+
+        return true
     }
 
     private fun resolveTypeForTypeAlias(

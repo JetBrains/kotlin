@@ -163,7 +163,7 @@ class TypeAliasExpander(
         val typeSubstitutor = TypeSubstitutor.create(substitutedType)
 
         substitutedType.arguments.forEachIndexed { i, substitutedArgument ->
-            if (!substitutedArgument.type.dependsOnTypeAliasParameters()) {
+            if (!substitutedArgument.type.containsTypeAliasParameters()) {
                 val unsubstitutedArgument = unsubstitutedType.arguments[i]
                 val typeParameter = unsubstitutedType.constructor.parameters[i]
                 DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
