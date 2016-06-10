@@ -235,6 +235,7 @@
 - [`KT-9444`](https://youtrack.jetbrains.com/issue/KT-9444) Rename dialog: Allow typing any identifier without backquotes
 - [`KT-9446`](https://youtrack.jetbrains.com/issue/KT-9446) Warn about calls with default arguments if function to be renamed inherits default values from some base function which is excluded from rename
 - [`KT-10713`](https://youtrack.jetbrains.com/issue/KT-10713) Skip read-only declarations when renaming parameters
+- [`KT-10687`](https://youtrack.jetbrains.com/issue/KT-10687) Qualify property references to avoid shadowing by parameters
 - [`KT-12543`](https://youtrack.jetbrains.com/issue/KT-12543) Qualify property references with 'this' to avoid renaming conflicts
 
 #### Java to Kotlin converter
