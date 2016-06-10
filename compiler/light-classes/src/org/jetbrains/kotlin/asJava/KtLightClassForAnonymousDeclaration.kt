@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.*
-import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.reference.SoftReference
 import org.jetbrains.kotlin.name.FqName
@@ -33,10 +32,6 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement {
         return JavaPsiFacade.getElementFactory(classOrObject.project).createReferenceElementByType(baseClassType)
-    }
-
-    override fun getContainingClass(): PsiClass? {
-        return delegate.containingClass
     }
 
     private val firstSupertypeFQName: String
@@ -103,6 +98,18 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
     override fun hashCode(): Int {
         return classOrObject.hashCode()
     }
+
+    override fun getNameIdentifier() = null
+    override fun getQualifiedName(): String? = null
+    override fun getModifierList(): PsiModifierList? = null
+    override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
+    override fun getExtendsList(): PsiReferenceList? = null
+    override fun getImplementsList(): PsiReferenceList? = null
+    override fun getContainingClass(): PsiClass? = null
+    override fun isInterface() = false
+    override fun isAnnotationType() = false
+    override fun getTypeParameterList() = null
+    override fun isEnum() = false
 
     companion object {
         private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
