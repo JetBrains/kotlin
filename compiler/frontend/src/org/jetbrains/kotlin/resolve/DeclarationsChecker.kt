@@ -191,7 +191,7 @@ class DeclarationsChecker(
 
         override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
             // TODO more precise diagnostics
-            if (!argument.dependsOnTypeAliasParameters() && !bound.dependsOnTypeAliasParameters()) {
+            if (!argument.containsTypeAliasParameters() && !bound.containsTypeAliasParameters()) {
                 trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(typeReference, bound, argument, typeParameter))
             }
         }

@@ -57,9 +57,14 @@ class TypeAliasExpansion private constructor(
     }
 }
 
-fun KotlinType.dependsOnTypeAliasParameters(): Boolean =
+fun KotlinType.containsTypeAliasParameters(): Boolean =
         TypeUtils.contains(this) {
             it.constructor.declarationDescriptor?.isTypeAliasParameter() ?: false
+        }
+
+fun KotlinType.containsTypeAliases(): Boolean =
+        TypeUtils.contains(this) {
+            it.constructor.declarationDescriptor is TypeAliasDescriptor
         }
 
 fun ClassifierDescriptor.isTypeAliasParameter(): Boolean =
