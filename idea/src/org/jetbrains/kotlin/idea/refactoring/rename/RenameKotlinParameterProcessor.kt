@@ -20,17 +20,40 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.listeners.RefactoringElementListener
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.utils.SmartList
 
 class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement) = element is KtParameter && element.ownerFunction is KtNamedFunction
+
+    override fun findCollisions(
+            element: PsiElement,
+            newName: String?,
+            allRenames: MutableMap<out PsiElement, String>,
+            result: MutableList<UsageInfo>
+    ) {
+        if (newName == null) return
+        val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
+        val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
+
+        val collisions = SmartList<UsageInfo>()
+        checkRedeclarations(descriptor, newName, collisions)
+        checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
+        checkNewNameUsagesRetargeting(declaration, newName, collisions)
+        result += collisions
+    }
 
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
@@ -50,5 +73,11 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
             if (parameter == null) continue
             allRenames[parameter] = newName
         }
+    }
+
+    override fun renameElement(element: PsiElement, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+        super.renameElement(element, newName, usages, listener)
+
+        usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
     }
 }

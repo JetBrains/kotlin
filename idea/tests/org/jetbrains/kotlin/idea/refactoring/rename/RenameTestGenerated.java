@@ -119,6 +119,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("clashParameterWithProperty/clashParameterWithProperty.test")
+    public void testClashParameterWithProperty_ClashParameterWithProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/clashParameterWithProperty/clashParameterWithProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("clashWithInnerClass/clashWithInnerClass.test")
     public void testClashWithInnerClass_ClashWithInnerClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/clashWithInnerClass/clashWithInnerClass.test");
@@ -182,6 +188,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("nestedClassRedeclaration/nestedClassRedeclaration.test")
     public void testNestedClassRedeclaration_NestedClassRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nestedClassRedeclaration/nestedClassRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterRedeclaration/parameterRedeclaration.test")
+    public void testParameterRedeclaration_ParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterRedeclaration/parameterRedeclaration.test");
         doTest(fileName);
     }
 
