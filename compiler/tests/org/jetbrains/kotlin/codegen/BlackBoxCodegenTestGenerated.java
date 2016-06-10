@@ -9253,12 +9253,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt4991.kt")
-        public void testKt4991() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/kt4991.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("nestedMaps.kt")
         public void testNestedMaps() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/nestedMaps.kt");
@@ -12622,12 +12616,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt4682.kt")
-        public void testKt4682() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt4682.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt5056.kt")
         public void testKt5056() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt5056.kt");
@@ -12757,12 +12745,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("typeCastException.kt")
         public void testTypeCastException() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/typeCastException.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("unjustifiedReferenceTarget.kt")
-        public void testUnjustifiedReferenceTarget() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/unjustifiedReferenceTarget.kt");
             doTest(fileName);
         }
     }
