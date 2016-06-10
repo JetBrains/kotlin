@@ -19539,6 +19539,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inhreritedTypeAliasQualifiedByDerivedClass.kt")
+            public void testInhreritedTypeAliasQualifiedByDerivedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/inhreritedTypeAliasQualifiedByDerivedClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isAsWithTypeAlias.kt")
             public void testIsAsWithTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/isAsWithTypeAlias.kt");
