@@ -26,6 +26,13 @@ class JavaUCallExpression(
         override val psi: PsiMethodCallExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), UCallExpression, PsiElementBacked, JavaUElementWithType {
+    override val receiverType: UType?
+        get() {
+            val qualifiedExpression = parent as? UQualifiedExpression ?: return null
+            if (qualifiedExpression.selector != this) return null
+            return qualifiedExpression.receiver.getExpressionType()
+        }
+    
     override val kind: UastCallKind
         get() = UastCallKind.FUNCTION_CALL
 
@@ -62,6 +69,9 @@ class JavaConstructorUCallExpression(
             else -> UastCallKind.CONSTRUCTOR_CALL
         }
     }
+
+    override val receiverType: UType?
+        get() = null
 
     override val functionReference: USimpleReferenceExpression?
         get() = null
@@ -119,6 +129,9 @@ class JavaArrayInitializerUCallExpression(
         override val psi: PsiArrayInitializerExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), UCallExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
+    override val receiverType: UType?
+        get() = null
+    
     override val functionReference: USimpleReferenceExpression?
         get() = null
 
@@ -150,6 +163,9 @@ class JavaAnnotationArrayInitializerUCallExpression(
         override val psi: PsiArrayInitializerMemberValue,
         override val parent: UElement
 ) : JavaAbstractUElement(), UCallExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
+    override val receiverType: UType?
+        get() = null
+    
     override val kind: UastCallKind
         get() = UastCallKind.ARRAY_INITIALIZER
 

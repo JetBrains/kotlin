@@ -166,8 +166,18 @@ open class ApiDetector : Detector(), UastScanner {
 
             val parentClass = declaration.parent as? UClass ?: return
             if (!isSdkClass(parentClass) || checkAosp(parentClass)) return
-            val parentInternalName = (node as? UCallExpression)?.getReceiver()?.getExpressionType()?.resolveClass(context)?.internalName
-                                     ?: parentClass.internalName ?: return
+            
+            var parentInternalName = parentClass.internalName
+            
+            if (node is UCallExpression) {
+                val clazz = node.receiverType?.resolveClass(context)?.let { getSupertypeFromAndroidSdk(context, it) }
+                val internalName = clazz?.internalName
+                if (internalName != null) {
+                    parentInternalName = internalName
+                }
+            }
+            
+            if (parentInternalName == null) return
 
             when (declaration) {
                 is UFunction -> {
@@ -196,6 +206,18 @@ open class ApiDetector : Detector(), UastScanner {
             }
 
             return mMinApi
+        }
+        
+        private fun getSupertypeFromAndroidSdk(context: UastContext, clazz: UClass): UClass? {
+            tailrec fun getSuperclassFromAndroidSdk(clazz: UClass): UClass? {
+                if (clazz.fqName?.startsWith("android.") ?: false) return clazz
+                return getSuperclassFromAndroidSdk(clazz.getSuperClass(context) ?: return null)
+            }
+            
+            val superClass = getSuperclassFromAndroidSdk(clazz)
+            if (superClass != null) return superClass
+            
+            return clazz.superTypes.firstOrNull { it.fqName?.startsWith("android.") ?: false }?.resolve(context)
         }
     }
 
