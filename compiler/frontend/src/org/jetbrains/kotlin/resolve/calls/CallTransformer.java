@@ -94,11 +94,13 @@ public class CallTransformer {
         private final Receiver explicitExtensionReceiver;
         private final ExpressionReceiver calleeExpressionAsDispatchReceiver;
         private final KtSimpleNameExpression fakeInvokeExpression;
+        public final boolean itIsVariableAsFunctionCall;
 
         public CallForImplicitInvoke(
                 @Nullable Receiver explicitExtensionReceiver,
                 @NotNull ExpressionReceiver calleeExpressionAsDispatchReceiver,
-                @NotNull Call call
+                @NotNull Call call,
+                boolean functionCall
         ) {
             super(call);
             this.outerCall = call;
@@ -107,6 +109,7 @@ public class CallTransformer {
             this.fakeInvokeExpression =
                     (KtSimpleNameExpression) KtPsiFactoryKt.KtPsiFactory(call.getCallElement())
                             .createExpression(OperatorNameConventions.INVOKE.asString());
+            itIsVariableAsFunctionCall = functionCall;
         }
 
         @Nullable

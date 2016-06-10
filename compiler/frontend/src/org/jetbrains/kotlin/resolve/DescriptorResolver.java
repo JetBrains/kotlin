@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.FunctionsTypingVisitor;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 
 import java.util.*;
@@ -76,6 +77,7 @@ public class DescriptorResolver {
     @NotNull private final SupertypeLoopChecker supertypeLoopsResolver;
     @NotNull private final VariableTypeResolver variableTypeResolver;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final FunctionsTypingVisitor functionsTypingVisitor;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -84,7 +86,8 @@ public class DescriptorResolver {
             @NotNull TypeResolver typeResolver,
             @NotNull SupertypeLoopChecker supertypeLoopsResolver,
             @NotNull VariableTypeResolver variableTypeResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull FunctionsTypingVisitor functionsTypingVisitor
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -93,6 +96,7 @@ public class DescriptorResolver {
         this.supertypeLoopsResolver = supertypeLoopsResolver;
         this.variableTypeResolver = variableTypeResolver;
         this.expressionTypingServices = expressionTypingServices;
+        this.functionsTypingVisitor = functionsTypingVisitor;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -774,7 +778,7 @@ public class DescriptorResolver {
     }
 
 
-    @Nullable
+    @NotNull
     /*package*/ static KotlinType transformAnonymousTypeIfNeeded(
             @NotNull DeclarationDescriptorWithVisibility descriptor,
             @NotNull KtDeclaration declaration,
@@ -949,7 +953,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    /*package*/ static DeferredType inferReturnTypeFromExpressionBody(
+    /*package*/ DeferredType inferReturnTypeFromExpressionBody(
             @NotNull StorageManager storageManager,
             @NotNull final ExpressionTypingServices expressionTypingServices,
             @NotNull final BindingTrace trace,
@@ -964,7 +968,9 @@ public class DescriptorResolver {
                 PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
                 KotlinType type = expressionTypingServices.getBodyExpressionType(
                         trace, scope, dataFlowInfo, function, functionDescriptor);
-                return transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+                KotlinType result = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+                functionsTypingVisitor.checkTypesForReturnStatements(function, trace, result);
+                return result;
             }
         });
     }

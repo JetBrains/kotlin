@@ -32,15 +32,15 @@ fun testReturnFromAnonFun() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                   else <!IMPLICIT_CAST_TO_ANY!>println()<!>
+            return <!TYPE_MISMATCH!>if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
+                   else <!IMPLICIT_CAST_TO_ANY!>println()<!><!>
         }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
+            return <!TYPE_MISMATCH!>if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
                    else if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                   else <!IMPLICIT_CAST_TO_ANY!>println()<!>
+                   else <!IMPLICIT_CAST_TO_ANY!>println()<!><!>
         }
 
 fun testUsage1() =
