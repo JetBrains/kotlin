@@ -39,11 +39,18 @@ fun loadScriptDefConfigs(configFile: File): List<KotlinScripDeftConfig> =
             XmlSerializer.deserialize(it, KotlinScripDeftConfig::class.java)
         }
 
-fun makeScriptDefsFromConfigs(configs: List<KotlinScripDeftConfig>): List<KotlinScriptDefinitionFromTemplate> =
-        configs.map {
-            val loader = URLClassLoader(it.classpath.map { File(it).toURI().toURL() }.toTypedArray())
-            val cl = loader.loadClass(it.def)
-            KotlinScriptDefinitionFromTemplate(cl.kotlin, null)
+fun makeScriptDefsFromConfigs(configs: List<KotlinScripDeftConfig>,
+                              errorsHandler: ((KotlinScripDeftConfig, Exception) -> Unit) = fun (ep, ex) = println(ex)): List<KotlinScriptDefinitionFromTemplate> =
+        configs.mapNotNull {
+            try {
+                val loader = URLClassLoader(it.classpath.map { File(it).toURI().toURL() }.toTypedArray())
+                val cl = loader.loadClass(it.def)
+                KotlinScriptDefinitionFromTemplate(cl.kotlin, null)
+            }
+            catch (ex: Exception) {
+                errorsHandler(it, ex)
+                null
+            }
         }
 
 @Tag("scriptDef")
