@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
@@ -45,7 +46,7 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
 
         if (erasedSuper is SimpleFunctionDescriptor && erasedSuper.typeParameters.isNotEmpty()) {
             // Only simple functions are supported now for erased overrides
-            erasedSuper = erasedSuper.createCopyWithNewTypeParameters(emptyList())
+            erasedSuper = erasedSuper.newCopyBuilder().setTypeParameters(emptyList()).build()!!
         }
 
         val overridabilityResult =

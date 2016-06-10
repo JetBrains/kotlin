@@ -145,6 +145,13 @@ class LazyJavaClassMemberScope(
         }
     }
 
+    private fun SimpleFunctionDescriptor.createRenamedCopy(builtinName: Name): SimpleFunctionDescriptor =
+            this.newCopyBuilder().apply {
+                setName(builtinName)
+                setSignatureChange()
+                setPreserveSourceElement()
+            }.build()!!
+
     private fun isOverridableRenamedDescriptor(superDescriptor: FunctionDescriptor, subDescriptor: FunctionDescriptor): Boolean {
         // if we check 'removeAt', get original sub-descriptor to distinct `remove(int)` and `remove(E)` in Java
         val subDescriptorToCheck = if (superDescriptor.isRemoveAtByIndex) subDescriptor.original else subDescriptor
@@ -223,7 +230,7 @@ class LazyJavaClassMemberScope(
             return
         }
 
-        var specialBuiltinsFromSuperTypes = SmartSet.create<SimpleFunctionDescriptor>()
+        val specialBuiltinsFromSuperTypes = SmartSet.create<SimpleFunctionDescriptor>()
 
         // Merge functions with same signatures
         val mergedFunctionFromSuperTypes = resolveOverridesForNonStaticMembers(
@@ -317,10 +324,11 @@ class LazyJavaClassMemberScope(
     private fun SimpleFunctionDescriptor.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(
             specialBuiltin: CallableDescriptor,
             alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
-    ) = if (alreadyDeclaredFunctions.none { this != it && it.doesOverride(specialBuiltin) })
+    ): SimpleFunctionDescriptor =
+        if (alreadyDeclaredFunctions.none { this != it && it.doesOverride(specialBuiltin) })
             this
         else
-            createHiddenCopyToOvercomeSignatureClash()
+            newCopyBuilder().setHiddenToOvercomeSignatureClash().build()!!
 
     private fun createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(
             overridden: FunctionDescriptor,
@@ -330,9 +338,11 @@ class LazyJavaClassMemberScope(
             it.doesOverrideBuiltinFunctionWithErasedValueParameters(overridden)
         }?.let {
             override ->
-            override.createCopyWithNewValueParameters(
-                    copyValueParameters(overridden.valueParameters.map { it.type }, override.valueParameters, overridden))
-
+            override.newCopyBuilder().apply {
+                setValueParameters(copyValueParameters(overridden.valueParameters.map { it.type }, override.valueParameters, overridden))
+                setSignatureChange()
+                setPreserveSourceElement()
+            }.build()
         }
     }
 

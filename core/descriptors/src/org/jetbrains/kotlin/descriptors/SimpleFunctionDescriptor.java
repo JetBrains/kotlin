@@ -30,18 +30,10 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
 
     @NotNull
-    SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name);
-
-    @NotNull
-    SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters);
-
-    @NotNull
-    SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters);
-
-    @NotNull
-    SimpleFunctionDescriptor createHiddenCopyToOvercomeSignatureClash();
+    @Override
+    SimpleFunctionDescriptor getOriginal();
 
     @NotNull
     @Override
-    SimpleFunctionDescriptor getOriginal();
+    CopyBuilder<? extends SimpleFunctionDescriptor> newCopyBuilder();
 }

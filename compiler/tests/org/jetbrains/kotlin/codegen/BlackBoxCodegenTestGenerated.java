@@ -6211,6 +6211,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionNtoStringGeneric.kt")
+        public void testFunctionNtoStringGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionNtoStringGeneric.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionNtoStringNoReflect.kt")
         public void testFunctionNtoStringNoReflect() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionNtoStringNoReflect.kt");
