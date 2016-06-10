@@ -1,0 +1,4 @@
+package
+
+public typealias Test</*0*/ T, /*1*/ X>  = kotlin.collections.List<T>
+public typealias Test2</*0*/ T, /*1*/ X>  = Test<T, X>

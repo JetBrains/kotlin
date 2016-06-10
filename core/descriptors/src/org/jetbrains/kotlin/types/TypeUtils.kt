@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.types.typeUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
@@ -128,6 +126,9 @@ fun constituentTypes(types: Collection<KotlinType>): Collection<KotlinType> {
     return result
 }
 
+fun KotlinType.constituentTypes(): Collection<KotlinType> =
+        constituentTypes(listOf(this))
+
 private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<KotlinType>) {
     result.addAll(types)
     for (type in types) {
@@ -135,7 +136,7 @@ private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<K
             with (type.asFlexibleType()) { constituentTypes(result, setOf(lowerBound, upperBound)) }
         }
         else {
-            constituentTypes(result, type.arguments.filterNot { it.isStarProjection }.map { it.type })
+            constituentTypes(result, type.arguments.mapNotNull { if (!it.isStarProjection) it.type else null })
         }
     }
 }
@@ -170,3 +171,24 @@ private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {
 
     return replace(newArguments)
 }
+
+fun KotlinType.containsTypeAliasParameters(): Boolean =
+        contains {
+            it.constructor.declarationDescriptor?.isTypeAliasParameter() ?: false
+        }
+
+fun KotlinType.containsTypeAliases(): Boolean =
+        contains {
+            it.constructor.declarationDescriptor is TypeAliasDescriptor
+        }
+
+fun ClassifierDescriptor.isTypeAliasParameter(): Boolean =
+        this is TypeParameterDescriptor && containingDeclaration is TypeAliasDescriptor
+
+fun KotlinType.requiresTypeAliasExpansion(): Boolean =
+        contains {
+            it.constructor.declarationDescriptor?.let {
+                it is TypeAliasDescriptor || it is TypeParameterDescriptor
+            } ?: false
+        }
+

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.contains
 
 class TypeAliasExpansion private constructor(
         val parent: TypeAliasExpansion?,
@@ -56,23 +57,3 @@ class TypeAliasExpansion private constructor(
                 create(null, typeAliasDescriptor, emptyList())
     }
 }
-
-fun KotlinType.containsTypeAliasParameters(): Boolean =
-        TypeUtils.contains(this) {
-            it.constructor.declarationDescriptor?.isTypeAliasParameter() ?: false
-        }
-
-fun KotlinType.containsTypeAliases(): Boolean =
-        TypeUtils.contains(this) {
-            it.constructor.declarationDescriptor is TypeAliasDescriptor
-        }
-
-fun ClassifierDescriptor.isTypeAliasParameter(): Boolean =
-        this is TypeParameterDescriptor && containingDeclaration is TypeAliasDescriptor
-
-fun KotlinType.requiresTypeAliasExpansion(): Boolean =
-        TypeUtils.contains(this) {
-            it.constructor.declarationDescriptor?.let {
-                it is TypeAliasDescriptor || it is TypeParameterDescriptor
-            }
-        }

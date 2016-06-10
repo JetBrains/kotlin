@@ -3,7 +3,7 @@ object AnObject {
     fun foo() = "OK"
 }
 
-typealias GenericTestObject<T> = AnObject
+typealias GenericTestObject<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = AnObject
 
 val test11: AnObject = GenericTestObject
 val test12: GenericTestObject<*> = GenericTestObject

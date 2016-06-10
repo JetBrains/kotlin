@@ -35,9 +35,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
-import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 fun KtDeclaration.checkTypeReferences(trace: BindingTrace) {
@@ -155,7 +154,7 @@ class DeclarationsChecker(
 
         checkTypeAliasExpansion(typeAliasDescriptor, declaration)
 
-        val expandedType = typeAliasDescriptor.expandedType // TODO refactor type alias expansion
+        val expandedType = typeAliasDescriptor.expandedType
         if (expandedType.isError) return
 
         val expandedClassifier = expandedType.constructor.declarationDescriptor
@@ -167,7 +166,22 @@ class DeclarationsChecker(
         if (TypeUtils.contains(expandedType) { it.isArrayOfNothing()} ) {
             trace.report(TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE.on(typeReference, expandedType, "Array<Nothing> is illegal"))
         }
+
+        val usedTypeAliasParameters: Set<TypeParameterDescriptor> = getUsedTypeAliasParameters(expandedType, typeAliasDescriptor)
+        for (typeParameter in typeAliasDescriptor.declaredTypeParameters) {
+            if (typeParameter !in usedTypeAliasParameters) {
+                val source = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) as? KtTypeParameter
+                             ?: throw AssertionError("No source element for type parameter $typeParameter of $typeAliasDescriptor")
+                trace.report(UNUSED_TYPEALIAS_PARAMETER.on(source, typeParameter, expandedType))
+            }
+        }
     }
+
+    private fun getUsedTypeAliasParameters(type: KotlinType, typeAlias: TypeAliasDescriptor): Set<TypeParameterDescriptor> =
+            type.constituentTypes().mapNotNullTo(HashSet()) {
+                val descriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor
+                descriptor?.check { it.containingDeclaration == typeAlias }
+            }
 
     private class TypeAliasDeclarationCheckingReportStrategy(
             private val trace: BindingTrace,
