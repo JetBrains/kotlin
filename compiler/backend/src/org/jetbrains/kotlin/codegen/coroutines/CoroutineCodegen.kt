@@ -55,12 +55,12 @@ class CoroutineCodegen(
 
     override fun generateClosureBody() {
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
+                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
                 COROUTINE_CONTROLLER_FIELD_NAME,
                 typeMapper.mapType(controllerType).descriptor, null, null)
 
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
+                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
                 COROUTINE_LABEL_FIELD_NAME,
                 Type.INT_TYPE.descriptor, null, null)
 
