@@ -492,8 +492,15 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
     try {
         val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader).toList()
 
-        val classpath = project.buildscript.configurations.getByName("classpath")
-        val resolvedClasspathArtifacts = classpath.resolvedConfiguration.resolvedArtifacts.toList()
+        fun Project.getResolvedArtifacts() = buildscript.configurations.getByName("classpath")
+                .resolvedConfiguration.resolvedArtifacts
+        
+        val resolvedClasspathArtifacts = project.getResolvedArtifacts().toMutableList()
+        val rootProject = project.rootProject
+        if (rootProject != project) {
+            resolvedClasspathArtifacts += rootProject.getResolvedArtifacts()
+        }
+        
         val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<File>>()
 
         for (subplugin in subplugins) {
