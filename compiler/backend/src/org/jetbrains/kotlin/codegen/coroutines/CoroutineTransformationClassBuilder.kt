@@ -158,6 +158,15 @@ class CoroutineTransformerMethodVisitor(
                 "Stack should be spilled before suspension call"
             }
 
+            val variableTypeInTable = arrayOfNulls<Type>(methodNode.maxLocals)
+            methodNode.localVariables.filter { it.start.index() < call.index() && call.index() < it.end.index() }.forEach {
+                val type = Type.getType(it.desc)
+                variableTypeInTable[it.index] = type
+                if (type.size == 2) {
+                    variableTypeInTable[it.index + 1] = UNINITIALIZED_TYPE
+                }
+            }
+
             val frame = frames[call.index()]
             val localsCount = frame.locals
             val varsCountByType = mutableMapOf<Type, Int>()
@@ -165,7 +174,14 @@ class CoroutineTransformerMethodVisitor(
             // 1 - continuation argument
             // 2 - continuation exception
             val variablesToSpill =
-                    (3 until localsCount).map { Pair(it, frame.getLocal(it)) }.filter { it.second != BasicValue.UNINITIALIZED_VALUE }
+                    (3 until localsCount)
+                            .map { Pair(it, frame.getLocal(it)) }
+                            .filter {
+                                val (index, value) = it
+                                value != BasicValue.UNINITIALIZED_VALUE
+                                    && variableTypeInTable[index] !== UNINITIALIZED_TYPE
+                                    && (variableTypeInTable[index] == null || variableTypeInTable[index]?.sort == value.type.sort)
+                            }
 
             for ((index, basicValue) in variablesToSpill) {
                 val type = basicValue.type
@@ -371,3 +387,5 @@ private fun Type.normalize() =
 private class SuspensionPoint(val suspensionCall: MethodInsnNode) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 }
+
+private val UNINITIALIZED_TYPE = Type.getObjectType("uninitialized")
