@@ -397,7 +397,7 @@ class NewResolutionOldInference(
             // todo hacks
             val functionCall = CallTransformer.CallForImplicitInvoke(
                     basicCallContext.call.explicitReceiver?.check { useExplicitReceiver },
-                    variableReceiver, basicCallContext.call)
+                    variableReceiver, basicCallContext.call, true)
             val tracingForInvoke = TracingStrategyForInvoke(calleeExpression, functionCall, variableReceiver.type)
             val basicCallResolutionContext = basicCallContext.replaceBindingTrace(variable.resolvedCall.trace)
                     .replaceCall(functionCall)
