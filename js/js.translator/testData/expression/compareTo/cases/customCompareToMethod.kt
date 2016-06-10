@@ -12,8 +12,6 @@ fun testExtensionFunctionAsCompareTo() {
     val x: B = B(100)
     val y: B = B(200)
 
-    assertEquals(false, x < y, "ext fun: x < y")
-    assertEquals(true, x > y, "ext fun: x > y")
     assertEquals(1, x.compareTo(y), "ext fun: x compareTo y")
 }
 
