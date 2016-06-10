@@ -10,5 +10,7 @@
 
         <!-- diagnosticSuppressor decelerated in common.xml -->
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.idea.debugger.DiagnosticSuppressorForDebugger"/>
+
+        <scriptTemplateProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptTemplateProvider"/>
     </extensions>
 </idea-plugin>
