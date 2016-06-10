@@ -837,12 +837,6 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
-            @TestMetadata("convertUnaryExpression.kt")
-            public void testConvertUnaryExpression() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertUnaryExpression.kt");
-                doExtractFunctionTest(fileName);
-            }
-
             @TestMetadata("delegatingFunction.kt")
             public void testDelegatingFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/delegatingFunction.kt");
