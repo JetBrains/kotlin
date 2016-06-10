@@ -18,19 +18,17 @@ package org.jetbrains.kotlin.codegen.flags;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.GenerationUtils;
-import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
@@ -53,35 +51,20 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  * TESTED_OBJECTS: Test, prop$delegate
  * FLAGS: ACC_STATIC, ACC_FINAL, ACC_PRIVATE
  */
-public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
-    private KotlinCoreEnvironment environment;
+public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
-    }
+    protected void doMultiFileTest(
+            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
+    ) throws Exception {
+        compile(files, null, ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, Collections.<String>emptyList());
 
-    @Override
-    protected void tearDown() throws Exception {
-        environment = null;
-        super.tearDown();
-    }
-
-    protected void doTest(String path) throws Exception {
-        File ktFile = new File(path);
-        assertTrue("Cannot find a file " + ktFile.getAbsolutePath(), ktFile.exists());
-
-        String fileText = FileUtil.loadFile(ktFile, true);
-
-        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), fileText, environment.getProject());
-
-        OutputFileCollection outputFiles = GenerationUtils.compileFile(psiFile, environment);
+        String fileText = FileUtil.loadFile(wholeFile, true);
 
         List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
         for (TestedObject testedObject : testedObjects) {
             String className = null;
-            for (OutputFile outputFile : outputFiles.asList()) {
+            for (OutputFile outputFile : classFileFactory.asList()) {
                 String filePath = outputFile.getRelativePath();
                 if (testedObject.isFullContainingClassName && filePath.equals(testedObject.containingClass + ".class") ||
                     !testedObject.isFullContainingClassName && filePath.startsWith(testedObject.containingClass)) {
@@ -91,7 +74,7 @@ public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
 
             assertNotNull("Couldn't find a class file with name " + testedObject.containingClass, className);
 
-            OutputFile outputFile = outputFiles.get(className);
+            OutputFile outputFile = classFileFactory.get(className);
             assertNotNull(outputFile);
 
             ClassReader cr = new ClassReader(outputFile.asByteArray());
