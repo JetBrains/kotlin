@@ -103,6 +103,10 @@ class TypeAliasExpander(
                     argumentVariance
                 }
 
+        if (typeAliasArgument.isStarProjection) {
+            return TypeUtils.makeStarProjection(typeParameterDescriptor!!)
+        }
+
         val substitutedType = TypeUtils.makeNullableIfNeeded(typeAliasArgument.type, originalType.isMarkedNullable)
 
         return TypeProjectionImpl(substitutedVariance, substitutedType)
@@ -165,7 +169,7 @@ class TypeAliasExpander(
         val typeSubstitutor = TypeSubstitutor.create(substitutedType)
 
         substitutedType.arguments.forEachIndexed { i, substitutedArgument ->
-            if (!substitutedArgument.type.containsTypeAliasParameters()) {
+            if (!substitutedArgument.isStarProjection && !substitutedArgument.type.containsTypeAliasParameters()) {
                 val unsubstitutedArgument = unsubstitutedType.arguments[i]
                 val typeParameter = unsubstitutedType.constructor.parameters[i]
                 DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
