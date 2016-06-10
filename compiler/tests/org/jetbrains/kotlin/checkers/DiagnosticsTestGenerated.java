@@ -19647,6 +19647,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unusedTypeAliasParameter.kt")
+            public void testUnusedTypeAliasParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/unusedTypeAliasParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("wrongNumberOfArgumentsInTypeAliasConstructor.kt")
             public void testWrongNumberOfArgumentsInTypeAliasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/wrongNumberOfArgumentsInTypeAliasConstructor.kt");

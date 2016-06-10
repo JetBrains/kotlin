@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
+import org.jetbrains.kotlin.types.typeUtil.requiresTypeAliasExpansion
 
 class TypeAliasExpander(
         private val reportStrategy: TypeAliasExpansionReportStrategy
