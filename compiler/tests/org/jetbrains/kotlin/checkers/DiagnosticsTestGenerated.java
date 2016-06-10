@@ -19563,6 +19563,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noApproximationInTypeAliasArgumentSubstitution.kt")
+            public void testNoApproximationInTypeAliasArgumentSubstitution() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/noApproximationInTypeAliasArgumentSubstitution.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noRHS.kt")
             public void testNoRHS() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/noRHS.kt");

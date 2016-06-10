@@ -1,0 +1,5 @@
+package
+
+public typealias Array2D</*0*/ T>  = kotlin.Array<kotlin.Array<T>>
+public fun bar(/*0*/ a: Array2D<kotlin.Int> [= kotlin.Array<kotlin.Array<kotlin.Int>>]): kotlin.Unit
+public fun foo(/*0*/ a: Array2D<out kotlin.Number> [= kotlin.Array<kotlin.Array<out kotlin.Number>>]): Array2D<out kotlin.Number> [= kotlin.Array<kotlin.Array<out kotlin.Number>>]
