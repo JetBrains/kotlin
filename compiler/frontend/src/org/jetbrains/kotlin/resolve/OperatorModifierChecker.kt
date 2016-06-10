@@ -52,7 +52,7 @@ class OperatorModifierChecker : DeclarationChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
-        val checkResult = OperatorChecks.checkOperator(functionDescriptor)
+        val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) return
 
         val errorDescription = if (checkResult is CheckResult.IllegalSignature)
