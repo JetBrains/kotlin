@@ -717,7 +717,7 @@ class DeclarationsChecker(
     }
 
     private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {
-        descriptor.returnType?.let {
+        descriptor.returnType?.unwrap()?.let {
             val target = declaration.nameIdentifier ?: declaration
             if (declaration.typeReference == null) {
                 if (it.isNothing() && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
