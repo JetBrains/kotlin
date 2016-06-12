@@ -1,0 +1,3 @@
+// "Change to '1L'" "true"
+val a = foo(1L<caret>)
+fun foo(l: Long) = l

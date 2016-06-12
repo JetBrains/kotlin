@@ -1,6 +1,6 @@
 // "Convert expression to 'Int'" "true"
 fun foo() {
-    bar(1L<caret>)
+    bar("1".toLong()<caret>)
 }
 
 fun bar(l: Int) {
