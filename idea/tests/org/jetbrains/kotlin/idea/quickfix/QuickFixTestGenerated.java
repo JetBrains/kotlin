@@ -7397,6 +7397,111 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/surroundWithNullCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SurroundWithNullCheck extends AbstractQuickFixTest {
+        public void testAllFilesPresentInSurroundWithNullCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithNullCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("argumentNullable.kt")
+        public void testArgumentNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/argumentNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("chainedUnsafeCall.kt")
+        public void testChainedUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/chainedUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionUnsafeCall.kt")
+        public void testExpressionUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/expressionUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("infixUnsafeCall.kt")
+        public void testInfixUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/infixUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeFuncUnsafe.kt")
+        public void testInvokeFuncUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/invokeFuncUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeUnsafe.kt")
+        public void testInvokeUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/invokeUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("iteratorUnsafe.kt")
+        public void testIteratorUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/iteratorUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleUnsafeCall.kt")
+        public void testSimpleUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/simpleUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInBinary.kt")
+        public void testUnsafeCallInBinary() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInBinary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInDeclaration.kt")
+        public void testUnsafeCallInDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInDeclaration.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInGetter.kt")
+        public void testUnsafeCallInGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInsideAnonymous.kt")
+        public void testUnsafeCallInsideAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInsideAnonymous.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInsideIf.kt")
+        public void testUnsafeCallInsideIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInsideIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInsideWhen.kt")
+        public void testUnsafeCallInsideWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInsideWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCallInsideWhile.kt")
+        public void testUnsafeCallInsideWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unsafeCallInsideWhile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unstableValue.kt")
+        public void testUnstableValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/unstableValue.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/toString")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -8632,6 +8737,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("twoElseBranchesInWhen.kt")
         public void testTwoElseBranchesInWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/twoElseBranchesInWhen.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/wrapWithSafeLetCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WrapWithSafeLetCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInWrapWithSafeLetCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrapWithSafeLetCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("argumentNullable.kt")
+        public void testArgumentNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/argumentNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("chainedUnsafeCall.kt")
+        public void testChainedUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/chainedUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionUnsafeCall.kt")
+        public void testExpressionUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/expressionUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideLet.kt")
+        public void testInsideLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/insideLet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeFuncUnsafe.kt")
+        public void testInvokeFuncUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeFuncUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeUnsafe.kt")
+        public void testInvokeUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unstableValue.kt")
+        public void testUnstableValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/unstableValue.kt");
             doTest(fileName);
         }
     }

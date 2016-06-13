@@ -1,0 +1,9 @@
+// "Surround with null check" "true"
+
+fun foo(x: String?) {
+    if (x != null) {
+        bar(x)
+    }
+}
+
+fun bar(s: String) = s.hashCode()

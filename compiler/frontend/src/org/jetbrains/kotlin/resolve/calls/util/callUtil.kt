@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
 
@@ -198,6 +199,16 @@ fun KtExpression.getFunctionResolvedCallWithAssert(context: BindingContext): Res
     }
     @Suppress("UNCHECKED_CAST")
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
+}
+
+fun KtExpression.getType(context: BindingContext): KotlinType? {
+    val type = context.getType(this)
+    if (type != null) return type
+    val resolvedCall = this.getResolvedCall(context)
+    if (resolvedCall is VariableAsFunctionResolvedCall) {
+        return resolvedCall.variableCall.resultingDescriptor.type
+    }
+    return null
 }
 
 fun Call.isSafeCall(): Boolean {
