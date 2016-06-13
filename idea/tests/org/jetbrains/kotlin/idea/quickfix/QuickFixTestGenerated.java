@@ -8788,6 +8788,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideLet.kt")
+        public void testInsideLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/insideLet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("invokeFuncUnsafe.kt")
         public void testInvokeFuncUnsafe() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeFuncUnsafe.kt");

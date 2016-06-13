@@ -21,6 +21,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -38,8 +40,13 @@ class WrapWithSafeLetCallFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val factory = KtPsiFactory(element)
         val nullableText = nullableExpression.text
-        nullableExpression.replace(factory.createExpression("it"))
-        val wrapped = factory.createExpressionByPattern("$0?.let { $1 }", nullableText, element.text)
+        val validator = NewDeclarationNameValidator(element, nullableExpression, NewDeclarationNameValidator.Target.VARIABLES)
+        val name = KotlinNameSuggester.suggestNameByName("it", validator)
+        nullableExpression.replace(factory.createExpression(name))
+        val wrapped = when (name) {
+            "it" -> factory.createExpressionByPattern("$0?.let { $1 }", nullableText, element)
+            else -> factory.createExpressionByPattern("$0?.let { $1 -> $2 }", nullableText, name, element)
+        }
         element.replace(wrapped)
     }
 
