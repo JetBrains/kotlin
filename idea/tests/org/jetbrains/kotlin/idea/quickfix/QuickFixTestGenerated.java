@@ -7438,6 +7438,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithNullCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("argumentNullable.kt")
+        public void testArgumentNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/argumentNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("chainedUnsafeCall.kt")
         public void testChainedUnsafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/chainedUnsafeCall.kt");
