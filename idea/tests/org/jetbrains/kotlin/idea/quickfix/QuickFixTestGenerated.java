@@ -7435,6 +7435,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("iteratorUnsafe.kt")
+        public void testIteratorUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/iteratorUnsafe.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleUnsafeCall.kt")
         public void testSimpleUnsafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/simpleUnsafeCall.kt");
