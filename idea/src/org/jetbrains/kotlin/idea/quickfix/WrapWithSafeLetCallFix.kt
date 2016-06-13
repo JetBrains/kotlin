@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class WrapWithSafeLetCallFix(
@@ -68,11 +69,7 @@ class WrapWithSafeLetCallFix(
             val argument = typeMismatch.psiElement.parent as? KtValueArgument ?: return null
             val call = argument.getParentOfType<KtCallExpression>(true) ?: return null
 
-            val expected = typeMismatch.a
-            val actual = typeMismatch.b
-            if (expected.isMarkedNullable || !actual.isMarkedNullable) return null
-            val expectedNullable = TypeUtils.makeNullable(expected)
-            if (!actual.isSubtypeOf(expectedNullable)) return null
+            if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
 
             return WrapWithSafeLetCallFix(call, typeMismatch.psiElement)
         }
