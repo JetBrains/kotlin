@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
 import java.io.File
 import java.net.URLClassLoader
 
@@ -40,8 +41,9 @@ interface ScriptTemplateProvider {
     }
 }
 
-fun makeScriptDefsFromTemplateProviderExtesions(errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = fun (ep, ex) = println(ex)): List<KotlinScriptDefinitionFromTemplate> =
-        makeScriptDefsFromTemplateProviders(Extensions.getExtensions(ScriptTemplateProvider.EP_NAME).asIterable(),
+fun makeScriptDefsFromTemplateProviderExtensions(project: Project,
+                                                 errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = fun (ep, ex) = println(ex)): List<KotlinScriptDefinitionFromTemplate> =
+        makeScriptDefsFromTemplateProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplateProvider.EP_NAME).extensions.asIterable(),
                                             errorsHandler)
 
 fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvider>,
@@ -51,7 +53,7 @@ fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvid
     return providers.filter { it.isValid }.sortedByDescending { it.version }.mapNotNull {
         try {
             idToVersion.get(it.id)?.let { ver -> errorsHandler(it, RuntimeException("Conflicting scriptTemplateProvider ${it.id}, using one with version $ver")) }
-            val loader = URLClassLoader(it.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray())
+            val loader = URLClassLoader(it.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
             val cl = loader.loadClass(it.templateClass)
             idToVersion.put(it.id, it.version)
             KotlinScriptDefinitionFromTemplate(cl.kotlin, it.context)

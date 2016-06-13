@@ -83,7 +83,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun reloadScriptDefinitions() {
-        (makeScriptDefsFromTemplateProviderExtesions(/* TODO: add logging here */) +
+        (makeScriptDefsFromTemplateProviderExtensions(project /* TODO: add logging here */) +
          loadScriptConfigsFromProjectRoot(File(project.basePath ?: "")).map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } +
          makeScriptDefsFromConfigs(loadScriptDefConfigsFromProjectRoot(File(project.basePath ?: "")))).let {
             if (it.isNotEmpty()) {
