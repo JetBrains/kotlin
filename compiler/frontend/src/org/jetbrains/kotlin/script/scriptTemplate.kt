@@ -37,7 +37,6 @@ annotation class ScriptFilePattern(val pattern: String)
 
 interface GetScriptDependencies {
     operator fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? = null
-    operator fun invoke(context: Any?): KotlinScriptExternalDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
@@ -62,18 +61,14 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    private val dependenciesExtractors by lazy {
+    private val dependenciesResolvers by lazy {
         template.annotations.mapNotNull { it as? ScriptDependencyResolver }.map { it.extractor.constructors.first().call() }
-    }
-
-    private val dependencies: List<KotlinScriptExternalDependencies> by lazy {
-        dependenciesExtractors.mapNotNull { it(context) }
     }
 
     override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
-        val fileDeps = dependenciesExtractors.mapNotNull { it(fileAnnotations, context) }
-        return KotlinScriptExternalDependenciesUnion(dependencies + fileDeps)
+        val fileDeps = dependenciesResolvers.mapNotNull { it(fileAnnotations, context) }
+        return KotlinScriptExternalDependenciesUnion(fileDeps)
     }
 
     private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {

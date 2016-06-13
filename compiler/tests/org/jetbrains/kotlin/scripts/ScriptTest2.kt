@@ -119,7 +119,6 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
     override fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? {
-        if (annotations.none()) return null
         val anns = annotations.map { parseAnnotation(it) }.filter { it.name == depends::class.simpleName }
         val cp = anns.flatMap {
             it.value.mapNotNull {
@@ -130,7 +129,7 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
             }
         }
         return object : KotlinScriptExternalDependencies {
-            override val classpath = cp
+            override val classpath = classpathFromClassloader() + cp
         }
     }
 
@@ -139,12 +138,6 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
                     ?.mapNotNull { it.toFile()?.canonicalPath }
                     ?.filter { it.contains("out/test") }
             ?: emptyList()
-
-    override fun invoke(context: Any?): KotlinScriptExternalDependencies? {
-        return object : KotlinScriptExternalDependencies {
-            override val classpath = classpathFromClassloader()
-        }
-    }
 }
 
 @ScriptFilePattern(".*\\.kts")
