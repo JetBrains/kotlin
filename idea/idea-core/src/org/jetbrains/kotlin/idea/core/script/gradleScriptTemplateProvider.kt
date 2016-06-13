@@ -16,18 +16,28 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.script.ScriptTemplateProvider
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import java.io.File
 
-class GradleScriptTemplateProvider: ScriptTemplateProvider {
+class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationManager?): ScriptTemplateProvider {
 
-    private val gradleHome = System.getProperty("idea.gradle.home")?.let { File(it) }?.let { if (it.exists()) it else null }
+    private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
+    private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
 
     override val id: String = "Gradle"
     override val version: Int = 1
     override val isValid: Boolean = gradleHome != null
 
     override val templateClass: String = "org.gradle.script.lang.kotlin.KotlinBuildScript"
-    override val dependenciesClasspath: Iterable<String> = listOf(File(gradleHome, "gradle_all.jar").absolutePath)
+    override val dependenciesClasspath: Iterable<String> =
+            gradleLibsPath?.listFiles { file -> file.extension == "jar" && depLibsPrefixes.any { file.name.startsWith(it) } }
+                ?.map { it.absolutePath }
+                ?: emptyList()
     override val context: Any? = gradleHome
+
+    companion object {
+        private val depLibsPrefixes = listOf("gradle-script-kotlin", "gradle-core")
+    }
 }
