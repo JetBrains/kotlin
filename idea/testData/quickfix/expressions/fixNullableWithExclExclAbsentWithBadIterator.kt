@@ -1,5 +1,6 @@
 // "Add non-null asserted (!!) call" "false"
 // ACTION: Replace with a 'forEach' function call
+// ACTION: Surround with null check
 // ERROR: Not nullable value required to call an 'iterator()' method on for-loop range
 
 class Some {
