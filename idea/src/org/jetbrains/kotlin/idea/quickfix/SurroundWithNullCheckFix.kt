@@ -64,14 +64,16 @@ class SurroundWithNullCheckFix(
                 else -> return null
             } as? KtReferenceExpression ?: return null
 
-            val context = expression.analyze()
-            val nullableType = nullableExpression.getType(context) ?: return null
-            val containingDescriptor = nullableExpression.getResolutionScope(context, expression.getResolutionFacade()).ownerDescriptor
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(nullableExpression, nullableType, context, containingDescriptor)
-            if (!dataFlowValue.isPredictable) return null
+            if (!nullableExpression.isPredictable()) return null
 
             return SurroundWithNullCheckFix(expression, nullableExpression)
         }
     }
+}
 
+private fun KtExpression.isPredictable(): Boolean {
+    val context = this.analyze()
+    val nullableType = this.getType(context) ?: return false
+    val containingDescriptor = this.getResolutionScope(context, this.getResolutionFacade()).ownerDescriptor
+    return DataFlowValueFactory.createDataFlowValue(this, nullableType, context, containingDescriptor).isPredictable
 }
