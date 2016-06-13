@@ -71,6 +71,9 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
 
 fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
+fun isNullabilityMismatch(expected: KotlinType, actual: KotlinType) =
+        !expected.isMarkedNullable && actual.isMarkedNullable && actual.isSubtypeOf(TypeUtils.makeNullable(expected))
+
 fun KotlinType.cannotBeReified(): Boolean =
         KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic() || this.isCaptured()
 
