@@ -163,8 +163,17 @@ fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
     val methodName = Name.guessByFirstCharacter(name)
     val propertyName = toRename.name ?: ""
     return when {
-        name.startsWith("get") -> propertyNameByGetMethodName(methodName)
-        name.startsWith("set") -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
+        JvmAbi.isGetterName(name) -> propertyNameByGetMethodName(methodName)
+        JvmAbi.isSetterName(name) -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
         else -> null
     }?.asString()
+}
+
+fun accessorNameByPropertyName(name: String, accessor: KtLightMethod): String? {
+    val methodName = accessor.name
+    return when {
+        JvmAbi.isGetterName(methodName) -> JvmAbi.getterName(name)
+        JvmAbi.isSetterName(methodName) -> JvmAbi.setterName(name)
+        else -> null
+    }
 }

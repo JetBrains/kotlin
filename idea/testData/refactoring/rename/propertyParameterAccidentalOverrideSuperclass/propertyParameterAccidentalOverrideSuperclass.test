@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/test.kt",
+  "newName": "foo",
+  "withRuntime": "true",
+  "hint": "Property after rename will clash with existing parameter 'foo' in class 'A'"
+}
