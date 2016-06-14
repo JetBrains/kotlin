@@ -243,8 +243,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
         }
 
+        val newPropertyName = if (newName != null && element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
+
         for (propertyMethod in propertyMethods) {
-            addRenameElements(propertyMethod, (element as PsiNamedElement).name, newName, allRenames, scope)
+            addRenameElements(propertyMethod, (element as PsiNamedElement).name, newPropertyName, allRenames, scope)
         }
     }
 
