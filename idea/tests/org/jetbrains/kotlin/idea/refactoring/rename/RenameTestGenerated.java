@@ -863,6 +863,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameOverriddenPropertyViaJavaGetter/renameOverriddenPropertyViaJavaGetter.test")
+    public void testRenameOverriddenPropertyViaJavaGetter_RenameOverriddenPropertyViaJavaGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameOverriddenPropertyViaJavaGetter/renameOverriddenPropertyViaJavaGetter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameOverriddenPropertyViaJavaSetter/renameOverriddenPropertyViaJavaSetter.test")
+    public void testRenameOverriddenPropertyViaJavaSetter_RenameOverriddenPropertyViaJavaSetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameOverriddenPropertyViaJavaSetter/renameOverriddenPropertyViaJavaSetter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renamePlus/plus.test")
     public void testRenamePlus_Plus() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePlus/plus.test");
