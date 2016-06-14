@@ -311,7 +311,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                             refKindUsages[UsageKind.SIMPLE_PROPERTY_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
-        usages.forEach { (it as? UsageInfoWithReplacement)?.apply() }
+        usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
 
         dropOverrideKeywordIfNecessary(element)
 

@@ -100,7 +100,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         val classFromText = KtPsiFactory(project).createClass(builder.asString())
         val body = sealedClass.getOrCreateBody()
         val klass = body.addBefore(classFromText, body.rBrace) as KtClass
-        PsiElementRenameHandler.rename(klass, project, sealedClass, editor)
+        runInteractiveRename(klass, project, sealedClass, editor)
         chooseAndImplementMethods(project, klass, editor)
     }
 
@@ -142,9 +142,14 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
                                            baseClass, name, visibility)
             val classFromText = factory.createClass(builder.asString())
             val klass = container.parent.addAfter(classFromText, container) as KtClass
-            PsiElementRenameHandler.rename(klass, project, container, editor)
+            runInteractiveRename(klass, project, container, editor)
             chooseAndImplementMethods(project, klass, editor)
         }
+    }
+
+    private fun runInteractiveRename(klass: KtClass, project: Project, container: KtClassOrObject, editor: Editor) {
+        if (ApplicationManager.getApplication().isUnitTestMode) return
+        PsiElementRenameHandler.rename(klass, project, container, editor)
     }
 
     private fun chooseSubclassToCreate(baseClass: KtClass, baseName: String): CreateClassDialog? {
