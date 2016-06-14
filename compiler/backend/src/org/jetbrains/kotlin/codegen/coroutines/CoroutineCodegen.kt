@@ -75,32 +75,6 @@ class CoroutineCodegen(
 
         val classDescriptor = closureContext.contextDescriptor
 
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
-                                       object : FunctionGenerationStrategy.CodegenBased(state) {
-            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                AsmUtil.genAssignInstanceFieldFromParam(
-                    FieldInfo.createForHiddenField(
-                            typeMapper.mapClass(classDescriptor),
-                            typeMapper.mapType(controllerType), COROUTINE_CONTROLLER_FIELD_NAME),
-                    1, codegen.v)
-
-                with(codegen.v) {
-                    setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
-
-                    for (parameter in funDescriptor.valueParameters) {
-                        // 0 - this
-                        // 1 - controller
-                        val parametersIndexShift = 2
-                        AsmUtil.genAssignInstanceFieldFromParam(
-                                parameter.getFieldInfoForCoroutineLambdaParameter(), parametersIndexShift + parameter.index, this)
-                    }
-
-                    load(0, AsmTypes.OBJECT_TYPE)
-                    areturn(AsmTypes.OBJECT_TYPE)
-                }
-            }
-        })
-
         val resumeFunctionDescriptor =
                 createSynthesizedImplementationByName(
                         "resume",
@@ -142,6 +116,36 @@ class CoroutineCodegen(
                                                generateExceptionHandlingBlock(codegen)
                                            }
                                        })
+
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
+                                       object : FunctionGenerationStrategy.CodegenBased(state) {
+                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                                                generateInvokeMethod(codegen, signature)
+                                           }
+                                       })
+    }
+
+    private fun generateInvokeMethod(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+        AsmUtil.genAssignInstanceFieldFromParam(
+                FieldInfo.createForHiddenField(
+                        typeMapper.mapClass(classDescriptor),
+                        typeMapper.mapType(controllerType), COROUTINE_CONTROLLER_FIELD_NAME),
+                1, codegen.v)
+
+        with(codegen.v) {
+            setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
+
+            for (parameter in funDescriptor.valueParameters) {
+                // 0 - this
+                // 1 - controller
+                val parametersIndexShift = 2
+                AsmUtil.genAssignInstanceFieldFromParam(
+                        parameter.getFieldInfoForCoroutineLambdaParameter(), parametersIndexShift + parameter.index, this)
+            }
+
+            load(0, AsmTypes.OBJECT_TYPE)
+            areturn(AsmTypes.OBJECT_TYPE)
+        }
     }
 
     private fun ExpressionCodegen.initializeCoroutineParameters() {
