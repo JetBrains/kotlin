@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -161,14 +164,13 @@ object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NA
 object InvokeIntrinsic : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         val callableDescriptor = callInfo.callableDescriptor
-        if (callableDescriptor.name != OperatorNameConventions.INVOKE)
-            return false
-        val isExtension = callableDescriptor.extensionReceiverParameter != null
-        val parameterCount = callableDescriptor.valueParameters.size + (if (isExtension) 1 else 0)
-        val funDeclaration = callableDescriptor.containingDeclaration
+        if (callableDescriptor is FunctionInvokeDescriptor) return true
 
-        if (!isExtension && funDeclaration == callInfo.context.reflectionTypes.getKFunction(parameterCount))
-            return true
+        // Otherwise, it can be extension lambda
+        if (callableDescriptor.name != OperatorNameConventions.INVOKE || callableDescriptor.extensionReceiverParameter == null)
+            return false
+        val parameterCount = callableDescriptor.valueParameters.size + 1
+        val funDeclaration = callableDescriptor.containingDeclaration
 
         return funDeclaration == callableDescriptor.builtIns.getFunction(parameterCount)
     }
