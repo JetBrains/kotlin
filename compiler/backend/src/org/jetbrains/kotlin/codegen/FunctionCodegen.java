@@ -294,7 +294,7 @@ public class FunctionCodegen {
 
     private void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
         // IDEA's ClsPsi builder fails to annotate synthetic parameters
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
         // see MethodWriter.visitParameterAnnotation()
