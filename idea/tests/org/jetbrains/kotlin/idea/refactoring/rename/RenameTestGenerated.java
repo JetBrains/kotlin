@@ -35,6 +35,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("ambiguousClassFunImportRenameClass/ambiguousClassFunImportRenameClass.test")
+    public void testAmbiguousClassFunImportRenameClass_AmbiguousClassFunImportRenameClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/ambiguousClassFunImportRenameClass/ambiguousClassFunImportRenameClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ambiguousClassFunImportRenameFun/ambiguousClassFunImportRenameFun.test")
+    public void testAmbiguousClassFunImportRenameFun_AmbiguousClassFunImportRenameFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/ambiguousClassFunImportRenameFun/ambiguousClassFunImportRenameFun.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("automaticRenamer/simple.test")
     public void testAutomaticRenamer_Simple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamer/simple.test");
