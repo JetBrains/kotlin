@@ -245,7 +245,21 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
 
         val newPropertyName = if (newName != null && element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
 
+        val (getterJvmName, setterJvmName) = getJvmNames(namedUnwrappedElement)
+
         for (propertyMethod in propertyMethods) {
+            if (element is KtDeclaration && newPropertyName != null) {
+                val wrapper = object : PsiNamedElement by propertyMethod {
+                    override fun setName(name: String) = this
+                    override fun copy() = this
+                }
+                when {
+                    JvmAbi.isGetterName(propertyMethod.name) && getterJvmName == null ->
+                        allRenames[wrapper] = JvmAbi.getterName(newPropertyName)
+                    JvmAbi.isSetterName(propertyMethod.name) && setterJvmName == null ->
+                        allRenames[wrapper] = JvmAbi.setterName(newPropertyName)
+                }
+            }
             addRenameElements(propertyMethod, (element as PsiNamedElement).name, newPropertyName, allRenames, scope)
         }
     }

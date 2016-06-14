@@ -203,6 +203,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nonCodePropertyAccessorUsages/nonCodePropertyAccessorUsages.test")
+    public void testNonCodePropertyAccessorUsages_NonCodePropertyAccessorUsages() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonCodePropertyAccessorUsages/nonCodePropertyAccessorUsages.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("parameterRedeclaration/parameterRedeclaration.test")
     public void testParameterRedeclaration_ParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterRedeclaration/parameterRedeclaration.test");
