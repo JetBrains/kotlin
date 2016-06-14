@@ -58,15 +58,15 @@ interface KotlinScriptDefinition {
 }
 
 interface KotlinScriptExternalDependencies {
-    val classpath: Iterable<String> get() = emptyList()
+    val classpath: Iterable<File> get() = emptyList()
     val imports: Iterable<String> get() = emptyList()
-    val sources: Iterable<String> get() = emptyList()
+    val sources: Iterable<File> get() = emptyList()
 }
 
 class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScriptExternalDependencies>) : KotlinScriptExternalDependencies {
-    override val classpath: Iterable<String> get() = dependencies.flatMap { it.classpath }
+    override val classpath: Iterable<File> get() = dependencies.flatMap { it.classpath }
     override val imports: Iterable<String> get() = dependencies.flatMap { it.imports }
-    override val sources: Iterable<String> get() = dependencies.flatMap { it.sources }
+    override val sources: Iterable<File> get() = dependencies.flatMap { it.sources }
 }
 
 data class ScriptParameter(val name: Name, val type: KotlinType)

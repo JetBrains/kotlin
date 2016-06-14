@@ -33,7 +33,7 @@ class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationMana
     override val templateClass: String = "org.gradle.script.lang.kotlin.KotlinBuildScript"
     override val dependenciesClasspath: Iterable<String> =
             gradleLibsPath?.listFiles { file -> file.extension == "jar" && depLibsPrefixes.any { file.name.startsWith(it) } }
-                ?.map { it.absolutePath }
+                ?.map { it.canonicalPath }
                 ?: emptyList()
     override val context: Any? = gradleHome
 

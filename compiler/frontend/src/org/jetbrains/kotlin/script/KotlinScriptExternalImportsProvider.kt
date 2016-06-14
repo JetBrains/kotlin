@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -90,11 +91,11 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         }
     }
 
-    fun getKnownCombinedClasspath(): List<String> = cacheLock.read {
+    fun getKnownCombinedClasspath(): List<File> = cacheLock.read {
         cache.values.flatMap { it.classpath }
     }.distinct()
 
-    fun <TF> getCombinedClasspathFor(files: Iterable<TF>): List<String> =
+    fun <TF> getCombinedClasspathFor(files: Iterable<TF>): List<File> =
         getExternalImports(files)
                 .flatMap { it.classpath }
                 .distinct()

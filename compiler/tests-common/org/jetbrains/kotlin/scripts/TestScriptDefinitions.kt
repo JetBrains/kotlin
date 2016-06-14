@@ -27,17 +27,17 @@ import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
-abstract class BaseScriptDefinition (val extension: String, val cp: List<String>? = null) : KotlinScriptDefinition {
+abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
     override fun <TF> isScript(file: TF): Boolean = getFileName(file).endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
     override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? =
             object : KotlinScriptExternalDependencies {
-                override val classpath = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
+                override val classpath: Iterable<File> = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
             }
 }
 
-open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<String>? = null, val extraDependencies: KotlinScriptExternalDependencies? = null)
+open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<File>? = null, val extraDependencies: KotlinScriptExternalDependencies? = null)
     : BaseScriptDefinition(extension, classpath)
 {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
@@ -45,14 +45,14 @@ open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val 
 
 open class SimpleParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>) : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters)
 
-class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>, classpath: List<String>? = null)
+class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>, classpath: List<File>? = null)
     : BaseScriptDefinition(extension, classpath)
 {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
             listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
 }
 
-open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>, classpath: List<String>? = null)
+open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>, classpath: List<File>? = null)
     : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters, classpath)
 {
     override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
@@ -63,14 +63,14 @@ class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String,
                                                         parameters: List<ScriptParameter>,
                                                         superclass: KClass<out Any>,
                                                         val superclassParameters: List<ScriptParameter>,
-                                                        classpath: List<String>? = null)
+                                                        classpath: List<File>? = null)
     : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass, classpath)
 {
     override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
             superclassParameters.map { it.name }
 }
 
-class StandardWithClasspathScriptDefinition(extension: String, classpath: List<String>? = null)
+class StandardWithClasspathScriptDefinition(extension: String, classpath: List<File>? = null)
     : BaseScriptDefinition(extension, classpath)
 {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
@@ -78,14 +78,14 @@ class StandardWithClasspathScriptDefinition(extension: String, classpath: List<S
 }
 
 class SimpleScriptExtraDependencies(
-        override val classpath: List<String>,
+        override val classpath: Iterable<File>,
         override val imports: List<String> = emptyList()
 ) : KotlinScriptExternalDependencies
 
-fun classpathFromProperty(): List<String> =
+fun classpathFromProperty(): List<File> =
     System.getProperty("java.class.path")?.let {
         it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                .map { File(it).canonicalPath }
+                .map { File(it) }
     } ?: emptyList()
 
 fun URL.toFile() =
@@ -97,8 +97,8 @@ fun URL.toFile() =
         else File(file)
     }
 
-fun classpathFromClassloader(classLoader: ClassLoader): List<String> =
+fun classpathFromClassloader(classLoader: ClassLoader): List<File> =
     (classLoader as? URLClassLoader)?.urLs
-            ?.mapNotNull { it.toFile()?.canonicalPath }
+            ?.mapNotNull { it.toFile() }
             ?: emptyList()
 

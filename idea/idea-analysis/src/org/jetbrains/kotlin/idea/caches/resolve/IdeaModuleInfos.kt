@@ -310,7 +310,7 @@ internal data class ScriptModuleInfo(val project: Project, val module: Module?, 
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
         val jarfs = StandardFileSystems.jar()
         return scriptDefinition.getDependenciesFor(scriptFile, project)?.classpath
-                       ?.map { File(it).canonicalFile }
+                       ?.map { it.canonicalFile }
                        ?.distinct()
                        ?.mapNotNull {
                            // TODO: ensure that the entries are checked elsewhere, so diagnostics is delivered to a user if files are not correctly specified

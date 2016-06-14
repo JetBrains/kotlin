@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
@@ -123,20 +124,20 @@ class GetTestKotlinScriptDependencies : GetScriptDependencies {
         val cp = anns.flatMap {
             it.value.mapNotNull {
                 when (it) {
-                    is SimpleUntypedAst.Node.str -> if (it.value == "@{runtime}") kotlinPaths.runtimePath.canonicalPath else it.value
+                    is SimpleUntypedAst.Node.str -> if (it.value == "@{runtime}") kotlinPaths.runtimePath else File(it.value)
                     else -> null
                 }
             }
         }
         return object : KotlinScriptExternalDependencies {
-            override val classpath = classpathFromClassloader() + cp
+            override val classpath: Iterable<File> = classpathFromClassloader() + cp
         }
     }
 
-    private fun classpathFromClassloader(): List<String> =
+    private fun classpathFromClassloader(): List<File> =
             (GetTestKotlinScriptDependencies::class.java.classLoader as? URLClassLoader)?.urLs
-                    ?.mapNotNull { it.toFile()?.canonicalPath }
-                    ?.filter { it.contains("out/test") }
+                    ?.mapNotNull { it.toFile() }
+                    ?.filter { it.path.contains("out") && it.path.contains("test") }
             ?: emptyList()
 }
 

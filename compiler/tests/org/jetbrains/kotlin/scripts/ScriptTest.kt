@@ -119,7 +119,7 @@ class ScriptTest {
         val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), runIsolated = true, suppressOutput = true)
         Assert.assertNull(aClass1)
 
-        val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.contains("kotlin-runtime") || it.contains("junit") }
+        val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.name.contains("kotlin-runtime") || it.name.contains("junit") }
         Assert.assertFalse(cp.isEmpty())
 
         val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = cp), runIsolated = true)
@@ -131,7 +131,7 @@ class ScriptTest {
         val aClass1 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = emptyList()), runIsolated = true, suppressOutput = true)
         Assert.assertNull(aClass1)
 
-        val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.contains("kotlin-runtime") || it.contains("junit") }
+        val cp = classpathFromClassloader(ScriptTest::class.java.classLoader).filter { it.name.contains("kotlin-runtime") || it.name.contains("junit") }
         Assert.assertFalse(cp.isEmpty())
 
         val aClass2 = compileScript("fib_ext.kts", SimpleParamsWithClasspathTestScriptDefinition(".kts", numIntParam(), classpath = cp, extraDependencies = SimpleScriptExtraDependencies(cp)), runIsolated = true)
@@ -145,7 +145,8 @@ class ScriptTest {
                 StandardWithClasspathScriptDefinition(
                         ".kts",
                         listOf("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar",
-                               "dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")))
+                               "dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")
+                            .map { File(it) }))
         Assert.assertNotNull(aClass)
         var exceptionThrown = false
         try {
