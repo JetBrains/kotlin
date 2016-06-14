@@ -128,6 +128,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestInplaceRename("foo")
     }
 
+    fun testLocalVarShadowingMemberProperty() {
+        doTestInplaceRename("name1")
+    }
+
     private fun doTestInplaceRename(newName: String?) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtilBase.findTargetElement(
