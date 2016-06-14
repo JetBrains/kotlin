@@ -75,8 +75,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     private final KotlinType superClassType;
     private final List<KotlinType> superInterfaceTypes;
     private final FunctionDescriptor functionReferenceTarget;
-    protected final FunctionGenerationStrategy strategy;
-    private final CalculatedClosure closure;
+    private final FunctionGenerationStrategy strategy;
+    protected final CalculatedClosure closure;
     private final Type asmType;
     private final int visibilityFlag;
 
