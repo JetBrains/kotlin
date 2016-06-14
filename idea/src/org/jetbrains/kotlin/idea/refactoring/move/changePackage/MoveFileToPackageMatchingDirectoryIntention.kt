@@ -28,12 +28,14 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.refactoring.isInsideInjectedFragment
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
 class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
         KtPackageDirective::class.java, "", "Move file to package-matching directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
+        if (element.isInsideInjectedFragment) return false
         if (element.getContainingKtFile().packageMatchesDirectory()) return false
 
         val qualifiedName = element.qualifiedName
