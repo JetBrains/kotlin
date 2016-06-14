@@ -44,7 +44,7 @@ data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, va
 
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    private val evaluatedClasspath by lazy { config.classpath.evalWithVars(environmentVars).distinct() }
+    private val evaluatedClasspath by lazy { config.classpath.evalWithVars(environmentVars).map { File(it) }.distinctBy { it.canonicalPath } }
 
     override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? =
             if (!isScript(file)) null
@@ -53,13 +53,13 @@ data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, va
                 when {
                     extDeps != null ->
                         object : KotlinScriptExternalDependencies {
-                            override val classpath = evaluatedClasspath + extDeps.classpath.evalWithVars(environmentVars).distinct()
+                            override val classpath: Iterable<File> = evaluatedClasspath + extDeps.classpath
                             override val imports = extDeps.imports
-                            override val sources = extDeps.sources.evalWithVars(environmentVars).distinct()
+                            override val sources: Iterable<File> = extDeps.sources
                         }
                     !evaluatedClasspath.isEmpty() ->
                         object : KotlinScriptExternalDependencies {
-                            override val classpath = evaluatedClasspath
+                            override val classpath: Iterable<File> = evaluatedClasspath
                         }
                     else -> null
                 }

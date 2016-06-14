@@ -69,11 +69,11 @@ class KotlinScriptConfigurationManager(
         return allScriptsClasspathCache!!
     }
 
-    private fun String.classpathEntryToVfs(): VirtualFile =
-            if (File(this).isDirectory)
-                StandardFileSystems.local()?.findFileByPath(this) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
+    private fun File.classpathEntryToVfs(): VirtualFile =
+            if (isDirectory)
+                StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
             else
-                StandardFileSystems.jar()?.findFileByPath(this + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
+                StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
 
     fun getAllScriptsClasspathScope(): GlobalSearchScope? {
         return getAllScriptsClasspath().let { cp ->

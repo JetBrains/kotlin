@@ -75,7 +75,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         is PsiFile -> getAnnotationEntriesFromPsiFile(file)
         is VirtualFile -> getAnnotationEntriesFromVirtualFile(file, project)
         is File -> {
-            val virtualFile = (StandardFileSystems.local().findFileByPath(file.absolutePath)
+            val virtualFile = (StandardFileSystems.local().findFileByPath(file.canonicalPath)
                                ?: throw java.lang.IllegalArgumentException("Unable to find file ${file.canonicalPath}"))
             getAnnotationEntriesFromVirtualFile(virtualFile, project)
         }

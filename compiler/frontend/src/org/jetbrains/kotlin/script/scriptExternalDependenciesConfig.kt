@@ -30,7 +30,7 @@ import java.util.*
 class KotlinScriptExternalDependenciesConfig : KotlinScriptExternalDependencies {
     @Tag("classpath")
     @AbstractCollection(surroundWithTag = false, elementTag = "path", elementValueAttribute = "")
-    override var classpath: MutableList<String> = ArrayList()
+    override var classpath: Iterable<File> = ArrayList()
 
     @Tag("imports")
     @AbstractCollection(surroundWithTag = false, elementTag = "name", elementValueAttribute = "")
@@ -38,7 +38,7 @@ class KotlinScriptExternalDependenciesConfig : KotlinScriptExternalDependencies 
 
     @Tag("sources")
     @AbstractCollection(surroundWithTag = false, elementTag = "path", elementValueAttribute = "")
-    override var sources: MutableList<String> = ArrayList()
+    override var sources: Iterable<File> = ArrayList()
 }
 
 fun loadScriptExternalImportConfigs(configFile: File): List<KotlinScriptExternalDependenciesConfig> =
