@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/test.kt",
+  "newName": "b",
+  "withRuntime": "true",
+  "hint": "Property 'b' is already declared in class 'Foo'"
+}
