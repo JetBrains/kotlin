@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.ZipUtil
+import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
@@ -33,16 +34,23 @@ import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
+import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.BuilderRegistry
+import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.IncProjectBuilder
+import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.model.JpsModuleRootModificationUtil
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.incremental.CacheVersion
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -744,18 +752,66 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         doTest()
     }
 
+    fun testGetDependentTargets() {
+        fun addModuleWithSourceAndTestRoot(name: String): JpsModule {
+            return addModule(name, "src/").apply {
+                contentRootsList.addUrl(JpsPathUtil.pathToUrl("test/"))
+                addSourceRoot(JpsPathUtil.pathToUrl("test/"), JavaSourceRootType.TEST_SOURCE)
+            }
+        }
+
+        val a = addModuleWithSourceAndTestRoot("a")
+        val b = addModuleWithSourceAndTestRoot("b")
+        val c = addModuleWithSourceAndTestRoot("c")
+        val b2 = addModuleWithSourceAndTestRoot("b2")
+        val c2 = addModuleWithSourceAndTestRoot("c2")
+
+        JpsModuleRootModificationUtil.addDependency(b, a, JpsJavaDependencyScope.COMPILE, /*exported =*/ true)
+        JpsModuleRootModificationUtil.addDependency(c, b, JpsJavaDependencyScope.COMPILE, /*exported =*/ false)
+        JpsModuleRootModificationUtil.addDependency(b2, a, JpsJavaDependencyScope.COMPILE, /*exported =*/ false)
+        JpsModuleRootModificationUtil.addDependency(c2, b2, JpsJavaDependencyScope.COMPILE, /*exported =*/ false)
+
+        val actual = StringBuilder()
+        buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
+            project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object: BuildLogger {
+                override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
+                    actual.append("Targets dependent on ${chunk.targets.joinToString() }:\n")
+                    actual.append(getDependentTargets(chunk, context).map { it.toString() }.sorted().joinToString("\n"))
+                    actual.append("\n---------\n")
+                }
+
+                override fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>) {}
+                override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
+                override fun markedAsDirty(files: Iterable<File>) {}
+            }))
+        }
+
+        val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
+
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }
                 .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
-        val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
-        val expectedFile = File(projectRoot, "errors.txt")
+        val expectedFile = File(getCurrentTestDataRoot(), "errors.txt")
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
+    private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+
+    private fun buildCustom(
+            canceledStatus: CanceledStatus,
+            logger: TestProjectBuilderLogger,
+            buildResult: BuildResult,
+            setupProject: ProjectDescriptor.() -> Unit = {}
+    ) {
         val scopeBuilder = CompileScopeTestBuilder.make().all()
         val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))
+
+        descriptor.setupProject()
+
         try {
             val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, null, true)
             builder.addMessageHandler(buildResult)
