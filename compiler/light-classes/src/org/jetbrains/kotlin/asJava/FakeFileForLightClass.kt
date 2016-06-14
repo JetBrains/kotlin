@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 open class FakeFileForLightClass(
-        private val ktFile: KtFile,
+        protected val ktFile: KtFile,
         private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
