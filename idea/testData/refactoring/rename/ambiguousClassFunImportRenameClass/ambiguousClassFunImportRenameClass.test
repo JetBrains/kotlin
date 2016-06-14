@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "lib/lib.kt",
+  "newName": "Foo2",
+  "withRuntime": "true"
+}
