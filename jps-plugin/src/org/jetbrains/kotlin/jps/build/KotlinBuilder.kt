@@ -142,7 +142,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
-            LOG.info("Build result: " + actualExitCode)
+            LOG.debug("Build result: " + actualExitCode)
 
             context.testingContext?.buildLogger?.buildFinished(actualExitCode)
 
@@ -820,14 +820,15 @@ private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): M
     return chunkCaches
 }
 
-private fun getDependentTargets(
+fun getDependentTargets(
         compilingChunk: ModuleChunk,
         context: CompileContext
 ): Set<ModuleBuildTarget> {
-    val classpathKind = JpsJavaClasspathKind.compile(compilingChunk.targets.any { it.isTests })
+    val compilingChunkIsTests = compilingChunk.targets.any { it.isTests }
+    val classpathKind = JpsJavaClasspathKind.compile(compilingChunkIsTests)
 
     fun dependsOnCompilingChunk(target: BuildTarget<*>): Boolean {
-        if (target !is ModuleBuildTarget) return false
+        if (target !is ModuleBuildTarget || compilingChunkIsTests && !target.isTests) return false
 
         val dependencies = getDependenciesRecursively(target.module, classpathKind)
         return ContainerUtil.intersects(dependencies, compilingChunk.modules)
