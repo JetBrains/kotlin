@@ -128,6 +128,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (friendPaths != null) {
             configuration.put(JVMConfigurationKeys.FRIEND_PATHS, friendPaths)
         }
+        if ("1.8".equals(arguments.jvmTarget)) {
+            configuration.put(JVMConfigurationKeys.JVM_8_TARGET, true)
+        }
 
         putAdvancedOptions(configuration, arguments)
 
