@@ -2,10 +2,6 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile files('libs/android-support-v4.jar')
 }

@@ -15,3 +15,10 @@ buildscript {
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
     }
 }
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
