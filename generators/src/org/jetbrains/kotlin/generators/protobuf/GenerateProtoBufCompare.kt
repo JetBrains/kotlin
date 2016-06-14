@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.generators.protobuf
 
-import com.google.protobuf.Descriptors
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.protobuf.Descriptors
 import org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
@@ -39,7 +39,7 @@ class GenerateProtoBufCompare {
         }
     }
 
-    private val JAVA_TYPES_WITH_INLINED_EQUALS: EnumSet<com.google.protobuf.Descriptors.FieldDescriptor.JavaType> = EnumSet.of(
+    private val JAVA_TYPES_WITH_INLINED_EQUALS: EnumSet<Descriptors.FieldDescriptor.JavaType> = EnumSet.of(
             Descriptors.FieldDescriptor.JavaType.INT,
             Descriptors.FieldDescriptor.JavaType.LONG,
             Descriptors.FieldDescriptor.JavaType.FLOAT,

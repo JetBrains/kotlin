@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.decompiler.common
 
-import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind

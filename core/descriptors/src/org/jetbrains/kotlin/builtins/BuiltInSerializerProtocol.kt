@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.builtins
 
-import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 

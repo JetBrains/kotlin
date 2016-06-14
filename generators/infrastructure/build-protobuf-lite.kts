@@ -71,9 +71,10 @@ fun main(args: Array<String>) {
 
     assert(liteProfileReached && keepClasses.isNotEmpty()) { "Wrong pom.xml or the format has changed, check its contents at $POM_PATH" }
 
-    ZipOutputStream(BufferedOutputStream(FileOutputStream(File(outputPath)))).use { output ->
+    val outputFile = File(outputPath).apply { delete() }
+    ZipOutputStream(BufferedOutputStream(FileOutputStream(outputFile))).use { output ->
         for ((name, value) in allFiles) {
-            val className = name.substringAfter("com/google/protobuf/").substringBeforeLast(".class")
+            val className = name.substringAfter("org/jetbrains/kotlin/protobuf/").substringBeforeLast(".class")
             if (keepClasses.any { className == it || className.startsWith(it + "$") }) {
                 val (entry, bytes) = value
                 output.putNextEntry(entry)

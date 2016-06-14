@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
