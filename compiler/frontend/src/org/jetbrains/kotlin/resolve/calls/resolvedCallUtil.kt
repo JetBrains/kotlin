@@ -69,13 +69,13 @@ fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
     }
 }
 
-fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
+fun ResolvedCall<*>.getImplicitReceiverValue(): ImplicitReceiver? {
     return when (explicitReceiverKind) {
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> extensionReceiver ?: dispatchReceiver
         ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver
         ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
         else -> null
-    }
+    } as? ImplicitReceiver
 }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
