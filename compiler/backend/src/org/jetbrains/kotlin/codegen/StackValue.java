@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -154,13 +156,13 @@ public abstract class StackValue {
 
     @NotNull
     public static Delegate delegate(
-            Type type,
+            @NotNull Type type,
             @NotNull StackValue delegateValue,
             @NotNull StackValue metadataValue,
-            @NotNull CallableMethod getter,
-            @Nullable CallableMethod setter
+            @NotNull VariableDescriptorWithAccessors variableDescriptor,
+            @NotNull ExpressionCodegen codegen
     ) {
-        return new Delegate(type, delegateValue, metadataValue, getter, setter);
+        return new Delegate(type, delegateValue, metadataValue, variableDescriptor, codegen);
     }
 
     @NotNull
@@ -660,62 +662,72 @@ public abstract class StackValue {
         }
     }
 
-    public static class Delegate extends StackValueWithSimpleReceiver {
-        @NotNull private final StackValue delegateValue;
-        @NotNull private final StackValue metadataValue;
-        @NotNull private final CallableMethod getter;
-        @Nullable private final CallableMethod setter;
+    public static class Delegate extends StackValue {
+        @NotNull
+        private final StackValue delegateValue;
+        @NotNull
+        private final StackValue metadataValue;
+        @NotNull
+        private final VariableDescriptorWithAccessors variableDescriptor;
+        @NotNull
+        private final ExpressionCodegen codegen;
 
         private Delegate(
-                Type type,
+                @NotNull Type type,
                 @NotNull StackValue delegateValue,
                 @NotNull StackValue metadataValue,
-                @NotNull CallableMethod getter,
-                @Nullable CallableMethod setter
+                @NotNull VariableDescriptorWithAccessors variableDescriptor,
+                @NotNull ExpressionCodegen codegen
         ) {
-            super(type, false, false, new Receiver(OBJECT_TYPE, delegateValue, constant(null, OBJECT_TYPE), metadataValue) {
-                @Override
-                public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
-                    //UGLY HACK
-                    //TODO rethink Receiver/StackValue concept
-                    //We need to make duplication of delegated var, owner (null) and property metadata: dup 3.
-                    //As HACK Type.LONG_TYPE and Type.INT_TYPE passed to dup util to simulate dup 3.
-                    AsmUtil.dup(v, Type.LONG_TYPE, Type.INT_TYPE);
-                }
-            }, false);
+            super(type);
             this.delegateValue = delegateValue;
             this.metadataValue = metadataValue;
-            this.getter = getter;
-            this.setter = setter;
+            this.variableDescriptor = variableDescriptor;
+            this.codegen = codegen;
         }
 
-        @NotNull
-        public StackValue getMetadataValue() {
-            return metadataValue;
+
+        private ResolvedCall<FunctionDescriptor> getResolvedCall(boolean isGetter) {
+            BindingContext bindingContext = codegen.getState().getBindingContext();
+            VariableAccessorDescriptor accessor = isGetter ? variableDescriptor.getGetter(): variableDescriptor.getSetter();
+            assert accessor != null : "Accessor descriptor for delegated local property should be present " + variableDescriptor;
+            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor);
+            assert resolvedCall != null : "Resolve call should be recorded for delegate call " + variableDescriptor;
+            return resolvedCall;
         }
 
         @Override
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            getter.genInvokeInstruction(v);
-            coerce(getter.getReturnType(), type, v);
+            ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCall(true);
+            List<? extends ValueArgument> arguments = resolvedCall.getCall().getValueArguments();
+            assert arguments.size() == 2 : "Resolved call for 'getValue' should have 2 arguments, but was " +
+                                           arguments.size() + ": " + resolvedCall;
+
+            codegen.tempVariables.put(arguments.get(0).asElement(), StackValue.constant(null, OBJECT_TYPE));
+            codegen.tempVariables.put(arguments.get(1).asElement(), metadataValue);
+            StackValue lastValue = codegen.invokeFunction(resolvedCall, delegateValue);
+            lastValue.put(type, v);
+
+            codegen.tempVariables.remove(arguments.get(0).asElement());
+            codegen.tempVariables.remove(arguments.get(1).asElement());
         }
 
         @Override
-        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
-            assert setter != null : "";
-            coerceFrom(topOfStackType, v);
-            setter.genInvokeInstruction(v);
-        }
+        public void store(@NotNull StackValue rightSide, @NotNull InstructionAdapter v, boolean skipReceiver) {
+            ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCall(false);
+            List<? extends ValueArgument> arguments = resolvedCall.getCall().getValueArguments();
+            assert arguments.size() == 3 : "Resolved call for 'setValue' should have 3 arguments, but was " +
+                                           arguments.size() + ": " + resolvedCall;
 
-        @Override
-        protected StackValueWithSimpleReceiver changeReceiver(@NotNull StackValue newReceiver) {
-            StackValue newDelegateValue = delegateValue instanceof StackValueWithSimpleReceiver
-                                          ? ((StackValueWithSimpleReceiver) delegateValue).changeReceiver(newReceiver)
-                                          : delegateValue;
-            StackValue newMetadataValue = metadataValue instanceof StackValueWithSimpleReceiver
-                                          ? ((StackValueWithSimpleReceiver) metadataValue).changeReceiver(newReceiver)
-                                          : metadataValue;
-            return delegate(type, newDelegateValue, newMetadataValue, getter, setter);
+            codegen.tempVariables.put(arguments.get(0).asElement(), StackValue.constant(null, OBJECT_TYPE));
+            codegen.tempVariables.put(arguments.get(1).asElement(), metadataValue);
+            codegen.tempVariables.put(arguments.get(2).asElement(), rightSide);
+            StackValue lastValue = codegen.invokeFunction(resolvedCall, delegateValue);
+            lastValue.put(Type.VOID_TYPE, v);
+
+            codegen.tempVariables.remove(arguments.get(0).asElement());
+            codegen.tempVariables.remove(arguments.get(1).asElement());
+            codegen.tempVariables.remove(arguments.get(2).asElement());
         }
     }
 

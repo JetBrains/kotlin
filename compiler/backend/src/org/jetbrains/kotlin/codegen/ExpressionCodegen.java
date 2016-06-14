@@ -2330,16 +2330,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return lookupCapturedValueInConstructorParameters(descriptor);
         }
 
-        return lookupInContext(descriptor, StackValue.LOCAL_0, state, false, context);
+        return lookupInContext(descriptor, StackValue.LOCAL_0, state, false, context, this);
     }
 
     @Nullable
-    StackValue lookupInContext(
+    static StackValue lookupInContext(
             @NotNull DeclarationDescriptor descriptor,
             @NotNull StackValue prefix,
             @NotNull GenerationState state,
             boolean ignoreNoOuter,
-            @NotNull CodegenContext context
+            @NotNull CodegenContext context,
+            @Nullable ExpressionCodegen codegen
     ) {
         StackValue value = context.lookupInContext(descriptor, prefix, state, ignoreNoOuter);
         if(!isDelegatedLocalVariable(descriptor) || value == null) {
@@ -2350,7 +2351,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         VariableDescriptor metadata = getDelegatedLocalVariableMetadata((VariableDescriptor) descriptor, state.getBindingContext());
         StackValue metadataValue = context.lookupInContext(metadata, prefix, state, ignoreNoOuter);
         assert metadataValue != null : "Metadata stack value should be non-null for local delegated property";
-        return delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor, state.getBindingContext(),
+        //required for ImplementationBodyCodegen.lookupConstructorExpressionsInClosureIfPresent
+        if (codegen == null) return null;
+        return codegen.delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor, state.getBindingContext(),
                                               state.getTypeMapper());
     }
 
@@ -4477,22 +4480,13 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     @NotNull
-    private static StackValue.Delegate delegatedVariableValue(
+    private StackValue.Delegate delegatedVariableValue(
             @NotNull StackValue delegateValue,
             @NotNull StackValue metadataValue,
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull BindingContext bindingContext,
             @NotNull KotlinTypeMapper typeMapper
     ) {
-        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE, variableDescriptor);
-        assert delegateVariableDescriptor != null : variableDescriptor;
-
-        VariableAccessorDescriptor getterDescriptor = variableDescriptor.getGetter();
-        VariableAccessorDescriptor setterDescriptor = variableDescriptor.getSetter();
-
-        //noinspection ConstantConditions
-        CallableMethod getterMethod = typeMapper.mapToCallableMethod(getterDescriptor, false);
-        CallableMethod setterMethod = setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, false) : null;
-        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, getterMethod, setterMethod);
+        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
     }
 }
