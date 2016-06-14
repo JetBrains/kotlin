@@ -36,6 +36,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/idea" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-analysis" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-android" />
+      <root url="file://$PROJECT_DIR$/../out/production/idea-android-output-parser" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-completion" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-core" />
       <root url="file://$PROJECT_DIR$/../out/production/idea-jps-common" />
@@ -90,6 +91,7 @@
       <root url="file://$PROJECT_DIR$/../idea/ide-common/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-analysis/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-android/src" />
+      <root url="file://$PROJECT_DIR$/../idea/idea-android-output-parser/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-completion/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-core/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-jps-common/src" />
