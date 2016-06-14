@@ -38,6 +38,7 @@
           <element id="module-output" name="ide-common" />
           <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
           <element id="module-output" name="idea-android" />
+          <element id="module-output" name="idea-android-output-parser" />
           <element id="module-output" name="js.serializer" />
           <element id="module-output" name="serialization" />
           <element id="module-output" name="idea-completion" />
