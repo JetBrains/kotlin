@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -40,7 +39,18 @@ import java.util.*
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
         JvmDeclarationOriginKind.DELEGATION,
-        JvmDeclarationOriginKind.BRIDGE)
+        JvmDeclarationOriginKind.BRIDGE
+)
+
+private val PREDEFINED_SIGNATURES = listOf(
+        "notify()V",
+        "notifyAll()V",
+        "wait()V",
+        "wait(J)V",
+        "wait(JI)V"
+).map { signature ->
+    RawSignature(signature.substringBefore('('), signature.substring(signature.indexOf('(')), MemberKind.METHOD)
+}
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
@@ -94,7 +104,25 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             classInternalName: String,
             signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
-        reportDiagnosticsTasks.add { reportClashingSignaturesInHierarchy(classOrigin, classInternalName, signatures) }
+        reportDiagnosticsTasks.add {
+            reportClashingWithPredefinedSignatures(classOrigin, classInternalName, signatures)
+            reportClashingSignaturesInHierarchy(classOrigin, classInternalName, signatures)
+        }
+    }
+
+    private fun reportClashingWithPredefinedSignatures(
+            classOrigin: JvmDeclarationOrigin,
+            classInternalName: String,
+            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+    ) {
+        for (predefinedSignature in PREDEFINED_SIGNATURES) {
+            if (!signatures.containsKey(predefinedSignature)) continue
+
+            val origins = signatures[predefinedSignature] + JvmDeclarationOrigin.NO_ORIGIN
+
+            val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, predefinedSignature, origins) ?: continue
+            diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
+        }
     }
 
     private fun reportClashingSignaturesInHierarchy(
@@ -114,41 +142,64 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             }
         }
 
-        signatures@
         for ((rawSignature, origins) in groupedBySignature.entrySet()) {
             if (origins.size <= 1) continue
 
-            var memberElement: PsiElement? = null
-            var ownNonFakeCount = 0
-            for (origin in origins) {
-                val member = origin.descriptor as? CallableMemberDescriptor?
-                if (member != null && member.containingDeclaration == classOrigin.descriptor && member.kind != FAKE_OVERRIDE) {
-                    ownNonFakeCount++
-                    // If there's more than one real element, the clashing signature is already reported.
-                    // Only clashes between fake overrides are interesting here
-                    if (ownNonFakeCount > 1) continue@signatures
+            val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, rawSignature, origins)
 
-                    if (member.kind != DELEGATION) {
-                        // Delegates don't have declarations in the code
-                        memberElement = origin.element ?: DescriptorToSourceUtils.descriptorToDeclaration(member)
-                        if (memberElement == null && member is PropertyAccessorDescriptor) {
-                            memberElement = DescriptorToSourceUtils.descriptorToDeclaration(member.correspondingProperty)
-                        }
+            when (diagnostic) {
+                is ConflictingDeclarationError.AccidentalOverride -> {
+                    diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(diagnostic.element, diagnostic.data))
+                }
+                is ConflictingDeclarationError.ConflictingInheritedJvmDeclarations -> {
+                    diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
+                }
+            }
+        }
+    }
+
+    private sealed class ConflictingDeclarationError(val element: PsiElement, val data: ConflictingJvmDeclarationsData) {
+        class AccidentalOverride(element: PsiElement, data: ConflictingJvmDeclarationsData) :
+                ConflictingDeclarationError(element, data)
+        class ConflictingInheritedJvmDeclarations(element: PsiElement, data: ConflictingJvmDeclarationsData) :
+                ConflictingDeclarationError(element, data)
+    }
+
+    private fun computeDiagnosticToReport(
+            classOrigin: JvmDeclarationOrigin,
+            classInternalName: String,
+            rawSignature: RawSignature,
+            origins: Collection<JvmDeclarationOrigin>
+    ): ConflictingDeclarationError? {
+        var memberElement: PsiElement? = null
+        var ownNonFakeCount = 0
+        for (origin in origins) {
+            val member = origin.descriptor as? CallableMemberDescriptor?
+            if (member != null && member.containingDeclaration == classOrigin.descriptor && member.kind != FAKE_OVERRIDE) {
+                ownNonFakeCount++
+                // If there's more than one real element, the clashing signature is already reported.
+                // Only clashes between fake overrides are interesting here
+                if (ownNonFakeCount > 1) return null
+
+                if (member.kind != DELEGATION) {
+                    // Delegates don't have declarations in the code
+                    memberElement = origin.element ?: DescriptorToSourceUtils.descriptorToDeclaration(member)
+                    if (memberElement == null && member is PropertyAccessorDescriptor) {
+                        memberElement = DescriptorToSourceUtils.descriptorToDeclaration(member.correspondingProperty)
                     }
                 }
             }
-
-            val elementToReportOn = memberElement ?: classOrigin.element
-            if (elementToReportOn == null) return // TODO: it'd be better to report this error without any element at all
-
-            val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
-            if (memberElement != null) {
-                diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data))
-            }
-            else {
-                diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(elementToReportOn, data))
-            }
         }
+
+        val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
+        if (memberElement != null) {
+            return ConflictingDeclarationError.AccidentalOverride(memberElement, data)
+        }
+
+        // TODO: it'd be better to report this error without any element at all
+        val elementToReportOn = classOrigin.element ?: return null
+
+        return ConflictingDeclarationError.ConflictingInheritedJvmDeclarations(elementToReportOn, data)
     }
 
     private fun groupMembersDescriptorsBySignature(descriptor: ClassDescriptor): MultiMap<RawSignature, JvmDeclarationOrigin> {
