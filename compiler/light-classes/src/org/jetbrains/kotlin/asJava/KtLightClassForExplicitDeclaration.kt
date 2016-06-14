@@ -184,6 +184,8 @@ open class KtLightClassForExplicitDeclaration(
                 { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
                 { getJavaFileStub() }
         ) {
+            override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
+
             override fun processDeclarations(
                     processor: PsiScopeProcessor,
                     state: ResolveState,
