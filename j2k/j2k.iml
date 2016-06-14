@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
   </component>
 </module>
