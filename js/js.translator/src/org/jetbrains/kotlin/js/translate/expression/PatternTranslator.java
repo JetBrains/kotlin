@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypesKt;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -181,7 +183,9 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
         if (isAnyOrNullableAny(type)) return namer().isAny();
 
-        if (isFunctionTypeOrSubtype(type)) return namer().isTypeOf(program().getStringLiteral("function"));
+        if (isFunctionTypeOrSubtype(type) && !ReflectionTypes.isFunctionalKPropertyType(type)) {
+            return namer().isTypeOf(program().getStringLiteral("function"));
+        }
 
         if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
 
