@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -33,8 +34,12 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import javax.swing.JComponent
 
-class HasPlatformTypeInspection : AbstractKotlinInspection() {
+class HasPlatformTypeInspection(
+        @JvmField var publicAPIOnly: Boolean = true
+) : AbstractKotlinInspection() {
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
@@ -49,7 +54,9 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
                 if (declaration.containingClassOrObject?.isLocal() ?: false) return
 
                 val context = declaration.analyze(BodyResolveMode.PARTIAL)
-                val returnType = declaration.getReturnType(context) ?: return
+                val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return
+                if (publicAPIOnly && !callable.visibility.isPublicAPI) return
+                val returnType = callable.returnType ?: return
                 if (!returnType.isFlexibleRecursive()) return
 
                 val fixes = mutableListOf(IntentionWrapper(SpecifyTypeExplicitlyIntention(), declaration.containingFile))
@@ -73,11 +80,6 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
                 holder.registerProblem(problemDescriptor)
             }
 
-            private fun KtDeclaration.getReturnType(bindingContext: BindingContext): KotlinType? {
-                val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
-                return callable.returnType
-            }
-
             private fun KotlinType.isFlexibleRecursive(): Boolean {
                 if (isFlexible()) return true
                 return arguments.any { it.type.isFlexibleRecursive() }
@@ -85,5 +87,9 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
         }
     }
 
-
+    override fun createOptionsPanel(): JComponent? {
+        val panel = MultipleCheckboxOptionsPanel(this)
+        panel.addCheckbox("Apply only to public or protected members", "publicAPIOnly")
+        return panel
+    }
 }
