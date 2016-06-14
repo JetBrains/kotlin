@@ -348,11 +348,11 @@ var Kotlin = {};
         klass.$metadata$.properties[propertyName].set.call(thisObject, value);
     };
 
-    function isInheritanceFromTrait(objConstructor, trait) {
-        if (isNativeClass(objConstructor) || objConstructor.$metadata$.classIndex < trait.$metadata$.classIndex) {
+    function isInheritanceFromTrait(metadata, trait) {
+        if (metadata == null || metadata.classIndex < trait.$metadata$.classIndex) {
             return false;
         }
-        var baseClasses = objConstructor.$metadata$.baseClasses;
+        var baseClasses = metadata.baseClasses;
         var i;
         for (i = 0; i < baseClasses.length; i++) {
             if (baseClasses[i] === trait) {
@@ -360,7 +360,7 @@ var Kotlin = {};
             }
         }
         for (i = 0; i < baseClasses.length; i++) {
-            if (isInheritanceFromTrait(baseClasses[i], trait)) {
+            if (isInheritanceFromTrait(baseClasses[i].$metadata$, trait)) {
                 return true;
             }
         }
@@ -368,7 +368,7 @@ var Kotlin = {};
     }
 
     Kotlin.isType = function (object, klass) {
-        if (object == null || klass == null) {
+        if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
             return false;
         }
         else {
@@ -379,7 +379,8 @@ var Kotlin = {};
                 return false;
             }
             else {
-                return isInheritanceFromTrait(object.constructor, klass);
+                var metadata = "$metadata$" in object ? object.$metadata$ : object.constructor.$metadata$;
+                return isInheritanceFromTrait(metadata, klass);
             }
         }
     };
@@ -418,34 +419,70 @@ var Kotlin = {};
     };
 
     Kotlin.getCallableRefForTopLevelProperty = function(packageName, name, isVar) {
-      var obj = {};
-      obj.name = name;
-      obj.get = function() { return packageName[name]; };
-      if (isVar) {
-          obj.set_za3rmp$ = function(value) { packageName[name] = value; };
-      }
-      return obj;
+        var getFun = function() { return packageName[name]; };
+        var setFun = isVar ? function(value) { packageName[name] = value; } : null;
+        return getPropertyRefClass(name, getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
     };
 
     Kotlin.getCallableRefForMemberProperty = function(name, isVar) {
-      var obj = {};
-      obj.name = name;
-      obj.get_za3rmp$ = function(receiver) { return receiver[name]; };
-      if (isVar) {
-          obj.set_wn2jw4$ = function(receiver, value) { receiver[name] = value; };
-      }
-      return obj;
+        var getFun = function(receiver) { return receiver[name]; };
+        var setFun = isVar ? function(receiver, value) { receiver[name] = value; } : null;
+        return getPropertyRefClass(name, getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 
     Kotlin.getCallableRefForExtensionProperty = function(name, getFun, setFun) {
-      var obj = {};
-      obj.name = name;
-      obj.get_za3rmp$ = getFun;
-      if (typeof setFun === "function") {
-          obj.set_wn2jw4$ = setFun;
-      }
-      return obj;
+        var getFunWrapper = function(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) };
+        return getPropertyRefClass(name, getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
+
+    function getPropertyRefClass(name, getFun, getName, setFun, setName, cache) {
+        var obj = getFun;
+        var isMutable = typeof setFun === "function";
+        obj.$metadata$ = getPropertyRefMetadata(isMutable ? cache.mutable : cache.immutable);
+        obj[getName] = getFun;
+        if (isMutable) {
+            obj[setName] = setFun;
+        }
+        obj.constructor = obj;
+        Object.defineProperty(obj, "name", { get : function() { return name; } });
+        return obj;
+    }
+
+    var propertyRefClassMetadataCache = {
+        zeroArg: {
+            mutable: { value: null, implementedInterface: function () {
+                return Kotlin.modules['stdlib'].kotlin.reflect.KMutableProperty0 }
+            },
+            immutable: { value: null, implementedInterface: function () {
+                return Kotlin.modules['stdlib'].kotlin.reflect.KProperty0 }
+            }
+        },
+        oneArg: {
+            mutable: { value: null, implementedInterface: function () {
+                return Kotlin.modules['stdlib'].kotlin.reflect.KMutableProperty1 }
+            },
+            immutable: { value: null, implementedInterface: function () {
+                return Kotlin.modules['stdlib'].kotlin.reflect.KProperty1 }
+            }
+        }
+    };
+
+    function getPropertyRefMetadata(cache) {
+        if (cache.value === null) {
+            cache.value = {
+                baseClasses: [cache.implementedInterface()],
+                baseClass: null,
+                classIndex: Kotlin.newClassIndex(),
+                functions: {},
+                properties: {},
+                types: {},
+                staticMembers: {}
+            };
+        }
+        return cache.value;
+    }
+
+
 ////////////////////////////////// packages & modules //////////////////////////////
 
     Kotlin.modules = {};

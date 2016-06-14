@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
@@ -326,6 +327,7 @@ class ClassTranslator private constructor(
 
     private fun getSupertypesNameReferences(): List<JsExpression> {
         val supertypes = getSupertypesWithoutFakes(descriptor)
+                .filter { it.constructor.declarationDescriptor !is FunctionClassDescriptor }
         if (supertypes.isEmpty()) {
             return emptyList()
         }
