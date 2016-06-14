@@ -16,18 +16,24 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiImportStaticStatement
+import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.utils.SmartList
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
@@ -46,6 +52,40 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         if (newName != null && !KotlinNameSuggester.isIdentifier(newName)) {
             allRenames[element] = newName.quoteIfNeeded()
+        }
+    }
+
+    protected var PsiElement.ambiguousImportUsages: List<UsageInfo>? by UserDataProperty(Key.create("AMBIGUOUS_IMPORT_USAGES"))
+
+    protected fun UsageInfo.isAmbiguousImportUsage(): Boolean {
+        val ref = reference as? PsiPolyVariantReference ?: return false
+        val refElement = ref.element
+        return refElement.parents.any { (it is KtImportDirective && !it.isAllUnder) || (it is PsiImportStaticStatement && !it.isOnDemand) }
+               && ref.multiResolve(false).size > 1
+    }
+
+    override fun getPostRenameCallback(element: PsiElement, newName: String?, elementListener: RefactoringElementListener?): Runnable? {
+        if (newName == null) return null
+
+        return Runnable {
+            element.ambiguousImportUsages?.forEach {
+                val ref = it.reference as? PsiPolyVariantReference ?: return@forEach
+                if (ref.multiResolve(false).isEmpty()) {
+                    ref.handleElementRename(newName)
+                }
+                else {
+                    ref.element?.getStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                        val fqName = importDirective.importedFqName!!
+                        val newFqName = fqName.parent().child(Name.identifier(newName))
+                        val importList = importDirective.parent as KtImportList
+                        if (importList.imports.none { it.importedFqName == newFqName }) {
+                            val newImportDirective = KtPsiFactory(element).createImportDirective(ImportPath(newFqName, false))
+                            importDirective.parent.addAfter(newImportDirective, importDirective)
+                        }
+                    }
+                }
+            }
+            element.ambiguousImportUsages = null
         }
     }
 }

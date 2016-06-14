@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartList
+import java.util.*
 
 class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -108,7 +109,19 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun renameElement(element: PsiElement, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
-        super.renameElement(element, newName, usages, listener)
+        val simpleUsages = ArrayList<UsageInfo>(usages.size)
+        val ambiguousImportUsages = com.intellij.util.SmartList<UsageInfo>()
+        for (usage in usages) {
+            if (usage.isAmbiguousImportUsage()) {
+                ambiguousImportUsages += usage
+            }
+            else {
+                simpleUsages += usage
+            }
+        }
+        element.ambiguousImportUsages = ambiguousImportUsages
+
+        super.renameElement(element, newName, simpleUsages.toTypedArray(), listener)
 
         usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
     }
