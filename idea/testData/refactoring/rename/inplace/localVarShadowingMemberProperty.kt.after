@@ -1,0 +1,10 @@
+package test
+
+class ShadeKotlin {
+    val name1 = 1;
+    fun inner() {
+        val name1 = 2;
+        print(this.name1)
+        print(name1)
+    }
+}
