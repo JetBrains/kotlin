@@ -5032,30 +5032,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("capturedLocalVal.kt")
-        public void testCapturedLocalVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/capturedLocalVal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalValNoInline.kt")
-        public void testCapturedLocalValNoInline() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/capturedLocalValNoInline.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalVar.kt")
-        public void testCapturedLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/capturedLocalVar.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalVarNoInline.kt")
-        public void testCapturedLocalVarNoInline() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/capturedLocalVarNoInline.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("castGetReturnType.kt")
         public void testCastGetReturnType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/castGetReturnType.kt");
@@ -5170,18 +5146,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localVal.kt")
-        public void testLocalVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/localVal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localVar.kt")
-        public void testLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/localVar.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("privateSetterKPropertyIsNotMutable.kt")
         public void testPrivateSetterKPropertyIsNotMutable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/privateSetterKPropertyIsNotMutable.kt");
@@ -5274,9 +5238,57 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("capturedLocalVal.kt")
+            public void testCapturedLocalVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedLocalValNoInline.kt")
+            public void testCapturedLocalValNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalValNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedLocalVar.kt")
+            public void testCapturedLocalVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedLocalVarNoInline.kt")
+            public void testCapturedLocalVarNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/capturedLocalVarNoInline.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("iinc.kt")
             public void testIinc() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/iinc.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineGetValue.kt")
+            public void testInlineGetValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/inlineGetValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOperators.kt")
+            public void testInlineOperators() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/inlineOperators.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localVal.kt")
+            public void testLocalVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localVar.kt")
+            public void testLocalVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVar.kt");
                 doTest(fileName);
             }
 

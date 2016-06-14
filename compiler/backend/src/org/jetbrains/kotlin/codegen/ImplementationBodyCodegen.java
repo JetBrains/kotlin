@@ -1256,7 +1256,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
             private void lookupInContext(@NotNull DeclarationDescriptor toLookup) {
-                ExpressionCodegen.lookupInContext(toLookup, StackValue.LOCAL_0, state, true, context);
+                ExpressionCodegen.lookupInContext(toLookup, StackValue.LOCAL_0, state, true, context, null);
             }
 
             @Override
