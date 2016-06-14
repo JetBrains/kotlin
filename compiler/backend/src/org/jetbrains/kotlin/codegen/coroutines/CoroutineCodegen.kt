@@ -37,9 +37,11 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 
 class CoroutineCodegen(
@@ -126,13 +128,23 @@ class CoroutineCodegen(
     }
 
     private fun generateInvokeMethod(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-        AsmUtil.genAssignInstanceFieldFromParam(
-                FieldInfo.createForHiddenField(
-                        typeMapper.mapClass(classDescriptor),
-                        typeMapper.mapType(controllerType), COROUTINE_CONTROLLER_FIELD_NAME),
-                1, codegen.v)
+        val classDescriptor = closureContext.contextDescriptor
+        val owner = typeMapper.mapClass(classDescriptor)
+        val controllerFieldInfo = FieldInfo.createForHiddenField(
+                owner,
+                typeMapper.mapType(controllerType), COROUTINE_CONTROLLER_FIELD_NAME)
+
+        val thisInstance = StackValue.thisOrOuter(codegen, classDescriptor, false, false)
 
         with(codegen.v) {
+            // if (controller != null)
+            StackValue.field(controllerFieldInfo, thisInstance).put(AsmTypes.OBJECT_TYPE, this)
+            val repeated = Label()
+            ifnonnull(repeated)
+
+            // first call
+            AsmUtil.genAssignInstanceFieldFromParam(controllerFieldInfo, 1, this)
+
             setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
 
             // Save lambda parameters to fields
@@ -147,6 +159,31 @@ class CoroutineCodegen(
             }
 
             load(0, AsmTypes.OBJECT_TYPE)
+            areturn(AsmTypes.OBJECT_TYPE)
+
+            // repeated call
+            visitLabel(repeated)
+            anew(owner)
+            dup()
+
+            // pass closure parameters to constructor
+            val constructorParameters = calculateConstructorParameters(typeMapper, closure, owner)
+            for (parameter in constructorParameters) {
+                StackValue.field(parameter, thisInstance).put(parameter.fieldType, this)
+            }
+
+            val constructor = Method("<init>", Type.VOID_TYPE, constructorParameters.map { it.fieldType }.toTypedArray())
+            invokespecial(owner.internalName, constructor.name, constructor.descriptor, false)
+
+            // Pass lambda parameters to 'invoke' call on newly constructed object
+            index = 1
+            for (parameter in signature.valueParameters) {
+                load(index, parameter.asmType)
+                index += parameter.asmType.size
+            }
+
+            // 'invoke' call on freshly constructed coroutine returns receiver itself
+            invokevirtual(owner.internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
             areturn(AsmTypes.OBJECT_TYPE)
         }
     }
