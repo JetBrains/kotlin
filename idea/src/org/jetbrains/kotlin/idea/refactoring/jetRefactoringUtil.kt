@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.unwrap.RangeSplitter
 import com.intellij.codeInsight.unwrap.UnwrapHandler
 import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandAdapter
@@ -787,3 +788,9 @@ internal fun DeclarationDescriptor.explicateAsTextForReceiver(): String {
 internal fun ImplicitReceiver.explicateAsText(): String {
     return declarationDescriptor.explicateAsTextForReceiver()
 }
+
+val PsiFile.isInjectedFragment: Boolean
+    get() = InjectedLanguageManager.getInstance(project).isInjectedFragment(this)
+
+val PsiElement.isInsideInjectedFragment: Boolean
+    get() = containingFile.isInjectedFragment
