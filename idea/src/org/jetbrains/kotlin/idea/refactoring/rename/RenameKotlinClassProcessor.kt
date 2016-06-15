@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KtLightClass
@@ -41,6 +42,18 @@ import java.util.*
 class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtClassOrObject || element is KtLightClass || element is KtConstructor<*>
+    }
+
+    override fun isToSearchInComments(psiElement: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_CLASS
+
+    override fun setToSearchInComments(element: PsiElement, enabled: Boolean) {
+        JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_CLASS = enabled
+    }
+
+    override fun isToSearchForTextOccurrences(element: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_FOR_TEXT_FOR_CLASS
+
+    override fun setToSearchForTextOccurrences(element: PsiElement, enabled: Boolean) {
+        JavaRefactoringSettings.getInstance().RENAME_SEARCH_FOR_TEXT_FOR_CLASS = enabled
     }
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor?) = getClassOrObject(element)
