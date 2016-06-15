@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.impl.PsiVariableEx
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -28,3 +30,5 @@ interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiNamedElemen
 }
 
 interface KtLightDeclaration<out T: KtDeclaration, out D: PsiElement>: KtLightElement<T, D>
+
+interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>, PsiVariableEx

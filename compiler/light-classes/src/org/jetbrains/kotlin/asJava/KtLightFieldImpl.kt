@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>, PsiVariableEx
-
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
         private val lightMemberOrigin: LightMemberOrigin?,
