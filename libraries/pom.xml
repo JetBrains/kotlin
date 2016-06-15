@@ -50,6 +50,7 @@
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
+        <kotlin.compiler.jdkHome>${env.JDK_16}</kotlin.compiler.jdkHome>
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -79,6 +80,8 @@
 
         <module>tools/runtime</module>
         <module>stdlib</module>
+        <module>stdlib/jre7</module>
+        <module>stdlib/jre8</module>
         <module>tools/kotlin-reflect</module>
         <module>tools/kotlin-osgi-bundle</module>
 
@@ -161,6 +164,7 @@
                 <version>${surefire-version}</version>
                 <configuration>
                     <forkMode>once</forkMode>
+                    <jvm>${env.JDK_16}/bin/java</jvm>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <failIfNoTests>false</failIfNoTests>
