@@ -16,6 +16,7 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
@@ -61,6 +62,12 @@ class JavaUType(
 
     override val isByte: Boolean
         get() = check("byte", "java.lang.Byte")
+    
+    val isString: Boolean
+        get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.String"
+    
+    val isPrimitive: Boolean
+        get() = psi is PsiPrimitiveType
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun check(unboxedType: String, boxedType: String): Boolean =
