@@ -188,6 +188,10 @@ internal object KotlinConverter : UastConverter {
         val type = bindingContext[BindingContext.TYPE, typeReference] ?: return UastErrorType
         return KotlinUType(type, typeReference.project, parent, typeReference.typeElement)
     }
+    
+    internal fun convertTypeReference(typeReference: KtTypeReference, parent: UElement): UTypeReference {
+        return KotlinUTypeReference(typeReference, parent)
+    }
 
     internal fun asSimpleReference(element: PsiElement?, parent: UElement): USimpleReferenceExpression? {
         if (element == null) return null
