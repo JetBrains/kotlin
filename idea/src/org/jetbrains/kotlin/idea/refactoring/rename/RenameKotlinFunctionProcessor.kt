@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.rename;
+package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
@@ -85,6 +85,9 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
+        if (element is KtLightMethod && newName != null && getJvmName(element) == null) {
+            (element.kotlinOrigin as? KtNamedFunction)?.let { allRenames[it] = newName }
+        }
         val psiMethod = wrapPsiMethod(element)
         if (psiMethod?.containingClass != null) {
             javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
