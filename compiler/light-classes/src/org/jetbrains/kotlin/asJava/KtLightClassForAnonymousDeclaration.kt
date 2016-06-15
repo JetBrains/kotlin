@@ -111,6 +111,8 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
     override fun getTypeParameterList() = null
     override fun isEnum() = false
 
+    override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration(classFqName, classOrObject)
+
     companion object {
         private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
     }
