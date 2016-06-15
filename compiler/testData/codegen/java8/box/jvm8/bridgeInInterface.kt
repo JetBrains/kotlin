@@ -1,4 +1,5 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
+
 interface Test<T> {
     fun test(p: T): T {
         return p
@@ -21,4 +22,3 @@ fun <T> execute(t: Test<T>, p: T): T {
 fun box(): String {
     return execute(TestClass(), "O")
 }
-

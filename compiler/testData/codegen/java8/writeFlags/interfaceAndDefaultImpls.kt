@@ -1,4 +1,5 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
+
 interface Test {
     fun a() {
 
@@ -8,7 +9,6 @@ interface Test {
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: Test$DefaultImpls
 // FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
-
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: Test

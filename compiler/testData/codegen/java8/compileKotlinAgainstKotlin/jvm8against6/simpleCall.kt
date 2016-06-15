@@ -7,7 +7,7 @@ interface Test {
 }
 
 // FILE: 2.kt
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
 class TestClass : Test {
 
 }
