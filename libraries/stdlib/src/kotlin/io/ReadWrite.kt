@@ -6,6 +6,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.net.URL
 import java.util.NoSuchElementException
+import kotlin.internal.PlatformImplementations
 
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
@@ -155,19 +156,10 @@ public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
     var closed = false
     try {
         return block(this)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         closed = true
-        try {
-            close()
-        } catch (closeException: Exception) {
-            // eat the closeException as we are already throwing the original cause
-            // and we don't want to mask the real exception
-
-            // TODO on Java 7 we should call
-            // e.addSuppressed(closeException)
-            // to work like try-with-resources
-            // http://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html#suppressed-exceptions
-        }
+        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+        PlatformImplementations.INSTANCE.closeSuppressed(this, e)
         throw e
     } finally {
         if (!closed) {
