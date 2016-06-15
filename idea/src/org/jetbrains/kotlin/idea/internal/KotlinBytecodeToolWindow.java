@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -128,7 +129,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             if (jvm8Target.isSelected()) {
-                configuration.put(JVMConfigurationKeys.JVM_8_TARGET, true);
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8);
             }
 
             return getBytecodeForFile(ktFile, configuration);

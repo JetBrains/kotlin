@@ -51,8 +51,8 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "module-name", description = "Module name")
     public String moduleName;
 
-    @Argument(value = "jvm-target", description = "Compile code to specified JVM target: 1.6 or 1.8. Default one is 1.6.")
-    @ValueDescription("<1.6|1.8>")
+    @Argument(value = "jvm-target", description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6")
+    @ValueDescription("<version>")
     public String jvmTarget;
 
     // Advanced options
