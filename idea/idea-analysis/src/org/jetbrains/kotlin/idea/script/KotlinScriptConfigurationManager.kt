@@ -149,7 +149,7 @@ class KotlinScriptConfigurationManager(project: Project,
     companion object {
         @JvmStatic
         fun getInstance(project: Project): KotlinScriptConfigurationManager =
-                project.getComponent(KotlinScriptConfigurationManager::class.java)
+                project.getComponent(KotlinScriptConfigurationManager::class.java)!!
     }
 }
 
