@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -73,6 +70,10 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             Errors.NO_VALUE_FOR_PARAMETER,
             Errors.TOO_MANY_ARGUMENTS,
             Errors.NONE_APPLICABLE -> diagElement.getNonStrictParentOfType<KtCallExpression>()
+
+            Errors.TYPE_MISMATCH -> diagElement
+                    .getParentOfTypeAndBranch<KtValueArgument> { getArgumentExpression() }
+                    ?.getStrictParentOfType<KtCallExpression>()
 
             else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.factory}")
         } as? KtExpression
