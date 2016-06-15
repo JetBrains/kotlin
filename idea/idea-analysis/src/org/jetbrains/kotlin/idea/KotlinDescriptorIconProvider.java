@@ -134,6 +134,10 @@ public final class KotlinDescriptorIconProvider {
             return PlatformIcons.CLASS_ICON;
         }
 
+        if (descriptor instanceof TypeAliasDescriptor) {
+            return PlatformIcons.CLASS_ICON;
+        }
+
         LOG.warn("No icon for descriptor: " + descriptor);
         return null;
     }
