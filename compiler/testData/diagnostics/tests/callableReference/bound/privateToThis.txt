@@ -1,0 +1,12 @@
+package
+
+public final class Foo</*0*/ out T> {
+    public constructor Foo</*0*/ out T>(/*0*/ name: T)
+    private/*private to this*/ final var prop: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private/*private to this*/ final fun func(/*0*/ t: T): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun testFunc(): kotlin.Unit
+    public final fun testProp(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
