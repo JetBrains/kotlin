@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.scripts
 
 import com.intellij.openapi.util.Disposer
+import junit.framework.TestCase
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
@@ -39,8 +39,9 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 import java.lang.reflect.InvocationTargetException
+import java.net.URLClassLoader
 
-class ScriptTest {
+class ScriptTest: TestCase() {
     @Test
     fun testScriptWithParam() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
@@ -62,6 +63,21 @@ class ScriptTest {
         Assert.assertNotNull(aClass)
         val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
         Assert.assertNotNull(anObj)
+    }
+
+    @Test
+    fun testStandardScriptWithSaving() {
+        val tmpdir = File(KotlinTestUtils.tmpDirForTest(this), "withSaving")
+        tmpdir.mkdirs()
+        val aClass = compileScript("fib_std.kts", StandardScriptDefinition, saveClassesDir = tmpdir)
+        Assert.assertNotNull(aClass)
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
+        Assert.assertNotNull(anObj)
+        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()))
+        val aClassSaved = savedClassLoader.loadClass(aClass.name)
+        Assert.assertNotNull(aClassSaved)
+        val anObjSaved = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClassSaved!!, emptyList())
+        Assert.assertNotNull(anObjSaved)
     }
 
     @Test
@@ -163,21 +179,24 @@ class ScriptTest {
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean = true,
-            suppressOutput: Boolean = false): Class<*>? =
-    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
+            suppressOutput: Boolean = false,
+            saveClassesDir: File? = null): Class<*>? =
+    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, runIsolated, suppressOutput, saveClassesDir)
 
     private fun compileSmokeTestScript(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean = true,
-            suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/integration/smoke/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
+            suppressOutput: Boolean = false,
+            saveClassesDir: File? = null): Class<*>? =
+            compileScriptImpl("compiler/testData/integration/smoke/" + scriptPath, scriptDefinition, runIsolated, suppressOutput, saveClassesDir)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean,
-            suppressOutput: Boolean): Class<*>?
+            suppressOutput: Boolean,
+            saveClassesDir: File? = null): Class<*>?
     {
         val paths = PathUtil.getKotlinPathsForDistDirectory()
         val messageCollector =
@@ -190,6 +209,10 @@ class ScriptTest {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+            if (saveClassesDir != null) {
+                configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
+            }
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

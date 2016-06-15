@@ -41,6 +41,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
 
+    public static final CompilerConfigurationKey<Boolean> RETAIN_OUTPUT_IN_MEMORY =
+            CompilerConfigurationKey.create("retain compiled classes in memory for further use, e.g. when running scripts");
+
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =

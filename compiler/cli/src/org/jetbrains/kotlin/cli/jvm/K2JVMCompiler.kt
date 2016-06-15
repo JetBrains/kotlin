@@ -166,6 +166,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
+                configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
                 val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
 

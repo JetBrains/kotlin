@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -51,23 +50,19 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import java.io.IOException
-import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 import java.util.jar.Attributes
-import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.defaultType
-import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.javaType
 
 object KotlinToJVMBytecodeCompiler {
@@ -106,7 +101,9 @@ object KotlinToJVMBytecodeCompiler {
         return GenerationStateEventCallback { state ->
             val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
             writeOutput(configuration, currentOutput, mainClass = null)
-            state.factory.releaseGeneratedOutput()
+            if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
+                state.factory.releaseGeneratedOutput()
+            }
         }
     }
 
@@ -346,9 +343,8 @@ object KotlinToJVMBytecodeCompiler {
             makeParentClassLoader: () -> ClassLoader): Class<*>? {
         val state = analyzeAndGenerate(environment) ?: return null
 
-        val classLoader: GeneratedClassLoader
         try {
-            classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader(), null)
+            val classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader(), null)
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
