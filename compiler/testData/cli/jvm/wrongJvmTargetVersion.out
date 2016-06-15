@@ -1,0 +1,3 @@
+error: unknown JVM target version: 1.5
+Supported versions: 1.6, 1.8
+COMPILATION_ERROR

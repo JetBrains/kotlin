@@ -128,8 +128,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (friendPaths != null) {
             configuration.put(JVMConfigurationKeys.FRIEND_PATHS, friendPaths)
         }
-        if ("1.8".equals(arguments.jvmTarget)) {
-            configuration.put(JVMConfigurationKeys.JVM_8_TARGET, true)
+
+        if (arguments.jvmTarget != null) {
+            val jvmTarget = JvmTarget.fromString(arguments.jvmTarget)
+            if (jvmTarget != null) {
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+            }
+            else {
+                val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
+                                   "Supported versions: ${JvmTarget.values().joinToString { it.string }}"
+                messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, CompilerMessageLocation.NO_LOCATION)
+            }
         }
 
         putAdvancedOptions(configuration, arguments)
