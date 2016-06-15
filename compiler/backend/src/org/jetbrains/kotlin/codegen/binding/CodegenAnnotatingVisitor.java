@@ -23,6 +23,7 @@ import com.intellij.util.containers.Stack;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -295,7 +295,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             callableDescriptor = bindingContext.get(VARIABLE, expression);
             if (callableDescriptor == null) return;
 
-            supertypes = Collections.singleton(runtimeTypes.getSupertypeForPropertyReference((PropertyDescriptor) target));
+            //noinspection ConstantConditions
+            supertypes = Collections.singleton(runtimeTypes.getSupertypeForPropertyReference(
+                    (PropertyDescriptor) target,
+                    ReflectionTypes.Companion.isKMutablePropertyType(callableDescriptor.getReturnType())
+            ));
         }
         else {
             return;
@@ -335,7 +339,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (delegate != null && descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             String name = inventAnonymousClassName();
-            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(propertyDescriptor);
+            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(propertyDescriptor, propertyDescriptor.isVar());
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, propertyDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
         }

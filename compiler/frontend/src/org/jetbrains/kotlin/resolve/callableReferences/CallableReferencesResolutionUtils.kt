@@ -211,7 +211,8 @@ private fun createReflectionTypeForCallableDescriptor(
         reflectionTypes: ReflectionTypes,
         trace: BindingTrace?,
         reportOn: KtExpression?,
-        ignoreReceiver: Boolean
+        ignoreReceiver: Boolean,
+        scopeOwnerDescriptor: DeclarationDescriptor
 ): KotlinType? {
     val extensionReceiver = descriptor.extensionReceiverParameter
     val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
@@ -240,7 +241,12 @@ private fun createReflectionTypeForCallableDescriptor(
             return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
         }
         is PropertyDescriptor -> {
-            reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, descriptor.isVar)
+            val mutable = descriptor.isVar && run {
+                val setter = descriptor.setter
+                // TODO: support private-to-this
+                setter == null || Visibilities.isVisible(null, setter, scopeOwnerDescriptor)
+            }
+            reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, mutable)
         }
         is VariableDescriptor -> {
             if (reportOn != null) {
@@ -256,9 +262,10 @@ private fun createReflectionTypeForCallableDescriptor(
 fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
         reflectionTypes: ReflectionTypes,
-        ignoreReceiver: Boolean
+        ignoreReceiver: Boolean,
+        scopeOwnerDescriptor: DeclarationDescriptor
 ): KotlinType? =
-        createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null, ignoreReceiver)
+        createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null, ignoreReceiver, scopeOwnerDescriptor)
 
 fun createReflectionTypeForResolvedCallableReference(
         reference: KtCallableReferenceExpression,
@@ -268,7 +275,7 @@ fun createReflectionTypeForResolvedCallableReference(
         reflectionTypes: ReflectionTypes
 ): KotlinType? {
     val type = createReflectionTypeForCallableDescriptor(
-            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.isEmptyLHS
+            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.isEmptyLHS, context.scope.ownerDescriptor
     ) ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {
@@ -297,7 +304,8 @@ fun getResolvedCallableReferenceShapeType(
             overloadResolutionResults.isSingleResult ->
                 OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
                     createReflectionTypeForCallableDescriptor(
-                            call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference, reference.isEmptyLHS
+                            call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference, reference.isEmptyLHS,
+                            context.scope.ownerDescriptor
                     )
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->

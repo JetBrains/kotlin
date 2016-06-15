@@ -160,8 +160,9 @@ class CandidateResolver(
                     val candidate = candidateCall.candidateDescriptor
                     val candidateReflectionType = getReflectionTypeForCandidateDescriptor(
                             candidate, reflectionTypes,
-                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.isEmptyLHS }
-                    );
+                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.isEmptyLHS },
+                            scope.ownerDescriptor
+                    )
                     if (candidateReflectionType != null) {
                         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
                             candidateCall.addStatus(OTHER_ERROR)
@@ -384,7 +385,7 @@ class CandidateResolver(
                         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
                         val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, expectedType, expression, context, null, false)
                         if (smartCastResult == null || !smartCastResult.isCorrect) {
-                            context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement));
+                            context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement))
                         }
                     }
                 }
