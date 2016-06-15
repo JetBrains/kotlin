@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -31,7 +30,7 @@ class OverriddenJsNameChecker : DeclarationChecker {
     private val fqnGenerator = FQNGenerator()
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
-                       bindingContext: BindingContext, languageFeatureSettings: LanguageFeatureSettings) {
+                       bindingContext: BindingContext) {
         doCheck(descriptor) { first, second ->
             val psi = descriptor.findPsi() ?: declaration
             diagnosticHolder.report(ErrorsJs.JS_NAME_OVERRIDE_CLASH.on(psi, first, second))

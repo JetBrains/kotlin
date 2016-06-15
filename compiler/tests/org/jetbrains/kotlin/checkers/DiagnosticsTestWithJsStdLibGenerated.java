@@ -367,12 +367,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
-        @TestMetadata("overriddenJsNameClash.kt")
-        public void testOverriddenJsNameClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/overriddenJsNameClash.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("packageAndMethod.kt")
         public void testPackageAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMethod.kt");

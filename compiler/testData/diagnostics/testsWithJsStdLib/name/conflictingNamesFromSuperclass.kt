@@ -20,4 +20,4 @@ open class E {
     open fun g() {}
 }
 
-<!JS_NAME_OVERRIDE_CLASH!>class F : E(), A, B<!>
+<!JS_NAME_CLASH_SYNTHETIC!>class F : E(), A, B<!>
