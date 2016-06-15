@@ -51,7 +51,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../dependencies/download/idea-for-compiler-test/openapi.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/idea_rt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -60,7 +60,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../ideaSDK/core/asm-all.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/openapi.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
