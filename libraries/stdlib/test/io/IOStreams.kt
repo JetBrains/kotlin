@@ -15,7 +15,7 @@ class IOStreamsTest {
         } finally {
             writer?.close()
         }
-        var act: String?
+        val act: String?
         var reader: BufferedReader? = null
         try {
             reader = tmpFile.inputStream().reader().buffered()
@@ -24,5 +24,19 @@ class IOStreamsTest {
             reader?.close()
         }
         assertEquals("Hello, World!", act)
+    }
+
+    @test fun testInputStreamIterator() {
+        val x = ByteArray(10) { it.toByte() }
+
+        val result = mutableListOf<Byte>()
+
+        x.inputStream().buffered().use { stream ->
+            for(b in stream) {
+                result += b
+            }
+        }
+
+        assertEquals(x.asList(), result)
     }
 }
