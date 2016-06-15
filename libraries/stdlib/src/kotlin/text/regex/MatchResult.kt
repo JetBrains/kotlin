@@ -36,8 +36,17 @@ public interface MatchGroupCollection : Collection<MatchGroup?> {
      * corresponds to the entire match.
      */
     public operator fun get(index: Int): MatchGroup?
+}
 
-    // TODO: Provide get(name: String) on JVM 7+
+/**
+ * Extends [MatchGroupCollection] by introducing a way to get matched groups by name, when regex supports it.
+ */
+public interface MatchNamedGroupCollection : MatchGroupCollection {
+    /**
+     * Returns a named group with the specified [name].
+     * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
+     */
+    public operator fun get(name: String): MatchGroup?
 }
 
 /**
