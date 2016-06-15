@@ -145,7 +145,6 @@ public abstract class MavenTestCase extends UsefulTestCase {
     protected void tearDown() throws Exception {
         try {
             MavenServerManager.getInstance().shutdown(true);
-            MavenArtifactDownloader.awaitQuiescence(100, TimeUnit.SECONDS);
             myProject = null;
             UIUtil.invokeAndWaitIfNeeded(new Runnable() {
                 @Override
