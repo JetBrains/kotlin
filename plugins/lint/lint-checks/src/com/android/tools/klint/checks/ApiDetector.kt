@@ -24,6 +24,7 @@ import com.android.tools.klint.detector.api.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.check.UastAndroidContext
 import org.jetbrains.uast.check.UastScanner
+import org.jetbrains.uast.java.JavaUVariable
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 import java.util.*
@@ -195,6 +196,17 @@ open class ApiDetector : Detector(), UastScanner {
                 }
                 is UVariable -> {
                     if (declaration.kind != UastVariableKind.MEMBER) return
+                    if (declaration is JavaUVariable 
+                        && declaration.hasModifier(UastModifier.IMMUTABLE)
+                        && declaration.hasModifier(UastModifier.STATIC)
+                        && declaration.visibility == UastVisibility.PUBLIC
+                        && declaration.initializer.evaluate() != null) {
+                        val type = declaration.type
+                        // Kotlin inlines Java field values with the primitive types, so we don't need to check its version. 
+                        if (type.isPrimitive || type.isString) {
+                            return
+                        }
+                    }
                     check(db.getFieldVersion(parentInternalName, declaration.name), parentClass)
                 }
             }
