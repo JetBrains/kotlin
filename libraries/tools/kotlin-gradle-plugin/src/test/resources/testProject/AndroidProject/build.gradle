@@ -1,8 +1,6 @@
 buildscript {
     repositories {
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        maven { url 'file://' + pathToKotlinPlugin }
         maven {
             url 'http://jcenter.bintray.com'
         }
@@ -18,7 +16,7 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
+        maven { url 'file://' + pathToKotlinPlugin }
         mavenCentral()
     }
 }
