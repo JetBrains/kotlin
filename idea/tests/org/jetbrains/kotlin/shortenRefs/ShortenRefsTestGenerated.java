@@ -469,4 +469,37 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/shortenRefs/typealias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Typealias extends AbstractShortenRefsTest {
+        public void testAllFilesPresentInTypealias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/typealias"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("TypeAliasAsCtor.kt")
+        public void testTypeAliasAsCtor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/typealias/TypeAliasAsCtor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeAliasAsObject.kt")
+        public void testTypeAliasAsObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/typealias/TypeAliasAsObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeAliasAsType.kt")
+        public void testTypeAliasAsType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/typealias/TypeAliasAsType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeAliasAsTypeArgument.kt")
+        public void testTypeAliasAsTypeArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/typealias/TypeAliasAsTypeArgument.kt");
+            doTest(fileName);
+        }
+    }
 }
