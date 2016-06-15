@@ -68,6 +68,7 @@ class KaptIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
             assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertNotContains("w: Classpath entry points to a non-existent location")
         }
 
         project.build("build") {
