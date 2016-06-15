@@ -23,11 +23,11 @@ import org.jetbrains.annotations.Nullable;
 public class MockSchemesManagerFactory extends SchemesManagerFactory {
   private static final SchemesManager EMPTY = new EmptySchemesManager();
 
+  @NotNull
   @Override
-  protected <T extends Scheme, E extends ExternalizableScheme> SchemesManager<T, E> create(@NotNull String directoryName,
-                                                                                           @NotNull SchemeProcessor<E> processor,
-                                                                                           @NotNull RoamingType roamingType,
-                                                                                           @Nullable String presentableName) {
+  public <T extends Scheme, E extends ExternalizableScheme> SchemesManager<T, E> createSchemesManager(
+          @NotNull String directoryName, @NotNull SchemeProcessor<E> processor, @NotNull RoamingType roamingType
+  ) {
     //noinspection unchecked
     return EMPTY;
   }
