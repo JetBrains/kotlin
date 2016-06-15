@@ -68,6 +68,15 @@ open class ApiDetector : Detector(), UastScanner {
             return super.visitCallExpression(node)
         }
 
+        override fun visitBinaryExpressionWithType(node: UBinaryExpressionWithType): Boolean {
+            val typeRef = node.typeReference
+            if (typeRef != null) {
+                checkVersion(context, typeRef, node.type.resolve(context))
+            }
+            
+            return super.visitBinaryExpressionWithType(node)
+        }
+
         override fun visitSimpleReferenceExpression(node: USimpleReferenceExpression): Boolean {
             checkVersion(context, node, node.resolve(context) as? UVariable)
             return super.visitSimpleReferenceExpression(node)
