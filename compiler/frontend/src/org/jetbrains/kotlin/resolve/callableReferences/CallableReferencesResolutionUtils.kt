@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.Printer
 
@@ -68,7 +70,7 @@ private fun resolvePossiblyAmbiguousCallableReference(
         callResolver: CallResolver
 ): OverloadResolutionResults<CallableDescriptor> {
     val call = CallMaker.makeCall(reference, receiver, null, reference, emptyList())
-    val temporaryTrace = TemporaryTraceAndCache.create(context, "trace to resolve ::${reference.getReferencedName()} as function", reference)
+    val temporaryTrace = TemporaryTraceAndCache.create(context, "resolve callable reference as function", reference)
     val newContext = if (resolutionMode == ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS)
         context.replaceTraceAndCache(temporaryTrace).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
     else
@@ -84,12 +86,12 @@ private fun OverloadResolutionResults<*>.isSomething(): Boolean = !isNothing
 
 fun resolvePossiblyAmbiguousCallableReference(
         callableReferenceExpression: KtCallableReferenceExpression,
-        lhsType: KotlinType?,
+        lhs: DoubleColonLHS?,
         context: ResolutionContext<*>,
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
 ): OverloadResolutionResults<CallableDescriptor>? {
-    val reference = callableReferenceExpression.getCallableReference()
+    val reference = callableReferenceExpression.callableReference
 
     fun resolveInScope(traceTitle: String, classifier: ClassifierDescriptor, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
 
@@ -124,26 +126,35 @@ fun resolvePossiblyAmbiguousCallableReference(
         return results
     }
 
-    if (lhsType == null) {
-        return resolvePossiblyAmbiguousCallableReference(reference, null, context, resolutionMode, callResolver)
+    val lhsType = lhs?.type ?: return resolvePossiblyAmbiguousCallableReference(reference, null, context, resolutionMode, callResolver)
+
+    when (lhs) {
+        is DoubleColonLHS.Type -> {
+            val classifier = lhsType.constructor.declarationDescriptor
+            if (classifier !is ClassDescriptor) {
+                context.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(callableReferenceExpression))
+                return null
+            }
+
+            val possibleStatic = resolveInScope("resolve unbound callable reference in static scope", classifier, classifier.staticScope)
+            if (possibleStatic.isSomething()) return possibleStatic
+
+            val possibleNested = resolveInScope(
+                    "resolve unbound callable reference in static nested classes scope", classifier,
+                    ScopeUtils.getStaticNestedClassesScope(classifier)
+            )
+            if (possibleNested.isSomething()) return possibleNested
+
+            val possibleWithReceiver = resolveWithReceiver("resolve unbound callable reference with receiver", TransientReceiver(lhsType))
+            if (possibleWithReceiver.isSomething()) return possibleWithReceiver
+        }
+        is DoubleColonLHS.Expression -> {
+            val result = resolveWithReceiver("resolve bound callable reference", ExpressionReceiver.create(
+                    callableReferenceExpression.receiverExpression!!, lhsType, context.trace.bindingContext
+            ))
+            if (result.isSomething()) return result
+        }
     }
-
-    val classifier = lhsType.constructor.declarationDescriptor
-    if (classifier !is ClassDescriptor) {
-        context.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(callableReferenceExpression))
-        return null
-    }
-
-    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.staticScope)
-    if (possibleStatic.isSomething()) return possibleStatic
-
-    val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
-                                        classifier, ScopeUtils.getStaticNestedClassesScope(classifier))
-    if (possibleNested.isSomething()) return possibleNested
-
-    val possibleWithReceiver = resolveWithReceiver("trace to resolve ::${reference.getReferencedName()} with receiver",
-                                                   TransientReceiver(lhsType))
-    if (possibleWithReceiver.isSomething()) return possibleWithReceiver
 
     return null
 }

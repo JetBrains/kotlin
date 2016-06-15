@@ -1751,9 +1751,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("innerNested.kt")
+                public void testInnerNested() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/innerNested.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/object.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privateToThis.kt")
+                public void testPrivateToThis() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/privateToThis.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("referenceToStaticMethodOnInstance.kt")
+                public void testReferenceToStaticMethodOnInstance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/referenceToStaticMethodOnInstance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valueOfTypeParameterType.kt")
+                public void testValueOfTypeParameterType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/valueOfTypeParameterType.kt");
                     doTest(fileName);
                 }
             }

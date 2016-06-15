@@ -307,9 +307,8 @@ class DoubleColonExpressionResolver(
     ): Pair<DoubleColonLHS?, OverloadResolutionResults<*>?> {
         val lhsResult = expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, context) }
 
-        val resolutionResults = resolvePossiblyAmbiguousCallableReference(
-                expression, lhsResult?.type, context, resolveArgumentsMode, callResolver
-        )
+        val resolutionResults =
+                resolvePossiblyAmbiguousCallableReference(expression, lhsResult, context, resolveArgumentsMode, callResolver)
 
         return lhsResult to resolutionResults
     }
