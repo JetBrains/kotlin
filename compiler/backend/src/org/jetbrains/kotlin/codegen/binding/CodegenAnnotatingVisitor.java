@@ -301,8 +301,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             callableDescriptor = bindingContext.get(VARIABLE, expression);
             if (callableDescriptor == null) return;
 
+            //noinspection ConstantConditions
             supertypes = Collections.singleton(
-                    runtimeTypes.getSupertypeForPropertyReference((PropertyDescriptor) target, receiverType != null)
+                    runtimeTypes.getSupertypeForPropertyReference(
+                            (PropertyDescriptor) target,
+                            ReflectionTypes.Companion.isKMutablePropertyType(callableDescriptor.getReturnType()),
+                            receiverType != null
+                    )
             );
         }
         else {
@@ -380,7 +385,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (delegate != null && descriptor instanceof VariableDescriptorWithAccessors) {
             VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
             String name = inventAnonymousClassName();
-            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(variableDescriptor, /* bound = */ false);
+            KotlinType supertype =
+                    runtimeTypes.getSupertypeForPropertyReference(variableDescriptor, variableDescriptor.isVar(), /* bound = */ false);
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, variableDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
         }
