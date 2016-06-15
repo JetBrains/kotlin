@@ -32,7 +32,7 @@ class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
         var skipCheck: Boolean = false
 
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 1, 1)
+        val INSTANCE = JvmMetadataVersion(1, 1, 2)
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()
