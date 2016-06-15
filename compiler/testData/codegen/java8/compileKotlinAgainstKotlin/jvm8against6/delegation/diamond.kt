@@ -9,7 +9,7 @@ interface Test {
 }
 
 // FILE: 2.kt
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
 interface Test2 : Test {
 
 }
@@ -31,6 +31,7 @@ class TestClass : Test4 {
 fun box(): String {
     checkPresent(Test2::class.java, "test")
     checkPresent(Test3::class.java, "test")
+    // TODO: enable this test once the required behavior is specified
     //checkNoMethod(Test4::class.java, "test")
 
     return TestClass().test()

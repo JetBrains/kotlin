@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
 // WITH_RUNTIME
 // FULL_JDK
 interface Test {
@@ -11,6 +11,7 @@ class TestClass : Test {
 }
 
 fun box(): String {
+    // TODO: enable this test once the required behavior is specified
 //    try {
 //        TestClass::class.java.getDeclaredMethod("test")
 //    }

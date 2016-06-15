@@ -1,4 +1,5 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+// JVM_TARGET: 1.8
+
 interface Test {
     fun test(): String {
         return "OK"

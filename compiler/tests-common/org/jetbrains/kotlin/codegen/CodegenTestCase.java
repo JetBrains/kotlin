@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -146,6 +148,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<String> kotlinConfigurationFlags = new ArrayList<String>(0);
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
+
+            List<String> lines = InTextDirectivesUtils.findLinesWithPrefixesRemoved(testFile.content, "// JVM_TARGET:");
+            if (!lines.isEmpty()) {
+                String targetString = CollectionsKt.single(lines);
+                JvmTarget jvmTarget = JvmTarget.Companion.fromString(targetString);
+                assert jvmTarget != null : "Unknown target: " + targetString;
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget);
+            }
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
