@@ -51,6 +51,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "module-name", description = "Module name")
     public String moduleName;
 
+    @Argument(value = "jvm-target", description = "Target version of the generated JVM bytecode, only 1.6 is supported")
+    @ValueDescription("<version>")
+    public String jvmTarget;
+
     // Advanced options
     @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
     public boolean noCallAssertions;

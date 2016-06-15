@@ -10,6 +10,7 @@ where possible options include:
   -script                    Evaluate the script file
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for runtime libraries discovery
   -module-name               Module name
+  -jvm-target <version>      Target version of the generated JVM bytecode, only 1.6 is supported
   -language-version <version> Provide source compatibility with specified language version
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
