@@ -584,6 +584,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
+        ResolvedCall<? extends CallableDescriptor> loopRangeCall = RangeCodegenUtil.getLoopRangeResolvedCall(forExpression, bindingContext);
+        if (loopRangeCall != null) {
+            CallableDescriptor loopRangeCallee = loopRangeCall.getResultingDescriptor();
+            if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
+                generateForLoop(createForInArrayIndicesRangeLoopGenerator(forExpression, loopRangeCall));
+                return StackValue.none();
+            }
+            else if (RangeCodegenUtil.isCollectionIndices(loopRangeCallee)) {
+                generateForLoop(createForInCollectionIndicesRangeLoopGenerator(forExpression, loopRangeCall));
+                return StackValue.none();
+            }
+        }
+
         KtExpression loopRange = forExpression.getLoopRange();
         assert loopRange != null;
         KotlinType loopRangeType = bindingContext.getType(loopRange);
@@ -606,6 +619,24 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         generateForLoop(new IteratorForLoopGenerator(forExpression));
         return StackValue.none();
+    }
+
+    private AbstractForLoopGenerator createForInCollectionIndicesRangeLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue extensionReceiver = loopRangeCall.getExtensionReceiver();
+        assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'indices' call";
+        return new ForInCollectionIndicesRangeLoopGenerator(forExpression, extensionReceiver);
+    }
+
+    private AbstractForLoopGenerator createForInArrayIndicesRangeLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue extensionReceiver = loopRangeCall.getExtensionReceiver();
+        assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'indices' call";
+        return new ForInArrayIndicesRangeLoopGenerator(forExpression, extensionReceiver);
     }
 
     private OwnerKind contextKind() {
@@ -1080,6 +1111,54 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // ranges inherit first and last from corresponding progressions
             generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
+        }
+    }
+
+    private abstract class ForInOptimizedIndicesLoopGenerator extends AbstractForInRangeLoopGenerator {
+        protected final ReceiverValue receiverValue;
+
+        private ForInOptimizedIndicesLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression);
+            this.receiverValue = receiverValue;
+        }
+
+        @Override
+        protected void storeRangeStartAndEnd() {
+            StackValue.local(loopParameterVar, loopParameterType).store(StackValue.constant(0, asmElementType), v);
+
+            StackValue receiver = generateReceiverValue(receiverValue, false);
+            receiver.put(receiver.type, v);
+            getReceiverSizeAsInt();
+            v.iconst(1);
+            v.sub(Type.INT_TYPE);
+            StackValue.local(endVar, asmElementType).store(StackValue.onStack(Type.INT_TYPE), v);
+        }
+
+        /**
+         * <code>(receiver -> size:I)</code>
+         */
+        protected abstract void getReceiverSizeAsInt();
+    }
+
+    private class ForInCollectionIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
+        private ForInCollectionIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression, receiverValue);
+        }
+
+        @Override
+        protected void getReceiverSizeAsInt() {
+            v.invokeinterface("java/util/Collection", "size", "()I");
+        }
+    }
+
+    private class ForInArrayIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
+        private ForInArrayIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression, receiverValue);
+        }
+
+        @Override
+        protected void getReceiverSizeAsInt() {
+            v.arraylength();
         }
     }
 
@@ -2873,7 +2952,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (hasSpread) {
             boolean arrayOfReferences = KotlinBuiltIns.isArray(outType);
             if (size == 1) {
-                // Arrays.copyOf(array, newLength)
+                // Arrays.copyOf(receiverValue, newLength)
                 ValueArgument argument = arguments.get(0);
                 Type arrayType = arrayOfReferences ? Type.getType("[Ljava/lang/Object;")
                                                    : Type.getType("[" + elementType.getDescriptor());
