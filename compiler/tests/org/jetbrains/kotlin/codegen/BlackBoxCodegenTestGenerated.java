@@ -1956,6 +1956,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetterInsideClass.kt")
+            public void testPrivateSetterInsideClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/privateSetterInsideClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateSetterOutsideClass.kt")
+            public void testPrivateSetterOutsideClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/privateSetterOutsideClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleExtension.kt")
             public void testSimpleExtension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/simpleExtension.kt");
@@ -5113,6 +5125,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/localVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateSetterKPropertyIsNotMutable.kt")
+        public void testPrivateSetterKPropertyIsNotMutable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/privateSetterKPropertyIsNotMutable.kt");
             doTest(fileName);
         }
 

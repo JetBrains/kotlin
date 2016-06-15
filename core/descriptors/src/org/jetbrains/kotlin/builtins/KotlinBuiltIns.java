@@ -216,6 +216,9 @@ public abstract class KotlinBuiltIns {
 
         public final FqNameUnsafe kClass = reflect("KClass");
         public final FqNameUnsafe kCallable = reflect("KCallable");
+        public final FqNameUnsafe kMutableProperty0 = reflect("KMutableProperty0");
+        public final FqNameUnsafe kMutableProperty1 = reflect("KMutableProperty1");
+        public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
         public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
 
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;

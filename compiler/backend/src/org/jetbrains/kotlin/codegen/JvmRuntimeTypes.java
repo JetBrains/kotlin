@@ -140,14 +140,16 @@ public class JvmRuntimeTypes {
     }
 
     @NotNull
-    public KotlinType getSupertypeForPropertyReference(@NotNull VariableDescriptorWithAccessors descriptor, boolean isBound) {
+    public KotlinType getSupertypeForPropertyReference(
+            @NotNull VariableDescriptorWithAccessors descriptor, boolean isMutable, boolean isBound
+    ) {
         if (descriptor instanceof LocalVariableDescriptor) {
-            return (descriptor.isVar() ? mutableLocalVariableReference : localVariableReference).getDefaultType();
+            return (isMutable ? mutableLocalVariableReference : localVariableReference).getDefaultType();
         }
 
         int arity = (descriptor.getExtensionReceiverParameter() != null ? 1 : 0) +
                     (descriptor.getDispatchReceiverParameter() != null ? 1 : 0) -
                     (isBound ? 1 : 0);
-        return (descriptor.isVar() ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
+        return (isMutable ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
     }
 }
