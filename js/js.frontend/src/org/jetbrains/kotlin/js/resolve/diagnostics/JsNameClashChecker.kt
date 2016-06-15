@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 class JsNameClashChecker : SimpleDeclarationChecker {
     private val fqnGenerator = FQNGenerator()
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
+    private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<DeclarationDescriptor>()
 
     override fun check(
@@ -74,6 +75,14 @@ class JsNameClashChecker : SimpleDeclarationChecker {
                 val existing = scope[name]
                 if (existing != null && existing != overrideFqn.descriptor) {
                     diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH_SYNTHETIC.on(declaration, name, override, existing))
+                    break
+                }
+
+                val clashedOverrides = clashedFakeOverrides[override]
+                if (clashedOverrides != null) {
+                    val (firstExample, secondExample) = clashedOverrides
+                    diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH_SYNTHETIC.on(declaration, name, firstExample, secondExample))
+                    break
                 }
             }
         }
@@ -111,6 +120,28 @@ class JsNameClashChecker : SimpleDeclarationChecker {
         val fqn = fqnGenerator.generate(descriptor)
         if (fqn.shared && isOpaque(fqn.descriptor)) {
             target[fqn.names.last()] = fqn.descriptor
+            (fqn.descriptor as? CallableMemberDescriptor)?.let { checkOverrideClashes(it, target) }
+        }
+    }
+
+    private fun checkOverrideClashes(descriptor: CallableMemberDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
+        var overridden = descriptor.overriddenDescriptors
+        while (overridden.isNotEmpty()) {
+            for (overridenDescriptor in overridden) {
+                val overriddenFqn = fqnGenerator.generate(overridenDescriptor)
+                if (overriddenFqn.shared) {
+                    val existing = target[overriddenFqn.names.last()]
+                    if (existing != null) {
+                        if (existing != descriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                            clashedFakeOverrides[descriptor] = Pair(existing, overridenDescriptor)
+                        }
+                    }
+                    else {
+                        target[overriddenFqn.names.last()] = descriptor
+                    }
+                }
+            }
+            overridden = overridden.flatMap { it.overriddenDescriptors }
         }
     }
 
