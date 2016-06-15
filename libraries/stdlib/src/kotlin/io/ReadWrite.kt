@@ -6,7 +6,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.net.URL
 import java.util.NoSuchElementException
-import kotlin.internal.PlatformImplementations
+import kotlin.internal.*
 
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
@@ -159,7 +159,7 @@ public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
     } catch (e: Throwable) {
         closed = true
         @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-        PlatformImplementations.INSTANCE.closeSuppressed(this, e)
+        platformCloseSuppressed(this, e)
         throw e
     } finally {
         if (!closed) {

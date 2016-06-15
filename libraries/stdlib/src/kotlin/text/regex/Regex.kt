@@ -19,7 +19,7 @@ package kotlin.text
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import kotlin.internal.DefaultPlatformImplementations
+import kotlin.internal.IMPLEMENTATIONS
 
 private interface FlagEnum {
     public val value: Int
@@ -247,7 +247,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
                 null
         }
         override fun get(name: String): MatchGroup? {
-            return DefaultPlatformImplementations.INSTANCE.getMatchResultNamedGroup(matchResult, name)
+            return IMPLEMENTATIONS.getMatchResultNamedGroup(matchResult, name)
         }
     }
 
