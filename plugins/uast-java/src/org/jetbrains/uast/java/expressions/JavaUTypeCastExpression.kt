@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiTypeCastExpression
 import org.jetbrains.uast.UBinaryExpressionWithType
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UTypeReference
 import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -27,6 +28,9 @@ class JavaUTypeCastExpression(
 ) : JavaAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
     override val type by lz { JavaConverter.convert(psi.castType?.type, this) }
+
+    override val typeReference: UTypeReference?
+        get() = null
 
     override val operationKind: UastBinaryExpressionWithTypeKind.TypeCast
         get() = UastBinaryExpressionWithTypeKind.TYPE_CAST

@@ -8,6 +8,7 @@ import org.w3c.dom.DOMError
 import org.w3c.dom.DOMErrorHandler
 import org.w3c.dom.DOMLocator
 
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.app.Activity
 import android.app.ApplicationErrorReport
@@ -108,7 +109,10 @@ class ApiCallTest: Activity() {
         }
     }
 
-    fun test(priority: Boolean) {
+    fun test(priority: Boolean, layout: ViewGroup) {
+        if (layout is <error descr="Class requires API level 14 (current min is 1): `GridLayout`">GridLayout</error>) {}
+        layout as? <error descr="Class requires API level 14 (current min is 1): `GridLayout`">GridLayout</error>
+        
         if (android.os.Build.VERSION.<error descr="Field requires API level 4 (current min is 1): `SDK_INT`">SDK_INT</error> >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
