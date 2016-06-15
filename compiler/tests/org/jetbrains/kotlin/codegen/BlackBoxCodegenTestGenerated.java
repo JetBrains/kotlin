@@ -10417,6 +10417,57 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInIndices extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInForInIndices() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("forInCollectionImplicitReceiverIndices.kt")
+            public void testForInCollectionImplicitReceiverIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forInCollectionImplicitReceiverIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInCollectionIndices.kt")
+            public void testForInCollectionIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forInCollectionIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInNonOptimizedIndices.kt")
+            public void testForInNonOptimizedIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forInNonOptimizedIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInObjectArrayIndices.kt")
+            public void testForInObjectArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forInObjectArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInPrimitiveArrayIndices.kt")
+            public void testForInPrimitiveArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forInPrimitiveArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forNullableIntInArrayIndices.kt")
+            public void testForNullableIntInArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forNullableIntInArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forNullableIntInCollectionIndices.kt")
+            public void testForNullableIntInCollectionIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forNullableIntInCollectionIndices.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ranges/literal")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
