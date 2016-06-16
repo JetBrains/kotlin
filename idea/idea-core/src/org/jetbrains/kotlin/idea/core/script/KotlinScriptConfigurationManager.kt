@@ -53,22 +53,25 @@ class KotlinScriptConfigurationManager(
 
     init {
         reloadScriptDefinitions()
-        // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
-        runReadAction { cacheAllScriptsExtraImports() }
 
-        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-            override fun after(events: List<VFileEvent>) {
-                val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
-                if (isChanged) {
-                    // TODO: consider more fine-grained update
-                    cacheLock.write {
-                        allScriptsClasspathCache = null
-                        allLibrarySourcesCache = null
+        dumbService.runWhenSmart {
+            // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
+            runReadAction { cacheAllScriptsExtraImports() }
+
+            project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+                override fun after(events: List<VFileEvent>) {
+                    val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
+                    if (isChanged) {
+                        // TODO: consider more fine-grained update
+                        cacheLock.write {
+                            allScriptsClasspathCache = null
+                            allLibrarySourcesCache = null
+                        }
+                        notifyRootsChanged()
                     }
-                    notifyRootsChanged()
                 }
-            }
-        })
+            })
+        }
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
