@@ -181,13 +181,26 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        if (!isDebuggerContext(context)) {
-            // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
-            if (!isCallInsideSameClassAsDeclared(property, context)) return false;
-        }
-        else {
-            // In debugger we want to access through accessors if they are present. If property overrides something accessors must be present.
-            if (!property.getOverriddenDescriptors().isEmpty()) return false;
+        if (!isCallInsideSameClassAsDeclared(property, context)) {
+            if (!isDebuggerContext(context)) {
+                // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
+                return false;
+            }
+            else {
+                // In debugger we want to access through accessors if they are generated
+
+                // Non default accessors must always be generated
+                for (PropertyAccessorDescriptor accessorDescriptor : property.getAccessors()) {
+                    if (!accessorDescriptor.isDefault()) {
+                        if (forGetter == accessorDescriptor instanceof PropertyGetterDescriptor) {
+                            return false;
+                        }
+                    }
+                }
+
+                // If property overrides something, accessors must be generated too
+                if (!property.getOverriddenDescriptors().isEmpty()) return false;
+            }
         }
 
         // Delegated and extension properties have no backing fields
