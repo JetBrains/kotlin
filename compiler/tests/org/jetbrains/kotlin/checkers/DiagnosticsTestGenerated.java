@@ -19821,6 +19821,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasAsQualifier.kt")
+            public void testTypeAliasAsQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasAsQualifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructor.kt")
             public void testTypeAliasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructor.kt");
