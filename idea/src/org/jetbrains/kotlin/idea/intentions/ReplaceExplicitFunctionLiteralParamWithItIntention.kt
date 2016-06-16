@@ -47,16 +47,18 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseInten
         if (parameter.typeReference != null) return false
 
         if (functionLiteral.anyDescendantOfType<KtFunctionLiteral>() { literal ->
-            literal !== functionLiteral &&
-            !literal.hasParameterSpecification() &&
-            literal.anyDescendantOfType<KtSimpleNameExpression> { nameExpr ->
-                nameExpr.getReferencedName() == element.text
-            }
+            literal.usesName(element.text) &&
+            (!literal.hasParameterSpecification() || literal.usesName("it"))
         } ) return false
 
         text = "Replace explicit parameter '${parameter.name}' with 'it'"
         return true
     }
+
+    private fun KtFunctionLiteral.usesName(name: String): Boolean =
+            anyDescendantOfType<KtSimpleNameExpression> {
+                nameExpr -> nameExpr.getReferencedName() == name
+            }
 
     override fun startInWriteAction(): Boolean = false
 
