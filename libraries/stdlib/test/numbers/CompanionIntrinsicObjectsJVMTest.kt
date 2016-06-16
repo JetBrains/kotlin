@@ -20,7 +20,7 @@ import kotlin.test.*
 
 import org.junit.Test as test
 
-class CompanionObjectsExtensionsTest {
+class CompanionIntrinsicObjectsJVMTest {
     @test fun intTest() {
         val i = Int
 

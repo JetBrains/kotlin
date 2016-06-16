@@ -1,9 +1,9 @@
-package test.collections
+package test.utils
 
 import org.junit.Test as test
 import kotlin.test.*
 
-class PreconditionsTest() {
+class PreconditionsJVMTest() {
 
     @test fun passingRequire() {
         require(true)

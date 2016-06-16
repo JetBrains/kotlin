@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package collections
+package test.collections
 
 import test.collections.behaviors.listBehavior
 import test.collections.compare

@@ -1,12 +1,13 @@
-package test.collections
+package test.exceptions
 
 import kotlin.test.*
+import test.collections.assertArrayNotSameButEquals
 
 import org.junit.Test  as test
 import java.io.PrintWriter
 import java.io.*
 
-class ExceptionTest {
+class ExceptionJVMTest {
 
     @test fun printStackTraceOnRuntimeException() {
         assertPrintStackTrace(RuntimeException("Crikey!"))

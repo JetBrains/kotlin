@@ -1,5 +1,4 @@
-@file: Suppress("DEPRECATION_ERROR")
-package language
+package test.ranges
 
 import java.lang.Integer.MAX_VALUE as MaxI
 import java.lang.Integer.MIN_VALUE as MinI

@@ -1,4 +1,4 @@
-package test.collections
+package test.numbers
 
 import java.math.BigInteger
 import java.math.BigDecimal
