@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.indexing.IndexableSetContributor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -136,14 +135,5 @@ class KotlinScriptConfigurationManager(
         fun getInstance(project: Project): KotlinScriptConfigurationManager =
                 ServiceManager.getService(project, KotlinScriptConfigurationManager::class.java)
     }
-}
-
-
-class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
-
-    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> =
-            KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath().toSet()
-
-    override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()
 }
 
