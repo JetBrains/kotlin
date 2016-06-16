@@ -28,7 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
@@ -74,7 +74,7 @@ public abstract class AbstractKotlinUpDownMover extends LineMover {
                 }
 
                 if (comment != null) {
-                    int extension = JetRefactoringUtilKt.getLineCount(comment);
+                    int extension = KotlinRefactoringUtilKt.getLineCount(comment);
                     if (extendDown) {
                         bottomExtension = extension;
                     }
