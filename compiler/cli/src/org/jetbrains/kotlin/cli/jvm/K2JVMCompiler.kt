@@ -62,7 +62,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         try {
             if (!arguments.noJdk) {
-                configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+                if (arguments.jdk != null) {
+                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots(File(arguments.jdk)))
+                }
+                else {
+                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+                }
+            }
+            else {
+                if (arguments.jdk != null) {
+                    messageCollector.report(CompilerMessageSeverity.WARNING,
+                                            "The '-jdk' option with a path to JDK is ignored because '-no-jdk' is specified",
+                                            CompilerMessageLocation.NO_LOCATION)
+                }
             }
         }
         catch (t: Throwable) {
