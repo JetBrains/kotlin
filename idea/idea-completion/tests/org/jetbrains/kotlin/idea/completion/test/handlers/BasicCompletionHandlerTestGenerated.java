@@ -155,6 +155,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("PreferClassToConstructor.kt")
+    public void testPreferClassToConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PreferClassToConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PreferMatchingKeyword.kt")
     public void testPreferMatchingKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PreferMatchingKeyword.kt");
