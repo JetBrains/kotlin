@@ -10486,9 +10486,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInRangeWithImplicitReceiver.kt")
+        public void testForInRangeWithImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeWithImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forIntRange.kt")
         public void testForIntRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forIntRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forNullableIntInRangeWithImplicitReceiver.kt")
+        public void testForNullableIntInRangeWithImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forNullableIntInRangeWithImplicitReceiver.kt");
             doTest(fileName);
         }
 

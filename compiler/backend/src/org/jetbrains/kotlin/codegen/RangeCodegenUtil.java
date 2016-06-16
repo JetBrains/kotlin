@@ -71,36 +71,6 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    public static BinaryCall getRangeAsBinaryCall(@NotNull KtForExpression forExpression) {
-        // We are looking for rangeTo() calls
-        // Other binary operations will succeed too, but will be filtered out later (by examining a resolvedCall)
-        KtExpression rangeExpression = forExpression.getLoopRange();
-        assert rangeExpression != null;
-        KtExpression loopRange = KtPsiUtil.deparenthesize(rangeExpression);
-        if (loopRange instanceof KtQualifiedExpression) {
-            // a.rangeTo(b)
-            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) loopRange;
-            KtExpression selector = qualifiedExpression.getSelectorExpression();
-            if (selector instanceof KtCallExpression) {
-                KtCallExpression callExpression = (KtCallExpression) selector;
-                List<? extends ValueArgument> arguments = callExpression.getValueArguments();
-                if (arguments.size() == 1) {
-                    return new BinaryCall(qualifiedExpression.getReceiverExpression(), callExpression.getCalleeExpression(),
-                                          arguments.get(0).getArgumentExpression());
-                }
-            }
-        }
-        else if (loopRange instanceof KtBinaryExpression) {
-            // a rangeTo b
-            // a .. b
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) loopRange;
-            return new BinaryCall(binaryExpression.getLeft(), binaryExpression.getOperationReference(), binaryExpression.getRight());
-
-        }
-        return null;
-    }
-
-    @Nullable
     public static ResolvedCall<? extends CallableDescriptor> getLoopRangeResolvedCall(@NotNull KtForExpression forExpression, @NotNull BindingContext bindingContext) {
         KtExpression loopRange = KtPsiUtil.deparenthesize(forExpression.getLoopRange());
 
@@ -111,8 +81,11 @@ public class RangeCodegenUtil {
                 return CallUtilKt.getResolvedCall(selector, bindingContext);
             }
         }
-        else if (loopRange instanceof KtSimpleNameExpression) {
+        else if (loopRange instanceof KtSimpleNameExpression || loopRange instanceof KtCallExpression) {
             return CallUtilKt.getResolvedCall(loopRange, bindingContext);
+        }
+        else if (loopRange instanceof KtBinaryExpression) {
+            return CallUtilKt.getResolvedCall(((KtBinaryExpression) loopRange).getOperationReference(), bindingContext);
         }
 
         return null;
@@ -190,17 +163,5 @@ public class RangeCodegenUtil {
         if (!packageName.equals(packageFqName)) return false;
 
         return true;
-    }
-
-    public static class BinaryCall {
-        public final KtExpression left;
-        public final KtExpression op;
-        public final KtExpression right;
-
-        private BinaryCall(KtExpression left, KtExpression op, KtExpression right) {
-            this.left = left;
-            this.op = op;
-            this.right = right;
-        }
     }
 }

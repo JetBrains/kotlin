@@ -572,22 +572,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitForExpression(@NotNull KtForExpression forExpression, StackValue receiver) {
-        // Is it a "1..2" or so
-        RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
-        if (binaryCall != null) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(binaryCall.op, bindingContext);
-            if (resolvedCall != null) {
-                if (RangeCodegenUtil.isOptimizableRangeTo(resolvedCall.getResultingDescriptor())) {
-                    generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
-                    return StackValue.none();
-                }
-            }
-        }
-
         ResolvedCall<? extends CallableDescriptor> loopRangeCall = RangeCodegenUtil.getLoopRangeResolvedCall(forExpression, bindingContext);
         if (loopRangeCall != null) {
             CallableDescriptor loopRangeCallee = loopRangeCall.getResultingDescriptor();
-            if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
+            if (RangeCodegenUtil.isOptimizableRangeTo(loopRangeCallee)) {
+                generateForLoop(createForInRangeLiteralLoopGenerator(forExpression, loopRangeCall));
+                return StackValue.none();
+            }
+            else if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
                 generateForLoop(createForInArrayIndicesRangeLoopGenerator(forExpression, loopRangeCall));
                 return StackValue.none();
             }
@@ -619,6 +611,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         generateForLoop(new IteratorForLoopGenerator(forExpression));
         return StackValue.none();
+    }
+
+    private AbstractForLoopGenerator createForInRangeLiteralLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue from = loopRangeCall.getDispatchReceiver();
+        KtExpression to = loopRangeCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
+        return new ForInRangeLiteralLoopGenerator(forExpression, from, to);
     }
 
     private AbstractForLoopGenerator createForInCollectionIndicesRangeLoopGenerator(
@@ -1075,23 +1076,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private class ForInRangeLiteralLoopGenerator extends AbstractForInRangeLoopGenerator {
-        private final RangeCodegenUtil.BinaryCall rangeCall;
+        private final ReceiverValue from;
+        private final KtExpression to;
 
         private ForInRangeLiteralLoopGenerator(
                 @NotNull KtForExpression forExpression,
-                @NotNull RangeCodegenUtil.BinaryCall rangeCall
+                @NotNull ReceiverValue from,
+                @NotNull KtExpression to
         ) {
             super(forExpression);
-            this.rangeCall = rangeCall;
+            this.from = from;
+            this.to = to;
         }
 
         @Override
         protected void storeRangeStartAndEnd() {
-            gen(rangeCall.left, loopParameterType);
-            v.store(loopParameterVar, loopParameterType);
-
-            gen(rangeCall.right, asmElementType);
-            v.store(endVar, asmElementType);
+            loopParameter().store(generateReceiverValue(from, false), v);
+            StackValue.local(endVar, asmElementType).store(gen(to), v);
         }
     }
 
@@ -1124,7 +1125,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         protected void storeRangeStartAndEnd() {
-            StackValue.local(loopParameterVar, loopParameterType).store(StackValue.constant(0, asmElementType), v);
+            loopParameter().store(StackValue.constant(0, asmElementType), v);
 
             StackValue receiver = generateReceiverValue(receiverValue, false);
             receiver.put(receiver.type, v);
