@@ -16143,6 +16143,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NestedSealed.kt")
+            public void testNestedSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NestedSealed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NeverConstructed.kt")
             public void testNeverConstructed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverConstructed.kt");
