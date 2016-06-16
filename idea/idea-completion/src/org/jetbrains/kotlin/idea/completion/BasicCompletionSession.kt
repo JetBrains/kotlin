@@ -23,8 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -119,9 +118,26 @@ class BasicCompletionSession(
                 lookupElement.putUserData(LookupCancelWatcher.AUTO_POPUP_AT, position.startOffset)
                 lookupElement
             }
+
+            if (isInFunctionLiteralStart(position)) {
+                collector.addLookupElementPostProcessor { lookupElement ->
+                    lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+                    lookupElement
+                }
+            }
         }
 
         completionKind.doComplete()
+    }
+
+    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
+        var prev = position.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
+        if (prev?.node?.elementType == KtTokens.LPAR) {
+            prev = prev?.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
+        }
+        if (prev?.node?.elementType != KtTokens.LBRACE) return false
+        val functionLiteral = prev!!.parent as? KtFunctionLiteral ?: return false
+        return functionLiteral.lBrace == prev
     }
 
     override fun createSorter(): CompletionSorter {

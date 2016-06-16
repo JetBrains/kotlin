@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PlainPrefixMatcher
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
@@ -44,29 +43,24 @@ object PackageDirectiveCompletion {
 
         val expression = file.findElementAt(parameters.offset)?.parent as? KtSimpleNameExpression ?: return false
 
-        try {
-            val prefixLength = parameters.offset - expression.textOffset
-            val prefix = expression.text!!
-            val prefixMatcher = PlainPrefixMatcher(prefix.substring(0, prefixLength))
-            val result = result.withPrefixMatcher(prefixMatcher)
+        val prefixLength = parameters.offset - expression.textOffset
+        val prefix = expression.text!!
+        val prefixMatcher = PlainPrefixMatcher(prefix.substring(0, prefixLength))
+        val result = result.withPrefixMatcher(prefixMatcher)
 
-            val resolutionFacade = expression.getResolutionFacade()
+        val resolutionFacade = expression.getResolutionFacade()
 
-            val packageMemberScope = resolutionFacade.moduleDescriptor.getPackage(file.packageFqName.parent()).memberScope
+        val packageMemberScope = resolutionFacade.moduleDescriptor.getPackage(file.packageFqName.parent()).memberScope
 
-            val variants = packageMemberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, prefixMatcher.asNameFilter())
-            val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() }))
-            for (variant in variants) {
-                val lookupElement = lookupElementFactory.createLookupElement(variant)
-                if (!lookupElement.lookupString.contains(DUMMY_IDENTIFIER)) {
-                    result.addElement(lookupElement)
-                }
+        val variants = packageMemberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, prefixMatcher.asNameFilter())
+        val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() }))
+        for (variant in variants) {
+            val lookupElement = lookupElementFactory.createLookupElement(variant)
+            if (!lookupElement.lookupString.contains(DUMMY_IDENTIFIER)) {
+                result.addElement(lookupElement)
             }
+        }
 
-            return true
-        }
-        catch (e: ProcessCanceledException) {
-            throw rethrowWithCancelIndicator(e)
-        }
+        return true
     }
 }
