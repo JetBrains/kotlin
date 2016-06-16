@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ public class StdLibJsArrayScriptTest extends StdLibTestBase {
     @Override
     protected RhinoResultChecker getResultChecker() {
         return new CompositeRhinoResultsChecker(
-                new RhinoFunctionResultChecker(TEST_MODULE, "jstest", "testSize", 3.0),
-                new RhinoFunctionResultChecker(TEST_MODULE, "jstest", "testToListToString", "[]-[foo]-[foo, bar]")
+                new RhinoFunctionResultChecker(TEST_MODULE, "test.collections.js", "testSize", 3.0),
+                new RhinoFunctionResultChecker(TEST_MODULE, "test.collections.js", "testToListToString", "[]-[foo]-[foo, bar]")
         );
     }
 }

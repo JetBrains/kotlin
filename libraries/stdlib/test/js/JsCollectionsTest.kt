@@ -1,4 +1,4 @@
-package test.collections
+package test.collections.js
 
 import java.util.*
 
@@ -8,7 +8,7 @@ import kotlin.comparisons.*
 
 fun <T> List<T>.toArrayList() = this.toCollection(ArrayList<T>())
 
-class JavautilCollectionsTest {
+class JsCollectionsTest {
     val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()
     val SORTED_TEST_LIST = arrayOf(0, 1, 2, 7, 9).toList()
     val MAX_ELEMENT = 9

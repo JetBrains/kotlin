@@ -48,30 +48,10 @@
 
                                         <exclude name="concurrent/**"/>
                                         <exclude name="io/**"/>
+                                        <exclude name="reflection/**"/>
 
-                                        <exclude name="ExceptionTest.kt"/>
-
-                                        <!-- test for javaClass<T>()-->
-                                        <exclude name="JavaClassTest.kt"/>
-                                        <!-- javaClass(), Retention etc. -->
-                                        <exclude name="AnnotationsTest.kt"/>
-
-                                        <!-- Something missed in JS:-->
-
-                                        <!-- BigInteger, BigDecimal -->
-                                        <exclude name="MathTest.kt"/>
-                                        <!-- ByteArray.inputStream -->
-                                        <exclude name="OldStdlibTest.kt"/>
-                                        <!-- failsWith, javaClass -->
-                                        <exclude name="PreconditionsTest.kt"/>
-                                        <!-- dom.createDocument -->
-                                        <exclude name="dom/*.kt"/>
-                                        <!-- dom.createDocument -->
-                                        <exclude name="browser/BrowserTest.kt"/>
-
-
-                                        <!-- Can't run: spaces in function name -->
-                                        <exclude name="NaturalLanguageTest.kt"/>
+                                        <!-- Can't run: spaces in function name KT-4160 -->
+                                        <exclude name="language/EscapedTestNamesTest.kt"/>
 
                                    </fileset>
                                     <fileset dir="${basedir}/../../../js/js.libraries/test">

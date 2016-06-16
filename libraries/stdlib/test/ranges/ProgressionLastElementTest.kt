@@ -1,4 +1,4 @@
-package language
+package test.ranges
 
 import org.junit.Test
 import kotlin.test.assertEquals

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ public class StdLibTestToJSTest extends StdLibQUnitTestSupport {
                           "libraries/stdlib/test",
                           "js/JsArrayTest.kt",
                           "js/MapJsTest.kt",
-                          "GetOrElseTest.kt",
                           "collections/ListSpecificTest.kt",
                           "collections/IteratorsTest.kt",
                           "collections/CollectionBehaviors.kt",
@@ -38,8 +37,8 @@ public class StdLibTestToJSTest extends StdLibQUnitTestSupport {
                           "collections/SequenceTest.kt",
                           "collections/IterableTests.kt",
                           "collections/ArraysTest.kt",
-                          "language/RangeTest.kt",
-                          "language/RangeIterationTest.kt"
+                          "ranges/RangeTest.kt",
+                          "ranges/RangeIterationTest.kt"
         );
     }
 
