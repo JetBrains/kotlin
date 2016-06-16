@@ -1601,6 +1601,8 @@
     <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.core.script.dependencies.JavaClassesInScriptDependenciesShortNameCache"/>
     <indexedRootsProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptDependenciesIndexableSetContributor"/>
 
+    <psi.clsCustomNavigationPolicy implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependencySourceNavigationPolicyForJavaClasses"/>
+
   </extensions>
 
   <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
