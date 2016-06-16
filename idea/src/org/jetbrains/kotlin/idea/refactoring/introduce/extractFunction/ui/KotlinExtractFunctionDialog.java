@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -220,7 +220,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         MultiMap<PsiElement, String> conflicts = ExtractableAnalysisUtilKt.validate(currentDescriptor).getConflicts();
         conflicts.values().removeAll(originalDescriptor.getConflicts().values());
 
-        JetRefactoringUtilKt.checkConflictsInteractively(
+        KotlinRefactoringUtilKt.checkConflictsInteractively(
                 project,
                 conflicts,
                 new Function0<Unit>() {
