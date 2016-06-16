@@ -22,7 +22,6 @@ import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceFolderType;
 import com.android.sdklib.IAndroidTarget;
-import com.android.sdklib.repository.local.LocalSdk;
 import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
@@ -1430,7 +1429,7 @@ public class LintDriver {
         // Gather all Java source files in a single pass; more efficient.
         List<File> sources = new ArrayList<File>(100);
         for (File folder : sourceFolders) {
-            gatherJavaFiles(folder, sources);
+            gatherKotlinFiles(folder, sources);
         }
         if (!sources.isEmpty()) {
             List<JavaContext> contexts = Lists.newArrayListWithExpectedSize(sources.size());
@@ -1522,14 +1521,14 @@ public class LintDriver {
         }
     }
 
-    private static void gatherJavaFiles(@NonNull File dir, @NonNull List<File> result) {
+    private static void gatherKotlinFiles(@NonNull File dir, @NonNull List<File> result) {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".java")) { //$NON-NLS-1$
+                if (file.isFile() && file.getName().endsWith(".kt")) { //$NON-NLS-1$
                     result.add(file);
                 } else if (file.isDirectory()) {
-                    gatherJavaFiles(file, result);
+                    gatherKotlinFiles(file, result);
                 }
             }
         }
