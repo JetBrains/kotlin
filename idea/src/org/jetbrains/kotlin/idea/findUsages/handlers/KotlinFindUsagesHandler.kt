@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.CommonProcessors
@@ -76,7 +74,6 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
         val options = findUsagesOptions.clone()
         options.searchScope = searchScope
-        val scopeContainingFile = (searchScope as? LocalSearchScope)?.scope?.get(0)?.containingFile
         searchReferences(target, object : Processor<UsageInfo> {
             override fun process(info: UsageInfo): Boolean {
                 val reference = info.reference
