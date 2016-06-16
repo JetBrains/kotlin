@@ -284,44 +284,39 @@ class KotlinCompletionContributor : CompletionContributor() {
             }
         }
 
-        try {
-            result.restartCompletionWhenNothingMatches()
+        result.restartCompletionWhenNothingMatches()
 
-            val configuration = CompletionSessionConfiguration(parameters)
-            if (parameters.completionType == CompletionType.BASIC) {
-                val session = BasicCompletionSession(configuration, parameters, toFromOriginalFileMapper, result)
+        val configuration = CompletionSessionConfiguration(parameters)
+        if (parameters.completionType == CompletionType.BASIC) {
+            val session = BasicCompletionSession(configuration, parameters, toFromOriginalFileMapper, result)
 
-                addPostProcessor(session)
+            addPostProcessor(session)
 
-                if (parameters.isAutoPopup && session.shouldDisableAutoPopup()) {
-                    result.stopHere()
-                    return
-                }
-
-                val somethingAdded = session.complete()
-                if (!somethingAdded && parameters.invocationCount < 2) {
-                    // Rerun completion if nothing was found
-                    val newConfiguration = CompletionSessionConfiguration(
-                            useBetterPrefixMatcherForNonImportedClasses = false,
-                            completeNonAccessibleDeclarations = false,
-                            filterOutJavaGettersAndSetters = false,
-                            completeJavaClassesNotToBeUsed = false,
-                            completeStaticMembers = parameters.invocationCount > 0
-                    )
-
-                    val newSession = BasicCompletionSession(newConfiguration, parameters, toFromOriginalFileMapper, result)
-                    addPostProcessor(newSession)
-                    newSession.complete()
-                }
+            if (parameters.isAutoPopup && session.shouldDisableAutoPopup()) {
+                result.stopHere()
+                return
             }
-            else {
-                val session = SmartCompletionSession(configuration, parameters, toFromOriginalFileMapper, result)
-                addPostProcessor(session)
-                session.complete()
+
+            val somethingAdded = session.complete()
+            if (!somethingAdded && parameters.invocationCount < 2) {
+                // Rerun completion if nothing was found
+                val newConfiguration = CompletionSessionConfiguration(
+                        useBetterPrefixMatcherForNonImportedClasses = false,
+                        completeNonAccessibleDeclarations = false,
+                        filterOutJavaGettersAndSetters = false,
+                        completeJavaClassesNotToBeUsed = false,
+                        completeStaticMembers = parameters.invocationCount > 0
+                )
+
+                val newSession = BasicCompletionSession(newConfiguration, parameters, toFromOriginalFileMapper, result)
+                addPostProcessor(newSession)
+                newSession.complete()
             }
         }
-        catch (e: ProcessCanceledException) {
-            throw rethrowWithCancelIndicator(e)
+        else {
+            val session = SmartCompletionSession(configuration, parameters, toFromOriginalFileMapper, result)
+            addPostProcessor(session)
+            session.complete()
         }
     }
 
