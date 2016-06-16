@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
