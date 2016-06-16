@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
 import com.google.dart.compiler.backend.js.ast.JsName
-import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsScope
+import org.jetbrains.kotlin.js.naming.FQNGenerator
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -169,7 +169,10 @@ class UsageTracker(
             is TypeParameterDescriptor -> Namer.isInstanceSuggestedName(this)
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
-            else -> "closure\$${getSuggestedName(this)}"
+            else -> {
+                val mangled = FQNGenerator().generate(this).names.last()
+                "closure\$$mangled"
+            }
         }
 
         return scope.declareFreshName(suggestedName)

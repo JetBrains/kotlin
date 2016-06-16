@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.js.naming.FQNGenerator;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -40,7 +41,6 @@ import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
 
 /**
  * Encapsulates different types of constants and naming conventions.
@@ -128,7 +128,7 @@ public final class Namer {
             qualifier = fqNameParent.asString();
         }
 
-        String mangledName = getSuggestedName(functionDescriptor);
+        String mangledName = new FQNGenerator().generate(functionDescriptor).getNames().get(0);
         return StringUtil.join(Arrays.asList(moduleName, qualifier, mangledName), ".");
     }
 

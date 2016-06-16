@@ -187,7 +187,9 @@ class FQNGenerator {
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
             is ClassDescriptor -> {
-                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT) {
+                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT ||
+                    containingDeclaration.modality == Modality.OPEN || containingDeclaration.modality == Modality.ABSTRACT
+                ) {
                     return descriptor.visibility.isPublicAPI
                 }
 

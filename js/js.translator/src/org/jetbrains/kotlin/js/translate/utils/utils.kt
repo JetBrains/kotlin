@@ -43,14 +43,14 @@ fun generateDelegateCall(
     val functionScope = context.getScopeForDescriptor(fromDescriptor);
 
     if (DescriptorUtils.isExtension(fromDescriptor)) {
-        val extensionFunctionReceiverName = functionScope.declareName(Namer.getReceiverParameterName())
+        val extensionFunctionReceiverName = functionScope.declareFreshName(Namer.getReceiverParameterName())
         parameters.add(JsParameter(extensionFunctionReceiverName))
         args.add(JsNameRef(extensionFunctionReceiverName))
     }
 
     for (param in fromDescriptor.valueParameters) {
         val paramName = param.name.asString()
-        val jsParamName = functionScope.declareName(paramName)
+        val jsParamName = functionScope.declareFreshName(paramName)
         parameters.add(JsParameter(jsParamName))
         args.add(JsNameRef(jsParamName))
     }

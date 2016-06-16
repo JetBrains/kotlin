@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.naming.FQNGenerator
@@ -39,8 +38,7 @@ class JsNameClashChecker : DeclarationChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageFeatureSettings: LanguageFeatureSettings
+            bindingContext: BindingContext
     ) {
         if (declaration !is KtProperty || !descriptor.isExtension) {
             checkDescriptor(descriptor, declaration, diagnosticHolder)
