@@ -1541,6 +1541,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBePrimaryConstructorPropertyInspection"
+                     displayName="Property is explicitly assigned to constructor parameter"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

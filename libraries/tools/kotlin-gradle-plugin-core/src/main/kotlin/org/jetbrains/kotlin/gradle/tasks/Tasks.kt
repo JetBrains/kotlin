@@ -73,6 +73,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
     var anyClassesCompiled: Boolean = false
+    var friendTaskName: String? = null
 
     private val loggerInstance = Logging.getLogger(this.javaClass)
     override fun getLogger() = loggerInstance
@@ -145,7 +146,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
 }
 
-
 open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
@@ -153,12 +153,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     // Should be SourceDirectorySet or File
     val srcDirsSources = HashSet<Any>()
-
-    private val testsMap = mapOf(
-            "compileTestKotlin" to  "compileKotlin",
-            "compileDebugUnitTestKotlin" to  "compileDebugKotlin",
-            "compileReleaseUnitTestKotlin" to  "compileReleaseKotlin"
-            )
 
     // TODO: find out whether we really need to be able to override destination dir here, and how it should work with destinationDir property
     private val compilerDestinationDir: String get() = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.path.orEmpty() } else { kotlinOptions.destination }
@@ -209,7 +203,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
         args.languageVersion = kotlinOptions.languageVersion
 
-        fun  addFriendPathForTestTask(taskName: String) {
+        fun addFriendPathForTestTask(taskName: String) {
             logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")
             val tasks = project.getTasksByName("$taskName", false)
             logger.kotlinDebug("tasks for $taskName: ${tasks}")
@@ -223,10 +217,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
         }
 
-        testsMap.get(this.name)?.let {
-            addFriendPathForTestTask(it)
-        }
-
+        logger.kotlinDebug { "friendTaskName = $friendTaskName" }
+        friendTaskName?.let { addFriendPathForTestTask(it) }
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 

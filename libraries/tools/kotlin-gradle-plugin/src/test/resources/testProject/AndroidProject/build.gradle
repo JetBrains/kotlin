@@ -1,8 +1,6 @@
 buildscript {
     repositories {
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        maven { url 'file://' + pathToKotlinPlugin }
         maven {
             url 'http://jcenter.bintray.com'
         }
@@ -13,5 +11,12 @@ buildscript {
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
         classpath ('com.android.tools.build:gradle:' + androidToolsVersion)
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+        mavenCentral()
     }
 }

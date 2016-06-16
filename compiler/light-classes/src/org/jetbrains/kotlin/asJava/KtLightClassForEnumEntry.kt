@@ -27,4 +27,5 @@ internal class KtLightClassForEnumEntry(
         private val enumConstant: PsiEnumConstant
 ): KtLightClassForAnonymousDeclaration(fqName, enumEntry), PsiEnumConstantInitializer {
     override fun getEnumConstant(): PsiEnumConstant = enumConstant
+    override fun copy() = KtLightClassForEnumEntry(classFqName, classOrObject as KtEnumEntry, enumConstant)
 }

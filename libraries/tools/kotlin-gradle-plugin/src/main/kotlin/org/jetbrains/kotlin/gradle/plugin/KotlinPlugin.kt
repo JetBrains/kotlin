@@ -64,7 +64,8 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val pluginName: String,
         val compileTaskNameSuffix: String,
         val taskDescription: String,
-        val compilerClass: Class<T>
+        val compilerClass: Class<T>,
+        val tasksProvider: KotlinTasksProvider
 ) {
     abstract protected fun doTargetSpecificProcessing()
     val logger = Logging.getLogger(this.javaClass)
@@ -114,9 +115,9 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     open protected fun createKotlinCompileTask(suffix: String = ""): T {
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
         logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
-        val compile = project.tasks.create(name, compilerClass)
+        val compile = tasksProvider.createKotlinJVMTask(project, name)
         compile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
-        return compile
+        return compilerClass.cast(compile)
     }
 
     open protected fun commonTaskConfiguration() {
@@ -132,13 +133,14 @@ class Kotlin2JvmSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        val tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
         project, javaBasePlugin, sourceSet,
         pluginName = "kotlin",
         compileTaskNameSuffix = "kotlin",
         taskDescription = "Compiles the $sourceSet.kotlin.",
-        compilerClass = tasksProvider.kotlinJVMCompileTaskClass
+        compilerClass = tasksProvider.kotlinJVMCompileTaskClass,
+        tasksProvider = tasksProvider
 ) {
 
     private companion object {
@@ -202,13 +204,14 @@ class Kotlin2JsSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        val tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
         project, javaBasePlugin, sourceSet,
         pluginName = "kotlin2js",
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js",
-        compilerClass = tasksProvider.kotlinJSCompileTaskClass
+        compilerClass = tasksProvider.kotlinJSCompileTaskClass,
+        tasksProvider = tasksProvider
 ) {
 
     val copyKotlinJsTaskName = sourceSet.getTaskName("copy", "kotlinJs")

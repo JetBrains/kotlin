@@ -34,11 +34,13 @@ abstract class AbstractKotlinAndroidGradleTests(
                          androidHome = File("../../../dependencies/android-sdk-for-tests"),
                          androidGradlePluginVersion = androidGradlePluginVersion)
 
+
+
     @Test
     fun testSimpleCompile() {
         val project = Project("AndroidProject", gradleVersion)
 
-        project.build("build") {
+        project.build("build", "assembleAndroidTest") {
             assertSuccessful()
             assertContains(":Lib:compileReleaseKotlin",
                     ":Test:compileDebugKotlin",
@@ -53,7 +55,10 @@ abstract class AbstractKotlinAndroidGradleTests(
                     ":compileFlavor1Jnidebug",
                     ":compileFlavor2Jnidebug",
                     ":compileFlavor1Release",
-                    ":compileFlavor2Release")
+                    ":compileFlavor2Release",
+                    ":compileFlavor1DebugUnitTestKotlin",
+                    "InternalDummyTest PASSED",
+                    ":compileFlavor1DebugAndroidTestKotlin")
         }
 
         // Run the build second time, assert everything is up-to-date
