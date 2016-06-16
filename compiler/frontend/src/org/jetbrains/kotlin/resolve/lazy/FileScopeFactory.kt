@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -73,8 +72,10 @@ class FileScopeFactory(
         val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
 
-        val extraImports = ktImportsFactory.createImportDirectives(getScriptExternalDependencies(file).flatMap { it.imports.map { ImportPath(it) } })
-        val allImplicitImports = defaultImports + extraImports
+        val extraImports = file.originalFile.virtualFile?.let { getScriptExternalDependencies(it, file.project) }
+                ?.flatMap { ktImportsFactory.createImportDirectives(it.imports.map { ImportPath(it) }) }
+
+        val allImplicitImports = defaultImports + extraImports.orEmpty()
 
         val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
             allImplicitImports
