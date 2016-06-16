@@ -17,24 +17,33 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.IndexableSetContributor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class KotlinScriptConfigurationManager(
         private val project: Project,
+        private val dumbService: DumbService,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
         private val scriptExternalImportsProvider: KotlinScriptExternalImportsProvider?
 ) {
@@ -47,10 +56,27 @@ class KotlinScriptConfigurationManager(
         reloadScriptDefinitions()
         // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
         runReadAction { cacheAllScriptsExtraImports() }
+
+        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+            override fun after(events: List<VFileEvent>) {
+                val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache( events.mapNotNull { it.file })?.any() ?: false
+                if (isChanged) {
+                    // TODO: consider more fine-grained update
+                    cacheLock.write {
+                        allScriptsClasspathCache = null
+                    }
+                    notifyRootsChanged()
+                }
+            }
+        })
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
     private val cacheLock = ReentrantReadWriteLock()
+
+    private fun notifyRootsChanged() {
+        runWriteAction { ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true) }
+    }
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
             scriptExternalImportsProvider
@@ -61,12 +87,17 @@ class KotlinScriptConfigurationManager(
 
     fun getAllScriptsClasspath(): List<VirtualFile> = cacheLock.read {
         if (allScriptsClasspathCache == null) {
-            allScriptsClasspathCache =
-                    (scriptExternalImportsProvider?.getKnownCombinedClasspath() ?: emptyList())
-                    .distinct()
-                    .mapNotNull { it.classpathEntryToVfs() }
+            dumbService.runWhenSmart {
+                cacheLock.write {
+                    allScriptsClasspathCache =
+                            (scriptExternalImportsProvider?.getKnownCombinedClasspath() ?: emptyList())
+                                    .distinct()
+                                    .mapNotNull { it.classpathEntryToVfs() }
+                }
+                notifyRootsChanged()
+            }
         }
-        return allScriptsClasspathCache!!
+        return allScriptsClasspathCache ?: emptyList()
     }
 
     private fun File.classpathEntryToVfs(): VirtualFile =
