@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,67 +29,69 @@ class KotlinSourceFilterScope private constructor(
         private val includeProjectSourceFiles: Boolean,
         private val includeLibrarySourceFiles: Boolean,
         private val includeClassFiles: Boolean,
-        private val project: Project) : DelegatingGlobalSearchScope(delegate) {
+        private val includeScriptDependencies: Boolean,
+        private val project: Project
+) : DelegatingGlobalSearchScope(delegate) {
 
     private val index = ProjectRootManager.getInstance(project).fileIndex
 
     //NOTE: avoid recomputing in potentially bottleneck 'contains' method
     private val isJsProjectRef = Ref<Boolean?>(null)
 
-    override fun getProject(): Project? {
-        return project
-    }
+    override fun getProject() = project
 
     override fun contains(file: VirtualFile): Boolean {
         if (!super.contains(file)) return false
+
         return ProjectRootsUtil.isInContent(
-                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, index, isJsProjectRef)
+                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index, isJsProjectRef
+        )
     }
 
     companion object {
-        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project): GlobalSearchScope {
-            return create(delegate, true, true, true, project)
-        }
+        @JvmStatic
+        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, project)
 
-        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project): GlobalSearchScope {
-            return create(delegate, true, false, true, project)
-        }
+        @JvmStatic
+        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, true, project)
 
-        fun sources(delegate: GlobalSearchScope, project: Project): GlobalSearchScope {
-            return create(delegate, true, false, false, project)
-        }
+        @JvmStatic
+        fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, project)
 
-        fun librarySources(delegate: GlobalSearchScope, project: Project): GlobalSearchScope {
-            return create(delegate, false, true, false, project)
-        }
+        @JvmStatic
+        fun sources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, true, project)
 
-        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project): GlobalSearchScope {
-            return create(delegate, false, false, true, project)
-        }
+        @JvmStatic
+        fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, project)
+
+        @JvmStatic
+        fun librarySources(delegate: GlobalSearchScope, project: Project) = create(delegate, false, true, false, true, project)
+
+        @JvmStatic
+        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, false, false, true, true, project)
 
         private fun create(
                 delegate: GlobalSearchScope,
                 includeProjectSourceFiles: Boolean,
                 includeLibrarySourceFiles: Boolean,
                 includeClassFiles: Boolean,
+                includeScriptDependencies: Boolean,
                 project: Project
         ): GlobalSearchScope {
             if (delegate === GlobalSearchScope.EMPTY_SCOPE) return delegate
 
             if (delegate is KotlinSourceFilterScope) {
-
-                val doIncludeProjectSourceFiles = delegate.includeProjectSourceFiles && includeProjectSourceFiles
-                val doIncludeLibrarySourceFiles = delegate.includeLibrarySourceFiles && includeLibrarySourceFiles
-                val doIncludeClassFiles = delegate.includeClassFiles && includeClassFiles
-
-                return KotlinSourceFilterScope(delegate.myBaseScope,
-                                               doIncludeProjectSourceFiles,
-                                               doIncludeLibrarySourceFiles,
-                                               doIncludeClassFiles,
-                                               project)
+                return KotlinSourceFilterScope(
+                        delegate.myBaseScope,
+                        includeProjectSourceFiles = delegate.includeProjectSourceFiles && includeProjectSourceFiles,
+                        includeLibrarySourceFiles = delegate.includeLibrarySourceFiles && includeLibrarySourceFiles,
+                        includeClassFiles = delegate.includeClassFiles && includeClassFiles,
+                        includeScriptDependencies = delegate.includeScriptDependencies && includeScriptDependencies,
+                        project = project
+                )
             }
 
-            return KotlinSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, project)
+            return KotlinSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, project)
         }
     }
 }

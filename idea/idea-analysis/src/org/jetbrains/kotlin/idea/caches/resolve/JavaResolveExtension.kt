@@ -108,6 +108,7 @@ private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFac
         return resolutionFacade.getFrontendService(this, JavaDescriptorResolver::class.java)
     }
     else {
+        //TODO_R: should this work in scripts?
         if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
 
         val cacheService = KotlinCacheService.getInstance(project)

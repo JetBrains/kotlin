@@ -47,7 +47,7 @@ class KotlinGotoClassContributor : GotoClassContributor {
 
     override fun getItemsByName(name: String, pattern: String, project: Project, includeNonProjectItems: Boolean): Array<NavigationItem> {
         val scope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
-        val classesOrObjects = KotlinClassShortNameIndex.getInstance().get(name, project, KotlinSourceFilterScope.sourceAndClassFiles(scope, project))
+        val classesOrObjects = KotlinClassShortNameIndex.getInstance().get(name, project, KotlinSourceFilterScope.projectSourceAndClassFiles(scope, project))
 
         if (classesOrObjects.isEmpty()) return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY
 
@@ -73,7 +73,7 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
 
     override fun getItemsByName(name: String, pattern: String, project: Project, includeNonProjectItems: Boolean): Array<NavigationItem> {
         val baseScope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
-        val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(baseScope, project)
+        val noLibrarySourceScope = KotlinSourceFilterScope.projectSourceAndClassFiles(baseScope, project)
 
         val result = ArrayList<NavigationItem>()
         result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
