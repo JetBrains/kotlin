@@ -246,6 +246,7 @@
 - [`KT-10687`](https://youtrack.jetbrains.com/issue/KT-10687) Qualify property references to avoid shadowing by parameters
 - [`KT-12543`](https://youtrack.jetbrains.com/issue/KT-12543) Qualify property references with 'this' to avoid renaming conflicts
 - [`KT-12732`](https://youtrack.jetbrains.com/issue/KT-12732) Copy default parameter values to overriding function which is renamed by Java reference while its base function is unchanged
+- [`KT-12747`](https://youtrack.jetbrains.com/issue/KT-12747) Fix exception on file copy
 
 #### Java to Kotlin converter
 
