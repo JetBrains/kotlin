@@ -303,6 +303,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline/script"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
             }
 
+            @TestMetadata("ScriptAfterClosingBrace.after.kts")
+            public void testScriptAfterClosingBrace() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/script/ScriptAfterClosingBrace.after.kts");
+                doNewlineTest(fileName);
+            }
+
             @TestMetadata("ScriptAfterExpression.after.kts")
             public void testScriptAfterExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/script/ScriptAfterExpression.after.kts");
@@ -318,6 +324,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("ScriptAfterImport.after.kts")
             public void testScriptAfterImport() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/script/ScriptAfterImport.after.kts");
+                doNewlineTest(fileName);
+            }
+
+            @TestMetadata("ScriptBetweenFunctionCalls.after.kts")
+            public void testScriptBetweenFunctionCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/script/ScriptBetweenFunctionCalls.after.kts");
                 doNewlineTest(fileName);
             }
 

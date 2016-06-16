@@ -151,6 +151,11 @@ abstract class KotlinCommonBlock(
 
     fun getChildAttributes(newChildIndex: Int): ChildAttributes {
         val type = node.elementType
+
+        if (node.elementType == KtNodeTypes.BLOCK && node.treeParent.elementType == KtNodeTypes.SCRIPT) {
+            return ChildAttributes(Indent.getNoneIndent(), null)
+        }
+
         return when (type) {
             in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(Indent.getNormalIndent(), null)
 
