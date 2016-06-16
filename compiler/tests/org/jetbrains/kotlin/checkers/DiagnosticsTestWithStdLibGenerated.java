@@ -784,6 +784,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("kt11266.kt")
+        public void testKt11266() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt11266.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1558.kt")
         public void testKt1558() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt1558.kt");
