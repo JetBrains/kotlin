@@ -16,19 +16,11 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionProgressIndicator
 import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.lookup.CharFilter
-import com.intellij.codeInsight.lookup.CharFilter.Result
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
 class KotlinCompletionCharFilter() : CharFilter() {
     companion object {
@@ -43,10 +35,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
     override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.psiFile !is KtFile) return null
         if (!lookup.isCompletion) return null
-        // it does not work in tests, so we use other way
-//        val isAutopopup = CompletionService.getCompletionService().getCurrentCompletion().isAutopopupCompletion()
-        val completionParameters = (CompletionService.getCompletionService().currentCompletion as CompletionProgressIndicator).parameters
-        val isAutopopup = completionParameters.invocationCount == 0
+        val isAutopopup = CompletionService.getCompletionService().currentCompletion!!.isAutopopupCompletion
 
         if (Character.isJavaIdentifierPart(c) || c == '@') {
             return CharFilter.Result.ADD_TO_PREFIX
@@ -55,8 +44,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
         val currentItem = lookup.currentItem
 
         // do not accept items by special chars in some special positions such as in the very beginning of function literal where name of the first parameter can be
-        if (isAutopopup && !lookup.isSelectionTouched
-            && (currentItem?.getUserData(SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING) != null || isInFunctionLiteralStart(completionParameters.position))) {
+        if (isAutopopup && !lookup.isSelectionTouched && currentItem?.getUserData(SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING) != null) {
             return Result.HIDE_LOOKUP
         }
 
@@ -93,15 +81,5 @@ class KotlinCompletionCharFilter() : CharFilter() {
 
             else -> CharFilter.Result.HIDE_LOOKUP
         }
-    }
-
-    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
-        var prev = position.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
-        if (prev?.node?.elementType == KtTokens.LPAR) {
-            prev = prev?.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
-        }
-        if (prev?.node?.elementType != KtTokens.LBRACE) return false
-        val functionLiteral = prev!!.parent as? KtFunctionLiteral ?: return false
-        return functionLiteral.lBrace == prev
     }
 }
