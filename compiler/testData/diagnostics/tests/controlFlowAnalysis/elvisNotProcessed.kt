@@ -9,7 +9,7 @@ else {
     { true } <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
 }
 
-val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>ww<!> = if (true) {
+val ww = if (true) {
     <!TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
 }
 else if (true) {
