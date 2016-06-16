@@ -49,6 +49,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         }
     }
 
+    // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
     fun <TF> cacheExternalImports(files: Iterable<TF>): Unit = cacheLock.write {
         val uncached = hashSetOf<String>()
         files.forEach { file ->
@@ -68,6 +69,36 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                     uncached.add(path)
                 }
             }
+        }
+    }
+
+    // optimized for update, no special duplicates handling
+    fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
+        files.mapNotNull { file ->
+            val path = getFilePath(file)
+            val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+            if (scriptDef != null) {
+                val deps = scriptDef.getDependenciesFor(file, project)
+                val oldDeps = cache[path]
+                when {
+                    deps != null && (oldDeps == null ||
+                                     !deps.classpath.isSameClasspathAs(oldDeps.classpath) || !deps.sources.isSameClasspathAs(oldDeps.sources)) -> {
+                        // changed or new
+                        cache.put(path, deps)
+                        cacheOfNulls.remove(path)
+                        file
+                    }
+                    deps != null -> {
+                        // same as before
+                        null
+                    }
+                    else -> {
+                        if (cache.remove(path) != null || cacheOfNulls.remove(path)) file // cleared
+                        else null // same as before
+                    }
+                }
+            }
+            else null // not a script
         }
     }
 
