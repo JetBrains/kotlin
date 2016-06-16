@@ -96,6 +96,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/traitWithFunImplement.kt");
             doClassTest(fileName);
         }
+
+        @TestMetadata("typealias.kt")
+        public void testTypealias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/typealias.kt");
+            doClassTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/navigation/gotoSymbol")
@@ -151,6 +157,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         @TestMetadata("stdLibJoinToString.kt")
         public void testStdLibJoinToString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
+            doSymbolTest(fileName);
+        }
+
+        @TestMetadata("typealias.kt")
+        public void testTypealias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/typealias.kt");
             doSymbolTest(fileName);
         }
     }

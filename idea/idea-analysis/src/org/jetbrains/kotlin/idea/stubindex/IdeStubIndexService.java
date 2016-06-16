@@ -144,7 +144,10 @@ public class IdeStubIndexService extends StubIndexService {
 
     @Override
     public void indexTypeAlias(KotlinTypeAliasStub stub, IndexSink sink) {
-        // TODO short name index for type aliases?
+        String name = stub.getName();
+        if (name != null) {
+            sink.occurrence(KotlinTypeAliasShortNameIndex.getInstance().getKey(), name);
+        }
 
         if (stub.isTopLevel()) {
             FqName fqName = stub.getFqName();
