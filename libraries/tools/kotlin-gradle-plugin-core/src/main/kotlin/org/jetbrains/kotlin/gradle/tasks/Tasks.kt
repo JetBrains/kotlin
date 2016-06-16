@@ -195,6 +195,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         args.noStdlib = true
+        args.jdk = kotlinOptions.jdk
         args.noJdk = kotlinOptions.noJdk
         args.noInline = kotlinOptions.noInline
         args.noOptimize = kotlinOptions.noOptimize
