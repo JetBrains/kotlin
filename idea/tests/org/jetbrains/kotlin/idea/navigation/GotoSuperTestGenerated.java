@@ -106,4 +106,10 @@ public class GotoSuperTestGenerated extends AbstractGotoSuperTest {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSuper/TraitSimple.test");
         doTest(fileName);
     }
+
+    @TestMetadata("TypeAliasInSuperType.test")
+    public void testTypeAliasInSuperType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSuper/TypeAliasInSuperType.test");
+        doTest(fileName);
+    }
 }

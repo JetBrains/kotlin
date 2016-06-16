@@ -1,0 +1,8 @@
+// FILE: before.kt
+interface Some
+typealias S = Some
+class <caret>SomeClass: S
+// FILE: after.kt
+interface <caret>Some
+typealias S = Some
+class SomeClass: S
