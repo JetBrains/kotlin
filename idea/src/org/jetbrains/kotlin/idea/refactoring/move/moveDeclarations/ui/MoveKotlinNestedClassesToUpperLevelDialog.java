@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -378,7 +378,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                     new Function1<KtFile, KtFile>() {
                         @Override
                         public KtFile invoke(@NotNull KtFile originalFile) {
-                            return JetRefactoringUtilKt.createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString());
+                            return KotlinRefactoringUtilKt.createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString());
                         }
                     }
             );
