@@ -355,6 +355,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsNameProhibitedOnExtensionProperty.kt")
+        public void testJsNameProhibitedOnExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameProhibitedOnExtensionProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsNameUseTargetOnProperty.kt")
         public void testJsNameUseTargetOnProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameUseTargetOnProperty.kt");

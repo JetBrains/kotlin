@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 object JsNameChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
@@ -49,6 +50,11 @@ object JsNameChecker : DeclarationChecker {
             is PropertyAccessorDescriptor -> {
                 if (AnnotationsUtils.getJsName(descriptor.correspondingProperty) != null) {
                     diagnosticHolder.report(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY.on(jsNamePsi))
+                }
+            }
+            is PropertyDescriptor -> {
+                if (descriptor.isExtension) {
+                    diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY.on(jsNamePsi))
                 }
             }
         }
