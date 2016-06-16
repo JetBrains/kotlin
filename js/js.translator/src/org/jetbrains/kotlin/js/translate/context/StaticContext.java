@@ -110,6 +110,9 @@ public final class StaticContext {
     @NotNull
     private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<DeclarationDescriptor, JsName>();
 
+    @NotNull
+    private final Map<PropertyDescriptor, JsName> backingFieldNameCache = new HashMap<PropertyDescriptor, JsName>();
+
     private final Map<JsScope, Map<String, JsName>> persistentNames = new HashMap<JsScope, Map<String, JsName>>();
 
     @NotNull
@@ -119,6 +122,9 @@ public final class StaticContext {
     private final Map<String, JsName> importedModules = new LinkedHashMap<String, JsName>();
 
     private Map<String, JsName> readOnlyImportedModules;
+
+    @NotNull
+    private final JsScope rootPackageScope;
 
     //TODO: too many parameters in constructor
     private StaticContext(
@@ -139,6 +145,7 @@ public final class StaticContext {
         this.standardClasses = standardClasses;
         this.config = config;
         currentModule = moduleDescriptor;
+        rootPackageScope = new JsObjectScope(rootScope, "<root package>", "root-package");
     }
 
     @NotNull
@@ -281,6 +288,27 @@ public final class StaticContext {
     }
 
     @NotNull
+    public JsName getNameForBackingField(@NotNull PropertyDescriptor property) {
+        JsName name = backingFieldNameCache.get(property);
+
+        if (name == null) {
+            FQNPart fqn = fqnGenerator.generate(property);
+            assert fqn.getNames().size() == 1 : "Private names must always consist of exactly one name";
+
+            JsScope scope = getScopeForDescriptor(fqn.getScope());
+
+            if (DynamicCallsKt.isDynamic(property)) {
+                scope = JsDynamicScope.INSTANCE;
+            }
+            String baseName = fqn.getNames().get(0) + "_0";
+            name = scope.declareFreshName(baseName);
+            backingFieldNameCache.put(property, name);
+        }
+
+        return name;
+    }
+
+    @NotNull
     private List<JsName> getNameForFQNPart(@NotNull FQNPart part) {
         JsScope scope = getScopeForDescriptor(part.getScope());
 
@@ -328,7 +356,7 @@ public final class StaticContext {
             @Override
             public JsName create() {
                 String name = Namer.generatePackageName(packageFqName);
-                return getRootScope().declareName(name);
+                return rootPackageScope.declareName(name);
             }
         });
     }
@@ -427,9 +455,8 @@ public final class StaticContext {
                     if (!(descriptor instanceof CallableDescriptor)) {
                         return null;
                     }
-                    JsScope enclosingScope = getEnclosingScope(descriptor);
 
-                    JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(enclosingScope);
+                    JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(getRootScope());
                     assert (!scopeToFunction.containsKey(correspondingFunction.getScope())) : "Scope to function value overridden for " + descriptor;
                     scopeToFunction.put(correspondingFunction.getScope(), correspondingFunction);
                     return correspondingFunction.getScope();

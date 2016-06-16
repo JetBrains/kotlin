@@ -179,8 +179,7 @@ private class PropertyTranslator(
     }
 
     private fun generateDefaultSetterFunction(setterDescriptor: VariableAccessorDescriptor): JsFunction {
-        val containingScope = context().getScopeForDescriptor(setterDescriptor.containingDeclaration)
-        val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
+        val function = JsFunction(context().program().rootScope, JsBlock(), accessorDescription(setterDescriptor))
 
         assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.correspondingVariable.name.asString()

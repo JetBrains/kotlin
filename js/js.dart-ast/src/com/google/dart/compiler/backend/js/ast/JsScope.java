@@ -47,7 +47,7 @@ public abstract class JsScope {
     private final String description;
     private Map<String, JsName> names = Collections.emptyMap();
     private final JsScope parent;
-    protected int tempIndex = 0;
+    private int tempIndex = 0;
     private final String scopeId;
 
     private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
@@ -94,7 +94,6 @@ public abstract class JsScope {
     public JsName declareFreshName(@NotNull String suggestedName) {
         assert !suggestedName.isEmpty();
         String ident = getFreshIdent(suggestedName);
-        assert !hasOwnName(ident);
         return doCreateName(ident);
     }
 
@@ -121,7 +120,7 @@ public abstract class JsScope {
      * @return <code>null</code> if the identifier has no associated name
      */
     @Nullable
-    public final JsName findName(String ident) {
+    public final JsName findName(@NotNull String ident) {
         JsName name = findOwnName(ident);
         if (name == null && parent != null) {
             return parent.findName(ident);
@@ -131,6 +130,11 @@ public abstract class JsScope {
 
     public boolean hasOwnName(@NotNull String name) {
         return names.containsKey(name);
+    }
+
+    @Nullable
+    public boolean hasName(@NotNull String name) {
+        return hasOwnName(name) || (parent != null && parent.hasName(name));
     }
 
     /**
@@ -209,7 +213,7 @@ public abstract class JsScope {
         }
 
         String freshName = suggestedIdent;
-        while (hasOwnName(freshName)) {
+        while (hasName(freshName)) {
             freshName = baseName + sep + counter++;
         }
 

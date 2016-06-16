@@ -230,6 +230,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsName getNameForBackingField(@NotNull PropertyDescriptor property) {
+        return staticContext.getNameForBackingField(property);
+    }
+
+    @NotNull
     public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
     }
