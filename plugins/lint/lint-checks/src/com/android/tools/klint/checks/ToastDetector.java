@@ -17,6 +17,7 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.tools.klint.client.api.UastLintUtils;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
@@ -124,7 +125,7 @@ public class ToastDetector extends Detector implements UastScanner {
 
         @Override
         public boolean visitCallExpression(@NotNull UCallExpression node) {
-            if (node == mTarget) {
+            if (node.equals(mTarget)) {
                 mSeenTarget = true;
             } else if (mSeenTarget && node.matchesFunctionName("show")) { //$NON-NLS-1$
                 // TODO: Do more flow analysis to see whether we're really calling show
@@ -132,7 +133,7 @@ public class ToastDetector extends Detector implements UastScanner {
                 mFound = true;
             }
 
-            return true;
+            return super.visitCallExpression(node);
         }
 
         @Override
@@ -141,16 +142,16 @@ public class ToastDetector extends Detector implements UastScanner {
                 mSeenTarget = true;
             }
 
-            return false;
+            return super.visitQualifiedExpression(node);
         }
 
         @Override
         public boolean visitReturnExpression(@NotNull UReturnExpression node) {
-            if (mTarget.equals(node.getReturnExpression())) {
+            if (UastLintUtils.isChildOfExpression(mTarget, node.getReturnExpression())) {
                 mFound = true;
             }
 
-            return false;
+            return super.visitReturnExpression(node);
         }
 
         boolean isShowCalled() {

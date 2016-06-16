@@ -10,6 +10,23 @@ class ToastTest(context: Context) : Activity() {
         // Don't warn here
         return Toast.makeText(context, "foo", Toast.LENGTH_LONG)
     }
+    
+    private fun insideRunnable(context: Context) {
+        Runnable {
+            Toast.makeText(context, "foo", Toast.LENGTH_LONG).show()
+        }
+
+        Runnable {
+            val toast = Toast.makeText(context, "foo", Toast.LENGTH_LONG)
+            if (5 > 3) {
+                toast.show()
+            }
+        }
+
+        Runnable {
+            Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText(context, "foo", Toast.LENGTH_LONG)</warning>
+        }
+    }
 
     private fun showToast(context: Context) {
         // Don't warn here
