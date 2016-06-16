@@ -22,11 +22,11 @@ class CollectionJVMTest {
 
     @test fun removeAllWithDifferentEquality() {
         val data = listOf(IdentityData(1), IdentityData(1))
-        val list = data.toArrayList()
+        val list = data.toMutableList()
         list -= identitySetOf(data[0]) as Iterable<IdentityData>
         assertTrue(list.single() === data[1], "Identity contains should be used")
 
-        val list2 = data.toArrayList()
+        val list2 = data.toMutableList()
         list2 -= hashSetOf(data[0]) as Iterable<IdentityData>
         assertTrue(list2.isEmpty(), "Equality contains should be used")
 

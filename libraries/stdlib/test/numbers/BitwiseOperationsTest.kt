@@ -1,8 +1,9 @@
-package test
+package test.numbers
 
 import kotlin.test.*
 import org.junit.Test as test
 
+// TODO: Run these tests during compiler test only (JVM & JS)
 class BitwiseOperationsTest {
     @test fun orForInt() {
         assertEquals(3, 2 or 1)

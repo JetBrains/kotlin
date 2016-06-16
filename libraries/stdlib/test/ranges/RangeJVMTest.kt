@@ -1,5 +1,4 @@
-@file: Suppress("DEPRECATION_ERROR")
-package language
+package test.ranges
 
 import kotlin.ranges.LongProgression.Companion
 import java.lang.Double as jDouble

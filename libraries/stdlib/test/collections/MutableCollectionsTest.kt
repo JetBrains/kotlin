@@ -15,7 +15,7 @@ class MutableCollectionTest {
             }
 
     fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean)
-            = testOperation(before, after, expectedModified, { it.toArrayList() })
+            = testOperation(before, after, expectedModified, { it.toMutableList() })
 
 
     @test fun addAll() {

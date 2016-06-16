@@ -1,4 +1,4 @@
-package test.annotations
+package test.reflection
 
 import kotlin.test.*
 import org.junit.Test as test

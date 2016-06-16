@@ -17,7 +17,7 @@
 package test.collections
 
 import test.collections.behaviors.listBehavior
-import test.compare.STRING_CASE_INSENSITIVE_ORDER
+import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
