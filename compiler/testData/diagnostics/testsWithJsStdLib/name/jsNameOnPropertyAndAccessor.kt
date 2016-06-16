@@ -19,6 +19,3 @@ class A {
 @JsName("mm_") var mm: Int
     <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("get_mm")<!> get() = 23
     <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("set_mm")<!> set(value) {}
-
-@JsName("ext_") val A.ext: Int
-    <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("get_ext")<!> get() = 23

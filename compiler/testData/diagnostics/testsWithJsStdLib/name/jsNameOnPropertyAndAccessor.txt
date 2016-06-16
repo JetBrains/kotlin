@@ -4,7 +4,6 @@ package foo {
     @kotlin.js.JsName(name = "mm_") public var mm: kotlin.Int
     @kotlin.js.JsName(name = "xx_") public val xx: kotlin.Int
     @kotlin.js.JsName(name = "yy_") public val yy: kotlin.Int = 0
-    @kotlin.js.JsName(name = "ext_") public val foo.A.ext: kotlin.Int
 
     public final class A {
         public constructor A()
