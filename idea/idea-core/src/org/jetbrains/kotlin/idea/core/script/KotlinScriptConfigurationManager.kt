@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -79,7 +80,9 @@ class KotlinScriptConfigurationManager(
     private val cacheLock = ReentrantReadWriteLock()
 
     private fun notifyRootsChanged() {
-        runWriteAction { ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true) }
+        ApplicationManager.getApplication().invokeLater {
+            runWriteAction { ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true) }
+        }
     }
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
