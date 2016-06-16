@@ -58,11 +58,12 @@ class KotlinScriptConfigurationManager(
 
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
             override fun after(events: List<VFileEvent>) {
-                val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache( events.mapNotNull { it.file })?.any() ?: false
+                val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
                 if (isChanged) {
                     // TODO: consider more fine-grained update
                     cacheLock.write {
                         allScriptsClasspathCache = null
+                        allLibrarySourcesCache = null
                     }
                     notifyRootsChanged()
                 }
@@ -71,6 +72,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
+    private var allLibrarySourcesCache: List<VirtualFile>? = null
     private val cacheLock = ReentrantReadWriteLock()
 
     private fun notifyRootsChanged() {
@@ -99,15 +101,37 @@ class KotlinScriptConfigurationManager(
         return allScriptsClasspathCache ?: emptyList()
     }
 
+    fun getAllLibrarySources(): List<VirtualFile> = cacheLock.read {
+        if (allLibrarySourcesCache == null) {
+            dumbService.runWhenSmart {
+                cacheLock.write {
+                    allLibrarySourcesCache =
+                            (scriptExternalImportsProvider?.getKnownSourceRoots() ?: emptyList())
+                                    .distinct()
+                                    .mapNotNull { it.classpathEntryToVfs() }
+                }
+                notifyRootsChanged()
+            }
+        }
+        return allLibrarySourcesCache ?: emptyList()
+    }
+
     private fun File.classpathEntryToVfs(): VirtualFile =
             if (isDirectory)
                 StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
             else
                 StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
 
-    fun getAllScriptsClasspathScope(): GlobalSearchScope? {
+    fun getAllScriptsClasspathScope(): GlobalSearchScope {
         return getAllScriptsClasspath().let { cp ->
-            if (cp.isEmpty()) null
+            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
+            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
+        }
+    }
+
+    fun getAllLibrarySourcesScope(): GlobalSearchScope {
+        return getAllLibrarySources().let { cp ->
+            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
             else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
         }
     }
