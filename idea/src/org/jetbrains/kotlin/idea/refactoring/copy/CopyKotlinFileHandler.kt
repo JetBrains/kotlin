@@ -27,7 +27,7 @@ class CopyKotlinFileHandler : CopyHandlerDelegateBase() {
 
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
         return elements
-                .map { it.containingFile as? KtFile ?: return null }
+                .map { (if (it.isValid) it.containingFile as? KtFile else null) ?: return null }
                 .toTypedArray()
     }
 
