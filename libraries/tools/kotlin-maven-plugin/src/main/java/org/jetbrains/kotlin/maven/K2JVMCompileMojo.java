@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -30,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -66,6 +61,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
     protected String jvmTarget;
+
+    @Parameter(property = "kotlin.compiler.jdk", required = false, readonly = false)
+    protected String jdk;
 
     @NotNull
     @Override
@@ -111,5 +109,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         arguments.languageVersion = languageVersion;
         arguments.jvmTarget = jvmTarget;
+
+        if (jdk != null) {
+            getLog().info("Overriding JDK path with: " + jdk);
+            arguments.jdk = jdk;
+        }
     }
 }
