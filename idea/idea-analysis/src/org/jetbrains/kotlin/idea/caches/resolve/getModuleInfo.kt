@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.KtLightElement
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -123,8 +124,13 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     }
 
     val scriptDefinition = getScriptDefinition(virtualFile, project)
-    if (scriptDefinition != null)
-        return ScriptModuleInfo(project, module, virtualFile, scriptDefinition)
+    if (scriptDefinition != null) {
+        return ScriptModuleInfo(project, virtualFile, scriptDefinition)
+    }
+
+    if (KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope().contains(virtualFile)) {
+        return ScriptDependenciesModuleInfo(project)
+    }
 
     return NotUnderContentRootModuleInfo
 }
