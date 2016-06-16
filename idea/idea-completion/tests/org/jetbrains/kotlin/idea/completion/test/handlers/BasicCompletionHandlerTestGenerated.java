@@ -385,6 +385,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("OptionalParameters3.kt")
+        public void testOptionalParameters3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/OptionalParameters3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ParameterTypeIsDerivedFromFunction.kt")
         public void testParameterTypeIsDerivedFromFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ParameterTypeIsDerivedFromFunction.kt");
