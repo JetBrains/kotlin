@@ -30,7 +30,7 @@ interface ScriptTemplateProvider {
 
     val isValid: Boolean
 
-    val templateClass: String
+    val templateClassName: String
 
     val dependenciesClasspath: Iterable<String>
 
@@ -54,7 +54,7 @@ fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvid
         try {
             idToVersion.get(it.id)?.let { ver -> errorsHandler(it, RuntimeException("Conflicting scriptTemplateProvider ${it.id}, using one with version $ver")) }
             val loader = URLClassLoader(it.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
-            val cl = loader.loadClass(it.templateClass)
+            val cl = loader.loadClass(it.templateClassName)
             idToVersion.put(it.id, it.version)
             KotlinScriptDefinitionFromTemplate(cl.kotlin, it.context)
         }
