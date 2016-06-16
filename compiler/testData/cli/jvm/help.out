@@ -3,6 +3,7 @@ where possible options include:
   -d <directory|jar>         Destination for generated class files
   -classpath (-cp) <path>    Paths where to find user class files
   -include-runtime           Include Kotlin runtime in to resulting .jar
+  -jdk <path>                Path to JDK home to include into classpath, if differs from default %JAVA_HOME%
   -no-jdk                    Don't include Java runtime into classpath
   -no-stdlib                 Don't include Kotlin runtime into classpath
   -module <path>             Path to the module file to compile

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
+
+    @Argument(value = "jdk", description = "Path to JDK home to include into classpath, if differs from default %JAVA_HOME%")
+    @ValueDescription("<path>")
+    public String jdk;
 
     @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
