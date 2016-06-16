@@ -35,13 +35,13 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptFilePattern(val pattern: String)
 
-interface GetScriptDependencies {
-    operator fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? = null
+interface ScriptDependenciesResolver {
+    fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptDependencyResolver(val extractor: KClass<out GetScriptDependencies>)
+annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
 
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val context: Any?) : KotlinScriptDefinition {
     override val name = template.simpleName!!
@@ -62,12 +62,12 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
     private val dependenciesResolvers by lazy {
-        template.annotations.mapNotNull { it as? ScriptDependencyResolver }.map { it.extractor.constructors.first().call() }
+        template.annotations.mapNotNull { it as? ScriptDependencyResolver }.map { it.resolver.constructors.first().call() }
     }
 
     override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
-        val fileDeps = dependenciesResolvers.mapNotNull { it(fileAnnotations, context) }
+        val fileDeps = dependenciesResolvers.mapNotNull { it.resolve(project.basePath?.let { File(it) }, File(getFilePath(file)), fileAnnotations, context) }
         return KotlinScriptExternalDependenciesUnion(fileDeps)
     }
 

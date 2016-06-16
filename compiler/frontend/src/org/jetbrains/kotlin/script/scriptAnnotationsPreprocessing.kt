@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.*
 
-object SimpleUntypedAst {
+object SimpleAnnotationAst {
 
     sealed class Node<out T>(val name: String) {
         class empty(name: String) : Node<Unit>(name)
@@ -47,11 +47,11 @@ object SimpleUntypedAst {
         internal fun convert(expression: KtExpression): Node<Any> = when (expression) {
             is KtStringTemplateExpression -> {
                 if (expression.entries.isEmpty())
-                    SimpleUntypedAst.Node.str(name, "")
+                    SimpleAnnotationAst.Node.str(name, "")
                 else if (expression.entries.size == 1)
                     convert(expression.entries[0])
                 else
-                    SimpleUntypedAst.Node.str(name, "")
+                    SimpleAnnotationAst.Node.str(name, "")
                     // TODO: parse expressions, etc. e.g.:
                     //      convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
             }
@@ -73,9 +73,9 @@ object SimpleUntypedAst {
     }
 }
 
-fun parseAnnotation(ann: KtAnnotationEntry): SimpleUntypedAst.Node.list<Any> {
-    val wann = SimpleUntypedAst.KtAnnotationWrapper(ann)
+fun parseAnnotation(ann: KtAnnotationEntry): SimpleAnnotationAst.Node.list<Any> {
+    val wann = SimpleAnnotationAst.KtAnnotationWrapper(ann)
     val vals = wann.valueArguments
-    return SimpleUntypedAst.Node.list(wann.name, vals)
+    return SimpleAnnotationAst.Node.list(wann.name, vals)
 }
 
