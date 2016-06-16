@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, Direct
         if (scope == null) return
 
         runReadAction {
-            val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(scope, baseClass.project)
+            val noLibrarySourceScope = KotlinSourceFilterScope.projectSourceAndClassFiles(scope, baseClass.project)
             KotlinSuperClassIndex.getInstance()
                     .get(name, baseClass.project, noLibrarySourceScope).asSequence()
                     .mapNotNull { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate) }

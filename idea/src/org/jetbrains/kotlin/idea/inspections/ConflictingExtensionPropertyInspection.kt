@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,7 +193,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
                         object : Task.Modal(project, "Searching for imports to delete", true) {
                             override fun run(indicator: ProgressIndicator) {
                                 val importsToDelete = runReadAction {
-                                    val searchScope = KotlinSourceFilterScope.sources(GlobalSearchScope.projectScope(project), project)
+                                    val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
                                     ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<KtSimpleNameReference>()
                                             .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
