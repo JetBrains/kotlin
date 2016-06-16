@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.EverythingGlobalScope
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -77,11 +76,7 @@ private fun findCandidateDeclarationsInIndex(
         project: Project,
         referencedDescriptor: DeclarationDescriptor
 ): Collection<KtDeclaration?> {
-    val libraryClassFilesScope = KotlinSourceFilterScope.libraryClassFiles(GlobalSearchScope.allScope(project), project)
-    // NOTE: using this scope here and getNoScopeWrap below is hopefully temporary and will be removed after refactoring
-    //   of searching logic
-    val scriptsScope = KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
-    val scope = scriptsScope?.let { GlobalSearchScope.union( arrayOf(libraryClassFilesScope, it)) } ?: libraryClassFilesScope
+    val scope = KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
 
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {

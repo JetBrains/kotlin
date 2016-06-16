@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.util.containers.ContainerUtil;
@@ -98,14 +99,14 @@ public class SourceNavigationHelper {
         if (libraryFile == null) return GlobalSearchScope.EMPTY_SCOPE;
 
         boolean includeLibrarySources = navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES;
-        if (ProjectRootsUtil.isInContent(declaration, false, includeLibrarySources, !includeLibrarySources)) {
+        if (ProjectRootsUtil.isInContent(declaration, false, includeLibrarySources, !includeLibrarySources, true)) {
             return GlobalSearchScope.EMPTY_SCOPE;
         }
 
         Project project = declaration.getProject();
         return includeLibrarySources
-               ? KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)
-               : KotlinSourceFilterScope.libraryClassFiles(GlobalSearchScope.allScope(project), project);
+               ? KotlinSourceFilterScope.librarySources(new EverythingGlobalScope(project), project)
+               : KotlinSourceFilterScope.libraryClassFiles(new EverythingGlobalScope(project), project);
     }
 
     private static List<KtFile> getContainingFiles(@NotNull Iterable<KtNamedDeclaration> declarations) {
@@ -448,7 +449,7 @@ public class SourceNavigationHelper {
                 break;
             case SOURCES_TO_CLASS_FILES:
                 if (from.getContainingKtFile().isCompiled()) return from;
-                if (!ProjectRootsUtil.isInContent(from, false, true, false)) return from;
+                if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from;
                 if (KtPsiUtil.isLocal(from)) return from;
                 break;
         }
