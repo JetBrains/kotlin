@@ -29,7 +29,7 @@ class Java8OverrideImplementTest : AbstractOverrideImplementTest() {
         myFixture.testDataPath = TEST_PATH
     }
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK8
 
     fun testOverrideCollectionStream() {
         doOverrideFileTest("stream")
