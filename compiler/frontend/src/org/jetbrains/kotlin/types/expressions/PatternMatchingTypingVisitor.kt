@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.cfg.WhenOnSealedExhaustivenessChecker
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
@@ -206,19 +209,41 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         return Pair(currentDataFlowInfo ?: contextAfterSubject.dataFlowInfo, jumpOutPossible)
     }
 
-    private fun checkSmartCastsInSubjectIfRequired(expression: KtWhenExpression, contextBeforeSubject: ExpressionTypingContext, subjectType: KotlinType) {
-        val subjectExpression = expression.subjectExpression
-        if (subjectExpression != null &&
-            TypeUtils.isNullableType(subjectType) &&
-            !WhenChecker.containsNullCase(expression, contextBeforeSubject.trace.bindingContext)
-        ) {
-            val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
-            val subjectContext = contextBeforeSubject.replaceExpectedType(TypeUtils.makeNotNullable(subjectType)).replaceBindingTrace(trace)
-            val castResult = DataFlowAnalyzer.checkPossibleCast(
-                    subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext)
-            if (castResult != null && castResult.isCorrect) {
-                trace.commit()
+    private fun checkSmartCastsInSubjectIfRequired(
+            expression: KtWhenExpression,
+            contextBeforeSubject: ExpressionTypingContext,
+            subjectType: KotlinType
+    ) {
+        val subjectExpression = expression.subjectExpression ?: return
+        val nullableType = TypeUtils.isNullableType(subjectType)
+        val bindingContext = contextBeforeSubject.trace.bindingContext
+        if (nullableType && !WhenChecker.containsNullCase(expression, bindingContext)) {
+            val notNullableType = TypeUtils.makeNotNullable(subjectType)
+            checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType, notNullableType)
+        }
+        val subjectClass = subjectType.constructor.declarationDescriptor as? ClassDescriptor ?: return
+        if (subjectClass.modality == Modality.SEALED &&
+            WhenOnSealedExhaustivenessChecker.getMissingCases(expression, bindingContext, subjectClass, false).isNotEmpty()) {
+            for (descriptor in WhenOnSealedExhaustivenessChecker.getNestedSubclasses(subjectClass)) {
+                if (descriptor.modality == Modality.SEALED && DescriptorUtils.isDirectSubclass(descriptor, subjectClass)) {
+                    checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType, descriptor.defaultType)
+                }
             }
+        }
+    }
+
+    private fun checkSmartCastToExpectedTypeInSubject(
+            contextBeforeSubject: ExpressionTypingContext,
+            subjectExpression: KtExpression,
+            subjectType: KotlinType,
+            expectedType: KotlinType
+    ) {
+        val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
+        val subjectContext = contextBeforeSubject.replaceExpectedType(expectedType).replaceBindingTrace(trace)
+        val castResult = DataFlowAnalyzer.checkPossibleCast(
+                subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext)
+        if (castResult != null && castResult.isCorrect) {
+            trace.commit()
         }
     }
 
