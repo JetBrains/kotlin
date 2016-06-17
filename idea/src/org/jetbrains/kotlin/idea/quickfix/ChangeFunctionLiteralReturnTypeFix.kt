@@ -64,7 +64,9 @@ class ChangeFunctionLiteralReturnTypeFix(
         val eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters)
 
         val correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty::class.java)
-        if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.initializer!!, functionLiteralExpression)) {
+        if (correspondingProperty != null &&
+            correspondingProperty.initializer?.let { QuickFixUtil.canEvaluateTo(it, functionLiteralExpression) } ?: true
+        ) {
             val correspondingPropertyTypeRef = correspondingProperty.typeReference
             val propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef)
             return if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType))
