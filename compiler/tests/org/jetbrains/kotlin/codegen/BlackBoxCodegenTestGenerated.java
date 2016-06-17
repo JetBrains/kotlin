@@ -4183,6 +4183,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lastUnitExpression.kt")
+        public void testLastUnitExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("manualContinuationImpl.kt")
         public void testManualContinuationImpl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/manualContinuationImpl.kt");
