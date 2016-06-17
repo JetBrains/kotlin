@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -50,6 +51,16 @@ public class PluginTestCaseBase {
     public static Sdk fullJdk() {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
+        return getSdk(javaHome, "Full");
+    }
+
+    @NotNull
+    public static Sdk fullJdk8() {
+        String javaHome = System.getenv("JDK8_PATH");
+        assert javaHome != null : "You should set up environment variable JDK8_PATH. " +
+                                  "Example: /usr/lib/jvm/java-8-oracle/jre";
+        assert new File(javaHome).isDirectory();
+        VfsRootAccess.allowRootAccess(javaHome);
         return getSdk(javaHome, "Full");
     }
 

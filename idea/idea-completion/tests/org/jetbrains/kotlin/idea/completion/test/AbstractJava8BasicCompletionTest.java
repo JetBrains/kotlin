@@ -24,6 +24,6 @@ public abstract class AbstractJava8BasicCompletionTest extends AbstractJvmBasicC
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK8;
     }
 }
