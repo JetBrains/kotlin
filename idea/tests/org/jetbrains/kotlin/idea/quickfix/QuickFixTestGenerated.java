@@ -714,6 +714,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedPrivateInInitializer.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("usedVarArg.kt")
+        public void testUsedVarArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedVarArg.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty")

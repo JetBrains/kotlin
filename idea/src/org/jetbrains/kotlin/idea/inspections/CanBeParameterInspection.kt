@@ -33,10 +33,16 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.quickfix.RemoveValVarFromParameterFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+
+private val CONSTRUCTOR_VAL_VAR_MODIFIERS = listOf(
+        OPEN_KEYWORD, FINAL_KEYWORD,
+        PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD,
+        LATEINIT_KEYWORD
+)
 
 class CanBeParameterInspection : AbstractKotlinInspection() {
     private fun PsiReference.usedAsPropertyIn(klass: KtClass): Boolean {
@@ -75,7 +81,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                 // Applicable to val / var parameters of a class / object primary constructors
                 val valOrVar = parameter.valOrVarKeyword ?: return
                 val name = parameter.name ?: return
-                if (parameter.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+                if (parameter.hasModifier(OVERRIDE_KEYWORD)) return
                 if (parameter.annotationEntries.isNotEmpty()) return
                 val constructor = parameter.parent.parent as? KtPrimaryConstructor ?: return
                 val klass = constructor.getContainingClassOrObject() as? KtClass ?: return
@@ -119,8 +125,13 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             parameter.valOrVarKeyword?.delete()
-            // Delete visibility / modality, if any
-            parameter.modifierList?.delete()
+            // Delete visibility / open / final / lateinit, if any
+            // Retain annotations / vararg
+            // override should never be here
+            val modifierList = parameter.modifierList ?: return
+            for (modifier in CONSTRUCTOR_VAL_VAR_MODIFIERS) {
+                modifierList.getModifier(modifier)?.delete()
+            }
         }
     }
 }
