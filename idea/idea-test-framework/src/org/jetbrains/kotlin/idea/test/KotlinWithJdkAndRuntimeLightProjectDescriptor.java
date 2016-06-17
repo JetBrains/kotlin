@@ -25,10 +25,10 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
     }
 
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor();
-    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_FULL_JDK = new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
+    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_FULL_JDK8 = new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         @Override
         public Sdk getSdk() {
-            return PluginTestCaseBase.fullJdk();
+            return PluginTestCaseBase.fullJdk8();
         }
     };
 }

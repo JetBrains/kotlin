@@ -46,14 +46,14 @@ abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
         Assert.assertTrue(atLeastOneFile)
     }
 
-    protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
+    protected fun module(name: String, hasTestRoot: Boolean = false, useJdk8: Boolean = false): Module {
         val srcDir = TEST_DATA_PATH + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, "$name", StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
             setTestRoot(moduleWithSrcRootSet, name)
         }
 
-        val jdkToUse = if (useFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
+        val jdkToUse = if (useJdk8) PluginTestCaseBase.fullJdk8() else PluginTestCaseBase.mockJdk()
         ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, jdkToUse)
 
         return moduleWithSrcRootSet
