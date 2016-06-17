@@ -1745,7 +1745,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert resolvedCall.getValueArgumentsByIndex() != null : "Arguments were not resolved for call element: " + callOwner.getText();
             KtExpression argumentExpression =
                     resolvedCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
-            if (KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
+            if (valueToReturn == null
+                    && KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
                 tempVariables.put(argumentExpression, StackValue.unit());
             }
             else {
