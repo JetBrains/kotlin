@@ -58,7 +58,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 holder.registerProblem(holder.manager.createProblemDescriptor(
                         nameIdentifier,
                         nameIdentifier,
-                        "Property is explicitly assigned by parameter ${assignedDescriptor.name}, can be declared directly in constructor",
+                        "Property is explicitly assigned to parameter ${assignedDescriptor.name}, can be declared directly in constructor",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         isOnTheFly,
                         MakeConstructorPropertyFix(property, assignedParameter)
