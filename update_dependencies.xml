@@ -197,9 +197,6 @@
         <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
         <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
-        <!-- Protocol Buffers -->
-        <get-protobuf-and-rename-packages/>
-
         <!-- ant 1.8.2 -->
         <get-ant-library version="1.8.2" folderName="ant-1.8"/>
 
@@ -307,7 +304,6 @@
             <available file="${dependencies}/bootstrap-compiler/Kotlin" property="have.bootstrap.compiler"/>
             <fail message="Bootstrap compiler is expected to be downloaded to '${dependencies}/bootstrap-compiler' by TeamCity" unless:set="have.bootstrap.compiler"/>
             <echo message="Bootstrap compiler found in '${dependencies}/bootstrap-compiler'" if:set="have.bootstrap.compiler"/>
-
         </sequential>
 
         <local name="bootstrap.need.chmod"/>
@@ -323,6 +319,8 @@
             <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
             <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
         </exec>
+
+        <get-protobuf-and-rename-packages/>
 
         <download-or-build-markdown-parser/>
     </target>
