@@ -84,7 +84,7 @@ class DoubleColonExpressionResolver(
             c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
         }
         else {
-            val result = resolveDoubleColonLHS(expression.receiverExpression!!, expression, c)
+            val result = resolveDoubleColonLHS(expression, c)
             val type = result?.type
             if (type != null && !type.isError) {
                 checkClassLiteral(c, expression, result!!)
@@ -134,12 +134,12 @@ class DoubleColonExpressionResolver(
 
     private fun KtExpression.canBeConsideredProperType(): Boolean {
         return when (this) {
-            is KtSimpleNameExpression -> true
-            is KtDotQualifiedExpression -> {
-                receiverExpression.canBeConsideredProperType() && selectorExpression.let { selector ->
-                    selector is KtSimpleNameExpression || (selector is KtCallExpression && selector.isWithoutValueArguments)
-                }
-            }
+            is KtSimpleNameExpression ->
+                true
+            is KtCallExpression ->
+                isWithoutValueArguments
+            is KtDotQualifiedExpression ->
+                receiverExpression.canBeConsideredProperType() && selectorExpression.let { it != null && it.canBeConsideredProperType() }
             else -> false
         }
     }
@@ -152,45 +152,101 @@ class DoubleColonExpressionResolver(
         return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarks /* TODO: test this */
     }
 
-    private fun resolveDoubleColonLHS(
-            expression: KtExpression, doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext
-    ): DoubleColonLHS? {
-        // First, try resolving the LHS as expression, if possible
+    private fun shouldTryResolveLHSAsType(expression: KtDoubleColonExpression): Boolean {
+        val lhs = expression.receiverExpression
+        return lhs != null && lhs.canBeConsideredProperType()
+    }
 
-        if (shouldTryResolveLHSAsExpression(doubleColonExpression)) {
-            val traceForExpr = TemporaryTraceAndCache.create(c, "resolve '::' LHS as expression", expression)
-            val contextForExpr = c.replaceTraceAndCache(traceForExpr).replaceExpectedType(NO_EXPECTED_TYPE)
-            val typeInfo = expressionTypingServices.getTypeInfo(expression, contextForExpr)
-            val type = typeInfo.type
-
-            if (type != null) {
-                // Be careful not to call a utility function to get a resolved call by an expression which may accidentally
-                // deparenthesize that expression, as this is undesirable here
-                val call = traceForExpr.trace.bindingContext[BindingContext.CALL, expression.getQualifiedElementSelector()]
-                val resolvedCall = call.getResolvedCall(traceForExpr.trace.bindingContext)
-                val implicitReferenceToCompanion =
-                        resolvedCall != null &&
-                        resolvedCall.resultingDescriptor.let { result ->
-                            result is FakeCallableDescriptorForObject &&
-                            result.classDescriptor.companionObjectDescriptor != null
-                        }
-
-                val resolvedToFunctionWithoutArguments =
-                        resolvedCall != null &&
-                        expression.canBeConsideredProperType() &&
-                        resolvedCall.resultingDescriptor !is VariableDescriptor
-
-                if (!implicitReferenceToCompanion && !resolvedToFunctionWithoutArguments) {
-                    traceForExpr.commit()
-                    return DoubleColonLHS.Expression(typeInfo).apply {
-                        c.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, this)
-                    }
-                }
+    private fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
+        val resultForExpr = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
+        if (resultForExpr != null) {
+            val lhs = resultForExpr.lhs
+            if (lhs != null) {
+                return resultForExpr.commit()
             }
         }
 
-        // Then, try resolving it as type
+        val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
+            resolveTypeOnLHS(expression, doubleColonExpression, context)
+        }
+        if (resultForType != null) {
+            val lhs = resultForType.lhs
+            if (lhs != null) {
+                return resultForType.commit()
+            }
+        }
 
+        // If the LHS could be resolved neither as an expression nor as a type, we should still type-check it to allow all diagnostics
+        // to be reported and references to be resolved. For that, we commit one of the applicable traces here, preferring the expression
+        if (resultForExpr != null) return resultForExpr.commit()
+        if (resultForType != null) return resultForType.commit()
+
+        return null
+    }
+
+    private class LHSResolutionResult(
+            val lhs: DoubleColonLHS?,
+            val expression: KtExpression,
+            val traceAndCache: TemporaryTraceAndCache
+    ) {
+        fun commit(): DoubleColonLHS? {
+            if (lhs != null) {
+                traceAndCache.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, lhs)
+            }
+            traceAndCache.commit()
+            return lhs
+        }
+    }
+
+    /**
+     * Returns null if the LHS is definitely not an expression. Returns a non-null result if a resolution was attempted and led to
+     * either a successful result or not.
+     */
+    private fun tryResolveLHS(
+            doubleColonExpression: KtDoubleColonExpression,
+            context: ExpressionTypingContext,
+            criterion: (KtDoubleColonExpression) -> Boolean,
+            resolve: (KtExpression, ExpressionTypingContext) -> DoubleColonLHS?
+    ): LHSResolutionResult? {
+        val expression = doubleColonExpression.receiverExpression ?: return null
+
+        if (!criterion(doubleColonExpression)) return null
+
+        val traceAndCache = TemporaryTraceAndCache.create(context, "resolve '::' LHS", doubleColonExpression)
+        val c = context.replaceTraceAndCache(traceAndCache).replaceExpectedType(NO_EXPECTED_TYPE)
+
+        val lhs = resolve(expression, c)
+        return LHSResolutionResult(lhs, expression, traceAndCache)
+    }
+
+    private fun resolveExpressionOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
+        val typeInfo = expressionTypingServices.getTypeInfo(expression, c)
+
+        // TODO: do not lose data flow info maybe
+        if (typeInfo.type == null) return null
+
+        // Be careful not to call a utility function to get a resolved call by an expression which may accidentally
+        // deparenthesize that expression, as this is undesirable here
+        val call = c.trace.bindingContext[BindingContext.CALL, expression.getQualifiedElementSelector()]
+        val resolvedCall = call.getResolvedCall(c.trace.bindingContext)
+
+        if (resolvedCall != null) {
+            val resultingDescriptor = resolvedCall.resultingDescriptor
+            if (resultingDescriptor is FakeCallableDescriptorForObject) {
+                val classDescriptor = resultingDescriptor.classDescriptor
+                if (classDescriptor.companionObjectDescriptor != null) return null
+            }
+
+            // Check if this is resolved to a function (with the error "arguments expected"), such as in "Runnable::class"
+            if (expression.canBeConsideredProperType() && resultingDescriptor !is VariableDescriptor) return null
+        }
+
+        return DoubleColonLHS.Expression(typeInfo)
+    }
+
+    private fun resolveTypeOnLHS(
+            expression: KtExpression, doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext
+    ): DoubleColonLHS.Type? {
         val qualifierResolutionResult =
                 qualifiedExpressionResolver.resolveDescriptorForDoubleColonLHS(expression, c.scope, c.trace, c.isDebuggerContext)
 
@@ -229,9 +285,7 @@ class DoubleColonExpressionResolver(
             TypeUtils.makeNullableAsSpecified(possiblyBareType.actualType, doubleColonExpression.hasQuestionMarks)
         }
 
-        return DoubleColonLHS.Type(type, possiblyBareType).apply {
-            c.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, this)
-        }
+        return DoubleColonLHS.Type(type, possiblyBareType)
     }
 
     private fun isAllowedInClassLiteral(type: KotlinType): Boolean {
@@ -256,7 +310,7 @@ class DoubleColonExpressionResolver(
     fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, c: ExpressionTypingContext): KotlinTypeInfo {
         val callableReference = expression.callableReference
         if (callableReference.getReferencedName().isEmpty()) {
-            expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, c) }
+            if (!expression.isEmptyLHS) resolveDoubleColonLHS(expression, c)
             c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference))
             val errorType = ErrorUtils.createErrorType("Empty callable reference")
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
@@ -354,7 +408,9 @@ class DoubleColonExpressionResolver(
             context: ExpressionTypingContext,
             resolveArgumentsMode: ResolveArgumentsMode
     ): Pair<DoubleColonLHS?, OverloadResolutionResults<*>?> {
-        val lhsResult = expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, context) }
+        val lhsResult =
+                if (expression.isEmptyLHS) null
+                else resolveDoubleColonLHS(expression, context)
 
         val resolutionResults =
                 resolvePossiblyAmbiguousCallableReference(expression, lhsResult, context, resolveArgumentsMode, callResolver)

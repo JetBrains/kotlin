@@ -308,7 +308,7 @@ class CallExpressionResolver(
                 selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments)
         is KtExpression -> {
             expressionTypingServices.getTypeInfo(selectorExpression, context)
-            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.text))
+            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression))
             noTypeInfo(context)
         }
         else /*null*/ -> noTypeInfo(context)

@@ -8607,6 +8607,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("illegalSelectorCallableReference.kt")
+            public void testIllegalSelectorCallableReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/illegalSelectorCallableReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inExpr.kt")
             public void testInExpr() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/inExpr.kt");

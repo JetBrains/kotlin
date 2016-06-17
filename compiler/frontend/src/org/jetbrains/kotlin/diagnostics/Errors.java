@@ -510,7 +510,7 @@ public interface Errors {
 
     // Call resolution
 
-    DiagnosticFactory1<KtExpression, String> ILLEGAL_SELECTOR = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtExpression> ILLEGAL_SELECTOR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtExpression, KtExpression, KotlinType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, KtExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
