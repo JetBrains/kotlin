@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -87,29 +88,29 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedType, contextAfterSubject, dataFlowInfoForEntries)
         val whenResultValue = whenReturnType?.let { DataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
-        val (outputDataFlowInfo, jumpOutPossible) =
-                joinWhenExpressionBranches(expression, contextAfterSubject, jumpOutPossibleInSubject, whenResultValue)
+        val branchesTypeInfo =
+                joinWhenExpressionBranches(expression, contextAfterSubject, whenReturnType, jumpOutPossibleInSubject, whenResultValue)
 
         val isExhaustive = WhenChecker.isWhenExhaustive(expression, trace)
 
+        val branchesDataFlowInfo = branchesTypeInfo.dataFlowInfo
         val resultDataFlowInfo = if (expression.elseExpression == null && !isExhaustive) {
             // Without else expression in non-exhaustive when, we *must* take initial data flow info into account,
             // because data flow can bypass all when branches in this case
-            outputDataFlowInfo.or(contextAfterSubject.dataFlowInfo)
+            branchesDataFlowInfo.or(contextAfterSubject.dataFlowInfo)
         }
         else {
-            outputDataFlowInfo
+            branchesDataFlowInfo
         }
 
         if (whenReturnType != null && isExhaustive && expression.elseExpression == null && KotlinBuiltIns.isNothing(whenReturnType)) {
             trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression)
         }
 
-        val resultType = whenReturnType?.let {
-            components.dataFlowAnalyzer.checkType(it, expression, contextWithExpectedType)
-        }
+        val branchesType = branchesTypeInfo.type ?: return noTypeInfo(resultDataFlowInfo)
+        val resultType = components.dataFlowAnalyzer.checkType(branchesType, expression, contextWithExpectedType)
 
-        return createTypeInfo(resultType, resultDataFlowInfo, jumpOutPossible, contextWithExpectedType.dataFlowInfo)
+        return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }
 
     private fun inferTypeForWhenExpression(
@@ -172,19 +173,24 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun joinWhenExpressionBranches(
             expression: KtWhenExpression,
             contextAfterSubject: ExpressionTypingContext,
+            resultType: KotlinType?,
             jumpOutPossibleInSubject: Boolean,
             whenResultValue: DataFlowValue?
-    ): Pair<DataFlowInfo, Boolean> {
+    ): KotlinTypeInfo {
         val bindingContext = contextAfterSubject.trace.bindingContext
 
         var currentDataFlowInfo: DataFlowInfo? = null
         var jumpOutPossible = jumpOutPossibleInSubject
+        var errorTypeExistInBranch = false
         for (whenEntry in expression.entries) {
             val entryExpression = whenEntry.expression ?: continue
 
             val entryTypeInfo = BindingContextUtils.getRecordedTypeInfo(entryExpression, bindingContext) ?:
                                 continue
             val entryType = entryTypeInfo.type
+            if (entryType == null) {
+                errorTypeExistInBranch = true
+            }
 
             val entryDataFlowInfo =
                     if (whenResultValue != null && entryType != null) {
@@ -206,7 +212,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             jumpOutPossible = jumpOutPossible or entryTypeInfo.jumpOutPossible
         }
 
-        return Pair(currentDataFlowInfo ?: contextAfterSubject.dataFlowInfo, jumpOutPossible)
+        val resultDataFlowInfo = currentDataFlowInfo ?: contextAfterSubject.dataFlowInfo
+        return if (resultType == null || errorTypeExistInBranch && KotlinBuiltIns.isNothing(resultType))
+            noTypeInfo(resultDataFlowInfo)
+        else
+            createTypeInfo(resultType, resultDataFlowInfo, jumpOutPossible, resultDataFlowInfo)
     }
 
     private fun checkSmartCastsInSubjectIfRequired(
