@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -366,11 +364,6 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 = this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
 
         private fun addImport(fqName: FqName, allUnder: Boolean): KtImportDirective {
-            //TODO: it's a temporary hack for JetCodeFragment's and non-physical files
-            // We should increment modification tracker after inserting import to invalidate resolve caches.
-            // Without this modification references with new import won't be resolved.
-            (PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-
             val importPath = ImportPath(fqName, allUnder)
 
             val psiFactory = KtPsiFactory(project)
