@@ -41,7 +41,11 @@ import kotlin.reflect.memberProperties
 annotation class ScriptFilePattern(val pattern: String)
 
 interface ScriptDependenciesResolver {
-    fun resolve(scriptFile: File?, annotations: Iterable<Annotation>, environment: Map<String, Any?>?): KotlinScriptExternalDependencies? = null
+    fun resolve(scriptFile: File?,
+                annotations: Iterable<Annotation>,
+                environment: Map<String, Any?>?,
+                previousDependencies: KotlinScriptExternalDependencies? = null
+    ): KotlinScriptExternalDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
@@ -88,7 +92,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         return res
     }
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? {
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
                 .map { KtAnnotationWrapper(it) }
                 .mapNotNull { wrappedAnn ->
@@ -111,7 +115,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
                 val annFQN = ann.first.qualifiedName
                 if (resolver.first.supportedAnnotationClasses.asIterable2().any { it.qualifiedName == annFQN }) ann.second else null
             }
-            resolver.second.resolve(getFile(file), supportedAnnotations, environment)
+            resolver.second.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
         }
         return KotlinScriptExternalDependenciesUnion(fileDeps)
     }

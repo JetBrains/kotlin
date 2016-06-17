@@ -309,7 +309,7 @@ internal data class ScriptModuleInfo(val project: Project, val module: Module?, 
     private fun dependenciesRoots(): List<VirtualFile> {
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
         val jarfs = StandardFileSystems.jar()
-        return scriptDefinition.getDependenciesFor(scriptFile, project)?.classpath
+        return scriptDefinition.getDependenciesFor(scriptFile, project, null)?.classpath
                        ?.map { it.canonicalFile }
                        ?.distinct()
                        ?.mapNotNull {

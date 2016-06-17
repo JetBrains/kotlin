@@ -54,7 +54,7 @@ interface KotlinScriptDefinition {
     fun getScriptName(script: KtScript): Name =
         ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? = null
+    fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 }
 
 interface KotlinScriptExternalDependencies {

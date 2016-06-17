@@ -36,7 +36,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
             cache[path]
             ?: if (cacheOfNulls.contains(path)) null
                else scriptDefinitionProvider.findScriptDefinition(file)
-                    ?.let { it.getDependenciesFor(file, project) }
+                    ?.let { it.getDependenciesFor(file, project, null) }
                     .apply { cacheLock.write {
                         if (this == null) {
                             cacheOfNulls.add(path)
@@ -57,7 +57,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
             if (!cache.containsKey(path) && !cacheOfNulls.contains(path) && !uncached.contains(path)) {
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
                 if (scriptDef != null) {
-                    val deps = scriptDef.getDependenciesFor(file, project)
+                    val deps = scriptDef.getDependenciesFor(file, project, null)
                     if (deps != null) {
                         cache.put(path, deps)
                     }
@@ -78,8 +78,8 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
             val path = getFilePath(file)
             val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
             if (scriptDef != null) {
-                val deps = scriptDef.getDependenciesFor(file, project)
                 val oldDeps = cache[path]
+                val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
                 when {
                     deps != null && (oldDeps == null ||
                                      !deps.classpath.isSameClasspathAs(oldDeps.classpath) || !deps.sources.isSameClasspathAs(oldDeps.sources)) -> {
