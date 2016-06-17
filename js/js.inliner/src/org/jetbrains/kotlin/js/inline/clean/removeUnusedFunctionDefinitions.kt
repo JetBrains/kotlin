@@ -43,9 +43,8 @@ fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunct
     }.accept(root)
 }
 
-private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {
+private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {
     private val tracker = ReferenceTracker<JsName, JsFunction>()
-    private val functions = functions
     private val processed = IdentitySet<JsFunction>()
 
     val removableFunctions: List<JsFunction>
