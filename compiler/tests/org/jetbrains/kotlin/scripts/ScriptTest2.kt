@@ -120,7 +120,12 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    override fun resolve(scriptFile: File?, annotations: Iterable<Annotation>, environment: Map<String, Any?>?): KotlinScriptExternalDependencies? {
+    override fun resolve(scriptFile: File?,
+                         annotations: Iterable<Annotation>,
+                         environment: Map<String, Any?>?,
+                         previousDependencies: KotlinScriptExternalDependencies?
+    ): KotlinScriptExternalDependencies?
+    {
         val cp = annotations.flatMap {
             when (it) {
                 is depends -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))

@@ -46,7 +46,7 @@ data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, va
 
     private val evaluatedClasspath by lazy { config.classpath.evalWithVars(environmentVars).map { File(it) }.distinctBy { it.canonicalPath } }
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? =
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? =
             if (!isScript(file)) null
             else {
                 val extDeps = getScriptDependenciesFromConfig(file)

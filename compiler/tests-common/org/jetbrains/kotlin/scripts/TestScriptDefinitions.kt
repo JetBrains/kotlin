@@ -31,7 +31,7 @@ abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? 
     override val name = "Test Kotlin Script"
     override fun <TF> isScript(file: TF): Boolean = getFileName(file).endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
-    override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? =
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? =
             object : KotlinScriptExternalDependencies {
                 override val classpath: Iterable<File> = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
             }
