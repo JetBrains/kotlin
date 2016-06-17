@@ -11190,6 +11190,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyGetterAndGetFunctionDifferentReturnType.kt")
+            public void testPropertyGetterAndGetFunctionDifferentReturnType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/propertyGetterAndGetFunctionDifferentReturnType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("returnUnit.kt")
             public void testReturnUnit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/returnUnit.kt");
