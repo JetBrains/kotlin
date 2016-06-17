@@ -23,8 +23,6 @@ fun box(): String {
 
     if (future.get() != "56") return "fail: ${future.get()}"
 
-    java.lang.Thread.sleep(1000)
-
     if (result != "OK") return "fail notOk"
 
     val future2 = async<String>() {

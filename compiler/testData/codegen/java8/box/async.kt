@@ -12,10 +12,8 @@ fun foobar(x: String, y: String) = x + y
 fun box(): String {
     var result = ""
     fun log(x: String) {
-        synchronized(result) {
-            if (result.isNotEmpty()) result += "\n"
-            result += x
-        }
+        if (result.isNotEmpty()) result += "\n"
+        result += x
     }
 
     val future = async<String> {
@@ -29,14 +27,7 @@ fun box(): String {
 
     future.whenComplete { value, t ->
         log("completed with '$value'")
-    }
-
-    future.join()
-    java.lang.Thread.sleep(1000)
-
-    val readResult = synchronized(result) {
-        result
-    }
+    }.join()
 
     val expectedResult =
     """
@@ -45,7 +36,7 @@ fun box(): String {
     |got '123 bar with foo' after 'foo'
     |completed with '123 bar with foo'""".trimMargin().trim('\n', ' ')
 
-    if (expectedResult != readResult) return readResult
+    if (expectedResult != result) return result
 
     return "OK"
 }
