@@ -8370,6 +8370,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("literalPropertyWithGetter.kt")
+            public void testLiteralPropertyWithGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/literalPropertyWithGetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multiFakeOverride.kt")
             public void testMultiFakeOverride() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/multiFakeOverride.kt");
