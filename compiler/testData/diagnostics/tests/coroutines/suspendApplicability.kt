@@ -8,7 +8,7 @@ class Controller {
 
     }
 
-    inline <!INAPPLICABLE_MODIFIER!>suspend<!> fun inlineFun(x: Continuation<Int>) {
+    inline suspend fun inlineFun(x: Continuation<Int>) {
 
     }
 

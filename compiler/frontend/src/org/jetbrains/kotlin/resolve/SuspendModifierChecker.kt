@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
@@ -46,11 +45,6 @@ object SuspendModifierChecker : SimpleDeclarationChecker {
         val suspendModifierElement = declaration.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD).sure { "${declaration.text}" }
         fun report(message: String) {
             diagnosticHolder.report(Errors.INAPPLICABLE_MODIFIER.on(suspendModifierElement, KtTokens.SUSPEND_KEYWORD, message))
-        }
-
-        if (functionDescriptor.isInline) {
-            report("inline suspend functions are not supported")
-            return
         }
 
         val isValidContinuation = functionDescriptor.valueParameters.lastOrNull()?.type?.isValidContinuation() ?: false

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.coroutine.REPLACED_SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -41,7 +42,8 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
 
 const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
-const val SUSPENSION_POINT_MARKER_NAME = "suspensionPoint"
+const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
+const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
 const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
 const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 
@@ -54,7 +56,7 @@ data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createCoroutineSuspensionFunctionView` and it's usages for clarification
 // But for call generation it's convenient to have `machine` (continuation) parameter/argument within resolvedCall.
-// So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): V`
+// So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // and fake `this` expression that used as argument for second parameter
 fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
         project: Project
@@ -63,11 +65,14 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
     if (!isSuspensionPoint()) return null
 
     val initialSignatureDescriptor = function.initialSignatureDescriptor ?: return null
+    if (function.getUserData(REPLACED_SUSPENSION_POINT_KEY) == true) return null
+
     val newCandidateDescriptor =
             initialSignatureDescriptor.createCustomCopy {
-                // Here we know that last parameter should be Continuation<T> where T is return type
-                setReturnType(it.valueParameters.last().type.arguments.single().type)
+                setPreserveSourceElement()
+                setSignatureChange()
                 putUserData(SUSPENSION_POINT_KEY, true)
+                putUserData(REPLACED_SUSPENSION_POINT_KEY, true)
             }
 
     val newCall = ResolvedCallImpl(
@@ -88,8 +93,12 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
             newCandidateDescriptor.valueParameters.last(),
             ExpressionValueArgument(arguments))
 
+    val newTypeArguments = newCandidateDescriptor.typeParameters.map {
+        Pair(it, typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection())
+    }.toMap()
+
     newCall.setResultingSubstitutor(
-            TypeConstructorSubstitution.createByParametersMap(typeArguments.mapValues { it.value.asTypeProjection() }).buildSubstitutor())
+            TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor())
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
 }

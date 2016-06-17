@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
@@ -125,3 +126,6 @@ val AbstractInsnNode.intConstant: Int? get() =
     }
 
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
+
+fun AbstractInsnNode.isStoreOperation(): Boolean = getOpcode() in Opcodes.ISTORE..Opcodes.ASTORE
+fun AbstractInsnNode.isLoadOperation(): Boolean = getOpcode() in Opcodes.ILOAD..Opcodes.ALOAD
