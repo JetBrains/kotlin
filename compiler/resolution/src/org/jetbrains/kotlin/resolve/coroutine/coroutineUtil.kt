@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 val SUSPENSION_POINT_KEY: FunctionDescriptor.UserDataKey<Boolean> = object : FunctionDescriptor.UserDataKey<Boolean> {}
+val REPLACED_SUSPENSION_POINT_KEY: FunctionDescriptor.UserDataKey<Boolean> = object : FunctionDescriptor.UserDataKey<Boolean> {}
 
 // Returns suspension function as it's visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunctionDescriptor? {
     if (!isSuspend) return null
-    val returnType = valueParameters.lastOrNull()?.returnType?.arguments?.getOrNull(0)?.type ?: return null
+    val returnType = getSuspensionPointReturnType() ?: return null
 
     val newOriginal =
             if (original !== this)
@@ -44,5 +45,7 @@ fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunc
         putUserData(SUSPENSION_POINT_KEY, true)
     }.build()!!
 }
+
+fun SimpleFunctionDescriptor.getSuspensionPointReturnType(): KotlinType? = valueParameters.lastOrNull()?.returnType?.arguments?.getOrNull(0)?.type
 
 class CoroutineReceiverValue(callableDescriptor: CallableDescriptor, receiverType: KotlinType) : ExtensionReceiver(callableDescriptor, receiverType)
