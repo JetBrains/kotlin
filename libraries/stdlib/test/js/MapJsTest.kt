@@ -1,10 +1,10 @@
-package test.collections
+package test.collections.js
 
-import test.collections.behaviors.mapBehavior
 import kotlin.test.*
-
-import java.util.*
 import org.junit.Test as test
+import java.util.*
+import test.collections.*
+import test.collections.behaviors.*
 
 class ComplexMapJsTest : MapJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap

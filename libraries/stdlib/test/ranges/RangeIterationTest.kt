@@ -1,5 +1,4 @@
-@file: Suppress("DEPRECATION_ERROR")
-package language
+package test.ranges
 
 import org.junit.Test as test
 import kotlin.test.*

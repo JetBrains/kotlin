@@ -1,9 +1,9 @@
-package test.collections
+package test.language
 
 import org.junit.Test as test
 import kotlin.test.*
 
-class NaturalLanguageTest {
+class EscapedTestNamesTest {
 
     @test fun `strings equal`() {
         val actual = "abc"

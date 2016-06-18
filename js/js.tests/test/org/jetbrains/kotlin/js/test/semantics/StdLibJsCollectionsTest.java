@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import junit.framework.Test;
 
-//NOTE: well, it has tests
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class StdLibGetOtElseTest extends JsUnitTestBase {
+public final class StdLibJsCollectionsTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/GetOrElseTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/js/JsCollectionsTest.kt");
     }
 }

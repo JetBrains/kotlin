@@ -1,4 +1,4 @@
-package numbers
+package test.numbers
 
 import org.junit.Test as test
 import kotlin.test.*

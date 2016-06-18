@@ -1,4 +1,4 @@
-package test.compare
+package test.comparisons
 
 import java.util.*
 import kotlin.test.*

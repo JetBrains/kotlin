@@ -20,8 +20,7 @@ import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 import test.collections.behaviors.*
-import test.compare.STRING_CASE_INSENSITIVE_ORDER
-import java.io.Serializable
+import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.comparisons.*
 
 class CollectionTest {
@@ -762,11 +761,11 @@ class CollectionTest {
     @test fun sortInPlace() {
         val data = listOf(11, 3, 7)
 
-        val asc = data.toArrayList()
+        val asc = data.toMutableList()
         asc.sort()
         assertEquals(listOf(3, 7, 11), asc)
 
-        val desc = data.toArrayList()
+        val desc = data.toMutableList()
         desc.sortDescending()
         assertEquals(listOf(11, 7, 3), desc)
     }
