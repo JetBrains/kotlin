@@ -139,6 +139,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
             doTest(fileName);
         }
 
+        @TestMetadata("explicitDefaultAccessors.kt")
+        public void testExplicitDefaultAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/explicitDefaultAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleVars.kt")
         public void testMultipleVars() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/multipleVars.kt");

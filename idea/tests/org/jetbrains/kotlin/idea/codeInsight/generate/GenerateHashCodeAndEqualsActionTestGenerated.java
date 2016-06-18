@@ -65,6 +65,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("explicitDefaultAccessors.kt")
+    public void testExplicitDefaultAccessors() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/explicitDefaultAccessors.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("genericClass.kt")
     public void testGenericClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/genericClass.kt");
