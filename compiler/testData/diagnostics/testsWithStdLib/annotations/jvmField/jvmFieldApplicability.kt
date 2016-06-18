@@ -4,6 +4,8 @@ fun foo() {
     <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
 }
 
+annotation class DemoAnnotation
+
 <!WRONG_ANNOTATION_TARGET!>@JvmField<!>
 abstract class C : I{
 
@@ -22,6 +24,22 @@ abstract class C : I{
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val customGetter: String = ""
         get() = field
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val explicitDefaultGetter: String = ""
+        get
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    var explicitDefaultSetter: String = ""
+        set
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val explicitDefaultAnnotatedGetter: String = ""
+        @DemoAnnotation get
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    var explicitDefaultAnnotatedSetter: String = ""
+        @DemoAnnotation set
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     var customSetter: String = ""

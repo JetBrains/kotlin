@@ -2,6 +2,7 @@ package
 
 public final class My {
     public constructor My()
+    public final var m: kotlin.Int
     public final val w: kotlin.String = "6"
     public final var x: kotlin.Int
     public final var y: kotlin.Int

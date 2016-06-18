@@ -313,6 +313,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("privatePropertyWithExplicitDefaultGetter.kt")
+        public void testPrivatePropertyWithExplicitDefaultGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privatePropertyWithExplicitDefaultGetter.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/protectedMember.kt");

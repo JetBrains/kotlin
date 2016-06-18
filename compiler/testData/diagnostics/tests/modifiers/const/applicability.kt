@@ -44,6 +44,9 @@ const val delegated: Int <!CONST_VAL_WITH_DELEGATE!>by Delegate()<!>
 const val withGetter: Int
 <!CONST_VAL_WITH_GETTER!>get() = 13<!>
 
+const val withExplicitDefaultGetter: Int = 1
+    <!CONST_VAL_WITH_GETTER!>get<!>
+
 fun foo(): Int {
     <!WRONG_MODIFIER_TARGET!>const<!> val local: Int = 14
     return 15

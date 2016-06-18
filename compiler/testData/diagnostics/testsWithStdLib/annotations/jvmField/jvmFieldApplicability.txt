@@ -14,10 +14,21 @@ package
     @kotlin.jvm.JvmField() public abstract val c: kotlin.Int
     @kotlin.jvm.JvmField() public final val customGetter: kotlin.String = ""
     @kotlin.jvm.JvmField() public final var customSetter: kotlin.String
+    @kotlin.jvm.JvmField() public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
+    @kotlin.jvm.JvmField() public final var explicitDefaultAnnotatedSetter: kotlin.String
+    @kotlin.jvm.JvmField() public final val explicitDefaultGetter: kotlin.String = ""
+    @kotlin.jvm.JvmField() public final var explicitDefaultSetter: kotlin.String
     @kotlin.jvm.JvmField() public final val noBackingField: kotlin.String
     @kotlin.jvm.JvmField() private final val private: kotlin.Int = 3
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.jvm.JvmField() private final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class DemoAnnotation : kotlin.Annotation {
+    public constructor DemoAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

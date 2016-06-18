@@ -11,6 +11,7 @@ private val privateTopLevel: kotlin.Int = 3
 public const var topLeveLVar: kotlin.Int
 public const val topLevel: kotlin.Int = 0
 public const val topLevelInferred: kotlin.Int = 1
+public const val withExplicitDefaultGetter: kotlin.Int = 1
 public const val withGetter: kotlin.Int
 public fun foo(): kotlin.Int
 
