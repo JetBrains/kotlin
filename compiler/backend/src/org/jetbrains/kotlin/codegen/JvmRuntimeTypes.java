@@ -109,9 +109,9 @@ public class JvmRuntimeTypes {
     }
 
     @NotNull
-    public KotlinType getSupertypeForPropertyReference(@NotNull PropertyDescriptor descriptor) {
+    public KotlinType getSupertypeForPropertyReference(@NotNull PropertyDescriptor descriptor, boolean isMutable) {
         int arity = (descriptor.getExtensionReceiverParameter() != null ? 1 : 0) +
                     (descriptor.getDispatchReceiverParameter() != null ? 1 : 0);
-        return (descriptor.isVar() ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
+        return (isMutable ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
     }
 }

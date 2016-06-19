@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.method
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -44,6 +45,7 @@ class PropertyReferenceCodegen(
         context: ClassContext,
         expression: KtElement,
         classBuilder: ClassBuilder,
+        private val localVariableDescriptorForReference: VariableDescriptor,
         resolvedCall: ResolvedCall<*>
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val classDescriptor = context.contextDescriptor
@@ -136,7 +138,7 @@ class PropertyReferenceCodegen(
             value.put(OBJECT_TYPE, this)
         }
 
-        if (!target.isVar) return
+        if (!ReflectionTypes.isKMutablePropertyType(localVariableDescriptorForReference.type)) return
 
         val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE))
         generateAccessor(method("set", Type.VOID_TYPE, *setterParameters)) { value ->

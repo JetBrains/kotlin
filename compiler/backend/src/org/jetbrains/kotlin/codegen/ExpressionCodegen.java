@@ -2945,7 +2945,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, resolvedCall
+                element, classBuilder, variableDescriptor, resolvedCall
         );
         codegen.generate();
 
