@@ -531,8 +531,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     return Math.max(lineBreaksNeeded - lineBreaksPresent, 0)
                 }
 
+                val actualContainer = (containingElement as? KtClassOrObject)?.getOrCreateBody() ?: containingElement
+
                 fun addNextToOriginalElementContainer(addBefore: Boolean): KtNamedDeclaration {
-                    val actualContainer = (containingElement as? KtClassOrObject)?.getBody() ?: containingElement
                     val sibling = config.originalElement.parentsWithSelf.first { it.parent == actualContainer }
                     return if (addBefore) {
                         actualContainer.addBefore(declaration, sibling)
@@ -543,7 +544,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 val declarationInPlace = when {
-                    containingElement.isAncestor(config.originalElement, true) -> {
+                    actualContainer.isAncestor(config.originalElement, true) -> {
                         val insertToBlock = containingElement is KtBlockExpression
                         if (insertToBlock) {
                             val parent = containingElement.parent
