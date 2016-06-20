@@ -253,6 +253,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EnumArguments.after.kt")
+        public void testEnumArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumArguments.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ForLineBreak.after.kt")
         public void testForLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.kt");
