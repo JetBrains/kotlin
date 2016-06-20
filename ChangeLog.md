@@ -199,6 +199,7 @@
 - [`KT-11933`](https://youtrack.jetbrains.com/issue/KT-11933) Entities used only by alias are marked as unused
 - [`KT-12193`](https://youtrack.jetbrains.com/issue/KT-12193) Convert to block body isn't equivalent for when expressions returning Unit
 - [`KT-10779`](https://youtrack.jetbrains.com/issue/KT-10779) Simplify 'for' using destructing declaration: intention / inspection quick fix is available only when all variables are used
+- [`KT-11281`](https://youtrack.jetbrains.com/issue/KT-11281) Fix exception on applying "Convert to class" intention to Java interface with Kotlin inheritor(s)
 - [`KT-12285`](https://youtrack.jetbrains.com/issue/KT-12285) Fix exception on test class generation
 - [`KT-12502`](https://youtrack.jetbrains.com/issue/KT-12502) Convert to expression body should be forbidden for non-exhaustive when returning Unit
 - [`KT-12260`](https://youtrack.jetbrains.com/issue/KT-12260) ISE while replacing an operator with safe call
