@@ -1,14 +1,14 @@
 // WITH_RUNTIME
 // DISABLE-ERRORS
 interface T<X> {
-    fun <caret>foo(x: X): X
+    fun foo(x: X): X
 }
 
 enum class E : T<Int> {
     A, B, C;
 
     override fun foo(x: Int): Int {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        <caret><selection>throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
     }
 
     val bar = 1

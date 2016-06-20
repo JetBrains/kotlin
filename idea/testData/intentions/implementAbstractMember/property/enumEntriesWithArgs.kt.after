@@ -9,8 +9,8 @@ enum class E(n: Int) {
             get() = throw UnsupportedOperationException()
     }, C(3) {
         override val foo: Int
-            get() = throw UnsupportedOperationException()
+            get() = <caret><selection>throw UnsupportedOperationException()</selection>
     };
 
-    abstract val <caret>foo: Int
+    abstract val foo: Int
 }
