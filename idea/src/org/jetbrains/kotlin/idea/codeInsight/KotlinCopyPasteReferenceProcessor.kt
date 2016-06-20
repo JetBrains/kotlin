@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
@@ -45,12 +44,14 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
@@ -142,12 +143,12 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
         element.forEachDescendantOfType<KtElement>(canGoInside = { it.javaClass as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
             val reference = element.mainReference ?: return@forEachDescendantOfType
 
-            val descriptors = reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
+            val descriptors = resolveReference(reference)
             //check whether this reference is unambiguous
             if (reference !is KtMultiReference<*> && descriptors.size > 1) return@forEachDescendantOfType
 
             for (descriptor in descriptors) {
-                val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
+                val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.project, descriptor)
                 val declaration = declarations.singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
@@ -242,7 +243,7 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
         }
 
         val referencedDescriptors = try {
-            reference.resolveToDescriptors(reference.getElement().analyze()) //TODO: we could use partial body resolve for all references together
+            resolveReference(reference)
         }
         catch (e: Throwable) {
             LOG.error("Failed to analyze reference ($reference) after copy paste", e)
@@ -260,6 +261,18 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
         }
 
         return ReferenceToRestoreData(reference, refData)
+    }
+
+    private fun resolveReference(reference: KtReference): Collection<DeclarationDescriptor> {
+        val element = reference.element
+        val bindingContext = element.analyze() //TODO: we could use partial body resolve for all references together
+
+        if (element is KtNameReferenceExpression && reference is KtSimpleNameReference) {
+            bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element]
+                    ?.let { return listOf(it) }
+        }
+
+        return reference.resolveToDescriptors(bindingContext)
     }
 
     private fun restoreReferences(referencesToRestore: Collection<ReferenceToRestoreData>, file: KtFile) {
