@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.LocalQuickFixOnPsiElement
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -35,7 +32,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 
 abstract class IntentionBasedInspection<TElement : PsiElement>(
         val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
-        protected val problemText: String?,
+        protected open val problemText: String?,
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
 
@@ -47,6 +44,10 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
             val additionalChecker: (TElement) -> Boolean = { true }
     )
 
+    open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null
+
+    open fun inspectionRange(element: TElement): TextRange? = null
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
@@ -56,7 +57,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                 val targetElement = element as TElement
 
                 var problemRange: TextRange? = null
-                var fixes: SmartList<IntentionBasedQuickFix<*>>? = null
+                var fixes: SmartList<LocalQuickFix>? = null
 
                 for ((intention, additionalChecker) in intentions) {
                     synchronized(intention) {
@@ -69,15 +70,21 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                         if (range != null && additionalChecker(targetElement)) {
                             problemRange = problemRange?.union(range) ?: range
                             if (fixes == null) {
-                                fixes = SmartList<IntentionBasedQuickFix<*>>()
+                                fixes = SmartList<LocalQuickFix>()
                             }
                             fixes!!.add(IntentionBasedQuickFix(intention, intention.text, additionalChecker, targetElement))
                         }
                     }
                 }
 
-                if (problemRange != null) {
-                    holder.registerProblem(targetElement, problemText ?: fixes!!.first().name, problemHighlightType, problemRange, *fixes!!.toTypedArray())
+                val range = inspectionRange(targetElement) ?: problemRange
+                if (range != null) {
+                    val allFixes = fixes ?: SmartList<LocalQuickFix>()
+                    additionalFixes(targetElement)?.let { allFixes.addAll(it) }
+                    if (!allFixes.isEmpty()) {
+                        holder.registerProblem(targetElement, problemText ?: allFixes.first().name,
+                                               problemHighlightType, range, *allFixes.toTypedArray())
+                    }
                 }
             }
         }

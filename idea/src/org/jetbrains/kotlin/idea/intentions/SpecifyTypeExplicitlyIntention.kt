@@ -19,17 +19,22 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
@@ -37,23 +42,50 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
-    override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
-        if (element.containingFile is KtCodeFragment) return false
-        if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
-        if (element is KtConstructor<*>) return false
-        if (element.typeReference != null) return false
+class SpecifyTypeExplicitlyIntention :
+        SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"),
+        LowPriorityAction {
 
-        if (getTypeForDeclaration(element).isError) return false
+    private fun KotlinType.isFlexibleRecursive(): Boolean {
+        if (isFlexible()) return true
+        return arguments.any { it.type.isFlexibleRecursive() }
+    }
 
-        val initializer = (element as? KtWithExpressionInitializer)?.initializer
-        if (initializer != null && initializer.textRange.containsOffset(caretOffset)) return false
+    fun dangerousFlexibleTypeOrNull(declaration: KtCallableDeclaration, publicAPIOnly: Boolean): KotlinType? {
+        when (declaration) {
+            is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return null
+            is KtProperty -> if (declaration.isLocal || declaration.typeReference != null) return null
+            else -> return null
+        }
 
-        if (element is KtNamedFunction && element.hasBlockBody()) return false
+        if (declaration.containingClassOrObject?.isLocal() ?: false) return null
+
+        val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
+        if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
+        val type = callable.returnType ?: return null
+        if (!type.isFlexibleRecursive()) return null
+        return type
+    }
+
+    override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
+        if (element.containingFile is KtCodeFragment) return null
+        if (element is KtFunctionLiteral) return null // TODO: should KtFunctionLiteral be KtCallableDeclaration at all?
+        if (element is KtConstructor<*>) return null
+        if (element.typeReference != null) return null
+
+        if (getTypeForDeclaration(element).isError) return null
+
+        if (element is KtNamedFunction && element.hasBlockBody()) return null
 
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 
-        return true
+        val initializer = (element as? KtWithExpressionInitializer)?.initializer
+        return if (initializer != null) {
+            TextRange(element.startOffset, initializer.startOffset - 1)
+        }
+        else {
+            TextRange(element.startOffset, element.endOffset)
+        }
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {

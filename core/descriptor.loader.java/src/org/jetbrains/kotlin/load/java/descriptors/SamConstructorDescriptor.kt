@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 
 class SamConstructorDescriptor(
         containingDeclaration: DeclarationDescriptor,
-        samInterface: JavaClassDescriptor
+        private val samInterface: JavaClassDescriptor
 ) : SimpleFunctionDescriptorImpl(
         containingDeclaration,
         null,
@@ -31,7 +32,10 @@ class SamConstructorDescriptor(
         samInterface.name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         samInterface.source
-)
+), SyntheticMemberDescriptor<JavaClassDescriptor> {
+    override val baseDescriptorForSynthetic: JavaClassDescriptor
+        get() = samInterface
+}
 
 object SamConstructorDescriptorKindExclude : DescriptorKindExclude() {
     override fun excludes(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
