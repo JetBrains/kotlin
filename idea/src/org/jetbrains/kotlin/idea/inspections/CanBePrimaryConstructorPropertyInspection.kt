@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -73,6 +74,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = "Move to constructor"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val commentSaver = CommentSaver(original)
             val isVar = original.isVar
             val modifiers = original.modifierList?.text
             val factory = KtPsiFactory(project)
@@ -83,6 +85,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 parameter.addBefore(newModifiers, parameter.valOrVarKeyword)
             }
             original.delete()
+            commentSaver.restore(parameter)
         }
     }
 }
