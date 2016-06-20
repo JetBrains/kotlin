@@ -69,6 +69,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val getterFlags = proto.getterFlags
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
             val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
+            val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(getterFlags)
             val getter = if (isNotDefault) {
                 PropertyGetterDescriptorImpl(
                         property,
@@ -77,6 +78,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                         Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
                         /* isDefault = */ !isNotDefault,
                         /* isExternal = */ isExternal,
+                        isInline,
                         property.kind, null, SourceElement.NO_SOURCE
                 )
             }
@@ -94,6 +96,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val setterFlags = proto.setterFlags
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
+            val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
                         property,
@@ -102,6 +105,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                         Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
                         /* isDefault = */ !isNotDefault,
                         /* isExternal = */ isExternal,
+                        isInline,
                         property.kind, null, SourceElement.NO_SOURCE
                 )
                 val setterLocal = local.childContext(setter, listOf())

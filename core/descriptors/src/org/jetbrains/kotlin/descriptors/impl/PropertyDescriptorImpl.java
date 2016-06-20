@@ -260,7 +260,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), newModality, normalizeVisibility(getter.getVisibility(), kind),
-                getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(),
+                getter.isDefault(), getter.isExternal(), getter.isInline(), kind, original == null ? null : original.getGetter(),
                 SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
@@ -270,7 +270,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), newModality, normalizeVisibility(setter.getVisibility(), kind),
-                setter.isDefault(), setter.isExternal(), kind, original == null ? null : original.getSetter(),
+                setter.isDefault(), setter.isExternal(), setter.isInline(), kind, original == null ? null : original.getSetter(),
                 SourceElement.NO_SOURCE
         );
         if (newSetter != null) {

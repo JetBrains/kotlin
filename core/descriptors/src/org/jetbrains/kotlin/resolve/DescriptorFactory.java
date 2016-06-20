@@ -48,7 +48,7 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        return createSetter(propertyDescriptor, annotations, true, false, propertyDescriptor.getSource());
+        return createSetter(propertyDescriptor, annotations, true, false, false, propertyDescriptor.getSource());
     }
 
     @NotNull
@@ -57,9 +57,10 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault,
             boolean isExternal,
+            boolean isInline,
             @NotNull SourceElement sourceElement
     ) {
-        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getVisibility(), sourceElement);
+        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, isInline, propertyDescriptor.getVisibility(), sourceElement);
     }
 
     @NotNull
@@ -68,12 +69,13 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault,
             boolean isExternal,
+            boolean isInline,
             @NotNull Visibility visibility,
             @NotNull SourceElement sourceElement
     ) {
         PropertySetterDescriptorImpl setterDescriptor = new PropertySetterDescriptorImpl(
                 propertyDescriptor, annotations, propertyDescriptor.getModality(), visibility, isDefault, isExternal,
-                CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
+                isInline, CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
         );
         setterDescriptor.initializeDefault();
         return setterDescriptor;
@@ -84,17 +86,7 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        return createGetter(propertyDescriptor, annotations, true, false);
-    }
-
-    @NotNull
-    public static PropertyGetterDescriptorImpl createGetter(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations,
-            boolean isDefault,
-            boolean isExternal
-    ) {
-        return createGetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getSource());
+        return createGetter(propertyDescriptor, annotations, true, false, false);
     }
 
     @NotNull
@@ -103,11 +95,23 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault,
             boolean isExternal,
+            boolean isInline
+    ) {
+        return createGetter(propertyDescriptor, annotations, isDefault, isExternal, isInline, propertyDescriptor.getSource());
+    }
+
+    @NotNull
+    public static PropertyGetterDescriptorImpl createGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            boolean isExternal,
+            boolean isInline,
             @NotNull SourceElement sourceElement
     ) {
         return new PropertyGetterDescriptorImpl(
                 propertyDescriptor, annotations, propertyDescriptor.getModality(), propertyDescriptor.getVisibility(),
-                isDefault, isExternal, CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
+                isDefault, isExternal, isInline, CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
         );
     }
 

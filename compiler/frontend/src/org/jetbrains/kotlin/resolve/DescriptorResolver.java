@@ -925,6 +925,7 @@ public class DescriptorResolver {
                     resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, setter.hasModifier(EXTERNAL_KEYWORD),
+                    property.hasModifier(KtTokens.INLINE_KEYWORD) || setter.hasModifier(KtTokens.INLINE_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(setter)
             );
             KtTypeReference returnTypeReference = setter.getReturnTypeReference();
@@ -973,7 +974,8 @@ public class DescriptorResolver {
         else if (property.isVar()) {
             Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
             setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, setterAnnotations, !property.hasDelegate(),
-                                                              /* isExternal = */ false, propertyDescriptor.getSource());
+                                                              /* isExternal = */ false, property.hasModifier(KtTokens.INLINE_KEYWORD),
+                                                              propertyDescriptor.getSource());
         }
 
         if (!property.isVar()) {
@@ -1005,6 +1007,7 @@ public class DescriptorResolver {
                     resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
+                    property.hasModifier(KtTokens.INLINE_KEYWORD) || getter.hasModifier(KtTokens.INLINE_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
             );
             KotlinType returnType =
@@ -1015,7 +1018,7 @@ public class DescriptorResolver {
         else {
             Annotations getterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
             getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !property.hasDelegate(),
-                                                              /* isExternal = */ false);
+                                                              /* isExternal = */ false, property.hasModifier(KtTokens.INLINE_KEYWORD));
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;

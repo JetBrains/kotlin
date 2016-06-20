@@ -300,6 +300,7 @@ message Property {
     Modality
     isNotDefault
     isExternal
+    isInline
   */
   optional int32 getter_flags = 7 /* absent => same as property */;
   optional int32 setter_flags = 8 /* absent => same as property */;

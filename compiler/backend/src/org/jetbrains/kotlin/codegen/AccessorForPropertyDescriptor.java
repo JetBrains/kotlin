@@ -95,7 +95,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  /* isDefault = */ false, /* isExternal = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
+                  /* isDefault = */ false, /* isExternal = */ false, /* isInline = */false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initialize(property.getType());
         }
 
@@ -117,7 +117,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
         public Setter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  /* isDefault = */ false, /* isExternal = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
+                  /* isDefault = */ false, /* isExternal = */ false, /* isInline = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initializeDefault();
         }
 

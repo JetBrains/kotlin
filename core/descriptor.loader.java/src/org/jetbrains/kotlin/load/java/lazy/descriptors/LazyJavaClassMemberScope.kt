@@ -444,7 +444,7 @@ class LazyJavaClassMemberScope(
 
         val getter = DescriptorFactory.createGetter(
                 propertyDescriptor, getterMethod.annotations, /* isDefault = */false,
-                /* isExternal = */ false, getterMethod.source
+                /* isExternal = */ false, /* isInline = */ false, getterMethod.source
         ).apply {
             initialSignatureDescriptor = getterMethod
             initialize(propertyDescriptor.type)
@@ -452,7 +452,7 @@ class LazyJavaClassMemberScope(
 
         val setter = setterMethod?.let { setterMethod ->
             DescriptorFactory.createSetter(propertyDescriptor, setterMethod.annotations, /* isDefault = */false,
-            /* isExternal = */ false, setterMethod.visibility, setterMethod.source
+            /* isExternal = */ false, /* isInline = */ false, setterMethod.visibility, setterMethod.source
             ).apply {
                 initialSignatureDescriptor = setterMethod
             }

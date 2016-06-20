@@ -40,12 +40,13 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull Visibility visibility,
             boolean isDefault,
             boolean isExternal,
+            boolean isInline,
             @NotNull Kind kind,
             @Nullable PropertyGetterDescriptor original,
             @NotNull SourceElement source
     ) {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"),
-              isDefault, isExternal, kind, source);
+              isDefault, isExternal, isInline, kind, source);
         this.original = original != null ? original : this;
     }
     
