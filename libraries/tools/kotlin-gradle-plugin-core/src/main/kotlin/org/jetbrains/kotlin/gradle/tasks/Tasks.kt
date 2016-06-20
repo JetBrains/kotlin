@@ -94,7 +94,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
         logger.kotlinDebug("modified ${modified.joinToString { it.path }}")
         logger.kotlinDebug("removed ${removed.joinToString { it.path }}")
-        var commonArgs = createBlankArgs()
         val args = createBlankArgs()
         val sources = getKotlinSources()
         if (sources.isEmpty()) {
