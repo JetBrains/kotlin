@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -46,6 +47,28 @@ import org.jetbrains.kotlin.utils.ifEmpty
 class SpecifyTypeExplicitlyIntention :
         SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"),
         LowPriorityAction {
+
+    private fun KotlinType.isFlexibleRecursive(): Boolean {
+        if (isFlexible()) return true
+        return arguments.any { it.type.isFlexibleRecursive() }
+    }
+
+    fun dangerousFlexibleTypeOrNull(declaration: KtCallableDeclaration, publicAPIOnly: Boolean): KotlinType? {
+        when (declaration) {
+            is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return null
+            is KtProperty -> if (declaration.isLocal || declaration.typeReference != null) return null
+            else -> return null
+        }
+
+        if (declaration.containingClassOrObject?.isLocal() ?: false) return null
+
+        val context = declaration.analyze(BodyResolveMode.PARTIAL)
+        val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return null
+        if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
+        val type = callable.returnType ?: return null
+        if (!type.isFlexibleRecursive()) return null
+        return type
+    }
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (element.containingFile is KtCodeFragment) return null
