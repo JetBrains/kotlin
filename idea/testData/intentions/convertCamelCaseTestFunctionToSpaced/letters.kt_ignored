@@ -1,0 +1,12 @@
+// CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// ERROR: Cannot access class 'java.lang.Class'. Check your module classpath for missing or conflicting dependencies
+// ERROR: This annotation is not applicable to target 'member function'
+import org.junit.Test
+
+class A {
+    @Test fun <caret>testTwoPlusTwoEqualsFour() {}
+}
+
+fun test() {
+    A().testTwoPlusTwoEqualsFour()
+}
