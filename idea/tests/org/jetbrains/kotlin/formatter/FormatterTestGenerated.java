@@ -349,6 +349,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("In.after.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/In.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InfixCall.after.kt")
         public void testInfixCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/InfixCall.after.kt");
