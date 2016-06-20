@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.util.supertypesWithAny
@@ -216,9 +218,20 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
     val receiverExpression: KtExpression?
     when (this) {
         is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-            return receiver?.let {
-                (bindingContext[BindingContext.DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
-            }.singletonOrEmptyList()
+            if (receiver != null) {
+                val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] ?: return emptyList()
+                when (lhs) {
+                    is DoubleColonLHS.Type -> return listOf(lhs.type)
+
+                    is DoubleColonLHS.Expression -> {
+                        val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
+                        return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext, moduleDescriptor, predictableSmartCastsOnly)
+                    }
+                }
+            }
+            else {
+                return emptyList()
+            }
         }
 
         is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
@@ -267,13 +280,23 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
 
     val dataFlowInfo = bindingContext.getDataFlowInfo(contextElement)
 
-    return receiverValues.flatMap { receiverValue ->
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
-        if (dataFlowValue.isPredictable || !predictableSmartCastsOnly) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
-            SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
-        }
-        else {
-            listOf(receiverValue.type)
-        }
+    return receiverValues.flatMap {
+        receiverValueTypes(it, dataFlowInfo, bindingContext, moduleDescriptor, predictableSmartCastsOnly)
+    }
+}
+
+private fun receiverValueTypes(
+        receiverValue: ReceiverValue,
+        dataFlowInfo: DataFlowInfo,
+        bindingContext: BindingContext,
+        moduleDescriptor: ModuleDescriptor,
+        predictableSmartCastsOnly: Boolean
+): List<KotlinType> {
+    val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
+    return if (dataFlowValue.isPredictable || !predictableSmartCastsOnly) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
+        SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
+    }
+    else {
+        listOf(receiverValue.type)
     }
 }

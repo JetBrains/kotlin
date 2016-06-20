@@ -152,8 +152,7 @@ class ReferenceVariantsHelper(
             }
 
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-                val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-                return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, kindFilter, nameFilter)
+                return getVariantsForCallableReference(callTypeAndReceiver, contextElement, useReceiverType, kindFilter, nameFilter)
             }
 
             is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
@@ -227,24 +226,37 @@ class ReferenceVariantsHelper(
     }
 
     private fun getVariantsForCallableReference(
-            receiverExpression: KtExpression?,
-            resolutionScope: LexicalScope,
+            callTypeAndReceiver: CallTypeAndReceiver.CALLABLE_REFERENCE,
+            contextElement: PsiElement,
+            useReceiverType: KotlinType?,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
-        if (receiverExpression != null) {
-            val type =
-                    (bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) as? DoubleColonLHS.Type)?.type
-                    ?: return emptyList()
 
-            descriptors.addNonExtensionMembers(listOf(type), kindFilter, nameFilter, constructorFilter = { true })
+        val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
 
-            descriptors.addScopeAndSyntheticExtensions(resolutionScope, listOf(type), CallType.CALLABLE_REFERENCE, kindFilter, nameFilter)
+        val receiver = callTypeAndReceiver.receiver
+        if (receiver != null) {
+            val isStatic = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] is DoubleColonLHS.Type
 
-            val staticScope = (type.constructor.declarationDescriptor as? ClassDescriptor)?.staticScope
-            if (staticScope != null) {
-                descriptors.addAll(staticScope.getDescriptorsFiltered(kindFilter, nameFilter))
+            val explicitReceiverTypes = if (useReceiverType != null) {
+                listOf(useReceiverType)
+            }
+            else {
+                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)!!
+            }
+
+            val constructorFilter = { descriptor: ClassDescriptor -> if (isStatic) true else descriptor.isInner }
+            descriptors.addNonExtensionMembers(explicitReceiverTypes, kindFilter, nameFilter, constructorFilter)
+
+            descriptors.addScopeAndSyntheticExtensions(resolutionScope, explicitReceiverTypes, CallType.CALLABLE_REFERENCE, kindFilter, nameFilter)
+
+            if (isStatic) {
+                explicitReceiverTypes
+                        .map { (it.constructor.declarationDescriptor as? ClassDescriptor)?.staticScope }
+                        .filterNotNull()
+                        .flatMapTo(descriptors) { scope -> scope.getDescriptorsFiltered(kindFilter, nameFilter) }
             }
         }
         else {

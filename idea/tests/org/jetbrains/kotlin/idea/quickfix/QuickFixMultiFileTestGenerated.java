@@ -71,6 +71,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("callableReferenceExtension2.before.Main.kt")
+        public void testCallableReferenceExtension2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/callableReferenceExtension2.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("callableReferenceTopLevel.before.Main.kt")
         public void testCallableReferenceTopLevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/callableReferenceTopLevel.before.Main.kt");
