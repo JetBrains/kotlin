@@ -79,7 +79,7 @@ object ModifierCheckerCore {
             COMPANION_KEYWORD to EnumSet.of(OBJECT),
             LATEINIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY),
             DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS),
-            INLINE_KEYWORD    to EnumSet.of(FUNCTION),
+            INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
             COROUTINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
