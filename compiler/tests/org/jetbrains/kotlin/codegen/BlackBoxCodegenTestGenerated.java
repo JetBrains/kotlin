@@ -4183,6 +4183,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lastExpressionIsLoop.kt")
+        public void testLastExpressionIsLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lastUnitExpression.kt")
         public void testLastUnitExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt");
