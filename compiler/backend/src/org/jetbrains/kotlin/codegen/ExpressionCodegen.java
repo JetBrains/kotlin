@@ -570,7 +570,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, false, continueLabel, null);
+            conditionValue = generateBlock((KtBlockExpression) body, statements, false, continueLabel, null);
         }
         else {
             if (body != null) {
@@ -1678,9 +1678,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     /* package */ StackValue generateBlock(@NotNull KtBlockExpression expression, boolean isStatement) {
         if (expression.getParent() instanceof KtNamedFunction) {
             // For functions end of block should be end of function label
-            return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
+            return generateBlock(expression, expression.getStatements(), isStatement, null, context.getMethodEndLabel());
         }
-        return generateBlock(expression.getStatements(), isStatement, null, null);
+        return generateBlock(expression, expression.getStatements(), isStatement, null, null);
     }
 
     @NotNull
@@ -1695,16 +1695,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private StackValue generateBlock(
-            List<KtExpression> statements,
+            @NotNull KtBlockExpression block,
+            @NotNull List<KtExpression> statements,
             boolean isStatement,
-            Label labelBeforeLastExpression,
+            @Nullable Label labelBeforeLastExpression,
             @Nullable final Label labelBlockEnd
     ) {
         final Label blockEnd = labelBlockEnd != null ? labelBlockEnd : new Label();
 
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
-        StackValue answer = StackValue.none();
+        @Nullable
+        StackValue answer = null;
 
         for (Iterator<KtExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
             KtExpression possiblyLabeledStatement = iterator.next();
@@ -1731,9 +1733,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             if (!iterator.hasNext()) {
                 answer = result;
-                StackValue handleResultValue = !(possiblyLabeledStatement instanceof KtReturnExpression)
-                                               ? genControllerHandleResultCallIfNeeded(possiblyLabeledStatement, possiblyLabeledStatement)
-                                               : null;
+                StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, possiblyLabeledStatement);
                 if (handleResultValue != null) {
                     answer = handleResultValue;
                 }
@@ -1743,6 +1743,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
+        }
+
+        if (answer == null) {
+            answer = genControllerHandleResultForLastStatementInCoroutine(block, null);
+            if (answer == null) {
+                answer = StackValue.none();
+            }
         }
 
         return new StackValueWithLeaveTask(answer, new Function1<StackValue, Unit>() {
@@ -1757,6 +1764,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return Unit.INSTANCE;
             }
         });
+    }
+
+    @Nullable
+    private StackValue genControllerHandleResultForLastStatementInCoroutine(
+            @NotNull KtBlockExpression block,
+            @Nullable KtExpression lastStatement
+    ) {
+        if (!(block.getParent() instanceof KtFunctionLiteral)) return null;
+        KtFunctionLiteral functionLiteral = (KtFunctionLiteral) block.getParent();
+
+        return genControllerHandleResultCallIfNeeded(functionLiteral, lastStatement);
     }
 
     @Nullable
