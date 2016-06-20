@@ -544,6 +544,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     }
 
+    @TestMetadata("idea/testData/quickfix/convertJavaInterfaceToClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertJavaInterfaceToClass extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInConvertJavaInterfaceToClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertJavaInterfaceToClass"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+        @TestMetadata("kotlinInheritor.before.Main.java")
+        public void testKotlinInheritor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/convertJavaInterfaceToClass/kotlinInheritor.before.Main.java");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
