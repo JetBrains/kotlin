@@ -157,7 +157,7 @@ class FilesTest {
 
         fun assertFailsRelativeTo(file: File, base: File) {
             val e = assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
-            println(e.message)
+//            println(e.message)
         }
 
         val allFiles = listOf(absolute, relative) + if (isBackslashSeparator) listOf(networkShare1, networkShare2) else emptyList()

@@ -15,12 +15,12 @@ class TimerTest {
 
         val task = timer.scheduleAtFixedRate(1000, 100) {
             val current = counter.incrementAndGet()
-            println("Timer fired at $current")
+            // println("Timer fired at $current")
         }
         Thread.sleep(1500)
         task.cancel()
 
         val value = counter.get()
-        assertTrue(value > 4, "current counter is $value")
+        assertTrue(value > 4, "Expected to fire at least 4 times, but was $value")
     }
 }
