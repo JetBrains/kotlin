@@ -17,74 +17,49 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
-import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import javax.swing.JComponent
 
 class HasPlatformTypeInspection(
+        val intention: SpecifyTypeExplicitlyIntention = SpecifyTypeExplicitlyIntention(),
         @JvmField var publicAPIOnly: Boolean = true
-) : AbstractKotlinInspection() {
+) : IntentionBasedInspection<KtCallableDeclaration>(
+        intention,
+        { intention.dangerousFlexibleTypeOrNull(it, publicAPIOnly) != null }
+) {
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-                super.visitDeclaration(declaration)
+    override val problemHighlightType = ProblemHighlightType.WEAK_WARNING
 
-                val declType = when (declaration) {
-                    is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return else "Function"
-                    is KtProperty -> if (declaration.isLocal || declaration.typeReference != null) return else "Property"
-                    else -> return
-                }
+    override val problemText = "Declaration has platform type. Make the type explicit to prevent subtle bugs."
 
-                if (declaration.containingClassOrObject?.isLocal() ?: false) return
+    override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
+        val type = intention.dangerousFlexibleTypeOrNull(element, publicAPIOnly) ?: return null
 
-                val context = declaration.analyze(BodyResolveMode.PARTIAL)
-                val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return
-                if (publicAPIOnly && !callable.visibility.isPublicAPI) return
-                val returnType = callable.returnType ?: return
-                if (!returnType.isFlexibleRecursive()) return
-
-                val fixes = mutableListOf(IntentionWrapper(SpecifyTypeExplicitlyIntention(), declaration.containingFile))
-
-                if (returnType.isNullabilityFlexible()) {
-                    val expression = declaration.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()
-                    if (expression != null) {
-                        fixes += IntentionWrapper(AddExclExclCallFix(expression), declaration.containingFile)
-                    }
-                }
-
-                val nameElement = declaration.nameIdentifier ?: return
-                val problemDescriptor = holder.manager.createProblemDescriptor(
-                        nameElement,
-                        nameElement,
-                        "$declType has platform type. Make the type explicit to prevent subtle bugs.",
-                        ProblemHighlightType.WEAK_WARNING,
-                        isOnTheFly,
-                        *fixes.toTypedArray()
-                )
-                holder.registerProblem(problemDescriptor)
-            }
-
-            private fun KotlinType.isFlexibleRecursive(): Boolean {
-                if (isFlexible()) return true
-                return arguments.any { it.type.isFlexibleRecursive() }
+        if (type.isNullabilityFlexible()) {
+            val expression = element.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()
+            if (expression != null) {
+                return listOf(IntentionWrapper(AddExclExclCallFix(expression), element.containingFile))
             }
         }
+
+        return null
+    }
+
+    override fun inspectionRange(element: KtCallableDeclaration) = element.nameIdentifier?.let {
+        val start = it.getStartOffsetIn(element)
+        TextRange(start, start + it.endOffset - it.startOffset)
     }
 
     override fun createOptionsPanel(): JComponent? {

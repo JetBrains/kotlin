@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 
 abstract class IntentionBasedInspection<TElement : PsiElement>(
         val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
-        protected val problemText: String?,
+        protected open val problemText: String?,
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
 
