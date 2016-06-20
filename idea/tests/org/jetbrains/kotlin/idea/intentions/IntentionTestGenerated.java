@@ -3509,6 +3509,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertCamelCaseTestFunctionToSpaced extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertCamelCaseTestFunctionToSpaced() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("nonFunction.kt")
+        public void testNonFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/nonFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notAtIdentifier.kt")
+        public void testNotAtIdentifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/notAtIdentifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notTestFunction.kt")
+        public void testNotTestFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/notTestFunction.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertForEachToForLoop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

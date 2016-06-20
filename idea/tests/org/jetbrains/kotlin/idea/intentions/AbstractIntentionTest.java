@@ -28,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
@@ -145,6 +146,8 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), PluginTestCaseBase.mockJdk());
             }
 
+            ConfigLibraryUtil.configureLibrariesByDirective(getModule(), PlatformTestUtil.getCommunityPath(), fileText);
+
             if (getFile() instanceof KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
                 DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
             }
@@ -156,6 +159,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
             }
         }
         finally {
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText);
             if (isWithRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getTestProjectJdk());
             }
