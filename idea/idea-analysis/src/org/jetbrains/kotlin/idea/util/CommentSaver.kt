@@ -332,7 +332,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
                 }
             }
             else {
-                restored = putAbandonedCommentsAfter.parent.addAfter(comment, putAbandonedCommentsAfter) as PsiComment
+                restored = putAbandonedCommentsAfter.parent.addBefore(comment, putAbandonedCommentsAfter) as PsiComment
                 putAbandonedCommentsAfter = restored
             }
 

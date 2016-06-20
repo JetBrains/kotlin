@@ -724,6 +724,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBePrimaryConstructorProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("commentAfter.kt")
+        public void testCommentAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty/commentAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentAhead.kt")
+        public void testCommentAhead() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty/commentAhead.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedOpenVar.kt")
         public void testProtectedOpenVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty/protectedOpenVar.kt");
