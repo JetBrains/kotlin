@@ -24,6 +24,8 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
@@ -126,7 +128,7 @@ abstract class ImplementAbstractMemberIntentionBase :
 
     protected abstract val preferConstructorParameters: Boolean
 
-    private fun implementInKotlinClass(member: KtNamedDeclaration, targetClass: KtClassOrObject) {
+    private fun implementInKotlinClass(editor: Editor?, member: KtNamedDeclaration, targetClass: KtClassOrObject) {
         val subClassDescriptor = targetClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
         val superMemberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
         val superClassDescriptor = superMemberDescriptor.containingDeclaration as? ClassDescriptor ?: return
@@ -138,7 +140,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                                                                descriptorToImplement,
                                                                OverrideMemberChooserObject.BodyType.EMPTY,
                                                                preferConstructorParameters)
-        OverrideImplementMembersHandler.generateMembers(null, targetClass, chooserObject.singletonList(), false)
+        OverrideImplementMembersHandler.generateMembers(editor, targetClass, chooserObject.singletonList(), false)
     }
 
     private fun implementInJavaClass(member: KtNamedDeclaration, targetClass: PsiClass) {
@@ -152,9 +154,11 @@ abstract class ImplementAbstractMemberIntentionBase :
             runWriteAction {
                 for (targetClass in targetClasses) {
                     try {
+                        val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
+                        val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
                         when (targetClass) {
-                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(member, it) }
-                            is KtEnumEntry -> implementInKotlinClass(member, targetClass)
+                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(targetEditor, member, it) }
+                            is KtEnumEntry -> implementInKotlinClass(targetEditor, member, targetClass)
                             is PsiClass -> implementInJavaClass(member, targetClass)
                         }
                     }
