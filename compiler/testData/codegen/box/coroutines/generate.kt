@@ -48,7 +48,7 @@ class GeneratorController<T>() : AbstractIterator<T>() {
         setNextStep(c)
     }
 
-    fun handleResult(result: Unit, c: Continuation<Nothing>) {
+    operator fun handleResult(result: Unit, c: Continuation<Nothing>) {
         done()
     }
 }
