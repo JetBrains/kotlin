@@ -517,6 +517,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Semicolon.after.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Semicolon.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SingleLineFunctionLiteral.after.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
