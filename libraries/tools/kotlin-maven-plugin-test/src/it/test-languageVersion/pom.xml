@@ -21,6 +21,10 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <kotlin.compiler.languageVersion>1.0</kotlin.compiler.languageVersion>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -56,12 +60,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <args>
-                        <arg>-language-version</arg>
-                        <arg>1.0</arg>
-                    </args>
-                </configuration>
             </plugin>
         </plugins>
     </build>
