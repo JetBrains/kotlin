@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -62,8 +63,7 @@ class SpecifyTypeExplicitlyIntention :
 
         if (declaration.containingClassOrObject?.isLocal() ?: false) return null
 
-        val context = declaration.analyze(BodyResolveMode.PARTIAL)
-        val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return null
+        val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
         if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
         val type = callable.returnType ?: return null
         if (!type.isFlexibleRecursive()) return null
