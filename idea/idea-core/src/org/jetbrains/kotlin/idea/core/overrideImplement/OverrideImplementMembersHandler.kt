@@ -72,18 +72,22 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
             return
         }
 
-        val selectedElements = if (implementAll) {
-            members
+        val copyDoc: Boolean
+        val selectedElements: Collection<OverrideMemberChooserObject>
+        if (implementAll) {
+            selectedElements = members
+            copyDoc = false
         }
         else {
             val chooser = showOverrideImplementChooser(project, members.toTypedArray()) ?: return
-            chooser.selectedElements ?: return
+            selectedElements = chooser.selectedElements ?: return
+            copyDoc = chooser.isCopyJavadoc
         }
         if (selectedElements.isEmpty()) return
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        generateMembers(editor, classOrObject, selectedElements)
+        generateMembers(editor, classOrObject, selectedElements, copyDoc)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
@@ -93,9 +97,14 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
     override fun startInWriteAction(): Boolean = false
 
     companion object {
-        fun generateMembers(editor: Editor?, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
+        fun generateMembers(
+                editor: Editor?,
+                classOrObject: KtClassOrObject,
+                selectedElements: Collection<OverrideMemberChooserObject>,
+                copyDoc: Boolean
+        ) {
             val project = classOrObject.project
-            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project) })
+            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project, copyDoc) })
         }
     }
 }

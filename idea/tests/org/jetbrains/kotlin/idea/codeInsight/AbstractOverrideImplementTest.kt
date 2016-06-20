@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.kotlin.utils.rethrow
@@ -171,8 +172,9 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
             classOrObject: KtClassOrObject,
             selectedElements: List<OverrideMemberChooserObject>) {
         try {
+            val copyDoc = InTextDirectivesUtils.isDirectiveDefined(classOrObject.containingFile.text, "// COPY_DOC")
             myFixture.project.executeWriteCommand("") {
-                OverrideImplementMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements)
+                OverrideImplementMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements, copyDoc)
             }
         }
         catch (throwable: Throwable) {
