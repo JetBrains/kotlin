@@ -151,6 +151,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("CurlyBraceStringInterpolation.after.kt")
+        public void testCurlyBraceStringInterpolation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DelegationList.after.kt")
         public void testDelegationList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.kt");
