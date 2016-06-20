@@ -44,14 +44,15 @@ fun createModuleResolverProvider(
         syntheticFiles: Collection<KtFile>,
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
+        allModules: Collection<IdeaModuleInfo>?,
         builtIns: KotlinBuiltIns
 ): ModuleResolverProvider {
 
-    val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
+    val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
     val syntheticFilesModules = syntheticFilesByModule.keys
-    allModuleInfos.addAll(syntheticFilesModules + syntheticFilesModules.flatMap { it.dependencies() })
+    allModuleInfos.addAll(syntheticFilesModules)
 
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 

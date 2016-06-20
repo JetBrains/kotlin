@@ -67,6 +67,26 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     private val globalContext = GlobalContext(logProcessCanceled = true)
 
+    // TODO: soft reference?
+    // TODO: cache by script definition?
+    private val facadeForScriptDependencies by lazy {
+        ProjectResolutionFacade(project, globalContext.storageManager) {
+            globalResolveSessionProvider(
+                    "dependencies of scripts",
+                    project,
+                    JvmPlatform, // TODO: Js scripts?
+                    null, // TODO: provide sdk via dependencies
+                    commonGlobalContext = globalContext,
+                    allModules = listOf(ScriptDependenciesModuleInfo(project)),
+                    dependencies = listOf(
+                            LibraryModificationTracker.getInstance(project), //TODO: provide correct trackers
+                            ProjectRootModificationTracker.getInstance(project)
+                    ),
+                    moduleFilter = { true }
+            )
+        }
+    }
+
     private inner class GlobalFacade(platform: TargetPlatform, sdk: Sdk?) {
         val facadeForLibraries = ProjectResolutionFacade(project, globalContext.storageManager) {
             globalResolveSessionProvider(
@@ -123,7 +143,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
 
         fun makeGlobalResolveSessionProvider(reuseDataFrom: ProjectResolutionFacade? = null,
-                                             moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
+                                             moduleFilter: (IdeaModuleInfo) -> Boolean = { true },
+                                             allModules: Collection<IdeaModuleInfo>? = null
         ): CachedValueProvider.Result<ModuleResolverProvider> {
             return globalResolveSessionProvider(
                     debugName,
@@ -134,7 +155,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                     syntheticFiles = files,
                     reuseDataFrom = reuseDataFrom,
                     moduleFilter = moduleFilter,
-                    dependencies = dependenciesForSyntheticFileCache
+                    dependencies = dependenciesForSyntheticFileCache,
+                    allModules = allModules
             )
         }
 
@@ -150,7 +172,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
             syntheticFileModule is ScriptModuleInfo || syntheticFileModule is ScriptDependenciesModuleInfo -> {
                 ProjectResolutionFacade(project, globalContext.storageManager) {
-                    makeGlobalResolveSessionProvider()
+                    makeGlobalResolveSessionProvider(
+                            reuseDataFrom = facadeForScriptDependencies,
+                            allModules = listOf(syntheticFileModule) + syntheticFileModule.dependencies(),
+                            moduleFilter = { it == syntheticFileModule }
+                    )
                 }
             }
 
@@ -258,7 +284,8 @@ private fun globalResolveSessionProvider(
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         commonGlobalContext: GlobalContextImpl,
         reuseDataFrom: ProjectResolutionFacade? = null,
-        syntheticFiles: Collection<KtFile> = listOf()
+        syntheticFiles: Collection<KtFile> = listOf(),
+        allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ): CachedValueProvider.Result<ModuleResolverProvider> {
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
@@ -274,7 +301,7 @@ private fun globalResolveSessionProvider(
             debugName, project, globalContext, sdk,
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
             syntheticFiles, delegateResolverForProject, moduleFilter,
-            builtIns
+            allModules, builtIns
     )
 
     if (builtIns is JvmBuiltIns) {
