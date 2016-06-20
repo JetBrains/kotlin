@@ -1,0 +1,3 @@
+public final var something: dynamic
+    public final fun <get-something>(): dynamic
+    public final fun <set-something>(/*0*/ <set-?>: dynamic): kotlin.Unit
