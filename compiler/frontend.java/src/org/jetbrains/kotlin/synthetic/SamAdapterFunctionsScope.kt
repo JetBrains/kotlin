@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.Name
@@ -33,8 +34,8 @@ import org.jetbrains.kotlin.types.*
 import java.util.*
 import kotlin.properties.Delegates
 
-interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
-    val sourceFunction: FunctionDescriptor
+interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, SyntheticMemberDescriptor<FunctionDescriptor> {
+    override val baseDescriptorForSynthetic: FunctionDescriptor
 }
 
 class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope {
@@ -92,7 +93,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
             source: SourceElement
     ) : SamAdapterExtensionFunctionDescriptor, SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, source) {
 
-        override var sourceFunction: FunctionDescriptor by Delegates.notNull()
+        override var baseDescriptorForSynthetic: FunctionDescriptor by Delegates.notNull()
             private set
 
         private var toSourceFunctionTypeParameters: Map<TypeParameterDescriptor, TypeParameterDescriptor>? = null
@@ -105,7 +106,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
                                                       sourceFunction.name,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                       sourceFunction.original.source)
-                descriptor.sourceFunction = sourceFunction
+                descriptor.baseDescriptorForSynthetic = sourceFunction
 
                 val sourceTypeParams = (sourceFunction.typeParameters).toMutableList()
                 val ownerClass = sourceFunction.containingDeclaration as ClassDescriptor
@@ -138,8 +139,8 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
             }
         }
 
-        override fun hasStableParameterNames() = sourceFunction.hasStableParameterNames()
-        override fun hasSynthesizedParameterNames() = sourceFunction.hasSynthesizedParameterNames()
+        override fun hasStableParameterNames() = baseDescriptorForSynthetic.hasStableParameterNames()
+        override fun hasSynthesizedParameterNames() = baseDescriptorForSynthetic.hasSynthesizedParameterNames()
 
         override fun createSubstitutedCopy(
                 newOwner: DeclarationDescriptor,
@@ -152,7 +153,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
             return MyFunctionDescriptor(
                     containingDeclaration, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, source
             ).apply {
-                sourceFunction = this@MyFunctionDescriptor.sourceFunction
+                baseDescriptorForSynthetic = this@MyFunctionDescriptor.baseDescriptorForSynthetic
             }
         }
 
@@ -176,7 +177,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
                     TypeConstructorSubstitution.createByConstructorsMap(
                             substitutionMap, configuration.substitution.approximateCapturedTypes()).buildSubstitutor()
 
-            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)
+            descriptor.baseDescriptorForSynthetic = original.baseDescriptorForSynthetic.substitute(sourceFunctionSubstitutor)
 
             return descriptor
         }
