@@ -138,7 +138,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                                                                descriptorToImplement,
                                                                OverrideMemberChooserObject.BodyType.EMPTY,
                                                                preferConstructorParameters)
-        OverrideImplementMembersHandler.generateMembers(null, targetClass, chooserObject.singletonList())
+        OverrideImplementMembersHandler.generateMembers(null, targetClass, chooserObject.singletonList(), false)
     }
 
     private fun implementInJavaClass(member: KtNamedDeclaration, targetClass: PsiClass) {

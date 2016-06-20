@@ -1,0 +1,12 @@
+// COPY_DOC
+
+import foo.A
+
+class B : A() {
+    /**
+     * @return TEST
+     */
+    override fun foo(): Int {
+        <selection><caret>return super.foo()</selection>
+    }
+}
