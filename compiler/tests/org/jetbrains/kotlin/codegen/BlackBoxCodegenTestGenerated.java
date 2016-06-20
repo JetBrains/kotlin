@@ -4153,6 +4153,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("handleResultCallEmptyBody.kt")
+        public void testHandleResultCallEmptyBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/handleResultCallEmptyBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("illegalState.kt")
         public void testIllegalState() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/illegalState.kt");
