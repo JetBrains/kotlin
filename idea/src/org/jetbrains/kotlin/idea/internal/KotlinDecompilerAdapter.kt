@@ -54,7 +54,7 @@ fun getOrCreateDummyRoot(): VirtualFile =
 
 class DecompiledFileWritingAccessProvider : WritingAccessProvider() {
     override fun isPotentiallyWritable(file: VirtualFile): Boolean {
-        if (file.fileSystem is DummyFileSystem && file.parent.name == KOTLIN_DECOMPILED_FOLDER) {
+        if (file.fileSystem is DummyFileSystem && file.parent?.name == KOTLIN_DECOMPILED_FOLDER) {
             return false
         }
         return true
