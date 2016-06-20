@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.descriptors;
+package org.jetbrains.kotlin.descriptors.synthetic
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-public interface SamAdapterDescriptor<D extends FunctionDescriptor> extends FunctionDescriptor, JavaCallableMemberDescriptor,
-                                                                            SyntheticMemberDescriptor<D> {
+interface SyntheticMemberDescriptor<out T : DeclarationDescriptor> {
+    val baseDescriptorForSynthetic: T
 }

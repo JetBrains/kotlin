@@ -33,7 +33,7 @@ object ProtectedSyntheticExtensionCallChecker : SimpleCallChecker {
 
         val sourceFunction = when (descriptor) {
             is SyntheticJavaPropertyDescriptor -> descriptor.getMethod
-            is SamAdapterExtensionFunctionDescriptor -> descriptor.sourceFunction
+            is SamAdapterExtensionFunctionDescriptor -> descriptor.baseDescriptorForSynthetic
             else -> return
         }
 
