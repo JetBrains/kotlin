@@ -59,6 +59,16 @@ open class KtLightClassForExplicitDeclaration(
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
+    private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val listDelegate = super.getExtendsList() ?: return@lazy null
+        KtLightPsiReferenceList(listDelegate, this)
+    }
+
+    private val _implementsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val listDelegate = super.getImplementsList() ?: return@lazy null
+        KtLightPsiReferenceList(listDelegate, this)
+    }
+
     private fun getLocalClassParent(): PsiElement? {
         fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
             if (method == null || name == null) return null
@@ -395,6 +405,10 @@ open class KtLightClassForExplicitDeclaration(
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
     override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
+
+    override fun getExtendsList() = _extendsList
+
+    override fun getImplementsList() = _implementsList
 
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")
