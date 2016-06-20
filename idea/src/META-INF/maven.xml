@@ -8,6 +8,7 @@
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider" />
 
     <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">
+      <param name="sourceDirs/source" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
       <param name="sourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
       <param name="sourceDirs/sourceDir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
 
