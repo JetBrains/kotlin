@@ -141,7 +141,7 @@ class DescriptorSerializer private constructor(
 
         val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
 
-        val propertyFlags = Flags.getAccessorFlags(hasAnnotations, descriptor.visibility, descriptor.modality, false, false)
+        val propertyFlags = Flags.getAccessorFlags(hasAnnotations, descriptor.visibility, descriptor.modality, false, false, false)
 
         val getter = descriptor.getter
         if (getter != null) {
@@ -593,7 +593,8 @@ class DescriptorSerializer private constructor(
                     accessor.visibility,
                     accessor.modality,
                     !accessor.isDefault,
-                    accessor.isExternal
+                    accessor.isExternal,
+                    accessor.isInline
             )
         }
 

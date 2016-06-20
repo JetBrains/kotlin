@@ -73,6 +73,7 @@ public class Flags {
 
     public static final BooleanFlagField IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
     public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
+    public static final BooleanFlagField IS_INLINE_ACCESSOR = FlagField.booleanAfter(IS_EXTERNAL_ACCESSOR);
 
     // ---
 
@@ -180,13 +181,15 @@ public class Flags {
             @NotNull Visibility visibility,
             @NotNull Modality modality,
             boolean isNotDefault,
-            boolean isExternal
+            boolean isExternal,
+            boolean isInlineAccessor
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | IS_NOT_DEFAULT.toFlags(isNotDefault)
                | IS_EXTERNAL_ACCESSOR.toFlags(isExternal)
+               | IS_INLINE_ACCESSOR.toFlags(isInlineAccessor)
                ;
     }
 

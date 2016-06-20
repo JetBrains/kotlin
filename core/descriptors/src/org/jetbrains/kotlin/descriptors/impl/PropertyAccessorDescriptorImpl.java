@@ -33,6 +33,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     private final boolean isExternal;
     private final Modality modality;
     private final PropertyDescriptor correspondingProperty;
+    private final boolean isInline;
     private final Kind kind;
     private Visibility visibility;
     @Nullable
@@ -46,6 +47,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
             @NotNull Name name,
             boolean isDefault,
             boolean isExternal,
+            boolean isInline,
             Kind kind,
             @NotNull SourceElement source
     ) {
@@ -55,6 +57,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         this.correspondingProperty = correspondingProperty;
         this.isDefault = isDefault;
         this.isExternal = isExternal;
+        this.isInline = isInline;
         this.kind = kind;
     }
 
@@ -86,7 +89,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     @Override
     public boolean isInline() {
-        return false;
+        return isInline;
     }
 
     @Override

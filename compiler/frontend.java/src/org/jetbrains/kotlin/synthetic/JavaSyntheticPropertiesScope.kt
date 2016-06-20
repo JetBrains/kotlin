@@ -317,6 +317,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                                                           visibility,
                                                           false,
                                                           getMethod.isExternal,
+                                                          false,
                                                           CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                           null,
                                                           SourceElement.NO_SOURCE)
@@ -329,6 +330,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                                                  syntheticExtensionVisibility(setMethod),
                                                  false,
                                                  setMethod.isExternal,
+                                                 false,
                                                  CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                  null,
                                                  SourceElement.NO_SOURCE)

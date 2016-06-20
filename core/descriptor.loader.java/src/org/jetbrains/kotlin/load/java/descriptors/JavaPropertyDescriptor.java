@@ -112,7 +112,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (getter != null) {
             newGetter = new PropertyGetterDescriptorImpl(
                     enhanced, getter.getAnnotations(), getter.getModality(), getter.getVisibility(),
-                    getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource()
+                    getter.isDefault(), getter.isExternal(), getter.isInline(), getKind(), getter, getter.getSource()
             );
             newGetter.setInitialSignatureDescriptor(getter.getInitialSignatureDescriptor());
             newGetter.initialize(enhancedReturnType);
@@ -123,7 +123,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (setter != null) {
             newSetter = new PropertySetterDescriptorImpl(
                     enhanced, setter.getAnnotations(), setter.getModality(), setter.getVisibility(),
-                    setter.isDefault(), setter.isExternal(), getKind(), setter, setter.getSource()
+                    setter.isDefault(), setter.isExternal(), setter.isInline(), getKind(), setter, setter.getSource()
             );
             newSetter.setInitialSignatureDescriptor(newSetter.getInitialSignatureDescriptor());
             newSetter.initialize(setter.getValueParameters().get(0));

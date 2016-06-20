@@ -123,6 +123,7 @@ private fun genProperty(
             Visibilities.PUBLIC,
             false,
             false,
+            false,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             null,
             SourceElement.NO_SOURCE
