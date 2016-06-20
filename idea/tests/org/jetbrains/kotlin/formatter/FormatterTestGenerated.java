@@ -43,6 +43,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
 
+        @TestMetadata("AnnotationBeforeExpression.after.kt")
+        public void testAnnotationBeforeExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AnonymousInitializers.after.kt")
         public void testAnonymousInitializers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializers.after.kt");
