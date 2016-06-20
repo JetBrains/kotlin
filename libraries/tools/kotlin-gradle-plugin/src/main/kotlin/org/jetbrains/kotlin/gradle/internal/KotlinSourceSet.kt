@@ -37,7 +37,7 @@ private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResol
     val klass = DefaultSourceDirectorySet::class.java
     val defaultConstructor = klass.constructorOrNull(String::class.java, FileResolver::class.java)
 
-    if (defaultConstructor != null) {
+    if (defaultConstructor != null && defaultConstructor.getAnnotation(java.lang.Deprecated::class.java) == null) {
         // TODO: drop when gradle < 2.12 are obsolete
         { name, resolver -> defaultConstructor.newInstance(name, resolver) }
     }
