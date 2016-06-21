@@ -18,20 +18,17 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtUserType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.TypeResolutionContext
-import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForResolvedCallableReference
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.callableReferences.bindFunctionReference
+import org.jetbrains.kotlin.resolve.callableReferences.bindPropertyReference
+import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
 import org.jetbrains.kotlin.resolve.callableReferences.resolveCallableReferenceTarget
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolver
@@ -206,19 +203,46 @@ class DoubleColonExpressionResolver(
         }
         if (descriptor == null) return null
 
+        checkReferenceIsToAllowedMember(descriptor, context.trace, expression)
+
+        val type = createReflectionTypeForCallableDescriptor(
+                descriptor, lhsType, reflectionTypes, expression.isEmptyLHS, context.scope.ownerDescriptor
+        ) ?: return null
+
+        when (descriptor) {
+            is FunctionDescriptor -> bindFunctionReference(expression, type, context)
+            is PropertyDescriptor -> bindPropertyReference(expression, type, context)
+        }
+
+        return type
+    }
+
+    private fun checkReferenceIsToAllowedMember(
+            descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
+    ) {
+        val simpleName = expression.callableReference
         if (expression.isEmptyLHS &&
             (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference))
+            trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(simpleName))
         }
 
         val containingDeclaration = descriptor.containingDeclaration
         if (DescriptorUtils.isObject(containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference))
+            trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(simpleName))
         }
         if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference))
+            trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(simpleName))
         }
+        if (descriptor is CallableMemberDescriptor && isMemberExtension(descriptor)) {
+            trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(simpleName, descriptor))
+        }
+        if (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) {
+            trace.report(UNSUPPORTED.on(simpleName, "References to variables aren't supported yet"))
+        }
+    }
 
-        return createReflectionTypeForResolvedCallableReference(expression, lhsType, descriptor, context, reflectionTypes)
+    private fun isMemberExtension(descriptor: CallableMemberDescriptor): Boolean {
+        val original = (descriptor as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: descriptor
+        return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
     }
 }
