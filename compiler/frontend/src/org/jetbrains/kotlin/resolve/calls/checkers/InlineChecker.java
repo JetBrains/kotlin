@@ -50,12 +50,12 @@ import static org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalRetur
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage;
 
 class InlineChecker implements SimpleCallChecker {
-    private final SimpleFunctionDescriptor descriptor;
+    private final FunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
     private final boolean isEffectivelyPublicApiFunction;
     private final boolean isEffectivelyPrivateApiFunction;
 
-    public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
+    public InlineChecker(@NotNull FunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = DescriptorUtilsKt.isEffectivelyPublicApi(descriptor);
