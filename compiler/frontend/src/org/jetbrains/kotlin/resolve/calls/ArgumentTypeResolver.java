@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -238,15 +240,32 @@ public class ArgumentTypeResolver {
             @NotNull CallResolutionContext<?> context,
             boolean expectedTypeIsUnknown
     ) {
+        KtTypeReference typeReference = callableReferenceExpression.getTypeReference();
         KotlinType receiverType =
-                CallableReferencesResolutionUtilsKt.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
+                typeReference == null ? null : typeResolver.resolveType(context.scope, typeReference, context.trace, false);
         OverloadResolutionResults<CallableDescriptor> overloadResolutionResults =
                 CallableReferencesResolutionUtilsKt.resolvePossiblyAmbiguousCallableReference(
                         callableReferenceExpression, receiverType, context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS,
                         callResolver);
-        return CallableReferencesResolutionUtilsKt.getResolvedCallableReferenceShapeType(
-                callableReferenceExpression, receiverType, overloadResolutionResults, context, expectedTypeIsUnknown,
-                reflectionTypes, builtIns, functionPlaceholders
+        if (overloadResolutionResults == null) return null;
+
+        if (overloadResolutionResults.isSingleResult()) {
+            ResolvedCall<?> resolvedCall =
+                    OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
+            if (resolvedCall == null) return null;
+
+            return CallableReferencesResolutionUtilsKt.createReflectionTypeForCallableDescriptor(
+                    resolvedCall.getResultingDescriptor(), receiverType, reflectionTypes,
+                    callableReferenceExpression.isEmptyLHS(), context.scope.getOwnerDescriptor()
+            );
+        }
+
+        if (expectedTypeIsUnknown) {
+            return functionPlaceholders.createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), false);
+        }
+
+        return FunctionTypeResolveUtilsKt.createFunctionType(
+                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), TypeUtils.DONT_CARE
         );
     }
 

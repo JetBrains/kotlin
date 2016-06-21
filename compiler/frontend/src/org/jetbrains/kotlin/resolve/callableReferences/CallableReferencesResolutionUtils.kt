@@ -16,17 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.callableReferences
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -43,21 +39,10 @@ import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.Printer
-
-fun resolveCallableReferenceReceiverType(
-        callableReferenceExpression: KtCallableReferenceExpression,
-        context: ResolutionContext<*>,
-        typeResolver: TypeResolver
-): KotlinType? =
-        callableReferenceExpression.typeReference?.let {
-            typeResolver.resolveType(context.scope, it, context.trace, false)
-        }
 
 private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(results: OverloadResolutionResults<D>, trace: TemporaryTraceAndCache) {
     when (this) {
@@ -164,44 +149,15 @@ fun resolveCallableReferenceTarget(
         callResolver: CallResolver
 ): CallableDescriptor? {
     val resolutionResults = resolvePossiblyAmbiguousCallableReference(
-            callableReferenceExpression, lhsType, context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS, callResolver)
+            callableReferenceExpression, lhsType, context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS, callResolver
+    )
     return resolutionResults?.let { results ->
         if (results.isSomething()) {
             resolvedToSomething[0] = true
-            OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency)?.let { call ->
-                call.resultingDescriptor
-            }
+            OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency)?.resultingDescriptor
         }
-        else {
-            null
-        }
+        else null
     }
-}
-
-internal fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
-    val functionDescriptor = AnonymousFunctionDescriptor(
-            context.scope.ownerDescriptor,
-            Annotations.EMPTY,
-            CallableMemberDescriptor.Kind.DECLARATION,
-            expression.toSourceElement()
-    )
-
-    functionDescriptor.initialize(
-            null, null, emptyList(),
-            createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
-            type.arguments.last().type,
-            Modality.FINAL,
-            Visibilities.PUBLIC
-    )
-
-    context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
-}
-
-internal fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
-    val localVariable = LocalVariableDescriptor(context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"),
-                                                referenceType, /* mutable = */ false, expression.toSourceElement())
-
-    context.trace.record(BindingContext.VARIABLE, expression, localVariable)
 }
 
 fun createReflectionTypeForCallableDescriptor(
@@ -242,28 +198,3 @@ fun createReflectionTypeForCallableDescriptor(
         else -> throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")
     }
 }
-
-fun getResolvedCallableReferenceShapeType(
-        reference: KtCallableReferenceExpression,
-        lhsType: KotlinType?,
-        overloadResolutionResults: OverloadResolutionResults<CallableDescriptor>?,
-        context: ResolutionContext<*>,
-        expectedTypeUnknown: Boolean,
-        reflectionTypes: ReflectionTypes,
-        builtIns: KotlinBuiltIns,
-        functionPlaceholders: FunctionPlaceholders
-): KotlinType? =
-        when {
-            overloadResolutionResults == null ->
-                null
-            overloadResolutionResults.isSingleResult ->
-                OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
-                    createReflectionTypeForCallableDescriptor(
-                            call.resultingDescriptor, lhsType, reflectionTypes, reference.isEmptyLHS, context.scope.ownerDescriptor
-                    )
-                }
-            expectedTypeUnknown /* && overload resolution was ambiguous */ ->
-                functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)
-            else ->
-                createFunctionType(builtIns, Annotations.EMPTY, null, emptyList(), TypeUtils.DONT_CARE)
-        }
