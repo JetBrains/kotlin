@@ -707,6 +707,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             ))
         }
 
+        override fun clear() {
+            hasErrors = false
+        }
+
         override fun hasErrors(): Boolean = hasErrors
 
         private fun renderLocationIfNeeded(location: CompilerMessageLocation): String {

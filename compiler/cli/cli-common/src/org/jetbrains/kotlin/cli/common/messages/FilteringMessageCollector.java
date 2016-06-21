@@ -29,6 +29,11 @@ public class FilteringMessageCollector implements MessageCollector {
     }
 
     @Override
+    public void clear() {
+        messageCollector.clear();
+    }
+
+    @Override
     public void report(
             @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
     ) {

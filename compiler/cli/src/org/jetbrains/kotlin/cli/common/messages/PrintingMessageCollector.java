@@ -33,6 +33,11 @@ public class PrintingMessageCollector implements MessageCollector {
     }
 
     @Override
+    public void clear() {
+        // Do nothing, messages are already reported
+    }
+
+    @Override
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,

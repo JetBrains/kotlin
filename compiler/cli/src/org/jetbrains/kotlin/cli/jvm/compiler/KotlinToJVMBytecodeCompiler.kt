@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.util.io.JarUtil
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
@@ -26,10 +28,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.getModuleName
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
@@ -127,7 +126,26 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
-        val result = analyze(environment, targetDescription)
+        var result = analyze(environment, targetDescription)
+        
+        if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
+            val oldReadOnlyValue = configuration.isReadOnly
+            configuration.isReadOnly = false
+            configuration.addJavaSourceRoots(result.additionalJavaRoots)
+            configuration.isReadOnly = oldReadOnlyValue
+
+            environment.addJavaSourceRoots(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+
+            // Clear package caches (see KotlinJavaPsiFacade)
+            (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
+            
+            // Clear all diagnostic messages
+            configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
+            
+            // Repeat analysis with additional Java roots (kapt generated sources)
+            result = analyze(environment, targetDescription)
+        }
+        
         if (result == null || !result.shouldGenerateCode) return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -355,7 +373,12 @@ object KotlinToJVMBytecodeCompiler {
 
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
-        return if (analyzerWithCompilerReport.hasErrors()) null else analyzerWithCompilerReport.analysisResult
+        val analysisResult = analyzerWithCompilerReport.analysisResult
+        
+        return if (!analyzerWithCompilerReport.hasErrors() || analysisResult is AnalysisResult.RetryWithAdditionalJavaRoots)
+            analysisResult
+        else
+            null
     }
 
     private fun generate(

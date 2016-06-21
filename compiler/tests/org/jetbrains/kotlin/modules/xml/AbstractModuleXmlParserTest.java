@@ -45,6 +45,11 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
             }
 
             @Override
+            public void clear() {
+                // Do nothing
+            }
+
+            @Override
             public boolean hasErrors() {
                 throw new UnsupportedOperationException();
             }
