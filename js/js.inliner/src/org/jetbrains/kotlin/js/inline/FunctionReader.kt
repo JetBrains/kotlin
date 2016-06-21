@@ -160,7 +160,7 @@ class FunctionReader(private val context: TranslationContext) {
 
     private fun getRootPackage(): JsExpression {
         val rootName = context.program().rootScope.declareName(Namer.getRootPackageName())
-        return JsAstUtils.fqnWithoutSideEffects(rootName, null)
+        return JsAstUtils.pureFqn(rootName, null)
     }
 }
 

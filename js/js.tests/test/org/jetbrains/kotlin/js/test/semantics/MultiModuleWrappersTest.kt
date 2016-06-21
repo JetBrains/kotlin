@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.js.test.WithModuleKind
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class MultiModuleWrappersTest() : MultipleModulesTranslationTest("multiModuleWrappers/") {
-    private var overridenTestName = ""
+    private var overriddenTestName = ""
 
     @WithModuleKind(ModuleKind.AMD) fun testAmd() {
         runTest("simple")
@@ -56,11 +56,11 @@ class MultiModuleWrappersTest() : MultipleModulesTranslationTest("multiModuleWra
     }
 
     fun runTest(name: String) {
-        overridenTestName = name
+        overriddenTestName = name
         doTest("${pathToTestDir()}/cases/$name")
     }
 
-    override fun getTestName(lowercaseFirstLetter: Boolean) = overridenTestName
+    override fun getTestName(lowercaseFirstLetter: Boolean) = overriddenTestName
 
     override fun getOutputPath() = "${super.getOutputPath()}/${moduleKind.name.toLowerCase()}/"
 }

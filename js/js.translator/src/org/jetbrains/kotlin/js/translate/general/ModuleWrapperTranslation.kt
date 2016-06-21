@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     @JvmStatic fun wrapIfNecessary(
-            moduleId: String?, function: JsExpression, importedModules: List<String>,
+            moduleId: String, function: JsExpression, importedModules: List<String>,
             program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
@@ -35,7 +35,7 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapUmd(
-            moduleId: String?, function: JsExpression,
+            moduleId: String, function: JsExpression,
             importedModules: List<String>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
@@ -57,18 +57,13 @@ object ModuleWrapperTranslation {
         val commonJsBody = JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program))
         val plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules, program)
 
-        val plainExpr: JsExpression = if (moduleId != null) {
-            val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
-                JsArrayAccess(rootName.makeRef(), program.getStringLiteral(moduleId))
-            }
-            else {
-                JsNameRef(scope.declareName(moduleId), rootName.makeRef())
-            }
-            JsAstUtils.assignment(lhs, plainInvocation)
+        val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
+            JsArrayAccess(rootName.makeRef(), program.getStringLiteral(moduleId))
         }
         else {
-            plainInvocation
+            JsNameRef(scope.declareName(moduleId), rootName.makeRef())
         }
+        val plainExpr = JsAstUtils.assignment(lhs, plainInvocation)
 
         val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainExpr.makeStmt()))
         adapterBody.statements += selector
@@ -77,20 +72,16 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapAmd(
-            moduleId: String?,function: JsExpression,
+            moduleId: String,function: JsExpression,
             importedModules: List<String>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
-        val invocationArgs = mutableListOf<JsExpression>()
-
-        if (moduleId != null) {
-            invocationArgs += program.getStringLiteral(moduleId)
-        }
-
-        val moduleNameList = importedModules.map { program.getStringLiteral(it) }
-        invocationArgs += JsArrayLiteral(moduleNameList)
-        invocationArgs += function
+        val invocationArgs = listOf(
+                program.getStringLiteral(moduleId),
+                JsArrayLiteral(importedModules.map { program.getStringLiteral(it) }),
+                function
+        )
 
         val invocation = JsInvocation(defineName.makeRef(), invocationArgs)
         return listOf(invocation.makeStmt())
@@ -108,21 +99,16 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapPlain(
-            moduleId: String?, function: JsExpression,
+            moduleId: String, function: JsExpression,
             importedModules: List<String>, program: JsProgram
     ): List<JsStatement> {
         val invocation = makePlainInvocation(function, importedModules, program)
 
-        val statement = if (moduleId == null) {
-            invocation.makeStmt()
+        val statement = if (Namer.requiresEscaping(moduleId)) {
+            JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt()
         }
         else {
-            if (Namer.requiresEscaping(moduleId)) {
-                JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt()
-            }
-            else {
-                JsAstUtils.newVar(program.rootScope.declareName(moduleId), invocation)
-            }
+            JsAstUtils.newVar(program.rootScope.declareName(moduleId), invocation)
         }
 
         return listOf(statement)
