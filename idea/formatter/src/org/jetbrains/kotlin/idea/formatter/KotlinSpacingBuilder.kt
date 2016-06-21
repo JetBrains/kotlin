@@ -27,7 +27,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
-import java.util.ArrayList
+import java.util.*
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacingBuilderUtil: KotlinSpacingBuilderUtil) {
     private val builders = ArrayList<Builder>()
@@ -120,7 +120,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
                 if (child1.node.elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
                     val isBeforeBlock = child2.node.elementType == KtNodeTypes.BLOCK || child2.node.firstChildNode?.elementType == KtNodeTypes.BLOCK
                     val keepBlankLines = if (isBeforeBlock) 0 else codeStyleSettings.KEEP_BLANK_LINES_IN_CODE
-                    return Spacing.createSpacing(0, 0, 1, true, keepBlankLines)
+                    return createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = keepBlankLines)
                 }
                 return spacing
             }
@@ -138,6 +138,14 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
         val builder = CustomSpacingBuilder()
         builder.init()
         builders.add(builder)
+    }
+
+    fun createSpacing(minSpaces: Int,
+                      maxSpaces: Int = minSpaces,
+                      minLineFeeds: Int = 0,
+                      keepLineBreaks: Boolean = codeStyleSettings.KEEP_LINE_BREAKS,
+                      keepBlankLines: Int = codeStyleSettings.KEEP_BLANK_LINES_IN_CODE): Spacing {
+        return Spacing.createSpacing(minSpaces, maxSpaces, minLineFeeds, keepLineBreaks, keepBlankLines)
     }
 }
 
