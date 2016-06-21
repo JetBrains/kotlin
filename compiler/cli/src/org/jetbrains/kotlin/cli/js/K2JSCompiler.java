@@ -74,10 +74,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static final Map<String, ModuleKind> moduleKindMap = new HashMap<String, ModuleKind>();
 
     static {
-        moduleKindMap.put(K2JSCompilerArguments.MODULE_PLAIN, ModuleKind.PLAIN);
-        moduleKindMap.put(K2JSCompilerArguments.MODULE_COMMONJS, ModuleKind.COMMON_JS);
-        moduleKindMap.put(K2JSCompilerArguments.MODULE_AMD, ModuleKind.AMD);
-        moduleKindMap.put(K2JSCompilerArguments.MODULE_UMD, ModuleKind.UMD);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_AMD, ModuleKind.AMD);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_UMD, ModuleKind.UMD);
     }
 
     public static void main(String... args) {
@@ -289,7 +289,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;
         if (moduleKind == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
-                                                                   "valid values are: plain, amd, commonjs, umd",
+                                                                   "Valid values are: plain, amd, commonjs, umd",
                                     CompilerMessageLocation.NO_LOCATION);
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);

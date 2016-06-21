@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.js.translate.declaration.PackageDeclarationTranslato
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
-import org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.ImportedModule;
 import org.jetbrains.kotlin.js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
+import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.toStringLiteralList;
@@ -213,16 +211,15 @@ public final class Translation {
         mayBeGenerateTests(files, config, rootBlock, context);
 
         // Invoke function passing modules as arguments
-        // This should help minifier tool to recognize references to this modules as local variables and make them shorter.
-        List<ImportedModule> importedModuleList = new ArrayList<ImportedModule>();
+        // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
+        List<String> importedModuleList = new ArrayList<String>();
         JsName kotlinName = program.getScope().declareName(Namer.KOTLIN_NAME);
         rootFunction.getParameters().add(new JsParameter((kotlinName)));
-        importedModuleList.add(new ImportedModule(Namer.KOTLIN_LOWER_NAME, kotlinName));
+        importedModuleList.add(Namer.KOTLIN_LOWER_NAME);
 
         for (String importedModule : staticContext.getImportedModules().keySet()) {
             rootFunction.getParameters().add(new JsParameter(staticContext.getImportedModules().get(importedModule)));
-            JsName globalId = program.getScope().declareName(Namer.suggestedModuleName(importedModule));
-            importedModuleList.add(new ImportedModule(importedModule, globalId));
+            importedModuleList.add(importedModule);
         }
 
         if (mainCallParameters.shouldBeGenerated()) {

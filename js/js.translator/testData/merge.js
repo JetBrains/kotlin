@@ -1,11 +1,6 @@
-var stdlib = module.exports;
-var mergedRoot = Kotlin;
-
-for (var propertyName in stdlib) {
-    Kotlin[propertyName] = stdlib[propertyName];
-}
 (function () {
-    for (var i = 0; i < Kotlin.lazyInitClasses.length; ++i) {
-        Kotlin.createDefinition(Kotlin.lazyInitClasses[i], mergedRoot);
-    }
+    var stdlib = module.exports;
+    Object.getOwnPropertyNames(stdlib).forEach(function(propertyName) {
+        Kotlin[propertyName] = stdlib[propertyName];
+    });
 })();

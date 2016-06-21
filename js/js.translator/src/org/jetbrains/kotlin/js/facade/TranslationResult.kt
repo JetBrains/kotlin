@@ -37,7 +37,6 @@ import java.io.File
 import java.util.*
 
 abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
-
     class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
     class Success(
@@ -80,7 +79,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     data = moduleDescriptor,
                     kind = config.moduleKind,
                     imported = importedModules
-                );
+                )
                 val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(moduleDescription)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)

@@ -113,7 +113,7 @@ public final class StaticContext {
     @NotNull
     private final Map<String, JsName> importedModules = new LinkedHashMap<String, JsName>();
 
-    private Map<String, JsName> importedModulesSafe;
+    private Map<String, JsName> readOnlyImportedModules;
 
     //TODO: too many parameters in constructor
     private StaticContext(
@@ -173,10 +173,10 @@ public final class StaticContext {
 
     @NotNull
     public Map<String, JsName> getImportedModules() {
-        if (importedModulesSafe == null) {
-            importedModulesSafe = Collections.unmodifiableMap(importedModules);
+        if (readOnlyImportedModules == null) {
+            readOnlyImportedModules = Collections.unmodifiableMap(importedModules);
         }
-        return importedModulesSafe;
+        return readOnlyImportedModules;
     }
 
     @NotNull
