@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -63,7 +64,7 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
         val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(changeInfo)
 
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
-            packageDirective.fqName = newFqName
+            packageDirective.fqName = newFqName.quoteIfNeeded()
             postProcessMoveUsages(internalUsages)
             project.runWithElementsToShortenIsEmptyIgnored { declarationProcessor.execute(declarationUsages) }
         }
