@@ -22,23 +22,26 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.bindFunctionReference
-import org.jetbrains.kotlin.resolve.callableReferences.bindPropertyReference
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
 import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -318,6 +321,35 @@ class DoubleColonExpressionResolver(
     private fun isMemberExtension(descriptor: CallableMemberDescriptor): Boolean {
         val original = (descriptor as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: descriptor
         return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
+    }
+
+    private fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
+        val functionDescriptor = AnonymousFunctionDescriptor(
+                context.scope.ownerDescriptor,
+                Annotations.EMPTY,
+                CallableMemberDescriptor.Kind.DECLARATION,
+                expression.toSourceElement(),
+                /* isCoroutine = */ false
+        )
+
+        functionDescriptor.initialize(
+                null, null, emptyList(),
+                createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
+                type.arguments.last().type,
+                Modality.FINAL,
+                Visibilities.PUBLIC
+        )
+
+        context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
+    }
+
+    private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
+        val localVariable = LocalVariableDescriptor(
+                context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType, /* mutable = */ false,
+                /* isDelegated = */ false, expression.toSourceElement()
+        )
+
+        context.trace.record(BindingContext.VARIABLE, expression, localVariable)
     }
 
     fun resolveCallableReference(
