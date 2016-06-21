@@ -822,6 +822,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinDefaultAnnotationParameterUsages.0.kt")
+            public void testKotlinDefaultAnnotationParameterUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinDefaultAnnotationParameterUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinFunctionParameterUsages.0.kt")
             public void testKotlinFunctionParameterUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findParameterUsages/kotlinFunctionParameterUsages.0.kt");
@@ -1425,6 +1431,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("ConventionUsages.0.java")
             public void testConventionUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/ConventionUsages.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultJavaAnnotationMethodUsages.0.java")
+            public void testDefaultJavaAnnotationMethodUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/defaultJavaAnnotationMethodUsages.0.java");
                 doTest(fileName);
             }
 

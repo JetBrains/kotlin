@@ -311,6 +311,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameDefaultJavaAnnotationMethod/renameDefaultJavaAnnotationMethod.test")
+    public void testRenameDefaultJavaAnnotationMethod_RenameDefaultJavaAnnotationMethod() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameDefaultJavaAnnotationMethod/renameDefaultJavaAnnotationMethod.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameDefaultKotlinAnnotationMethod/renameDefaultKotlinAnnotationMethod.test")
+    public void testRenameDefaultKotlinAnnotationMethod_RenameDefaultKotlinAnnotationMethod() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameDefaultKotlinAnnotationMethod/renameDefaultKotlinAnnotationMethod.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameEmptyKotlinFile/renameFile.test")
     public void testRenameEmptyKotlinFile_RenameFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameEmptyKotlinFile/renameFile.test");
