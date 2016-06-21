@@ -120,14 +120,12 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    override fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? {
-        val anns = annotations.map { parseAnnotation(it) }.filter { it.name == depends::class.simpleName }
-        val cp = anns.flatMap {
-            it.value.mapNotNull {
-                when (it) {
-                    is SimpleAnnotationAst.Node.str -> if (it.value == "@{runtime}") kotlinPaths.runtimePath else File(it.value)
-                    else -> null
-                }
+    override fun resolve(scriptFile: File?, annotations: Iterable<Annotation>, context: Any?): KotlinScriptExternalDependencies? {
+        val cp = annotations.flatMap {
+            when (it) {
+                is depends -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
+                is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
+                else -> throw Exception("Unknown annotation ${it.javaClass}")
             }
         }
         return object : KotlinScriptExternalDependencies {
@@ -143,15 +141,15 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 }
 
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyResolver(TestKotlinScriptDependenciesResolver::class)
+@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
 abstract class ScriptWithIntParam(num: Int)
 
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyResolver(TestKotlinScriptDependenciesResolver::class)
+@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
 abstract class ScriptWithClassParam(param: TestParamClass)
 
 @ScriptFilePattern(".*\\.kts")
-@ScriptDependencyResolver(TestKotlinScriptDependenciesResolver::class)
+@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
 abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
 
 @Target(AnnotationTarget.FILE)

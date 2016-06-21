@@ -92,6 +92,13 @@ fun <TF> getFilePath(file: TF): String = when (file) {
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
+fun <TF> getFile(file: TF): File? = when (file) {
+    is PsiFile -> file.originalFile.run { File(virtualFile?.path) }
+    is VirtualFile -> File(file.path)
+    is File -> file
+    else -> throw IllegalArgumentException("Unsupported file type $file")
+}
+
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")
 
