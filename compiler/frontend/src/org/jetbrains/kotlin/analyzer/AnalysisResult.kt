@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.analyzer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
+import java.io.File
 
 open class AnalysisResult protected constructor(
         val bindingContext: BindingContext,
@@ -58,6 +59,12 @@ open class AnalysisResult protected constructor(
     }
 
     private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
+    
+    class RetryWithAdditionalJavaRoots(
+            bindingContext: BindingContext, 
+            moduleDescriptor: ModuleDescriptor, 
+            val additionalJavaRoots: List<File>
+    ) : AnalysisResult(bindingContext, moduleDescriptor)
 
     companion object {
         val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())

@@ -58,16 +58,16 @@ interface JvmDependenciesIndex {
     ): Set<String>
 }
 
-interface JvmDependenciesIndexFactory {
-    fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex
+interface JvmDependenciesIndexFactory<out T : JvmDependenciesIndex> {
+    fun makeIndexFor(roots: List<JavaRoot>): T
 }
 
-class JvmStaticDependenciesIndexFactory : JvmDependenciesIndexFactory {
-    override fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots)
+class JvmStaticDependenciesIndexFactory : JvmDependenciesIndexFactory<JvmDependenciesIndex> {
+    override fun makeIndexFor(roots: List<JavaRoot>) = JvmDependenciesIndexImpl(roots)
 }
 
-class JvmUpdatableDependenciesIndexFactory : JvmDependenciesIndexFactory {
-    override fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesDynamicCompoundIndex().apply {
+class JvmUpdatableDependenciesIndexFactory : JvmDependenciesIndexFactory<JvmDependenciesDynamicCompoundIndex> {
+    override fun makeIndexFor(roots: List<JavaRoot>) = JvmDependenciesDynamicCompoundIndex().apply {
         addIndex(JvmDependenciesIndexImpl(roots))
     }
 }

@@ -107,9 +107,9 @@ class KotlinCoreEnvironment private constructor(
         }
     }
     private val sourceFiles = ArrayList<KtFile>()
-    private val rootsIndex: JvmDependenciesIndex
+    private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
-    val configuration: CompilerConfiguration = configuration.copy().apply { setReadOnly(true) }
+    val configuration: CompilerConfiguration = configuration.copy()
 
     init {
         PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
@@ -154,11 +154,9 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
-
-        // TODO: pass index factory in the configuration to avoid selection logic here
-        // for a moment using updatable index for REPL mode, so we can add roots to classpath then compiling subsequent lines in REPL
-        val indexFactory = if (configuration.getBoolean(CommonConfigurationKeys.REPL_MODE)) JvmUpdatableDependenciesIndexFactory()
-                           else JvmStaticDependenciesIndexFactory()
+        
+        // REPL and kapt2 update classpath dynamically
+        val indexFactory = JvmUpdatableDependenciesIndexFactory()
 
         rootsIndex = indexFactory.makeIndexFor(initialRoots)
         updateClasspathFromRootsIndex(rootsIndex)
@@ -226,19 +224,17 @@ class KotlinCoreEnvironment private constructor(
             projectEnvironment.addSourcesToClasspath(it.file)
         }
     }
+    
+    fun updateClasspath(roots: List<ContentRoot>): List<File>? {
+        return rootsIndex.addNewIndexForRoots(roots.classpathRoots())?.let {
+            updateClasspathFromRootsIndex(it)
+            it.indexedRoots.mapNotNull { File(it.file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
+        } ?: emptyList()
+    }
 
     @Suppress("unused") // used externally
-    fun tryUpdateClasspath(files: Iterable<File>): List<File>? =
-        if (rootsIndex !is JvmDependenciesDynamicCompoundIndex) {
-            report(WARNING, "Unable to update classpath after initialization, it is only allowed in REPL")
-            null
-        }
-        else {
-            rootsIndex.addNewIndexForRoots(files.map { JvmClasspathRoot(it) }.classpathRoots())?.let {
-                updateClasspathFromRootsIndex(it)
-                it.indexedRoots.mapNotNull { File(it.file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
-            } ?: emptyList()
-        }
+    @Deprecated("Use updateClasspath() instead.", ReplaceWith("updateClasspath(files)"))
+    fun tryUpdateClasspath(files: Iterable<File>): List<File>? = updateClasspath(files.map(::JvmClasspathRoot))
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         when (root) {

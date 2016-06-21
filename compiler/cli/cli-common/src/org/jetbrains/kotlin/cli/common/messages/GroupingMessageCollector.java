@@ -34,6 +34,11 @@ public class GroupingMessageCollector implements MessageCollector {
     }
 
     @Override
+    public void clear() {
+        groupedMessages.clear();
+    }
+
+    @Override
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,
