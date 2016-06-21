@@ -265,6 +265,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("warningJdkWithNoJdk.args")
+        public void testWarningJdkWithNoJdk() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("warningsInDummy.args")
         public void testWarningsInDummy() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningsInDummy.args");

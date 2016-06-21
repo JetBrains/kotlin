@@ -108,6 +108,15 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testCustomJdk() {
+        Project("customJdk", "1.6").build("build") {
+            assertFailed()
+            assertContains("Unresolved reference: stream")
+            assertNotContains("AutoCloseable")
+        }
+    }
+
+    @Test
     fun testGradleSubplugin() {
         val project = Project("kotlinGradleSubplugin", "1.6")
 

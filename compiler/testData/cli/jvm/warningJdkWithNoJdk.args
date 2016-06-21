@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-jdk
+$TESTDATA_DIR$
+-no-jdk
