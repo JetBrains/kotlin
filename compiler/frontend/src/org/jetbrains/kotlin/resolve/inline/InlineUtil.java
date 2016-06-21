@@ -39,8 +39,26 @@ public class InlineUtil {
                FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
+    public static boolean isInlineFunctionOrProperty(@Nullable DeclarationDescriptor descriptor) {
+        return isInline(descriptor) || isInlineProperty(descriptor);
+    }
+
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof FunctionDescriptor && getInlineStrategy((FunctionDescriptor) descriptor).isInline();
+    }
+
+    public static boolean isInlineProperty(@Nullable DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof PropertyDescriptor))  return false;
+
+        PropertyGetterDescriptor getter = ((PropertyDescriptor) descriptor).getGetter();
+        if (getter == null || !getter.isInline()) return false;
+
+        if (((PropertyDescriptor) descriptor).isVar()) {
+            PropertySetterDescriptor setter = ((PropertyDescriptor) descriptor).getSetter();
+            return setter != null && setter.isInline();
+        }
+
+        return true;
     }
 
     public static boolean isInlineOrContainingInline(@Nullable DeclarationDescriptor descriptor) {
