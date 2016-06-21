@@ -546,20 +546,7 @@ public final class StaticContext {
                     JsNameRef result = getQualifierForParentPackage(((PackageFragmentDescriptor) containingDescriptor).getFqName());
 
                     JsExpression moduleExpression = getModuleExpressionFor(descriptor);
-                    if (moduleExpression == null) return result;
-
-                    if (LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) {
-                        return null;
-                    }
-
-                    JsName moduleId = moduleName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
-                                      importedModules.get(moduleName);
-                    if (moduleId == null) {
-                        moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
-                        importedModules.put(moduleName, moduleId);
-                    }
-
-                    return JsAstUtils.replaceRootReference(result, JsAstUtils.pureFqn(moduleId, null));
+                    return moduleExpression != null ? JsAstUtils.replaceRootReference(result, moduleExpression) : result;
                 }
             };
             Rule<JsExpression> constructorOrCompanionObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
@@ -667,7 +654,7 @@ public final class StaticContext {
             importedModules.put(moduleName, moduleId);
         }
 
-        return JsAstUtils.fqnWithoutSideEffects(moduleId, null);
+        return JsAstUtils.pureFqn(moduleId, null);
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
