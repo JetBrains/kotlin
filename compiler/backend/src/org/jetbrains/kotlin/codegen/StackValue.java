@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -1783,6 +1784,20 @@ public abstract class StackValue {
     }
 
     private static StackValue complexReceiver(StackValue stackValue, boolean... isReadOperations) {
+        if (stackValue instanceof Property) {
+            ResolvedCall resolvedCall = ((Property) stackValue).resolvedCall;
+            if (resolvedCall != null &&
+                resolvedCall.getResultingDescriptor() instanceof PropertyDescriptor &&
+                InlineUtil.hasInlineAccessors((PropertyDescriptor) resolvedCall.getResultingDescriptor())) {
+                //TODO need to support
+                throwUnsupportedComplexOperation(resolvedCall.getResultingDescriptor());
+            }
+        }
+        else if (stackValue instanceof Delegate) {
+            //TODO need to support
+            throwUnsupportedComplexOperation(((Delegate) stackValue).variableDescriptor);
+        }
+
         if (stackValue instanceof StackValueWithSimpleReceiver) {
             return new DelegatedForComplexReceiver(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
                                  new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
@@ -1853,6 +1868,14 @@ public abstract class StackValue {
             v.pop();
             v.mark(end);
         }
+    }
+
+    private static void throwUnsupportedComplexOperation(
+            @NotNull CallableDescriptor descriptor
+    ) {
+        throw new RuntimeException(
+                "Augment assignment and increment are not supported for local delegated properties ans inline properties: " +
+                descriptor);
     }
 }
 
