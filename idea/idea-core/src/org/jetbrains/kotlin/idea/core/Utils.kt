@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
@@ -162,6 +163,12 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
 }
 
 fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
+
+fun FqName.quoteSegmentsIfNeeded(): String {
+    return pathSegments().map { it.asString().quoteIfNeeded() }.joinToString(".")
+}
+
+fun FqName.quoteIfNeeded() = FqName(quoteSegmentsIfNeeded())
 
 fun isEnumCompanionPropertyWithEntryConflict(element: PsiElement, expectedName: String): Boolean {
     if (element !is KtProperty) return false

@@ -24,10 +24,10 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -154,7 +154,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (expression !is KtNameReferenceExpression) return expression
         if (expression.parent is KtThisExpression || expression.parent is KtSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
-        val newExpression = expression.changeQualifiedName(fqName)
+        val newExpression = expression.changeQualifiedName(fqName.quoteIfNeeded())
         val newQualifiedElement = newExpression.getQualifiedElement()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
@@ -181,14 +181,14 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtNameReferenceExpression {
         assert(!fqName.isRoot) { "Can't set empty FqName for element $this" }
 
-        val shortName = fqName.shortName().render()
+        val shortName = fqName.shortName().asString()
         val psiFactory = KtPsiFactory(this)
         val fqNameBase = (parent as? KtCallExpression)?.let { parent ->
             val callCopy = parent.copy() as KtCallExpression
             callCopy.calleeExpression!!.replace(psiFactory.createSimpleName(shortName)).parent!!.text
         } ?: shortName
 
-        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().render()}.$fqNameBase" else fqNameBase
+        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
 
         val elementToReplace = getQualifiedElement()
 
