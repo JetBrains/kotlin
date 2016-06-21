@@ -220,7 +220,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             afterInside(ANNOTATION_ENTRY, ANNOTATED_EXPRESSION).spaces(1)
 
             before(SEMICOLON).spaces(0)
-            after(SEMICOLON).spaces(1)
 
             beforeInside(INITIALIZER_LIST, ENUM_ENTRY).spaces(0)
 
@@ -321,6 +320,17 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
                 inPosition(rightSet = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT)).spacing(
                         Spacing.createKeepingFirstColumnSpacing(0, Integer.MAX_VALUE, settings.KEEP_LINE_BREAKS, kotlinCommonSettings.KEEP_BLANK_LINES_IN_CODE))
+            }
+
+            // Add space after a semicolon if there is another child at the same line
+            inPosition(left = SEMICOLON).customRule { parent, left, right ->
+                val nodeAfterLeft = left.node.treeNext
+                if (nodeAfterLeft is PsiWhiteSpace && !nodeAfterLeft.textContains('\n')) {
+                    Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
+                }
+                else {
+                    null
+                }
             }
 
             inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)
