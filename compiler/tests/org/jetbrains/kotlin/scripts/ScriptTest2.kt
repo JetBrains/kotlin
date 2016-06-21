@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -120,6 +119,7 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
+    @AcceptedAnnotations(depends::class)
     override fun resolve(scriptFile: File?,
                          annotations: Iterable<Annotation>,
                          environment: Map<String, Any?>?,
@@ -145,16 +145,19 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
             ?: emptyList()
 }
 
-@ScriptFilePattern(".*\\.kts")
-@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithIntParam(num: Int)
 
-@ScriptFilePattern(".*\\.kts")
-@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithClassParam(param: TestParamClass)
 
-@ScriptFilePattern(".*\\.kts")
-@ScriptDependenciesResolverClass(TestKotlinScriptDependenciesResolver::class, depends::class)
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
 
 @Target(AnnotationTarget.FILE)

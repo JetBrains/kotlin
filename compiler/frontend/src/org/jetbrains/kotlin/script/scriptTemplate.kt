@@ -34,11 +34,13 @@ import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.memberFunctions
 import kotlin.reflect.memberProperties
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptFilePattern(val pattern: String)
+annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver>,
+                                          val scriptFilePattern: String)
 
 interface ScriptDependenciesResolver {
     fun resolve(scriptFile: File?,
@@ -48,12 +50,14 @@ interface ScriptDependenciesResolver {
     ): KotlinScriptExternalDependencies? = null
 }
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptDependenciesResolverClass(val resolver: KClass<out ScriptDependenciesResolver>,
-                                                 vararg val supportedAnnotationClasses: KClass<out Any>)
+annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KClass<out Annotation>)
 
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val environment: Map<String, Any?>?) : KotlinScriptDefinition {
+
+    private val definitionAnnotation by lazy { template.annotations.mapNotNull { it as? ScriptTemplateDefinition }.firstOrNull() }
+
     override val name = template.simpleName!!
 
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
@@ -66,30 +70,32 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
             getScriptParameters(scriptDescriptor).map { it.name }
 
     override fun <TF> isScript(file: TF): Boolean =
-            template.annotations.any { (it as? ScriptFilePattern)?.let { Regex(it.pattern).matches(getFileName(file)) } ?: false }
+            definitionAnnotation?.let { Regex(it.scriptFilePattern).matches(getFileName(file)) } ?: false
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
+    private class ResolverWithAcceptedAnnotations(val resolverClass: KClass<out ScriptDependenciesResolver>) {
+        val resolver by lazy { resolverClass.constructors.first().call() }
+        val acceptedAnnotations by lazy {
+            val resolveMethodName = ScriptDependenciesResolver::class.memberFunctions.first().name
+            resolverClass.memberFunctions.find { it.name == resolveMethodName }?.annotations
+                    ?.mapNotNull { it as? AcceptedAnnotations }
+                    ?.flatMap {
+                        val v = it.supportedAnnotationClasses
+                        v.toList() // TODO: find out why if inlined, it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass"
+                    }
+            ?: emptyList()
+        }
+    }
+
     private val dependenciesResolvers by lazy {
-        template.annotations.mapNotNull { it as? ScriptDependenciesResolverClass }.map { Pair(it, it.resolver.constructors.first().call()) }
+        definitionAnnotation?.resolver?.let { listOf(ResolverWithAcceptedAnnotations(it)) } ?: emptyList()
     }
 
     private val supportedAnnotationClasses: List<KClass<out Any>> by lazy {
-        template.annotations.mapNotNull { it as? ScriptDependenciesResolverClass }
-                .flatMap {
-                    // it.supportedAnnotationClasses.asIterable() // TODO: find out why it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass"
-                    it.supportedAnnotationClasses.asIterable2()
-                }
+        dependenciesResolvers.flatMap { it.acceptedAnnotations }
                 .distinctBy { it.qualifiedName }
-    }
-
-    private fun Array<out KClass<out Any>>.asIterable2(): ArrayList<KClass<out Any>> {
-        val res = arrayListOf<KClass<out Any>>()
-        for (x in this) {
-            res.add(x)
-        }
-        return res
     }
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
@@ -110,12 +116,12 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
                 Pair(it.first, InvalidScriptResolverAnnotation(it.second.name, it.second.valueArguments, ex))
             }
         }
-        val fileDeps = dependenciesResolvers.mapNotNull { resolver ->
+        val fileDeps = dependenciesResolvers.mapNotNull { resolverWrapper ->
             val supportedAnnotations = annotations.mapNotNull { ann ->
                 val annFQN = ann.first.qualifiedName
-                if (resolver.first.supportedAnnotationClasses.asIterable2().any { it.qualifiedName == annFQN }) ann.second else null
+                if (resolverWrapper.acceptedAnnotations.any { it.qualifiedName == annFQN }) ann.second else null
             }
-            resolver.second.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
+            resolverWrapper.resolver.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
         }
         return KotlinScriptExternalDependenciesUnion(fileDeps)
     }
