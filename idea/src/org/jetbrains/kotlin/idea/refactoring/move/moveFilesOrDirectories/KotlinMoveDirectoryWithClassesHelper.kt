@@ -28,6 +28,7 @@ import com.intellij.util.Function
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.ArrayList
@@ -89,7 +90,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         moveContextMap[file] = MoveContext(moveDestination,
                                            fileHandler.findInternalUsages(file, moveDestination),
                                            moveDeclarationsProcessor)
-        moveDestination.getPackage()?.let { newPackage -> file.packageDirective?.fqName = FqName(newPackage.qualifiedName) }
+        moveDestination.getPackage()?.let { newPackage -> file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded() }
         return true
     }
 

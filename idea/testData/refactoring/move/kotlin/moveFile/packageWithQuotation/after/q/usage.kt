@@ -1,6 +1,6 @@
 package q
 
-import p.foo
+import p.`123`.foo
 
 fun bar() {
     foo()
