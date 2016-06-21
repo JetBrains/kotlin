@@ -544,4 +544,9 @@ public class TranslationContext {
                                                                "reports true for given constructor: " + constructor);
         callSites.add(new DeferredCallSite(constructor, invocationArgs, this));
     }
+
+    @Nullable
+    public JsExpression getModuleExpressionFor(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getModuleExpressionFor(descriptor);
+    }
 }
