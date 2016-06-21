@@ -35,7 +35,7 @@ class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationMana
             gradleLibsPath?.listFiles { file -> file.extension == "jar" && depLibsPrefixes.any { file.name.startsWith(it) } }
                 ?.map { it.canonicalPath }
                 ?: emptyList()
-    override val context: Any? = gradleHome
+    override val environment: Map<String, Any?>? = kotlin.collections.mapOf("gradleHome" to gradleHome)
 
     companion object {
         private val depLibsPrefixes = listOf("gradle-script-kotlin", "gradle-core")

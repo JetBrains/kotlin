@@ -34,7 +34,7 @@ interface ScriptTemplateProvider {
 
     val dependenciesClasspath: Iterable<String>
 
-    val context: Any?
+    val environment: Map<String, Any?>?
 
     companion object {
         val EP_NAME = ExtensionPointName.create<ScriptTemplateProvider>("org.jetbrains.kotlin.scriptTemplateProvider")
@@ -56,7 +56,7 @@ fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvid
             val loader = URLClassLoader(it.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
             val cl = loader.loadClass(it.templateClassName)
             idToVersion.put(it.id, it.version)
-            KotlinScriptDefinitionFromTemplate(cl.kotlin, it.context)
+            KotlinScriptDefinitionFromTemplate(cl.kotlin, it.environment)
         }
         catch (ex: Exception) {
             errorsHandler(it, ex)

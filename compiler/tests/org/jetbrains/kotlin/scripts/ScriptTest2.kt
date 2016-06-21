@@ -69,10 +69,10 @@ class ScriptTest2 {
     private fun compileScript(
             scriptPath: String,
             scriptBase: KClass<out Any>,
-            context: Any? = null,
+            environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, context), runIsolated, suppressOutput)
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, environment), runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
@@ -120,7 +120,7 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    override fun resolve(scriptFile: File?, annotations: Iterable<Annotation>, context: Any?): KotlinScriptExternalDependencies? {
+    override fun resolve(scriptFile: File?, annotations: Iterable<Annotation>, environment: Map<String, Any?>?): KotlinScriptExternalDependencies? {
         val cp = annotations.flatMap {
             when (it) {
                 is depends -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
