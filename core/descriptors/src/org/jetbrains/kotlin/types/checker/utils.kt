@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.checker
 
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -63,6 +64,13 @@ fun findCorrespondingSupertype(
                 isAnyMarkedNullable = isAnyMarkedNullable || currentType.isMarkedNullable
 
                 currentPathNode = currentPathNode.previous
+            }
+
+            if (!typeCheckingProcedureCallbacks.assertEqualTypeConstructors(substituted.constructor, supertypeConstructor)) {
+                throw AssertionError("Type constructors should be equals!" +
+                                     "substitutedSuperType: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(substituted)}, " +
+                                     "foundSupertype: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(currentSubtype)}, " +
+                                     "supertype: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(supertype)}")
             }
 
             return TypeUtils.makeNullableAsSpecified(substituted, isAnyMarkedNullable)
