@@ -125,10 +125,12 @@ class Kotlin2JvmSourceSetProcessor(
 
         project.afterEvaluate { project ->
             if (project != null) {
-                val subpluginEnvironment = loadSubplugins(project)
-                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
+
+                val subpluginEnvironment = loadSubplugins(project)
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask, 
+                        javaTask as? AbstractCompile, null, sourceSet)
+                
                 if (javaTask !is JavaCompile) return@afterEvaluate
 
                 var kotlinAfterJavaTask: KotlinCompile? = null
@@ -340,7 +342,7 @@ open class KotlinAndroidPlugin(
                 }
             }
 
-            subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+            subpluginEnvironment.addSubpluginArguments(project, kotlinTask, javaTask, variantData, null)
             kotlinTask.mapClasspath { javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) }
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
@@ -471,7 +473,12 @@ class SubpluginEnvironment(
         val subplugins: List<KotlinGradleSubplugin>
 ) {
 
-    fun addSubpluginArguments(project: Project, kotlinTask: KotlinCompile) {
+    fun addSubpluginArguments(
+            project: Project, 
+            kotlinTask: KotlinCompile, 
+            javaTask: AbstractCompile?,
+            variantData: Any?,
+            javaSourceSet: SourceSet?) {
         val pluginOptions = kotlinTask.pluginOptions
 
         for (subplugin in subplugins) {
@@ -484,7 +491,7 @@ class SubpluginEnvironment(
             val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
             subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-            for (arg in subplugin.getExtraArguments(project, kotlinTask)) {
+            for (arg in subplugin.apply(project, kotlinTask, javaTask, variantData, javaSourceSet)) {
                 pluginOptions.addPluginArgument(subplugin.getPluginName(), arg.key, arg.value)
             }
         }

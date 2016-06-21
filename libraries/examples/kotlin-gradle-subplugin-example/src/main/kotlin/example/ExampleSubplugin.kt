@@ -18,16 +18,23 @@ package example
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
-public class ExampleSubplugin : KotlinGradleSubplugin {
+class ExampleSubplugin : KotlinGradleSubplugin {
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
         return true
     }
 
-    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption> {
+    override fun apply(
+            project: Project, 
+            kotlinCompile: AbstractCompile, 
+            javaCompile: AbstractCompile?, 
+            variantData: Any?,
+            javaSourceSet: SourceSet?
+    ): List<SubpluginOption> {
         println("ExampleSubplugin loaded")
         return listOf(SubpluginOption("exampleKey", "exampleValue"))
     }
