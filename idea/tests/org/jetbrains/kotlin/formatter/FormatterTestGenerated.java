@@ -43,6 +43,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
 
+        @TestMetadata("AnnotationBeforeExpression.after.kt")
+        public void testAnnotationBeforeExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AnonymousInitializers.after.kt")
         public void testAnonymousInitializers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializers.after.kt");
@@ -151,6 +157,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("CurlyBraceStringInterpolation.after.kt")
+        public void testCurlyBraceStringInterpolation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DelegationList.after.kt")
         public void testDelegationList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.kt");
@@ -238,6 +250,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("EmptyLineBetweenProperties.after.kt")
         public void testEmptyLineBetweenProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenProperties.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EnumArguments.after.kt")
+        public void testEnumArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumArguments.after.kt");
             doTest(fileName);
         }
 
@@ -346,6 +364,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("IfSpacing.after.kt")
         public void testIfSpacing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfSpacing.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("In.after.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/In.after.kt");
             doTest(fileName);
         }
 
@@ -496,6 +520,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("secondaryCtorLineBreak.after.kt")
         public void testSecondaryCtorLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/secondaryCtorLineBreak.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Semicolon.after.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Semicolon.after.kt");
             doTest(fileName);
         }
 

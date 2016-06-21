@@ -167,6 +167,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             around(AS_KEYWORD).spaces(1)
             around(IS_KEYWORD).spaces(1)
+            around(IN_KEYWORD).spaces(1)
             aroundInside(IDENTIFIER, BINARY_EXPRESSION).spaces(1)
 
             // before LPAR in constructor(): this() {}
@@ -212,6 +213,16 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
             betweenInside(LOOP_RANGE, RPAR, FOR).spaces(0)
+
+            after(LONG_TEMPLATE_ENTRY_START).spaces(0)
+            before(LONG_TEMPLATE_ENTRY_END).spaces(0)
+
+            afterInside(ANNOTATION_ENTRY, ANNOTATED_EXPRESSION).spaces(1)
+
+            before(SEMICOLON).spaces(0)
+            after(SEMICOLON).spaces(1)
+
+            beforeInside(INITIALIZER_LIST, ENUM_ENTRY).spaces(0)
 
             val TYPE_COLON_ELEMENTS = TokenSet.create(PROPERTY, FUN, VALUE_PARAMETER, DESTRUCTURING_DECLARATION_ENTRY, FUNCTION_LITERAL)
             beforeInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(kotlinSettings.SPACE_BEFORE_TYPE_COLON) }
