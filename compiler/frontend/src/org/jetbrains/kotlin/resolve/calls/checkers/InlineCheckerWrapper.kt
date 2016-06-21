@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -33,7 +33,7 @@ class InlineCheckerWrapper : SimpleCallChecker {
 
         while (parentDescriptor != null) {
             if (InlineUtil.isInline(parentDescriptor)) {
-                val checker = getChecker(parentDescriptor as SimpleFunctionDescriptor)
+                val checker = getChecker(parentDescriptor as FunctionDescriptor)
                 checker.check(resolvedCall, context)
             }
 
@@ -41,7 +41,7 @@ class InlineCheckerWrapper : SimpleCallChecker {
         }
     }
 
-    private fun getChecker(descriptor: SimpleFunctionDescriptor): SimpleCallChecker {
+    private fun getChecker(descriptor: FunctionDescriptor): SimpleCallChecker {
         val map = checkersCache?.get() ?: hashMapOf()
         checkersCache = checkersCache ?: WeakReference(map)
         return map.getOrPut(descriptor) { InlineChecker(descriptor) }
