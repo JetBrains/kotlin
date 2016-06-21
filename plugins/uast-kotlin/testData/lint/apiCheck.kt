@@ -8,14 +8,15 @@ import org.w3c.dom.DOMError
 import org.w3c.dom.DOMErrorHandler
 import org.w3c.dom.DOMLocator
 
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.app.Activity
 import android.app.ApplicationErrorReport
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Build
-import android.widget.Chronometer
-import android.widget.GridLayout
+import android.widget.*
 import dalvik.bytecode.OpcodeInfo
 
 import android.os.Build.VERSION
@@ -35,6 +36,9 @@ class ApiCallTest: Activity() {
         // Ok
         Bundle().getInt("")
 
+        // Ok, this constant is inlined
+        View.SYSTEM_UI_FLAG_FULLSCREEN
+        
         // Virtual call
         <error descr="Call requires API level 11 (current min is 1): `getActionBar`">getActionBar()</error> // API 11
         <error descr="Call requires API level 11 (current min is 1): `getActionBar`">actionBar</error> // API 11
@@ -107,7 +111,13 @@ class ApiCallTest: Activity() {
         }
     }
 
-    fun test(priority: Boolean) {
+    fun test(priority: Boolean, layout: ViewGroup) {
+        if (layout is LinearLayout) {}
+        layout as? LinearLayout
+        
+        if (layout is <error descr="Class requires API level 14 (current min is 1): `GridLayout`">GridLayout</error>) {}
+        layout as? <error descr="Class requires API level 14 (current min is 1): `GridLayout`">GridLayout</error>
+        
         if (android.os.Build.VERSION.<error descr="Field requires API level 4 (current min is 1): `SDK_INT`">SDK_INT</error> >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {

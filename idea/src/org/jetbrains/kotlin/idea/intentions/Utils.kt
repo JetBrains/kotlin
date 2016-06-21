@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
@@ -162,6 +162,13 @@ private fun KtExpression.specialNegation(): KtExpression? {
             val left = left ?: return null
             val right = right ?: return null
             return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
+        }
+
+        is KtIsExpression -> {
+            return factory.createExpressionByPattern("$0 $1 $2",
+                                                     leftHandSide,
+                                                     if (isNegated) "is" else "!is",
+                                                     typeReference ?: return null)
         }
 
         is KtConstantExpression -> {

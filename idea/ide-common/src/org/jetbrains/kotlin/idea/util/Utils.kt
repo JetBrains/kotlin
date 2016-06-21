@@ -16,8 +16,16 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.Flexibility
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
@@ -41,6 +49,41 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
 
         else -> {
             return Pair(null, null)
+        }
+    }
+}
+
+fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
+        receiverToCast: ReceiverValue,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor,
+        dataFlowInfo: DataFlowInfo
+): List<KotlinType> {
+    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo)
+    return variants.filter { type ->
+        variants.all { another -> another === type || chooseMoreSpecific(type, another).let { it == null || it === type } }
+    }
+}
+
+private fun chooseMoreSpecific(type1: KotlinType, type2: KotlinType): KotlinType? {
+    val type1IsSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(type1, type2)
+    val type2IsSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(type2, type1)
+
+    when {
+        type1IsSubtype && !type2IsSubtype -> return type1
+
+        type2IsSubtype && !type1IsSubtype -> return type2
+
+        !type1IsSubtype && !type2IsSubtype -> return null
+
+        else -> { // type1IsSubtype && type2IsSubtype
+            val flexibility1 = type1.getCapability(Flexibility::class.java)
+            val flexibility2 = type2.getCapability(Flexibility::class.java)
+            when {
+                flexibility1 != null && flexibility2 == null -> return type2
+                flexibility2 != null && flexibility1 == null -> return type1
+                else -> return null //TODO?
+            }
         }
     }
 }

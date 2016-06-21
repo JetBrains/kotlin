@@ -47,7 +47,7 @@ class SmartCompletionSession(
         // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
         var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
-        filter = filter exclude topLevelExtensionsExclude // handled via indices
+        filter = filter exclude TopLevelExtensionsExclude // handled via indices
 
         if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
             // if function type is expected we need classes to obtain their constructors

@@ -64,7 +64,9 @@ class KotlinUSwitchEntry(
                     it.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
                     else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
                 }
-                type = KotlinConverter.convert(it.typeReference, this)
+                val typeRef = it.typeReference
+                type = KotlinConverter.convert(typeRef, this)
+                typeReference = typeRef?.let { KotlinConverter.convertTypeReference(it, this) }
             }
             is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
             else -> EmptyUExpression(this)

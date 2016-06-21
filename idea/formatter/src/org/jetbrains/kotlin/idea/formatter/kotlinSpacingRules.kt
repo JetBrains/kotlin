@@ -167,6 +167,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             around(AS_KEYWORD).spaces(1)
             around(IS_KEYWORD).spaces(1)
+            around(IN_KEYWORD).spaces(1)
             aroundInside(IDENTIFIER, BINARY_EXPRESSION).spaces(1)
 
             // before LPAR in constructor(): this() {}
@@ -212,6 +213,15 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
             betweenInside(LOOP_RANGE, RPAR, FOR).spaces(0)
+
+            after(LONG_TEMPLATE_ENTRY_START).spaces(0)
+            before(LONG_TEMPLATE_ENTRY_END).spaces(0)
+
+            afterInside(ANNOTATION_ENTRY, ANNOTATED_EXPRESSION).spaces(1)
+
+            before(SEMICOLON).spaces(0)
+
+            beforeInside(INITIALIZER_LIST, ENUM_ENTRY).spaces(0)
 
             val TYPE_COLON_ELEMENTS = TokenSet.create(PROPERTY, FUN, VALUE_PARAMETER, DESTRUCTURING_DECLARATION_ENTRY, FUNCTION_LITERAL)
             beforeInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(kotlinSettings.SPACE_BEFORE_TYPE_COLON) }
@@ -310,6 +320,17 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
                 inPosition(rightSet = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT)).spacing(
                         Spacing.createKeepingFirstColumnSpacing(0, Integer.MAX_VALUE, settings.KEEP_LINE_BREAKS, kotlinCommonSettings.KEEP_BLANK_LINES_IN_CODE))
+            }
+
+            // Add space after a semicolon if there is another child at the same line
+            inPosition(left = SEMICOLON).customRule { parent, left, right ->
+                val nodeAfterLeft = left.node.treeNext
+                if (nodeAfterLeft is PsiWhiteSpace && !nodeAfterLeft.textContains('\n')) {
+                    Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
+                }
+                else {
+                    null
+                }
             }
 
             inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)

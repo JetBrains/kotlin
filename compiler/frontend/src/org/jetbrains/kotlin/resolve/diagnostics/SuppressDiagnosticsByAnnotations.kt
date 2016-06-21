@@ -39,7 +39,6 @@ abstract class SuppressDiagnosticsByAnnotations(
         vararg annotationsFqName: FqName
 ) : SuppressStringProvider {
 
-    private val annotationsFqName = annotationsFqName
     private val stringsToSuppress = diagnosticsToSuppress.map { it.name.toLowerCase() }
     private val expectedFqNames = annotationsFqName.map { it.toString() }
 

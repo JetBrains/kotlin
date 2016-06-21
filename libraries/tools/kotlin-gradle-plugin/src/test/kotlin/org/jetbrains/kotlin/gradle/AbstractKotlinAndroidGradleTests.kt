@@ -151,4 +151,14 @@ fun getSomething() = 10
             assertCompiledKotlinSources(project.relativizeToSubproject("app", file))
         }
     }
+
+    @Test
+    fun testAndroidExtensions() {
+        val project = Project("AndroidExtensionsProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+    }
 }

@@ -753,6 +753,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedPrivateInInitializer.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("usedVarArg.kt")
+        public void testUsedVarArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedVarArg.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty")
@@ -761,6 +767,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class CanBePrimaryConstructorProperty extends AbstractQuickFixTest {
         public void testAllFilesPresentInCanBePrimaryConstructorProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBePrimaryConstructorProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("commentAfter.kt")
+        public void testCommentAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty/commentAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentAhead.kt")
+        public void testCommentAhead() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBePrimaryConstructorProperty/commentAhead.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("protectedOpenVar.kt")
@@ -8316,6 +8334,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("dontChangeFunctionReturnTypeToErrorType.kt")
             public void testDontChangeFunctionReturnTypeToErrorType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/dontChangeFunctionReturnTypeToErrorType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("literalPropertyWithGetter.kt")
+            public void testLiteralPropertyWithGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/literalPropertyWithGetter.kt");
                 doTest(fileName);
             }
 

@@ -27,6 +27,9 @@ class JavaUAssertExpression(
     val condition: UExpression by lz { JavaConverter.convertOrEmpty(psi.assertCondition, this) }
     val message: UExpression? by lz { JavaConverter.convertOrNull(psi.assertDescription, this) }
 
+    override val receiverType: UType?
+        get() = null
+    
     override val functionReference: USimpleReferenceExpression?
         get() = null
 

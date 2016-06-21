@@ -24,6 +24,7 @@ import com.android.tools.klint.detector.api.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.check.UastAndroidContext
 import org.jetbrains.uast.check.UastScanner
+import org.jetbrains.uast.java.JavaUVariable
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 import java.util.*
@@ -66,6 +67,15 @@ open class ApiDetector : Detector(), UastScanner {
             }
 
             return super.visitCallExpression(node)
+        }
+
+        override fun visitBinaryExpressionWithType(node: UBinaryExpressionWithType): Boolean {
+            val typeRef = node.typeReference
+            if (typeRef != null) {
+                checkVersion(context, typeRef, node.type.resolve(context))
+            }
+            
+            return super.visitBinaryExpressionWithType(node)
         }
 
         override fun visitSimpleReferenceExpression(node: USimpleReferenceExpression): Boolean {
@@ -166,8 +176,18 @@ open class ApiDetector : Detector(), UastScanner {
 
             val parentClass = declaration.parent as? UClass ?: return
             if (!isSdkClass(parentClass) || checkAosp(parentClass)) return
-            val parentInternalName = (node as? UCallExpression)?.getReceiver()?.getExpressionType()?.resolveClass(context)?.internalName
-                                     ?: parentClass.internalName ?: return
+            
+            var parentInternalName = parentClass.internalName
+            
+            if (node is UCallExpression) {
+                val clazz = node.receiverType?.resolveClass(context)?.let { getSupertypeFromAndroidSdk(context, it) }
+                val internalName = clazz?.internalName
+                if (internalName != null) {
+                    parentInternalName = internalName
+                }
+            }
+            
+            if (parentInternalName == null) return
 
             when (declaration) {
                 is UFunction -> {
@@ -176,6 +196,17 @@ open class ApiDetector : Detector(), UastScanner {
                 }
                 is UVariable -> {
                     if (declaration.kind != UastVariableKind.MEMBER) return
+                    if (declaration is JavaUVariable 
+                        && declaration.hasModifier(UastModifier.IMMUTABLE)
+                        && declaration.hasModifier(UastModifier.STATIC)
+                        && declaration.visibility == UastVisibility.PUBLIC
+                        && declaration.initializer.evaluate() != null) {
+                        val type = declaration.type
+                        // Kotlin inlines Java field values with the primitive types, so we don't need to check its version. 
+                        if (type.isPrimitive || type.isString) {
+                            return
+                        }
+                    }
                     check(db.getFieldVersion(parentInternalName, declaration.name), parentClass)
                 }
             }
@@ -196,6 +227,18 @@ open class ApiDetector : Detector(), UastScanner {
             }
 
             return mMinApi
+        }
+        
+        private fun getSupertypeFromAndroidSdk(context: UastContext, clazz: UClass): UClass? {
+            tailrec fun getSuperclassFromAndroidSdk(clazz: UClass): UClass? {
+                if (clazz.fqName?.startsWith("android.") ?: false) return clazz
+                return getSuperclassFromAndroidSdk(clazz.getSuperClass(context) ?: return null)
+            }
+            
+            val superClass = getSuperclassFromAndroidSdk(clazz)
+            if (superClass != null) return superClass
+            
+            return clazz.superTypes.firstOrNull { it.fqName?.startsWith("android.") ?: false }?.resolve(context)
         }
     }
 
