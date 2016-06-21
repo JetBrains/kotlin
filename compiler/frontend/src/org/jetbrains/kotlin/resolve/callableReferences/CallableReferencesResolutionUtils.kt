@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -151,24 +150,15 @@ fun resolvePossiblyAmbiguousCallableReference(
     return null
 }
 
-fun createReflectionTypeForCallableDescriptor(
+fun createKCallableTypeForReference(
         descriptor: CallableDescriptor,
-        lhsType: KotlinType?,
+        lhs: DoubleColonLHS?,
         reflectionTypes: ReflectionTypes,
-        ignoreReceiver: Boolean,
         scopeOwnerDescriptor: DeclarationDescriptor
 ): KotlinType? {
-    val extensionReceiver = descriptor.extensionReceiverParameter
-    val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
-        // See CallableDescriptor#getOwnerForEffectiveDispatchReceiverParameter
-        if ((descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-            DescriptorUtils.getDispatchReceiverParameterIfNeeded(descriptor.containingDeclaration)
-        else dispatchReceiver
-    }
-
     val receiverType =
-            if ((extensionReceiver != null || dispatchReceiver != null) && !ignoreReceiver)
-                lhsType ?: extensionReceiver?.type ?: dispatchReceiver?.type
+            if (descriptor.extensionReceiverParameter != null || descriptor.dispatchReceiverParameter != null)
+                (lhs as? DoubleColonLHS.Type)?.type
             else null
 
     return when (descriptor) {

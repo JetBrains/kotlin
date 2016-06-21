@@ -2234,6 +2234,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt10036_bound.kt")
+                public void testKt10036_bound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt10036_bound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt12751.kt")
+                public void testKt12751() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt12751.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt9601.kt")
                 public void testKt9601() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt9601.kt");
@@ -2255,6 +2267,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("overloads.kt")
                 public void testOverloads() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/overloads.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overloadsBound.kt")
+                public void testOverloadsBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/overloadsBound.kt");
                     doTest(fileName);
                 }
 

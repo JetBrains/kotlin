@@ -1,0 +1,19 @@
+package
+
+public fun foo(/*0*/ list: L<kotlin.CharSequence>, /*1*/ b: B): kotlin.Unit
+public fun </*0*/ T> L<T>.foo(/*0*/ action: (T) -> kotlin.Unit): kotlin.Unit
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun remove(/*0*/ charSequence: kotlin.CharSequence): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class L</*0*/ out T> {
+    public constructor L</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
