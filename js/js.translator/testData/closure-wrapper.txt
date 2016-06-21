@@ -8,12 +8,11 @@
     }
 }(this, function () {
     var Kotlin = {};
-    var kotlin = Kotlin;
     function require() {
         return Kotlin;
     }
     var module = {};
 %output%
-    Kotlin.modules.kotlin = mergedRoot;
-    return mergedRoot;
+    Kotlin.modules.kotlin = Kotlin;
+    return Kotlin;
 }));

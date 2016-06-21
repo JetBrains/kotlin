@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
@@ -51,7 +52,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             "CommonJS/node.js",
             "UMD (detect AMD or CommonJS if available, fallback to plain)"
     );
-    private static final List<String> moduleKindIds = asList("plain", "amd", "commonjs", "umd");
+    private static final List<String> moduleKindIds = asList(K2JsArgumentConstants.MODULE_PLAIN, K2JsArgumentConstants.MODULE_AMD,
+                                                             K2JsArgumentConstants.MODULE_COMMONJS, K2JsArgumentConstants.MODULE_UMD);
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;

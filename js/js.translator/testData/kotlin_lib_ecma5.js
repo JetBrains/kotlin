@@ -186,8 +186,7 @@
             //noinspection JSUnfilteredForInLoop
             Object.defineProperty(constructor, innerTypeName, {
                 get: innerType,
-                configurable: true,
-                enumerable: true
+                configurable: true
             });
         }
     }
@@ -226,7 +225,7 @@
     Kotlin.createClass = function (basesFun, constructor, properties, staticProperties) {
         function $o() {
             var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
-            Object.defineProperty(this, $o.className, {value: klass, enumerable: true});
+            Object.defineProperty(this, $o.className, {value: klass});
             if (staticProperties && staticProperties.object_initializer$) {
                 staticProperties.object_initializer$(klass);
             }
@@ -302,7 +301,7 @@
     Kotlin.createTrait = function (basesFun, properties, staticProperties) {
         function $o() {
             var klass = Kotlin.createTraitNow(getBases(basesFun), properties, staticProperties);
-            Object.defineProperty(this, $o.className, {value: klass, enumerable: true});
+            Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
 
@@ -325,7 +324,7 @@
             var obj = new klass();
             var metadata = klass.$metadata$;
             metadata.type = Kotlin.TYPE.OBJECT;
-            Object.defineProperty(this, $o.className, {value: obj, enumerable: true});
+            Object.defineProperty(this, $o.className, {value: obj});
             defineNestedTypes(obj, klass.$metadata$.types);
             copyProperties(obj, metadata.staticMembers);
             if (metadata.baseClass != null) {
@@ -512,8 +511,7 @@
                         members[p].className = p;
                         Object.defineProperty(definition, p, {
                             get: members[p],
-                            configurable: true,
-                            enumerable: true
+                            configurable: true
                         });
                     }
                     else {
@@ -538,11 +536,11 @@
     Kotlin.definePackage = function (initializer, members) {
         var definition = createDefinition(members);
         if (initializer === null) {
-            return {value: definition, enumerable: true};
+            return {value: definition};
         }
         else {
             var getter = createPackageGetter(definition, initializer);
-            return {get: getter, enumerable: true};
+            return {get: getter};
         }
     };
 
