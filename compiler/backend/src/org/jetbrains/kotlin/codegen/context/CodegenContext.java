@@ -609,8 +609,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                                                                 withinInliningContext, superCallTarget != null);
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-            int setterAccessFlag = setter == null ? propertyAccessFlag
-                                                  : propertyAccessFlag | getVisibilityAccessFlag(setter);
+
+            int setterAccessFlag = propertyAccessFlag;
+            if (setter != null && setter.getVisibility().normalize() != Visibilities.INVISIBLE_FAKE) {
+                setterAccessFlag = propertyAccessFlag | getVisibilityAccessFlag(setter);
+            }
             boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,
                                                                 withinInliningContext, superCallTarget != null);
 
