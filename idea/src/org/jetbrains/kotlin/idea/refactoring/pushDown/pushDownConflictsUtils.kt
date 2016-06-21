@@ -134,7 +134,7 @@ private fun checkMemberClashing(
                     .firstOrNull() { it.name == member.name }
                     ?.let {
                         val message = "${targetClassDescriptor.renderForConflicts()} " +
-                                      "already contains nested class named ${CommonRefactoringUtil.htmlEmphasize(member.name)}"
+                                      "already contains nested class named ${CommonRefactoringUtil.htmlEmphasize(member.name ?: "")}"
                         conflicts.putValue(it, message.capitalize())
                     }
         }
