@@ -22,10 +22,15 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.resolve.OriginCapability
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -34,7 +39,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -114,17 +118,16 @@ abstract class CompletionSession(
 
     protected val prefixMatcher = CamelHumpMatcher(prefix)
 
-    protected val descriptorNameFilter: (Name) -> Boolean = run {
-        val nameFilter = prefixMatcher.asNameFilter()
-        val getOrSetPrefix = listOf("get", "set").firstOrNull { prefix.startsWith(it) }
+    private val descriptorStringNameFilter: (String) -> Boolean = run {
+        val nameFilter = prefixMatcher.asStringNameFilter()
+        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
         if (getOrSetPrefix != null)
-            nameFilter or prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asNameFilter()
+            prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() or nameFilter
         else
             nameFilter
     }
 
-    private infix fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
-            = { this(it) || otherFilter(it) }
+    protected val descriptorNameFilter: (Name) -> Boolean = descriptorStringNameFilter.toNameFilter()
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.completeNonAccessibleDeclarations) }
     protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
@@ -158,18 +161,11 @@ abstract class CompletionSession(
                                    declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) })
     }
 
-    // excludes top-level extensions except for ones declared in the current file - those that are fetched from indices
-    protected val topLevelExtensionsExclude = object : DescriptorKindExclude() {
-        val extensionsFromThisFile = file.declarations
-                .filter { it.isExtensionDeclaration() }
-                .map { it.resolveToDescriptor() }
-                .toSet()
-
+    protected object TopLevelExtensionsExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor !is CallableMemberDescriptor) return false
             if (descriptor.extensionReceiverParameter == null) return false
-            if (descriptor in extensionsFromThisFile) return false
-            if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions from packages */
+            if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions */
             val containingPackage = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
             if (containingPackage.fqName.asString().startsWith("kotlinx.android.synthetic.")) return false // TODO: temporary solution for Android synthetic extensions
             return true
@@ -221,6 +217,12 @@ abstract class CompletionSession(
     }
 
     fun complete(): Boolean {
+        // we restart completion when prefix becomes "get" or "set" to ensure that properties get lower priority comparing to get/set functions (see KT-12299)
+        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("get or set prefix") {
+            override fun accepts(prefix: String, context: ProcessingContext?) = prefix == "get" || prefix == "set"
+        })
+        collector.restartCompletionOnPrefixChange(prefixPattern)
+
         val statisticsContext = calcContextForStatisticsInfo()
         if (statisticsContext != null) {
             collector.addLookupElementPostProcessor { lookupElement ->
@@ -250,7 +252,7 @@ abstract class CompletionSession(
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher,
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, PreferGetSetMethodsToPropertyWeigher,
                                     NotImportedWeigher(importableFqNameClassifier),
                                     NotImportedStaticMemberWeigher(importableFqNameClassifier),
                                     KindWeigher, CallableWeigher)
@@ -315,12 +317,11 @@ abstract class CompletionSession(
 
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-            val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
             val indicesHelper = indicesHelper(true)
             val extensions = if (runtimeReceiver != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), descriptorStringNameFilter)
             else
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, descriptorStringNameFilter)
 
             val pair = extensions.partition { isImportableDescriptorImported(it) }
             variants += pair.first

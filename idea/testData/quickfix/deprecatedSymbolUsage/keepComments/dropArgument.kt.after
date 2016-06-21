@@ -8,5 +8,5 @@ fun oldFun(p: Int) {
 fun newFun(){}
 
 fun foo() {
-    newFun()/* use zero */
+    /* use zero */newFun()
 }

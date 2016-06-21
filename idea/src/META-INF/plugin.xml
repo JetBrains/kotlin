@@ -1572,6 +1572,8 @@
     <deadCode implementation="org.jetbrains.kotlin.idea.inspections.KotlinJUnitStaticEntryPoint"/>
   </extensions>
 
+  <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensionPoints>

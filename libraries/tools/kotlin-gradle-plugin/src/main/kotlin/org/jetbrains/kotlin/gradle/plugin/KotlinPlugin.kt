@@ -61,11 +61,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val project: ProjectInternal,
         val javaBasePlugin: JavaBasePlugin,
         val sourceSet: SourceSet,
+        val tasksProvider: KotlinTasksProvider,
         val pluginName: String,
         val compileTaskNameSuffix: String,
-        val taskDescription: String,
-        val compilerClass: Class<T>,
-        val tasksProvider: KotlinTasksProvider
+        val taskDescription: String
 ) {
     abstract protected fun doTargetSpecificProcessing()
     val logger = Logging.getLogger(this.javaClass)
@@ -114,10 +113,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 
     open protected fun createKotlinCompileTask(suffix: String = ""): T {
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
-        logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
-        val compile = tasksProvider.createKotlinJVMTask(project, name)
-        compile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
-        return compilerClass.cast(compile)
+        logger.kotlinDebug("Creating kotlin compile task $name")
+        val kotlinCompile = doCreateTask(project, name)
+        kotlinCompile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
+        return kotlinCompile
     }
 
     open protected fun commonTaskConfiguration() {
@@ -126,6 +125,8 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         kotlinTask.source(kotlinDirSet)
         mapKotlinTaskProperties(project, kotlinTask)
     }
+
+    protected abstract fun doCreateTask(project: Project, taskName: String): T
 }
 
 class Kotlin2JvmSourceSetProcessor(
@@ -135,17 +136,18 @@ class Kotlin2JvmSourceSetProcessor(
         val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
-        project, javaBasePlugin, sourceSet,
+        project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin",
         compileTaskNameSuffix = "kotlin",
-        taskDescription = "Compiles the $sourceSet.kotlin.",
-        compilerClass = tasksProvider.kotlinJVMCompileTaskClass,
-        tasksProvider = tasksProvider
+        taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
 
     private companion object {
         private var cachedKotlinAnnotationProcessingDep: String? = null
     }
+
+    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+            tasksProvider.createKotlinJVMTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
@@ -206,12 +208,10 @@ class Kotlin2JsSourceSetProcessor(
         val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
-        project, javaBasePlugin, sourceSet,
+        project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin2js",
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
-        compileTaskNameSuffix = "kotlin2Js",
-        compilerClass = tasksProvider.kotlinJSCompileTaskClass,
-        tasksProvider = tasksProvider
+        compileTaskNameSuffix = "kotlin2Js"
 ) {
 
     val copyKotlinJsTaskName = sourceSet.getTaskName("copy", "kotlinJs")
@@ -228,6 +228,9 @@ class Kotlin2JsSourceSetProcessor(
             .map { it.replace(absoluteSourceRootDir, (kotlinTask.property("sourceMapDestinationDir") as File).path) }
 
     private fun shouldGenerateSourceMap() = kotlinTask.property("sourceMap")
+
+    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+            tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
         kotlinTask.kotlinDestinationDir = defaultKotlinDestinationDir
@@ -508,8 +511,15 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
     try {
         val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader).toList()
 
-        val classpath = project.buildscript.configurations.getByName("classpath")
-        val resolvedClasspathArtifacts = classpath.resolvedConfiguration.resolvedArtifacts.toList()
+        fun Project.getResolvedArtifacts() = buildscript.configurations.getByName("classpath")
+                .resolvedConfiguration.resolvedArtifacts
+        
+        val resolvedClasspathArtifacts = project.getResolvedArtifacts().toMutableList()
+        val rootProject = project.rootProject
+        if (rootProject != project) {
+            resolvedClasspathArtifacts += rootProject.getResolvedArtifacts()
+        }
+        
         val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<File>>()
 
         for (subplugin in subplugins) {

@@ -1,4 +1,4 @@
-fun Any.`as`(s: String): String{}
+infix fun Any.`as`(s: String): String{}
 
 fun foo(p: Any) {
     p as <caret>

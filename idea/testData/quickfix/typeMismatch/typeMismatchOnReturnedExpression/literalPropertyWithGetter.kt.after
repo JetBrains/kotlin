@@ -1,0 +1,4 @@
+// "Change 'complex' type to '(Int) -> Long'" "true"
+
+val complex: (Int) -> Long
+    get() = { it.toLong() }

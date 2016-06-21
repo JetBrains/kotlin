@@ -46,7 +46,7 @@ class KotlinInplacePropertyIntroducer(
         title: String,
         doNotChangeVar: Boolean,
         exprType: KotlinType?,
-        extractionResult: ExtractionResult,
+        private var extractionResult: ExtractionResult,
         private val availableTargets: List<ExtractionTarget>
 ): KotlinInplaceVariableIntroducer<KtProperty>(
         property, editor, project, title, KtExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
@@ -54,8 +54,6 @@ class KotlinInplacePropertyIntroducer(
     init {
         assert(availableTargets.isNotEmpty()) { "No targets available: ${property.getElementTextWithContext()}" }
     }
-
-    private var extractionResult = extractionResult
 
     private var currentTarget: ExtractionTarget = extractionResult.config.generatorOptions.target
         set(value: ExtractionTarget) {

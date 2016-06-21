@@ -119,6 +119,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("ExtensionsAndGetPrefix")
+    public void testExtensionsAndGetPrefix() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExtensionsAndGetPrefix/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionsForSmartCast")
     public void testExtensionsForSmartCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExtensionsForSmartCast/");
@@ -182,6 +188,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("JavaInnerClasses")
     public void testJavaInnerClasses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/JavaInnerClasses/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KT12124")
+    public void testKT12124() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/KT12124/");
         doTest(fileName);
     }
 

@@ -304,7 +304,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        return SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
+        return SmartCastManager.Companion.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KotlinType expectedType) {

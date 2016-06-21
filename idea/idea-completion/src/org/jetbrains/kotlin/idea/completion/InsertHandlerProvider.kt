@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -48,9 +49,10 @@ class InsertHandlerProvider(
 
                             1 -> {
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
-                                    val parameterType = parameters.single().type
+                                    val parameter = parameters.single()
+                                    val parameterType = parameter.type
                                     if (parameterType.isFunctionType) {
-                                        if (getValueParametersCountFromFunctionType(parameterType) <= 1) {
+                                        if (getValueParametersCountFromFunctionType(parameterType) <= 1 && !parameter.hasDefaultValue()) {
                                             // otherwise additional item with lambda template is to be added
                                             return KotlinFunctionInsertHandler.Normal(
                                                     callType, needTypeArguments, inputValueArguments = false,
