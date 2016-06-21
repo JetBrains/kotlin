@@ -306,6 +306,11 @@
 - [`KT-12206`](https://youtrack.jetbrains.com/issue/KT-12206) Fix NoSuchFieldError on accessing base property without backing field in evaluate expression
 - [`KT-12516`](https://youtrack.jetbrains.com/issue/KT-12516) File Structure: Kotlin annotation classes have Java annotation icons
 - [`KT-11328`](https://youtrack.jetbrains.com/issue/KT-11328) "New Kotlin class": generates packages when fully qualified name is specified
+- [`KT-10680`](https://youtrack.jetbrains.com/issue/KT-10680) Format spaces around *in* keyword
+- [`KT-12791`](https://youtrack.jetbrains.com/issue/KT-12791) Format spaces inside curly braces in string template
+- [`KT-12781`](https://youtrack.jetbrains.com/issue/KT-12781) Format spaces after annotation in annotated expression
+- [`KT-12689`](https://youtrack.jetbrains.com/issue/KT-12689) Format spaces around semicolon
+- [`KT-12714`](https://youtrack.jetbrains.com/issue/KT-12714) Format spaces before enum arguments
 
 
 ### Reflection
