@@ -233,7 +233,7 @@ class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor is CallableDescriptor && !InlineUtil.isInline(descriptor)) {
+        if (descriptor is CallableDescriptor && !InlineUtil.isInlineFunctionOrProperty(descriptor)) {
             checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, diagnosticHolder)
         }
 
