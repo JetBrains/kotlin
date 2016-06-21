@@ -197,11 +197,7 @@ object LightClassUtil {
         var setterWrapper = specialSetter
         val additionalAccessors = arrayListOf<PsiMethod>()
 
-        val wrappers = getPsiMethodWrappers(ktDeclaration, true).filter {
-            JvmAbi.isGetterName(it.name) || JvmAbi.isSetterName(it.name)
-        }
-
-        for (wrapper in wrappers) {
+        for (wrapper in getPsiMethodWrappers(ktDeclaration, true)) {
             if (JvmAbi.isSetterName(wrapper.name)) {
                 if (setterWrapper == null || setterWrapper === specialSetter) {
                     setterWrapper = wrapper
