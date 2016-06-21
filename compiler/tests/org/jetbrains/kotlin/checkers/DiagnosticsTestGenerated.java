@@ -2085,6 +2085,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/callableReference/generic")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Generic extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInGeneric() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/generic"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt10968.kt")
+                public void testKt10968() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt10968.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt11075.kt")
+                public void testKt11075() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt11075.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt12286.kt")
+                public void testKt12286() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt12286.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/callableReference/property")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
