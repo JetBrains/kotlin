@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getExternalModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -149,13 +150,17 @@ class FunctionReader(private val context: TranslationContext) {
 
         val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram("<inline>")))
         val moduleName = getExternalModuleName(descriptor)!!
-        val moduleNameLiteral = context.program().getStringLiteral(moduleName)
-        val moduleReference = context.namer().getModuleReference(moduleNameLiteral)
+        val moduleReference = context.getModuleExpressionFor(descriptor) ?: getRootPackage()
 
         val replacements = hashMapOf(moduleRootVariable[moduleName]!! to moduleReference,
                                      moduleKotlinVariable[moduleName]!! to Namer.kotlinObject())
         replaceExternalNames(function, replacements)
         return function
+    }
+
+    private fun getRootPackage(): JsExpression {
+        val rootName = context.program().rootScope.declareName(Namer.getRootPackageName())
+        return JsAstUtils.fqnWithoutSideEffects(rootName, null)
     }
 }
 
