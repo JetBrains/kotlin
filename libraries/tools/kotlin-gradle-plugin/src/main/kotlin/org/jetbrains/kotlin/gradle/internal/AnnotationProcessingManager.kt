@@ -63,7 +63,7 @@ fun Project.initKapt(
 
         kotlinAfterJavaTask.source(kaptManager.generatedKotlinSourceDir)
         kotlinAfterJavaTask.source(kaptManager.aptOutputDir)
-        subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
+        subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask, javaTask, null, null)
 
         javaTask.doLast {
             moveGeneratedJavaFilesToCorrespondingDirectories(kaptManager.aptOutputDir)
