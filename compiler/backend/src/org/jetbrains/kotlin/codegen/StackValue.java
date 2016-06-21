@@ -271,10 +271,11 @@ public abstract class StackValue {
             @Nullable String fieldName,
             @Nullable CallableMethod getter,
             @Nullable CallableMethod setter,
-            GenerationState state,
-            @NotNull StackValue receiver
+            @NotNull StackValue receiver,
+            @NotNull ExpressionCodegen codegen,
+            @Nullable ResolvedCall resolvedCall
     ) {
-        return new Property(descriptor, backingFieldOwner, getter, setter, isStaticBackingField, fieldName, type, state, receiver);
+        return new Property(descriptor, backingFieldOwner, getter, setter, isStaticBackingField, fieldName, type, receiver, codegen, resolvedCall);
     }
 
     @NotNull
@@ -1170,23 +1171,27 @@ public abstract class StackValue {
         private final Type backingFieldOwner;
 
         private final PropertyDescriptor descriptor;
-        private final GenerationState state;
 
         private final String fieldName;
+        @NotNull private final ExpressionCodegen codegen;
+        @Nullable private final ResolvedCall resolvedCall;
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @Nullable Type backingFieldOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStaticBackingField,
-                @Nullable String fieldName, @NotNull Type type, @NotNull GenerationState state,
-                @NotNull StackValue receiver
+                @Nullable String fieldName, @NotNull Type type,
+                @NotNull StackValue receiver,
+                @NotNull ExpressionCodegen codegen,
+                @Nullable ResolvedCall resolvedCall
         ) {
             super(type, isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver, true);
             this.backingFieldOwner = backingFieldOwner;
             this.getter = getter;
             this.setter = setter;
             this.descriptor = descriptor;
-            this.state = state;
             this.fieldName = fieldName;
+            this.codegen = codegen;
+            this.resolvedCall = resolvedCall;
         }
 
         @Override
@@ -1202,8 +1207,16 @@ public abstract class StackValue {
                 coerceTo(type, v);
             }
             else {
-                getter.genInvokeInstruction(v);
-                coerce(getter.getReturnType(), type, v);
+                PropertyGetterDescriptor getter = descriptor.getGetter();
+                assert getter != null : "Getter descriptor should be not null for " + descriptor;
+                if (resolvedCall != null && getter.isInline()) {
+                    CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getter);
+                    callGenerator.putHiddenParams();
+                    callGenerator.genCall(this.getter, resolvedCall, false, codegen);
+                } else {
+                    this.getter.genInvokeInstruction(v);
+                }
+                coerce(this.getter.getReturnType(), type, v);
 
                 KotlinType returnType = descriptor.getReturnType();
                 if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
@@ -1243,6 +1256,23 @@ public abstract class StackValue {
             v.visitLdcInsn(descriptor.getName().asString());
             v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwUninitializedPropertyAccessException", "(Ljava/lang/String;)V", false);
             v.mark(ok);
+        }
+
+        @Override
+        public void store(@NotNull StackValue rightSide, @NotNull InstructionAdapter v, boolean skipReceiver) {
+            PropertySetterDescriptor setter = descriptor.getSetter();
+            if (resolvedCall != null && setter != null && setter.isInline()) {
+                assert this.setter != null : "Setter descriptor should be not null for " + descriptor;
+                CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, setter);
+                if (!skipReceiver) {
+                    putReceiver(v, false);
+                }
+                callGenerator.putHiddenParams();
+                callGenerator.putValueIfNeeded(rightSide.type, rightSide);
+                callGenerator.genCall(this.setter, resolvedCall, false, codegen);
+            } else {
+                super.store(rightSide, v, skipReceiver);
+            }
         }
 
         @Override

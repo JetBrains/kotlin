@@ -391,7 +391,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         KtExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, false, null, true, StackValue.LOCAL_0);
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, false, null, true, StackValue.LOCAL_0,
+                                                                             null);
 
         propValue.store(codegen.gen(initializer), codegen.v);
     }
@@ -611,7 +612,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                                          syntheticBackingField ||
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(), forceFieldForCompanionProperty, StackValue.none()
+                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
+                            forceFieldForCompanionProperty, StackValue.none(), null
                     );
 
                     InstructionAdapter iv = codegen.v;

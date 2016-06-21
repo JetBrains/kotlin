@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
@@ -31,12 +33,14 @@ fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
             val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(BitEncoding.decodeBytes(annotationData), strings)
-            inlineFunctionsJvmNames(classProto.functionList, nameResolver, classProto.typeTable)
+            inlineFunctionsJvmNames(classProto.functionList, nameResolver, classProto.typeTable) +
+            inlineAccessorsJvmNames(classProto.propertyList, nameResolver)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(BitEncoding.decodeBytes(annotationData), strings)
-            inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable)
+            inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable) +
+            inlineAccessorsJvmNames(packageProto.propertyList, nameResolver)
         }
         else -> emptySet()
     }
@@ -49,4 +53,28 @@ private fun inlineFunctionsJvmNames(functions: List<ProtoBuf.Function>, nameReso
         JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)
     }
     return jvmNames.toSet()
+}
+
+private fun inlineAccessorsJvmNames(properties: List<ProtoBuf.Property>, nameResolver: NameResolver): Set<String> {
+    val propertiesWithInlineAccessors = properties.filter { proto ->
+        proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.getterFlags) ||
+        proto.hasSetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.setterFlags)
+    }
+    val inlineAccessors = arrayListOf<JvmMethodSignature>()
+    propertiesWithInlineAccessors.forEach { proto ->
+        if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
+            val signature = proto.getExtension(JvmProtoBuf.propertySignature)
+            if (proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.getterFlags)) {
+                inlineAccessors.add(signature.getter)
+            }
+
+            if (proto.hasSetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.setterFlags)) {
+                inlineAccessors.add(signature.setter)
+            }
+        }
+    }
+
+    return inlineAccessors.mapNotNull {
+        nameResolver.getString(it.name) + nameResolver.getString(it.desc)
+    }.toSet()
 }
