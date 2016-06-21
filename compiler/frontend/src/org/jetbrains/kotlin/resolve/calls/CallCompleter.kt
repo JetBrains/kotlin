@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.coroutines.resolveCoroutineHandleResultCallIfNeeded
@@ -172,6 +174,15 @@ class CallCompleter(
     ) {
         val returnType = candidateDescriptor.returnType
 
+        val expectedReturnType =
+                if (isResolvingCallableReference(call)) {
+                    // TODO: compute generic type argument for R in the kotlin.Function<R> supertype (KT-12963)
+                    // TODO: also add constraints for parameter types (KT-12964)
+                    if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) getReturnTypeFromFunctionType(expectedType)
+                    else TypeUtils.NO_EXPECTED_TYPE
+                }
+                else expectedType
+
         fun ConstraintSystem.Builder.returnTypeInSystem(): KotlinType? =
                 returnType?.let {
                     val substitutor = typeVariableSubstitutors[call.toHandle()] ?: error("No substitutor for call: $call")
@@ -185,11 +196,11 @@ class CallCompleter(
             }
         }
 
-        if (returnType != null && !TypeUtils.noExpectedType(expectedType)) {
+        if (returnType != null && !TypeUtils.noExpectedType(expectedReturnType)) {
             updateSystemIfNeeded { builder ->
                 val returnTypeInSystem = builder.returnTypeInSystem()
                 if (returnTypeInSystem != null) {
-                    builder.addSubtypeConstraint(returnTypeInSystem, expectedType, EXPECTED_TYPE_POSITION.position())
+                    builder.addSubtypeConstraint(returnTypeInSystem, expectedReturnType, EXPECTED_TYPE_POSITION.position())
                     builder.build()
                 }
                 else null
@@ -209,7 +220,7 @@ class CallCompleter(
             }
         }
 
-        if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
+        if (returnType != null && expectedReturnType === TypeUtils.UNIT_EXPECTED_TYPE) {
             updateSystemIfNeeded { builder ->
                 val returnTypeInSystem = builder.returnTypeInSystem()
                 if (returnTypeInSystem != null) {
@@ -228,6 +239,11 @@ class CallCompleter(
         setConstraintSystem(system)
 
         setResultingSubstitutor(system.resultingSubstitutor)
+    }
+
+    private fun isResolvingCallableReference(call: Call): Boolean {
+        val callElement = call.callElement
+        return (callElement.parent as? KtCallableReferenceExpression)?.callableReference == callElement
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(

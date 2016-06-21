@@ -163,11 +163,23 @@ class CandidateResolver(
                             },
                             reflectionTypes, scope.ownerDescriptor
                     )
-                    if (candidateKCallableType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateKCallableType, expectedType)) {
+                    if (candidateKCallableType == null ||
+                        !canBeSubtype(candidateKCallableType, expectedType, candidateCall.candidateDescriptor.typeParameters)) {
                         candidateCall.addStatus(OTHER_ERROR)
                     }
                 }
             }
+
+    private fun canBeSubtype(subType: KotlinType, superType: KotlinType, candidateTypeParameters: List<TypeParameterDescriptor>): Boolean {
+        // Here we need to check that there exists a substitution from type parameters (used in types in candidate signature)
+        // to arguments such that substituted candidateKCallableType would be a subtype of expectedType.
+        // It looks like in general this can only be decided by constructing a constraint system and checking
+        // if it has a contradiction. Currently we use a heuristic that may not work ideally in all cases.
+        // TODO: use constraint system to check if candidateKCallableType can be a subtype of expectedType
+        val substituteDontCare = makeConstantSubstitutor(candidateTypeParameters, TypeUtils.DONT_CARE)
+        val subTypeSubstituted = substituteDontCare.substitute(subType, Variance.INVARIANT) ?: return true
+        return KotlinTypeChecker.ERROR_TYPES_ARE_EQUAL_TO_ANYTHING.isSubtypeOf(subTypeSubstituted, superType)
+    }
 
     private fun CallCandidateResolutionContext<*>.checkVisibilityWithoutReceiver() = checkAndReport {
         checkVisibilityWithDispatchReceiver(Visibilities.ALWAYS_SUITABLE_RECEIVER, null)
