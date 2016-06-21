@@ -1,0 +1,8 @@
+<idea-plugin version="2">
+    <extensions defaultExtensionNs="com.intellij">
+        <tipAndTrick file="Kotlin.html"/>
+        <tipAndTrick file="Kotlin_project.html"/>
+        <tipAndTrick file="Kotlin_mix.html"/>
+        <tipAndTrick file="Kotlin_Java_convert.html"/>
+    </extensions>
+</idea-plugin>
