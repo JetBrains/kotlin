@@ -150,7 +150,7 @@ class FunctionReader(private val context: TranslationContext) {
         val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram("<inline>")))
         val moduleName = getExternalModuleName(descriptor)!!
         val moduleNameLiteral = context.program().getStringLiteral(moduleName)
-        val moduleReference =  context.namer().getModuleReference(moduleNameLiteral)
+        val moduleReference = context.namer().getModuleReference(moduleNameLiteral)
 
         val replacements = hashMapOf(moduleRootVariable[moduleName]!! to moduleReference,
                                      moduleKotlinVariable[moduleName]!! to Namer.kotlinObject())

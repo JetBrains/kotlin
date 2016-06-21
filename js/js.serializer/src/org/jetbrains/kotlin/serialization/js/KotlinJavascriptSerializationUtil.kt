@@ -58,10 +58,8 @@ object KotlinJavascriptSerializationUtil {
 
     @JvmStatic fun readModule(metadata: ByteArray, storageManager: StorageManager,
                               kotlinModule: ModuleDescriptor): JsModuleDescriptor<PackageFragmentProvider?> {
-        val prototype = metadata.toContentMap()
-
-        val packageFragmentProvider = createPackageFragmentProvider(kotlinModule, prototype.contentMap, storageManager)
-        return JsModuleDescriptor(kotlinModule.name.asString(), prototype.kind, prototype.imported, packageFragmentProvider)
+        val jsModule = metadata.readAsContentMap(kotlinModule.name.asString())
+        return jsModule.copy(createPackageFragmentProvider(kotlinModule, jsModule.data, storageManager))
     }
 
     @JvmStatic private fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, contentMap: Map<String, ByteArray>,
