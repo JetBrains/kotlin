@@ -120,6 +120,15 @@ class ReflectionTypes(module: ModuleDescriptor) {
         fun isCallableType(type: KotlinType): Boolean =
                 type.isFunctionTypeOrSubtype || isKCallableType(type)
 
+        @JvmStatic fun isFunctionalKPropertyType(type: KotlinType): Boolean {
+            val descriptor = type.constructor.declarationDescriptor ?: return false
+            val segments = DescriptorUtils.getFqName(descriptor).pathSegments()
+            return segments.size == 3 && segments.subList(0, 2) == KOTLIN_REFLECT_FQ_NAME.pathSegments() &&
+                    segments.last().let { it.isProperty("KProperty") || it.isProperty("KMutableProperty")  }
+        }
+
+        private fun Name.isProperty(baseName: String) = asString().startsWith(baseName) && asString() != baseName
+
         private fun isKCallableType(type: KotlinType): Boolean =
                 hasFqName(type.constructor, KotlinBuiltIns.FQ_NAMES.kCallable) ||
                 type.constructor.supertypes.any { isKCallableType(it) }

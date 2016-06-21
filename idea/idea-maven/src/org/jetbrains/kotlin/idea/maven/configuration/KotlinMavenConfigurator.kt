@@ -80,18 +80,20 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
         dialog.show()
         if (!dialog.isOK) return
 
-        val collector = createConfigureKotlinNotificationCollector(project)
-        for (module in excludeMavenChildrenModules(project, dialog.modulesToConfigure)) {
-            val file = findModulePomFile(module)
-            if (file != null && canConfigureFile(file)) {
-                changePomFile(module, file, dialog.kotlinVersion, collector)
-                OpenFileAction.openFile(file.virtualFile, project)
+        WriteCommandAction.runWriteCommandAction(project) {
+            val collector = createConfigureKotlinNotificationCollector(project)
+            for (module in excludeMavenChildrenModules(project, dialog.modulesToConfigure)) {
+                val file = findModulePomFile(module)
+                if (file != null && canConfigureFile(file)) {
+                    changePomFile(module, file, dialog.kotlinVersion, collector)
+                    OpenFileAction.openFile(file.virtualFile, project)
+                }
+                else {
+                    showErrorMessage(project, "Cannot find pom.xml for module " + module.name)
+                }
             }
-            else {
-                showErrorMessage(project, "Cannot find pom.xml for module " + module.name)
-            }
+            collector.showNotification()
         }
-        collector.showNotification()
     }
 
     protected abstract fun isKotlinModule(module: Module): Boolean
@@ -112,33 +114,31 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
             return
         }
 
-        WriteCommandAction.runWriteCommandAction(module.project) {
-            val pom = PomFile(file as XmlFile)
-            pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
+        val pom = PomFile(file as XmlFile)
+        pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
-            pom.addDependency(MavenId(GROUP_ID, stdlibArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
-            if (testArtifactId != null) {
-                pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
-            }
-            if (addJunit) {
-                // TODO currently it is always disabled: junit version selection could be shown in the configurator dialog
-                pom.addDependency(MavenId("junit", "junit", "4.12"), MavenArtifactScope.TEST, null, false, null)
-            }
-
-            if (isSnapshot(version)) {
-                pom.addLibraryRepository(SNAPSHOT_REPOSITORY)
-                pom.addPluginRepository(SNAPSHOT_REPOSITORY)
-            }
-            if (isEap(version)) {
-                pom.addLibraryRepository(EAP_REPOSITORY)
-                pom.addPluginRepository(EAP_REPOSITORY)
-            }
-
-            val plugin = pom.addPlugin(MavenId(GROUP_ID, MAVEN_PLUGIN_ID, "\${$KOTLIN_VERSION_PROPERTY}"))
-            createExecutions(pom, plugin, module)
-
-            CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiFile>(file)
+        pom.addDependency(MavenId(GROUP_ID, stdlibArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
+        if (testArtifactId != null) {
+            pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
         }
+        if (addJunit) {
+            // TODO currently it is always disabled: junit version selection could be shown in the configurator dialog
+            pom.addDependency(MavenId("junit", "junit", "4.12"), MavenArtifactScope.TEST, null, false, null)
+        }
+
+        if (isSnapshot(version)) {
+            pom.addLibraryRepository(SNAPSHOT_REPOSITORY)
+            pom.addPluginRepository(SNAPSHOT_REPOSITORY)
+        }
+        if (isEap(version)) {
+            pom.addLibraryRepository(EAP_REPOSITORY)
+            pom.addPluginRepository(EAP_REPOSITORY)
+        }
+
+        val plugin = pom.addPlugin(MavenId(GROUP_ID, MAVEN_PLUGIN_ID, "\${$KOTLIN_VERSION_PROPERTY}"))
+        createExecutions(pom, plugin, module)
+
+        CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiFile>(file)
 
         collector.addMessage(virtualFile.path + " was modified")
     }
