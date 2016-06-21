@@ -1,0 +1,12 @@
+package
+
+public object TestCallableReferences {
+    private constructor TestCallableReferences()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ A> foo(/*0*/ x: A): A
+    public final fun </*0*/ B> foo(/*0*/ x: kotlin.collections.List<B>): kotlin.collections.List<B>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test0(): (kotlin.String) -> kotlin.String
+    public final fun </*0*/ T> test1(): (kotlin.collections.List<T>) -> kotlin.collections.List<T>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

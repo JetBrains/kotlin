@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T : kotlin.Comparable<T>> maxOf(/*0*/ a: T, /*1*/ b: T): T
+public fun </*0*/ T : kotlin.Comparable<T>> useMaxOf(): kotlin.Unit
