@@ -261,9 +261,8 @@ public class ArgumentTypeResolver {
                     OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
             if (resolvedCall == null) return null;
 
-            return CallableReferencesResolutionUtilsKt.createReflectionTypeForCallableDescriptor(
-                    resolvedCall.getResultingDescriptor(), lhs != null ? lhs.getType() : null, reflectionTypes,
-                    callableReferenceExpression.isEmptyLHS(), context.scope.getOwnerDescriptor()
+            return CallableReferencesResolutionUtilsKt.createKCallableTypeForReference(
+                    resolvedCall.getResultingDescriptor(), lhs, reflectionTypes, context.scope.getOwnerDescriptor()
             );
         }
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
+import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -158,12 +158,14 @@ class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkExpectedCallableType()
             = check {
                 if (!noExpectedType(expectedType)) {
-                    val callableReferenceExpression = call.callElement.parent as? KtCallableReferenceExpression
-                    val candidateReflectionType = createReflectionTypeForCallableDescriptor(
-                            candidateCall.candidateDescriptor, null, reflectionTypes,
-                            callableReferenceExpression?.isEmptyLHS == true, scope.ownerDescriptor
+                    val candidateKCallableType = createKCallableTypeForReference(
+                            candidateCall.candidateDescriptor,
+                            (call.callElement.parent as? KtCallableReferenceExpression)?.receiverExpression?.let {
+                                trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, it)
+                            },
+                            reflectionTypes, scope.ownerDescriptor
                     )
-                    if (candidateReflectionType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
+                    if (candidateKCallableType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateKCallableType, expectedType)) {
                         candidateCall.addStatus(OTHER_ERROR)
                     }
                 }

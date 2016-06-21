@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
+import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
@@ -286,10 +286,7 @@ class DoubleColonExpressionResolver(
 
         checkReferenceIsToAllowedMember(descriptor, context.trace, expression)
 
-        val ignoreReceiver = lhs is DoubleColonLHS.Expression || expression.isEmptyLHS
-        val type = createReflectionTypeForCallableDescriptor(
-                descriptor, lhs?.type, reflectionTypes, ignoreReceiver, context.scope.ownerDescriptor
-        ) ?: return null
+        val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, context.scope.ownerDescriptor) ?: return null
 
         when (descriptor) {
             is FunctionDescriptor -> bindFunctionReference(expression, type, context)
