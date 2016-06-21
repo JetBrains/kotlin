@@ -19,63 +19,51 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.*
 
-object SimpleAnnotationAst {
+internal class KtAnnotationWrapper(val psi: KtAnnotationEntry) {
+    val name: String
+        get() = (psi.typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
 
-    sealed class Node<out T>(val name: String) {
-        class empty(name: String) : Node<Unit>(name)
-        class str(name: String, val value: String) : Node<String>(name)
-        class int(name: String, val value: Int) : Node<Int>(name)
-        class list<out T>(name: String, val value: List<Node<T>>) : Node<List<Node<T>>>(name)
-        class ann(name: String, val value: List<Node<Any>>) : Node<List<Node<Any>>>(name)
+    val valueArguments by lazy {
+        psi.valueArguments.map {
+            Pair(it.getArgumentName()?.toString(), convert(it.getArgumentExpression()!!))
+        }
     }
 
-    class KtAnnotationWrapper(val psi: KtAnnotationEntry) {
-        val name: String
-            get() = (psi.typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
+    internal fun String?.orAnonymous(kind: String = ""): String {
+        return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
+    }
 
-        val valueArguments by lazy {
-            psi.valueArguments.map {
-                val name = it.getArgumentName()?.asName?.identifier.orAnonymous()
-                convert(it.getArgumentExpression()!!)
-            }
+    internal fun convert(expression: KtExpression): Any? = when (expression) {
+        is KtStringTemplateExpression -> {
+            if (expression.entries.isEmpty())
+                ""
+            else if (expression.entries.size == 1)
+                convert(expression.entries[0])
+            else
+                ""
+            // TODO: parse expressions, etc. e.g.:
+            //      convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
         }
+        else -> null
 
-        internal fun String?.orAnonymous(kind: String = ""): String {
-            return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
+    }
+
+    internal fun convert(entry: KtStringTemplateEntry): Any? = when (entry) {
+        is KtStringTemplateEntryWithExpression -> convertOrEmpty(entry.expression)
+        is KtEscapeStringTemplateEntry -> entry.unescapedValue
+        else -> {
+            StringUtil.unescapeStringCharacters(entry.text)
         }
+    }
 
-        internal fun convert(expression: KtExpression): Node<Any> = when (expression) {
-            is KtStringTemplateExpression -> {
-                if (expression.entries.isEmpty())
-                    SimpleAnnotationAst.Node.str(name, "")
-                else if (expression.entries.size == 1)
-                    convert(expression.entries[0])
-                else
-                    SimpleAnnotationAst.Node.str(name, "")
-                    // TODO: parse expressions, etc. e.g.:
-                    //      convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
-            }
-            else -> Node.empty(name)
-
-        }
-
-        internal fun convert(entry: KtStringTemplateEntry): Node<Any> = when (entry) {
-            is KtStringTemplateEntryWithExpression -> convertOrEmpty(entry.expression)
-            is KtEscapeStringTemplateEntry -> Node.str(name, entry.unescapedValue)
-            else -> {
-                Node.str(name, StringUtil.unescapeStringCharacters(entry.text))
-            }
-        }
-
-        internal fun convertOrEmpty(expression: KtExpression?): Node<Any> {
-            return if (expression != null) convert(expression) else Node.empty(name)
-        }
+    internal fun convertOrEmpty(expression: KtExpression?): Any? {
+        return if (expression != null) convert(expression) else null
     }
 }
 
-fun parseAnnotation(ann: KtAnnotationEntry): SimpleAnnotationAst.Node.list<Any> {
-    val wann = SimpleAnnotationAst.KtAnnotationWrapper(ann)
+fun parseAnnotation(ann: KtAnnotationEntry): Pair<String, Iterable<Any?>> {
+    val wann = KtAnnotationWrapper(ann)
     val vals = wann.valueArguments
-    return SimpleAnnotationAst.Node.list(wann.name, vals)
+    return Pair(wann.name, vals)
 }
 
