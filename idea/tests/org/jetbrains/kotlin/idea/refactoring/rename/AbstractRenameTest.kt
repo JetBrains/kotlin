@@ -370,9 +370,10 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             isSearchInComments: Boolean,
             isSearchTextOccurrences: Boolean
     ) {
+        if (substitution == null) return
         val renameProcessor = RenameProcessor(context.project, substitution, newName, isSearchInComments, isSearchTextOccurrences)
         if (renameParamsObject["overloadRenamer.onlyPrimaryElement"]?.asBoolean ?: false) {
-            with(AutomaticOverloadsRenamer) { substitution?.elementFilter = { false } }
+            with(AutomaticOverloadsRenamer) { substitution.elementFilter = { false } }
         }
         Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { renameProcessor.addRenamerFactory(it) }
         renameProcessor.run()
