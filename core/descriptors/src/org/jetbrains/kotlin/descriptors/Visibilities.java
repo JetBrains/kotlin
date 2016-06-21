@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.SuperCallReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver;
+import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
 import org.jetbrains.kotlin.utils.CollectionsKt;
@@ -176,7 +177,7 @@ public class Visibilities {
                                             ? ((SuperCallReceiverValue) receiver).getThisType()
                                             : receiver.getType();
 
-            return DescriptorUtils.isSubtypeOfClass(actualReceiverType, fromClass);
+            return DescriptorUtils.isSubtypeOfClass(actualReceiverType, fromClass) || DynamicTypesKt.isDynamic(actualReceiverType);
         }
     };
 
