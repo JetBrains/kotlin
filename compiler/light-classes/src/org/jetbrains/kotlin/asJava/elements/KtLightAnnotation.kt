@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.TypeUtils
 
 class KtLightAnnotation(
         override val clsDelegate: PsiAnnotation,
@@ -69,6 +71,13 @@ class KtLightAnnotation(
 
                 else -> null
             }
+        }
+        
+        fun getConstantValue(): Any? {
+            val expression = originalExpression as? KtExpression ?: return null
+            val annotationEntry = this@KtLightAnnotation.kotlinOrigin
+            val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
+            return context[BindingContext.COMPILE_TIME_VALUE, expression]?.getValue(TypeUtils.NO_EXPECTED_TYPE)
         }
 
         private fun unwrapArray(arguments: List<ValueArgument>): PsiElement? {
