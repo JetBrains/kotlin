@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'file://' + pathToKotlinPlugin
+        }
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT'
+    }
+}
+
+apply plugin: "kotlin"
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src'
+        }
+    }
+}
+
+repositories {
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT'
+}
+
+compileKotlin {
+    kotlinOptions.jdk = System.getenv("JDK_17")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "1.4"
+}

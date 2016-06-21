@@ -1,0 +1,5 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLine("[INFO] BUILD FAILURE");
+assertBuildLogHasNoLineThatContains("AutoCloseable");
+assertBuildLogHasLineThatContains("Unresolved reference: stream");
