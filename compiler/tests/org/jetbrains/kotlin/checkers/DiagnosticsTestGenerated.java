@@ -3147,6 +3147,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetter.kt")
+            public void testPrivateSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/privateSetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertiesInitWithOtherInstance.kt")
             public void testPropertiesInitWithOtherInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithOtherInstance.kt");

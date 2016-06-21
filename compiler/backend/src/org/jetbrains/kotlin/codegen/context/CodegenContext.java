@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -585,8 +585,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                                                                 withinInliningContext, superCallTarget != null);
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-            int setterAccessFlag = setter == null ? propertyAccessFlag
-                                                  : propertyAccessFlag | getVisibilityAccessFlag(setter);
+
+            int setterAccessFlag = propertyAccessFlag;
+            if (setter != null && setter.getVisibility().normalize() != Visibilities.INVISIBLE_FAKE) {
+                setterAccessFlag = propertyAccessFlag | getVisibilityAccessFlag(setter);
+            }
             boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,
                                                                 withinInliningContext, superCallTarget != null);
 
