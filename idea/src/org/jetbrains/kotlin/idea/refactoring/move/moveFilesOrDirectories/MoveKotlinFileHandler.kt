@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -128,7 +129,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         if (file !is KtFile) return
         val newDirectory = file.parent ?: return
         val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
-        file.packageDirective?.fqName = packageNameInfo.newContainer.fqName!!
+        file.packageDirective?.fqName = packageNameInfo.newContainer.fqName!!.quoteIfNeeded()
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {

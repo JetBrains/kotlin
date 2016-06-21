@@ -687,11 +687,9 @@ fun invokeOnceOnCommandFinish(action: () -> Unit) {
     commandProcessor.addCommandListener(listener)
 }
 
-fun FqName.quoteSegmentsIfNeeded(): String {
-    return pathSegments().map { it.asString().quoteIfNeeded() }.joinToString(".")
-}
+fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
 
-fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
+fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
 
 fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
 
