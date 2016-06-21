@@ -1,38 +1,50 @@
-File buildLog = new File(basedir, "build.log");
+String[] getBuildLogLines() {
+    File buildLog = new File(basedir, "build.log");
+    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
+    List result = new ArrayList();
+    String line;
+    while ((line = reader.readLine()) != null){
+        line=line.replaceAll("\\u001b[^m]*m","");
+        result.add(line);
+    }
+    reader.close();
+    return result.toArray(new String[0]);
+}
+
+String[] buildLog = getBuildLogLines();
+
 
 void assertBuildLogHasLine(String expectedLine) {
-    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
-    try {
-        String line;
-        int i = 0;
-        while ((line = reader.readLine()) != null) {
-            line = line.replaceAll("\\u001b[^m]*m", "");
-            i++;
-            if (line.equals(expectedLine)) {
-                print("Expected line was found at line " + i + " of build log: " + "\"" + expectedLine + "\"");
-                return;
-            }
+    for (int i = 0; i < buildLog.length; i++) {
+        String line = buildLog[i];
+        if (line.equals(expectedLine)) {
+            print("Expected line was found at line " + i + " of build log: " + "\"" + expectedLine + "\"");
+            return;
         }
-        throw new Exception("Expected build log to contain line: \"" + expectedLine + "\"");
-    } finally {
-        reader.close();
     }
+    throw new Exception("Expected build log to contain line: \"" + expectedLine + "\"");
 }
 
 void assertBuildLogHasLineThatContains(String content) {
-    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
-    try {
-        String line;
-        int i = 0;
-        while ((line = reader.readLine()) != null) {
-            i++;
-            if (line.contains(content)) {
-                print("Expected content " + "\"" + content + "\"" + " was found at line " + i + " of build log: " + "\"" + line + "\"");
-                return;
-            }
-        }
+    int line = findBuildLogLineThatContains(content);
+    if (line >= 0)
+        print("Expected content " + "\"" + content + "\"" + " was found at line " + (line+1) + " of build log: " + "\"" + buildLog[line] + "\"");
+    else
         throw new Exception("Expected build log to contain: \"" + content + "\"");
-    } finally {
-        reader.close();
+}
+
+void assertBuildLogHasNoLineThatContains(String content) {
+    int line = findBuildLogLineThatContains(content);
+    if (line >= 0)
+        throw new Exception("Expected build log not to contain content " + "\"" + content + "\"" + ", but was found at line " + (line+1) + ": " + "\"" + buildLog[line] + "\"");
+}
+
+int findBuildLogLineThatContains(String content) {
+    for (int i = 0; i < buildLog.length; i++) {
+        String line = buildLog[i];
+	    if (line.contains(content)) {
+	        return i;
+	    }
     }
+    return -1;
 }
