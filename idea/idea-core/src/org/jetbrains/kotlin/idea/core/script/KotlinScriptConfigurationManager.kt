@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -55,24 +56,20 @@ class KotlinScriptConfigurationManager(
     init {
         reloadScriptDefinitions()
 
-        dumbService.runWhenSmart {
-            // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
-            runReadAction { cacheAllScriptsExtraImports() }
-
-            project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-                override fun after(events: List<VFileEvent>) {
-                    val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
-                    if (isChanged) {
-                        // TODO: consider more fine-grained update
-                        cacheLock.write {
-                            allScriptsClasspathCache = null
-                            allLibrarySourcesCache = null
-                        }
-                        notifyRootsChanged()
-                    }
-                }
-            })
+        StartupManager.getInstance(project).registerPostStartupActivity {
+            cacheAllScriptsExtraImports()
+            invalidateLocalCaches()
+            notifyRootsChanged()
         }
+
+        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+            override fun after(events: List<VFileEvent>) {
+                updateExternalImportsCache(events.mapNotNull { it.file }) {
+                    invalidateLocalCaches()
+                    notifyRootsChanged()
+                }
+            }
+        })
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
@@ -152,13 +149,30 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun cacheAllScriptsExtraImports() {
-        scriptExternalImportsProvider?.apply {
-            invalidateCaches()
-            cacheExternalImports(
-                scriptDefinitionProvider.getAllKnownFileTypes()
-                        .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
+        runReadAction {
+            scriptExternalImportsProvider?.apply {
+                invalidateCaches()
+                cacheExternalImports(
+                        scriptDefinitionProvider.getAllKnownFileTypes()
+                                .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
+            }
         }
     }
+
+    private fun updateExternalImportsCache(files: Iterable<VirtualFile>, onChange: () -> Unit) {
+        val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(files)?.any() ?: false
+        if (isChanged) {
+            onChange()
+        }
+    }
+
+    private fun invalidateLocalCaches() {
+        cacheLock.write {
+            allScriptsClasspathCache = null
+            allLibrarySourcesCache = null
+        }
+    }
+
 
     companion object {
         @JvmStatic
