@@ -515,6 +515,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinFacadeClassViaTopLevelClass/renameKotlinFacadeClassViaTopLevelClass.test")
+    public void testRenameKotlinFacadeClassViaTopLevelClass_RenameKotlinFacadeClassViaTopLevelClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFacadeClassViaTopLevelClass/renameKotlinFacadeClassViaTopLevelClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinFacadeClassWithDefaultNameAndCommentsByRef/renameKotlinFacadeClassWithDefaultNameByRef.test")
     public void testRenameKotlinFacadeClassWithDefaultNameAndCommentsByRef_RenameKotlinFacadeClassWithDefaultNameByRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFacadeClassWithDefaultNameAndCommentsByRef/renameKotlinFacadeClassWithDefaultNameByRef.test");
