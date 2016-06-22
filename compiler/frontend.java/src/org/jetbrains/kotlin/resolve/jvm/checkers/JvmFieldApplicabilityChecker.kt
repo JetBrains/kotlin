@@ -54,7 +54,6 @@ class JvmFieldApplicabilityChecker : SimpleDeclarationChecker {
         val annotation = descriptor.findJvmFieldAnnotation() ?: return
 
         val problem = when {
-            // First two cases just prevent duplication of WRONG_ANNOTATION_TARGET
             descriptor !is PropertyDescriptor -> return
             declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(bindingContext) -> return
