@@ -27,6 +27,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     Coroutines(KOTLIN_1_1),
     AdditionalBuiltInsMembers(KOTLIN_1_1),
     DataClassInheritance(KOTLIN_1_1),
+    InlineProperties(KOTLIN_1_1)
     ;
 
     companion object {

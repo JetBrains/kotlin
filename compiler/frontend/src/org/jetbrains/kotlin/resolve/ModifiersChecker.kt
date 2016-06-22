@@ -94,7 +94,8 @@ object ModifierCheckerCore {
 
     val featureDependencies = mapOf(
             COROUTINE_KEYWORD to LanguageFeature.Coroutines,
-            SUSPEND_KEYWORD   to LanguageFeature.Coroutines
+            SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
+            INLINE_KEYWORD   to LanguageFeature.InlineProperties
     )
 
     // NOTE: deprecated targets must be possible!
@@ -252,12 +253,17 @@ object ModifierCheckerCore {
     private fun checkLanguageLevelSupport(
             trace: BindingTrace,
             node: ASTNode,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageFeatureSettings: LanguageFeatureSettings,
+            actualTargets: List<KotlinTarget>
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
+
         val dependency = featureDependencies[modifier] ?: return true
 
         if (!languageFeatureSettings.supportsFeature(dependency)) {
+            if (dependency == LanguageFeature.InlineProperties && actualTargets.size == 1 && actualTargets.contains(FUNCTION)) {
+                return true
+            }
             trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
             return false
         }
@@ -313,7 +319,7 @@ object ModifierCheckerCore {
                 else if (!checkParent(trace, second, parentDescriptor)) {
                     incorrectNodes += second
                 }
-                else if (!checkLanguageLevelSupport(trace, second, languageFeatureSettings)) {
+                else if (!checkLanguageLevelSupport(trace, second, languageFeatureSettings, actualTargets)) {
                     incorrectNodes += second
                 }
             }

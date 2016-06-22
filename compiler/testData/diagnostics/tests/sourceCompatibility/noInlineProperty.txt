@@ -1,0 +1,5 @@
+package
+
+public var value: kotlin.Int
+public var z: kotlin.Int
+public var z2: kotlin.Int
