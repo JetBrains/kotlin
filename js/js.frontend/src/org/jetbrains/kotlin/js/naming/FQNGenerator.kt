@@ -27,24 +27,24 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import java.util.*
 
 class FQNGenerator {
-    private val cache: MutableMap<DeclarationDescriptor, FQNPart> = WeakHashMap()
+    private val cache: MutableMap<DeclarationDescriptor, FQNPart?> = WeakHashMap()
 
     fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor.original) }
 
-    private fun generateCacheMiss(descriptor: DeclarationDescriptor): FQNPart {
+    private fun generateCacheMiss(descriptor: DeclarationDescriptor): FQNPart? {
+        // Members of companion objects of classes are treated as static members of these classes
         if (isNativeObject(descriptor) && isCompanionObject(descriptor)) {
             return generate(descriptor.containingDeclaration!!)
         }
 
         when (descriptor) {
-            is ModuleDescriptor -> return FQNPart(listOf(descriptor.name.asString()), true, descriptor, descriptor)
+            is ModuleDescriptor -> return null
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.name.isSpecial) {
-                    FQNPart(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
-                            descriptor.containingDeclaration)
+                    FQNPart(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor, descriptor.containingDeclaration)
                 }
                 else {
-                    generate(descriptor.containingDeclaration)
+                    null
                 }
             }
             is FakeCallableDescriptorForObject -> return generate(descriptor.getReferencedDescriptor())
