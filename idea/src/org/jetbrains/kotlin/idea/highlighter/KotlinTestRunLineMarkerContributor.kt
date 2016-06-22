@@ -53,6 +53,8 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val declaration = element.getStrictParentOfType<KtNamedDeclaration>() ?: return null
         if (declaration.nameIdentifier != element) return null
 
+        if (declaration !is KtClassOrObject && declaration !is KtNamedFunction) return null
+
         // To prevent IDEA failing on red code
         if (declaration.resolveToDescriptorIfAny() == null) return null
 
