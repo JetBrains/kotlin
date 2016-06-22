@@ -26,9 +26,37 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import java.util.*
 
+/**
+ * This class is responsible for generating names for declarations. It does not produce fully-qualified JS name, instead
+ * it tries to generate a simple name and specify a scoping declaration. This information can be used by the front-end
+ * to check whether names clash, by the code generator to place declarations to corresponding scopes and to produce
+ * fully-qualified names for static declarations.
+ *
+ * A new instance of this class can be created for each request, however, it's recommended to use shared instance, since
+ * [FQNGenerator] supports caching.
+ */
 class FQNGenerator {
     private val cache: MutableMap<DeclarationDescriptor, FQNPart?> = WeakHashMap()
 
+    /**
+     * Generates names for declarations. Name consist of the following parts:
+     *
+     *   * Aliasing declaration, if the given `descriptor` does not have its own entity in JS.
+     *   * Scoping declaration. Declarations are usually compiled to the hierarchy of nested JS objects,
+     *     this attribute allows to find out where to put the declaration.
+     *   * Simple name, which is a name that object must (or may) get on the generated JS.
+     *   * Whether the name is "shared". Shared names are visible to other modules and to native JS.
+     *     In order to preserve ABI, these names must be persistent. Private names do not require particular
+     *     name, so the code generator can invent any name which does not clash with anything; however,
+     *     it may derive the name from the suggested name to improve readability and debugging.
+     *
+     * This method returns `null` for root declarations (modules and root packages).
+     * It's guaranteed that a particular name is returned for any other declarations.
+     *
+     * Since packages in Kotlin do not always form hierarchy, suggested name is a list of strings. This
+     * list consists of exactly one string for any declaration except for package. Package name lists
+     * have at least one string.
+     */
     fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor.original) }
 
     private fun generateCacheMiss(descriptor: DeclarationDescriptor): FQNPart? {
@@ -38,21 +66,30 @@ class FQNGenerator {
         }
 
         when (descriptor) {
+            // Modules are root declarations, we don't produce declarations for them, therefore they can't clash
             is ModuleDescriptor -> return null
+
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.name.isSpecial) {
                     FQNPart(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor, descriptor.containingDeclaration)
                 }
                 else {
+                    // Root packages are similar to modules
                     null
                 }
             }
+
+            // It's a special case when an object has `invoke` operator defined, in this case we simply generate object itself
             is FakeCallableDescriptorForObject -> return generate(descriptor.getReferencedDescriptor())
+
+            // For primary constructors and constructors of native classes we generate references to containing classes
             is ConstructorDescriptor -> {
                 if (descriptor.isPrimary || isNativeObject(descriptor)) {
                     return generate(descriptor.containingDeclaration)
                 }
             }
+
+            // Local functions and variables are always private with their own names as suggested names
             is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
                     val name = getMangledName(getSuggestedName(descriptor), descriptor)
@@ -64,16 +101,36 @@ class FQNGenerator {
         return FQNPart(listOf(localName), shared, descriptor, fixParent(parent))
     }
 
+    // Getters and setters have generation strategy similar to common declarations, except for they are declared as
+    // members of classes/packages, not corresponding properties.
     private fun fixParent(parent: DeclarationDescriptor) = when (parent) {
         is PropertyDescriptor -> parent.containingDeclaration
         else -> parent
     }
 
     private fun getLocalName(descriptor: DeclarationDescriptor): LocalName {
+        // Dynamic declarations always require shared names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
             return LocalName(descriptor.name.asString(), true, descriptor.containingDeclaration!!)
         }
 
+        // For any non-local declaration suggest its own suggested name and put it in scope of its containing declaration.
+        // For local declaration get a sequence for names of all containing functions and join their names with '$' symbol,
+        // and use container of topmost function, i.e.
+        //
+        //     class A {
+        //         fun foo() {
+        //             fun bar() {
+        //                 fun baz() { ... }
+        //             }
+        //         }
+        //     }
+        //
+        // `baz` gets name 'foo$bar$baz$' scoped in `A` class.
+        //
+        // The exception are secondary constructors which get suggested name with '_init' suffix and are put in
+        // the class's parent scope.
+        //
         val parts = mutableListOf<String>()
         var current: DeclarationDescriptor = descriptor
         do {
@@ -85,7 +142,7 @@ class FQNGenerator {
                 parts[parts.lastIndex] = getSuggestedName(current) + "_init"
                 current = current.containingDeclaration!!
             }
-        } while (DescriptorUtils.isDescriptorWithLocalVisibility(last) && current !is ClassDescriptor)
+        } while (current is FunctionDescriptor)
 
         parts.reverse()
         val (id, shared) = getMangledName(parts.joinToString("$"), descriptor)
@@ -94,6 +151,9 @@ class FQNGenerator {
 
     private data class LocalName(val id: String, val shared: Boolean, val parent: DeclarationDescriptor)
 
+    // For regular names suggest its string representation
+    // For property accessors suggest name of a property with 'get_' and 'set_' prefixes
+    // For anonymous declarations (i.e. lambdas and object expressions) suggest 'f'
     private fun getSuggestedName(descriptor: DeclarationDescriptor): String {
         val name = descriptor.name
         return if (name.isSpecial) {
