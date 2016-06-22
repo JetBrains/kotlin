@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -176,5 +177,13 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         PsiElement parent = getParentByStub();
         if (!(parent instanceof KtParameterList)) return null;
         return ((KtParameterList) parent).getOwnerFunction();
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        KtDeclarationWithBody owner = getOwnerFunction();
+        if (owner instanceof KtPrimaryConstructor && hasValOrVar()) return super.getUseScope();
+        return owner != null ? owner.getUseScope() : super.getUseScope();
     }
 }
