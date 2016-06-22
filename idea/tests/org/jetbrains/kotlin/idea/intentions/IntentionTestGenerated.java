@@ -295,6 +295,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11679.kt")
+        public void testKt11679() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/kt11679.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notInsideIndices.kt")
         public void testNotInsideIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notInsideIndices.kt");
