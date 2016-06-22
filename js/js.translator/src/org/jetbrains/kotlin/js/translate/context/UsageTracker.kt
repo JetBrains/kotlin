@@ -170,7 +170,7 @@ class UsageTracker(
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
             else -> {
-                val mangled = FQNGenerator().generate(this).names.last()
+                val mangled = FQNGenerator().generate(this)!!.names.last()
                 "closure\$$mangled"
             }
         }

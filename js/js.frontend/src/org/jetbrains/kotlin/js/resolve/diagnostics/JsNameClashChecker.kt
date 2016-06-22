@@ -46,7 +46,7 @@ class JsNameClashChecker : DeclarationChecker {
     }
 
     private fun checkDescriptor(descriptor: DeclarationDescriptor, declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
-        val fqn = fqnGenerator.generate(descriptor)
+        val fqn = fqnGenerator.generate(descriptor)!!
         if (fqn.shared && fqn.scope is ClassOrPackageFragmentDescriptor && isOpaque(fqn.descriptor)) {
             val scope = getScope(fqn.scope)
             val name = fqn.names.last()
@@ -66,7 +66,7 @@ class JsNameClashChecker : DeclarationChecker {
                     .mapNotNull { it as? CallableMemberDescriptor }
                     .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
             for (override in fakeOverrides) {
-                val overrideFqn = fqnGenerator.generate(override)
+                val overrideFqn = fqnGenerator.generate(override)!!
                 val scope = getScope(overrideFqn.scope)
                 val name = overrideFqn.names.last()
                 val existing = scope[name]
@@ -114,7 +114,7 @@ class JsNameClashChecker : DeclarationChecker {
             }
         }
 
-        val fqn = fqnGenerator.generate(descriptor)
+        val fqn = fqnGenerator.generate(descriptor) ?: return
         if (fqn.shared && isOpaque(fqn.descriptor)) {
             target[fqn.names.last()] = fqn.descriptor
             (fqn.descriptor as? CallableMemberDescriptor)?.let { checkOverrideClashes(it, target) }
@@ -125,7 +125,7 @@ class JsNameClashChecker : DeclarationChecker {
         var overridden = descriptor.overriddenDescriptors
         while (overridden.isNotEmpty()) {
             for (overridenDescriptor in overridden) {
-                val overriddenFqn = fqnGenerator.generate(overridenDescriptor)
+                val overriddenFqn = fqnGenerator.generate(overridenDescriptor)!!
                 if (overriddenFqn.shared) {
                     val existing = target[overriddenFqn.names.last()]
                     if (existing != null) {

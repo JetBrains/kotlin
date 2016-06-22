@@ -222,7 +222,7 @@ public final class StaticContext {
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
         FQNPart part = fqnGenerator.generate(descriptor);
-        if (part.getDescriptor() instanceof ModuleDescriptor) {
+        if (part == null) {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
             if (currentModule == module) {
                 return pureFqn(Namer.getRootPackageName(), null);
@@ -232,37 +232,36 @@ public final class StaticContext {
                 return result != null ? result : JsAstUtils.pureFqn(rootScope.declareName(Namer.getRootPackageName()), null);
             }
         }
+
+        JsExpression expression;
+        List<JsName> partNames;
+        if (standardClasses.isStandardObject(part.getDescriptor())) {
+            expression = Namer.kotlinObject();
+            partNames = Collections.singletonList(standardClasses.getStandardObjectName(part.getDescriptor()));
+        }
+        else if (isLibraryObject(part.getDescriptor())) {
+            expression = Namer.kotlinObject();
+            partNames = getNameForFQNPart(part);
+        }
+        else if (isNative(part.getDescriptor()) && !isNativeObject(part.getScope())) {
+            expression = null;
+            partNames = getNameForFQNPart(part);
+        }
         else {
-            JsExpression expression;
-            List<JsName> partNames;
-            if (standardClasses.isStandardObject(part.getDescriptor())) {
-                expression = Namer.kotlinObject();
-                partNames = Collections.singletonList(standardClasses.getStandardObjectName(part.getDescriptor()));
-            }
-            else if (isLibraryObject(part.getDescriptor())) {
-                expression = Namer.kotlinObject();
-                partNames = getNameForFQNPart(part);
-            }
-            else if (isNative(part.getDescriptor()) && !isNativeObject(part.getScope())) {
+            if (part.getDescriptor() instanceof CallableDescriptor && part.getScope() instanceof FunctionDescriptor) {
                 expression = null;
-                partNames = getNameForFQNPart(part);
             }
             else {
-                if (part.getDescriptor() instanceof CallableDescriptor && part.getScope() instanceof FunctionDescriptor) {
-                    expression = null;
-                }
-                else {
-                    expression = getQualifiedExpression(part.getScope());
-                }
-                partNames = getNameForFQNPart(part);
+                expression = getQualifiedExpression(part.getScope());
             }
-            for (JsName partName : partNames) {
-                expression = new JsNameRef(partName, expression);
-                applySideEffects(expression, part.getDescriptor());
-            }
-            assert expression != null : "Since partNames is not empty, expression must be non-null";
-            return expression;
+            partNames = getNameForFQNPart(part);
         }
+        for (JsName partName : partNames) {
+            expression = new JsNameRef(partName, expression);
+            applySideEffects(expression, part.getDescriptor());
+        }
+        assert expression != null : "Since partNames is not empty, expression must be non-null";
+        return expression;
     }
 
     private static boolean isNative(DeclarationDescriptor descriptor) {
@@ -284,7 +283,11 @@ public final class StaticContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return getNameForFQNPart(fqnGenerator.generate(descriptor)).get(0);
+        FQNPart fqn = fqnGenerator.generate(descriptor);
+        if (fqn == null) {
+            throw new IllegalArgumentException("Can't generate name for root declarations: " + descriptor);
+        }
+        return getNameForFQNPart(fqn).get(0);
     }
 
     @NotNull
@@ -293,6 +296,7 @@ public final class StaticContext {
 
         if (name == null) {
             FQNPart fqn = fqnGenerator.generate(property);
+            assert fqn != null : "Properties are non-root declarations: " + property;
             assert fqn.getNames().size() == 1 : "Private names must always consist of exactly one name";
 
             JsScope scope = getScopeForDescriptor(fqn.getScope());
