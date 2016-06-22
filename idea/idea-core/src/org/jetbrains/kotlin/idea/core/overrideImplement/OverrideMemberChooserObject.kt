@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 interface OverrideMemberChooserObject : ClassMember {
     enum class BodyType {
@@ -155,9 +156,12 @@ private fun generateConstructorParameter(project: Project, descriptor: PropertyD
 }
 
 private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtNamedFunction {
-    val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
-                                        descriptor.kind, /* copyOverrides = */ true)
-    newDescriptor.setSingleOverridden(descriptor)
+    val newDescriptor = object : FunctionDescriptor by descriptor {
+        override fun getModality() = Modality.OPEN
+        override fun getReturnType() = descriptor.returnType?.makeNotNullable()
+        override fun getOverriddenDescriptors() = listOf(descriptor)
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitFunctionDescriptor(this, data)
+    }
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
