@@ -18660,6 +18660,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noInlineProperty.kt")
+            public void testNoInlineProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noInlineProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noLocalDelegatedProperty.kt")
             public void testNoLocalDelegatedProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedProperty.kt");
