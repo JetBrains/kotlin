@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.toFuzzyType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -211,8 +213,9 @@ object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching",
 
 class SmartCompletionInBasicWeigher(
         private val smartCompletion: SmartCompletion,
-        private val callType: CallType<*>,
-        private val resolutionFacade: ResolutionFacade
+        private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        private val resolutionFacade: ResolutionFacade,
+        private val bindingContext: BindingContext
 ) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
 
     companion object {
@@ -259,7 +262,7 @@ class SmartCompletionInBasicWeigher(
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
-                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade) to descriptor.name
+                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver, resolutionFacade, bindingContext) to descriptor.name
             }
 
             is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { it.toFuzzyType(emptyList()) } to null

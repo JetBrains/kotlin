@@ -721,6 +721,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ExpressionQualifier.kt")
+        public void testExpressionQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ExpressionQualifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoQualifier1.kt")
         public void testNoQualifier1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier1.kt");

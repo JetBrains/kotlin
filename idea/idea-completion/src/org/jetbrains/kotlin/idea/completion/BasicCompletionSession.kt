@@ -144,7 +144,7 @@ class BasicCompletionSession(
         var sorter = super.createSorter()
 
         if (smartCompletion != null) {
-            val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver.callType, resolutionFacade)
+            val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver, resolutionFacade, bindingContext)
             sorter = sorter.weighBefore(KindWeigher.toString(),
                                         smartCompletionInBasicWeigher,
                                         SmartCompletionPriorityWeigher,

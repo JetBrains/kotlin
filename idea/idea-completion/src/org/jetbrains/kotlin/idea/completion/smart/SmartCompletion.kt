@@ -162,7 +162,7 @@ class SmartCompletion(
         if (descriptor in descriptorsToSkip) return emptyList()
 
         val result = SmartList<LookupElement>()
-        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver.callType, resolutionFacade)
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver, resolutionFacade, bindingContext)
         val infoMatcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
 
         result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
@@ -329,7 +329,7 @@ class SmartCompletion(
         if (callableTypeExpectedInfo.isEmpty()) return
 
         fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {
-            val callableReferenceType = descriptor.callableReferenceType(resolutionFacade) ?: return null
+            val callableReferenceType = descriptor.callableReferenceType(resolutionFacade, null) ?: return null
 
             val matchedExpectedInfos = callableTypeExpectedInfo.filter { it.matchingSubstitutor(callableReferenceType) != null }
             if (matchedExpectedInfos.isEmpty()) return null

@@ -12,4 +12,5 @@ val Any.xTopLevelValOnAny: Int get()  = 1
 val Int.xTopLevelValOnInt: Int get()  = 1
 
 // EXIST: { lookupString:"xTopLevelIntVal", itemText:"xTopLevelIntVal", tailText: " for String in <root>", typeText: "Int" }
+// EXIST: { lookupString:"xTopLevelValOnAny", itemText:"xTopLevelValOnAny", tailText: " for Any in <root>", typeText: "Int" }
 // NOTHING_ELSE
