@@ -127,7 +127,6 @@ interface ModuleInfo {
     }
 
     enum class DependenciesOnBuiltIns : DependencyOnBuiltIns {
-
         NONE {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
                 //do nothing
@@ -138,11 +137,6 @@ interface ModuleInfo {
                 dependencies.add(builtinsModule)
             }
         };
-
-        override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
-            //TODO: KT-5457
-        }
-
     }
 }
 
