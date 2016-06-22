@@ -243,4 +243,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testConvertJavaDoc() {
         doOverrideDirectoryTest("foo")
     }
+
+    fun testPlatformTypes() {
+        doOverrideDirectoryTest("foo")
+    }
 }
