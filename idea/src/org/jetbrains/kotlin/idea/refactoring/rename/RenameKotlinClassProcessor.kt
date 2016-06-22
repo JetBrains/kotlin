@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
@@ -69,7 +70,9 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         if (virtualFile != null) {
             val nameWithoutExtensions = virtualFile.nameWithoutExtension
             if (nameWithoutExtensions == classOrObject.name) {
-                allRenames.put(file, newName + "." + virtualFile.extension)
+                val newFileName = newName + "." + virtualFile.extension
+                allRenames.put(file, newFileName)
+                RenamePsiElementProcessor.forElement(file).prepareRenaming(file, newFileName, allRenames)
             }
         }
     }

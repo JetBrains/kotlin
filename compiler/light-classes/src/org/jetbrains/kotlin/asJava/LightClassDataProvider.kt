@@ -69,6 +69,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
     abstract val isLocal: Boolean
 
     override fun compute(): CachedValueProvider.Result<T>? {
+        if (files.isEmpty()) return null
         return CachedValueProvider.Result.create(
                 computeLightClassData(),
                 if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
