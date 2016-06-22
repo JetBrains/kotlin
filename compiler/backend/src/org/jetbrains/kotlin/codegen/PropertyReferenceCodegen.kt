@@ -179,7 +179,7 @@ class PropertyReferenceCodegen(
             value.put(OBJECT_TYPE, this)
         }
 
-        if (!ReflectionTypes.isKMutablePropertyType(localVariableDescriptorForReference.type)) return
+        if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
 
         val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE))
         generateAccessor(method("set", Type.VOID_TYPE, *setterParameters)) { value ->

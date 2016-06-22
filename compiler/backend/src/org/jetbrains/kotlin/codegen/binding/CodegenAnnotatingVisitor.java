@@ -305,7 +305,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             supertypes = Collections.singleton(
                     runtimeTypes.getSupertypeForPropertyReference(
                             (PropertyDescriptor) target,
-                            ReflectionTypes.Companion.isKMutablePropertyType(callableDescriptor.getReturnType()),
+                            ReflectionTypes.Companion.isNumberedKMutablePropertyType(callableDescriptor.getReturnType()),
                             receiverType != null
                     )
             );
