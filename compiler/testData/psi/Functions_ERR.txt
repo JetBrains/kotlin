@@ -312,3 +312,60 @@ JetFile: Functions_ERR.kt
       <empty list>
     PsiWhiteSpace(' ')
     PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Only one type parameter list is allowed for a function
+      PsiElement(LT)('<')
+      PsiElement(IDENTIFIER)('D')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Only one type parameter list is allowed for a function
+      PsiElement(LT)('<')
+      PsiElement(IDENTIFIER)('D')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('A')
+    PsiElement(DOT)('.')
+    PsiErrorElement:Only one type parameter list is allowed for a function
+      PsiElement(LT)('<')
+      PsiElement(IDENTIFIER)('foo')
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiErrorElement:Expecting '('
+      <empty list>

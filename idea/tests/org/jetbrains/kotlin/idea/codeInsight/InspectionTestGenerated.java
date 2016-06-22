@@ -214,6 +214,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
+        public void testTwoSetOfTypeparameters_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/twoSetOfTypeparameters/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedImport/inspectionData/inspections.test")
         public void testUnusedImport_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedImport/inspectionData/inspections.test");
