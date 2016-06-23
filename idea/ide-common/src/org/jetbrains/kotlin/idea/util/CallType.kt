@@ -130,7 +130,7 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     companion object {
         fun detect(expression: KtSimpleNameExpression): CallTypeAndReceiver<*, *> {
             val parent = expression.parent
-            if (parent is KtCallableReferenceExpression) {
+            if (parent is KtCallableReferenceExpression && expression == parent.callableReference) {
                 return CallTypeAndReceiver.CALLABLE_REFERENCE(parent.receiverExpression)
             }
 
