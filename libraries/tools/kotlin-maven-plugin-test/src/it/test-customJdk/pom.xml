@@ -22,7 +22,7 @@
     </dependencies>
 
     <properties>
-        <kotlin.compiler.jdk>${env.JDK_18}</kotlin.compiler.jdk>
+        <kotlin.compiler.jdkHome>${env.JDK_17}</kotlin.compiler.jdkHome>
     </properties>
 
     <build>

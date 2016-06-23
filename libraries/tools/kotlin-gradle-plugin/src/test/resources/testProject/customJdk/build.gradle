@@ -32,7 +32,7 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jdk = System.getenv("JDK_17")
+    kotlinOptions.jdkHome = System.getenv("JDK_17")
 }
 
 task wrapper(type: Wrapper) {
