@@ -8,3 +8,5 @@ fun f(file: File) {
 // ABSENT: freeSpace
 // EXIST_JAVA_ONLY: { itemText: "isFile", tailText: "()", attributes: "bold" }
 // ABSENT: { itemText: "isFile", tailText: " (from isFile())" }
+// ABSENT: separator
+// ABSENT: listRoots
