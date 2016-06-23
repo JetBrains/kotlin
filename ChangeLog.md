@@ -7,9 +7,17 @@
 
 ### IDE
 
+#### Formatter
+
 ###### Issues fixed
 
 - [`KT-12830`](https://youtrack.jetbrains.com/issue/KT-12830) Remove spaces before *?* in nullable types
+
+#### Refactorings
+
+###### Issues fixed
+
+- [`KT-12413`](https://youtrack.jetbrains.com/issue/KT-12413) Change Signature: Fix bogus warning about unresolved type parameters/invalid functional type replacement
 
 ## 1.0.3
 

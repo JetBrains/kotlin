@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescrip
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.BorderLayout
@@ -407,9 +408,9 @@ class KotlinChangeSignatureDialog(
         }
 
         private fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
-            return startFrom.parents.mapNotNull {
+            return startFrom.parentsWithSelf.mapNotNull {
                 when {
-                    it is KtNamedFunction -> it.bodyExpression
+                    it is KtNamedFunction -> it.bodyExpression ?: it.valueParameterList
                     it is KtPropertyAccessor -> it.bodyExpression
                     it is KtDeclaration && KtPsiUtil.isLocal(it) -> null
                     it is KtConstructor<*> -> it
