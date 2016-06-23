@@ -4741,6 +4741,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classes.kt")
+        public void testClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/classes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overriddenMethod.kt")
         public void testOverriddenMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/overriddenMethod.kt");
