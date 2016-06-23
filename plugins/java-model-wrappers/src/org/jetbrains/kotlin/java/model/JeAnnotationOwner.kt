@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.java.model
 import com.intellij.psi.PsiAnnotationOwner
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
-import org.jetbrains.kotlin.java.model.internal.createAnnotation
+import org.jetbrains.kotlin.java.model.internal.KotlinAnnotationProxyMaker
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
 import java.lang.reflect.Array as RArray
@@ -30,14 +30,18 @@ interface JeAnnotationOwner : Element {
     override fun getAnnotationMirrors() = annotationOwner?.annotations?.map { JeAnnotationMirror(it) } ?: emptyList()
     
     override fun <A : Annotation> getAnnotation(annotationClass: Class<A>): A? {
+        if (!annotationClass.isAnnotation) {
+            throw IllegalArgumentException("Not an annotation class: " + annotationClass)
+        }
+        
         val annotationFqName = annotationClass.canonicalName
 
         val annotation = annotationOwner?.annotations
                                  ?.firstOrNull { it.qualifiedName == annotationFqName } ?: return null
         val annotationDeclaration = annotation.nameReferenceElement?.resolve() as? PsiClass ?: return null
-
+        
         @Suppress("UNCHECKED_CAST")
-        return createAnnotation(annotation, annotationDeclaration, annotationClass) as? A
+        return KotlinAnnotationProxyMaker(annotation, annotationDeclaration, annotationClass).generate() as? A
     }
     
     @Suppress("UNCHECKED_CAST")
