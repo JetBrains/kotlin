@@ -8,7 +8,7 @@ class Controller {
 
     }
 
-    <warning descr="[NOTHING_TO_INLINE] Expected performance impact of inlining 'public final inline suspend fun inlineFun(x: Continuation<Int>): Unit defined in Controller' can be insignificant. Inlining works best for functions with lambda parameters"><info descr="null">inline</info></warning> <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that inline suspend functions are not supported"><info descr="null">suspend</info></error> fun inlineFun(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
+    <warning descr="[NOTHING_TO_INLINE] Expected performance impact of inlining 'public final inline suspend fun inlineFun(x: Continuation<Int>): Unit defined in Controller' can be insignificant. Inlining works best for functions with lambda parameters"><info descr="null">inline</info></warning> <info descr="null">suspend</info> fun inlineFun(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
 
     }
 

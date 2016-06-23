@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
@@ -63,10 +61,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -80,6 +75,8 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvm6Interface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
@@ -97,6 +94,13 @@ public class FunctionCodegen {
     private final CodegenContext owner;
     private final ClassBuilder v;
     private final MemberCodegen<?> memberCodegen;
+
+    private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
+        @Override
+        public Boolean invoke(DeclarationDescriptor descriptor) {
+            return JvmCodegenUtil.isAnnotationOrJvm6Interface(descriptor, state);
+        }
+    };
 
     public FunctionCodegen(
             @NotNull CodegenContext owner,
@@ -163,7 +167,7 @@ public class FunctionCodegen {
         JvmMethodGenericSignature jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, contextKind);
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        int flags = getMethodAsmFlags(functionDescriptor, contextKind);
+        int flags = getMethodAsmFlags(functionDescriptor, contextKind, state);
 
         if (origin.getOriginKind() == JvmDeclarationOriginKind.SAM_DELEGATION) {
             flags |= ACC_SYNTHETIC;
@@ -198,7 +202,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state, parentBodyCodegen));
         }
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL || isAbstractMethod(functionDescriptor, contextKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL || isAbstractMethod(functionDescriptor, contextKind, state)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -294,7 +298,7 @@ public class FunctionCodegen {
 
     private void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
         // IDEA's ClsPsi builder fails to annotate synthetic parameters
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
         // see MethodWriter.visitParameterAnnotation()
@@ -354,6 +358,15 @@ public class FunctionCodegen {
 
         if (context.getParentContext() instanceof MultifileClassFacadeContext) {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
+            methodEnd = new Label();
+        }
+        else if (OwnerKind.IMPLEMENTATION == context.getContextKind() &&
+                 JvmCodegenUtil.isJvmInterface(functionDescriptor.getContainingDeclaration())) {
+            int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.IMPLEMENTATION, context.getState());
+            assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
+            Type type = typeMapper.mapDefaultImpls((ClassDescriptor) functionDescriptor.getContainingDeclaration());
+            Method asmMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.DEFAULT_IMPLS);
+            generateDelegateToMethodBody(true, mv, asmMethod, type.getInternalName());
             methodEnd = new Label();
         }
         else {
@@ -559,13 +572,10 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (isInterface(descriptor.getContainingDeclaration())) return;
+        if (isAnnotationOrJvm6Interface(descriptor.getContainingDeclaration(), state)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
-
-        // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
-        if (CallResolverUtilKt.isOrOverridesSynthesized(descriptor)) return;
 
         boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) != null;
 
@@ -573,7 +583,8 @@ public class FunctionCodegen {
         if (!isSpecial) {
             bridgesToGenerate = ImplKt.generateBridgesForFunctionDescriptor(
                     descriptor,
-                    getSignatureMapper(typeMapper)
+                    getSignatureMapper(typeMapper),
+                    IS_PURE_INTERFACE_CHECKER
             );
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
@@ -588,7 +599,8 @@ public class FunctionCodegen {
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                     descriptor,
-                    getSignatureMapper(typeMapper)
+                    getSignatureMapper(typeMapper),
+                    IS_PURE_INTERFACE_CHECKER
             );
 
             if (!specials.isEmpty()) {
@@ -600,7 +612,7 @@ public class FunctionCodegen {
                 }
             }
 
-            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
+            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION, state)) {
                 CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
@@ -908,7 +920,12 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor());
         }
         else {
-            iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            if (isJvm8InterfaceMember(descriptor, state)) {
+                iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            }
+            else {
+                iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            }
         }
 
         StackValue.coerce(delegateTo.getReturnType(), bridge.getReturnType(), iv);

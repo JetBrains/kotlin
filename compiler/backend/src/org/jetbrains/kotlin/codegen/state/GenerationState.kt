@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
 class GenerationState @JvmOverloads constructor(
@@ -154,8 +156,11 @@ class GenerationState @JvmOverloads constructor(
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
     val inheritMultifileParts: Boolean = configuration.getBoolean(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS)
+    val isJvm8Target: Boolean = configuration.get(JVMConfigurationKeys.JVM_TARGET) == JvmTarget.JVM_1_8
 
     val rootContext: CodegenContext<*> = RootContext(this)
+
+    val classFileVersion: Int = if (isJvm8Target) Opcodes.V1_8 else Opcodes.V1_6
 
     init {
         this.interceptedBuilderFactory = builderFactory

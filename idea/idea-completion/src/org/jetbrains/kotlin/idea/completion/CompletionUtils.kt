@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionProgressIndicator
-import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
@@ -107,31 +104,18 @@ fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
     return this
 }
 
-fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanceledException {
-    val indicator = CompletionService.getCompletionService().currentCompletion as CompletionProgressIndicator
-
-    // Force cancel to avoid deadlock in CompletionThreading.delegateWeighing()
-    if (!indicator.isCanceled) {
-        indicator.cancel()
-    }
-
-    return exception
+fun PrefixMatcher.asNameFilter(): (Name) -> Boolean {
+    return { name -> !name.isSpecial && prefixMatches(name.identifier) }
 }
 
-fun PrefixMatcher.asNameFilter() = { name: Name ->
-    if (name.isSpecial) {
-        false
-    }
-    else {
-        val identifier = name.identifier
-        if (prefix.startsWith("$")) { // we need properties from scope for backing field completion
-            prefixMatches("$" + identifier)
-        }
-        else {
-            prefixMatches(identifier)
-        }
-    }
+fun PrefixMatcher.asStringNameFilter() = { name: String -> prefixMatches(name) }
+
+fun ((String) -> Boolean).toNameFilter(): (Name) -> Boolean {
+    return { name -> !name.isSpecial && this(name.identifier) }
 }
+
+infix fun <T> ((T) -> Boolean).or(otherFilter: (T) -> Boolean): (T) -> Boolean
+        = { this(it) || otherFilter(it) }
 
 fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     val tails = tailFragments

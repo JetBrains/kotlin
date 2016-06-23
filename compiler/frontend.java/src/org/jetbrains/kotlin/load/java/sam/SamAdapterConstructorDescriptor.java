@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
-/* package */ class SamAdapterConstructorDescriptor extends JavaConstructorDescriptor implements SamAdapterDescriptor<JavaConstructorDescriptor> {
+/* package */ class SamAdapterConstructorDescriptor extends JavaConstructorDescriptor
+        implements SamAdapterDescriptor<JavaConstructorDescriptor> {
     private final JavaConstructorDescriptor declaration;
 
     public SamAdapterConstructorDescriptor(@NotNull JavaConstructorDescriptor declaration) {
@@ -61,7 +63,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
     @NotNull
     @Override
-    public JavaConstructorDescriptor getOriginForSam() {
+    public JavaConstructorDescriptor getBaseDescriptorForSynthetic() {
         return declaration;
     }
 }

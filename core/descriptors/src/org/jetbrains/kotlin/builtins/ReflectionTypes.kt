@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -119,13 +120,35 @@ class ReflectionTypes(module: ModuleDescriptor) {
         fun isCallableType(type: KotlinType): Boolean =
                 type.isFunctionTypeOrSubtype || isKCallableType(type)
 
+        @JvmStatic
+        fun isNumberedKPropertyOrKMutablePropertyType(type: KotlinType): Boolean =
+                isNumberedKPropertyType(type) || isNumberedKMutablePropertyType(type)
+
         private fun isKCallableType(type: KotlinType): Boolean =
-                isExactKCallableType(type) ||
+                hasFqName(type.constructor, KotlinBuiltIns.FQ_NAMES.kCallable) ||
                 type.constructor.supertypes.any { isKCallableType(it) }
 
-        private fun isExactKCallableType(type: KotlinType): Boolean {
-            val descriptor = type.constructor.declarationDescriptor
-            return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == KotlinBuiltIns.FQ_NAMES.kCallable
+        fun isNumberedKMutablePropertyType(type: KotlinType): Boolean {
+            val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+            return hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty0) ||
+                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty1) ||
+                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty2)
+        }
+
+        fun isNumberedKPropertyType(type: KotlinType): Boolean {
+            val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+            return hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty0) ||
+                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty1) ||
+                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty2)
+        }
+
+        private fun hasFqName(typeConstructor: TypeConstructor, fqName: FqNameUnsafe): Boolean {
+            val descriptor = typeConstructor.declarationDescriptor
+            return descriptor is ClassDescriptor && hasFqName(descriptor, fqName)
+        }
+
+        private fun hasFqName(descriptor: ClassDescriptor, fqName: FqNameUnsafe): Boolean {
+            return descriptor.name == fqName.shortName() && DescriptorUtils.getFqName(descriptor) == fqName
         }
 
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {

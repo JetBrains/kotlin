@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,6 @@ import junit.framework.Test;
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class StdLibBitwiseOperationsTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/language/BitwiseOperationsTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/numbers/BitwiseOperationsTest.kt");
     }
 }

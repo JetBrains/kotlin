@@ -1,4 +1,4 @@
-package test.collections
+package test.collections.js
 
 import org.junit.Test as test
 import kotlin.test.*

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedReceiverType);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
-                substitutedDescriptor, getter.getAnnotations(), newModality, getter.getVisibility(),
+                substitutedDescriptor, getter.getAnnotations(), newModality, normalizeVisibility(getter.getVisibility(), kind),
                 getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(),
                 SourceElement.NO_SOURCE
         );
@@ -269,7 +269,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
-                substitutedDescriptor, setter.getAnnotations(), newModality, setter.getVisibility(),
+                substitutedDescriptor, setter.getAnnotations(), newModality, normalizeVisibility(setter.getVisibility(), kind),
                 setter.isDefault(), setter.isExternal(), kind, original == null ? null : original.getSetter(),
                 SourceElement.NO_SOURCE
         );
@@ -306,6 +306,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
 
         return substitutedDescriptor;
+    }
+
+    private static Visibility normalizeVisibility(Visibility prev, Kind kind) {
+        if (kind == Kind.FAKE_OVERRIDE && Visibilities.isPrivate(prev.normalize())) {
+            return Visibilities.INVISIBLE_FAKE;
+        }
+        return prev;
     }
 
     private static FunctionDescriptor getSubstitutedInitialSignatureDescriptor(

@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
+fun eat(value: Any) {}
+
 fun test(param: String) {
     val a = ::<!UNSUPPORTED!>param<!>
 
@@ -8,4 +10,6 @@ fun test(param: String) {
 
     val lambda = { -> }
     val g = ::<!UNSUPPORTED!>lambda<!>
+
+    eat(::<!UNSUPPORTED!>param<!>)
 }

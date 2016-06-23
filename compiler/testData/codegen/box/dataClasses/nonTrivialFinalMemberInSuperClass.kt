@@ -1,6 +1,3 @@
-// TODO: remove the suppression once data classes can have supertypes
-@file:Suppress("DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES")
-
 abstract class Base {
     final override fun toString() = "OK"
     final override fun hashCode() = 42

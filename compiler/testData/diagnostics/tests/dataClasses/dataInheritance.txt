@@ -1,11 +1,5 @@
 package
 
-public interface Allowed {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
 public abstract data class Base {
     public constructor Base(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
@@ -16,7 +10,7 @@ public abstract data class Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final data class Complex : Allowed, NotAllowed {
+public final data class Complex : SuperInterface, SuperClass {
     public constructor Complex(/*0*/ y: kotlin.Int)
     public final val y: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
@@ -50,8 +44,26 @@ public final data class Nasty : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public open class NotAllowed {
-    public constructor NotAllowed()
+public final data class SubData : Complex {
+    public constructor SubData(/*0*/ sss: kotlin.String)
+    public final val sss: kotlin.String
+    public final override /*1*/ /*fake_override*/ val y: kotlin.Int
+    public final override /*1*/ /*synthesized*/ fun component1(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun copy(/*0*/ y: kotlin.Int = ...): Complex
+    public final /*synthesized*/ fun copy(/*0*/ sss: kotlin.String = ...): SubData
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SuperClass {
+    public constructor SuperClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SuperInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

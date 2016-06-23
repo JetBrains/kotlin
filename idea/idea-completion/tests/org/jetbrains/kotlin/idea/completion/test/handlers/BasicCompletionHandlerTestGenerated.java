@@ -137,6 +137,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("KT12328.kt")
+    public void testKT12328() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/KT12328.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedTypeArg.kt")
     public void testNestedTypeArg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NestedTypeArg.kt");
@@ -146,6 +152,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("NoTailFromSmart.kt")
     public void testNoTailFromSmart() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NoTailFromSmart.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PreferClassToConstructor.kt")
+    public void testPreferClassToConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PreferClassToConstructor.kt");
         doTest(fileName);
     }
 
@@ -376,6 +388,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("OptionalParameters2.kt")
         public void testOptionalParameters2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/OptionalParameters2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OptionalParameters3.kt")
+        public void testOptionalParameters3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/OptionalParameters3.kt");
             doTest(fileName);
         }
 

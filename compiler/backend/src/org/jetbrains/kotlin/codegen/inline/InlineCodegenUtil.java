@@ -82,7 +82,8 @@ public class InlineCodegenUtil {
             byte[] classData,
             final String methodName,
             final String methodDescriptor,
-            ClassId classId
+            ClassId classId,
+            final @NotNull GenerationState state
     ) {
         ClassReader cr = new ClassReader(classData);
         final MethodNode[] node = new MethodNode[1];
@@ -94,7 +95,7 @@ public class InlineCodegenUtil {
         cr.accept(new ClassVisitor(API) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                assertVersionNotGreaterThanJava6(version, name);
+                assertVersionNotGreaterThanGeneratedOne(version, name, state);
             }
 
             @Override
@@ -140,9 +141,9 @@ public class InlineCodegenUtil {
         return new SMAPAndMethodNode(node[0], smap);
     }
 
-    public static void assertVersionNotGreaterThanJava6(int version, String internalName) {
+    public static void assertVersionNotGreaterThanGeneratedOne(int version, String internalName, @NotNull GenerationState state) {
         // TODO: report a proper diagnostic
-        if (version > Opcodes.V1_6 && !"true".equals(System.getProperty("kotlin.skip.bytecode.version.check"))) {
+        if (version > state.getClassFileVersion() && !"true".equals(System.getProperty("kotlin.skip.bytecode.version.check"))) {
             throw new UnsupportedOperationException(
                     "Cannot inline bytecode of class " + internalName + " which has version " + version + ". " +
                     "This compiler can only inline Java 1.6 bytecode (version " + Opcodes.V1_6 + ")"

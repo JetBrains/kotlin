@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
@@ -261,7 +260,7 @@ public class InlineCodegen extends CallGenerator {
                 }
             });
 
-            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId);
+            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId, state);
         }
 
         assert functionDescriptor instanceof DeserializedSimpleFunctionDescriptor : "Not a deserialized function: " + functionDescriptor;
@@ -287,7 +286,8 @@ public class InlineCodegen extends CallGenerator {
             }
         });
 
-        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId);
+
+        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId, state);
     }
 
     @NotNull
@@ -309,7 +309,7 @@ public class InlineCodegen extends CallGenerator {
 
         MethodNode node = new MethodNode(
                 InlineCodegenUtil.API,
-                getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
+                getMethodAsmFlags(functionDescriptor, context.getContextKind(), state) | (callDefault ? Opcodes.ACC_STATIC : 0),
                 asmMethod.getName(),
                 asmMethod.getDescriptor(),
                 null, null
@@ -473,7 +473,7 @@ public class InlineCodegen extends CallGenerator {
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
         MethodNode methodNode = new MethodNode(
-                InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind()),
+                InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind(), state),
                 asmMethod.getName(), asmMethod.getDescriptor(), null, null
         );
 
@@ -677,7 +677,7 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void putHiddenParams() {
-        if ((getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) == 0) {
+        if ((getMethodAsmFlags(functionDescriptor, context.getContextKind(), state) & Opcodes.ACC_STATIC) == 0) {
             invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false);
         }
 

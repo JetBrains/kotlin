@@ -19,14 +19,17 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Arrays;
@@ -68,32 +71,23 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    public static BinaryCall getRangeAsBinaryCall(@NotNull KtForExpression forExpression) {
-        // We are looking for rangeTo() calls
-        // Other binary operations will succeed too, but will be filtered out later (by examining a resolvedCall)
-        KtExpression rangeExpression = forExpression.getLoopRange();
-        assert rangeExpression != null;
-        KtExpression loopRange = KtPsiUtil.deparenthesize(rangeExpression);
+    public static ResolvedCall<? extends CallableDescriptor> getLoopRangeResolvedCall(@NotNull KtForExpression forExpression, @NotNull BindingContext bindingContext) {
+        KtExpression loopRange = KtPsiUtil.deparenthesize(forExpression.getLoopRange());
+
         if (loopRange instanceof KtQualifiedExpression) {
-            // a.rangeTo(b)
             KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) loopRange;
             KtExpression selector = qualifiedExpression.getSelectorExpression();
-            if (selector instanceof KtCallExpression) {
-                KtCallExpression callExpression = (KtCallExpression) selector;
-                List<? extends ValueArgument> arguments = callExpression.getValueArguments();
-                if (arguments.size() == 1) {
-                    return new BinaryCall(qualifiedExpression.getReceiverExpression(), callExpression.getCalleeExpression(),
-                                          arguments.get(0).getArgumentExpression());
-                }
+            if (selector instanceof KtCallExpression || selector instanceof KtSimpleNameExpression) {
+                return CallUtilKt.getResolvedCall(selector, bindingContext);
             }
         }
-        else if (loopRange instanceof KtBinaryExpression) {
-            // a rangeTo b
-            // a .. b
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) loopRange;
-            return new BinaryCall(binaryExpression.getLeft(), binaryExpression.getOperationReference(), binaryExpression.getRight());
-
+        else if (loopRange instanceof KtSimpleNameExpression || loopRange instanceof KtCallExpression) {
+            return CallUtilKt.getResolvedCall(loopRange, bindingContext);
         }
+        else if (loopRange instanceof KtBinaryExpression) {
+            return CallUtilKt.getResolvedCall(((KtBinaryExpression) loopRange).getOperationReference(), bindingContext);
+        }
+
         return null;
     }
 
@@ -138,15 +132,36 @@ public class RangeCodegenUtil {
         return false;
     }
 
-    public static class BinaryCall {
-        public final KtExpression left;
-        public final KtExpression op;
-        public final KtExpression right;
+    public static boolean isArrayOrPrimitiveArrayIndices(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false;
 
-        private BinaryCall(KtExpression left, KtExpression op, KtExpression right) {
-            this.left = left;
-            this.op = op;
-            this.right = right;
-        }
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        if (extensionReceiver == null) return false;
+        KotlinType extensionReceiverType = extensionReceiver.getType();
+        if (!KotlinBuiltIns.isArray(extensionReceiverType) && !KotlinBuiltIns.isPrimitiveArray(extensionReceiverType)) return false;
+
+        return true;
+    }
+
+    public static boolean isCollectionIndices(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false;
+
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        if (extensionReceiver == null) return false;
+        KotlinType extensionReceiverType = extensionReceiver.getType();
+        if (!KotlinBuiltIns.isCollectionOrNullableCollection(extensionReceiverType)) return false;
+
+        return true;
+    }
+
+    private static boolean isTopLevelInPackage(@NotNull CallableDescriptor descriptor, @NotNull String name, @NotNull String packageName) {
+        if (!name.equals(descriptor.getName().asString())) return false;
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) return false;
+        String packageFqName = ((PackageFragmentDescriptor) containingDeclaration).getFqName().asString();
+        if (!packageName.equals(packageFqName)) return false;
+
+        return true;
     }
 }

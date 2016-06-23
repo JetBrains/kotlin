@@ -506,7 +506,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitWhileExpression(@NotNull KtWhileExpression expression, StackValue receiver) {
+    public StackValue visitWhileExpression(@NotNull final KtWhileExpression expression, StackValue receiver) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                generateWhile(expression);
+                return Unit.INSTANCE;
+            }
+        });
+    }
+
+    private void generateWhile(@NotNull KtWhileExpression expression) {
         Label condition = new Label();
         v.mark(condition);
 
@@ -523,13 +533,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.mark(end);
 
         blockStackElements.pop();
-
-        return StackValue.onStack(Type.VOID_TYPE);
     }
 
-
     @Override
-    public StackValue visitDoWhileExpression(@NotNull KtDoWhileExpression expression, StackValue receiver) {
+    public StackValue visitDoWhileExpression(@NotNull final KtDoWhileExpression expression, StackValue receiver) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                generateDoWhile(expression);
+                return Unit.INSTANCE;
+            }
+        });
+    }
+
+    private void generateDoWhile(@NotNull KtDoWhileExpression expression) {
         Label beginLoopLabel = new Label();
         v.mark(beginLoopLabel);
 
@@ -553,7 +570,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, false, continueLabel, null);
+            conditionValue = generateBlock((KtBlockExpression) body, statements, false, continueLabel, null);
         }
         else {
             if (body != null) {
@@ -567,20 +584,34 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.mark(breakLabel);
 
         blockStackElements.pop();
-        return StackValue.none();
     }
 
     @Override
-    public StackValue visitForExpression(@NotNull KtForExpression forExpression, StackValue receiver) {
-        // Is it a "1..2" or so
-        RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
-        if (binaryCall != null) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(binaryCall.op, bindingContext);
-            if (resolvedCall != null) {
-                if (RangeCodegenUtil.isOptimizableRangeTo(resolvedCall.getResultingDescriptor())) {
-                    generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
-                    return StackValue.none();
-                }
+    public StackValue visitForExpression(@NotNull final KtForExpression forExpression, StackValue receiver) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                generateFor(forExpression);
+                return Unit.INSTANCE;
+            }
+        });
+    }
+
+    private void generateFor(@NotNull KtForExpression forExpression) {
+        ResolvedCall<? extends CallableDescriptor> loopRangeCall = RangeCodegenUtil.getLoopRangeResolvedCall(forExpression, bindingContext);
+        if (loopRangeCall != null) {
+            CallableDescriptor loopRangeCallee = loopRangeCall.getResultingDescriptor();
+            if (RangeCodegenUtil.isOptimizableRangeTo(loopRangeCallee)) {
+                generateForLoop(createForInRangeLiteralLoopGenerator(forExpression, loopRangeCall));
+                return;
+            }
+            else if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
+                generateForLoop(createForInArrayIndicesRangeLoopGenerator(forExpression, loopRangeCall));
+                return;
+            }
+            else if (RangeCodegenUtil.isCollectionIndices(loopRangeCallee)) {
+                generateForLoop(createForInCollectionIndicesRangeLoopGenerator(forExpression, loopRangeCall));
+                return;
             }
         }
 
@@ -591,21 +622,43 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type asmLoopRangeType = asmType(loopRangeType);
         if (asmLoopRangeType.getSort() == Type.ARRAY) {
             generateForLoop(new ForInArrayLoopGenerator(forExpression));
-            return StackValue.none();
         }
-
-        if (RangeCodegenUtil.isRange(loopRangeType)) {
+        else if (RangeCodegenUtil.isRange(loopRangeType)) {
             generateForLoop(new ForInRangeInstanceLoopGenerator(forExpression));
-            return StackValue.none();
         }
-
-        if (RangeCodegenUtil.isProgression(loopRangeType)) {
+        else if (RangeCodegenUtil.isProgression(loopRangeType)) {
             generateForLoop(new ForInProgressionExpressionLoopGenerator(forExpression));
-            return StackValue.none();
         }
+        else {
+            generateForLoop(new IteratorForLoopGenerator(forExpression));
+        }
+    }
 
-        generateForLoop(new IteratorForLoopGenerator(forExpression));
-        return StackValue.none();
+    private AbstractForLoopGenerator createForInRangeLiteralLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue from = loopRangeCall.getDispatchReceiver();
+        KtExpression to = loopRangeCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
+        return new ForInRangeLiteralLoopGenerator(forExpression, from, to);
+    }
+
+    private AbstractForLoopGenerator createForInCollectionIndicesRangeLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue extensionReceiver = loopRangeCall.getExtensionReceiver();
+        assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'indices' call";
+        return new ForInCollectionIndicesRangeLoopGenerator(forExpression, extensionReceiver);
+    }
+
+    private AbstractForLoopGenerator createForInArrayIndicesRangeLoopGenerator(
+            @NotNull KtForExpression forExpression,
+            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
+    ) {
+        ReceiverValue extensionReceiver = loopRangeCall.getExtensionReceiver();
+        assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'indices' call";
+        return new ForInArrayIndicesRangeLoopGenerator(forExpression, extensionReceiver);
     }
 
     private OwnerKind contextKind() {
@@ -1044,23 +1097,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private class ForInRangeLiteralLoopGenerator extends AbstractForInRangeLoopGenerator {
-        private final RangeCodegenUtil.BinaryCall rangeCall;
+        private final ReceiverValue from;
+        private final KtExpression to;
 
         private ForInRangeLiteralLoopGenerator(
                 @NotNull KtForExpression forExpression,
-                @NotNull RangeCodegenUtil.BinaryCall rangeCall
+                @NotNull ReceiverValue from,
+                @NotNull KtExpression to
         ) {
             super(forExpression);
-            this.rangeCall = rangeCall;
+            this.from = from;
+            this.to = to;
         }
 
         @Override
         protected void storeRangeStartAndEnd() {
-            gen(rangeCall.left, loopParameterType);
-            v.store(loopParameterVar, loopParameterType);
-
-            gen(rangeCall.right, asmElementType);
-            v.store(endVar, asmElementType);
+            loopParameter().store(generateReceiverValue(from, false), v);
+            StackValue.local(endVar, asmElementType).store(gen(to), v);
         }
     }
 
@@ -1080,6 +1133,54 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // ranges inherit first and last from corresponding progressions
             generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
+        }
+    }
+
+    private abstract class ForInOptimizedIndicesLoopGenerator extends AbstractForInRangeLoopGenerator {
+        protected final ReceiverValue receiverValue;
+
+        private ForInOptimizedIndicesLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression);
+            this.receiverValue = receiverValue;
+        }
+
+        @Override
+        protected void storeRangeStartAndEnd() {
+            loopParameter().store(StackValue.constant(0, asmElementType), v);
+
+            StackValue receiver = generateReceiverValue(receiverValue, false);
+            receiver.put(receiver.type, v);
+            getReceiverSizeAsInt();
+            v.iconst(1);
+            v.sub(Type.INT_TYPE);
+            StackValue.local(endVar, asmElementType).store(StackValue.onStack(Type.INT_TYPE), v);
+        }
+
+        /**
+         * <code>(receiver -> size:I)</code>
+         */
+        protected abstract void getReceiverSizeAsInt();
+    }
+
+    private class ForInCollectionIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
+        private ForInCollectionIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression, receiverValue);
+        }
+
+        @Override
+        protected void getReceiverSizeAsInt() {
+            v.invokeinterface("java/util/Collection", "size", "()I");
+        }
+    }
+
+    private class ForInArrayIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
+        private ForInArrayIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression, receiverValue);
+        }
+
+        @Override
+        protected void getReceiverSizeAsInt() {
+            v.arraylength();
         }
     }
 
@@ -1577,9 +1678,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     /* package */ StackValue generateBlock(@NotNull KtBlockExpression expression, boolean isStatement) {
         if (expression.getParent() instanceof KtNamedFunction) {
             // For functions end of block should be end of function label
-            return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
+            return generateBlock(expression, expression.getStatements(), isStatement, null, context.getMethodEndLabel());
         }
-        return generateBlock(expression.getStatements(), isStatement, null, null);
+        return generateBlock(expression, expression.getStatements(), isStatement, null, null);
     }
 
     @NotNull
@@ -1594,16 +1695,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private StackValue generateBlock(
-            List<KtExpression> statements,
+            @NotNull KtBlockExpression block,
+            @NotNull List<KtExpression> statements,
             boolean isStatement,
-            Label labelBeforeLastExpression,
+            @Nullable Label labelBeforeLastExpression,
             @Nullable final Label labelBlockEnd
     ) {
         final Label blockEnd = labelBlockEnd != null ? labelBlockEnd : new Label();
 
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
-        StackValue answer = StackValue.none();
+        @Nullable
+        StackValue answer = null;
 
         for (Iterator<KtExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
             KtExpression possiblyLabeledStatement = iterator.next();
@@ -1625,13 +1728,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             // Note that this result value is potentially unused (in case of handleResult coroutine call)
+            // It's supposed here that no bytecode is emitted until 'put' call on relevant StackValue object
             StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
                 answer = result;
-                StackValue handleResultValue = !(possiblyLabeledStatement instanceof KtReturnExpression)
-                                               ? genControllerHandleResultCallIfNeeded(possiblyLabeledStatement, possiblyLabeledStatement)
-                                               : null;
+                StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, possiblyLabeledStatement);
                 if (handleResultValue != null) {
                     answer = handleResultValue;
                 }
@@ -1641,6 +1743,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
+        }
+
+        if (answer == null) {
+            answer = genControllerHandleResultForLastStatementInCoroutine(block, null);
+            if (answer == null) {
+                answer = StackValue.none();
+            }
         }
 
         return new StackValueWithLeaveTask(answer, new Function1<StackValue, Unit>() {
@@ -1658,6 +1767,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
+    private StackValue genControllerHandleResultForLastStatementInCoroutine(
+            @NotNull KtBlockExpression block,
+            @Nullable KtExpression lastStatement
+    ) {
+        if (!(block.getParent() instanceof KtFunctionLiteral)) return null;
+        KtFunctionLiteral functionLiteral = (KtFunctionLiteral) block.getParent();
+
+        return genControllerHandleResultCallIfNeeded(functionLiteral, lastStatement);
+    }
+
+    @Nullable
     private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression valueToReturn) {
         ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(RETURN_HANDLE_RESULT_RESOLVED_CALL, callOwner);
 
@@ -1665,7 +1785,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert resolvedCall.getValueArgumentsByIndex() != null : "Arguments were not resolved for call element: " + callOwner.getText();
             KtExpression argumentExpression =
                     resolvedCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
-            if (KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
+            if (valueToReturn == null
+                    && KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
                 tempVariables.put(argumentExpression, StackValue.unit());
             }
             else {
@@ -1683,7 +1804,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private StackValue genCoroutineInstanceValueFromResolvedCall(ResolvedCall<?> resolvedCall) {
+    public StackValue genCoroutineInstanceValueFromResolvedCall(ResolvedCall<?> resolvedCall) {
         // Currently only handleResult/suspend members are supported
         ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
         assert dispatchReceiver != null : "Dispatch receiver is null for handleResult/suspend to " + resolvedCall.getResultingDescriptor();
@@ -2512,7 +2633,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Callable callable = resolveToCallable(fd, superCallTarget != null, resolvedCall);
 
-        return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
+
+        StackValue result = callable.invokeMethodWithArguments(resolvedCall, receiver, this);
+
+        if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall)) {
+            // Suspension points should behave like they leave actual values on stack, while real methods return VOID
+            return new OperationStackValue(getSuspensionReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
+        }
+
+        return result;
     }
 
     @Nullable
@@ -2605,14 +2734,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (isSuspensionPoint) {
+            v.aconst(getSuspensionReturnTypeByResolvedCall(resolvedCall).getDescriptor());
             v.invokestatic(
-                    CoroutineCodegenUtilKt.SUSPENSION_POINT_MARKER_OWNER,
-                    CoroutineCodegenUtilKt.SUSPENSION_POINT_MARKER_NAME, "()V", false);
+                    CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
+                    CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
+                    "(Ljava/lang/String;)V", false);
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspensionPoint) {
+            StackValue.coerce(Type.VOID_TYPE, getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
+            v.invokestatic(
+                    CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
+                    CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
             addInlineMarker(v, false);
         }
 
@@ -2621,6 +2756,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.aconst(null);
             v.athrow();
         }
+    }
+
+    @NotNull
+    private Type getSuspensionReturnTypeByResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
+        assert resolvedCall.getResultingDescriptor() instanceof SimpleFunctionDescriptor
+                : "Suspension point resolved call should be built on SimpleFunctionDescriptor";
+
+        KotlinType returnType = org.jetbrains.kotlin.resolve.coroutine.CoroutineUtilKt
+                .getSuspensionPointReturnType((SimpleFunctionDescriptor) resolvedCall.getResultingDescriptor());
+
+        assert returnType != null : "Return type of suspension point should not be null";
+        return typeMapper.mapType(returnType);
     }
 
     @NotNull
@@ -2639,13 +2786,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (!isInline) return defaultCallGenerator;
 
-        FunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal());
+        FunctionDescriptor original =
+                unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal()));
         if (isDefaultCompilation) {
             return new InlineCodegenForDefaultBody(original, this, state);
         }
         else {
             return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
         }
+    }
+
+    @NotNull
+    private static FunctionDescriptor unwrapInitialSignatureDescriptor(@NotNull FunctionDescriptor function) {
+        if (function.getInitialSignatureDescriptor() != null) return function.getInitialSignatureDescriptor();
+        return function;
     }
 
     @NotNull
@@ -2873,7 +3027,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (hasSpread) {
             boolean arrayOfReferences = KotlinBuiltIns.isArray(outType);
             if (size == 1) {
-                // Arrays.copyOf(array, newLength)
+                // Arrays.copyOf(receiverValue, newLength)
                 ValueArgument argument = arguments.get(0);
                 Type arrayType = arrayOfReferences ? Type.getType("[Ljava/lang/Object;")
                                                    : Type.getType("[" + elementType.getDescriptor());
@@ -3010,7 +3164,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, target, dispatchReceiver, receiverAsmType
+                element, classBuilder, variableDescriptor, target, dispatchReceiver, receiverAsmType
         );
         codegen.generate();
 

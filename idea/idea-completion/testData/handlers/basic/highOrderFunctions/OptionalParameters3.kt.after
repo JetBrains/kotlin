@@ -1,0 +1,9 @@
+fun xfoo(p: () -> Unit = {}){}
+
+fun test() {
+    xfoo { <caret> }
+}
+
+// ELEMENT: xfoo
+// TAIL_TEXT: " {...} (p: () -> Unit = ...) (<root>)"
+

@@ -1175,7 +1175,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getInfo(call.getValueArguments().get(1));
 
         KotlinType type = resolvedCall.getResultingDescriptor().getReturnType();
-        if (type == null || rightType == null) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
+        if (type == null ||
+            rightType == null ||
+            leftType == null && KotlinBuiltIns.isNothing(rightType)) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
+
         if (leftType != null) {
             DataFlowValue leftValue = createDataFlowValue(left, leftType, context);
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
@@ -1196,7 +1199,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
         }
-
 
         // Sometimes return type for special call for elvis operator might be nullable,
         // but result is not nullable if the right type is not nullable

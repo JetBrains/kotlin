@@ -23,9 +23,21 @@ fun box(): String {
 
     if (future.get() != "56") return "fail: ${future.get()}"
 
-    java.lang.Thread.sleep(1000)
+    if (result != "OK") return "fail notOk"
 
-    return result
+    val future2 = async<String>() {
+        await(exception("OK"))
+        "fail"
+    }
+
+    try {
+        future2.get()
+    } catch (e: Exception) {
+        if (e.cause!!.message != "OK") return "fail message: ${e.cause!!.message}"
+        return "OK"
+    }
+
+    return "No exception"
 }
 
 fun <T> async(coroutine c: FutureController<T>.() -> Continuation<Unit>): CompletableFuture<T> {
@@ -37,17 +49,12 @@ fun <T> async(coroutine c: FutureController<T>.() -> Continuation<Unit>): Comple
 class FutureController<T> {
     val future = CompletableFuture<T>()
 
-
     suspend fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>) {
         f.whenComplete { value, throwable ->
-            try {
-                if (throwable == null)
-                    machine.resume(value)
-                else
-                    machine.resumeWithException(throwable)
-            } catch (e: Exception) {
-                future.completeExceptionally(e)
-            }
+            if (throwable == null)
+                machine.resume(value)
+            else
+                machine.resumeWithException(throwable)
         }
     }
 
@@ -55,7 +62,7 @@ class FutureController<T> {
         future.complete(value)
     }
 
-    fun handleException(t: Throwable, c: Continuation<Nothing>) {
+    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
         future.completeExceptionally(t)
     }
 }

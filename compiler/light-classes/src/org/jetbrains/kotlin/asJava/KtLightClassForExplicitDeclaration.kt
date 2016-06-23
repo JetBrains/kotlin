@@ -252,9 +252,9 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList.typeParameters
 
-    override fun getName(): String = classFqName.shortName().asString()
+    override fun getName(): String? = classFqName.shortName().asString()
 
-    override fun getQualifiedName(): String = classFqName.asString()
+    override fun getQualifiedName(): String? = classFqName.asString()
 
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
@@ -263,7 +263,7 @@ open class KtLightClassForExplicitDeclaration(
         }
     }
 
-    override fun getModifierList(): PsiModifierList = _modifierList
+    override fun getModifierList(): PsiModifierList? = _modifierList
 
     protected open fun computeModifiers(): Array<String> {
         val psiModifiers = hashSetOf<String>()
@@ -306,7 +306,7 @@ open class KtLightClassForExplicitDeclaration(
 
     private fun isSealed(): Boolean = classOrObject.hasModifier(SEALED_KEYWORD)
 
-    override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
     override fun isDeprecated(): Boolean {
         val jetModifierList = classOrObject.modifierList ?: return false
@@ -392,7 +392,7 @@ open class KtLightClassForExplicitDeclaration(
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
-    override fun getNameIdentifier() = lightIdentifier
+    override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
 
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")

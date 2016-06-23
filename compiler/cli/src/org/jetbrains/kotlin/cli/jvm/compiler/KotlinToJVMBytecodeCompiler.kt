@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
+import java.io.IOException
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
@@ -487,7 +488,14 @@ object KotlinToJVMBytecodeCompiler {
             return if (versionIndex >= 0) substring(0, versionIndex) else this
         }
 
-        val runtimes = jvmClasspathRoots.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+        val runtimes = jvmClasspathRoots.map {
+            try {
+                it.canonicalFile
+            }
+            catch (e: IOException) {
+                it
+            }
+        }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
 
         val runtimeVersions = runtimes.map {
             JarUtil.getJarAttribute(it, Attributes.Name.IMPLEMENTATION_VERSION).orEmpty().removeIdeaVersionSuffix()

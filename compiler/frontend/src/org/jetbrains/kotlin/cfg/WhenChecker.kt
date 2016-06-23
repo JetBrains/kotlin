@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -139,7 +140,7 @@ private class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase
     }
 }
 
-private abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {
+internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {
     private fun getReference(expression: KtExpression?): KtSimpleNameExpression? =
             when (expression) {
                 is KtSimpleNameExpression -> expression
@@ -223,7 +224,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
     }
 }
 
-private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
     override fun getMissingCases(
             expression: KtWhenExpression,
             context: BindingContext,
@@ -233,8 +234,7 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
         assert(DescriptorUtils.isSealedClass(subjectDescriptor)) {
             "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor: $subjectDescriptor"
         }
-        val memberClassDescriptors = LinkedHashSet<ClassDescriptor>()
-        collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
+        val memberClassDescriptors = getNestedSubclasses(subjectDescriptor!!)
         // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
         return getMissingClassCases(expression, memberClassDescriptors, context) +
                WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
@@ -242,6 +242,12 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
         return DescriptorUtils.isSealedClass(TypeUtils.getClassDescriptor(subjectType))
+    }
+
+    internal fun getNestedSubclasses(baseDescriptor: ClassDescriptor): Set<ClassDescriptor> {
+        val memberClassDescriptors = LinkedHashSet<ClassDescriptor>()
+        collectNestedSubclasses(baseDescriptor, baseDescriptor, memberClassDescriptors)
+        return memberClassDescriptors
     }
 
     private fun collectNestedSubclasses(
@@ -291,7 +297,7 @@ object WhenChecker {
     }
 
     private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
-            expression.subjectExpression?.let { context.getType(it) } ?: null
+            expression.subjectExpression?.let { context.get(SMARTCAST, it) ?: context.getType(it) } ?: null
 
     @JvmStatic
     fun getEnumMissingCases(
@@ -300,30 +306,9 @@ object WhenChecker {
             enumClassDescriptor: ClassDescriptor
     ) = WhenOnEnumExhaustivenessChecker.getMissingCases(expression, context, enumClassDescriptor, false)
 
-    /**
-     * It's assumed that function is called for a final type. In this case the only possible smart cast is to not nullable type.
-     * @return true if type is nullable, and cannot be smart casted
-     */
-    private fun isNullableTypeWithoutPossibleSmartCast(
-            expression: KtExpression?,
-            type: KotlinType,
-            context: BindingContext
-    ): Boolean {
-        if (expression == null) return false // Normally should not happen
-        if (!TypeUtils.isNullableType(type)) return false
-        // We cannot read data flow information here due to lack of inputs (module descriptor is necessary)
-        if (context.get(BindingContext.SMARTCAST, expression) != null) {
-            // We have smart cast from enum or boolean to something
-            // Not very nice but we *can* decide it was smart cast to not-null
-            // because both enum and boolean are final
-            return false
-        }
-        return true
-    }
-
     fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
         val type = whenSubjectType(expression, context) ?: return listOf(UnknownMissingCase)
-        val nullable = !type.isFlexible() && isNullableTypeWithoutPossibleSmartCast(expression.subjectExpression, type, context)
+        val nullable = type.isMarkedNullable
         val checkers = exhaustivenessCheckers.filter { it.isApplicable(type) }
         if (checkers.isEmpty()) return listOf(UnknownMissingCase)
         return checkers.map { it.getMissingCases(expression, context, TypeUtils.getClassDescriptor(type), nullable) }.flatten()

@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.maven
 
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.OrderEnumerator
@@ -30,7 +33,6 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.idea.util.projectStructure.findLibrary
 import java.io.File
 import java.util.*
 

@@ -130,6 +130,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("canBePrimaryConstructorProperty/inspectionData/inspections.test")
+        public void testCanBePrimaryConstructorProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/canBePrimaryConstructorProperty/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("canBeVal/inspectionData/inspections.test")
         public void testCanBeVal_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/canBeVal/inspectionData/inspections.test");
@@ -145,6 +151,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("equalsAndHashCode/inspectionData/inspections.test")
         public void testEqualsAndHashCode_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/equalsAndHashCode/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasPlatformType/inspectionData/inspections.test")
+        public void testHasPlatformType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/hasPlatformType/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -199,6 +211,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
+        public void testTwoSetOfTypeparameters_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/twoSetOfTypeparameters/inspectionData/inspections.test");
             doTest(fileName);
         }
 

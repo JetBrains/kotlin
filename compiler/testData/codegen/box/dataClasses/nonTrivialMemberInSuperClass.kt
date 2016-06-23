@@ -1,6 +1,4 @@
 // See KT-6206 Always generate hashCode() and equals() for data classes even if base classes have non-trivial analogs
-// TODO: remove the suppression once data classes can have supertypes
-@file:Suppress("DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES")
 
 abstract class Base {
     override fun toString() = "Fail"

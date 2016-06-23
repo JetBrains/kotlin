@@ -46,7 +46,7 @@ public class MappingClassesForWhenByEnumCodegen {
         ClassBuilder cb = state.getFactory().newVisitor(JvmDeclarationOrigin.NO_ORIGIN, mappingsClass, srcFile);
         cb.defineClass(
                 srcFile,
-                V1_6,
+                state.getClassFileVersion(),
                 ACC_PUBLIC | ACC_FINAL | ACC_SUPER | ACC_SYNTHETIC,
                 mappingsClass.getInternalName(),
                 null,

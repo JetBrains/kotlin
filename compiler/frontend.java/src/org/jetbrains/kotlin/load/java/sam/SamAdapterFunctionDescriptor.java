@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,12 +47,6 @@ import org.jetbrains.kotlin.name.Name;
 
     @NotNull
     @Override
-    public JavaMethodDescriptor getOriginForSam() {
-        return declaration;
-    }
-
-    @NotNull
-    @Override
     protected JavaMethodDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
@@ -62,5 +56,11 @@ import org.jetbrains.kotlin.name.Name;
             @NotNull SourceElement source
     ) {
         return new SamAdapterFunctionDescriptor(newOwner, (SimpleFunctionDescriptor) original, kind, declaration);
+    }
+
+    @NotNull
+    @Override
+    public JavaMethodDescriptor getBaseDescriptorForSynthetic() {
+        return declaration;
     }
 }

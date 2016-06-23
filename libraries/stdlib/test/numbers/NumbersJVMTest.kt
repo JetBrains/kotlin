@@ -1,4 +1,4 @@
-package numbers
+package test.numbers
 
 import java.math.BigDecimal
 import org.junit.Test as test

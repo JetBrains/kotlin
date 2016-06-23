@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common.bridges
 
 import org.jetbrains.kotlin.utils.DFS
-import java.util.HashSet
+import java.util.*
 
 interface FunctionHandle {
     val isDeclaration: Boolean

@@ -129,6 +129,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.FRIEND_PATHS, friendPaths)
         }
 
+        if (arguments.jvmTarget != null) {
+            val jvmTarget = JvmTarget.fromString(arguments.jvmTarget)
+            if (jvmTarget != null) {
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+            }
+            else {
+                val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
+                                   "Supported versions: ${JvmTarget.values().joinToString { it.string }}"
+                messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, CompilerMessageLocation.NO_LOCATION)
+            }
+        }
+
         putAdvancedOptions(configuration, arguments)
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)

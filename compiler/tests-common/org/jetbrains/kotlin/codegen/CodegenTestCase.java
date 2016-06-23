@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -71,6 +74,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest.findJavaSourcesInDirectory;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
@@ -144,6 +148,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<String> kotlinConfigurationFlags = new ArrayList<String>(0);
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
+
+            List<String> lines = InTextDirectivesUtils.findLinesWithPrefixesRemoved(testFile.content, "// JVM_TARGET:");
+            if (!lines.isEmpty()) {
+                String targetString = CollectionsKt.single(lines);
+                JvmTarget jvmTarget = JvmTarget.Companion.fromString(targetString);
+                assert jvmTarget != null : "Unknown target: " + targetString;
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget);
+            }
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
@@ -458,6 +470,48 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
         catch (ClassNotFoundException e) {
             throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
+    protected void compile(
+            @NotNull List<TestFile> files,
+            @Nullable File javaSourceDir,
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull List<String> javacOptions
+    ) {
+        CompilerConfiguration configuration = createConfiguration(
+                configurationKind, jdkKind,
+                Collections.singletonList(getAnnotationsJar()),
+                ArraysKt.filterNotNull(new File[] {javaSourceDir}),
+                files
+        );
+
+        myEnvironment = KotlinCoreEnvironment.createForTests(
+                getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
+
+        loadMultiFiles(files);
+
+        classFileFactory = GenerationUtils.compileFiles(myFiles.getPsiFiles(), myEnvironment).getFactory();
+
+        if (javaSourceDir != null) {
+            // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
+            File kotlinOut;
+            try {
+                kotlinOut = KotlinTestUtils.tmpDir(toString());
+            }
+            catch (IOException e) {
+                throw ExceptionUtilsKt.rethrow(e);
+            }
+
+            OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
+
+            File output = CodegenTestUtil.compileJava(
+                    findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
+            );
+            // Add javac output to classpath so that the created class loader can find generated Java classes
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, output);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1486,7 +1486,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
             parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
-            errorIf(error, typeParameterListOccurred, "Only one type parameter list is allowed for a function");
+            if (typeParameterListOccurred) {
+                int offset = myBuilder.getCurrentOffset();
+                error.rollbackTo();
+                error = mark();
+                advance(offset - myBuilder.getCurrentOffset());
+                error.error("Only one type parameter list is allowed for a function");
+            }
+            else {
+                error.drop();
+            }
             typeParameterListOccurred = true;
         }
 

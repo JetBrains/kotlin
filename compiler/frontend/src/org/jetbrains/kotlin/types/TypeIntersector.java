@@ -117,6 +117,11 @@ public class TypeIntersector {
             // TODO: maybe return the most specific among the types that are subtypes to all others in the `nullabilityStripped`?
             // TODO: e.g. among {Int, Int?, Int!}, return `Int` (now it returns `Int!`).
             KotlinType bestRepresentative = FlexibleTypesKt.singleBestRepresentative(nullabilityStripped);
+
+            if (bestRepresentative == null) {
+                bestRepresentative = UtilsKt.hackForTypeIntersector(nullabilityStripped);
+            }
+
             if (bestRepresentative == null) {
                 throw new AssertionError("Empty intersection for types " + types);
             }

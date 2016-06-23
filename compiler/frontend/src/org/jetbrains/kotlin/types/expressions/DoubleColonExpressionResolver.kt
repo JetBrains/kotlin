@@ -20,26 +20,28 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForResolvedCallableReference
+import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -272,32 +274,79 @@ class DoubleColonExpressionResolver(
             resolutionResults: OverloadResolutionResults<*>?,
             context: ExpressionTypingContext
     ): KotlinType? {
-        val reference = expression.callableReference
-
         val descriptor =
                 if (resolutionResults != null && !resolutionResults.isNothing) {
-                    OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)?.let { call ->
-                        call.resultingDescriptor
-                    } ?: return null
+                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)
+                    resolvedCall?.resultingDescriptor ?: return null
                 }
                 else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference))
+                    context.trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
                     return null
                 }
 
+        checkReferenceIsToAllowedMember(descriptor, context.trace, expression)
+
+        val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, context.scope.ownerDescriptor) ?: return null
+
+        when (descriptor) {
+            is FunctionDescriptor -> bindFunctionReference(expression, type, context)
+            is PropertyDescriptor -> bindPropertyReference(expression, type, context)
+        }
+
+        return type
+    }
+
+    private fun checkReferenceIsToAllowedMember(
+            descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
+    ) {
+        val simpleName = expression.callableReference
         if (expression.isEmptyLHS &&
             (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference))
+            trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(simpleName))
         }
-
         if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference))
+            trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(simpleName))
         }
+        if (descriptor is CallableMemberDescriptor && isMemberExtension(descriptor)) {
+            trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(simpleName, descriptor))
+        }
+        if (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) {
+            trace.report(UNSUPPORTED.on(simpleName, "References to variables aren't supported yet"))
+        }
+    }
 
-        val ignoreReceiver = lhs is DoubleColonLHS.Expression || expression.isEmptyLHS
-        return createReflectionTypeForResolvedCallableReference(
-                expression, lhs?.type, ignoreReceiver, descriptor, context, reflectionTypes
+    private fun isMemberExtension(descriptor: CallableMemberDescriptor): Boolean {
+        val original = (descriptor as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: descriptor
+        return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
+    }
+
+    private fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
+        val functionDescriptor = AnonymousFunctionDescriptor(
+                context.scope.ownerDescriptor,
+                Annotations.EMPTY,
+                CallableMemberDescriptor.Kind.DECLARATION,
+                expression.toSourceElement(),
+                /* isCoroutine = */ false
         )
+
+        functionDescriptor.initialize(
+                null, null, emptyList(),
+                createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
+                type.arguments.last().type,
+                Modality.FINAL,
+                Visibilities.PUBLIC
+        )
+
+        context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
+    }
+
+    private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
+        val localVariable = LocalVariableDescriptor(
+                context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType, /* mutable = */ false,
+                /* isDelegated = */ false, expression.toSourceElement()
+        )
+
+        context.trace.record(BindingContext.VARIABLE, expression, localVariable)
     }
 
     fun resolveCallableReference(
@@ -307,9 +356,8 @@ class DoubleColonExpressionResolver(
     ): Pair<DoubleColonLHS?, OverloadResolutionResults<*>?> {
         val lhsResult = expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, context) }
 
-        val resolutionResults = resolvePossiblyAmbiguousCallableReference(
-                expression, lhsResult?.type, context, resolveArgumentsMode, callResolver
-        )
+        val resolutionResults =
+                resolvePossiblyAmbiguousCallableReference(expression, lhsResult, context, resolveArgumentsMode, callResolver)
 
         return lhsResult to resolutionResults
     }

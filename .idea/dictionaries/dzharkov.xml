@@ -4,6 +4,7 @@
       <w>checkcast</w>
       <w>coroutine</w>
       <w>insn</w>
+      <w>liveness</w>
     </words>
   </dictionary>
 </component>

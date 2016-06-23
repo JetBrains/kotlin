@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -37,6 +35,10 @@ object DescriptorToSourceUtils {
                 for (overridden in descriptor.overriddenDescriptors) {
                     collectEffectiveReferencedDescriptors(result, overridden.original)
                 }
+                return
+            }
+            if (descriptor is SyntheticMemberDescriptor<*>) {
+                collectEffectiveReferencedDescriptors(result, descriptor.baseDescriptorForSynthetic)
                 return
             }
         }

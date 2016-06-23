@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
@@ -76,6 +77,8 @@ class ClassTranslator private constructor(
     }
 
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
+
+    private fun isAnnotation(): Boolean = descriptor.kind == ClassKind.ANNOTATION_CLASS
 
     private fun generateClassCreateInvocationArguments() {
         val properties = SmartList<JsPropertyInitializer>()
@@ -326,6 +329,7 @@ class ClassTranslator private constructor(
 
     private fun getSupertypesNameReferences(): List<JsExpression> {
         val supertypes = getSupertypesWithoutFakes(descriptor)
+                .filter { it.constructor.declarationDescriptor !is FunctionClassDescriptor }
         if (supertypes.isEmpty()) {
             return emptyList()
         }
@@ -369,7 +373,7 @@ class ClassTranslator private constructor(
     }
 
     private fun generatedBridgeMethods(properties: MutableList<JsPropertyInitializer>) {
-        if (isTrait()) return
+        if (isAnnotation()) return
 
         generateBridgesToTraitImpl(properties)
 
@@ -387,7 +391,10 @@ class ClassTranslator private constructor(
     private fun generateOtherBridges(properties: MutableList<JsPropertyInitializer>) {
         for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor is FunctionDescriptor) {
-                val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity())
+                val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity()) {
+                    //There is no DefaultImpls in js backend so if method non-abstract it should be recognized as non-abstract on bridges calculation
+                    false
+                }
 
                 for (bridge in bridgesToGenerate) {
                     generateBridge(bridge, properties)

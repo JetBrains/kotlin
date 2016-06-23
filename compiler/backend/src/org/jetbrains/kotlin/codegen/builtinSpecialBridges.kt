@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.bridges.DescriptorBasedFunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
@@ -46,14 +47,15 @@ class BridgeForBuiltinSpecial<out Signature : Any>(
 object BuiltinSpecialBridgesUtil {
     @JvmStatic fun <Signature : Any> generateBridgesForBuiltinSpecial(
             function: FunctionDescriptor,
-            signatureByDescriptor: (FunctionDescriptor) -> Signature
+            signatureByDescriptor: (FunctionDescriptor) -> Signature,
+            isBodyOwner: (DeclarationDescriptor) -> Boolean
     ): Set<BridgeForBuiltinSpecial<Signature>> {
 
-        val functionHandle = DescriptorBasedFunctionHandle(function)
+        val functionHandle = DescriptorBasedFunctionHandle(function, isBodyOwner)
         val fake = !functionHandle.isDeclaration
         val overriddenBuiltin = function.getOverriddenBuiltinReflectingJvmDescriptor()!!
 
-        val reachableDeclarations = findAllReachableDeclarations(function)
+        val reachableDeclarations = findAllReachableDeclarations(function, isBodyOwner)
 
         // e.g. `getSize()I`
         val methodItself = signatureByDescriptor(function)
@@ -79,8 +81,8 @@ object BuiltinSpecialBridgesUtil {
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
-                if (!DescriptorBasedFunctionHandle(overridden).isAbstract) {
-                    commonBridges.removeAll(findAllReachableDeclarations(overridden).map(signatureByDescriptor))
+                if (!DescriptorBasedFunctionHandle(overridden, isBodyOwner).isAbstract) {
+                    commonBridges.removeAll(findAllReachableDeclarations(overridden, isBodyOwner).map(signatureByDescriptor))
                 }
             }
         }
@@ -89,7 +91,7 @@ object BuiltinSpecialBridgesUtil {
 
         // Can be null if special builtin is final (e.g. 'name' in Enum)
         // because there should be no stubs for override in subclasses
-        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
+        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake, isBodyOwner)
         if (superImplementationDescriptor != null) {
             bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
         }
@@ -121,16 +123,23 @@ object BuiltinSpecialBridgesUtil {
 }
 
 
-private fun findSuperImplementationForStubDelegation(function: FunctionDescriptor, fake: Boolean): FunctionDescriptor? {
+private fun findSuperImplementationForStubDelegation(
+        function: FunctionDescriptor,
+        fake: Boolean,
+        isBodyOwner: (DeclarationDescriptor) -> Boolean
+): FunctionDescriptor? {
     if (function.modality != Modality.OPEN || !fake) return null
-    val implementation = findConcreteSuperDeclaration(DescriptorBasedFunctionHandle(function)).descriptor
+    val implementation = findConcreteSuperDeclaration(DescriptorBasedFunctionHandle(function, isBodyOwner)).descriptor
     if (DescriptorUtils.isInterface(implementation.containingDeclaration)) return null
 
     return implementation
 }
 
-private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =
-        findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor)).map { it.descriptor }.toMutableSet()
+private fun findAllReachableDeclarations(
+        functionDescriptor: FunctionDescriptor,
+        isBodyOwner: (DeclarationDescriptor) -> Boolean
+): MutableSet<FunctionDescriptor> =
+        findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor, isBodyOwner)).map { it.descriptor }.toMutableSet()
 
 private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExists(
         signatureByDescriptor: (FunctionDescriptor) -> Signature

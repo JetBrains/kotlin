@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
+import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -43,11 +43,15 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.LOCAL_VARIABLE_DELEGATE;
+import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
+import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
@@ -58,10 +62,37 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
+    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        if (!isJvmInterface(descriptor)) {
+            return false;
+        }
+        if (ANNOTATION_CLASS == ((ClassDescriptor) descriptor).getKind()) return true;
+
+        if (descriptor instanceof DeserializedClassDescriptor) {
+            SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
+            if (source instanceof KotlinJvmBinarySourceElement) {
+                KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
+                assert binaryClass instanceof FileBasedKotlinClass :
+                        "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
+                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
+            }
+        }
+        return !state.isJvm8Target();
+    }
+
+    private static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, state);
+    }
+
+    public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+        return isJvm8Interface(declaration, state);
+    }
+
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind == ClassKind.INTERFACE || kind == ClassKind.ANNOTATION_CLASS;
+            return kind == INTERFACE || kind == ANNOTATION_CLASS;
         }
         return false;
     }
@@ -150,13 +181,26 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        if (!isDebuggerContext(context)) {
-            // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
-            if (!isCallInsideSameClassAsDeclared(property, context)) return false;
-        }
-        else {
-            // In debugger we want to access through accessors if they are present. If property overrides something accessors must be present.
-            if (!property.getOverriddenDescriptors().isEmpty()) return false;
+        if (!isCallInsideSameClassAsDeclared(property, context)) {
+            if (!isDebuggerContext(context)) {
+                // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
+                return false;
+            }
+            else {
+                // In debugger we want to access through accessors if they are generated
+
+                // Non default accessors must always be generated
+                for (PropertyAccessorDescriptor accessorDescriptor : property.getAccessors()) {
+                    if (!accessorDescriptor.isDefault()) {
+                        if (forGetter == accessorDescriptor instanceof PropertyGetterDescriptor) {
+                            return false;
+                        }
+                    }
+                }
+
+                // If property overrides something, accessors must be generated too
+                if (!property.getOverriddenDescriptors().isEmpty()) return false;
+            }
         }
 
         // Delegated and extension properties have no backing fields

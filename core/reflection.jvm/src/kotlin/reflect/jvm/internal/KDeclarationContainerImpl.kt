@@ -156,10 +156,24 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return functions.single()
     }
 
-    private fun Class<*>.tryGetMethod(name: String, parameterTypes: List<Class<*>>, declared: Boolean) =
+    private fun Class<*>.tryGetMethod(name: String, parameterTypes: List<Class<*>>, returnType: Class<*>, declared: Boolean): Method? =
             try {
-                if (declared) getDeclaredMethod(name, *parameterTypes.toTypedArray())
-                else getMethod(name, *parameterTypes.toTypedArray())
+                val parametersArray = parameterTypes.toTypedArray()
+                val result = if (declared) getDeclaredMethod(name, *parametersArray) else getMethod(name, *parametersArray)
+
+                if (result.returnType == returnType) result
+                else {
+                    // If we've found a method with an unexpected return type, it's likely that there are several methods in this class
+                    // with the given parameter types and Java reflection API has returned not the one we're looking for.
+                    // Falling back to enumerating all methods in the class in this (rather rare) case.
+                    // Example: class A(val x: Int) { fun getX(): String = ... }
+                    val allMethods = if (declared) declaredMethods else methods
+                    allMethods.firstOrNull { method ->
+                        method.name == name &&
+                        method.returnType == returnType &&
+                        Arrays.equals(method.parameterTypes, parametersArray)
+                    }
+                }
             }
             catch (e: NoSuchMethodException) {
                 null
@@ -174,11 +188,10 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 null
             }
 
-    // TODO: check resulting method's return type
     fun findMethodBySignature(name: String, desc: String, declared: Boolean): Method? {
         if (name == "<init>") return null
 
-        return methodOwner.tryGetMethod(name, loadParameterTypes(desc), declared)
+        return methodOwner.tryGetMethod(name, loadParameterTypes(desc), loadReturnType(desc), declared)
     }
 
     fun findDefaultMethod(name: String, desc: String, isMember: Boolean, declared: Boolean): Method? {
@@ -190,7 +203,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
         addParametersAndMasks(parameterTypes, desc, false)
 
-        return methodOwner.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
+        return methodOwner.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, loadReturnType(desc), declared)
     }
 
     fun findConstructorBySignature(desc: String, declared: Boolean): Constructor<*>? {
@@ -214,45 +227,43 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     private fun loadParameterTypes(desc: String): List<Class<*>> {
-        val classLoader = jClass.safeClassLoader
         val result = arrayListOf<Class<*>>()
 
-        var i = 1
-        while (desc[i] != ')') {
-            var arrayDimension = 0
-            while (desc[i] == '[') {
-                arrayDimension++
-                i++
-            }
-
-            var type = when (desc[i++]) {
-                'L' -> {
-                    val semicolon = desc.indexOf(';', i)
-                    val internalName = desc.substring(i, semicolon)
-                    i = semicolon + 1
-                    classLoader.loadClass(internalName.replace('/', '.'))
-                }
-                'V' -> Void.TYPE
-                'Z' -> java.lang.Boolean.TYPE
-                'C' -> java.lang.Character.TYPE
-                'B' -> java.lang.Byte.TYPE
-                'S' -> java.lang.Short.TYPE
-                'I' -> java.lang.Integer.TYPE
-                'F' -> java.lang.Float.TYPE
-                'J' -> java.lang.Long.TYPE
-                'D' -> java.lang.Double.TYPE
+        var begin = 1
+        while (desc[begin] != ')') {
+            var end = begin
+            while (desc[end] == '[') end++
+            when (desc[end]) {
+                in "VZCBSIFJD" -> end++
+                'L' -> end = desc.indexOf(';', begin) + 1
                 else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
             }
 
-            repeat(arrayDimension) {
-                type = type.createArrayType()
-            }
-
-            result.add(type)
+            result.add(parseType(desc, begin, end))
+            begin = end
         }
 
         return result
     }
+
+    private fun parseType(desc: String, begin: Int, end: Int): Class<*> =
+            when (desc[begin]) {
+                'L' -> jClass.safeClassLoader.loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+                '[' -> parseType(desc, begin + 1, end).createArrayType()
+                'V' -> Void.TYPE
+                'Z' -> Boolean::class.java
+                'C' -> Char::class.java
+                'B' -> Byte::class.java
+                'S' -> Short::class.java
+                'I' -> Int::class.java
+                'F' -> Float::class.java
+                'J' -> Long::class.java
+                'D' -> Double::class.java
+                else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+            }
+
+    private fun loadReturnType(desc: String): Class<*> =
+            parseType(desc, desc.indexOf(')') + 1, desc.length)
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")

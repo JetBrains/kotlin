@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.cfg.WhenOnSealedExhaustivenessChecker
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -84,29 +88,29 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedType, contextAfterSubject, dataFlowInfoForEntries)
         val whenResultValue = whenReturnType?.let { DataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
-        val (outputDataFlowInfo, jumpOutPossible) =
-                joinWhenExpressionBranches(expression, contextAfterSubject, jumpOutPossibleInSubject, whenResultValue)
+        val branchesTypeInfo =
+                joinWhenExpressionBranches(expression, contextAfterSubject, whenReturnType, jumpOutPossibleInSubject, whenResultValue)
 
         val isExhaustive = WhenChecker.isWhenExhaustive(expression, trace)
 
+        val branchesDataFlowInfo = branchesTypeInfo.dataFlowInfo
         val resultDataFlowInfo = if (expression.elseExpression == null && !isExhaustive) {
             // Without else expression in non-exhaustive when, we *must* take initial data flow info into account,
             // because data flow can bypass all when branches in this case
-            outputDataFlowInfo.or(contextAfterSubject.dataFlowInfo)
+            branchesDataFlowInfo.or(contextAfterSubject.dataFlowInfo)
         }
         else {
-            outputDataFlowInfo
+            branchesDataFlowInfo
         }
 
         if (whenReturnType != null && isExhaustive && expression.elseExpression == null && KotlinBuiltIns.isNothing(whenReturnType)) {
             trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression)
         }
 
-        val resultType = whenReturnType?.let {
-            components.dataFlowAnalyzer.checkType(it, expression, contextWithExpectedType)
-        }
+        val branchesType = branchesTypeInfo.type ?: return noTypeInfo(resultDataFlowInfo)
+        val resultType = components.dataFlowAnalyzer.checkType(branchesType, expression, contextWithExpectedType)
 
-        return createTypeInfo(resultType, resultDataFlowInfo, jumpOutPossible, contextWithExpectedType.dataFlowInfo)
+        return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }
 
     private fun inferTypeForWhenExpression(
@@ -169,19 +173,24 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun joinWhenExpressionBranches(
             expression: KtWhenExpression,
             contextAfterSubject: ExpressionTypingContext,
+            resultType: KotlinType?,
             jumpOutPossibleInSubject: Boolean,
             whenResultValue: DataFlowValue?
-    ): Pair<DataFlowInfo, Boolean> {
+    ): KotlinTypeInfo {
         val bindingContext = contextAfterSubject.trace.bindingContext
 
         var currentDataFlowInfo: DataFlowInfo? = null
         var jumpOutPossible = jumpOutPossibleInSubject
+        var errorTypeExistInBranch = false
         for (whenEntry in expression.entries) {
             val entryExpression = whenEntry.expression ?: continue
 
             val entryTypeInfo = BindingContextUtils.getRecordedTypeInfo(entryExpression, bindingContext) ?:
                                 continue
             val entryType = entryTypeInfo.type
+            if (entryType == null) {
+                errorTypeExistInBranch = true
+            }
 
             val entryDataFlowInfo =
                     if (whenResultValue != null && entryType != null) {
@@ -203,22 +212,48 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             jumpOutPossible = jumpOutPossible or entryTypeInfo.jumpOutPossible
         }
 
-        return Pair(currentDataFlowInfo ?: contextAfterSubject.dataFlowInfo, jumpOutPossible)
+        val resultDataFlowInfo = currentDataFlowInfo ?: contextAfterSubject.dataFlowInfo
+        return if (resultType == null || errorTypeExistInBranch && KotlinBuiltIns.isNothing(resultType))
+            noTypeInfo(resultDataFlowInfo)
+        else
+            createTypeInfo(resultType, resultDataFlowInfo, jumpOutPossible, resultDataFlowInfo)
     }
 
-    private fun checkSmartCastsInSubjectIfRequired(expression: KtWhenExpression, contextBeforeSubject: ExpressionTypingContext, subjectType: KotlinType) {
-        val subjectExpression = expression.subjectExpression
-        if (subjectExpression != null &&
-            TypeUtils.isNullableType(subjectType) &&
-            !WhenChecker.containsNullCase(expression, contextBeforeSubject.trace.bindingContext)
-        ) {
-            val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
-            val subjectContext = contextBeforeSubject.replaceExpectedType(TypeUtils.makeNotNullable(subjectType)).replaceBindingTrace(trace)
-            val castResult = DataFlowAnalyzer.checkPossibleCast(
-                    subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext)
-            if (castResult != null && castResult.isCorrect) {
-                trace.commit()
+    private fun checkSmartCastsInSubjectIfRequired(
+            expression: KtWhenExpression,
+            contextBeforeSubject: ExpressionTypingContext,
+            subjectType: KotlinType
+    ) {
+        val subjectExpression = expression.subjectExpression ?: return
+        val nullableType = TypeUtils.isNullableType(subjectType)
+        val bindingContext = contextBeforeSubject.trace.bindingContext
+        if (nullableType && !WhenChecker.containsNullCase(expression, bindingContext)) {
+            val notNullableType = TypeUtils.makeNotNullable(subjectType)
+            checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType, notNullableType)
+        }
+        val subjectClass = subjectType.constructor.declarationDescriptor as? ClassDescriptor ?: return
+        if (subjectClass.modality == Modality.SEALED &&
+            WhenOnSealedExhaustivenessChecker.getMissingCases(expression, bindingContext, subjectClass, false).isNotEmpty()) {
+            for (descriptor in WhenOnSealedExhaustivenessChecker.getNestedSubclasses(subjectClass)) {
+                if (descriptor.modality == Modality.SEALED && DescriptorUtils.isDirectSubclass(descriptor, subjectClass)) {
+                    checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType, descriptor.defaultType)
+                }
             }
+        }
+    }
+
+    private fun checkSmartCastToExpectedTypeInSubject(
+            contextBeforeSubject: ExpressionTypingContext,
+            subjectExpression: KtExpression,
+            subjectType: KotlinType,
+            expectedType: KotlinType
+    ) {
+        val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
+        val subjectContext = contextBeforeSubject.replaceExpectedType(expectedType).replaceBindingTrace(trace)
+        val castResult = DataFlowAnalyzer.checkPossibleCast(
+                subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext)
+        if (castResult != null && castResult.isCorrect) {
+            trace.commit()
         }
     }
 

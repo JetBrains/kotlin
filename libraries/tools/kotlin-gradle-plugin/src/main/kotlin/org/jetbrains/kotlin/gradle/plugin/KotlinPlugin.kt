@@ -45,10 +45,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val project: ProjectInternal,
         val javaBasePlugin: JavaBasePlugin,
         val sourceSet: SourceSet,
+        val tasksProvider: KotlinTasksProvider,
         val pluginName: String,
         val compileTaskNameSuffix: String,
-        val taskDescription: String,
-        val compilerClass: Class<T>
+        val taskDescription: String
 ) {
     abstract protected fun doTargetSpecificProcessing()
     val logger = Logging.getLogger(this.javaClass)
@@ -97,10 +97,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 
     open protected fun createKotlinCompileTask(suffix: String = ""): T {
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
-        logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
-        val compile = project.tasks.create(name, compilerClass)
-        compile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
-        return compile
+        logger.kotlinDebug("Creating kotlin compile task $name")
+        val kotlinCompile = doCreateTask(project, name)
+        kotlinCompile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
+        return kotlinCompile
     }
 
     open protected fun commonTaskConfiguration() {
@@ -109,6 +109,8 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         kotlinTask.source(kotlinDirSet)
         mapKotlinTaskProperties(project, kotlinTask)
     }
+
+    protected abstract fun doCreateTask(project: Project, taskName: String): T
 }
 
 class Kotlin2JvmSourceSetProcessor(
@@ -116,18 +118,20 @@ class Kotlin2JvmSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        val tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
-        project, javaBasePlugin, sourceSet,
+        project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin",
         compileTaskNameSuffix = "kotlin",
-        taskDescription = "Compiles the $sourceSet.kotlin.",
-        compilerClass = tasksProvider.kotlinJVMCompileTaskClass
+        taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
 
     private companion object {
         private var cachedKotlinAnnotationProcessingDep: String? = null
     }
+
+    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+            tasksProvider.createKotlinJVMTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
@@ -186,13 +190,12 @@ class Kotlin2JsSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        val tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<AbstractCompile>(
-        project, javaBasePlugin, sourceSet,
+        project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin2js",
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
-        compileTaskNameSuffix = "kotlin2Js",
-        compilerClass = tasksProvider.kotlinJSCompileTaskClass
+        compileTaskNameSuffix = "kotlin2Js"
 ) {
 
     val copyKotlinJsTaskName = sourceSet.getTaskName("copy", "kotlinJs")
@@ -209,6 +212,9 @@ class Kotlin2JsSourceSetProcessor(
             .map { it.replace(absoluteSourceRootDir, (kotlinTask.property("sourceMapDestinationDir") as File).path) }
 
     private fun shouldGenerateSourceMap() = kotlinTask.property("sourceMap")
+
+    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+            tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
         kotlinTask.kotlinDestinationDir = defaultKotlinDestinationDir

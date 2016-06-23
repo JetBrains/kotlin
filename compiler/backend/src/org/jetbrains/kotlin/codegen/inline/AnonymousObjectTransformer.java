@@ -65,7 +65,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         createClassReader().accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name);
+                InlineCodegenUtil.assertVersionNotGreaterThanGeneratedOne(version, name, inliningContext.state);
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces);
             }
 

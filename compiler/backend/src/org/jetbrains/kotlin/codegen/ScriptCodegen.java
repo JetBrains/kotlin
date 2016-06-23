@@ -89,7 +89,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     @Override
     protected void generateDeclaration() {
         v.defineClass(scriptDeclaration,
-                      V1_6,
+                      state.getClassFileVersion(),
                       ACC_PUBLIC | ACC_SUPER,
                       classAsmType.getInternalName(),
                       null,

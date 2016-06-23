@@ -295,6 +295,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11679.kt")
+        public void testKt11679() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/kt11679.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notInsideIndices.kt")
         public void testNotInsideIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notInsideIndices.kt");
@@ -6381,9 +6387,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/in.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("invertableOperator.kt")
         public void testInvertableOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/invertableOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("is.kt")
+        public void testIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/is.kt");
             doTest(fileName);
         }
 
@@ -6450,6 +6468,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("negatedExpression.kt")
         public void testNegatedExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/negatedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notIs.kt")
+        public void testNotIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/notIs.kt");
             doTest(fileName);
         }
 
@@ -8272,6 +8296,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicable_hasMultipleParameters.kt")
         public void testNotApplicable_hasMultipleParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_hasMultipleParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notApplicable_itFromOuterLambda.kt")
+        public void testNotApplicable_itFromOuterLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_itFromOuterLambda.kt");
             doTest(fileName);
         }
 

@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.idea.maven
 
 import com.google.gson.JsonParser
 import org.jetbrains.idea.maven.model.MavenArchetype
-import org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
-import org.junit.Assert.*
 import java.io.File
 
 class KotlinMavenArchetypesProviderTest {

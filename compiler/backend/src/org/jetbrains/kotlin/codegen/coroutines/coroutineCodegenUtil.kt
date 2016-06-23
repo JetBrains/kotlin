@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -27,16 +29,23 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.coroutine.REPLACED_SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 // These classes do not actually exist at runtime
 val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
 
-const val SUSPENSION_POINT_MARKER_OWNER = "kotlin/Markers"
-const val SUSPENSION_POINT_MARKER_NAME = "suspensionPoint"
+const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
+const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
+const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
+const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
+const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 
 const val COROUTINE_CONTROLLER_FIELD_NAME = "controller"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
@@ -47,7 +56,7 @@ data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createCoroutineSuspensionFunctionView` and it's usages for clarification
 // But for call generation it's convenient to have `machine` (continuation) parameter/argument within resolvedCall.
-// So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): V`
+// So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // and fake `this` expression that used as argument for second parameter
 fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
         project: Project
@@ -56,11 +65,14 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
     if (!isSuspensionPoint()) return null
 
     val initialSignatureDescriptor = function.initialSignatureDescriptor ?: return null
+    if (function.getUserData(REPLACED_SUSPENSION_POINT_KEY) == true) return null
+
     val newCandidateDescriptor =
             initialSignatureDescriptor.createCustomCopy {
-                // Here we know that last parameter should be Continuation<T> where T is return type
-                setReturnType(it.valueParameters.last().type.arguments.single().type)
+                setPreserveSourceElement()
+                setSignatureChange()
                 putUserData(SUSPENSION_POINT_KEY, true)
+                putUserData(REPLACED_SUSPENSION_POINT_KEY, true)
             }
 
     val newCall = ResolvedCallImpl(
@@ -81,10 +93,50 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
             newCandidateDescriptor.valueParameters.last(),
             ExpressionValueArgument(arguments))
 
+    val newTypeArguments = newCandidateDescriptor.typeParameters.map {
+        Pair(it, typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection())
+    }.toMap()
+
     newCall.setResultingSubstitutor(
-            TypeConstructorSubstitution.createByParametersMap(typeArguments.mapValues { it.value.asTypeProjection() }).buildSubstitutor())
+            TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor())
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
+}
+
+data class HandleResultCallContext(
+        val resolvedCall: ResolvedCall<*>,
+        val exceptionExpression: KtExpression,
+        val continuationThisExpression: KtExpression
+)
+
+fun createResolvedCallForHandleExceptionCall(
+        callElement: KtElement,
+        handleExceptionFunction: SimpleFunctionDescriptor,
+        coroutineLambdaDescriptor: FunctionDescriptor
+): HandleResultCallContext {
+    val psiFactory = KtPsiFactory(callElement)
+
+    val exceptionArgument = CallMaker.makeValueArgument(psiFactory.createExpression("exception"))
+    val continuationThisArgument = CallMaker.makeValueArgument(psiFactory.createExpression("this"))
+
+    val valueArguments = listOf(exceptionArgument, continuationThisArgument)
+    val call = CallMaker.makeCall(callElement, null, null, null, valueArguments)
+
+    val resolvedCall = ResolvedCallImpl(
+            call,
+            handleExceptionFunction,
+            coroutineLambdaDescriptor.extensionReceiverParameter!!.value, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for handleException resolution"),
+            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
+
+    handleExceptionFunction.valueParameters.zip(valueArguments).forEach {
+        resolvedCall.recordValueArgument(it.first, ExpressionValueArgument(it.second))
+    }
+
+    resolvedCall.setResultingSubstitutor(TypeSubstitutor.EMPTY)
+
+    return HandleResultCallContext(
+            resolvedCall, exceptionArgument.getArgumentExpression()!!, continuationThisArgument.getArgumentExpression()!!)
 }
 
 fun ResolvedCall<*>.isSuspensionPoint() =

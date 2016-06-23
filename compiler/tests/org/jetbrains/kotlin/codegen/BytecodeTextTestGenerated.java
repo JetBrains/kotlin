@@ -853,6 +853,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("forInRangeWithImplicitReceiver.kt")
+        public void testForInRangeWithImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("loopVarInterval.kt")
         public void testLoopVarInterval() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/loopVarInterval.kt");
@@ -881,6 +887,45 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testPrimitiveRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveRange.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInIndices extends AbstractBytecodeTextTest {
+            public void testAllFilesPresentInForInIndices() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIndices"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("forInCollectionImplicitReceiverIndices.kt")
+            public void testForInCollectionImplicitReceiverIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCollectionImplicitReceiverIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInCollectionIndices.kt")
+            public void testForInCollectionIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCollectionIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInNonOptimizedIndices.kt")
+            public void testForInNonOptimizedIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInNonOptimizedIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInObjectArrayIndices.kt")
+            public void testForInObjectArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInObjectArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInPrimitiveArrayIndices.kt")
+            public void testForInPrimitiveArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInPrimitiveArrayIndices.kt");
+                doTest(fileName);
+            }
         }
     }
 

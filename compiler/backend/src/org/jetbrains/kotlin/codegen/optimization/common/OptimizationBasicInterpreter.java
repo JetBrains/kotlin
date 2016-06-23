@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
@@ -55,6 +54,14 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
             default:
                 return super.newValue(type);
         }
+    }
+
+    @Override
+    public BasicValue newOperation(@NotNull AbstractInsnNode insn) throws AnalyzerException {
+        if (insn.getOpcode() == Opcodes.ACONST_NULL) {
+            return newValue(Type.getObjectType("java/lang/Object"));
+        }
+        return super.newOperation(insn);
     }
 
     @NotNull

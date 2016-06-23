@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -475,7 +476,8 @@ public class BodyResolver {
                         trace.report(INTERFACE_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
-                    else if (ktClassOrObject.hasModifier(KtTokens.DATA_KEYWORD)) {
+                    else if (ktClassOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
+                             !languageFeatureSettings.supportsFeature(LanguageFeature.DataClassInheritance)) {
                         trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
                         addSupertype = false;
                     }

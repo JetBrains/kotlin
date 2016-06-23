@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,9 +140,9 @@ class LookupElementFactory(
             val isSingleParameter = descriptor.valueParameters.size == 1
 
             val parameterType = lastParameter.type
-            val functionParameterCount = getValueParametersCountFromFunctionType(parameterType)
-            // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
-            if (!isSingleParameter || functionParameterCount > 1) {
+            val insertHandler = insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal
+            if (insertHandler.lambdaInfo == null) {
+                val functionParameterCount = getValueParametersCountFromFunctionType(parameterType)
                 add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))
             }
 
@@ -210,7 +210,7 @@ class LookupElementFactory(
     }
 
     private fun createFunctionCallElementWithArguments(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
-        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
+        val lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
         return FunctionCallWithArgumentsLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
@@ -305,7 +305,7 @@ class LookupElementFactory(
             return callableWeight(descriptor.getMethod)
         }
         if (descriptor is SamAdapterExtensionFunctionDescriptor) {
-            return callableWeight(descriptor.sourceFunction)
+            return callableWeight(descriptor.baseDescriptorForSynthetic)
         }
 
         if (descriptor.overriddenDescriptors.isNotEmpty()) {

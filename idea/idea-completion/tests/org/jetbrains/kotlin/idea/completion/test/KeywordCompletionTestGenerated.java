@@ -419,6 +419,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("Receiver.kt")
+    public void testReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/Receiver.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Return1.kt")
     public void testReturn1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/Return1.kt");

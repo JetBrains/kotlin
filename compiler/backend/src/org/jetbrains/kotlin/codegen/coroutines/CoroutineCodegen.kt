@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -48,19 +50,28 @@ class CoroutineCodegen(
         parentCodegen: MemberCodegen<*>,
         classBuilder: ClassBuilder,
         private val continuationSuperType: KotlinType,
-        private val controllerType: KotlinType
+        private val coroutineLambdaDescriptor: FunctionDescriptor
 ) : ClosureCodegen(state, element, null, closureContext, null, strategy, parentCodegen, classBuilder) {
+    private val controllerType = coroutineLambdaDescriptor.controllerTypeIfCoroutine!!
 
     override fun generateClosureBody() {
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
+                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
                 COROUTINE_CONTROLLER_FIELD_NAME,
                 typeMapper.mapType(controllerType).descriptor, null, null)
 
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
+                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
                 COROUTINE_LABEL_FIELD_NAME,
                 Type.INT_TYPE.descriptor, null, null)
+
+        for (parameter in funDescriptor.valueParameters) {
+            v.newField(
+                    OtherOrigin(parameter),
+                    Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL,
+                    COROUTINE_LAMBDA_PARAMETER_PREFIX + parameter.index,
+                    typeMapper.mapType(parameter.type).descriptor, null, null)
+        }
 
         val classDescriptor = closureContext.contextDescriptor
 
@@ -75,6 +86,15 @@ class CoroutineCodegen(
 
                 with(codegen.v) {
                     setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
+
+                    for (parameter in funDescriptor.valueParameters) {
+                        // 0 - this
+                        // 1 - controller
+                        val parametersIndexShift = 2
+                        AsmUtil.genAssignInstanceFieldFromParam(
+                                parameter.getFieldInfoForCoroutineLambdaParameter(), parametersIndexShift + parameter.index, this)
+                    }
+
                     load(0, AsmTypes.OBJECT_TYPE)
                     areturn(AsmTypes.OBJECT_TYPE)
                 }
@@ -117,9 +137,48 @@ class CoroutineCodegen(
                                        object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                                                codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
+                                               codegen.initializeCoroutineParameters()
                                                super.doGenerateBody(codegen, signature)
+                                               generateExceptionHandlingBlock(codegen)
                                            }
                                        })
+    }
+
+    private fun ExpressionCodegen.initializeCoroutineParameters() {
+        for (parameter in coroutineLambdaDescriptor.valueParameters) {
+            val mappedType = typeMapper.mapType(parameter.type)
+            val newIndex = myFrameMap.enter(parameter, mappedType)
+
+            StackValue.field(parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false))
+                    .put(mappedType, v)
+            v.store(newIndex, mappedType)
+        }
+    }
+
+    private fun ValueParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
+            FieldInfo.createForHiddenField(
+                    typeMapper.mapClass(closureContext.thisDescriptor),
+                    typeMapper.mapType(returnType!!),
+                    COROUTINE_LAMBDA_PARAMETER_PREFIX + index)
+
+    private fun generateExceptionHandlingBlock(codegen: ExpressionCodegen) {
+        val handleExceptionFunction =
+                controllerType.memberScope.getContributedFunctions(
+                        OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION, KotlinLookupLocation(element)).singleOrNull { it.isOperator }
+                        ?: return
+
+        val (resolvedCall, fakeExceptionExpression, fakeThisContinuationException) =
+                createResolvedCallForHandleExceptionCall(element, handleExceptionFunction, coroutineLambdaDescriptor)
+
+        codegen.tempVariables.put(fakeExceptionExpression, StackValue.operation(AsmTypes.OBJECT_TYPE) {
+            codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME, "()Ljava/lang/Object;", false)
+        })
+
+        codegen.tempVariables.put(fakeThisContinuationException, codegen.genCoroutineInstanceValueFromResolvedCall(resolvedCall))
+
+        codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_MARKER_NAME, "()V", false)
+        codegen.invokeFunction(resolvedCall, StackValue.none()).put(Type.VOID_TYPE, codegen.v)
+        codegen.v.areturn(Type.VOID_TYPE)
     }
 
     private fun createSynthesizedImplementationByName(
@@ -205,7 +264,9 @@ class CoroutineCodegen(
                             descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper),
                     FunctionGenerationStrategy.FunctionDefault(state, declaration), expressionCodegen.parentCodegen, classBuilder,
                     continuationSupertype,
-                    originalCoroutineLambdaDescriptor.controllerTypeIfCoroutine!!)
+                    originalCoroutineLambdaDescriptor)
         }
     }
 }
+
+private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"

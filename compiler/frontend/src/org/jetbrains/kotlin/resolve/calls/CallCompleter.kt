@@ -114,12 +114,12 @@ class CallCompleter(
 
                     function.controllerTypeIfCoroutine ?: return@forEach
 
-                    val lastBlockStatement = it.functionLiteral.bodyExpression?.statements?.lastOrNull() ?: return@forEach
+                    val lastBlockStatement = it.functionLiteral.bodyExpression?.statements?.lastOrNull()
 
                     // Already resolved
                     if (lastBlockStatement is KtReturnExpression) return@forEach
 
-                    fakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(lastBlockStatement, lastBlockStatement, function, context)
+                    fakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(it.functionLiteral, lastBlockStatement, function, context)
                 }
     }
 

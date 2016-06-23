@@ -179,6 +179,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
             }
+            if (thenType == null && jumpInElse ||
+                elseType == null && jumpInThen) {
+                return TypeInfoFactoryKt.noTypeInfo(resultDataFlowInfo);
+            }
         }
         // If break or continue was possible, take condition check info as the jump info
         return TypeInfoFactoryKt.createTypeInfo(

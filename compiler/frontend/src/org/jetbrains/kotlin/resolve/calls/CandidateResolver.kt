@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
+import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -158,17 +158,14 @@ class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkExpectedCallableType()
             = check {
                 if (!noExpectedType(expectedType)) {
-                    val candidate = candidateCall.candidateDescriptor
-                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(
-                            candidate, reflectionTypes,
-                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.isEmptyLHS }
+                    val candidateKCallableType = createKCallableTypeForReference(
+                            candidateCall.candidateDescriptor,
+                            (call.callElement.parent as? KtCallableReferenceExpression)?.receiverExpression?.let {
+                                trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, it)
+                            },
+                            reflectionTypes, scope.ownerDescriptor
                     )
-                    if (candidateReflectionType != null) {
-                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
-                            candidateCall.addStatus(OTHER_ERROR)
-                        }
-                    }
-                    else {
+                    if (candidateKCallableType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateKCallableType, expectedType)) {
                         candidateCall.addStatus(OTHER_ERROR)
                     }
                 }

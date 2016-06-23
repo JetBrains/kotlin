@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -250,11 +252,26 @@ public class ArgumentTypeResolver {
                         SHAPE_FUNCTION_ARGUMENTS
                 );
         DoubleColonLHS lhs = pair.getFirst();
+        OverloadResolutionResults<?> overloadResolutionResults = pair.getSecond();
 
-        KotlinType receiverType = lhs != null ? lhs.getType() : null;
-        return CallableReferencesResolutionUtilsKt.getResolvedCallableReferenceShapeType(
-                callableReferenceExpression, receiverType, pair.getSecond(), context, expectedTypeIsUnknown,
-                reflectionTypes, builtIns, functionPlaceholders
+        if (overloadResolutionResults == null) return null;
+
+        if (overloadResolutionResults.isSingleResult()) {
+            ResolvedCall<?> resolvedCall =
+                    OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
+            if (resolvedCall == null) return null;
+
+            return CallableReferencesResolutionUtilsKt.createKCallableTypeForReference(
+                    resolvedCall.getResultingDescriptor(), lhs, reflectionTypes, context.scope.getOwnerDescriptor()
+            );
+        }
+
+        if (expectedTypeIsUnknown) {
+            return functionPlaceholders.createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), false);
+        }
+
+        return FunctionTypeResolveUtilsKt.createFunctionType(
+                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), TypeUtils.DONT_CARE
         );
     }
 

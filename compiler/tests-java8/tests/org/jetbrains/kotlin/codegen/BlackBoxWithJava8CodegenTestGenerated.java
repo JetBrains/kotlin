@@ -119,6 +119,66 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/box/jvm8")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jvm8 extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvm8() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("bridgeInClass.kt")
+        public void testBridgeInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/bridgeInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/bridgeInInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("diamond.kt")
+        public void testDiamond() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/diamond.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleCall.kt")
+        public void testSimpleCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/simpleCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/java8/box/jvm8/noDelegation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NoDelegation extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInNoDelegation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8/noDelegation"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("noDelegationToDefaultMethodInClass.kt")
+            public void testNoDelegationToDefaultMethodInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/noDelegation/noDelegationToDefaultMethodInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelegationToDefaultMethodInInterface.kt")
+            public void testNoDelegationToDefaultMethodInInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/noDelegation/noDelegationToDefaultMethodInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelegationToDefaultMethodInInterface2.kt")
+            public void testNoDelegationToDefaultMethodInInterface2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/noDelegation/noDelegationToDefaultMethodInInterface2.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/java8/box/mapRemove")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

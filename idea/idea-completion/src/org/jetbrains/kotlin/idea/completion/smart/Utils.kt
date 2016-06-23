@@ -33,8 +33,10 @@ import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
+import org.jetbrains.kotlin.resolve.PossiblyBareType
+import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
@@ -248,8 +250,14 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
 
 fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
-    return getReflectionTypeForCandidateDescriptor(
-            this, resolutionFacade.getFrontendService(ReflectionTypes::class.java), false
+
+    return createKCallableTypeForReference(
+            this,
+            (dispatchReceiverParameter?.type ?: extensionReceiverParameter?.type)?.let {
+                DoubleColonLHS.Type(it, PossiblyBareType.type(it))
+            },
+            resolutionFacade.getFrontendService(ReflectionTypes::class.java),
+            resolutionFacade.moduleDescriptor
     )?.toFuzzyType(emptyList())
 }
 

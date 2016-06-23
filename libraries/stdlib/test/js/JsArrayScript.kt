@@ -1,5 +1,5 @@
 // this package referenced from testArrayScriptTest
-package jstest
+package test.collections.js
 
 fun testSize(): Int {
     val a1 = arrayOf<String>()

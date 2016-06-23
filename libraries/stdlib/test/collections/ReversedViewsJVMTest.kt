@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package collections
+package test.collections
 
 import kotlin.test.assertEquals
 import org.junit.Test as test

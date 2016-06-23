@@ -37,6 +37,22 @@ class KaptIT: BaseGradleIT() {
     }
 
     @Test
+    fun testEnumConstructor() {
+        val project = Project("kaptEnumConstructor", GRADLE_VERSION)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testStubs() {
         val project = Project("kaptStubs", GRADLE_VERSION)
 
@@ -52,6 +68,7 @@ class KaptIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
             assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertNotContains("w: Classpath entry points to a non-existent location")
         }
 
         project.build("build") {

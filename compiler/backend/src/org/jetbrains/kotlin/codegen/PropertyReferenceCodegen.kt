@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.method
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClassContext
@@ -46,6 +47,7 @@ class PropertyReferenceCodegen(
         context: ClassContext,
         expression: KtElement,
         classBuilder: ClassBuilder,
+        private val localVariableDescriptorForReference: VariableDescriptor,
         private val target: VariableDescriptor,
         dispatchReceiver: ReceiverValue?,
         private val receiverType: Type? // non-null for bound references
@@ -82,7 +84,7 @@ class PropertyReferenceCodegen(
     override fun generateDeclaration() {
         v.defineClass(
                 element,
-                V1_6,
+                state.classFileVersion,
                 ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForClass(classDescriptor),
                 asmType.internalName,
                 null,
@@ -177,7 +179,7 @@ class PropertyReferenceCodegen(
             value.put(OBJECT_TYPE, this)
         }
 
-        if (!target.isVar) return
+        if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
 
         val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE))
         generateAccessor(method("set", Type.VOID_TYPE, *setterParameters)) { value ->
