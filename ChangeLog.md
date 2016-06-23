@@ -7,6 +7,12 @@
 
 ## 1.0.4
 
+### IDE
+
+###### Issues fixed
+
+- [`KT-12830`](https://youtrack.jetbrains.com/issue/KT-12830) Remove spaces before *?* in nullable types
+
 ## 1.0.3
 
 ### Compiler
