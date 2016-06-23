@@ -3,4 +3,3 @@ $TESTDATA_DIR$/simple.kt
 $TEMP_DIR$
 -jdk-home
 $TESTDATA_DIR$
--no-jdk

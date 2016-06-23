@@ -62,8 +62,8 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
     protected String jvmTarget;
 
-    @Parameter(property = "kotlin.compiler.jdk", required = false, readonly = false)
-    protected String jdk;
+    @Parameter(property = "kotlin.compiler.jdkHome", required = false, readonly = false)
+    protected String jdkHome;
 
     @NotNull
     @Override
@@ -110,9 +110,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         arguments.languageVersion = languageVersion;
         arguments.jvmTarget = jvmTarget;
 
-        if (jdk != null) {
-            getLog().info("Overriding JDK path with: " + jdk);
-            arguments.jdk = jdk;
+        if (jdkHome != null) {
+            getLog().info("Overriding JDK home path with: " + jdkHome);
+            arguments.jdkHome = jdkHome;
         }
     }
 }

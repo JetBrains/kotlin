@@ -60,26 +60,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
-        try {
-            if (!arguments.noJdk) {
-                if (arguments.jdk != null) {
-                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots(File(arguments.jdk)))
-                }
-                else {
-                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                }
-            }
-            else {
-                if (arguments.jdk != null) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING,
-                                            "The '-jdk' option with a path to JDK is ignored because '-no-jdk' is specified",
-                                            CompilerMessageLocation.NO_LOCATION)
-                }
-            }
-        }
-        catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, t)
-            return INTERNAL_ERROR
+        setupJdkClasspathRoots(arguments, configuration, messageCollector).let {
+            if (it != OK) return it
         }
 
         try {
@@ -324,6 +306,41 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 classpath.add(paths.runtimePath)
             }
             return classpath
+        }
+
+        private fun setupJdkClasspathRoots(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
+            try {
+                if (!arguments.noJdk) {
+                    if (arguments.jdkHome != null) {
+                        messageCollector.report(CompilerMessageSeverity.LOGGING,
+                                                "Using JDK home directory ${arguments.jdkHome}",
+                                                CompilerMessageLocation.NO_LOCATION)
+                        val classesRoots = PathUtil.getJdkClassesRoots(File(arguments.jdkHome))
+                        if (classesRoots.isEmpty()) {
+                            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                                    "No class roots are found in the JDK path: ${arguments.jdkHome}",
+                                                    CompilerMessageLocation.NO_LOCATION)
+                            return COMPILATION_ERROR
+                        }
+                        configuration.addJvmClasspathRoots(classesRoots)
+                    }
+                    else {
+                        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+                    }
+                }
+                else {
+                    if (arguments.jdkHome != null) {
+                        messageCollector.report(CompilerMessageSeverity.WARNING,
+                                                "The '-jdk-home' option is ignored because '-no-jdk' is specified",
+                                                CompilerMessageLocation.NO_LOCATION)
+                    }
+                }
+            }
+            catch (t: Throwable) {
+                MessageCollectorUtil.reportException(messageCollector, t)
+                return INTERNAL_ERROR
+            }
+            return OK
         }
     }
 }
