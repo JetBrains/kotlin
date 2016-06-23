@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.naming.FQNGenerator;
-import org.jetbrains.kotlin.js.naming.FQNPart;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
+import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
@@ -105,7 +105,7 @@ public final class StaticContext {
     private final ModuleDescriptor currentModule;
 
     @NotNull
-    private final FQNGenerator fqnGenerator = new FQNGenerator();
+    private final NameSuggestion nameSuggestion = new NameSuggestion();
 
     @NotNull
     private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<DeclarationDescriptor, JsName>();
@@ -221,8 +221,8 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        FQNPart part = fqnGenerator.generate(descriptor);
-        if (part == null) {
+        SuggestedName suggested = nameSuggestion.suggest(descriptor);
+        if (suggested == null) {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
             if (currentModule == module) {
                 return pureFqn(Namer.getRootPackageName(), null);
@@ -235,30 +235,30 @@ public final class StaticContext {
 
         JsExpression expression;
         List<JsName> partNames;
-        if (standardClasses.isStandardObject(part.getDescriptor())) {
+        if (standardClasses.isStandardObject(suggested.getDescriptor())) {
             expression = Namer.kotlinObject();
-            partNames = Collections.singletonList(standardClasses.getStandardObjectName(part.getDescriptor()));
+            partNames = Collections.singletonList(standardClasses.getStandardObjectName(suggested.getDescriptor()));
         }
-        else if (isLibraryObject(part.getDescriptor())) {
+        else if (isLibraryObject(suggested.getDescriptor())) {
             expression = Namer.kotlinObject();
-            partNames = getNameForFQNPart(part);
+            partNames = getActualNameFromSuggested(suggested);
         }
-        else if (isNative(part.getDescriptor()) && !isNativeObject(part.getScope())) {
+        else if (isNative(suggested.getDescriptor()) && !isNativeObject(suggested.getScope())) {
             expression = null;
-            partNames = getNameForFQNPart(part);
+            partNames = getActualNameFromSuggested(suggested);
         }
         else {
-            if (part.getDescriptor() instanceof CallableDescriptor && part.getScope() instanceof FunctionDescriptor) {
+            if (suggested.getDescriptor() instanceof CallableDescriptor && suggested.getScope() instanceof FunctionDescriptor) {
                 expression = null;
             }
             else {
-                expression = getQualifiedExpression(part.getScope());
+                expression = getQualifiedExpression(suggested.getScope());
             }
-            partNames = getNameForFQNPart(part);
+            partNames = getActualNameFromSuggested(suggested);
         }
         for (JsName partName : partNames) {
             expression = new JsNameRef(partName, expression);
-            applySideEffects(expression, part.getDescriptor());
+            applySideEffects(expression, suggested.getDescriptor());
         }
         assert expression != null : "Since partNames is not empty, expression must be non-null";
         return expression;
@@ -283,11 +283,11 @@ public final class StaticContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        FQNPart fqn = fqnGenerator.generate(descriptor);
-        if (fqn == null) {
+        SuggestedName suggested = nameSuggestion.suggest(descriptor);
+        if (suggested == null) {
             throw new IllegalArgumentException("Can't generate name for root declarations: " + descriptor);
         }
-        return getNameForFQNPart(fqn).get(0);
+        return getActualNameFromSuggested(suggested).get(0);
     }
 
     @NotNull
@@ -295,7 +295,7 @@ public final class StaticContext {
         JsName name = backingFieldNameCache.get(property);
 
         if (name == null) {
-            FQNPart fqn = fqnGenerator.generate(property);
+            SuggestedName fqn = nameSuggestion.suggest(property);
             assert fqn != null : "Properties are non-root declarations: " + property;
             assert fqn.getNames().size() == 1 : "Private names must always consist of exactly one name";
 
@@ -313,21 +313,21 @@ public final class StaticContext {
     }
 
     @NotNull
-    private List<JsName> getNameForFQNPart(@NotNull FQNPart part) {
-        JsScope scope = getScopeForDescriptor(part.getScope());
+    private List<JsName> getActualNameFromSuggested(@NotNull SuggestedName suggested) {
+        JsScope scope = getScopeForDescriptor(suggested.getScope());
 
-        if (DynamicCallsKt.isDynamic(part.getDescriptor())) {
+        if (DynamicCallsKt.isDynamic(suggested.getDescriptor())) {
             scope = JsDynamicScope.INSTANCE;
         }
 
         List<JsName> names = new ArrayList<JsName>();
-        if (part.getShared()) {
+        if (suggested.getStable()) {
             Map<String, JsName> scopeNames = persistentNames.get(scope);
             if (scopeNames == null) {
                 scopeNames = new HashMap<String, JsName>();
                 persistentNames.put(scope, scopeNames);
             }
-            for (String namePart : part.getNames()) {
+            for (String namePart : suggested.getNames()) {
                 JsName name = scopeNames.get(namePart);
                 if (name == null) {
                     name = scope.declareName(namePart);
@@ -338,16 +338,16 @@ public final class StaticContext {
         }
         else {
             // TODO: consider using sealed class to represent FQNs
-            assert part.getNames().size() == 1 : "Private names must always consist of exactly one name";
-            JsName name = nameCache.get(part.getDescriptor());
+            assert suggested.getNames().size() == 1 : "Private names must always consist of exactly one name";
+            JsName name = nameCache.get(suggested.getDescriptor());
             if (name == null) {
-                String baseName = part.getNames().get(0);
-                if (!DescriptorUtils.isDescriptorWithLocalVisibility(part.getDescriptor())) {
+                String baseName = suggested.getNames().get(0);
+                if (!DescriptorUtils.isDescriptorWithLocalVisibility(suggested.getDescriptor())) {
                     baseName += "_0";
                 }
                 name = scope.declareFreshName(baseName);
             }
-            nameCache.put(part.getDescriptor(), name);
+            nameCache.put(suggested.getDescriptor(), name);
             names.add(name);
         }
 
@@ -500,7 +500,6 @@ public final class StaticContext {
 
         return JsAstUtils.pureFqn(moduleId, null);
     }
-
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
         if (expression instanceof HasMetadata) {

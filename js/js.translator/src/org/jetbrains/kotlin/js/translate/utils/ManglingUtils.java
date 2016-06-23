@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.js.naming.FQNGenerator;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
+import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collection;
@@ -33,6 +34,8 @@ public class ManglingUtils {
         Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
                 Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
-        return new FQNGenerator().generate(functions.iterator().next()).getNames().get(0);
+        SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
+        assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();
+        return suggested.getNames().get(0);
     }
 }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.context
 import org.jetbrains.kotlin.descriptors.*
 import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.JsScope
-import org.jetbrains.kotlin.js.naming.FQNGenerator
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -170,7 +170,7 @@ class UsageTracker(
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
             else -> {
-                val mangled = FQNGenerator().generate(this)!!.names.last()
+                val mangled = NameSuggestion().suggest(this)!!.names.last()
                 "closure\$$mangled"
             }
         }
