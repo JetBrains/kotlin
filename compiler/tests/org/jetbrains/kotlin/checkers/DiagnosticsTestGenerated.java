@@ -8104,6 +8104,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/inheritedFromKotlin.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("invalid.kt")
+                public void testInvalid() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/invalid.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified")
