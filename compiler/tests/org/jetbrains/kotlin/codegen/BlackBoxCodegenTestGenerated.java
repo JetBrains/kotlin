@@ -1276,9 +1276,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("customReadOnlyIterator.kt")
+        public void testCustomReadOnlyIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/customReadOnlyIterator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegationToArrayList.kt")
         public void testDelegationToArrayList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/delegationToArrayList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("immutableRemove.kt")
+        public void testImmutableRemove() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/immutableRemove.kt");
             doTest(fileName);
         }
 
