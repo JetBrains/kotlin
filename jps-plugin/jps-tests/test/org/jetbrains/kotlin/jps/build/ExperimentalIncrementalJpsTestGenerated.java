@@ -443,6 +443,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("inlineClassValProperty")
+        public void testInlineClassValProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineClassValProperty/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineClassVarProperty")
+        public void testInlineClassVarProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineClassVarProperty/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionRemoved")
         public void testInlineFunctionRemoved() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionRemoved/");
@@ -476,6 +488,30 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("inlinePrivateFunctionAdded")
         public void testInlinePrivateFunctionAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinePrivateFunctionAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTopLevelFunctionWithJvmName")
+        public void testInlineTopLevelFunctionWithJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelFunctionWithJvmName/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTopLevelValProperty")
+        public void testInlineTopLevelValProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelValProperty/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTopLevelValPropertyWithJvmName")
+        public void testInlineTopLevelValPropertyWithJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelValPropertyWithJvmName/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTopLevelVarProperty")
+        public void testInlineTopLevelVarProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelVarProperty/");
             doTest(fileName);
         }
 
@@ -845,6 +881,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("topLevelFunctionWithJvmName")
+        public void testTopLevelFunctionWithJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionWithJvmName/");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevelMembersInTwoFiles")
         public void testTopLevelMembersInTwoFiles() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelMembersInTwoFiles/");
@@ -854,6 +896,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("topLevelPrivateValUsageAdded")
         public void testTopLevelPrivateValUsageAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelPrivateValUsageAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelPropertyWithJvmName")
+        public void testTopLevelPropertyWithJvmName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelPropertyWithJvmName/");
             doTest(fileName);
         }
 

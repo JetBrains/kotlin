@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.expressions.LabelResolver;
@@ -129,7 +131,29 @@ public class InlineCodegen extends CallGenerator {
 
         if (!(functionDescriptor instanceof FictitiousArrayConstructor)) {
             reportIncrementalInfo(functionDescriptor, codegen.getContext().getFunctionDescriptor().getOriginal(), jvmSignature, state);
+            String functionOrAccessorName = typeMapper.mapAsmMethod(function).getName();
+            //track changes for property accessor and @JvmName inline functions/property accessors
+            if(!functionOrAccessorName.equals(functionDescriptor.getName().asString())) {
+                MemberScope scope = getMemberScope(functionDescriptor);
+                if (scope != null) {
+                    //Fake lookup to track track changes for property accessors and @JvmName functions/property accessors
+                    scope.getContributedFunctions(Name.identifier(functionOrAccessorName), new KotlinLookupLocation(callElement));
+                }
+            }
         }
+    }
+
+    @Nullable
+    private static MemberScope getMemberScope(@NotNull FunctionDescriptor functionOrAccessor) {
+        CallableMemberDescriptor callableMemberDescriptor = JvmCodegenUtil.getDirectMember(functionOrAccessor);
+        DeclarationDescriptor classOrPackageFragment = callableMemberDescriptor.getContainingDeclaration();
+        if (classOrPackageFragment instanceof ClassDescriptor) {
+            return ((ClassDescriptor) classOrPackageFragment).getUnsubstitutedMemberScope();
+        }
+        else if (classOrPackageFragment instanceof PackageFragmentDescriptor) {
+            return ((PackageFragmentDescriptor) classOrPackageFragment).getMemberScope();
+        }
+        return null;
     }
 
     @Override
