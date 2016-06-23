@@ -1,0 +1,31 @@
+package
+
+public interface AbstractProperty {
+    public abstract val valProp: kotlin.Int
+    public abstract var varProp: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class FinalProperty {
+    public constructor FinalProperty()
+    public final val valProp: kotlin.Int
+    public final val valProp_1: kotlin.Int
+    public final var varProp: kotlin.Int
+    public final var varProp_2: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class OpenProperty {
+    public constructor OpenProperty()
+    public open val valProp: kotlin.Int
+    public open val valProp_1: kotlin.Int
+    public open var varProp: kotlin.Int
+    public open var varProp_2: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

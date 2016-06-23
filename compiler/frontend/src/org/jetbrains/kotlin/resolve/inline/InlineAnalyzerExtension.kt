@@ -20,20 +20,43 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.AnalyzerExtensions
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension
 import org.jetbrains.kotlin.resolve.annotations.isInlineOnlyOrReified
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
+object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
 
-    override fun process(descriptor: FunctionDescriptor, function: KtNamedFunction, trace: BindingTrace) {
+    override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
         assert(InlineUtil.isInline(descriptor)) { "This method should be invoked on inline function: " + descriptor }
 
-        checkDefaults(descriptor, function, trace)
-        checkModalityAndOverrides(descriptor, function, trace)
-        checkHasInlinableAndNullability(descriptor, function, trace)
+        checkModalityAndOverrides(descriptor, functionOrProperty, trace)
+        notSupportedInInlineCheck(descriptor, functionOrProperty, trace)
 
+        if (descriptor is FunctionDescriptor) {
+            assert (functionOrProperty is KtNamedFunction) {
+                "Function descriptor $descriptor should have corresponded KtNamedFunction, but has $functionOrProperty"
+            }
+            checkDefaults(descriptor, functionOrProperty as KtNamedFunction, trace)
+            checkHasInlinableAndNullability(descriptor, functionOrProperty, trace)
+        }
+        else {
+            assert (descriptor is PropertyDescriptor) {
+                "PropertyDescriptor expected, but was $descriptor"
+            }
+            assert (functionOrProperty is KtProperty) {
+                "Property descriptor $descriptor should have corresponded KtProperty, but has $functionOrProperty"
+            }
+
+            val hasBackingField = java.lang.Boolean.TRUE.equals(trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor))
+            if (hasBackingField || (functionOrProperty as KtProperty).delegateExpression != null) {
+                trace.report(Errors.INLINE_PROPERTY_WITH_BACKING_FIELD.on(functionOrProperty))
+            }
+        }
+    }
+
+    private fun notSupportedInInlineCheck(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
         val visitor = object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
                 super.visitKtElement(element)
@@ -54,7 +77,7 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
             }
         }
 
-        function.acceptChildren(visitor)
+        functionOrProperty.acceptChildren(visitor)
     }
 
     private fun checkDefaults(
@@ -74,22 +97,22 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
     }
 
     private fun checkModalityAndOverrides(
-            functionDescriptor: FunctionDescriptor,
-            function: KtFunction,
+            callableDescriptor: CallableMemberDescriptor,
+            functionOrProperty: KtCallableDeclaration,
             trace: BindingTrace) {
-        if (functionDescriptor.containingDeclaration is PackageFragmentDescriptor) {
+        if (callableDescriptor.containingDeclaration is PackageFragmentDescriptor) {
             return
         }
 
-        if (Visibilities.isPrivate(functionDescriptor.visibility)) {
+        if (Visibilities.isPrivate(callableDescriptor.visibility)) {
             return
         }
 
-        val overridesAnything = functionDescriptor.overriddenDescriptors.isNotEmpty()
+        val overridesAnything = callableDescriptor.overriddenDescriptors.isNotEmpty()
 
         if (overridesAnything) {
-            val ktTypeParameters = function.typeParameters
-            for (typeParameter in functionDescriptor.typeParameters) {
+            val ktTypeParameters = functionOrProperty.typeParameters
+            for (typeParameter in callableDescriptor.typeParameters) {
                 if (typeParameter.isReified) {
                     val ktTypeParameter = ktTypeParameters[typeParameter.index]
                     val reportOn = ktTypeParameter.modifierList?.getModifier(KtTokens.REIFIED_KEYWORD) ?: ktTypeParameter
@@ -98,17 +121,16 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
             }
         }
 
-        if (functionDescriptor.isEffectivelyFinal()) {
+        if (callableDescriptor.isEffectivelyFinal()) {
             if (overridesAnything) {
-                trace.report(Errors.OVERRIDE_BY_INLINE.on(function))
+                trace.report(Errors.OVERRIDE_BY_INLINE.on(functionOrProperty))
             }
             return
         }
-
-        trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function))
+        trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(functionOrProperty))
     }
 
-    private fun FunctionDescriptor.isEffectivelyFinal(): Boolean =
+    private fun CallableMemberDescriptor.isEffectivelyFinal(): Boolean =
             modality == Modality.FINAL ||
             containingDeclaration.let { containingDeclaration ->
                 containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
