@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.types
 
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.MethodSignature
@@ -27,37 +28,40 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVisitor
 
 class JeMethodExecutableTypeMirror(
-        val method: PsiMethod,
+        val psi: PsiMethod,
         val signature: MethodSignature? = null,
         val returnType: PsiType? = null
-) : JeTypeBase(), ExecutableType {
+) : JeTypeMirror, JeTypeWithManager, ExecutableType {
     override fun getKind() = TypeKind.EXECUTABLE
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitExecutable(this, p)
 
-    override fun getReturnType() = (returnType ?: method.returnType)?.let { it.toJeType() } ?: CustomJeNoneType(TypeKind.VOID)
+    override fun getReturnType() = (returnType ?: psi.returnType)?.let { it.toJeType(psi.manager) } ?: CustomJeNoneType(TypeKind.VOID)
 
-    override fun getReceiverType() = method.getReceiverTypeMirror()
+    override fun getReceiverType() = psi.getReceiverTypeMirror()
 
-    override fun getThrownTypes() = method.throwsList.referencedTypes.map { it.toJeType() }
+    override fun getThrownTypes() = psi.throwsList.referencedTypes.map { it.toJeType(psi.manager) }
+
+    override val psiManager: PsiManager
+        get() = psi.manager
 
     override fun getParameterTypes(): List<TypeMirror> {
-        signature?.parameterTypes?.let { types -> return types.map { it.toJeType() } }
-        return method.parameterList.parameters.map { it.type.toJeType() }
+        signature?.parameterTypes?.let { types -> return types.map { it.toJeType(psi.manager) } }
+        return psi.parameterList.parameters.map { it.type.toJeType(psi.manager) }
     }
 
     override fun getTypeVariables(): List<JeTypeVariableType> {
-        val typeParameters = signature?.typeParameters ?: method.typeParameters
+        val typeParameters = signature?.typeParameters ?: psi.typeParameters
         return typeParameters.map { JeTypeVariableType(PsiTypesUtil.getClassType(it), it) }
     }
 
-    override fun toString() = (method.containingClass?.qualifiedName?.let { it + "." } ?: "") + method.name
+    override fun toString() = (psi.containingClass?.qualifiedName?.let { it + "." } ?: "") + psi.name
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return method == (other as JeMethodExecutableTypeMirror).method
+        return psi == (other as JeMethodExecutableTypeMirror).psi
     }
 
-    override fun hashCode() = method.hashCode()
+    override fun hashCode() = psi.hashCode()
 }

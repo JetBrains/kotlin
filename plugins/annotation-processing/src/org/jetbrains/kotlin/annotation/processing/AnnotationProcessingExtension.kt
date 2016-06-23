@@ -63,7 +63,7 @@ class AnnotationProcessingExtension(
         
         val filer = KotlinFiler(generatedOutputDir)
         val messages = KotlinMessager()
-        val types = KotlinTypes(javaPsiFacade, projectScope)
+        val types = KotlinTypes(javaPsiFacade, PsiManager.getInstance(project), projectScope)
         val elements = KotlinElements(javaPsiFacade, projectScope)
         
         val processingEnvironment = KotlinProcessingEnvironment(elements, types, messages, options, filer)

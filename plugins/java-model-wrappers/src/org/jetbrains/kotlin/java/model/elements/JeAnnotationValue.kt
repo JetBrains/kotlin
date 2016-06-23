@@ -51,7 +51,7 @@ private class JeEnumValueAnnotationValue(val psi: PsiEnumConstant) : AnnotationV
 }
 
 private class JeTypeAnnotationValue(val psi: PsiClassObjectAccessExpression) : AnnotationValue {
-    override fun getValue() = psi.operand.type.toJeType()
+    override fun getValue() = psi.operand.type.toJeType(psi.manager)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitType(value, p)
 }
 

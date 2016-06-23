@@ -17,12 +17,16 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiIntersectionType
+import com.intellij.psi.PsiManager
 import javax.lang.model.type.IntersectionType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
-class JeIntersectionType(override val psiType: PsiIntersectionType) : JeAbstractType(), IntersectionType {
+class JeIntersectionType(
+        override val psiType: PsiIntersectionType, 
+        override val psiManager: PsiManager
+) : JePsiType(), JeTypeWithManager, IntersectionType {
     override fun getKind() = TypeKind.INTERSECTION
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitIntersection(this, p)
-    override fun getBounds() = psiType.superTypes.map { it.toJeType() }
+    override fun getBounds() = psiType.superTypes.map { it.toJeType(psiManager) }
 }

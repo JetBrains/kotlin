@@ -45,7 +45,7 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
         else -> ElementKind.LOCAL_VARIABLE
     }
 
-    override fun asType() = psi.type.toJeType()
+    override fun asType() = psi.type.toJeType(psi.manager)
 
     override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>, p: P) = v.visitVariable(this, p)
 

@@ -18,32 +18,34 @@ package org.jetbrains.kotlin.java.model.types
 
 import javax.lang.model.type.*
 
-object JePackageTypeMirror : JeTypeBase(), NoType {
+interface JeNoType : JeTypeMirror, NoType
+
+object JePackageTypeMirror : JeNoType {
     override fun getKind() = TypeKind.PACKAGE
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 }
 
-object JeNoneType : JeTypeBase(), NoType {
+object JeNoneType : JeNoType {
     override fun getKind() = TypeKind.NONE
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 }
 
-object JeVoidType : JeTypeBase(), NoType {
+object JeVoidType : JeNoType {
     override fun getKind() = TypeKind.VOID
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 }
 
-class CustomJeNoneType(private val _kind: TypeKind) : JeTypeBase(), NoType {
+class CustomJeNoneType(private val _kind: TypeKind) : JeNoType {
     override fun getKind() = _kind
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 }
 
-object JeErrorType : JeTypeBase(), NoType {
+object JeErrorType : JeNoType {
     override fun getKind() = TypeKind.ERROR
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 }
 
-object JeDeclaredErrorType : JeTypeBase(), DeclaredType, NoType {
+object JeDeclaredErrorType : JeNoType, DeclaredType {
     override fun getKind() = TypeKind.ERROR
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 

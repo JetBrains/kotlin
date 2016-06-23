@@ -51,6 +51,11 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
     }
 
     @Override
+    public void clear() {
+        // Do nothing
+    }
+
+    @Override
     public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
         String path = location.getPath();
         String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";

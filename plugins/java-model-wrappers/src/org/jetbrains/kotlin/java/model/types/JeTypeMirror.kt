@@ -16,26 +16,17 @@
 
 package org.jetbrains.kotlin.java.model.types
 
-import com.intellij.psi.PsiType
+import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.type.TypeMirror
 
-abstract class JeAbstractType : JeTypeBase() {
-    abstract val psiType: PsiType
+//TODO support type annotations
+interface JeTypeMirror : TypeMirror {
+    override fun getAnnotationMirrors() = emptyList<AnnotationMirror>()
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+    override fun <A : Annotation> getAnnotation(annotationClass: Class<A>?) = null
 
-        other as JeAbstractType
-
-        if (kind != other.kind) return false
-        if (psiType != other.psiType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int{
-        var result = kind.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
+    @Suppress("UNCHECKED_CAST")
+    override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
+        return java.lang.reflect.Array.newInstance(annotationType, 0) as Array<A>
     }
 }

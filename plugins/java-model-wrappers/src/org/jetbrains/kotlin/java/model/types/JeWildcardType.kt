@@ -16,18 +16,23 @@
 
 package org.jetbrains.kotlin.java.model.types
 
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiWildcardType
 import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVisitor
 import javax.lang.model.type.WildcardType
 
-class JeWildcardType(override val psiType: PsiWildcardType) : JeAbstractType(), WildcardType {
+class JeWildcardType(override val psiType: PsiWildcardType) : JePsiType(), JeTypeWithManager, WildcardType {
     override fun getKind() = TypeKind.WILDCARD
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitWildcard(this, p)
-    override fun getSuperBound() = psiType.superBound.toJeType()
-    override fun getExtendsBound() = psiType.extendsBound.toJeType()
-    override fun equals(other: Any?): Boolean{
+    
+    override fun getSuperBound() = psiType.superBound.toJeType(psiManager)
+    override fun getExtendsBound() = psiType.extendsBound.toJeType(psiManager)
+
+    override val psiManager: PsiManager
+        get() = psiType.manager
+
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
         if (!super.equals(other)) return false
@@ -40,11 +45,4 @@ class JeWildcardType(override val psiType: PsiWildcardType) : JeAbstractType(), 
         result = 31 * result + psiType.hashCode()
         return result
     }
-}
-
-class JeWildcardTypeWithBounds(private val extendsType: TypeMirror, private val superType: TypeMirror) : JeTypeBase(), WildcardType {
-    override fun getKind() = TypeKind.WILDCARD
-    override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitWildcard(this, p)
-    override fun getSuperBound() = superType
-    override fun getExtendsBound() = extendsType
 }

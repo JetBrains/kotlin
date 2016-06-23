@@ -16,17 +16,8 @@
 
 package org.jetbrains.kotlin.java.model.types
 
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.type.TypeMirror
+import com.intellij.psi.PsiManager
 
-//TODO support type annotations
-abstract class JeTypeBase : TypeMirror {
-    override fun getAnnotationMirrors() = emptyList<AnnotationMirror>()
-
-    override fun <A : Annotation> getAnnotation(annotationClass: Class<A>?) = null
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
-        return java.lang.reflect.Array.newInstance(annotationType, 0) as Array<A>
-    }
+interface JeTypeWithManager : JeTypeMirror {
+    val psiManager: PsiManager
 }
