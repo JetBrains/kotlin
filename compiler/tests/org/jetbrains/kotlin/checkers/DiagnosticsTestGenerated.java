@@ -10159,6 +10159,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/property/invoke.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("propertyWithBackingField.kt")
+                public void testPropertyWithBackingField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/property/propertyWithBackingField.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unsupportedConstruction.kt")
+                public void testUnsupportedConstruction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/property/unsupportedConstruction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("virtualProperty.kt")
+                public void testVirtualProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/property/virtualProperty.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inline/regressions")

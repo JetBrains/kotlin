@@ -47,6 +47,12 @@ public class InlineUtil {
         return descriptor instanceof FunctionDescriptor && getInlineStrategy((FunctionDescriptor) descriptor).isInline();
     }
 
+    public static boolean hasInlineAccessors(@Nullable PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        return getter != null && getter.isInline() || setter != null && setter.isInline();
+    }
+
     public static boolean isInlineProperty(@Nullable DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof PropertyDescriptor))  return false;
 
