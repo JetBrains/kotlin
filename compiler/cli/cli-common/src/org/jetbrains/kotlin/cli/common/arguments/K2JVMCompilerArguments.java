@@ -31,9 +31,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
-    @Argument(value = "jdk", description = "Path to JDK home to include into classpath, if differs from default %JAVA_HOME%")
+    @Argument(value = "jdk-home", description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME")
     @ValueDescription("<path>")
-    public String jdk;
+    public String jdkHome;
 
     @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
