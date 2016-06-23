@@ -20,7 +20,7 @@ package org.jetbrains.kotlin.js.translate.declaration
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.js.naming.FQNGenerator
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
@@ -63,7 +63,7 @@ class DelegationTranslator(
             else {
                 val classFqName = DescriptorUtils.getFqName(classDescriptor)
                 val typeFqName = DescriptorUtils.getFqName(descriptor)
-                val suffix = FQNGenerator.mangledId("${classFqName.asString()}:${typeFqName.asString()}")
+                val suffix = NameSuggestion.mangledId("${classFqName.asString()}:${typeFqName.asString()}")
                 val suggestedName = Namer.getDelegatePrefix() + if (suffix.isNotEmpty()) "_$suffix\$" else ""
                 val delegateName = context.getScopeForDescriptor(classDescriptor).declareFreshName("${suggestedName}_0")
                 fields[specifier] = Field(delegateName, true)

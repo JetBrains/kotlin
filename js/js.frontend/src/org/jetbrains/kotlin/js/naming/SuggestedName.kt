@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.js.naming
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-class FQNPart(val names: List<String>, val shared: Boolean, val descriptor: DeclarationDescriptor, val scope: DeclarationDescriptor)
+class SuggestedName(val names: List<String>, val stable: Boolean, val descriptor: DeclarationDescriptor, val scope: DeclarationDescriptor)

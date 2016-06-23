@@ -33,10 +33,10 @@ import java.util.*
  * fully-qualified names for static declarations.
  *
  * A new instance of this class can be created for each request, however, it's recommended to use shared instance, since
- * [FQNGenerator] supports caching.
+ * [NameSuggestion] supports caching.
  */
-class FQNGenerator {
-    private val cache: MutableMap<DeclarationDescriptor, FQNPart?> = WeakHashMap()
+class NameSuggestion {
+    private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = WeakHashMap()
 
     /**
      * Generates names for declarations. Name consist of the following parts:
@@ -57,12 +57,12 @@ class FQNGenerator {
      * list consists of exactly one string for any declaration except for package. Package name lists
      * have at least one string.
      */
-    fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor.original) }
+    fun suggest(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generate(descriptor.original) }
 
-    private fun generateCacheMiss(descriptor: DeclarationDescriptor): FQNPart? {
+    private fun generate(descriptor: DeclarationDescriptor): SuggestedName? {
         // Members of companion objects of classes are treated as static members of these classes
         if (isNativeObject(descriptor) && isCompanionObject(descriptor)) {
-            return generate(descriptor.containingDeclaration!!)
+            return suggest(descriptor.containingDeclaration!!)
         }
 
         when (descriptor) {
@@ -71,7 +71,7 @@ class FQNGenerator {
 
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.name.isSpecial) {
-                    FQNPart(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor, descriptor.containingDeclaration)
+                    SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor, descriptor.containingDeclaration)
                 }
                 else {
                     // Root packages are similar to modules
@@ -80,12 +80,12 @@ class FQNGenerator {
             }
 
             // It's a special case when an object has `invoke` operator defined, in this case we simply generate object itself
-            is FakeCallableDescriptorForObject -> return generate(descriptor.getReferencedDescriptor())
+            is FakeCallableDescriptorForObject -> return suggest(descriptor.getReferencedDescriptor())
 
             // For primary constructors and constructors of native classes we generate references to containing classes
             is ConstructorDescriptor -> {
                 if (descriptor.isPrimary || isNativeObject(descriptor)) {
-                    return generate(descriptor.containingDeclaration)
+                    return suggest(descriptor.containingDeclaration)
                 }
             }
 
@@ -93,12 +93,12 @@ class FQNGenerator {
             is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
                     val name = getMangledName(getSuggestedName(descriptor), descriptor)
-                    return FQNPart(listOf(name.first), false, descriptor, descriptor.containingDeclaration)
+                    return SuggestedName(listOf(name.first), false, descriptor, descriptor.containingDeclaration)
                 }
         }
 
         val (localName, shared, parent) = getLocalName(descriptor)
-        return FQNPart(listOf(localName), shared, descriptor, fixParent(parent))
+        return SuggestedName(listOf(localName), shared, descriptor, fixParent(parent))
     }
 
     // Getters and setters have generation strategy similar to common declarations, except for they are declared as

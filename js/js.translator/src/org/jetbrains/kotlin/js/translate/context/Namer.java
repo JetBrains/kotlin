@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.js.naming.FQNGenerator;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -128,7 +128,7 @@ public final class Namer {
             qualifier = fqNameParent.asString();
         }
 
-        String mangledName = new FQNGenerator().generate(functionDescriptor).getNames().get(0);
+        String mangledName = new NameSuggestion().suggest(functionDescriptor).getNames().get(0);
         return StringUtil.join(Arrays.asList(moduleName, qualifier, mangledName), ".");
     }
 
