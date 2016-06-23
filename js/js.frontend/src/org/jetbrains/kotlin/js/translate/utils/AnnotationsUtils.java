@@ -68,7 +68,7 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
+    private static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
             @NotNull PredefinedAnnotation annotation) {
         if (!hasAnnotation(declarationDescriptor, annotation)) {
             return null;
@@ -77,39 +77,19 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static String getNameForAnnotatedObjectWithOverrides(@NotNull DeclarationDescriptor declarationDescriptor) {
-        List<DeclarationDescriptor> descriptors;
-
-        if (declarationDescriptor instanceof CallableMemberDescriptor &&
-            DescriptorUtils.isOverride((CallableMemberDescriptor) declarationDescriptor)) {
-
-            Set<CallableMemberDescriptor> overriddenDeclarations =
-                    DescriptorUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
-
-            descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
-                @Override
-                public DeclarationDescriptor fun(CallableMemberDescriptor descriptor) {
-                    return DescriptorUtils.isOverride(descriptor) ? null : descriptor;
-                }
-            });
-        }
-        else {
-            descriptors = ContainerUtil.newArrayList(declarationDescriptor);
-        }
-
-        for (DeclarationDescriptor descriptor : descriptors) {
-            for (PredefinedAnnotation annotation : PredefinedAnnotation.Companion.getWITH_CUSTOM_NAME()) {
-                if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
-                    continue;
-                }
-                String name = getNameForAnnotatedObject(descriptor, annotation);
-                if (name == null) {
-                    name = getJsName(descriptor);
-                }
-                return name != null ? name : descriptor.getName().asString();
+    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor descriptor) {
+        for (PredefinedAnnotation annotation : PredefinedAnnotation.Companion.getWITH_CUSTOM_NAME()) {
+            if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                continue;
             }
+            String name = getNameForAnnotatedObject(descriptor, annotation);
+            if (name == null) {
+                name = getJsName(descriptor);
+            }
+            return name != null ? name : descriptor.getName().asString();
         }
-        return null;
+
+        return getJsName(descriptor);
     }
 
     @Nullable

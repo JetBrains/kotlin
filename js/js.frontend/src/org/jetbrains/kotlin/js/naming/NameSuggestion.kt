@@ -39,16 +39,16 @@ class NameSuggestion {
     private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = WeakHashMap()
 
     /**
-     * Generates names for declarations. Name consist of the following parts:
+     * Generates names for declarations. Name consists of the following parts:
      *
      *   * Aliasing declaration, if the given `descriptor` does not have its own entity in JS.
      *   * Scoping declaration. Declarations are usually compiled to the hierarchy of nested JS objects,
      *     this attribute allows to find out where to put the declaration.
      *   * Simple name, which is a name that object must (or may) get on the generated JS.
-     *   * Whether the name is "shared". Shared names are visible to other modules and to native JS.
-     *     In order to preserve ABI, these names must be persistent. Private names do not require particular
-     *     name, so the code generator can invent any name which does not clash with anything; however,
-     *     it may derive the name from the suggested name to improve readability and debugging.
+     *   * Whether the name is stable. Stable names are visible to other modules and to native JS.
+     *     Unstable names do not require particular name, so the code generator can invent any name
+     *     which does not clash with anything; however, it may derive the name from the suggested name to
+     *     improve readability and debugging experience.
      *
      * This method returns `null` for root declarations (modules and root packages).
      * It's guaranteed that a particular name is returned for any other declarations.
@@ -71,7 +71,8 @@ class NameSuggestion {
 
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.name.isSpecial) {
-                    SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor, descriptor.containingDeclaration)
+                    SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
+                                  descriptor.containingDeclaration)
                 }
                 else {
                     // Root packages are similar to modules
@@ -97,21 +98,13 @@ class NameSuggestion {
                 }
         }
 
-        val (localName, shared, parent) = getLocalName(descriptor)
-        return SuggestedName(listOf(localName), shared, descriptor, fixParent(parent))
+        return generateDefault(descriptor)
     }
 
-    // Getters and setters have generation strategy similar to common declarations, except for they are declared as
-    // members of classes/packages, not corresponding properties.
-    private fun fixParent(parent: DeclarationDescriptor) = when (parent) {
-        is PropertyDescriptor -> parent.containingDeclaration
-        else -> parent
-    }
-
-    private fun getLocalName(descriptor: DeclarationDescriptor): LocalName {
+    private fun generateDefault(descriptor: DeclarationDescriptor): SuggestedName {
         // Dynamic declarations always require shared names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
-            return LocalName(descriptor.name.asString(), true, descriptor.containingDeclaration!!)
+            return SuggestedName(listOf(descriptor.name.asString()), true, descriptor, descriptor.containingDeclaration!!)
         }
 
         // For any non-local declaration suggest its own suggested name and put it in scope of its containing declaration.
@@ -144,12 +137,17 @@ class NameSuggestion {
             }
         } while (current is FunctionDescriptor)
 
-        parts.reverse()
-        val (id, shared) = getMangledName(parts.joinToString("$"), descriptor)
-        return LocalName(id, shared, current)
-    }
+        // Getters and setters have generation strategy similar to common declarations, except for they are declared as
+        // members of classes/packages, not corresponding properties.
+        if (current is PropertyDescriptor) {
+            current = current.containingDeclaration
+        }
 
-    private data class LocalName(val id: String, val shared: Boolean, val parent: DeclarationDescriptor)
+        parts.reverse()
+        val unmangledName = parts.joinToString("$")
+        val (id, stable) = getMangledName(unmangledName, descriptor)
+        return SuggestedName(listOf(id), stable, descriptor, current)
+    }
 
     // For regular names suggest its string representation
     // For property accessors suggest name of a property with 'get_' and 'set_' prefixes
@@ -168,114 +166,95 @@ class NameSuggestion {
         }
     }
 
-    private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): Pair<String, Boolean> {
-        if (descriptor !is CallableDescriptor) {
-            if (isNativeObject(descriptor) || isLibraryObject(descriptor)) {
-                return Pair(getNameForAnnotatedObjectWithOverrides(descriptor) ?: descriptor.name.asString(), true)
-            }
-            return Pair(baseName, needsStableMangling(descriptor))
-        }
-
-        var resolvedDescriptor: CallableDescriptor = descriptor
-        var overriddenDescriptor: CallableDescriptor? = descriptor
-        while (overriddenDescriptor != null) {
-            resolvedDescriptor = overriddenDescriptor
-            if (isNativeObject(resolvedDescriptor) || isLibraryObject(resolvedDescriptor)) {
-                val explicitName = getNameForAnnotatedObjectWithOverrides(resolvedDescriptor)
-                if (explicitName != null) {
-                    return Pair(explicitName, true)
-                }
-            }
-            overriddenDescriptor = getOverriddenDescriptor(overriddenDescriptor)?.original
-        }
-
-        when {
-            isNativeObject(resolvedDescriptor) || isLibraryObject(resolvedDescriptor) -> {
-                return Pair(getNameForAnnotatedObjectWithOverrides(resolvedDescriptor) ?: resolvedDescriptor.name.asString(), true)
-            }
-        }
-
-        val explicitName = getJsName(resolvedDescriptor)
-        return when {
-            explicitName != null -> Pair(explicitName, true)
-            needsStableMangling(resolvedDescriptor) ->
-                Pair(getStableMangledName(baseName, getArgumentTypesAsString(resolvedDescriptor)), true)
-            else -> Pair(baseName, false)
-        }
-    }
-
-    private fun getOverriddenDescriptor(functionDescriptor: CallableDescriptor): CallableDescriptor? {
-        val overriddenDescriptors = functionDescriptor.overriddenDescriptors
-        if (overriddenDescriptors.isEmpty()) {
-            return null
-        }
-
-        //TODO: for now translator can't deal with multiple inheritance good enough
-        return overriddenDescriptors.iterator().next()
-    }
-
-    private fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
-        val argTypes = StringBuilder()
-
-        val receiverParameter = descriptor.extensionReceiverParameter
-        if (receiverParameter != null) {
-            argTypes.append(receiverParameter.type.getJetTypeFqName(true)).append(".")
-        }
-
-        argTypes.append(descriptor.valueParameters.joinToString(",") { it.type.getJetTypeFqName(true) })
-
-        return argTypes.toString()
-    }
-
-    private fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
-        val suffix = if (forCalculateId.isEmpty()) "" else "_${mangledId(forCalculateId)}\$"
-        return suggestedName + suffix
-    }
-
-    private fun needsStableMangling(descriptor: DeclarationDescriptor): Boolean {
-        if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return false
-        if (descriptor is ClassOrPackageFragmentDescriptor) return true
-        if (descriptor !is CallableMemberDescriptor) return false
-
-        // Use stable mangling for overrides because we use stable mangling when any function inside a overridable declaration
-        // for avoid clashing names when inheritance.
-        if (DescriptorUtils.isOverride(descriptor)) return true
-
-        val containingDeclaration = descriptor.containingDeclaration
-        if (isNativeObject(containingDeclaration) || isLibraryObject(containingDeclaration)) return true
-
-        return when (containingDeclaration) {
-            is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
-            is ClassDescriptor -> {
-                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT ||
-                    containingDeclaration.modality == Modality.OPEN || containingDeclaration.modality == Modality.ABSTRACT
-                ) {
-                    return descriptor.visibility.isPublicAPI
-                }
-
-                // valueOf() is created in the library with a mangled name for every enum class
-                if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return true
-
-                // Don't use stable mangling when it inside a non-public API declaration.
-                if (!containingDeclaration.visibility.isPublicAPI) return false
-
-                // Ignore the `protected` visibility because it can be use outside a containing declaration
-                // only when the containing declaration is overridable.
-                if (descriptor.visibility === Visibilities.PUBLIC) return true
-
-                return false
-            }
-            else -> {
-                assert(containingDeclaration is CallableMemberDescriptor) {
-                    "containingDeclaration for descriptor have unsupported type for mangling, " +
-                    "descriptor: " + descriptor + ", containingDeclaration: " + containingDeclaration
-                }
-                false
-            }
-        }
-    }
-
     companion object {
+        @JvmStatic private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): Pair<String, Boolean> {
+            // If we have a callable descriptor (property or method) it can override method in a parent class.
+            // Traverse to the topmost overridden method.
+            // It does not matter which path to choose during traversal, since front-end must ensure
+            // that names required by different overridden method do no differ.
+            val overriddenDescriptor = if (descriptor is CallableDescriptor) {
+                generateSequence(descriptor) { it.overriddenDescriptors.firstOrNull()?.original }.last()
+            }
+            else {
+                descriptor
+            }
+
+            // If declaration is marked with either @native, @library or @JsName, return its stable name as is.
+            val nativeName = getNameForAnnotatedObject(overriddenDescriptor)
+            if (nativeName != null) return Pair(nativeName, true)
+
+            val stable = shouldBeStable(descriptor)
+            val finalName = if (overriddenDescriptor is CallableDescriptor && stable) {
+                getStableMangledName(baseName, getArgumentTypesAsString(overriddenDescriptor))
+            }
+            else {
+                baseName
+            }
+            return Pair(finalName, stable)
+        }
+
+        @JvmStatic fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
+            val argTypes = StringBuilder()
+
+            val receiverParameter = descriptor.extensionReceiverParameter
+            if (receiverParameter != null) {
+                argTypes.append(receiverParameter.type.getJetTypeFqName(true)).append(".")
+            }
+
+            argTypes.append(descriptor.valueParameters.joinToString(",") { it.type.getJetTypeFqName(true) })
+
+            return argTypes.toString()
+        }
+
+        @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
+            val suffix = if (forCalculateId.isEmpty()) "" else "_${mangledId(forCalculateId)}\$"
+            return suggestedName + suffix
+        }
+
+        private fun shouldBeStable(descriptor: DeclarationDescriptor): Boolean {
+            if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return false
+            if (descriptor is ClassOrPackageFragmentDescriptor) return true
+            if (descriptor !is CallableMemberDescriptor) return false
+
+            // Use stable mangling for overrides because we use stable mangling when any function inside a overridable declaration
+            // for avoid clashing names when inheritance.
+            if (DescriptorUtils.isOverride(descriptor)) return true
+
+            val containingDeclaration = descriptor.containingDeclaration
+            if (isNativeObject(containingDeclaration) || isLibraryObject(containingDeclaration)) return true
+
+            return when (containingDeclaration) {
+                is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
+                is ClassDescriptor -> {
+                    // Open (abstract) public methods of classes or final public methods of open (abstract) classes should be stable
+                    if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT ||
+                        containingDeclaration.modality == Modality.OPEN || containingDeclaration.modality == Modality.ABSTRACT
+                    ) {
+                        return descriptor.visibility.isPublicAPI
+                    }
+
+                    // valueOf() is created in the library with a mangled name for every enum class
+                    if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return true
+
+                    // Don't use stable mangling when it inside a non-public class.
+                    if (!containingDeclaration.visibility.isPublicAPI) return false
+
+                    // Ignore the `protected` visibility because it can be use outside a containing declaration
+                    // only when the containing declaration is overridable.
+                    if (descriptor.visibility === Visibilities.PUBLIC) return true
+
+                    return false
+                }
+                else -> {
+                    assert(containingDeclaration is CallableMemberDescriptor) {
+                        "containingDeclaration for descriptor have unsupported type for mangling, " +
+                        "descriptor: " + descriptor + ", containingDeclaration: " + containingDeclaration
+                    }
+                    false
+                }
+            }
+        }
+
         @JvmStatic fun mangledId(forCalculateId: String): String {
             val absHashCode = Math.abs(forCalculateId.hashCode())
             return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
