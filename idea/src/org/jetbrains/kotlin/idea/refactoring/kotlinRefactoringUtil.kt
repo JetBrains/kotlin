@@ -146,20 +146,25 @@ fun KtFile.createTempCopy(text: String? = null): KtFile {
 fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElement> {
     val containers = ArrayList<KtElement>()
 
-    var objectFound = false
+    var objectOrNonInnerNestedClassFound = false
     val parents = if (strict) parents else parentsWithSelf
     for (element in parents) {
         val isValidContainer = when (element) {
             is KtFile -> true
-            is KtClassBody -> !objectFound || element.parent is KtObjectDeclaration
-            is KtBlockExpression -> !objectFound
+            is KtClassBody -> !objectOrNonInnerNestedClassFound || element.parent is KtObjectDeclaration
+            is KtBlockExpression -> !objectOrNonInnerNestedClassFound
             else -> false
         }
         if (!isValidContainer) continue
 
         containers.add(element as KtElement)
 
-        ((element as? KtClassBody)?.parent as? KtObjectDeclaration)?.let { objectFound = true }
+        if (!objectOrNonInnerNestedClassFound) {
+            val bodyParent = (element as? KtClassBody)?.parent
+            objectOrNonInnerNestedClassFound =
+                    (bodyParent is KtObjectDeclaration && !bodyParent.isObjectLiteral())
+                    || (bodyParent is KtClass && !bodyParent.isInner())
+        }
     }
 
     return containers
