@@ -391,7 +391,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
 
-        NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddCrossInlineFix)
+        NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddInlineModifierFix.CrossInlineFactory)
+        USAGE_IS_NOT_INLINABLE.registerFactory(AddInlineModifierFix.NoInlineFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(MakeConstructorParameterPropertyFix)
 
