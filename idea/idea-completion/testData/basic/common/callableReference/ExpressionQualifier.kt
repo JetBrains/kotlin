@@ -49,8 +49,8 @@ class C {
     }
 }
 
-// ABSENT: class
-// ABSENT: class.java
+// EXIST: class
+// EXIST_JAVA_ONLY: class.java
 // EXIST: { itemText: "memberFunInA", attributes: "" }
 // EXIST: { itemText: "memberValInA", attributes: "" }
 
