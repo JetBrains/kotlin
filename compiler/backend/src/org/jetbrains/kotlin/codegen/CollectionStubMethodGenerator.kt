@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.load.java.isFromBuiltins
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -204,8 +205,37 @@ class CollectionStubMethodGenerator(
         OverrideResolver.generateOverridesInAClass(klass, listOf(), object : NonReportingOverrideStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
-                if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass)?.kind == DECLARATION) {
-                    result.add(fakeOverride)
+                val foundOverriddenFromDirectSuperClass = fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass) ?: return
+                if (foundOverriddenFromDirectSuperClass.kind == DECLARATION) {
+                    // For regular classes there should no be fake overrides having return types incompatible with return types of their
+                    // overridden, while here it's possible to create declaration like `fun remove(e: E): ImmutableCollection<E>`
+                    // in read-only class that obviously conflicts with `fun remove(e: E): Boolean`.
+                    // But overrides binding algorithm suppose there should be no conflicts like this, so it simply chooses a random
+                    // representative for fake override, while we interested here in ones from mutable version.
+                    //
+                    // NB: READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER is used here for cases like:
+                    // `fun iterator(): CharIterator` defined in read-only collection
+                    // The problem is that 'CharIterator' is not a subtype of 'MutableIterator' while from Java's point of view it is,
+                    // so we must hack our subtyping a little bit
+                     val newDescriptor =
+                            if (READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER.isSubtypeOf(
+                                    fakeOverride.returnType!!, foundOverriddenFromDirectSuperClass.returnType!!))
+                                fakeOverride
+                            else
+                                foundOverriddenFromDirectSuperClass.copy(
+                                        fakeOverride.containingDeclaration,
+                                        fakeOverride.modality,
+                                        fakeOverride.visibility,
+                                        fakeOverride.kind, false)
+
+                    newDescriptor.overriddenDescriptors =
+                            fakeOverride.overriddenDescriptors.filter {
+                                superDescriptor ->
+                                // filter out incompatible descriptors, e.g. `fun remove(e: E): ImmutableCollection<E>` for `fun remove(e: E): Boolean`
+                                READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER.isSubtypeOf(newDescriptor.returnType!!, superDescriptor.returnType!!)
+                            }
+
+                    result.add(newDescriptor)
                 }
             }
 
@@ -265,4 +295,14 @@ class CollectionStubMethodGenerator(
             FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)
         }
     }
+}
+
+private val READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER = KotlinTypeChecker.withAxioms { x, y ->
+    val firstClass = x.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
+    val secondClass = y.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
+
+    val j2k = JavaToKotlinClassMap.INSTANCE
+    val firstReadOnly = if (j2k.isMutable(firstClass)) j2k.convertMutableToReadOnly(firstClass) else firstClass
+    val secondReadOnly = if (j2k.isMutable(secondClass)) j2k.convertMutableToReadOnly(secondClass) else secondClass
+    firstReadOnly.typeConstructor == secondReadOnly.typeConstructor
 }

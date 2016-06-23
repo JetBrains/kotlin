@@ -53,6 +53,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("immutableCollection.kt")
+    public void testImmutableCollection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineOnly.kt")
     public void testInlineOnly() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/inlineOnly.kt");
