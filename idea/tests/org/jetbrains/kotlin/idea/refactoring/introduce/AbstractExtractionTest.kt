@@ -211,6 +211,8 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             }
             val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
             val helper = object : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
+                override fun validate(descriptor: ExtractableCodeDescriptor) = descriptor.validate(extractionTarget)
+
                 override fun configureAndRun(
                         project: Project,
                         editor: Editor,

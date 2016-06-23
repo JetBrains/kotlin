@@ -16,24 +16,37 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty
 
-import com.intellij.openapi.project.*
-import com.intellij.psi.*
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.editor.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.*
-import org.jetbrains.kotlin.idea.refactoring.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
-import com.intellij.openapi.application.*
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
 class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
 ): RefactoringActionHandler {
     object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
+        private fun getExtractionTarget(descriptor: ExtractableCodeDescriptor) =
+                propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
+
+        override fun validate(descriptor: ExtractableCodeDescriptor) =
+                descriptor.validate(getExtractionTarget(descriptor) ?: ExtractionTarget.FUNCTION)
+
         override fun configureAndRun(
                 project: Project,
                 editor: Editor,
@@ -41,7 +54,7 @@ class KotlinIntroducePropertyHandler(
                 onFinish: (ExtractionResult) -> Unit
         ) {
             val descriptor = descriptorWithConflicts.descriptor
-            val target = propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
+            val target = getExtractionTarget(descriptor)
             if (target != null) {
                 val options = ExtractionGeneratorOptions.DEFAULT.copy(target = target, delayInitialOccurrenceReplacement = true)
                 doRefactor(ExtractionGeneratorConfiguration(descriptor, options), onFinish)
