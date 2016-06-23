@@ -63,8 +63,8 @@ class DelegationTranslator(
             else {
                 val classFqName = DescriptorUtils.getFqName(classDescriptor)
                 val typeFqName = DescriptorUtils.getFqName(descriptor)
-                val suffix = NameSuggestion.mangledId("${classFqName.asString()}:${typeFqName.asString()}")
-                val suggestedName = Namer.getDelegatePrefix() + if (suffix.isNotEmpty()) "_$suffix\$" else ""
+                val idForMangling = "${classFqName.asString()}:${typeFqName.asString()}"
+                val suggestedName = NameSuggestion.getStableMangledName(Namer.getDelegatePrefix(), idForMangling)
                 val delegateName = context.getScopeForDescriptor(classDescriptor).declareFreshName("${suggestedName}_0")
                 fields[specifier] = Field(delegateName, true)
             }
