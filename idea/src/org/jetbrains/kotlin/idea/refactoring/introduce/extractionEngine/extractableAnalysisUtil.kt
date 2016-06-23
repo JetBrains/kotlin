@@ -394,8 +394,12 @@ fun ExtractionData.createTemporaryDeclaration(pattern: String): KtNamedDeclarati
     }
 }
 
-internal fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression =
-        (createTemporaryDeclaration("fun() {\n$0\n}\n") as KtNamedFunction).bodyExpression as KtBlockExpression
+internal fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression {
+    if (options.extractAsProperty) {
+        return ((createTemporaryDeclaration("val = {\n$0\n}\n") as KtProperty).initializer as KtLambdaExpression).bodyExpression!!
+    }
+    return (createTemporaryDeclaration("fun() {\n$0\n}\n") as KtNamedFunction).bodyExpression as KtBlockExpression
+}
 
 private fun KotlinType.collectReferencedTypes(processTypeArguments: Boolean): List<KotlinType> {
     if (!processTypeArguments) return Collections.singletonList(this)
@@ -739,7 +743,8 @@ internal fun KtNamedDeclaration.getGeneratedBody() =
             }
         } ?: throw AssertionError("Couldn't get block body for this declaration: ${getElementTextWithContext()}")
 
-fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
+@JvmOverloads
+fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarget.FUNCTION): ExtractableCodeDescriptorWithConflicts {
     fun getDeclarationMessage(declaration: PsiNamedElement, messageKey: String, capitalize: Boolean = true): String {
         val message = KotlinRefactoringBundle.message(messageKey, RefactoringUIUtil.getDescription(declaration, true))
         return if (capitalize) message.capitalize() else message
@@ -749,7 +754,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
 
     val result = ExtractionGeneratorConfiguration(
             this,
-            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
+            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false, target = target)
     ).generateDeclaration()
 
     val valueParameterList = (result.declaration as? KtNamedFunction)?.valueParameterList

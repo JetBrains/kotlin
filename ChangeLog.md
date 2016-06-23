@@ -117,6 +117,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 ###### Issues fixed
 
+- [`KT-12294`](https://youtrack.jetbrains.com/issue/KT-12294) Introduce Property: Fix extraction of expressions referring to primary constructor parameters
 - [`KT-12413`](https://youtrack.jetbrains.com/issue/KT-12413) Change Signature: Fix bogus warning about unresolved type parameters/invalid functional type replacement
 
 ## 1.0.3

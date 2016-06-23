@@ -37,6 +37,8 @@ abstract class ExtractionEngineHelper(val operationName: String) {
         onFinish(project.executeWriteCommand<ExtractionResult>(operationName) { config.generateDeclaration() })
     }
 
+    open fun validate(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptorWithConflicts = descriptor.validate()
+
     abstract fun configureAndRun(
             project: Project,
             editor: Editor,
@@ -61,7 +63,7 @@ class ExtractionEngine(
         }
 
         fun validateAndRefactor() {
-            val validationResult = analysisResult.descriptor!!.validate()
+            val validationResult = helper.validate(analysisResult.descriptor!!)
             project.checkConflictsInteractively(validationResult.conflicts) {
                 helper.configureAndRun(project, editor, validationResult) {
                     try {

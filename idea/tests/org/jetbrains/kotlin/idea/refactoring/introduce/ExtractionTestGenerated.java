@@ -3100,6 +3100,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroducePropertyTest(fileName);
         }
 
+        @TestMetadata("primaryConstructorParameterReference.kt")
+        public void testPrimaryConstructorParameterReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/primaryConstructorParameterReference.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("replaceDuplicates.kt")
         public void testReplaceDuplicates() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/replaceDuplicates.kt");
