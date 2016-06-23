@@ -113,6 +113,12 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13037`](https://youtrack.jetbrains.com/issue/KT-13037) Fix possible deadlock in debugger in 2016.1 and exception in 2016.2
 - [`KT-12651`](https://youtrack.jetbrains.com/issue/KT-12651) Fix exception in evaluate expression when bad identifier is used for marking object
 
+#### Refactorings
+
+###### Issues fixed
+
+- [`KT-12413`](https://youtrack.jetbrains.com/issue/KT-12413) Change Signature: Fix bogus warning about unresolved type parameters/invalid functional type replacement
+
 ## 1.0.3
 
 ### Compiler

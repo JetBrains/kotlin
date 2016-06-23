@@ -72,7 +72,7 @@ class CodeFragmentAnalyzer(
     }
 
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
-    private fun KtExpression.correctContextForExpression(): KtExpression {
+    private fun KtElement.correctContextForElement(): KtElement {
         return when (this) {
                    is KtProperty -> this.delegateExpressionOrInitializer
                    is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
@@ -112,17 +112,17 @@ class CodeFragmentAnalyzer(
                 scopeForContextElement = descriptor.scopeForMemberDeclarationResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
-            is KtExpression -> {
-                val correctedContext = context.correctContextForExpression()
+            is KtFile -> {
+                scopeForContextElement = resolveSession.fileScopeProvider.getFileResolutionScope(context)
+                dataFlowInfo = DataFlowInfo.EMPTY
+            }
+            is KtElement -> {
+                val correctedContext = context.correctContextForElement()
 
                 val contextForElement = resolveToElement(correctedContext)
 
                 scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
-            }
-            is KtFile -> {
-                scopeForContextElement = resolveSession.fileScopeProvider.getFileResolutionScope(context)
-                dataFlowInfo = DataFlowInfo.EMPTY
             }
             else -> return null
         }
