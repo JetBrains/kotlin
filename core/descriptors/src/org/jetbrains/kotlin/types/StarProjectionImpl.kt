@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class StarProjectionImpl(
         private val typeParameter: TypeParameterDescriptor
@@ -45,7 +46,7 @@ fun TypeParameterDescriptor.starProjectionType(): KotlinType {
                         else null
 
             }
-    ).substitute(this.upperBounds.first(), Variance.OUT_VARIANCE)!!
+    ).substitute(this.upperBounds.first(), Variance.OUT_VARIANCE) ?: builtIns.defaultBound
 }
 
 class TypeBasedStarProjectionImpl(
