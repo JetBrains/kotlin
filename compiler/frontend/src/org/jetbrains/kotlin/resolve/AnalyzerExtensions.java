@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.KtCallableDeclaration;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;

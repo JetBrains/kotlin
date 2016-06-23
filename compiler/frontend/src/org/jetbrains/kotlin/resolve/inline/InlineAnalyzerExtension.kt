@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
-        assert(InlineUtil.isInline(descriptor)) { "This method should be invoked on inline function: " + descriptor }
-
         checkModalityAndOverrides(descriptor, functionOrProperty, trace)
         notSupportedInInlineCheck(descriptor, functionOrProperty, trace)
 
@@ -49,7 +47,7 @@ object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
                 "Property descriptor $descriptor should have corresponded KtProperty, but has $functionOrProperty"
             }
 
-            val hasBackingField = java.lang.Boolean.TRUE.equals(trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor))
+            val hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor) == true
             if (hasBackingField || (functionOrProperty as KtProperty).delegateExpression != null) {
                 trace.report(Errors.INLINE_PROPERTY_WITH_BACKING_FIELD.on(functionOrProperty))
             }

@@ -2330,11 +2330,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return lookupCapturedValueInConstructorParameters(descriptor);
         }
 
-        return lookupInContext(descriptor, StackValue.LOCAL_0, state, false, context, this);
+        return lookupValuaAndLocalVariableMetadata(descriptor, StackValue.LOCAL_0, state, false, context, this);
     }
 
     @Nullable
-    static StackValue lookupInContext(
+    static StackValue lookupValuaAndLocalVariableMetadata(
             @NotNull DeclarationDescriptor descriptor,
             @NotNull StackValue prefix,
             @NotNull GenerationState state,
@@ -2353,7 +2353,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert metadataValue != null : "Metadata stack value should be non-null for local delegated property";
         //required for ImplementationBodyCodegen.lookupConstructorExpressionsInClosureIfPresent
         if (codegen == null) return null;
-        return codegen.delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor, state.getBindingContext(),
+        return codegen.delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor,
                                               state.getTypeMapper());
     }
 
@@ -3780,7 +3780,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
         StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
-        return delegatedVariableValue(varValue, metadataValue, variableDescriptor, bindingContext, typeMapper);
+        return delegatedVariableValue(varValue, metadataValue, variableDescriptor, typeMapper);
     }
 
     private void initializeLocalVariable(
@@ -4488,7 +4488,6 @@ The "returned" value of try expression with no finally is either the last expres
             @NotNull StackValue delegateValue,
             @NotNull StackValue metadataValue,
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull BindingContext bindingContext,
             @NotNull KotlinTypeMapper typeMapper
     ) {
         return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
