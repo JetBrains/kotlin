@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
@@ -43,10 +43,11 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
 
     return when (source) {
         is KotlinJvmBinaryPackageSourceElement -> {
-            if (this !is DeserializedCallableMemberDescriptor) {
+            val directMember = JvmCodegenUtil.getDirectMember(this)
+            if (directMember !is DeserializedCallableMemberDescriptor) {
                 throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
             }
-            val kotlinClass = source.getContainingBinaryClass(this) ?:
+            val kotlinClass = source.getContainingBinaryClass(directMember) ?:
                     throw AssertionError("Descriptor $this is not found, in: $source")
             if (kotlinClass !is VirtualFileKotlinClass) {
                 throw AssertionError("Expected VirtualFileKotlinClass, got $kotlinClass")
@@ -54,7 +55,8 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
             kotlinClass.file.canonicalPath!!
         }
         is KotlinJvmBinarySourceElement -> {
-            assert(this is DeserializedSimpleFunctionDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
+            val directMember = JvmCodegenUtil.getDirectMember(this)
+            assert(directMember is DeserializedCallableMemberDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
             val kotlinClass = source.binaryClass as VirtualFileKotlinClass
             kotlinClass.file.canonicalPath!!
         }
