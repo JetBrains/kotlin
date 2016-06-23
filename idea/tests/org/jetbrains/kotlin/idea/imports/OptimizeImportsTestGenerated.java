@@ -53,6 +53,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("CallableReference2.kt")
+    public void testCallableReference2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/CallableReference2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassFromSameFileImportAddedBug.kt")
     public void testClassFromSameFileImportAddedBug() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ClassFromSameFileImportAddedBug.kt");
