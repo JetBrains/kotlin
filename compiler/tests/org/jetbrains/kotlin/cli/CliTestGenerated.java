@@ -295,6 +295,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("wrongJdkPath.args")
+        public void testWrongJdkPath() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongJdkPath.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("wrongJvmTargetVersion.args")
         public void testWrongJvmTargetVersion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongJvmTargetVersion.args");
