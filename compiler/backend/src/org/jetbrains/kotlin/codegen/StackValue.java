@@ -1208,16 +1208,17 @@ public abstract class StackValue {
                 coerceTo(type, v);
             }
             else {
-                PropertyGetterDescriptor getter = descriptor.getGetter();
-                assert getter != null : "Getter descriptor should be not null for " + descriptor;
-                if (resolvedCall != null && getter.isInline()) {
-                    CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getter);
+                PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+                assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
+                if (resolvedCall != null && getterDescriptor.isInline()) {
+                    CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getterDescriptor);
                     callGenerator.putHiddenParams();
-                    callGenerator.genCall(this.getter, resolvedCall, false, codegen);
-                } else {
-                    this.getter.genInvokeInstruction(v);
+                    callGenerator.genCall(getter, resolvedCall, false, codegen);
                 }
-                coerce(this.getter.getReturnType(), type, v);
+                else {
+                    getter.genInvokeInstruction(v);
+                }
+                coerce(getter.getReturnType(), type, v);
 
                 KotlinType returnType = descriptor.getReturnType();
                 if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
@@ -1261,17 +1262,18 @@ public abstract class StackValue {
 
         @Override
         public void store(@NotNull StackValue rightSide, @NotNull InstructionAdapter v, boolean skipReceiver) {
-            PropertySetterDescriptor setter = descriptor.getSetter();
-            if (resolvedCall != null && setter != null && setter.isInline()) {
-                assert this.setter != null : "Setter descriptor should be not null for " + descriptor;
-                CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, setter);
+            PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+            if (resolvedCall != null && setterDescriptor != null && setterDescriptor.isInline()) {
+                assert setter != null : "Setter should be not null for " + descriptor;
+                CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, setterDescriptor);
                 if (!skipReceiver) {
                     putReceiver(v, false);
                 }
                 callGenerator.putHiddenParams();
                 callGenerator.putValueIfNeeded(rightSide.type, rightSide);
-                callGenerator.genCall(this.setter, resolvedCall, false, codegen);
-            } else {
+                callGenerator.genCall(setter, resolvedCall, false, codegen);
+            }
+            else {
                 super.store(rightSide, v, skipReceiver);
             }
         }

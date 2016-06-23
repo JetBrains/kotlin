@@ -39,21 +39,17 @@ public class InlineUtil {
                FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
-    public static boolean isInlineFunctionOrProperty(@Nullable DeclarationDescriptor descriptor) {
-        return isInline(descriptor) || isInlineProperty(descriptor);
-    }
-
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof FunctionDescriptor && getInlineStrategy((FunctionDescriptor) descriptor).isInline();
     }
 
-    public static boolean hasInlineAccessors(@Nullable PropertyDescriptor propertyDescriptor) {
+    public static boolean hasInlineAccessors(@NotNull PropertyDescriptor propertyDescriptor) {
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         return getter != null && getter.isInline() || setter != null && setter.isInline();
     }
 
-    public static boolean isInlineProperty(@Nullable DeclarationDescriptor descriptor) {
+    public static boolean isPropertyWithAllAccessorsAreInline(@NotNull DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof PropertyDescriptor))  return false;
 
         PropertyGetterDescriptor getter = ((PropertyDescriptor) descriptor).getGetter();
