@@ -39,13 +39,13 @@ class JeTypeParameterElement(
 
     override fun getKind() = ElementKind.TYPE_PARAMETER
 
-    override fun asType() = PsiTypesUtil.getClassType(psi).toJeType()
+    override fun asType() = PsiTypesUtil.getClassType(psi).toJeType(psi.manager)
 
     override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>, p: P) = v.visitTypeParameter(this, p)
 
     override fun getEnclosedElements() = emptyList<Element>()
     
-    override fun getBounds() = psi.superTypes.map { it.toJeType() }
+    override fun getBounds() = psi.superTypes.map { it.toJeType(psi.manager) }
 
     override fun getGenericElement() = parent
 

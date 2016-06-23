@@ -41,10 +41,10 @@ class JeTypeElement(override val psi: PsiClass) : JeElement(), TypeElement, JeAn
 
     override fun getSuperclass(): TypeMirror {
         val superClass = psi.superClass ?: return JeNoneType
-        return PsiTypesUtil.getClassType(superClass).toJeType()
+        return PsiTypesUtil.getClassType(superClass).toJeType(psi.manager)
     }
 
-    override fun getInterfaces() = psi.interfaces.map { PsiTypesUtil.getClassType(it).toJeType() }
+    override fun getInterfaces() = psi.interfaces.map { PsiTypesUtil.getClassType(it).toJeType(psi.manager) }
 
     override fun getTypeParameters() = psi.typeParameters.map { JeTypeParameterElement(it, this) }
 
@@ -79,7 +79,7 @@ class JeTypeElement(override val psi: PsiClass) : JeElement(), TypeElement, JeAn
         else -> ElementKind.CLASS
     }
 
-    override fun asType() = PsiTypesUtil.getClassType(psi).toJeType()
+    override fun asType() = PsiTypesUtil.getClassType(psi).toJeType(psi.manager)
 
     override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>, p: P) = v.visitType(this, p)
     

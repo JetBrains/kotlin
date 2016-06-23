@@ -41,11 +41,11 @@ fun TypeKind?.toJePrimitiveType() = PSI_PRIMITIVES_MAP[TYPE_KIND_TO_PSI_PRIMITIV
 
 fun PsiType.toJePrimitiveType() = PSI_PRIMITIVES_MAP[this]
 
-fun PsiType.toJeType(): TypeMirror = when (this) {
+fun PsiType.toJeType(manager: PsiManager): TypeMirror = when (this) {
     PsiType.VOID -> JeVoidType
     PsiType.NULL -> JeNullType
     is PsiPrimitiveType -> PSI_PRIMITIVES_MAP[this] ?: JeErrorType
-    is PsiArrayType -> JeArrayType(this)
+    is PsiArrayType -> JeArrayType(this, manager)
     is PsiWildcardType -> JeWildcardType(this)
     is PsiClassType -> {
         val resolvedClass = this.resolve()
@@ -55,7 +55,7 @@ fun PsiType.toJeType(): TypeMirror = when (this) {
             else -> JeErrorType
         }
     }
-    is PsiIntersectionType -> JeIntersectionType(this)
+    is PsiIntersectionType -> JeIntersectionType(this, manager)
     else -> JeErrorType
 }
 

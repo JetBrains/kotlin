@@ -22,7 +22,7 @@ import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
-class JePrimitiveType(override val psiType: PsiPrimitiveType) : JeAbstractType(), PrimitiveType {
+class JePrimitiveType(override val psiType: PsiPrimitiveType) : JePsiType(), PrimitiveType {
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitPrimitive(this, p)
     
     override fun getKind() = when (psiType) {

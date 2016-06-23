@@ -36,7 +36,7 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), Exec
         return JeName(psi.name)
     }
 
-    override fun getThrownTypes() = psi.throwsList.referencedTypes.map { it.toJeType() }
+    override fun getThrownTypes() = psi.throwsList.referencedTypes.map { it.toJeType(psi.manager) }
 
     override fun getTypeParameters() = psi.typeParameters.map { JeTypeParameterElement(it, this) }
 
@@ -48,7 +48,7 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), Exec
         return JeAnnotationValue(defaultValue)
     }
 
-    override fun getReturnType() = psi.returnType?.let { it.toJeType() } ?: JeNoneType
+    override fun getReturnType() = psi.returnType?.let { it.toJeType(psi.manager) } ?: JeNoneType
 
     override fun getReceiverType() = psi.getReceiverTypeMirror()
     
@@ -89,7 +89,7 @@ fun PsiMethod.getReceiverTypeMirror(): TypeMirror {
         val containingClass = containingClass
         if (containingClass != null && !containingClass.hasModifierProperty(PsiModifier.STATIC)) {
             containingClass.containingClass?.let {
-                return PsiTypesUtil.getClassType(it).toJeType()
+                return PsiTypesUtil.getClassType(it).toJeType(manager)
             }
         }
 
@@ -97,6 +97,6 @@ fun PsiMethod.getReceiverTypeMirror(): TypeMirror {
     }
 
     val containingClass = containingClass ?: return JeNoneType
-    return PsiTypesUtil.getClassType(containingClass).toJeType()
+    return PsiTypesUtil.getClassType(containingClass).toJeType(manager)
     
 }

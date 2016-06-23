@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.java.model.types
 
-import com.intellij.psi.PsiType
 import javax.lang.model.type.NullType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
-object JeNullType : JeAbstractType(), NullType {
+object JeNullType : JeTypeMirror, NullType {
     override fun getKind() = TypeKind.NULL
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNull(this, p)
-    override val psiType = PsiType.NULL
     override fun toString() = "null"
 }

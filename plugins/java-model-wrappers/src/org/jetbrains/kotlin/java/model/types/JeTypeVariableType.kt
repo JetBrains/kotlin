@@ -24,9 +24,15 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
 import javax.lang.model.type.TypeVisitor
 
-class JeTypeVariableType(override val psiType: PsiClassType, val parameter: PsiTypeParameter) : JeAbstractType(), TypeVariable {
+class JeTypeVariableType(
+        override val psiType: PsiClassType, 
+        val parameter: PsiTypeParameter
+) : JePsiType(), JeTypeWithManager, TypeVariable {
     override fun getKind() = TypeKind.TYPEVAR
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitTypeVariable(this, p)
+
+    override val psiManager: PsiManager
+        get() = parameter.manager
 
     override fun getLowerBound(): TypeMirror? {
         //TODO support captured lower bounds

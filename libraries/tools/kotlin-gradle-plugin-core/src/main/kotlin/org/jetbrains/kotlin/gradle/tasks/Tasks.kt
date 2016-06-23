@@ -632,6 +632,10 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
 
     override fun hasErrors() = hasErrors
 
+    override fun clear() {
+        // Do nothing
+    }
+
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
         val text = with(StringBuilder()) {
             append(when (severity) {

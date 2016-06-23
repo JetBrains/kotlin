@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiClassInitializer
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import javax.lang.model.type.*
 
-class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitializer) : JeTypeBase(), ExecutableType {
+class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitializer) : JeTypeMirror, JeTypeWithManager, ExecutableType {
     override fun getKind() = TypeKind.EXECUTABLE
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitExecutable(this, p)
+
+    override val psiManager: PsiManager
+        get() = initializer.manager
 
     override fun getReturnType() = CustomJeNoneType(TypeKind.VOID)
 

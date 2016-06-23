@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiArrayType
+import com.intellij.psi.PsiManager
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
-class JeArrayType(override val psiType: PsiArrayType) : JeAbstractType(), ArrayType {
+class JeArrayType(override val psiType: PsiArrayType, override val psiManager: PsiManager) : JePsiType(), JeTypeWithManager, ArrayType {
     override fun getKind() = TypeKind.ARRAY
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitArray(this, p)
-    override fun getComponentType() = psiType.componentType.toJeType()
+    override fun getComponentType() = psiType.componentType.toJeType(psiManager)
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
