@@ -68,7 +68,7 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    private static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
+    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
             @NotNull PredefinedAnnotation annotation) {
         if (!hasAnnotation(declarationDescriptor, annotation)) {
             return null;
