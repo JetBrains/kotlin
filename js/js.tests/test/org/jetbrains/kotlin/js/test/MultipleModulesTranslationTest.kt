@@ -20,8 +20,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir
@@ -71,7 +71,7 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
     private fun getMetaFileOutputPath(moduleDirectoryName: String, version: EcmaVersion) =
         KotlinJavascriptMetadataUtils.replaceSuffix(getOutputFilePath(moduleDirectoryName, version))
 
-    override fun setupConfig(configuration: CompilerConfiguration) {
+    override fun setupConfig(configuration: LibrarySourcesConfig.Builder) {
         val method = try {
             javaClass.getMethod(name)
         }
@@ -80,7 +80,7 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
         }
 
         method.getAnnotation(WithModuleKind::class.java)?.let { moduleKind = it.value }
-        configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
+        configuration.moduleKind(moduleKind)
     }
 
     override fun shouldGenerateMetaInfo() = true

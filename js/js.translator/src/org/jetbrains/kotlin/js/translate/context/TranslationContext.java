@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
@@ -269,11 +268,6 @@ public class TranslationContext {
     @NotNull
     public Intrinsics intrinsics() {
         return staticContext.getIntrinsics();
-    }
-
-    @NotNull
-    public ReflectionTypes getReflectionTypes() {
-        return staticContext.getReflectionTypes();
     }
 
     @NotNull

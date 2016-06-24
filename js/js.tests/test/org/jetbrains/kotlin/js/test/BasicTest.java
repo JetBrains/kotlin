@@ -343,13 +343,20 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             librariesWithStdlib.addAll(libraries);
         }
 
-        return new LibrarySourcesConfig.Builder(project, moduleId, librariesWithStdlib)
+        LibrarySourcesConfig.Builder configBuilder = new LibrarySourcesConfig.Builder(project, moduleId, librariesWithStdlib)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(shouldGenerateSourceMap())
                 .inlineEnabled(isInlineEnabled)
                 .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
-                .metaInfo(shouldGenerateMetaInfo())
-                .build();
+                .metaInfo(shouldGenerateMetaInfo());
+
+        setupConfig(configBuilder);
+
+        return configBuilder.build();
+    }
+
+    protected void setupConfig(@NotNull LibrarySourcesConfig.Builder configuration) {
+        // Do nothing by default, expect inheritors to implement this method
     }
 
     @NotNull
