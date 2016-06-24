@@ -42,24 +42,24 @@ interface ScriptTemplateProvider {
 }
 
 fun makeScriptDefsFromTemplateProviderExtensions(project: Project,
-                                                 errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = fun (ep, ex) = println(ex)): List<KotlinScriptDefinitionFromTemplate> =
+                                                 errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = { ep, ex -> throw ex }): List<KotlinScriptDefinitionFromTemplate> =
         makeScriptDefsFromTemplateProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplateProvider.EP_NAME).extensions.asIterable(),
                                             errorsHandler)
 
 fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvider>,
-                                        errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = fun (ep, ex) = println(ex)
+                                        errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromTemplate> {
     val idToVersion = hashMapOf<String, Int>()
-    return providers.filter { it.isValid }.sortedByDescending { it.version }.mapNotNull {
+    return providers.filter { it.isValid }.sortedByDescending { it.version }.mapNotNull { provider ->
         try {
-            idToVersion.get(it.id)?.let { ver -> errorsHandler(it, RuntimeException("Conflicting scriptTemplateProvider ${it.id}, using one with version $ver")) }
-            val loader = URLClassLoader(it.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
-            val cl = loader.loadClass(it.templateClassName)
-            idToVersion.put(it.id, it.version)
-            KotlinScriptDefinitionFromTemplate(cl.kotlin, it.environment)
+            idToVersion.get(provider.id)?.let { ver -> errorsHandler(provider, RuntimeException("Conflicting scriptTemplateProvider ${provider.id}, using one with version $ver")) }
+            val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
+            val cl = loader.loadClass(provider.templateClassName)
+            idToVersion.put(provider.id, provider.version)
+            KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.environment)
         }
         catch (ex: Exception) {
-            errorsHandler(it, ex)
+            errorsHandler(provider, ex)
             null
         }
     }

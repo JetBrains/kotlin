@@ -24,6 +24,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 class KotlinScriptExternalImportsProvider(val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) {
+
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, KotlinScriptExternalDependencies>()
     private val cacheOfNulls = hashSetOf<String>()
@@ -82,7 +83,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                 val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
                 when {
                     deps != null && (oldDeps == null ||
-                                     !deps.classpath.isSameClasspathAs(oldDeps.classpath) || !deps.sources.isSameClasspathAs(oldDeps.sources)) -> {
+                                     !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
                         // changed or new
                         cache.put(path, deps)
                         cacheOfNulls.remove(path)
@@ -104,9 +105,8 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
 
     fun invalidateCaches() {
         cacheLock.write {
-            cache.keys.toList().apply {
-                cache.clear()
-            }
+            cache.clear()
+            cacheOfNulls.clear()
         }
     }
 
@@ -137,3 +137,10 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                 ServiceManager.getService(project, KotlinScriptExternalImportsProvider::class.java)
     }
 }
+
+internal fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean {
+    val c1 = asSequence().map { it.canonicalPath }
+    val c2 = other.asSequence().map { it.canonicalPath }
+    return c1 == c2
+}
+
