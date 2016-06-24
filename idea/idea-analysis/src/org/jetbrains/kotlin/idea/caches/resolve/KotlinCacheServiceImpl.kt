@@ -96,7 +96,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
         val filesModificationTracker = ModificationTracker {
-            files.sumByLong { it.outOfBlockModificationCount }
+            // TODO: Check getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) actually works
+            files.sumByLong { it.outOfBlockModificationCount + it.modificationStamp }
         }
         val dependenciesForSyntheticFileCache = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT, filesModificationTracker)
         val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
