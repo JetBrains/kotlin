@@ -576,7 +576,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checker.check(resolvedCall, resolutionContext);
         }
         for (SymbolUsageValidator validator : components.symbolUsageValidators) {
-            validator.validateCall(resolvedCall, descriptor, trace, expression);
+            validator.validateCall(resolvedCall, trace, expression);
         }
     }
 
@@ -909,7 +909,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             else if (setter != null) {
                 for (SymbolUsageValidator validator : components.symbolUsageValidators) {
-                    validator.validateCall(null, setter, trace, reportOn);
+                    validator.validatePropertyCall(setter, trace, reportOn);
                 }
             }
         }

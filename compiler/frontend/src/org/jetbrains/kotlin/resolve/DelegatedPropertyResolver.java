@@ -220,7 +220,7 @@ public class DelegatedPropertyResolver {
                 }
 
                 for (SymbolUsageValidator validator : symbolUsageValidators) {
-                    validator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
+                    validator.validateCall(resultingCall, trace, byKeyword);
                 }
             }
         }

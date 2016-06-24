@@ -81,12 +81,11 @@ class DestructuringDeclarationResolver(
 
         context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
 
-        val functionDescriptor = results.resultingDescriptor
         for (validator in symbolUsageValidators) {
-            validator.validateCall(null, functionDescriptor, context.trace, entry)
+            validator.validateCall(results.resultingCall, context.trace, entry)
         }
 
-        val functionReturnType = functionDescriptor.returnType
+        val functionReturnType = results.resultingDescriptor.returnType
         if (functionReturnType != null && !TypeUtils.noExpectedType(expectedType)
             && !KotlinTypeChecker.DEFAULT.isSubtypeOf(functionReturnType, expectedType) ) {
             context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(initializer, componentName, functionReturnType, expectedType))

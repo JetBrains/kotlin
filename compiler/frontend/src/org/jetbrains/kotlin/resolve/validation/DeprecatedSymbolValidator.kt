@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.validation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -35,7 +32,15 @@ import org.jetbrains.kotlin.resolve.getDeprecation
 
 class DeprecatedSymbolValidator : SymbolUsageValidator {
 
-    override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    override fun validateCall(resolvedCall: ResolvedCall<*>, trace: BindingTrace, element: PsiElement) {
+        validate(resolvedCall.resultingDescriptor, trace, element)
+    }
+
+    override fun validatePropertyCall(targetDescriptor: PropertyAccessorDescriptor, trace: BindingTrace, element: PsiElement) {
+        validate(targetDescriptor, trace, element)
+    }
+
+    private fun validate(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecation = targetDescriptor.getDeprecation()
 
         // avoid duplicating diagnostic when deprecation for property effectively deprecates setter
@@ -45,7 +50,7 @@ class DeprecatedSymbolValidator : SymbolUsageValidator {
             trace.report(createDeprecationDiagnostic(element, deprecation))
         }
         else if (targetDescriptor is PropertyDescriptor) {
-            propertyGetterWorkaround(resolvedCall, targetDescriptor, trace, element)
+            propertyGetterWorkaround(targetDescriptor, trace, element)
         }
     }
 
@@ -77,7 +82,6 @@ class DeprecatedSymbolValidator : SymbolUsageValidator {
                                                           KtTokens.DIVEQ, KtTokens.PERCEQ, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
     fun propertyGetterWorkaround(
-            resolvedCall: ResolvedCall<*>?,
             propertyDescriptor: PropertyDescriptor,
             trace: BindingTrace,
             expression: PsiElement
@@ -105,6 +109,6 @@ class DeprecatedSymbolValidator : SymbolUsageValidator {
         // skip Type::property
         if (callableExpression != null && callableExpression.callableReference == expression) return
 
-        propertyDescriptor.getter?.let { validateCall(resolvedCall, it, trace, expression) }
+        propertyDescriptor.getter?.let { validatePropertyCall(it, trace, expression) }
     }
 }
