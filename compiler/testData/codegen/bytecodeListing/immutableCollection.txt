@@ -1,15 +1,8 @@
 @kotlin.Metadata
 public interface ImmutableCollection {
     public abstract @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): ImmutableCollection
-    public abstract method add(p0: java.lang.Object): boolean
     public abstract @org.jetbrains.annotations.NotNull method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): ImmutableCollection
-    public abstract method addAll(p0: java.util.Collection): boolean
-    public abstract method clear(): void
-    public abstract method iterator(): java.util.Iterator
     public abstract @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): ImmutableCollection
-    public abstract method remove(p0: java.lang.Object): boolean
-    public abstract method removeAll(p0: java.util.Collection): boolean
-    public abstract method retainAll(p0: java.util.Collection): boolean
 }
 
 @kotlin.Metadata
