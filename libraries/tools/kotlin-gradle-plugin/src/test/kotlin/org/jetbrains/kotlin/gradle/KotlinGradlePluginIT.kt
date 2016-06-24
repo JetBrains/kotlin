@@ -3,8 +3,10 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -197,6 +199,51 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertContains(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
+        }
+    }
+
+    @Test
+    fun testConvertJavaToKotlin() {
+        val project = Project("convertBetweenJavaAndKotlin", GRADLE_VERSION)
+        project.setupWorkingDir()
+
+        val barKt = project.projectDir.getFileByName("Bar.kt")
+        val barKtContent = barKt.readText()
+        barKt.delete()
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val barClass = project.projectDir.getFileByName("Bar.class")
+        val barClassTimestamp = barClass.lastModified()
+
+        val barJava = project.projectDir.getFileByName("Bar.java")
+        barJava.delete()
+        barKt.writeText(barKtContent)
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains(":compileKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertNotEquals(barClassTimestamp, barClass.lastModified(), "Bar.class timestamp hasn't been updated")
+        }
+    }
+
+    @Test
+    fun testWipeClassesDirectoryBetweenBuilds() {
+        val project = Project("kotlinJavaProject", GRADLE_VERSION)
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val javaOutputDir = File(project.projectDir, "build/classes")
+        assert(javaOutputDir.isDirectory) { "Classes directory does not exist $javaOutputDir" }
+        javaOutputDir.deleteRecursively()
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(":compileKotlin UP-TO-DATE")
         }
     }
 }
