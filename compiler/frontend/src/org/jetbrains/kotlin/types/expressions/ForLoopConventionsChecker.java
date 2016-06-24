@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -99,7 +99,7 @@ public class ForLoopConventionsChecker {
         if ((extensionReceiverParameter != null) && (DynamicTypesKt.isDynamic(extensionReceiverParameter.getType()))) return;
 
         if (!descriptor.isOperator()) {
-            OperatorValidator.Companion.report(expression, descriptor, sink);
+            OperatorCallChecker.Companion.report(expression, descriptor, sink);
         }
     }
 

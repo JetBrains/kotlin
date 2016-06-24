@@ -871,20 +871,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public boolean checkLValue(
             @NotNull BindingTrace trace,
             @NotNull ExpressionTypingContext context,
-            @NotNull KtExpression expression,
-            @Nullable KtExpression rightHandSide,
-            @NotNull KtOperationExpression operationExpression
-    ) {
-        return checkLValue(trace, context, expression, rightHandSide, operationExpression, false);
-    }
-
-    private boolean checkLValue(
-            @NotNull BindingTrace trace,
-            @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expressionWithParenthesis,
             @Nullable KtExpression rightHandSide,
-            @NotNull KtOperationExpression operationExpression,
-            boolean canBeThis
+            @NotNull KtOperationExpression operationExpression
     ) {
         KtExpression expression = KtPsiUtil.deparenthesize(expressionWithParenthesis);
         if (expression instanceof KtArrayAccessExpression) {
@@ -901,17 +890,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     || operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
                 ResolvedCall<?> resolvedCall = ignoreReportsTrace.get(INDEXED_LVALUE_SET, expression);
                 if (resolvedCall != null) {
-                    CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
-                    components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
+                    BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
+                            context.replaceBindingTrace(trace), resolvedCall.getCall(), CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+                    );
+                    for (CallChecker checker : components.callCheckers) {
+                        checker.check(resolvedCall, callResolutionContext, components.languageFeatureSettings);
+                    }
                 }
             }
 
             return info.getType() != null;
         }
 
-        if (canBeThis && expression instanceof KtThisExpression) return true;
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
 
         boolean result = true;
