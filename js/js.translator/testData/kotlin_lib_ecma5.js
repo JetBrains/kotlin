@@ -449,18 +449,18 @@
     var propertyRefClassMetadataCache = {
         zeroArg: {
             mutable: { value: null, implementedInterface: function () {
-                return Kotlin.modules['stdlib'].kotlin.reflect.KMutableProperty0 }
+                return Kotlin.kotlin.reflect.KMutableProperty0 }
             },
             immutable: { value: null, implementedInterface: function () {
-                return Kotlin.modules['stdlib'].kotlin.reflect.KProperty0 }
+                return Kotlin.kotlin.reflect.KProperty0 }
             }
         },
         oneArg: {
             mutable: { value: null, implementedInterface: function () {
-                return Kotlin.modules['stdlib'].kotlin.reflect.KMutableProperty1 }
+                return Kotlin.kotlin.reflect.KMutableProperty1 }
             },
             immutable: { value: null, implementedInterface: function () {
-                return Kotlin.modules['stdlib'].kotlin.reflect.KProperty1 }
+                return Kotlin.kotlin.reflect.KProperty1 }
             }
         }
     };
