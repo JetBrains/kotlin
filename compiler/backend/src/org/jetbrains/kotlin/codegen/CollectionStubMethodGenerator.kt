@@ -29,13 +29,15 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
@@ -52,6 +54,7 @@ class CollectionStubMethodGenerator(
     private val typeMapper = state.typeMapper
 
     fun generate() {
+        if (descriptor.kind == ClassKind.INTERFACE) return
         val superCollectionClasses = findRelevantSuperCollectionClasses()
         if (superCollectionClasses.isEmpty()) return
 
@@ -281,19 +284,15 @@ class CollectionStubMethodGenerator(
     private fun FunctionDescriptor.signature(): JvmMethodGenericSignature = typeMapper.mapSignatureWithGeneric(this, OwnerKind.IMPLEMENTATION)
 
     private fun generateMethodStub(signature: JvmMethodGenericSignature, synthetic: Boolean) {
-        // TODO: investigate if it makes sense to generate abstract stubs in traits
-        var access = ACC_PUBLIC
-        if (descriptor.kind == ClassKind.INTERFACE) access = access or ACC_ABSTRACT
-        if (synthetic) access = access or ACC_SYNTHETIC
+        assert(descriptor.kind != ClassKind.INTERFACE) { "No stubs should be generated for interface ${descriptor.fqNameUnsafe}" }
 
+        val access = ACC_PUBLIC or (if (synthetic) ACC_SYNTHETIC else 0)
         val asmMethod = signature.asmMethod
         val genericSignature = if (synthetic) null else signature.genericsSignature
         val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.name, asmMethod.descriptor, genericSignature, null)
-        if (descriptor.kind != ClassKind.INTERFACE) {
-            mv.visitCode()
-            AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
-            FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)
-        }
+        mv.visitCode()
+        AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
+        FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)
     }
 }
 
