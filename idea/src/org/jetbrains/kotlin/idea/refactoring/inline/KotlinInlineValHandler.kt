@@ -24,16 +24,18 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -52,7 +55,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -67,6 +69,10 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class KotlinInlineValHandler : InlineActionHandler() {
+    enum class InlineMode {
+        ALL, PRIMARY, NONE
+    }
+
     companion object {
         private var KtSimpleNameExpression.internalUsageInfos: MutableMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>?
                 by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFOS"))
@@ -179,7 +185,15 @@ class KotlinInlineValHandler : InlineActionHandler() {
         }
 
         fun performRefactoring() {
-            if (!showDialog(project, name, declaration, referenceExpressions)) {
+            val primaryExpression = if (editor != null) {
+                val offset = editor.caretModel.offset
+                referenceExpressions.firstOrNull { it.textRange.contains(offset) }
+            }
+            else null
+            val primaryRef = primaryExpression?.mainReference
+
+            val inlineMode = showDialog(declaration, primaryRef, referenceExpressions.size)
+            if (inlineMode == InlineMode.NONE) {
                 if (isHighlighting) {
                     val statusBar = WindowManager.getInstance().getStatusBar(project)
                     statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
@@ -187,8 +201,10 @@ class KotlinInlineValHandler : InlineActionHandler() {
                 return
             }
 
+            val chosenExpressions = if (inlineMode == InlineMode.ALL) referenceExpressions else listOf(primaryExpression)
+
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
-                val inlinedExpressions = referenceExpressions
+                val inlinedExpressions = chosenExpressions
                         .flatMap { referenceExpression ->
                             if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
 
@@ -214,8 +230,10 @@ class KotlinInlineValHandler : InlineActionHandler() {
                             pointer.element
                         }
 
-                assignments.forEach { it.delete() }
-                declaration.delete()
+                if (inlineMode == InlineMode.ALL) {
+                    assignments.forEach { it.delete() }
+                    declaration.delete()
+                }
 
                 if (inlinedExpressions.isNotEmpty()) {
                     if (typeArgumentsForCall != null) {
@@ -263,25 +281,13 @@ class KotlinInlineValHandler : InlineActionHandler() {
         highlightManager.addOccurrenceHighlights(editor, elements.toTypedArray(), searchResultsAttributes, true, null)
     }
 
-    private fun showDialog(
-            project: Project,
-            name: String,
-            property: KtProperty,
-            referenceExpressions: List<KtExpression>
-    ): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return true
+    private fun showDialog(property: KtProperty, ref: PsiReference?, occurrenceCount: Int): InlineMode {
+        if (ApplicationManager.getApplication().isUnitTestMode) return InlineMode.ALL
+        if ((ref == null || occurrenceCount <= 1) && !EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog) return InlineMode.ALL
 
-        val kind = if (property.isLocal) "local variable" else "property"
-        val dialog = RefactoringMessageDialog(
-                RefactoringBundle.message("inline.variable.title"),
-                "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", referenceExpressions.size),
-                HelpID.INLINE_VARIABLE,
-                "OptionPane.questionIcon",
-                true,
-                project
-        )
-        dialog.show()
-        return dialog.isOK
+        val dialog = KotlinInlineValDialog(property, ref, occurrenceCount)
+        if (!dialog.showAndGet()) return InlineMode.NONE
+        return if (JavaRefactoringSettings.getInstance().INLINE_LOCAL_THIS) InlineMode.PRIMARY else InlineMode.ALL
     }
 
     private fun getParametersForFunctionLiteral(initializer: KtExpression): String? {
