@@ -44,19 +44,18 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class ForLoopConventionsChecker {
-
-    @NotNull private final KotlinBuiltIns builtIns;
-    @NotNull private final SymbolUsageValidator symbolUsageValidator;
-    @NotNull private final FakeCallResolver fakeCallResolver;
+    private final KotlinBuiltIns builtIns;
+    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
+    private final FakeCallResolver fakeCallResolver;
 
     public ForLoopConventionsChecker(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
-            @NotNull SymbolUsageValidator symbolUsageValidator
+            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
-        this.symbolUsageValidator = symbolUsageValidator;
+        this.symbolUsageValidators = symbolUsageValidators;
     }
 
     @Nullable
@@ -77,7 +76,9 @@ public class ForLoopConventionsChecker {
 
             checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
 
-            symbolUsageValidator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
+            for (SymbolUsageValidator validator : symbolUsageValidators) {
+                validator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
+            }
 
             KotlinType iteratorType = iteratorFunction.getReturnType();
             KotlinType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
@@ -130,7 +131,9 @@ public class ForLoopConventionsChecker {
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
-            symbolUsageValidator.validateCall(resolvedCall, functionDescriptor, context.trace, loopRangeExpression);
+            for (SymbolUsageValidator validator : symbolUsageValidators) {
+                validator.validateCall(resolvedCall, functionDescriptor, context.trace, loopRangeExpression);
+            }
 
             checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
 

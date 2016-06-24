@@ -37,7 +37,7 @@ class DestructuringDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
         private val localVariableResolver: LocalVariableResolver,
         private val typeResolver: TypeResolver,
-        private val symbolUsageValidator: SymbolUsageValidator
+        private val symbolUsageValidators: Iterable<SymbolUsageValidator>
 ) {
     fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
@@ -82,7 +82,9 @@ class DestructuringDeclarationResolver(
         context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
 
         val functionDescriptor = results.resultingDescriptor
-        symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
+        for (validator in symbolUsageValidators) {
+            validator.validateCall(null, functionDescriptor, context.trace, entry)
+        }
 
         val functionReturnType = functionDescriptor.returnType
         if (functionReturnType != null && !TypeUtils.noExpectedType(expectedType)

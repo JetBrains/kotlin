@@ -72,9 +72,8 @@ class CallExpressionResolver(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val builtIns: KotlinBuiltIns,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
-        private val symbolUsageValidator: SymbolUsageValidator
+        private val symbolUsageValidators: Iterable<SymbolUsageValidator>
 ) {
-
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
     // component dependency cycle
@@ -164,7 +163,7 @@ class CallExpressionResolver(
         val temporaryForQualifier = TemporaryTraceAndCache.create(context, "trace to resolve as qualifier", nameExpression)
         val contextForQualifier = context.replaceTraceAndCache(temporaryForQualifier)
         qualifiedExpressionResolver.resolveNameExpressionAsQualifierForDiagnostics(nameExpression, receiver, contextForQualifier)?.let {
-            resolveQualifierAsStandaloneExpression(it, contextForQualifier, symbolUsageValidator)
+            resolveQualifierAsStandaloneExpression(it, contextForQualifier, symbolUsageValidators)
             temporaryForQualifier.commit()
         } ?: temporaryForVariable.commit()
         return noTypeInfo(context)
@@ -451,7 +450,7 @@ class CallExpressionResolver(
             context.trace.get(BindingContext.REFERENCE_TARGET, it)
         }
 
-        resolveQualifierAsReceiverInExpression(qualifier, selectorDescriptor, context, symbolUsageValidator)
+        resolveQualifierAsReceiverInExpression(qualifier, selectorDescriptor, context, symbolUsageValidators)
     }
 
     companion object {
