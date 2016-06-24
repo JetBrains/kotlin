@@ -133,7 +133,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         private fun serializeClass(classDescriptor: ClassDescriptor) {
             val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
-            proto.addClass(classProto)
+            proto.addClass_(classProto)
 
             serializeClasses(classDescriptor.unsubstitutedInnerClassesScope)
         }

@@ -29,7 +29,7 @@ class BuiltInsClassDataFinder(
         private val nameResolver: NameResolver
 ) : ClassDataFinder {
     private val classIdToProto =
-            proto.classList.associateBy { klass ->
+            proto.class_List.associateBy { klass ->
                 nameResolver.getClassId(klass.fqName)
             }
 

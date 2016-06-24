@@ -23,7 +23,7 @@ import java.io.File
 import java.util.regex.Pattern
 
 // This file generates protobuf classes from formal description.
-// To run it, you'll need protoc (protobuf compiler) 2.5.0 installed.
+// To run it, you'll need protoc (protobuf compiler) 2.6.1 installed.
 //
 // * Windows: download and unpack from here: https://code.google.com/p/protobuf/downloads/list
 // * Ubuntu: install "protobuf-compiler" package
@@ -70,6 +70,7 @@ fun main(args: Array<String>) {
             modifyAndExecProtoc(protoPath)
         }
 
+        println()
         println("Do not forget to run GenerateProtoBufCompare")
     }
     catch (e: Throwable) {
@@ -89,8 +90,8 @@ private fun checkVersion() {
     if (version.isEmpty()) {
         throw AssertionError("Output is empty, stderr: ${processOutput.stderr}")
     }
-    if (version != "libprotoc 2.5.0") {
-        throw AssertionError("Expected protoc 2.5.0, but was: $version")
+    if (version != "libprotoc 2.6.1") {
+        throw AssertionError("Expected protoc 2.6.1, but was: $version")
     }
 }
 

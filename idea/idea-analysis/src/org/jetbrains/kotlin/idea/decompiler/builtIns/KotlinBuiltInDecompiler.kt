@@ -96,10 +96,10 @@ sealed class BuiltInDefinitionFile {
         val packageFqName = nameResolver.getPackageFqName(proto.`package`.getExtension(BuiltInsProtoBuf.packageFqName))
 
         val classesToDecompile =
-                if (FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) proto.classList.filter { classProto ->
+                if (FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) proto.class_List.filter { classProto ->
                     shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
                 }
-                else proto.classList
+                else proto.class_List
 
         private fun shouldDecompileBuiltInClass(classId: ClassId): Boolean {
             if (classId.isNestedClass) return false
