@@ -247,4 +247,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testPlatformTypes() {
         doOverrideDirectoryTest("foo")
     }
+
+    fun testAbstractAndNonAbstractInheritedFromInterface() {
+        doImplementFileTest("getFoo")
+    }
 }

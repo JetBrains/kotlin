@@ -334,7 +334,9 @@ public class OverrideResolver {
 
         @Override
         public void conflictingInterfaceMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            // don't care
+            if (descriptor.getModality() == Modality.ABSTRACT) {
+                shouldImplement.add(descriptor);
+            }
         }
 
         @Override

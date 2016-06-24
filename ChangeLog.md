@@ -113,6 +113,12 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13037`](https://youtrack.jetbrains.com/issue/KT-13037) Fix possible deadlock in debugger in 2016.1 and exception in 2016.2
 - [`KT-12651`](https://youtrack.jetbrains.com/issue/KT-12651) Fix exception in evaluate expression when bad identifier is used for marking object
 
+#### Intention actions, inspections and quickfixes
+
+###### Issues fixed
+
+- [`KT-11115`](https://youtrack.jetbrains.com/issue/KT-11115) Implement Members: Fix base member detection when abstract and non-abstract members with matching signatures are inherited from an interface
+
 #### Refactorings
 
 ###### Issues fixed
