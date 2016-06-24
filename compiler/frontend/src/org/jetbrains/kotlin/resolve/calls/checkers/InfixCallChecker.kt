@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.validation
+package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
-import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
 
-class InfixValidator : SymbolUsageValidator {
-
-    override fun validateCall(
-            resolvedCall: ResolvedCall<*>?,
-            targetDescriptor: CallableDescriptor,
-            trace: BindingTrace,
-            element: PsiElement
-    ) {
-        val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
+class InfixCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext, languageFeatureSettings: LanguageFeatureSettings) {
+        val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
         if (functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
+        val element = ((resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall ?: resolvedCall).call.calleeExpression
         if (isInfixCall(element) && !functionDescriptor.isInfix) {
             val operationRefExpression = element as? KtOperationReferenceExpression ?: return
             val containingDeclarationName = functionDescriptor.containingDeclaration.fqNameUnsafe.asString()
-            trace.report(Errors.INFIX_MODIFIER_REQUIRED.on(operationRefExpression, functionDescriptor, containingDeclarationName))
+            context.trace.report(Errors.INFIX_MODIFIER_REQUIRED.on(operationRefExpression, functionDescriptor, containingDeclarationName))
         }
     }
 

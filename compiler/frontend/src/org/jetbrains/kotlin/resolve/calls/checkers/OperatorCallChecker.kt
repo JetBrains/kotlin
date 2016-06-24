@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.validation
+package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -36,51 +35,41 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 
-class OperatorValidator : SymbolUsageValidator {
-
-    override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
-        val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
+class OperatorCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext, languageFeatureSettings: LanguageFeatureSettings) {
+        val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
         if (!checkNotErrorOrDynamic(functionDescriptor)) return
 
-        val jetElement = element as? KtElement ?: return
-        val call = resolvedCall?.call ?: trace.bindingContext[BindingContext.CALL, jetElement]
+        val element = resolvedCall.call.calleeExpression ?: resolvedCall.call.callElement
+        val call = resolvedCall.call
 
-        fun isInvokeCall(): Boolean {
-            return call is CallTransformer.CallForImplicitInvoke
-        }
+        fun isInvokeCall(): Boolean = call is CallTransformer.CallForImplicitInvoke
 
-        fun isMultiDeclaration(): Boolean {
-            return (resolvedCall != null) && (call?.callElement is KtDestructuringDeclarationEntry)
-        }
+        fun isMultiDeclaration(): Boolean = call.callElement is KtDestructuringDeclarationEntry
 
-        fun isConventionOperator(): Boolean {
-            if (jetElement !is KtOperationReferenceExpression) return false
-            return jetElement.getNameForConventionalOperation() != null
-        }
-
-        fun isArrayAccessExpression() = jetElement is KtArrayAccessExpression
-
-        if (resolvedCall is VariableAsFunctionResolvedCall && call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
+        if (resolvedCall is VariableAsFunctionResolvedCall &&
+            call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
             val outerCall = call.outerCall
             if (isConventionCall(outerCall)) {
-                throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. Variable: ${resolvedCall.variableCall.resultingDescriptor}")
+                throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. " +
+                                     "Variable: ${resolvedCall.variableCall.resultingDescriptor}")
             }
         }
 
         if (isMultiDeclaration() || isInvokeCall()) {
-            if (!functionDescriptor.isOperator && call != null) {
-                report(call.callElement, functionDescriptor, trace)
+            if (!functionDescriptor.isOperator) {
+                report(call.callElement, functionDescriptor, context.trace)
             }
             return
         }
 
-        val isConventionOperator = isConventionOperator()
-        if (isConventionOperator || isArrayAccessExpression()) {
+        val isConventionOperator = element is KtOperationReferenceExpression && element.getNameForConventionalOperation() != null
+        if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
-                report(jetElement, functionDescriptor, trace)
+                report(element, functionDescriptor, context.trace)
             }
-            if (isConventionOperator && call != null) {
-                checkDeprecatedUnaryConventions(call, functionDescriptor, trace)
+            if (isConventionOperator) {
+                checkDeprecatedUnaryConventions(call, functionDescriptor, context.trace)
             }
         }
     }
