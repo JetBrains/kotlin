@@ -24,11 +24,6 @@ import static org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CA
 import static org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL;
 
 public class K2JSCompilerArguments extends CommonCompilerArguments {
-    public static final String MODULE_PLAIN = "plain";
-    public static final String MODULE_AMD = "amd";
-    public static final String MODULE_COMMONJS = "commonjs";
-    public static final String MODULE_UMD = "umd";
-
     @Argument(value = "output", description = "Output file path")
     @ValueDescription("<path>")
     public String outputFile;

@@ -31,9 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
@@ -51,11 +49,6 @@ public class LibrarySourcesConfig extends JsConfig {
 
     public static final Key<String> EXTERNAL_MODULE_NAME = Key.create("externalModule");
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
-
-    public static final String STDLIB_JS_MODULE_NAME = "stdlib";
-    public static final String BUILTINS_JS_MODULE_NAME = "builtins";
-    public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
-    public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
 
     public LibrarySourcesConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration) {
         super(project, configuration);
