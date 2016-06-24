@@ -55,9 +55,9 @@ import java.util.*
 class CallCompleter(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val candidateResolver: CandidateResolver,
-        private val symbolUsageValidator: SymbolUsageValidator,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
+        private val symbolUsageValidators: Iterable<SymbolUsageValidator>,
         private val builtIns: KotlinBuiltIns,
         private val fakeCallResolver: FakeCallResolver,
         private val languageFeatureSettings: LanguageFeatureSettings
@@ -91,7 +91,10 @@ class CallCompleter(
                 resolvedCall.variableCall.call.calleeExpression
             else
                 resolvedCall.call.calleeExpression
-            symbolUsageValidator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
+
+            for (validator in symbolUsageValidators) {
+                validator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
+            }
 
             resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)
         }

@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
-
-
+class QualifiedExpressionResolver(val symbolUsageValidators: Iterable<SymbolUsageValidator>) {
     fun resolvePackageHeader(
             packageDirective: KtPackageDirective,
             module: ModuleDescriptor,
@@ -598,7 +596,9 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
 
         if (descriptor is ClassifierDescriptor) {
-            symbolUsageValidator.validateTypeUsage(descriptor, trace, referenceExpression)
+            for (validator in symbolUsageValidators) {
+                validator.validateTypeUsage(descriptor, trace, referenceExpression)
+            }
         }
 
         if (descriptor is DeclarationDescriptorWithVisibility) {

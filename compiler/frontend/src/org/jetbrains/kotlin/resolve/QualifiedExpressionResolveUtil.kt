@@ -29,9 +29,9 @@ fun resolveQualifierAsReceiverInExpression(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
         context: ExpressionTypingContext,
-        symbolUsageValidator: SymbolUsageValidator
+        symbolUsageValidators: Iterable<SymbolUsageValidator>
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context, symbolUsageValidator)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context, symbolUsageValidators)
 
     if (referenceTarget is TypeParameterDescriptor) {
         context.trace.report(Errors.TYPE_PARAMETER_ON_LHS_OF_DOT.on(qualifier.referenceExpression, referenceTarget))
@@ -43,9 +43,9 @@ fun resolveQualifierAsReceiverInExpression(
 fun resolveQualifierAsStandaloneExpression(
         qualifier: Qualifier,
         context: ExpressionTypingContext,
-        symbolUsageValidator: SymbolUsageValidator
+        symbolUsageValidators: Iterable<SymbolUsageValidator>
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, symbolUsageValidator)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, symbolUsageValidators)
 
     when (referenceTarget) {
         is TypeParameterDescriptor -> {
@@ -68,7 +68,7 @@ private fun resolveQualifierReferenceTarget(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
         context: ExpressionTypingContext,
-        symbolUsageValidator: SymbolUsageValidator
+        symbolUsageValidators: Iterable<SymbolUsageValidator>
 ): DeclarationDescriptor {
     if (qualifier is TypeParameterQualifier) {
         return qualifier.descriptor
@@ -104,7 +104,9 @@ private fun resolveQualifierReferenceTarget(
             context.trace.recordType(qualifier.expression, classValueTypeDescriptor.defaultType)
             if (classifier.hasCompanionObject) {
                 context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, classifier)
-                symbolUsageValidator.validateTypeUsage(classValueDescriptor, context.trace, qualifier.referenceExpression)
+                for (validator in symbolUsageValidators) {
+                    validator.validateTypeUsage(classValueDescriptor, context.trace, qualifier.referenceExpression)
+                }
             }
             return classValueTypeDescriptor
         }

@@ -23,22 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 interface SymbolUsageValidator {
+    fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement)
 
-    fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) { }
-
-    fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) { }
-
-    open class Composite(val validators: List<SymbolUsageValidator>) : SymbolUsageValidator {
-        override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
-            validators.forEach { it.validateCall(resolvedCall, targetDescriptor, trace, element) }
-        }
-
-        override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
-            validators.forEach { it.validateTypeUsage(targetDescriptor, trace, element) }
-        }
-    }
-
-    companion object {
-        val Empty: SymbolUsageValidator = Composite(listOf())
-    }
+    fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement)
 }
