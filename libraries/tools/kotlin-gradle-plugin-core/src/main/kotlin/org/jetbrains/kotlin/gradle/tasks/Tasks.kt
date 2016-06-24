@@ -1,14 +1,5 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.jetbrains.kotlin.com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.com.intellij.lang.Language
-import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
-import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.MethodClosure
@@ -36,6 +27,14 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.com.intellij.ide.highlighter.JavaFileType
+import org.jetbrains.kotlin.com.intellij.lang.Language
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -69,11 +68,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
     var incremental: Boolean = false
     var kotlinOptions: T = createBlankArgs()
-    var kotlinDestinationDir: File? = destinationDir
     var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
     var anyClassesCompiled: Boolean = false
     var friendTaskName: String? = null
+    var javaOutputDir: File? = null
 
     private val loggerInstance = Logging.getLogger(this.javaClass)
     override fun getLogger() = loggerInstance
@@ -104,14 +103,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         populateCommonArgs(args)
         populateTargetSpecificArgs(args)
         compilerCalled = true
-        beforeCompileHook(args)
-
-        try {
-            callCompiler(args, sources, inputs.isIncremental, modified, removed)
-        }
-        finally {
-            afterCompileHook(args)
-        }
+        callCompiler(args, sources, inputs.isIncremental, modified, removed)
     }
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
@@ -148,13 +140,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
-    private val kotlinClassFiles = HashSet<File>()
 
     // Should be SourceDirectorySet or File
     val srcDirsSources = HashSet<Any>()
-
-    // TODO: find out whether we really need to be able to override destination dir here, and how it should work with destinationDir property
-    private val compilerDestinationDir: String get() = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.path.orEmpty() } else { kotlinOptions.destination }
 
     // lazy because name is probably not available when constructor is called
     private val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name) }
@@ -180,7 +168,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             logger.kotlinDebug("args.classpath = ${args.classpath}")
         }
 
-        logger.kotlinDebug("destinationDir = $compilerDestinationDir")
+        if (args.destination?.isNotBlank() ?: false) {
+            // TODO: fix if needed
+            logger.warn("Setting kotlinOptions.destination is not supported in gradle")
+        }
+
+        logger.kotlinDebug("destinationDir = $destinationDir")
 
         val extraProperties = extensions.extraProperties
         args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
@@ -204,18 +197,11 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.languageVersion = kotlinOptions.languageVersion
         args.jvmTarget = kotlinOptions.jvmTarget
 
-        fun addFriendPathForTestTask(taskName: String) {
-            logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")
-            val tasks = project.getTasksByName("$taskName", false)
-            logger.kotlinDebug("tasks for $taskName: ${tasks}")
-            if (tasks.size == 1) {
-                val task = tasks.firstOrNull() as? KotlinCompile
-                if (task != null) {
-                    logger.kotlinDebug("destination directory for production = ${task.destinationDir}")
-                    args.friendPaths = arrayOf(task.destinationDir.absolutePath)
-                    args.moduleName = task.kotlinOptions.moduleName ?: task.extensions.extraProperties.getOrNull<String>("defaultModuleName")
-                }
-            }
+        fun addFriendPathForTestTask(friendKotlinTaskName: String) {
+            val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
+            args.friendPaths = arrayOf(friendTask.javaOutputDir!!.absolutePath)
+            args.moduleName = friendTask.kotlinOptions.moduleName ?: friendTask.extensions.extraProperties.getOrNull<String>("defaultModuleName")
+            logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
         }
 
         logger.kotlinDebug { "friendTaskName = $friendTaskName" }
@@ -237,7 +223,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val targetType = "java-production"
         val moduleName = args.moduleName
         val targets = listOf(TargetId(moduleName, targetType))
-        val outputDir = File(compilerDestinationDir)
+        val outputDir = destinationDir
         val caches = hashMapOf<TargetId, GradleIncrementalCacheImpl>()
         val lookupStorage = LookupStorage(File(cacheDirectory, "lookups"))
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
@@ -331,14 +317,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         fun cleanupOnError() {
-            val outputDirFile = File(compilerDestinationDir)
-
-            assert(outputDirFile.exists())
-            val generatedRelPaths = allGeneratedFiles.map { it.outputFile.toRelativeString(outputDirFile) }
-            logger.kotlinInfo("deleting output on error: ${generatedRelPaths.joinToString()}")
-
-            allGeneratedFiles.forEach { it.outputFile.delete() }
-            generatedRelPaths.forEach { File(destinationDir, it).delete() }
+            val filesToDelete = allGeneratedFiles.map { it.outputFile }
+            logger.kotlinInfo("deleting output on error: ${filesToDelete.joinToString()}")
+            filesToDelete.forEach { it.delete() }
         }
 
         fun processCompilerExitCode(exitCode: ExitCode) {
@@ -526,38 +507,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             .toSet()
 
     private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
-
-    override fun beforeCompileHook(args: K2JVMCompilerArguments) {
-        kotlinClassFiles.addAll(listClassFiles(compilerDestinationDir))
-    }
-
-    override fun afterCompileHook(args: K2JVMCompilerArguments) {
-        kaptAnnotationsFileUpdater?.dispose()
-
-        if (kaptStubGeneratingMode) return
-
-        logger.debug("Copying resulting files to classes")
-
-        // Copy kotlin classes to all classes directory
-        val outputDirFile = File(compilerDestinationDir)
-        if (outputDirFile.exists()) {
-            FileUtils.copyDirectory(outputDirFile, destinationDir)
-        }
-
-        kotlinClassFiles.removeAll(listClassFiles(compilerDestinationDir))
-        if (kotlinClassFiles.isNotEmpty()) {
-            // some classes were removed during compilation
-            val filesToRemove = kotlinClassFiles.map {
-                val relativePath = it.relativeTo(outputDirFile).path
-                File(destinationDir, relativePath)
-            }
-
-            val notRemoved = filesToRemove.filter { !it.delete() }
-            if (notRemoved.isNotEmpty()) {
-                logger.kotlinDebug("Could not delete classfiles: $notRemoved")
-            }
-        }
-    }
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(source: Any?) {

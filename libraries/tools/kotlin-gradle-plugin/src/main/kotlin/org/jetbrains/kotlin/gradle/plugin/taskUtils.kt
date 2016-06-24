@@ -52,8 +52,8 @@ internal fun AbstractCompile.appendClasspathDynamically(file: File) {
 }
 
 internal var AbstractTask.anyClassesCompiled: Boolean? by TaskPropertyDelegate("anyClassesCompiled")
-internal var AbstractTask.kotlinDestinationDir: File? by TaskPropertyDelegate("kotlinDestinationDir")
 internal var AbstractTask.friendTaskName: String? by TaskPropertyDelegate("friendTaskName")
+internal var AbstractTask.javaOutputDir: File? by TaskPropertyDelegate("javaOutputDir")
 
 inline
 internal fun <reified T : Any> TaskPropertyDelegate(propertyName: String) =

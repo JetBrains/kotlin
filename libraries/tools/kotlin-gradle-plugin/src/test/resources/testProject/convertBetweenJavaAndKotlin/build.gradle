@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT'
+    }
+}
+
+apply plugin: "java"
+apply plugin: "kotlin"
+
+repositories {
+    maven { url 'file://' + pathToKotlinPlugin }
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT'
+}
+
+compileJava {
+    options.incremental = true
+}
+
+compileJava.doLast {
+
+}
