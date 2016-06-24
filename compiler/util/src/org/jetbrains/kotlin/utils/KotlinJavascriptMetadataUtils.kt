@@ -80,8 +80,8 @@ object KotlinJavascriptMetadataUtils {
 
         val matcher = METADATA_PATTERN.matcher(text)
         while (matcher.find()) {
-            var abiVersion = matcher.group(1).toInt()
-            var moduleName = matcher.group(3)
+            val abiVersion = matcher.group(1).toInt()
+            val moduleName = matcher.group(3)
             val data = matcher.group(5)
             metadataList.add(KotlinJavascriptMetadata(abiVersion, moduleName, parseBase64Binary(data)))
         }

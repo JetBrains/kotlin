@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.*;
 import static org.jetbrains.kotlin.js.test.BasicTest.DIST_DIR_JS_PATH;
 import static org.jetbrains.kotlin.js.test.BasicTest.TEST_DATA_DIR_PATH;
 
