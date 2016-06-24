@@ -1,0 +1,36 @@
+package
+
+public fun main(/*0*/ a: A<*>, /*1*/ j: JavaClass<*>, /*2*/ i2: Inv2<*>): kotlin.Unit
+
+public final class A</*0*/ T : Inv<in T>> {
+    public constructor A</*0*/ T : Inv<in T>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv2</*0*/ T : Inv2<in T>> {
+    public constructor Inv2</*0*/ T : Inv2<in T>>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaClass</*0*/ T : JavaClass<in T!>!> {
+    public constructor JavaClass</*0*/ T : JavaClass<in T!>!>()
+    public open fun bar(/*0*/ vararg x: T! /*kotlin.Array<(out) T!>!*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
