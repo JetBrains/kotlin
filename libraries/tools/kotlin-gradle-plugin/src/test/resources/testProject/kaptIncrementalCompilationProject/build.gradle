@@ -24,6 +24,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
     compile "org.jetbrains.kotlin:annotation-processor-example:1.1-SNAPSHOT"
     kapt "org.jetbrains.kotlin:annotation-processor-example:1.1-SNAPSHOT"
+    testCompile 'junit:junit:4.12'
 }
 
 kapt {

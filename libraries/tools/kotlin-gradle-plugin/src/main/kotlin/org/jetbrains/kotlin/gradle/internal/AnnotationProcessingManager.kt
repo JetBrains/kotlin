@@ -106,7 +106,6 @@ private fun Project.createKotlinAfterJavaTask(
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile {
     val kotlinAfterJavaTask = with (taskFactory(KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
-        kotlinDestinationDir = kotlinTask.kotlinDestinationDir
         destinationDir = kotlinTask.destinationDir
         classpath = kotlinTask.classpath - project.files(javaTask.destinationDir)
         this

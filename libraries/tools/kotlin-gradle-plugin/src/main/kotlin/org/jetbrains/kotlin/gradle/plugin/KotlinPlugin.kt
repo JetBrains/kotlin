@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -145,7 +146,7 @@ class Kotlin2JvmSourceSetProcessor(
 
         project.afterEvaluate { project ->
             if (project != null) {
-                kotlinTask.kotlinDestinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
+                kotlinTask.destinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
                 for (dir in sourceSet.getJava().srcDirs) {
                     kotlinDirSet?.srcDir(dir)
@@ -180,6 +181,7 @@ class Kotlin2JvmSourceSetProcessor(
                 }
 
                 configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
+                createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
             }
         }
     }
@@ -203,7 +205,7 @@ class Kotlin2JsSourceSetProcessor(
     val build = project.tasks.findByName("build")
 
     val defaultKotlinDestinationDir = File(project.buildDir, "kotlin2js/${sourceSetName}")
-    private fun kotlinTaskDestinationDir(): File? = kotlinTask.kotlinDestinationDir
+    private fun kotlinTaskDestinationDir(): File? = kotlinTask.destinationDir
     private fun kotlinJsDestinationDir(): File? = (kotlinTask.property("outputFile") as String).let { File(it) }.let { if (it.isDirectory) it else it.parentFile }
 
     private fun kotlinSourcePathsForSourceMap() = sourceSet.getAllSource()
@@ -217,7 +219,7 @@ class Kotlin2JsSourceSetProcessor(
             tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
-        kotlinTask.kotlinDestinationDir = defaultKotlinDestinationDir
+        kotlinTask.destinationDir = defaultKotlinDestinationDir
         build?.dependsOn(kotlinTaskName)
         clean?.dependsOn("clean" + kotlinTaskName.capitalize())
 
@@ -373,8 +375,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            kotlinTask.kotlinDestinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
-            kotlinTask.destinationDir = javaTask.destinationDir
+            kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
             kotlinTask.description = "Compiles the ${variantDataName} kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
@@ -420,7 +421,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             // java classpath during project evaluation (see prepareComAndroidSupportSupportV42311Library)
             val fullClasspath = lazy {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-                (javaTask.classpath + androidRT) - project.files(kotlinTask.kotlinDestinationDir)
+                (javaTask.classpath + androidRT) - project.files(kotlinTask.destinationDir)
             }
             kotlinTask.classpath = javaTask.classpath
             kotlinTask.updateClasspathBeforeTask { fullClasspath.value }
@@ -446,6 +447,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
+            createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
         }
     }
 
@@ -487,8 +489,40 @@ private fun configureJavaTask(kotlinTask: AbstractCompile, javaTask: AbstractCom
      * so it's only safe to modify javaTask.classpath right before its usage
      */
     if (kotlinAfterJavaTask == null) {
-        javaTask.appendClasspathDynamically(kotlinTask.kotlinDestinationDir!!)
+        javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
     }
+}
+
+private fun createSyncOutputTask(
+        project: Project,
+        kotlinTask: AbstractCompile,
+        javaTask: AbstractCompile,
+        kotlinAfterJavaTask: AbstractCompile?,
+        variantName: String
+) {
+    // if kotlinAfterJavaTask is not null then kotlinTask compiles stubs, so don't sync them
+    val kotlinDir = (kotlinAfterJavaTask ?: kotlinTask).destinationDir
+    val javaDir = javaTask.destinationDir
+    val taskName = "copy${variantName.capitalize()}KotlinClasses"
+
+    val syncTask = project.tasks.create(taskName, SyncOutputTask::class.java)
+    syncTask.kotlinOutputDir = kotlinDir
+    syncTask.javaOutputDir = javaDir
+    kotlinTask.javaOutputDir = javaDir
+    kotlinAfterJavaTask?.javaOutputDir = javaDir
+
+    // copying should be executed after a latter task
+    if (kotlinAfterJavaTask != null) {
+        // finalizer tasks get executed even if finalizing task has failed;
+        // we want to avoid copying classes if kotlin compilation has failed
+        syncTask.onlyIf { kotlinAfterJavaTask.state.failure == null }
+        kotlinAfterJavaTask.finalizedBy(syncTask)
+    }
+    else {
+        javaTask.finalizedBy(syncTask)
+    }
+
+    project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
 }
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {

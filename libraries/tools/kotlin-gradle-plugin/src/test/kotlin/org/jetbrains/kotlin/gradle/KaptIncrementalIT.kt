@@ -39,6 +39,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
             checkStubUsage()
             checkGenerated(*annotatedElements)
             checkNotGenerated("notAnnotatedFun")
+            assertContains("foo.ATest PASSED")
         }
 
         project.build("build") {
