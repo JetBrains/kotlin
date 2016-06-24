@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collections;
@@ -60,26 +61,23 @@ import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
 public class DelegatedPropertyResolver {
-
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
-    public static final Name GETTER_NAME = Name.identifier("getValue");
-    public static final Name SETTER_NAME = Name.identifier("setValue");
 
-    public static final Name OLD_GETTER_NAME = Name.identifier("get");
-    public static final Name OLD_SETTER_NAME = Name.identifier("set");
+    private static final Name OLD_GETTER_NAME = Name.identifier("get");
+    private static final Name OLD_SETTER_NAME = Name.identifier("set");
 
-    @NotNull private final ExpressionTypingServices expressionTypingServices;
-    @NotNull private final FakeCallResolver fakeCallResolver;
-    @NotNull private final KotlinBuiltIns builtIns;
-    @NotNull private final SymbolUsageValidator symbolUsageValidator;
+    private final ExpressionTypingServices expressionTypingServices;
+    private final FakeCallResolver fakeCallResolver;
+    private final KotlinBuiltIns builtIns;
+    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
 
     public DelegatedPropertyResolver(
-            @NotNull SymbolUsageValidator symbolUsageValidator,
+            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
             @NotNull ExpressionTypingServices expressionTypingServices
     ) {
-        this.symbolUsageValidator = symbolUsageValidator;
+        this.symbolUsageValidators = symbolUsageValidators;
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
         this.expressionTypingServices = expressionTypingServices;
@@ -221,7 +219,9 @@ public class DelegatedPropertyResolver {
                     OperatorCallChecker.Companion.report(byKeyword, resultingDescriptor, trace);
                 }
 
-                symbolUsageValidator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
+                for (SymbolUsageValidator validator : symbolUsageValidators) {
+                    validator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
+                }
             }
         }
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
@@ -263,7 +263,7 @@ public class DelegatedPropertyResolver {
             trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
         }
 
-        Name functionName = isGet ? GETTER_NAME : SETTER_NAME;
+        Name functionName = isGet ? OperatorNameConventions.GET_VALUE : OperatorNameConventions.SET_VALUE;
         ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =

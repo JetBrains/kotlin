@@ -84,11 +84,10 @@ abstract class PlatformConfigurator(
         private val identifierChecker: IdentifierChecker,
         private val overloadFilter: OverloadFilter
 ) {
-
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
-    private val symbolUsageValidator: SymbolUsageValidator = SymbolUsageValidator.Composite(DEFAULT_VALIDATORS + additionalSymbolUsageValidators)
+    private val symbolUsageValidators: List<SymbolUsageValidator> = DEFAULT_VALIDATORS + additionalSymbolUsageValidators
 
     open fun configure(container: StorageComponentContainer) {
         with (container) {
@@ -96,7 +95,7 @@ abstract class PlatformConfigurator(
             declarationCheckers.forEach { useInstance(it) }
             callCheckers.forEach { useInstance(it) }
             typeCheckers.forEach { useInstance(it) }
-            useInstance(symbolUsageValidator)
+            symbolUsageValidators.forEach { useInstance(it) }
             additionalAnnotationCheckers.forEach { useInstance(it) }
             useInstance(identifierChecker)
             useInstance(overloadFilter)

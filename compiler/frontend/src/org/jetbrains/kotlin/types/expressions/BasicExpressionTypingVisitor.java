@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
@@ -574,8 +575,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (CallChecker checker : components.callCheckers) {
             checker.check(resolvedCall, resolutionContext);
         }
-
-        components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
+        for (SymbolUsageValidator validator : components.symbolUsageValidators) {
+            validator.validateCall(resolvedCall, descriptor, trace, expression);
+        }
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
@@ -905,9 +907,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
                 result = false;
             }
-            else {
-                if (setter != null) {
-                    components.symbolUsageValidator.validateCall(null, setter, trace, reportOn);
+            else if (setter != null) {
+                for (SymbolUsageValidator validator : components.symbolUsageValidators) {
+                    validator.validateCall(null, setter, trace, reportOn);
                 }
             }
         }

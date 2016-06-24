@@ -52,13 +52,11 @@ class DeprecatedSymbolValidator : SymbolUsageValidator {
     override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
         val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotationEntry::class.java, true)
-        if (annotationEntry != null && annotationEntry.getCalleeExpression()!!.getConstructorReferenceExpression() == element)
-            return
+        if (annotationEntry != null && annotationEntry.calleeExpression!!.constructorReferenceExpression == element) return
 
         // Do not check types in calls to super constructor in extends list, rely on call message
         val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, KtSuperTypeCallEntry::class.java, true)
-        if (superExpression != null && superExpression.getCalleeExpression().getConstructorReferenceExpression() == element)
-            return
+        if (superExpression != null && superExpression.calleeExpression.constructorReferenceExpression == element) return
 
         val deprecation = targetDescriptor.getDeprecation()
         if (deprecation != null) {
@@ -88,36 +86,24 @@ class DeprecatedSymbolValidator : SymbolUsageValidator {
         val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, KtBinaryExpression::class.java)
         if (binaryExpression != null) {
             val left = binaryExpression.left
-            if (left == expression) {
-                val operation = binaryExpression.operationToken
-                if (operation != null && operation in PROPERTY_SET_OPERATIONS)
-                    return
-            }
+            if (left == expression && binaryExpression.operationToken in PROPERTY_SET_OPERATIONS) return
 
-            val jetReferenceExpressions = PsiTreeUtil.getChildrenOfType<KtReferenceExpression>(left, KtReferenceExpression::class.java)
-            if (jetReferenceExpressions != null) {
-                for (expr in jetReferenceExpressions) {
-                    if (expr == expression) {
-                        val operation = binaryExpression.operationToken
-                        if (operation != null && operation in PROPERTY_SET_OPERATIONS)
-                            return // skip binary set operations
-                    }
+            val referenceExpressions = PsiTreeUtil.getChildrenOfType<KtReferenceExpression>(left, KtReferenceExpression::class.java)
+            if (referenceExpressions != null) {
+                for (expr in referenceExpressions) {
+                    // skip binary set operations
+                    if (expr == expression && binaryExpression.operationToken in PROPERTY_SET_OPERATIONS) return
                 }
             }
         }
 
         val unaryExpression = PsiTreeUtil.getParentOfType(expression, KtUnaryExpression::class.java)
-        if (unaryExpression != null) {
-            val operation = unaryExpression.operationReference.getReferencedNameElementType()
-            if (operation != null && operation in PROPERTY_SET_OPERATIONS)
-                return // skip unary set operations
-
-        }
+        // skip unary set operations
+        if (unaryExpression?.operationReference?.getReferencedNameElementType() in PROPERTY_SET_OPERATIONS) return
 
         val callableExpression = PsiTreeUtil.getParentOfType(expression, KtCallableReferenceExpression::class.java)
-        if (callableExpression != null && callableExpression.getCallableReference() == expression) {
-            return // skip Type::property
-        }
+        // skip Type::property
+        if (callableExpression != null && callableExpression.callableReference == expression) return
 
         propertyDescriptor.getter?.let { validateCall(resolvedCall, it, trace, expression) }
     }

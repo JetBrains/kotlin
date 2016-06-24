@@ -51,9 +51,9 @@ import java.util.*
 class CallCompleter(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val candidateResolver: CandidateResolver,
-        private val symbolUsageValidator: SymbolUsageValidator,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
+        private val symbolUsageValidators: Iterable<SymbolUsageValidator>,
         private val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
@@ -85,7 +85,10 @@ class CallCompleter(
                 resolvedCall.variableCall.call.calleeExpression
             else
                 resolvedCall.call.calleeExpression
-            symbolUsageValidator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
+
+            for (validator in symbolUsageValidators) {
+                validator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
+            }
         }
 
         if (results.isSingleResult && results.resultingCall.status.isSuccess) {

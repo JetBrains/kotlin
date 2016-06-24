@@ -40,7 +40,6 @@ public class ExpressionTypingComponents {
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
-    /*package*/ SymbolUsageValidator symbolUsageValidator;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
     /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
@@ -56,6 +55,7 @@ public class ExpressionTypingComponents {
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
     /*package*/ Iterable<CallChecker> callCheckers;
+    /*package*/ Iterable<SymbolUsageValidator> symbolUsageValidators;
     /*package*/ IdentifierChecker identifierChecker;
     /*package*/ DeclarationsCheckerBuilder declarationsCheckerBuilder;
     /*package*/ LocalVariableResolver localVariableResolver;
@@ -98,8 +98,8 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {
-        this.symbolUsageValidator = symbolUsageValidator;
+    public void setSymbolUsageValidators(@NotNull Iterable<SymbolUsageValidator> symbolUsageValidators) {
+        this.symbolUsageValidators = symbolUsageValidators;
     }
 
     @Inject
