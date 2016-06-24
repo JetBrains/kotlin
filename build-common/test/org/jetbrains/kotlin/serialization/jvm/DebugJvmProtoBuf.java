@@ -16,10 +16,10 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageModuleName);
   }
-  public interface StringTableTypesOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface StringTableTypesOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // repeated .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record record = 1;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record record = 1;</code>
      */
@@ -44,7 +44,6 @@ public final class DebugJvmProtoBuf {
     org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder getRecordOrBuilder(
         int index);
 
-    // repeated int32 local_name = 5 [packed = true];
     /**
      * <code>repeated int32 local_name = 5 [packed = true];</code>
      *
@@ -74,8 +73,9 @@ public final class DebugJvmProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.StringTableTypes}
    */
   public static final class StringTableTypes extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements StringTableTypesOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
+      StringTableTypesOrBuilder {
     // Use StringTableTypes.newBuilder() to construct.
     private StringTableTypes(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -195,10 +195,10 @@ public final class DebugJvmProtoBuf {
       return PARSER;
     }
 
-    public interface RecordOrBuilder
-        extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+    public interface RecordOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record)
+        org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-      // optional int32 range = 1 [default = 1];
       /**
        * <code>optional int32 range = 1 [default = 1];</code>
        *
@@ -216,7 +216,6 @@ public final class DebugJvmProtoBuf {
        */
       int getRange();
 
-      // optional int32 predefined_index = 2;
       /**
        * <code>optional int32 predefined_index = 2;</code>
        *
@@ -234,7 +233,6 @@ public final class DebugJvmProtoBuf {
        */
       int getPredefinedIndex();
 
-      // optional string string = 6;
       /**
        * <code>optional string string = 6;</code>
        *
@@ -261,7 +259,6 @@ public final class DebugJvmProtoBuf {
       org.jetbrains.kotlin.protobuf.ByteString
           getStringBytes();
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];</code>
        *
@@ -279,7 +276,6 @@ public final class DebugJvmProtoBuf {
        */
       org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Operation getOperation();
 
-      // repeated int32 substring_index = 4 [packed = true];
       /**
        * <code>repeated int32 substring_index = 4 [packed = true];</code>
        *
@@ -311,7 +307,6 @@ public final class DebugJvmProtoBuf {
        */
       int getSubstringIndex(int index);
 
-      // repeated int32 replace_char = 5 [packed = true];
       /**
        * <code>repeated int32 replace_char = 5 [packed = true];</code>
        *
@@ -344,8 +339,9 @@ public final class DebugJvmProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record}
      */
     public static final class Record extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage
-        implements RecordOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+        // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record)
+        RecordOrBuilder {
       // Use Record.newBuilder() to construct.
       private Record(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
@@ -455,8 +451,9 @@ public final class DebugJvmProtoBuf {
                 break;
               }
               case 50: {
+                org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
                 bitField0_ |= 0x00000004;
-                string_ = input.readBytes();
+                string_ = bs;
                 break;
               }
             }
@@ -616,7 +613,6 @@ public final class DebugJvmProtoBuf {
       }
 
       private int bitField0_;
-      // optional int32 range = 1 [default = 1];
       public static final int RANGE_FIELD_NUMBER = 1;
       private int range_;
       /**
@@ -640,7 +636,6 @@ public final class DebugJvmProtoBuf {
         return range_;
       }
 
-      // optional int32 predefined_index = 2;
       public static final int PREDEFINED_INDEX_FIELD_NUMBER = 2;
       private int predefinedIndex_;
       /**
@@ -664,7 +659,6 @@ public final class DebugJvmProtoBuf {
         return predefinedIndex_;
       }
 
-      // optional string string = 6;
       public static final int STRING_FIELD_NUMBER = 6;
       private java.lang.Object string_;
       /**
@@ -719,7 +713,6 @@ public final class DebugJvmProtoBuf {
         }
       }
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
       public static final int OPERATION_FIELD_NUMBER = 3;
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Operation operation_;
       /**
@@ -743,7 +736,6 @@ public final class DebugJvmProtoBuf {
         return operation_;
       }
 
-      // repeated int32 substring_index = 4 [packed = true];
       public static final int SUBSTRING_INDEX_FIELD_NUMBER = 4;
       private java.util.List<java.lang.Integer> substringIndex_;
       /**
@@ -785,7 +777,6 @@ public final class DebugJvmProtoBuf {
       }
       private int substringIndexMemoizedSerializedSize = -1;
 
-      // repeated int32 replace_char = 5 [packed = true];
       public static final int REPLACE_CHAR_FIELD_NUMBER = 5;
       private java.util.List<java.lang.Integer> replaceChar_;
       /**
@@ -835,7 +826,8 @@ public final class DebugJvmProtoBuf {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
 
         memoizedIsInitialized = 1;
         return true;
@@ -1005,8 +997,9 @@ public final class DebugJvmProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record}
        */
       public static final class Builder extends
-          org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-         implements org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder {
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record)
+          org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder {
         public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor;
@@ -1182,7 +1175,6 @@ public final class DebugJvmProtoBuf {
         }
         private int bitField0_;
 
-        // optional int32 range = 1 [default = 1];
         private int range_ = 1;
         /**
          * <code>optional int32 range = 1 [default = 1];</code>
@@ -1231,7 +1223,6 @@ public final class DebugJvmProtoBuf {
           return this;
         }
 
-        // optional int32 predefined_index = 2;
         private int predefinedIndex_ ;
         /**
          * <code>optional int32 predefined_index = 2;</code>
@@ -1280,7 +1271,6 @@ public final class DebugJvmProtoBuf {
           return this;
         }
 
-        // optional string string = 6;
         private java.lang.Object string_ = "";
         /**
          * <code>optional string string = 6;</code>
@@ -1302,9 +1292,12 @@ public final class DebugJvmProtoBuf {
         public java.lang.String getString() {
           java.lang.Object ref = string_;
           if (!(ref instanceof java.lang.String)) {
-            java.lang.String s = ((org.jetbrains.kotlin.protobuf.ByteString) ref)
-                .toStringUtf8();
-            string_ = s;
+            org.jetbrains.kotlin.protobuf.ByteString bs =
+                (org.jetbrains.kotlin.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            if (bs.isValidUtf8()) {
+              string_ = s;
+            }
             return s;
           } else {
             return (java.lang.String) ref;
@@ -1378,7 +1371,6 @@ public final class DebugJvmProtoBuf {
           return this;
         }
 
-        // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
         private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Operation operation_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Operation.NONE;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];</code>
@@ -1430,7 +1422,6 @@ public final class DebugJvmProtoBuf {
           return this;
         }
 
-        // repeated int32 substring_index = 4 [packed = true];
         private java.util.List<java.lang.Integer> substringIndex_ = java.util.Collections.emptyList();
         private void ensureSubstringIndexIsMutable() {
           if (!((bitField0_ & 0x00000010) == 0x00000010)) {
@@ -1518,7 +1509,8 @@ public final class DebugJvmProtoBuf {
         public Builder addAllSubstringIndex(
             java.lang.Iterable<? extends java.lang.Integer> values) {
           ensureSubstringIndexIsMutable();
-          super.addAll(values, substringIndex_);
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, substringIndex_);
           onChanged();
           return this;
         }
@@ -1538,7 +1530,6 @@ public final class DebugJvmProtoBuf {
           return this;
         }
 
-        // repeated int32 replace_char = 5 [packed = true];
         private java.util.List<java.lang.Integer> replaceChar_ = java.util.Collections.emptyList();
         private void ensureReplaceCharIsMutable() {
           if (!((bitField0_ & 0x00000020) == 0x00000020)) {
@@ -1620,7 +1611,8 @@ public final class DebugJvmProtoBuf {
         public Builder addAllReplaceChar(
             java.lang.Iterable<? extends java.lang.Integer> values) {
           ensureReplaceCharIsMutable();
-          super.addAll(values, replaceChar_);
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, replaceChar_);
           onChanged();
           return this;
         }
@@ -1650,7 +1642,6 @@ public final class DebugJvmProtoBuf {
       // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record)
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record record = 1;
     public static final int RECORD_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record> record_;
     /**
@@ -1686,7 +1677,6 @@ public final class DebugJvmProtoBuf {
       return record_.get(index);
     }
 
-    // repeated int32 local_name = 5 [packed = true];
     public static final int LOCAL_NAME_FIELD_NUMBER = 5;
     private java.util.List<java.lang.Integer> localName_;
     /**
@@ -1729,7 +1719,8 @@ public final class DebugJvmProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -1857,8 +1848,9 @@ public final class DebugJvmProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.StringTableTypes}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypesOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypesOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor;
@@ -2019,7 +2011,6 @@ public final class DebugJvmProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record record = 1;
       private java.util.List<org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record> record_ =
         java.util.Collections.emptyList();
       private void ensureRecordIsMutable() {
@@ -2161,7 +2152,8 @@ public final class DebugJvmProtoBuf {
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.StringTableTypes.Record> values) {
         if (recordBuilder_ == null) {
           ensureRecordIsMutable();
-          super.addAll(values, record_);
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, record_);
           onChanged();
         } else {
           recordBuilder_.addAllMessages(values);
@@ -2259,7 +2251,6 @@ public final class DebugJvmProtoBuf {
         return recordBuilder_;
       }
 
-      // repeated int32 local_name = 5 [packed = true];
       private java.util.List<java.lang.Integer> localName_ = java.util.Collections.emptyList();
       private void ensureLocalNameIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
@@ -2335,7 +2326,8 @@ public final class DebugJvmProtoBuf {
       public Builder addAllLocalName(
           java.lang.Iterable<? extends java.lang.Integer> values) {
         ensureLocalNameIsMutable();
-        super.addAll(values, localName_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, localName_);
         onChanged();
         return this;
       }
@@ -2364,10 +2356,10 @@ public final class DebugJvmProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
   }
 
-  public interface JvmMethodSignatureOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface JvmMethodSignatureOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // optional int32 name = 1;
     /**
      * <code>optional int32 name = 1;</code>
      */
@@ -2377,7 +2369,6 @@ public final class DebugJvmProtoBuf {
      */
     int getName();
 
-    // optional int32 desc = 2;
     /**
      * <code>optional int32 desc = 2;</code>
      *
@@ -2399,8 +2390,9 @@ public final class DebugJvmProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature}
    */
   public static final class JvmMethodSignature extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements JvmMethodSignatureOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature)
+      JvmMethodSignatureOrBuilder {
     // Use JvmMethodSignature.newBuilder() to construct.
     private JvmMethodSignature(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -2496,7 +2488,6 @@ public final class DebugJvmProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
@@ -2512,7 +2503,6 @@ public final class DebugJvmProtoBuf {
       return name_;
     }
 
-    // optional int32 desc = 2;
     public static final int DESC_FIELD_NUMBER = 2;
     private int desc_;
     /**
@@ -2543,7 +2533,8 @@ public final class DebugJvmProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -2657,8 +2648,9 @@ public final class DebugJvmProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor;
@@ -2780,7 +2772,6 @@ public final class DebugJvmProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 name = 1;
       private int name_ ;
       /**
        * <code>optional int32 name = 1;</code>
@@ -2813,7 +2804,6 @@ public final class DebugJvmProtoBuf {
         return this;
       }
 
-      // optional int32 desc = 2;
       private int desc_ ;
       /**
        * <code>optional int32 desc = 2;</code>
@@ -2873,10 +2863,10 @@ public final class DebugJvmProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature)
   }
 
-  public interface JvmFieldSignatureOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface JvmFieldSignatureOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // optional int32 name = 1;
     /**
      * <code>optional int32 name = 1;</code>
      */
@@ -2886,7 +2876,6 @@ public final class DebugJvmProtoBuf {
      */
     int getName();
 
-    // optional int32 desc = 2;
     /**
      * <code>optional int32 desc = 2;</code>
      *
@@ -2908,8 +2897,9 @@ public final class DebugJvmProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature}
    */
   public static final class JvmFieldSignature extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements JvmFieldSignatureOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature)
+      JvmFieldSignatureOrBuilder {
     // Use JvmFieldSignature.newBuilder() to construct.
     private JvmFieldSignature(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -3005,7 +2995,6 @@ public final class DebugJvmProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
@@ -3021,7 +3010,6 @@ public final class DebugJvmProtoBuf {
       return name_;
     }
 
-    // optional int32 desc = 2;
     public static final int DESC_FIELD_NUMBER = 2;
     private int desc_;
     /**
@@ -3052,7 +3040,8 @@ public final class DebugJvmProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -3166,8 +3155,9 @@ public final class DebugJvmProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignatureOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignatureOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor;
@@ -3289,7 +3279,6 @@ public final class DebugJvmProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 name = 1;
       private int name_ ;
       /**
        * <code>optional int32 name = 1;</code>
@@ -3322,7 +3311,6 @@ public final class DebugJvmProtoBuf {
         return this;
       }
 
-      // optional int32 desc = 2;
       private int desc_ ;
       /**
        * <code>optional int32 desc = 2;</code>
@@ -3382,10 +3370,10 @@ public final class DebugJvmProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature)
   }
 
-  public interface JvmPropertySignatureOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface JvmPropertySignatureOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;</code>
      */
@@ -3399,7 +3387,6 @@ public final class DebugJvmProtoBuf {
      */
     org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignatureOrBuilder getFieldOrBuilder();
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;</code>
      *
@@ -3425,7 +3412,6 @@ public final class DebugJvmProtoBuf {
      */
     org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder getSyntheticMethodOrBuilder();
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature getter = 3;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature getter = 3;</code>
      */
@@ -3439,7 +3425,6 @@ public final class DebugJvmProtoBuf {
      */
     org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder getGetterOrBuilder();
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature setter = 4;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature setter = 4;</code>
      */
@@ -3457,8 +3442,9 @@ public final class DebugJvmProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature}
    */
   public static final class JvmPropertySignature extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements JvmPropertySignatureOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature)
+      JvmPropertySignatureOrBuilder {
     // Use JvmPropertySignature.newBuilder() to construct.
     private JvmPropertySignature(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -3596,7 +3582,6 @@ public final class DebugJvmProtoBuf {
     }
 
     private int bitField0_;
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;
     public static final int FIELD_FIELD_NUMBER = 1;
     private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature field_;
     /**
@@ -3618,7 +3603,6 @@ public final class DebugJvmProtoBuf {
       return field_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;
     public static final int SYNTHETIC_METHOD_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature syntheticMethod_;
     /**
@@ -3652,7 +3636,6 @@ public final class DebugJvmProtoBuf {
       return syntheticMethod_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature getter = 3;
     public static final int GETTER_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature getter_;
     /**
@@ -3674,7 +3657,6 @@ public final class DebugJvmProtoBuf {
       return getter_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature setter = 4;
     public static final int SETTER_FIELD_NUMBER = 4;
     private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature setter_;
     /**
@@ -3705,7 +3687,8 @@ public final class DebugJvmProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -3833,8 +3816,9 @@ public final class DebugJvmProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignatureOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.JvmPropertySignature)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignatureOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor;
@@ -4010,7 +3994,6 @@ public final class DebugJvmProtoBuf {
       }
       private int bitField0_;
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature field = 1;
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature field_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignatureOrBuilder> fieldBuilder_;
@@ -4119,7 +4102,7 @@ public final class DebugJvmProtoBuf {
         if (fieldBuilder_ == null) {
           fieldBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmFieldSignatureOrBuilder>(
-                  field_,
+                  getField(),
                   getParentForChildren(),
                   isClean());
           field_ = null;
@@ -4127,7 +4110,6 @@ public final class DebugJvmProtoBuf {
         return fieldBuilder_;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature synthetic_method = 2;
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature syntheticMethod_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder> syntheticMethodBuilder_;
@@ -4272,7 +4254,7 @@ public final class DebugJvmProtoBuf {
         if (syntheticMethodBuilder_ == null) {
           syntheticMethodBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder>(
-                  syntheticMethod_,
+                  getSyntheticMethod(),
                   getParentForChildren(),
                   isClean());
           syntheticMethod_ = null;
@@ -4280,7 +4262,6 @@ public final class DebugJvmProtoBuf {
         return syntheticMethodBuilder_;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature getter = 3;
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature getter_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder> getterBuilder_;
@@ -4389,7 +4370,7 @@ public final class DebugJvmProtoBuf {
         if (getterBuilder_ == null) {
           getterBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder>(
-                  getter_,
+                  getGetter(),
                   getParentForChildren(),
                   isClean());
           getter_ = null;
@@ -4397,7 +4378,6 @@ public final class DebugJvmProtoBuf {
         return getterBuilder_;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.jvm.JvmMethodSignature setter = 4;
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature setter_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder> setterBuilder_;
@@ -4506,7 +4486,7 @@ public final class DebugJvmProtoBuf {
         if (setterBuilder_ == null) {
           setterBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
               org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.Builder, org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignatureOrBuilder>(
-                  setter_,
+                  getSetter(),
                   getParentForChildren(),
                   isClean());
           setter_ = null;
@@ -4594,6 +4574,10 @@ public final class DebugJvmProtoBuf {
   public static final int CLASS_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   *
+   * <pre>
+   * If absent, assumed to be JvmAbi.DEFAULT_MODULE_NAME
+   * </pre>
    */
   public static final
     org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
@@ -4613,27 +4597,27 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_fieldAccessorTable;
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_fieldAccessorTable;
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_fieldAccessorTable;
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_fieldAccessorTable;
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
@@ -4699,65 +4683,69 @@ public final class DebugJvmProtoBuf {
       "\022B\020DebugJvmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
-            org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor,
-              new java.lang.String[] { "Record", "LocalName", });
-          internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor =
-            internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor.getNestedTypes().get(0);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor,
-              new java.lang.String[] { "Range", "PredefinedIndex", "String", "Operation", "SubstringIndex", "ReplaceChar", });
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor =
-            getDescriptor().getMessageTypes().get(1);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor,
-              new java.lang.String[] { "Name", "Desc", });
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor =
-            getDescriptor().getMessageTypes().get(2);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor,
-              new java.lang.String[] { "Name", "Desc", });
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor =
-            getDescriptor().getMessageTypes().get(3);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor,
-              new java.lang.String[] { "Field", "SyntheticMethod", "Getter", "Setter", });
-          constructorSignature.internalInit(descriptor.getExtensions().get(0));
-          methodSignature.internalInit(descriptor.getExtensions().get(1));
-          propertySignature.internalInit(descriptor.getExtensions().get(2));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(3));
-          isRaw.internalInit(descriptor.getExtensions().get(4));
-          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
-          classModuleName.internalInit(descriptor.getExtensions().get(6));
-          packageModuleName.internalInit(descriptor.getExtensions().get(7));
-          org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
-            org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
-          return registry;
-        }
-      };
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
+              org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
           org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.getDescriptor(),
           org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor(),
         }, assigner);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor,
+        new java.lang.String[] { "Record", "LocalName", });
+    internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor =
+      internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor.getNestedTypes().get(0);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_Record_descriptor,
+        new java.lang.String[] { "Range", "PredefinedIndex", "String", "Operation", "SubstringIndex", "ReplaceChar", });
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_JvmMethodSignature_descriptor,
+        new java.lang.String[] { "Name", "Desc", });
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor,
+        new java.lang.String[] { "Name", "Desc", });
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor,
+        new java.lang.String[] { "Field", "SyntheticMethod", "Getter", "Setter", });
+    constructorSignature.internalInit(descriptor.getExtensions().get(0));
+    methodSignature.internalInit(descriptor.getExtensions().get(1));
+    propertySignature.internalInit(descriptor.getExtensions().get(2));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(3));
+    isRaw.internalInit(descriptor.getExtensions().get(4));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
+    classModuleName.internalInit(descriptor.getExtensions().get(6));
+    packageModuleName.internalInit(descriptor.getExtensions().get(7));
+    org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
+        org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+    org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.getDescriptor();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

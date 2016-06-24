@@ -52,7 +52,7 @@
           <element id="module-output" name="idea-ultimate" />
           <element id="module-output" name="formatter" />
           <element id="module-output" name="idea-maven" />
-          <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.5.0.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.6.1.jar" path-in-jar="/" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
