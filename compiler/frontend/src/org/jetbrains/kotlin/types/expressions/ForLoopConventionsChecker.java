@@ -77,7 +77,7 @@ public class ForLoopConventionsChecker {
             checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
 
             for (SymbolUsageValidator validator : symbolUsageValidators) {
-                validator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
+                validator.validateCall(iteratorResolvedCall, context.trace, loopRangeExpression);
             }
 
             KotlinType iteratorType = iteratorFunction.getReturnType();
@@ -132,7 +132,7 @@ public class ForLoopConventionsChecker {
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
             for (SymbolUsageValidator validator : symbolUsageValidators) {
-                validator.validateCall(resolvedCall, functionDescriptor, context.trace, loopRangeExpression);
+                validator.validateCall(resolvedCall, context.trace, loopRangeExpression);
             }
 
             checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
