@@ -24,8 +24,8 @@
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
-    <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.5.0.jar"/>
-    <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
+    <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.6.1.jar"/>
+    <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.6.1-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
 
     <property name="java.target" value="1.6"/>

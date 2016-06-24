@@ -435,27 +435,29 @@
                 </sequential>
             </macrodef>
 
+            <property name="protobuf.version" value="2.6.1"/>
+
             <!-- Download protobuf and rename packages -->
-            <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0"/>
-            <delete file="${dependencies}/protobuf-java-2.5.0.jar"/>
-            <delete file="${dependencies}/protobuf-java-2.5.0-sources.jar"/>
+            <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="${protobuf.version}"/>
+            <delete file="${dependencies}/protobuf-java-${protobuf.version}.jar"/>
+            <delete file="${dependencies}/protobuf-java-${protobuf.version}-sources.jar"/>
 
             <rename-packages-in-binaries
-                source.jar="${dependencies}/download/protobuf-java-2.5.0.jar"
-                target.jar="${dependencies}/protobuf-2.5.0.jar"
+                source.jar="${dependencies}/download/protobuf-java-${protobuf.version}.jar"
+                target.jar="${dependencies}/protobuf-${protobuf.version}.jar"
             />
 
             <rename-packages-in-sources
-                source.jar="${dependencies}/download/protobuf-java-2.5.0-sources.jar"
-                target.jar="${dependencies}/protobuf-2.5.0-sources.jar"
+                source.jar="${dependencies}/download/protobuf-java-${protobuf.version}-sources.jar"
+                target.jar="${dependencies}/protobuf-${protobuf.version}-sources.jar"
             />
 
             <!-- Build protobuf lite jar -->
             <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
                 <arg value="-script"/>
                 <arg value="${generators}/infrastructure/build-protobuf-lite.kts"/>
-                <arg value="${dependencies}/protobuf-2.5.0.jar"/>
-                <arg value="${dependencies}/protobuf-2.5.0-lite.jar"/>
+                <arg value="${dependencies}/protobuf-${protobuf.version}.jar"/>
+                <arg value="${dependencies}/protobuf-${protobuf.version}-lite.jar"/>
             </exec>
         </sequential>
     </macrodef>

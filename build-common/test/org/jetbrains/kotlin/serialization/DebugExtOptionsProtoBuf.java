@@ -77,22 +77,23 @@ public final class DebugExtOptionsProtoBuf {
       "\001(\010B\031B\027DebugExtOptionsProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
-            org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          skipInComparison.internalInit(descriptor.getExtensions().get(0));
-          nameIdInTable.internalInit(descriptor.getExtensions().get(1));
-          fqNameIdInTable.internalInit(descriptor.getExtensions().get(2));
-          stringIdInTable.internalInit(descriptor.getExtensions().get(3));
-          return null;
-        }
-      };
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
+              org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
           org.jetbrains.kotlin.protobuf.DescriptorProtos.getDescriptor(),
         }, assigner);
+    skipInComparison.internalInit(descriptor.getExtensions().get(0));
+    nameIdInTable.internalInit(descriptor.getExtensions().get(1));
+    fqNameIdInTable.internalInit(descriptor.getExtensions().get(2));
+    stringIdInTable.internalInit(descriptor.getExtensions().get(3));
+    org.jetbrains.kotlin.protobuf.DescriptorProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

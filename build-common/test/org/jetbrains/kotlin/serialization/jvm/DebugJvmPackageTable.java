@@ -8,10 +8,10 @@ public final class DebugJvmPackageTable {
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
   }
-  public interface PackageTableOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface PackageTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.PackageTable)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
      */
@@ -40,8 +40,9 @@ public final class DebugJvmPackageTable {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
    */
   public static final class PackageTable extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements PackageTableOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.PackageTable)
+      PackageTableOrBuilder {
     // Use PackageTable.newBuilder() to construct.
     private PackageTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -137,7 +138,6 @@ public final class DebugJvmPackageTable {
       return PARSER;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;
     public static final int PACKAGE_PARTS_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackageParts> packageParts_;
     /**
@@ -179,7 +179,8 @@ public final class DebugJvmPackageTable {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getPackagePartsCount(); i++) {
         if (!getPackageParts(i).isInitialized()) {
@@ -292,8 +293,9 @@ public final class DebugJvmPackageTable {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackageTableOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.PackageTable)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackageTableOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor;
@@ -443,7 +445,6 @@ public final class DebugJvmPackageTable {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;
       private java.util.List<org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackageParts> packageParts_ =
         java.util.Collections.emptyList();
       private void ensurePackagePartsIsMutable() {
@@ -585,7 +586,8 @@ public final class DebugJvmPackageTable {
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackageParts> values) {
         if (packagePartsBuilder_ == null) {
           ensurePackagePartsIsMutable();
-          super.addAll(values, packageParts_);
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, packageParts_);
           onChanged();
         } else {
           packagePartsBuilder_.addAllMessages(values);
@@ -694,10 +696,10 @@ public final class DebugJvmPackageTable {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.PackageTable)
   }
 
-  public interface PackagePartsOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+  public interface PackagePartsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.PackageParts)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
-    // required string package_fq_name = 1;
     /**
      * <code>required string package_fq_name = 1;</code>
      */
@@ -712,12 +714,11 @@ public final class DebugJvmPackageTable {
     org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes();
 
-    // repeated string class_name = 2;
     /**
      * <code>repeated string class_name = 2;</code>
      */
-    java.util.List<java.lang.String>
-    getClassNameList();
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getClassNameList();
     /**
      * <code>repeated string class_name = 2;</code>
      */
@@ -736,8 +737,9 @@ public final class DebugJvmPackageTable {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
    */
   public static final class PackageParts extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessage
-      implements PackagePartsOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.jvm.PackageParts)
+      PackagePartsOrBuilder {
     // Use PackageParts.newBuilder() to construct.
     private PackageParts(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -784,16 +786,18 @@ public final class DebugJvmPackageTable {
               break;
             }
             case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000001;
-              packageFqName_ = input.readBytes();
+              packageFqName_ = bs;
               break;
             }
             case 18: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
               if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 className_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000002;
               }
-              className_.add(input.readBytes());
+              className_.add(bs);
               break;
             }
           }
@@ -805,7 +809,7 @@ public final class DebugJvmPackageTable {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(className_);
+          className_ = className_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -839,7 +843,6 @@ public final class DebugJvmPackageTable {
     }
 
     private int bitField0_;
-    // required string package_fq_name = 1;
     public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
     private java.lang.Object packageFqName_;
     /**
@@ -882,13 +885,12 @@ public final class DebugJvmPackageTable {
       }
     }
 
-    // repeated string class_name = 2;
     public static final int CLASS_NAME_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.protobuf.LazyStringList className_;
     /**
      * <code>repeated string class_name = 2;</code>
      */
-    public java.util.List<java.lang.String>
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
         getClassNameList() {
       return className_;
     }
@@ -919,7 +921,8 @@ public final class DebugJvmPackageTable {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasPackageFqName()) {
         memoizedIsInitialized = 0;
@@ -1042,8 +1045,9 @@ public final class DebugJvmPackageTable {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackagePartsOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.jvm.PackageParts)
+        org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.PackagePartsOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.jvm.DebugJvmPackageTable.internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor;
@@ -1113,8 +1117,7 @@ public final class DebugJvmPackageTable {
         }
         result.packageFqName_ = packageFqName_;
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(
-              className_);
+          className_ = className_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.className_ = className_;
@@ -1180,7 +1183,6 @@ public final class DebugJvmPackageTable {
       }
       private int bitField0_;
 
-      // required string package_fq_name = 1;
       private java.lang.Object packageFqName_ = "";
       /**
        * <code>required string package_fq_name = 1;</code>
@@ -1194,9 +1196,12 @@ public final class DebugJvmPackageTable {
       public java.lang.String getPackageFqName() {
         java.lang.Object ref = packageFqName_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((org.jetbrains.kotlin.protobuf.ByteString) ref)
-              .toStringUtf8();
-          packageFqName_ = s;
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            packageFqName_ = s;
+          }
           return s;
         } else {
           return (java.lang.String) ref;
@@ -1254,7 +1259,6 @@ public final class DebugJvmPackageTable {
         return this;
       }
 
-      // repeated string class_name = 2;
       private org.jetbrains.kotlin.protobuf.LazyStringList className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureClassNameIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
@@ -1265,9 +1269,9 @@ public final class DebugJvmPackageTable {
       /**
        * <code>repeated string class_name = 2;</code>
        */
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getClassNameList() {
-        return java.util.Collections.unmodifiableList(className_);
+        return className_.getUnmodifiableView();
       }
       /**
        * <code>repeated string class_name = 2;</code>
@@ -1320,7 +1324,8 @@ public final class DebugJvmPackageTable {
       public Builder addAllClassName(
           java.lang.Iterable<java.lang.String> values) {
         ensureClassNameIsMutable();
-        super.addAll(values, className_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, className_);
         onChanged();
         return this;
       }
@@ -1358,12 +1363,12 @@ public final class DebugJvmPackageTable {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.jvm.PackageParts)
   }
 
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_fieldAccessorTable;
-  private static org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
@@ -1387,29 +1392,29 @@ public final class DebugJvmPackageTable {
       "e"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
-            org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor,
-              new java.lang.String[] { "PackageParts", });
-          internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor =
-            getDescriptor().getMessageTypes().get(1);
-          internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_fieldAccessorTable = new
-            org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor,
-              new java.lang.String[] { "PackageFqName", "ClassName", });
-          return null;
-        }
-      };
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public org.jetbrains.kotlin.protobuf.ExtensionRegistry assignDescriptors(
+              org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_PackageTable_descriptor,
+        new java.lang.String[] { "PackageParts", });
+    internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor,
+        new java.lang.String[] { "PackageFqName", "ClassName", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

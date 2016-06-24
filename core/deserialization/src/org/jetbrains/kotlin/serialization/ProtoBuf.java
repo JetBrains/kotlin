@@ -272,15 +272,15 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.MemberKind)
   }
 
-  public interface StringTableOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+  public interface StringTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.StringTable)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-    // repeated string string = 1;
     /**
      * <code>repeated string string = 1;</code>
      */
-    java.util.List<java.lang.String>
-    getStringList();
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getStringList();
     /**
      * <code>repeated string string = 1;</code>
      */
@@ -299,14 +299,15 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.StringTable}
    */
   public static final class StringTable extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-      implements StringTableOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.StringTable)
+      StringTableOrBuilder {
     // Use StringTable.newBuilder() to construct.
     private StringTable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StringTable(boolean noInit) {}
+    private StringTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final StringTable defaultInstance;
     public static StringTable getDefaultInstance() {
@@ -317,12 +318,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private StringTable(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -332,18 +339,19 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
             case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 string_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000001;
               }
-              string_.add(input.readBytes());
+              string_.add(bs);
               break;
             }
           }
@@ -355,7 +363,14 @@ public final class ProtoBuf {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          string_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(string_);
+          string_ = string_.getUnmodifiableView();
+        }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
         }
         makeExtensionsImmutable();
       }
@@ -375,13 +390,12 @@ public final class ProtoBuf {
       return PARSER;
     }
 
-    // repeated string string = 1;
     public static final int STRING_FIELD_NUMBER = 1;
     private org.jetbrains.kotlin.protobuf.LazyStringList string_;
     /**
      * <code>repeated string string = 1;</code>
      */
-    public java.util.List<java.lang.String>
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
         getStringList() {
       return string_;
     }
@@ -411,7 +425,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -423,6 +438,7 @@ public final class ProtoBuf {
       for (int i = 0; i < string_.size(); i++) {
         output.writeBytes(1, string_.getByteString(i));
       }
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -440,6 +456,7 @@ public final class ProtoBuf {
         size += dataSize;
         size += 1 * getStringList().size();
       }
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -517,7 +534,9 @@ public final class ProtoBuf {
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.ProtoBuf.StringTable, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.StringTableOrBuilder {
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.StringTable)
+        org.jetbrains.kotlin.serialization.ProtoBuf.StringTableOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -556,8 +575,7 @@ public final class ProtoBuf {
         org.jetbrains.kotlin.serialization.ProtoBuf.StringTable result = new org.jetbrains.kotlin.serialization.ProtoBuf.StringTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          string_ = new org.jetbrains.kotlin.protobuf.UnmodifiableLazyStringList(
-              string_);
+          string_ = string_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.string_ = string_;
@@ -576,6 +594,8 @@ public final class ProtoBuf {
           }
           
         }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -602,7 +622,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // repeated string string = 1;
       private org.jetbrains.kotlin.protobuf.LazyStringList string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureStringIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -613,9 +632,9 @@ public final class ProtoBuf {
       /**
        * <code>repeated string string = 1;</code>
        */
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getStringList() {
-        return java.util.Collections.unmodifiableList(string_);
+        return string_.getUnmodifiableView();
       }
       /**
        * <code>repeated string string = 1;</code>
@@ -668,7 +687,8 @@ public final class ProtoBuf {
       public Builder addAllString(
           java.lang.Iterable<java.lang.String> values) {
         ensureStringIsMutable();
-        super.addAll(values, string_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, string_);
         
         return this;
       }
@@ -706,10 +726,10 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.StringTable)
   }
 
-  public interface QualifiedNameTableOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+  public interface QualifiedNameTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.QualifiedNameTable)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-    // repeated .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;</code>
      */
@@ -728,14 +748,15 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable}
    */
   public static final class QualifiedNameTable extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-      implements QualifiedNameTableOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.QualifiedNameTable)
+      QualifiedNameTableOrBuilder {
     // Use QualifiedNameTable.newBuilder() to construct.
     private QualifiedNameTable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private QualifiedNameTable(boolean noInit) {}
+    private QualifiedNameTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final QualifiedNameTable defaultInstance;
     public static QualifiedNameTable getDefaultInstance() {
@@ -746,12 +767,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private QualifiedNameTable(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -761,7 +788,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -786,6 +813,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           qualifiedName_ = java.util.Collections.unmodifiableList(qualifiedName_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -804,10 +838,10 @@ public final class ProtoBuf {
       return PARSER;
     }
 
-    public interface QualifiedNameOrBuilder
-        extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    public interface QualifiedNameOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName)
+        org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-      // optional int32 parent_qualified_name = 1 [default = -1];
       /**
        * <code>optional int32 parent_qualified_name = 1 [default = -1];</code>
        */
@@ -817,7 +851,6 @@ public final class ProtoBuf {
        */
       int getParentQualifiedName();
 
-      // required int32 short_name = 2;
       /**
        * <code>required int32 short_name = 2;</code>
        *
@@ -835,7 +868,6 @@ public final class ProtoBuf {
        */
       int getShortName();
 
-      // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind kind = 3 [default = PACKAGE];
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind kind = 3 [default = PACKAGE];</code>
        */
@@ -849,14 +881,15 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName}
      */
     public static final class QualifiedName extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-        implements QualifiedNameOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+        // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName)
+        QualifiedNameOrBuilder {
       // Use QualifiedName.newBuilder() to construct.
       private QualifiedName(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
         super(builder);
-
+        this.unknownFields = builder.getUnknownFields();
       }
-      private QualifiedName(boolean noInit) {}
+      private QualifiedName(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
       private static final QualifiedName defaultInstance;
       public static QualifiedName getDefaultInstance() {
@@ -867,12 +900,18 @@ public final class ProtoBuf {
         return defaultInstance;
       }
 
+      private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
       private QualifiedName(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
+        org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+            org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+        org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+            org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+                unknownFieldsOutput);
         try {
           boolean done = false;
           while (!done) {
@@ -882,7 +921,7 @@ public final class ProtoBuf {
                 done = true;
                 break;
               default: {
-                if (!parseUnknownField(input,
+                if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                        extensionRegistry, tag)) {
                   done = true;
                 }
@@ -901,7 +940,10 @@ public final class ProtoBuf {
               case 24: {
                 int rawValue = input.readEnum();
                 org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Kind value = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Kind.valueOf(rawValue);
-                if (value != null) {
+                if (value == null) {
+                  unknownFieldsCodedOutput.writeRawVarint32(tag);
+                  unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+                } else {
                   bitField0_ |= 0x00000004;
                   kind_ = value;
                 }
@@ -915,6 +957,13 @@ public final class ProtoBuf {
           throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          try {
+            unknownFieldsCodedOutput.flush();
+          } catch (java.io.IOException e) {
+          // Should not happen
+          } finally {
+            unknownFields = unknownFieldsOutput.toByteString();
+          }
           makeExtensionsImmutable();
         }
       }
@@ -999,7 +1048,6 @@ public final class ProtoBuf {
       }
 
       private int bitField0_;
-      // optional int32 parent_qualified_name = 1 [default = -1];
       public static final int PARENT_QUALIFIED_NAME_FIELD_NUMBER = 1;
       private int parentQualifiedName_;
       /**
@@ -1015,7 +1063,6 @@ public final class ProtoBuf {
         return parentQualifiedName_;
       }
 
-      // required int32 short_name = 2;
       public static final int SHORT_NAME_FIELD_NUMBER = 2;
       private int shortName_;
       /**
@@ -1039,7 +1086,6 @@ public final class ProtoBuf {
         return shortName_;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind kind = 3 [default = PACKAGE];
       public static final int KIND_FIELD_NUMBER = 3;
       private org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Kind kind_;
       /**
@@ -1063,7 +1109,8 @@ public final class ProtoBuf {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
 
         if (!hasShortName()) {
           memoizedIsInitialized = 0;
@@ -1085,6 +1132,7 @@ public final class ProtoBuf {
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           output.writeEnum(3, kind_.getNumber());
         }
+        output.writeRawBytes(unknownFields);
       }
 
       private int memoizedSerializedSize = -1;
@@ -1105,6 +1153,7 @@ public final class ProtoBuf {
           size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeEnumSize(3, kind_.getNumber());
         }
+        size += unknownFields.size();
         memoizedSerializedSize = size;
         return size;
       }
@@ -1182,7 +1231,9 @@ public final class ProtoBuf {
       public static final class Builder extends
           org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
             org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName, Builder>
-          implements org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder {
+          implements
+          // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName)
+          org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder {
         // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
@@ -1252,6 +1303,8 @@ public final class ProtoBuf {
           if (other.hasKind()) {
             setKind(other.getKind());
           }
+          setUnknownFields(
+              getUnknownFields().concat(other.unknownFields));
           return this;
         }
 
@@ -1282,7 +1335,6 @@ public final class ProtoBuf {
         }
         private int bitField0_;
 
-        // optional int32 parent_qualified_name = 1 [default = -1];
         private int parentQualifiedName_ = -1;
         /**
          * <code>optional int32 parent_qualified_name = 1 [default = -1];</code>
@@ -1315,7 +1367,6 @@ public final class ProtoBuf {
           return this;
         }
 
-        // required int32 short_name = 2;
         private int shortName_ ;
         /**
          * <code>required int32 short_name = 2;</code>
@@ -1364,7 +1415,6 @@ public final class ProtoBuf {
           return this;
         }
 
-        // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind kind = 3 [default = PACKAGE];
         private org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Kind kind_ = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Kind.PACKAGE;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName.Kind kind = 3 [default = PACKAGE];</code>
@@ -1411,7 +1461,6 @@ public final class ProtoBuf {
       // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName)
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
     public static final int QUALIFIED_NAME_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedName_;
     /**
@@ -1453,7 +1502,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getQualifiedNameCount(); i++) {
         if (!getQualifiedName(i).isInitialized()) {
@@ -1471,6 +1521,7 @@ public final class ProtoBuf {
       for (int i = 0; i < qualifiedName_.size(); i++) {
         output.writeMessage(1, qualifiedName_.get(i));
       }
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -1483,6 +1534,7 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, qualifiedName_.get(i));
       }
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -1560,7 +1612,9 @@ public final class ProtoBuf {
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTableOrBuilder {
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.QualifiedNameTable)
+        org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTableOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -1618,6 +1672,8 @@ public final class ProtoBuf {
           }
           
         }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -1650,7 +1706,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedName_ =
         java.util.Collections.emptyList();
       private void ensureQualifiedNameIsMutable() {
@@ -1752,7 +1807,8 @@ public final class ProtoBuf {
       public Builder addAllQualifiedName(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> values) {
         ensureQualifiedNameIsMutable();
-        super.addAll(values, qualifiedName_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, qualifiedName_);
 
         return this;
       }
@@ -1786,10 +1842,10 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.QualifiedNameTable)
   }
 
-  public interface AnnotationOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+  public interface AnnotationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Annotation)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-    // required int32 id = 1;
     /**
      * <code>required int32 id = 1;</code>
      */
@@ -1799,7 +1855,6 @@ public final class ProtoBuf {
      */
     int getId();
 
-    // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument argument = 2;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Annotation.Argument argument = 2;</code>
      */
@@ -1818,14 +1873,15 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation}
    */
   public static final class Annotation extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-      implements AnnotationOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Annotation)
+      AnnotationOrBuilder {
     // Use Annotation.newBuilder() to construct.
     private Annotation(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Annotation(boolean noInit) {}
+    private Annotation(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Annotation defaultInstance;
     public static Annotation getDefaultInstance() {
@@ -1836,12 +1892,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Annotation(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -1851,7 +1913,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -1881,6 +1943,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           argument_ = java.util.Collections.unmodifiableList(argument_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -1899,10 +1968,10 @@ public final class ProtoBuf {
       return PARSER;
     }
 
-    public interface ArgumentOrBuilder
-        extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    public interface ArgumentOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Annotation.Argument)
+        org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-      // required int32 name_id = 1;
       /**
        * <code>required int32 name_id = 1;</code>
        */
@@ -1912,7 +1981,6 @@ public final class ProtoBuf {
        */
       int getNameId();
 
-      // required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;
       /**
        * <code>required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;</code>
        */
@@ -1926,14 +1994,15 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument}
      */
     public static final class Argument extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-        implements ArgumentOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+        // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Annotation.Argument)
+        ArgumentOrBuilder {
       // Use Argument.newBuilder() to construct.
       private Argument(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
         super(builder);
-
+        this.unknownFields = builder.getUnknownFields();
       }
-      private Argument(boolean noInit) {}
+      private Argument(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
       private static final Argument defaultInstance;
       public static Argument getDefaultInstance() {
@@ -1944,12 +2013,18 @@ public final class ProtoBuf {
         return defaultInstance;
       }
 
+      private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
       private Argument(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
+        org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+            org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+        org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+            org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+                unknownFieldsOutput);
         try {
           boolean done = false;
           while (!done) {
@@ -1959,7 +2034,7 @@ public final class ProtoBuf {
                 done = true;
                 break;
               default: {
-                if (!parseUnknownField(input,
+                if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                        extensionRegistry, tag)) {
                   done = true;
                 }
@@ -1991,6 +2066,13 @@ public final class ProtoBuf {
           throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          try {
+            unknownFieldsCodedOutput.flush();
+          } catch (java.io.IOException e) {
+          // Should not happen
+          } finally {
+            unknownFields = unknownFieldsOutput.toByteString();
+          }
           makeExtensionsImmutable();
         }
       }
@@ -2009,10 +2091,10 @@ public final class ProtoBuf {
         return PARSER;
       }
 
-      public interface ValueOrBuilder
-          extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+      public interface ValueOrBuilder extends
+          // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Annotation.Argument.Value)
+          org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-        // optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;</code>
          *
@@ -2034,7 +2116,6 @@ public final class ProtoBuf {
          */
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type getType();
 
-        // optional sint64 int_value = 2;
         /**
          * <code>optional sint64 int_value = 2;</code>
          */
@@ -2044,7 +2125,6 @@ public final class ProtoBuf {
          */
         long getIntValue();
 
-        // optional float float_value = 3;
         /**
          * <code>optional float float_value = 3;</code>
          */
@@ -2054,7 +2134,6 @@ public final class ProtoBuf {
          */
         float getFloatValue();
 
-        // optional double double_value = 4;
         /**
          * <code>optional double double_value = 4;</code>
          */
@@ -2064,7 +2143,6 @@ public final class ProtoBuf {
          */
         double getDoubleValue();
 
-        // optional int32 string_value = 5;
         /**
          * <code>optional int32 string_value = 5;</code>
          */
@@ -2074,7 +2152,6 @@ public final class ProtoBuf {
          */
         int getStringValue();
 
-        // optional int32 class_id = 6;
         /**
          * <code>optional int32 class_id = 6;</code>
          *
@@ -2092,7 +2169,6 @@ public final class ProtoBuf {
          */
         int getClassId();
 
-        // optional int32 enum_value_id = 7;
         /**
          * <code>optional int32 enum_value_id = 7;</code>
          */
@@ -2102,7 +2178,6 @@ public final class ProtoBuf {
          */
         int getEnumValueId();
 
-        // optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
          */
@@ -2112,7 +2187,6 @@ public final class ProtoBuf {
          */
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation getAnnotation();
 
-        // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument.Value array_element = 9;
         /**
          * <code>repeated .org.jetbrains.kotlin.serialization.Annotation.Argument.Value array_element = 9;</code>
          */
@@ -2131,14 +2205,15 @@ public final class ProtoBuf {
        * Protobuf type {@code org.jetbrains.kotlin.serialization.Annotation.Argument.Value}
        */
       public static final class Value extends
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          implements ValueOrBuilder {
+          org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+          // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Annotation.Argument.Value)
+          ValueOrBuilder {
         // Use Value.newBuilder() to construct.
         private Value(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
           super(builder);
-
+          this.unknownFields = builder.getUnknownFields();
         }
-        private Value(boolean noInit) {}
+        private Value(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
         private static final Value defaultInstance;
         public static Value getDefaultInstance() {
@@ -2149,12 +2224,18 @@ public final class ProtoBuf {
           return defaultInstance;
         }
 
+        private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
         private Value(
             org.jetbrains.kotlin.protobuf.CodedInputStream input,
             org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
             throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
           initFields();
           int mutable_bitField0_ = 0;
+          org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+              org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+          org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+              org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+                  unknownFieldsOutput);
           try {
             boolean done = false;
             while (!done) {
@@ -2164,7 +2245,7 @@ public final class ProtoBuf {
                   done = true;
                   break;
                 default: {
-                  if (!parseUnknownField(input,
+                  if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                          extensionRegistry, tag)) {
                     done = true;
                   }
@@ -2173,7 +2254,10 @@ public final class ProtoBuf {
                 case 8: {
                   int rawValue = input.readEnum();
                   org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type value = org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type.valueOf(rawValue);
-                  if (value != null) {
+                  if (value == null) {
+                    unknownFieldsCodedOutput.writeRawVarint32(tag);
+                    unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+                  } else {
                     bitField0_ |= 0x00000001;
                     type_ = value;
                   }
@@ -2240,6 +2324,13 @@ public final class ProtoBuf {
           } finally {
             if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
               arrayElement_ = java.util.Collections.unmodifiableList(arrayElement_);
+            }
+            try {
+              unknownFieldsCodedOutput.flush();
+            } catch (java.io.IOException e) {
+            // Should not happen
+            } finally {
+              unknownFields = unknownFieldsOutput.toByteString();
             }
             makeExtensionsImmutable();
           }
@@ -2415,7 +2506,6 @@ public final class ProtoBuf {
         }
 
         private int bitField0_;
-        // optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;
         public static final int TYPE_FIELD_NUMBER = 1;
         private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type type_;
         /**
@@ -2443,7 +2533,6 @@ public final class ProtoBuf {
           return type_;
         }
 
-        // optional sint64 int_value = 2;
         public static final int INT_VALUE_FIELD_NUMBER = 2;
         private long intValue_;
         /**
@@ -2459,7 +2548,6 @@ public final class ProtoBuf {
           return intValue_;
         }
 
-        // optional float float_value = 3;
         public static final int FLOAT_VALUE_FIELD_NUMBER = 3;
         private float floatValue_;
         /**
@@ -2475,7 +2563,6 @@ public final class ProtoBuf {
           return floatValue_;
         }
 
-        // optional double double_value = 4;
         public static final int DOUBLE_VALUE_FIELD_NUMBER = 4;
         private double doubleValue_;
         /**
@@ -2491,7 +2578,6 @@ public final class ProtoBuf {
           return doubleValue_;
         }
 
-        // optional int32 string_value = 5;
         public static final int STRING_VALUE_FIELD_NUMBER = 5;
         private int stringValue_;
         /**
@@ -2507,7 +2593,6 @@ public final class ProtoBuf {
           return stringValue_;
         }
 
-        // optional int32 class_id = 6;
         public static final int CLASS_ID_FIELD_NUMBER = 6;
         private int classId_;
         /**
@@ -2531,7 +2616,6 @@ public final class ProtoBuf {
           return classId_;
         }
 
-        // optional int32 enum_value_id = 7;
         public static final int ENUM_VALUE_ID_FIELD_NUMBER = 7;
         private int enumValueId_;
         /**
@@ -2547,7 +2631,6 @@ public final class ProtoBuf {
           return enumValueId_;
         }
 
-        // optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;
         public static final int ANNOTATION_FIELD_NUMBER = 8;
         private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation annotation_;
         /**
@@ -2563,7 +2646,6 @@ public final class ProtoBuf {
           return annotation_;
         }
 
-        // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument.Value array_element = 9;
         public static final int ARRAY_ELEMENT_FIELD_NUMBER = 9;
         private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> arrayElement_;
         /**
@@ -2613,7 +2695,8 @@ public final class ProtoBuf {
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
           byte isInitialized = memoizedIsInitialized;
-          if (isInitialized != -1) return isInitialized == 1;
+          if (isInitialized == 1) return true;
+          if (isInitialized == 0) return false;
 
           if (hasAnnotation()) {
             if (!getAnnotation().isInitialized()) {
@@ -2661,6 +2744,7 @@ public final class ProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             output.writeMessage(9, arrayElement_.get(i));
           }
+          output.writeRawBytes(unknownFields);
         }
 
         private int memoizedSerializedSize = -1;
@@ -2705,6 +2789,7 @@ public final class ProtoBuf {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(9, arrayElement_.get(i));
           }
+          size += unknownFields.size();
           memoizedSerializedSize = size;
           return size;
         }
@@ -2782,7 +2867,9 @@ public final class ProtoBuf {
         public static final class Builder extends
             org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
               org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value, Builder>
-            implements org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.ValueOrBuilder {
+            implements
+            // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Annotation.Argument.Value)
+            org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.ValueOrBuilder {
           // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.newBuilder()
           private Builder() {
             maybeForceBuilderInitialization();
@@ -2914,6 +3001,8 @@ public final class ProtoBuf {
               }
               
             }
+            setUnknownFields(
+                getUnknownFields().concat(other.unknownFields));
             return this;
           }
 
@@ -2952,7 +3041,6 @@ public final class ProtoBuf {
           }
           private int bitField0_;
 
-          // optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;
           private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type.BYTE;
           /**
            * <code>optional .org.jetbrains.kotlin.serialization.Annotation.Argument.Value.Type type = 1;</code>
@@ -3012,7 +3100,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional sint64 int_value = 2;
           private long intValue_ ;
           /**
            * <code>optional sint64 int_value = 2;</code>
@@ -3045,7 +3132,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional float float_value = 3;
           private float floatValue_ ;
           /**
            * <code>optional float float_value = 3;</code>
@@ -3078,7 +3164,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional double double_value = 4;
           private double doubleValue_ ;
           /**
            * <code>optional double double_value = 4;</code>
@@ -3111,7 +3196,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional int32 string_value = 5;
           private int stringValue_ ;
           /**
            * <code>optional int32 string_value = 5;</code>
@@ -3144,7 +3228,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional int32 class_id = 6;
           private int classId_ ;
           /**
            * <code>optional int32 class_id = 6;</code>
@@ -3193,7 +3276,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional int32 enum_value_id = 7;
           private int enumValueId_ ;
           /**
            * <code>optional int32 enum_value_id = 7;</code>
@@ -3226,7 +3308,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;
           private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation annotation_ = org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance();
           /**
            * <code>optional .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
@@ -3287,7 +3368,6 @@ public final class ProtoBuf {
             return this;
           }
 
-          // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument.Value array_element = 9;
           private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> arrayElement_ =
             java.util.Collections.emptyList();
           private void ensureArrayElementIsMutable() {
@@ -3389,7 +3469,8 @@ public final class ProtoBuf {
           public Builder addAllArrayElement(
               java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> values) {
             ensureArrayElementIsMutable();
-            super.addAll(values, arrayElement_);
+            org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+                values, arrayElement_);
 
             return this;
           }
@@ -3424,7 +3505,6 @@ public final class ProtoBuf {
       }
 
       private int bitField0_;
-      // required int32 name_id = 1;
       public static final int NAME_ID_FIELD_NUMBER = 1;
       private int nameId_;
       /**
@@ -3440,7 +3520,6 @@ public final class ProtoBuf {
         return nameId_;
       }
 
-      // required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;
       public static final int VALUE_FIELD_NUMBER = 2;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value value_;
       /**
@@ -3463,7 +3542,8 @@ public final class ProtoBuf {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
 
         if (!hasNameId()) {
           memoizedIsInitialized = 0;
@@ -3490,6 +3570,7 @@ public final class ProtoBuf {
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           output.writeMessage(2, value_);
         }
+        output.writeRawBytes(unknownFields);
       }
 
       private int memoizedSerializedSize = -1;
@@ -3506,6 +3587,7 @@ public final class ProtoBuf {
           size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeMessageSize(2, value_);
         }
+        size += unknownFields.size();
         memoizedSerializedSize = size;
         return size;
       }
@@ -3583,7 +3665,9 @@ public final class ProtoBuf {
       public static final class Builder extends
           org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
             org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument, Builder>
-          implements org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.ArgumentOrBuilder {
+          implements
+          // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Annotation.Argument)
+          org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.ArgumentOrBuilder {
         // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
@@ -3644,6 +3728,8 @@ public final class ProtoBuf {
           if (other.hasValue()) {
             mergeValue(other.getValue());
           }
+          setUnknownFields(
+              getUnknownFields().concat(other.unknownFields));
           return this;
         }
 
@@ -3682,7 +3768,6 @@ public final class ProtoBuf {
         }
         private int bitField0_;
 
-        // required int32 name_id = 1;
         private int nameId_ ;
         /**
          * <code>required int32 name_id = 1;</code>
@@ -3715,7 +3800,6 @@ public final class ProtoBuf {
           return this;
         }
 
-        // required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;
         private org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value value_ = org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
         /**
          * <code>required .org.jetbrains.kotlin.serialization.Annotation.Argument.Value value = 2;</code>
@@ -3788,7 +3872,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // required int32 id = 1;
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
@@ -3804,7 +3887,6 @@ public final class ProtoBuf {
       return id_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument argument = 2;
     public static final int ARGUMENT_FIELD_NUMBER = 2;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument> argument_;
     /**
@@ -3847,7 +3929,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasId()) {
         memoizedIsInitialized = 0;
@@ -3872,6 +3955,7 @@ public final class ProtoBuf {
       for (int i = 0; i < argument_.size(); i++) {
         output.writeMessage(2, argument_.get(i));
       }
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -3888,6 +3972,7 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
       }
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -3965,7 +4050,9 @@ public final class ProtoBuf {
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.ProtoBuf.Annotation, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.AnnotationOrBuilder {
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Annotation)
+        org.jetbrains.kotlin.serialization.ProtoBuf.AnnotationOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -4034,6 +4121,8 @@ public final class ProtoBuf {
           }
           
         }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -4070,7 +4159,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // required int32 id = 1;
       private int id_ ;
       /**
        * <code>required int32 id = 1;</code>
@@ -4103,7 +4191,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Annotation.Argument argument = 2;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument> argument_ =
         java.util.Collections.emptyList();
       private void ensureArgumentIsMutable() {
@@ -4205,7 +4292,8 @@ public final class ProtoBuf {
       public Builder addAllArgument(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument> values) {
         ensureArgumentIsMutable();
-        super.addAll(values, argument_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, argument_);
 
         return this;
       }
@@ -4240,10 +4328,10 @@ public final class ProtoBuf {
   }
 
   public interface TypeOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Type)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Type> {
 
-    // repeated .org.jetbrains.kotlin.serialization.Type.Argument argument = 2;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Type.Argument argument = 2;</code>
      */
@@ -4258,7 +4346,6 @@ public final class ProtoBuf {
      */
     int getArgumentCount();
 
-    // optional bool nullable = 3 [default = false];
     /**
      * <code>optional bool nullable = 3 [default = false];</code>
      */
@@ -4268,7 +4355,6 @@ public final class ProtoBuf {
      */
     boolean getNullable();
 
-    // optional int32 flexible_type_capabilities_id = 4;
     /**
      * <code>optional int32 flexible_type_capabilities_id = 4;</code>
      *
@@ -4288,7 +4374,6 @@ public final class ProtoBuf {
      */
     int getFlexibleTypeCapabilitiesId();
 
-    // optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
      */
@@ -4298,7 +4383,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getFlexibleUpperBound();
 
-    // optional int32 flexible_upper_bound_id = 8;
     /**
      * <code>optional int32 flexible_upper_bound_id = 8;</code>
      */
@@ -4308,7 +4392,6 @@ public final class ProtoBuf {
      */
     int getFlexibleUpperBoundId();
 
-    // optional int32 class_name = 6;
     /**
      * <code>optional int32 class_name = 6;</code>
      */
@@ -4318,7 +4401,6 @@ public final class ProtoBuf {
      */
     int getClassName();
 
-    // optional int32 type_parameter = 7;
     /**
      * <code>optional int32 type_parameter = 7;</code>
      *
@@ -4336,7 +4418,6 @@ public final class ProtoBuf {
      */
     int getTypeParameter();
 
-    // optional int32 type_parameter_name = 9;
     /**
      * <code>optional int32 type_parameter_name = 9;</code>
      *
@@ -4354,7 +4435,6 @@ public final class ProtoBuf {
      */
     int getTypeParameterName();
 
-    // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
      */
@@ -4364,7 +4444,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getOuterType();
 
-    // optional int32 outer_type_id = 11;
     /**
      * <code>optional int32 outer_type_id = 11;</code>
      */
@@ -4379,13 +4458,15 @@ public final class ProtoBuf {
    */
   public static final class Type extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Type> implements TypeOrBuilder {
+        Type> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Type)
+      TypeOrBuilder {
     // Use Type.newBuilder() to construct.
     private Type(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Type, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Type(boolean noInit) {}
+    private Type(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Type defaultInstance;
     public static Type getDefaultInstance() {
@@ -4396,12 +4477,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Type(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -4411,7 +4498,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -4497,6 +4584,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           argument_ = java.util.Collections.unmodifiableList(argument_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -4515,10 +4609,10 @@ public final class ProtoBuf {
       return PARSER;
     }
 
-    public interface ArgumentOrBuilder
-        extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    public interface ArgumentOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Type.Argument)
+        org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-      // optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];</code>
        */
@@ -4528,7 +4622,6 @@ public final class ProtoBuf {
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection getProjection();
 
-      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        *
@@ -4546,7 +4639,6 @@ public final class ProtoBuf {
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
 
-      // optional int32 type_id = 3;
       /**
        * <code>optional int32 type_id = 3;</code>
        */
@@ -4560,14 +4652,15 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Type.Argument}
      */
     public static final class Argument extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-        implements ArgumentOrBuilder {
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+        // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Type.Argument)
+        ArgumentOrBuilder {
       // Use Argument.newBuilder() to construct.
       private Argument(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
         super(builder);
-
+        this.unknownFields = builder.getUnknownFields();
       }
-      private Argument(boolean noInit) {}
+      private Argument(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
       private static final Argument defaultInstance;
       public static Argument getDefaultInstance() {
@@ -4578,12 +4671,18 @@ public final class ProtoBuf {
         return defaultInstance;
       }
 
+      private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
       private Argument(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
         initFields();
         int mutable_bitField0_ = 0;
+        org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+            org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+        org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+            org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+                unknownFieldsOutput);
         try {
           boolean done = false;
           while (!done) {
@@ -4593,7 +4692,7 @@ public final class ProtoBuf {
                 done = true;
                 break;
               default: {
-                if (!parseUnknownField(input,
+                if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                        extensionRegistry, tag)) {
                   done = true;
                 }
@@ -4602,7 +4701,10 @@ public final class ProtoBuf {
               case 8: {
                 int rawValue = input.readEnum();
                 org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection value = org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection.valueOf(rawValue);
-                if (value != null) {
+                if (value == null) {
+                  unknownFieldsCodedOutput.writeRawVarint32(tag);
+                  unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+                } else {
                   bitField0_ |= 0x00000001;
                   projection_ = value;
                 }
@@ -4634,6 +4736,13 @@ public final class ProtoBuf {
           throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          try {
+            unknownFieldsCodedOutput.flush();
+          } catch (java.io.IOException e) {
+          // Should not happen
+          } finally {
+            unknownFields = unknownFieldsOutput.toByteString();
+          }
           makeExtensionsImmutable();
         }
       }
@@ -4727,7 +4836,6 @@ public final class ProtoBuf {
       }
 
       private int bitField0_;
-      // optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];
       public static final int PROJECTION_FIELD_NUMBER = 1;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection projection_;
       /**
@@ -4743,7 +4851,6 @@ public final class ProtoBuf {
         return projection_;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       public static final int TYPE_FIELD_NUMBER = 2;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
       /**
@@ -4767,7 +4874,6 @@ public final class ProtoBuf {
         return type_;
       }
 
-      // optional int32 type_id = 3;
       public static final int TYPE_ID_FIELD_NUMBER = 3;
       private int typeId_;
       /**
@@ -4791,7 +4897,8 @@ public final class ProtoBuf {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
 
         if (hasType()) {
           if (!getType().isInitialized()) {
@@ -4815,6 +4922,7 @@ public final class ProtoBuf {
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           output.writeInt32(3, typeId_);
         }
+        output.writeRawBytes(unknownFields);
       }
 
       private int memoizedSerializedSize = -1;
@@ -4835,6 +4943,7 @@ public final class ProtoBuf {
           size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32Size(3, typeId_);
         }
+        size += unknownFields.size();
         memoizedSerializedSize = size;
         return size;
       }
@@ -4912,7 +5021,9 @@ public final class ProtoBuf {
       public static final class Builder extends
           org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
             org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument, Builder>
-          implements org.jetbrains.kotlin.serialization.ProtoBuf.Type.ArgumentOrBuilder {
+          implements
+          // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Type.Argument)
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type.ArgumentOrBuilder {
         // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
@@ -4982,6 +5093,8 @@ public final class ProtoBuf {
           if (other.hasTypeId()) {
             setTypeId(other.getTypeId());
           }
+          setUnknownFields(
+              getUnknownFields().concat(other.unknownFields));
           return this;
         }
 
@@ -5014,7 +5127,6 @@ public final class ProtoBuf {
         }
         private int bitField0_;
 
-        // optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];
         private org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection projection_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection.INV;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type.Argument.Projection projection = 1 [default = INV];</code>
@@ -5050,7 +5162,6 @@ public final class ProtoBuf {
           return this;
         }
 
-        // optional .org.jetbrains.kotlin.serialization.Type type = 2;
         private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
@@ -5135,7 +5246,6 @@ public final class ProtoBuf {
           return this;
         }
 
-        // optional int32 type_id = 3;
         private int typeId_ ;
         /**
          * <code>optional int32 type_id = 3;</code>
@@ -5180,7 +5290,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // repeated .org.jetbrains.kotlin.serialization.Type.Argument argument = 2;
     public static final int ARGUMENT_FIELD_NUMBER = 2;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument> argument_;
     /**
@@ -5216,7 +5325,6 @@ public final class ProtoBuf {
       return argument_.get(index);
     }
 
-    // optional bool nullable = 3 [default = false];
     public static final int NULLABLE_FIELD_NUMBER = 3;
     private boolean nullable_;
     /**
@@ -5232,7 +5340,6 @@ public final class ProtoBuf {
       return nullable_;
     }
 
-    // optional int32 flexible_type_capabilities_id = 4;
     public static final int FLEXIBLE_TYPE_CAPABILITIES_ID_FIELD_NUMBER = 4;
     private int flexibleTypeCapabilitiesId_;
     /**
@@ -5258,7 +5365,6 @@ public final class ProtoBuf {
       return flexibleTypeCapabilitiesId_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;
     public static final int FLEXIBLE_UPPER_BOUND_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type flexibleUpperBound_;
     /**
@@ -5274,7 +5380,6 @@ public final class ProtoBuf {
       return flexibleUpperBound_;
     }
 
-    // optional int32 flexible_upper_bound_id = 8;
     public static final int FLEXIBLE_UPPER_BOUND_ID_FIELD_NUMBER = 8;
     private int flexibleUpperBoundId_;
     /**
@@ -5290,7 +5395,6 @@ public final class ProtoBuf {
       return flexibleUpperBoundId_;
     }
 
-    // optional int32 class_name = 6;
     public static final int CLASS_NAME_FIELD_NUMBER = 6;
     private int className_;
     /**
@@ -5306,7 +5410,6 @@ public final class ProtoBuf {
       return className_;
     }
 
-    // optional int32 type_parameter = 7;
     public static final int TYPE_PARAMETER_FIELD_NUMBER = 7;
     private int typeParameter_;
     /**
@@ -5330,7 +5433,6 @@ public final class ProtoBuf {
       return typeParameter_;
     }
 
-    // optional int32 type_parameter_name = 9;
     public static final int TYPE_PARAMETER_NAME_FIELD_NUMBER = 9;
     private int typeParameterName_;
     /**
@@ -5354,7 +5456,6 @@ public final class ProtoBuf {
       return typeParameterName_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
     public static final int OUTER_TYPE_FIELD_NUMBER = 10;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type outerType_;
     /**
@@ -5370,7 +5471,6 @@ public final class ProtoBuf {
       return outerType_;
     }
 
-    // optional int32 outer_type_id = 11;
     public static final int OUTER_TYPE_ID_FIELD_NUMBER = 11;
     private int outerTypeId_;
     /**
@@ -5401,7 +5501,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getArgumentCount(); i++) {
         if (!getArgument(i).isInitialized()) {
@@ -5466,6 +5567,7 @@ public final class ProtoBuf {
         output.writeInt32(11, outerTypeId_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -5515,6 +5617,7 @@ public final class ProtoBuf {
           .computeInt32Size(11, outerTypeId_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -5591,7 +5694,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Type, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Type)
+        org.jetbrains.kotlin.serialization.ProtoBuf.TypeOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -5733,6 +5838,8 @@ public final class ProtoBuf {
           setOuterTypeId(other.getOuterTypeId());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -5781,7 +5888,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.Type.Argument argument = 2;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument> argument_ =
         java.util.Collections.emptyList();
       private void ensureArgumentIsMutable() {
@@ -5883,7 +5989,8 @@ public final class ProtoBuf {
       public Builder addAllArgument(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument> values) {
         ensureArgumentIsMutable();
-        super.addAll(values, argument_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, argument_);
 
         return this;
       }
@@ -5906,7 +6013,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional bool nullable = 3 [default = false];
       private boolean nullable_ ;
       /**
        * <code>optional bool nullable = 3 [default = false];</code>
@@ -5939,7 +6045,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 flexible_type_capabilities_id = 4;
       private int flexibleTypeCapabilitiesId_ ;
       /**
        * <code>optional int32 flexible_type_capabilities_id = 4;</code>
@@ -5992,7 +6097,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type flexible_upper_bound = 5;</code>
@@ -6053,7 +6157,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 flexible_upper_bound_id = 8;
       private int flexibleUpperBoundId_ ;
       /**
        * <code>optional int32 flexible_upper_bound_id = 8;</code>
@@ -6086,7 +6189,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 class_name = 6;
       private int className_ ;
       /**
        * <code>optional int32 class_name = 6;</code>
@@ -6119,7 +6221,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 type_parameter = 7;
       private int typeParameter_ ;
       /**
        * <code>optional int32 type_parameter = 7;</code>
@@ -6168,7 +6269,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 type_parameter_name = 9;
       private int typeParameterName_ ;
       /**
        * <code>optional int32 type_parameter_name = 9;</code>
@@ -6217,7 +6317,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type outerType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
@@ -6278,7 +6377,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 outer_type_id = 11;
       private int outerTypeId_ ;
       /**
        * <code>optional int32 outer_type_id = 11;</code>
@@ -6323,10 +6421,10 @@ public final class ProtoBuf {
   }
 
   public interface TypeParameterOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.TypeParameter)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<TypeParameter> {
 
-    // required int32 id = 1;
     /**
      * <code>required int32 id = 1;</code>
      */
@@ -6336,7 +6434,6 @@ public final class ProtoBuf {
      */
     int getId();
 
-    // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
      */
@@ -6346,7 +6443,6 @@ public final class ProtoBuf {
      */
     int getName();
 
-    // optional bool reified = 3 [default = false];
     /**
      * <code>optional bool reified = 3 [default = false];</code>
      */
@@ -6356,7 +6452,6 @@ public final class ProtoBuf {
      */
     boolean getReified();
 
-    // optional .org.jetbrains.kotlin.serialization.TypeParameter.Variance variance = 4 [default = INV];
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.TypeParameter.Variance variance = 4 [default = INV];</code>
      */
@@ -6366,7 +6461,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance getVariance();
 
-    // repeated .org.jetbrains.kotlin.serialization.Type upper_bound = 5;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Type upper_bound = 5;</code>
      */
@@ -6381,7 +6475,6 @@ public final class ProtoBuf {
      */
     int getUpperBoundCount();
 
-    // repeated int32 upper_bound_id = 6;
     /**
      * <code>repeated int32 upper_bound_id = 6;</code>
      */
@@ -6400,13 +6493,15 @@ public final class ProtoBuf {
    */
   public static final class TypeParameter extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        TypeParameter> implements TypeParameterOrBuilder {
+        TypeParameter> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.TypeParameter)
+      TypeParameterOrBuilder {
     // Use TypeParameter.newBuilder() to construct.
     private TypeParameter(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private TypeParameter(boolean noInit) {}
+    private TypeParameter(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final TypeParameter defaultInstance;
     public static TypeParameter getDefaultInstance() {
@@ -6417,12 +6512,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private TypeParameter(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -6432,7 +6533,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -6456,7 +6557,10 @@ public final class ProtoBuf {
             case 32: {
               int rawValue = input.readEnum();
               org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance value = org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance.valueOf(rawValue);
-              if (value != null) {
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
                 bitField0_ |= 0x00000008;
                 variance_ = value;
               }
@@ -6504,6 +6608,13 @@ public final class ProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           upperBoundId_ = java.util.Collections.unmodifiableList(upperBoundId_);
+        }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
         }
         makeExtensionsImmutable();
       }
@@ -6589,7 +6700,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // required int32 id = 1;
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
@@ -6605,7 +6715,6 @@ public final class ProtoBuf {
       return id_;
     }
 
-    // required int32 name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
     private int name_;
     /**
@@ -6621,7 +6730,6 @@ public final class ProtoBuf {
       return name_;
     }
 
-    // optional bool reified = 3 [default = false];
     public static final int REIFIED_FIELD_NUMBER = 3;
     private boolean reified_;
     /**
@@ -6637,7 +6745,6 @@ public final class ProtoBuf {
       return reified_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.TypeParameter.Variance variance = 4 [default = INV];
     public static final int VARIANCE_FIELD_NUMBER = 4;
     private org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance variance_;
     /**
@@ -6653,7 +6760,6 @@ public final class ProtoBuf {
       return variance_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Type upper_bound = 5;
     public static final int UPPER_BOUND_FIELD_NUMBER = 5;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> upperBound_;
     /**
@@ -6689,7 +6795,6 @@ public final class ProtoBuf {
       return upperBound_.get(index);
     }
 
-    // repeated int32 upper_bound_id = 6;
     public static final int UPPER_BOUND_ID_FIELD_NUMBER = 6;
     private java.util.List<java.lang.Integer> upperBoundId_;
     /**
@@ -6723,7 +6828,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasId()) {
         memoizedIsInitialized = 0;
@@ -6772,6 +6878,7 @@ public final class ProtoBuf {
         output.writeInt32(6, upperBoundId_.get(i));
       }
       extensionWriter.writeUntil(1000, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -6810,6 +6917,7 @@ public final class ProtoBuf {
         size += 1 * getUpperBoundIdList().size();
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -6886,7 +6994,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameterOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.TypeParameter)
+        org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameterOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -7000,6 +7110,8 @@ public final class ProtoBuf {
           
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -7044,7 +7156,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // required int32 id = 1;
       private int id_ ;
       /**
        * <code>required int32 id = 1;</code>
@@ -7077,7 +7188,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 name = 2;
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
@@ -7110,7 +7220,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional bool reified = 3 [default = false];
       private boolean reified_ ;
       /**
        * <code>optional bool reified = 3 [default = false];</code>
@@ -7143,7 +7252,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.TypeParameter.Variance variance = 4 [default = INV];
       private org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance variance_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance.INV;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeParameter.Variance variance = 4 [default = INV];</code>
@@ -7179,7 +7287,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Type upper_bound = 5;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> upperBound_ =
         java.util.Collections.emptyList();
       private void ensureUpperBoundIsMutable() {
@@ -7281,7 +7388,8 @@ public final class ProtoBuf {
       public Builder addAllUpperBound(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Type> values) {
         ensureUpperBoundIsMutable();
-        super.addAll(values, upperBound_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, upperBound_);
 
         return this;
       }
@@ -7304,7 +7412,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 upper_bound_id = 6;
       private java.util.List<java.lang.Integer> upperBoundId_ = java.util.Collections.emptyList();
       private void ensureUpperBoundIdIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
@@ -7356,7 +7463,8 @@ public final class ProtoBuf {
       public Builder addAllUpperBoundId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
         ensureUpperBoundIdIsMutable();
-        super.addAll(values, upperBoundId_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, upperBoundId_);
         
         return this;
       }
@@ -7382,15 +7490,14 @@ public final class ProtoBuf {
   }
 
   public interface ClassOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Class)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Class> {
 
-    // optional int32 flags = 1 [default = 6];
     /**
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -7404,7 +7511,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -7415,7 +7521,6 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // required int32 fq_name = 3;
     /**
      * <code>required int32 fq_name = 3;</code>
      */
@@ -7425,7 +7530,6 @@ public final class ProtoBuf {
      */
     int getFqName();
 
-    // optional int32 companion_object_name = 4;
     /**
      * <code>optional int32 companion_object_name = 4;</code>
      */
@@ -7435,7 +7539,6 @@ public final class ProtoBuf {
      */
     int getCompanionObjectName();
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;</code>
      */
@@ -7450,7 +7553,6 @@ public final class ProtoBuf {
      */
     int getTypeParameterCount();
 
-    // repeated .org.jetbrains.kotlin.serialization.Type supertype = 6;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Type supertype = 6;</code>
      */
@@ -7465,7 +7567,6 @@ public final class ProtoBuf {
      */
     int getSupertypeCount();
 
-    // repeated int32 supertype_id = 2 [packed = true];
     /**
      * <code>repeated int32 supertype_id = 2 [packed = true];</code>
      */
@@ -7479,7 +7580,6 @@ public final class ProtoBuf {
      */
     int getSupertypeId(int index);
 
-    // repeated int32 nested_class_name = 7 [packed = true];
     /**
      * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      */
@@ -7493,7 +7593,6 @@ public final class ProtoBuf {
      */
     int getNestedClassName(int index);
 
-    // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 8;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 8;</code>
      */
@@ -7508,7 +7607,6 @@ public final class ProtoBuf {
      */
     int getConstructorCount();
 
-    // repeated .org.jetbrains.kotlin.serialization.Function function = 9;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Function function = 9;</code>
      */
@@ -7523,7 +7621,6 @@ public final class ProtoBuf {
      */
     int getFunctionCount();
 
-    // repeated .org.jetbrains.kotlin.serialization.Property property = 10;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Property property = 10;</code>
      */
@@ -7538,7 +7635,6 @@ public final class ProtoBuf {
      */
     int getPropertyCount();
 
-    // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
      */
@@ -7553,7 +7649,6 @@ public final class ProtoBuf {
      */
     int getEnumEntryCount();
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
      */
@@ -7568,13 +7663,15 @@ public final class ProtoBuf {
    */
   public static final class Class extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Class> implements ClassOrBuilder {
+        Class> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Class)
+      ClassOrBuilder {
     // Use Class.newBuilder() to construct.
     private Class(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Class, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Class(boolean noInit) {}
+    private Class(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Class defaultInstance;
     public static Class getDefaultInstance() {
@@ -7585,12 +7682,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Class(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -7600,7 +7703,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -7756,6 +7859,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
           enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -7884,14 +7994,12 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -7907,7 +8015,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -7920,7 +8027,6 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // required int32 fq_name = 3;
     public static final int FQ_NAME_FIELD_NUMBER = 3;
     private int fqName_;
     /**
@@ -7936,7 +8042,6 @@ public final class ProtoBuf {
       return fqName_;
     }
 
-    // optional int32 companion_object_name = 4;
     public static final int COMPANION_OBJECT_NAME_FIELD_NUMBER = 4;
     private int companionObjectName_;
     /**
@@ -7952,7 +8057,6 @@ public final class ProtoBuf {
       return companionObjectName_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;
     public static final int TYPE_PARAMETER_FIELD_NUMBER = 5;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_;
     /**
@@ -7988,7 +8092,6 @@ public final class ProtoBuf {
       return typeParameter_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Type supertype = 6;
     public static final int SUPERTYPE_FIELD_NUMBER = 6;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> supertype_;
     /**
@@ -8024,7 +8127,6 @@ public final class ProtoBuf {
       return supertype_.get(index);
     }
 
-    // repeated int32 supertype_id = 2 [packed = true];
     public static final int SUPERTYPE_ID_FIELD_NUMBER = 2;
     private java.util.List<java.lang.Integer> supertypeId_;
     /**
@@ -8048,7 +8150,6 @@ public final class ProtoBuf {
     }
     private int supertypeIdMemoizedSerializedSize = -1;
 
-    // repeated int32 nested_class_name = 7 [packed = true];
     public static final int NESTED_CLASS_NAME_FIELD_NUMBER = 7;
     private java.util.List<java.lang.Integer> nestedClassName_;
     /**
@@ -8072,7 +8173,6 @@ public final class ProtoBuf {
     }
     private int nestedClassNameMemoizedSerializedSize = -1;
 
-    // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 8;
     public static final int CONSTRUCTOR_FIELD_NUMBER = 8;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Constructor> constructor_;
     /**
@@ -8108,7 +8208,6 @@ public final class ProtoBuf {
       return constructor_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Function function = 9;
     public static final int FUNCTION_FIELD_NUMBER = 9;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Function> function_;
     /**
@@ -8144,7 +8243,6 @@ public final class ProtoBuf {
       return function_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Property property = 10;
     public static final int PROPERTY_FIELD_NUMBER = 10;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property> property_;
     /**
@@ -8180,7 +8278,6 @@ public final class ProtoBuf {
       return property_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
     public static final int ENUM_ENTRY_FIELD_NUMBER = 13;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_;
     /**
@@ -8216,7 +8313,6 @@ public final class ProtoBuf {
       return enumEntry_.get(index);
     }
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
     private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_;
     /**
@@ -8249,7 +8345,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasFqName()) {
         memoizedIsInitialized = 0;
@@ -8356,6 +8453,7 @@ public final class ProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -8433,6 +8531,7 @@ public final class ProtoBuf {
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -8509,7 +8608,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Class, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.ClassOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Class, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Class)
+        org.jetbrains.kotlin.serialization.ProtoBuf.ClassOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Class.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -8725,6 +8826,8 @@ public final class ProtoBuf {
           mergeTypeTable(other.getTypeTable());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -8801,13 +8904,11 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 6];
       private int flags_ = 6;
       /**
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -8823,7 +8924,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -8839,7 +8939,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -8858,7 +8957,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -8874,7 +8972,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 fq_name = 3;
       private int fqName_ ;
       /**
        * <code>required int32 fq_name = 3;</code>
@@ -8907,7 +9004,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 companion_object_name = 4;
       private int companionObjectName_ ;
       /**
        * <code>optional int32 companion_object_name = 4;</code>
@@ -8940,7 +9036,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_ =
         java.util.Collections.emptyList();
       private void ensureTypeParameterIsMutable() {
@@ -9042,7 +9137,8 @@ public final class ProtoBuf {
       public Builder addAllTypeParameter(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> values) {
         ensureTypeParameterIsMutable();
-        super.addAll(values, typeParameter_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, typeParameter_);
 
         return this;
       }
@@ -9065,7 +9161,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Type supertype = 6;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> supertype_ =
         java.util.Collections.emptyList();
       private void ensureSupertypeIsMutable() {
@@ -9167,7 +9262,8 @@ public final class ProtoBuf {
       public Builder addAllSupertype(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Type> values) {
         ensureSupertypeIsMutable();
-        super.addAll(values, supertype_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, supertype_);
 
         return this;
       }
@@ -9190,7 +9286,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 supertype_id = 2 [packed = true];
       private java.util.List<java.lang.Integer> supertypeId_ = java.util.Collections.emptyList();
       private void ensureSupertypeIdIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
@@ -9242,7 +9337,8 @@ public final class ProtoBuf {
       public Builder addAllSupertypeId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
         ensureSupertypeIdIsMutable();
-        super.addAll(values, supertypeId_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, supertypeId_);
         
         return this;
       }
@@ -9256,7 +9352,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 nested_class_name = 7 [packed = true];
       private java.util.List<java.lang.Integer> nestedClassName_ = java.util.Collections.emptyList();
       private void ensureNestedClassNameIsMutable() {
         if (!((bitField0_ & 0x00000040) == 0x00000040)) {
@@ -9308,7 +9403,8 @@ public final class ProtoBuf {
       public Builder addAllNestedClassName(
           java.lang.Iterable<? extends java.lang.Integer> values) {
         ensureNestedClassNameIsMutable();
-        super.addAll(values, nestedClassName_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, nestedClassName_);
         
         return this;
       }
@@ -9322,7 +9418,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 8;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Constructor> constructor_ =
         java.util.Collections.emptyList();
       private void ensureConstructorIsMutable() {
@@ -9424,7 +9519,8 @@ public final class ProtoBuf {
       public Builder addAllConstructor(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Constructor> values) {
         ensureConstructorIsMutable();
-        super.addAll(values, constructor_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, constructor_);
 
         return this;
       }
@@ -9447,7 +9543,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Function function = 9;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Function> function_ =
         java.util.Collections.emptyList();
       private void ensureFunctionIsMutable() {
@@ -9549,7 +9644,8 @@ public final class ProtoBuf {
       public Builder addAllFunction(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Function> values) {
         ensureFunctionIsMutable();
-        super.addAll(values, function_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, function_);
 
         return this;
       }
@@ -9572,7 +9668,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Property property = 10;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property> property_ =
         java.util.Collections.emptyList();
       private void ensurePropertyIsMutable() {
@@ -9674,7 +9769,8 @@ public final class ProtoBuf {
       public Builder addAllProperty(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Property> values) {
         ensurePropertyIsMutable();
-        super.addAll(values, property_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, property_);
 
         return this;
       }
@@ -9697,7 +9793,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_ =
         java.util.Collections.emptyList();
       private void ensureEnumEntryIsMutable() {
@@ -9799,7 +9894,8 @@ public final class ProtoBuf {
       public Builder addAllEnumEntry(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> values) {
         ensureEnumEntryIsMutable();
-        super.addAll(values, enumEntry_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, enumEntry_);
 
         return this;
       }
@@ -9822,7 +9918,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -9895,10 +9990,10 @@ public final class ProtoBuf {
   }
 
   public interface PackageOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Package)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Package> {
 
-    // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Function function = 3;</code>
      */
@@ -9913,7 +10008,6 @@ public final class ProtoBuf {
      */
     int getFunctionCount();
 
-    // repeated .org.jetbrains.kotlin.serialization.Property property = 4;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Property property = 4;</code>
      */
@@ -9928,7 +10022,6 @@ public final class ProtoBuf {
      */
     int getPropertyCount();
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
      */
@@ -9943,13 +10036,15 @@ public final class ProtoBuf {
    */
   public static final class Package extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Package> implements PackageOrBuilder {
+        Package> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Package)
+      PackageOrBuilder {
     // Use Package.newBuilder() to construct.
     private Package(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Package, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Package(boolean noInit) {}
+    private Package(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Package defaultInstance;
     public static Package getDefaultInstance() {
@@ -9960,12 +10055,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Package(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -9975,7 +10076,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -10024,6 +10125,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           property_ = java.util.Collections.unmodifiableList(property_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -10043,7 +10151,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
     public static final int FUNCTION_FIELD_NUMBER = 3;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Function> function_;
     /**
@@ -10079,7 +10186,6 @@ public final class ProtoBuf {
       return function_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Property property = 4;
     public static final int PROPERTY_FIELD_NUMBER = 4;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property> property_;
     /**
@@ -10115,7 +10221,6 @@ public final class ProtoBuf {
       return property_.get(index);
     }
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
     private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_;
     /**
@@ -10139,7 +10244,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getFunctionCount(); i++) {
         if (!getFunction(i).isInitialized()) {
@@ -10183,6 +10289,7 @@ public final class ProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -10204,6 +10311,7 @@ public final class ProtoBuf {
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -10280,7 +10388,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Package, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.PackageOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Package, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Package)
+        org.jetbrains.kotlin.serialization.ProtoBuf.PackageOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Package.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -10367,6 +10477,8 @@ public final class ProtoBuf {
           mergeTypeTable(other.getTypeTable());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -10415,7 +10527,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Function> function_ =
         java.util.Collections.emptyList();
       private void ensureFunctionIsMutable() {
@@ -10517,7 +10628,8 @@ public final class ProtoBuf {
       public Builder addAllFunction(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Function> values) {
         ensureFunctionIsMutable();
-        super.addAll(values, function_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, function_);
 
         return this;
       }
@@ -10540,7 +10652,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Property property = 4;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property> property_ =
         java.util.Collections.emptyList();
       private void ensurePropertyIsMutable() {
@@ -10642,7 +10753,8 @@ public final class ProtoBuf {
       public Builder addAllProperty(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Property> values) {
         ensurePropertyIsMutable();
-        super.addAll(values, property_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, property_);
 
         return this;
       }
@@ -10665,7 +10777,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -10737,10 +10848,10 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Package)
   }
 
-  public interface TypeTableOrBuilder
-      extends org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+  public interface TypeTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.TypeTable)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
-    // repeated .org.jetbrains.kotlin.serialization.Type type = 1;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.Type type = 1;</code>
      */
@@ -10755,7 +10866,6 @@ public final class ProtoBuf {
      */
     int getTypeCount();
 
-    // optional int32 first_nullable = 2 [default = -1];
     /**
      * <code>optional int32 first_nullable = 2 [default = -1];</code>
      *
@@ -10779,14 +10889,15 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeTable}
    */
   public static final class TypeTable extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-      implements TypeTableOrBuilder {
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.TypeTable)
+      TypeTableOrBuilder {
     // Use TypeTable.newBuilder() to construct.
     private TypeTable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private TypeTable(boolean noInit) {}
+    private TypeTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final TypeTable defaultInstance;
     public static TypeTable getDefaultInstance() {
@@ -10797,12 +10908,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private TypeTable(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -10812,7 +10929,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -10842,6 +10959,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           type_ = java.util.Collections.unmodifiableList(type_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -10861,7 +10985,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // repeated .org.jetbrains.kotlin.serialization.Type type = 1;
     public static final int TYPE_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> type_;
     /**
@@ -10897,7 +11020,6 @@ public final class ProtoBuf {
       return type_.get(index);
     }
 
-    // optional int32 first_nullable = 2 [default = -1];
     public static final int FIRST_NULLABLE_FIELD_NUMBER = 2;
     private int firstNullable_;
     /**
@@ -10930,7 +11052,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getTypeCount(); i++) {
         if (!getType(i).isInitialized()) {
@@ -10951,6 +11074,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(2, firstNullable_);
       }
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -10967,6 +11091,7 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, firstNullable_);
       }
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -11044,7 +11169,9 @@ public final class ProtoBuf {
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
           org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeTableOrBuilder {
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.TypeTable)
+        org.jetbrains.kotlin.serialization.ProtoBuf.TypeTableOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -11113,6 +11240,8 @@ public final class ProtoBuf {
         if (other.hasFirstNullable()) {
           setFirstNullable(other.getFirstNullable());
         }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -11145,7 +11274,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.Type type = 1;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Type> type_ =
         java.util.Collections.emptyList();
       private void ensureTypeIsMutable() {
@@ -11247,7 +11375,8 @@ public final class ProtoBuf {
       public Builder addAllType(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Type> values) {
         ensureTypeIsMutable();
-        super.addAll(values, type_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, type_);
 
         return this;
       }
@@ -11270,7 +11399,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 first_nullable = 2 [default = -1];
       private int firstNullable_ = -1;
       /**
        * <code>optional int32 first_nullable = 2 [default = -1];</code>
@@ -11335,15 +11463,14 @@ public final class ProtoBuf {
   }
 
   public interface ConstructorOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Constructor)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Constructor> {
 
-    // optional int32 flags = 1 [default = 6];
     /**
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *isSecondary
@@ -11354,7 +11481,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *isSecondary
@@ -11362,7 +11488,6 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 2;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 2;</code>
      */
@@ -11382,13 +11507,15 @@ public final class ProtoBuf {
    */
   public static final class Constructor extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Constructor> implements ConstructorOrBuilder {
+        Constructor> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Constructor)
+      ConstructorOrBuilder {
     // Use Constructor.newBuilder() to construct.
     private Constructor(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Constructor, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Constructor(boolean noInit) {}
+    private Constructor(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Constructor defaultInstance;
     public static Constructor getDefaultInstance() {
@@ -11399,12 +11526,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Constructor(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -11414,7 +11547,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -11444,6 +11577,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -11463,14 +11603,12 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *isSecondary
@@ -11483,7 +11621,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *isSecondary
@@ -11493,7 +11630,6 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 2;
     public static final int VALUE_PARAMETER_FIELD_NUMBER = 2;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_;
     /**
@@ -11536,7 +11672,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getValueParameterCount(); i++) {
         if (!getValueParameter(i).isInitialized()) {
@@ -11565,6 +11702,7 @@ public final class ProtoBuf {
         output.writeMessage(2, valueParameter_.get(i));
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -11582,6 +11720,7 @@ public final class ProtoBuf {
           .computeMessageSize(2, valueParameter_.get(i));
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -11658,7 +11797,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Constructor, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.ConstructorOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Constructor, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Constructor)
+        org.jetbrains.kotlin.serialization.ProtoBuf.ConstructorOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Constructor.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -11728,6 +11869,8 @@ public final class ProtoBuf {
           
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -11764,13 +11907,11 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 6];
       private int flags_ = 6;
       /**
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *isSecondary
@@ -11783,7 +11924,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *isSecondary
@@ -11796,7 +11936,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *isSecondary
@@ -11812,7 +11951,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *isSecondary
@@ -11825,7 +11963,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 2;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_ =
         java.util.Collections.emptyList();
       private void ensureValueParameterIsMutable() {
@@ -11927,7 +12064,8 @@ public final class ProtoBuf {
       public Builder addAllValueParameter(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> values) {
         ensureValueParameterIsMutable();
-        super.addAll(values, valueParameter_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, valueParameter_);
 
         return this;
       }
@@ -11962,15 +12100,14 @@ public final class ProtoBuf {
   }
 
   public interface FunctionOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Function)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 9 [default = 6];
     /**
      * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -11987,7 +12124,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -12001,7 +12137,6 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // optional int32 old_flags = 1 [default = 6];
     /**
      * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
@@ -12011,7 +12146,6 @@ public final class ProtoBuf {
      */
     int getOldFlags();
 
-    // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
      */
@@ -12021,7 +12155,6 @@ public final class ProtoBuf {
      */
     int getName();
 
-    // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
      */
@@ -12031,7 +12164,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getReturnType();
 
-    // optional int32 return_type_id = 7;
     /**
      * <code>optional int32 return_type_id = 7;</code>
      */
@@ -12041,7 +12173,6 @@ public final class ProtoBuf {
      */
     int getReturnTypeId();
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
      */
@@ -12056,7 +12187,6 @@ public final class ProtoBuf {
      */
     int getTypeParameterCount();
 
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
      */
@@ -12066,7 +12196,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getReceiverType();
 
-    // optional int32 receiver_type_id = 8;
     /**
      * <code>optional int32 receiver_type_id = 8;</code>
      */
@@ -12076,7 +12205,6 @@ public final class ProtoBuf {
      */
     int getReceiverTypeId();
 
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 6;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 6;</code>
      */
@@ -12091,7 +12219,6 @@ public final class ProtoBuf {
      */
     int getValueParameterCount();
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
      */
@@ -12106,13 +12233,15 @@ public final class ProtoBuf {
    */
   public static final class Function extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Function> implements FunctionOrBuilder {
+        Function> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Function)
+      FunctionOrBuilder {
     // Use Function.newBuilder() to construct.
     private Function(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Function, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Function(boolean noInit) {}
+    private Function(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Function defaultInstance;
     public static Function getDefaultInstance() {
@@ -12123,12 +12252,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Function(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -12138,7 +12273,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -12238,6 +12373,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -12257,14 +12399,12 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 9 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 9;
     private int flags_;
     /**
      * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -12283,7 +12423,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -12299,7 +12438,6 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // optional int32 old_flags = 1 [default = 6];
     public static final int OLD_FLAGS_FIELD_NUMBER = 1;
     private int oldFlags_;
     /**
@@ -12315,7 +12453,6 @@ public final class ProtoBuf {
       return oldFlags_;
     }
 
-    // required int32 name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
     private int name_;
     /**
@@ -12331,7 +12468,6 @@ public final class ProtoBuf {
       return name_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
     public static final int RETURN_TYPE_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type returnType_;
     /**
@@ -12347,7 +12483,6 @@ public final class ProtoBuf {
       return returnType_;
     }
 
-    // optional int32 return_type_id = 7;
     public static final int RETURN_TYPE_ID_FIELD_NUMBER = 7;
     private int returnTypeId_;
     /**
@@ -12363,7 +12498,6 @@ public final class ProtoBuf {
       return returnTypeId_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
     public static final int TYPE_PARAMETER_FIELD_NUMBER = 4;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_;
     /**
@@ -12399,7 +12533,6 @@ public final class ProtoBuf {
       return typeParameter_.get(index);
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
     public static final int RECEIVER_TYPE_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type receiverType_;
     /**
@@ -12415,7 +12548,6 @@ public final class ProtoBuf {
       return receiverType_;
     }
 
-    // optional int32 receiver_type_id = 8;
     public static final int RECEIVER_TYPE_ID_FIELD_NUMBER = 8;
     private int receiverTypeId_;
     /**
@@ -12431,7 +12563,6 @@ public final class ProtoBuf {
       return receiverTypeId_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 6;
     public static final int VALUE_PARAMETER_FIELD_NUMBER = 6;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_;
     /**
@@ -12467,7 +12598,6 @@ public final class ProtoBuf {
       return valueParameter_.get(index);
     }
 
-    // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
     private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_;
     /**
@@ -12498,7 +12628,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasName()) {
         memoizedIsInitialized = 0;
@@ -12579,6 +12710,7 @@ public final class ProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -12628,6 +12760,7 @@ public final class ProtoBuf {
           .computeMessageSize(30, typeTable_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -12704,7 +12837,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Function, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.FunctionOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Function, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Function)
+        org.jetbrains.kotlin.serialization.ProtoBuf.FunctionOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Function.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -12854,6 +12989,8 @@ public final class ProtoBuf {
           mergeTypeTable(other.getTypeTable());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -12918,13 +13055,11 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 9 [default = 6];
       private int flags_ = 6;
       /**
        * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -12943,7 +13078,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -12962,7 +13096,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -12984,7 +13117,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -13003,7 +13135,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 old_flags = 1 [default = 6];
       private int oldFlags_ = 6;
       /**
        * <code>optional int32 old_flags = 1 [default = 6];</code>
@@ -13036,7 +13167,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 name = 2;
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
@@ -13069,7 +13199,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
@@ -13130,7 +13259,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 return_type_id = 7;
       private int returnTypeId_ ;
       /**
        * <code>optional int32 return_type_id = 7;</code>
@@ -13163,7 +13291,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_ =
         java.util.Collections.emptyList();
       private void ensureTypeParameterIsMutable() {
@@ -13265,7 +13392,8 @@ public final class ProtoBuf {
       public Builder addAllTypeParameter(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> values) {
         ensureTypeParameterIsMutable();
-        super.addAll(values, typeParameter_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, typeParameter_);
 
         return this;
       }
@@ -13288,7 +13416,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type receiverType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
@@ -13349,7 +13476,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 receiver_type_id = 8;
       private int receiverTypeId_ ;
       /**
        * <code>optional int32 receiver_type_id = 8;</code>
@@ -13382,7 +13508,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 6;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> valueParameter_ =
         java.util.Collections.emptyList();
       private void ensureValueParameterIsMutable() {
@@ -13484,7 +13609,8 @@ public final class ProtoBuf {
       public Builder addAllValueParameter(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter> values) {
         ensureValueParameterIsMutable();
-        super.addAll(values, valueParameter_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, valueParameter_);
 
         return this;
       }
@@ -13507,7 +13633,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
       private org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -13580,15 +13705,14 @@ public final class ProtoBuf {
   }
 
   public interface PropertyOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Property)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 11 [default = 518];
     /**
      * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13606,7 +13730,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13621,7 +13744,6 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // optional int32 old_flags = 1 [default = 2054];
     /**
      * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
@@ -13631,7 +13753,6 @@ public final class ProtoBuf {
      */
     int getOldFlags();
 
-    // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
      */
@@ -13641,7 +13762,6 @@ public final class ProtoBuf {
      */
     int getName();
 
-    // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
      */
@@ -13651,7 +13771,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getReturnType();
 
-    // optional int32 return_type_id = 9;
     /**
      * <code>optional int32 return_type_id = 9;</code>
      */
@@ -13661,7 +13780,6 @@ public final class ProtoBuf {
      */
     int getReturnTypeId();
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
      */
@@ -13676,7 +13794,6 @@ public final class ProtoBuf {
      */
     int getTypeParameterCount();
 
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
      */
@@ -13686,7 +13803,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getReceiverType();
 
-    // optional int32 receiver_type_id = 10;
     /**
      * <code>optional int32 receiver_type_id = 10;</code>
      */
@@ -13696,7 +13812,6 @@ public final class ProtoBuf {
      */
     int getReceiverTypeId();
 
-    // optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;</code>
      */
@@ -13706,12 +13821,10 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter getSetterValueParameter();
 
-    // optional int32 getter_flags = 7;
     /**
      * <code>optional int32 getter_flags = 7;</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13724,7 +13837,6 @@ public final class ProtoBuf {
      * <code>optional int32 getter_flags = 7;</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13734,7 +13846,6 @@ public final class ProtoBuf {
      */
     int getGetterFlags();
 
-    // optional int32 setter_flags = 8;
     /**
      * <code>optional int32 setter_flags = 8;</code>
      */
@@ -13749,13 +13860,15 @@ public final class ProtoBuf {
    */
   public static final class Property extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        Property> implements PropertyOrBuilder {
+        Property> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Property)
+      PropertyOrBuilder {
     // Use Property.newBuilder() to construct.
     private Property(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Property, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private Property(boolean noInit) {}
+    private Property(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final Property defaultInstance;
     public static Property getDefaultInstance() {
@@ -13766,12 +13879,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private Property(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -13781,7 +13900,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -13880,6 +13999,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
         }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -13899,14 +14025,12 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 11 [default = 518];
     public static final int FLAGS_FIELD_NUMBER = 11;
     private int flags_;
     /**
      * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13926,7 +14050,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -13943,7 +14066,6 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // optional int32 old_flags = 1 [default = 2054];
     public static final int OLD_FLAGS_FIELD_NUMBER = 1;
     private int oldFlags_;
     /**
@@ -13959,7 +14081,6 @@ public final class ProtoBuf {
       return oldFlags_;
     }
 
-    // required int32 name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
     private int name_;
     /**
@@ -13975,7 +14096,6 @@ public final class ProtoBuf {
       return name_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
     public static final int RETURN_TYPE_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type returnType_;
     /**
@@ -13991,7 +14111,6 @@ public final class ProtoBuf {
       return returnType_;
     }
 
-    // optional int32 return_type_id = 9;
     public static final int RETURN_TYPE_ID_FIELD_NUMBER = 9;
     private int returnTypeId_;
     /**
@@ -14007,7 +14126,6 @@ public final class ProtoBuf {
       return returnTypeId_;
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
     public static final int TYPE_PARAMETER_FIELD_NUMBER = 4;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_;
     /**
@@ -14043,7 +14161,6 @@ public final class ProtoBuf {
       return typeParameter_.get(index);
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
     public static final int RECEIVER_TYPE_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type receiverType_;
     /**
@@ -14059,7 +14176,6 @@ public final class ProtoBuf {
       return receiverType_;
     }
 
-    // optional int32 receiver_type_id = 10;
     public static final int RECEIVER_TYPE_ID_FIELD_NUMBER = 10;
     private int receiverTypeId_;
     /**
@@ -14075,7 +14191,6 @@ public final class ProtoBuf {
       return receiverTypeId_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;
     public static final int SETTER_VALUE_PARAMETER_FIELD_NUMBER = 6;
     private org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter setterValueParameter_;
     /**
@@ -14091,14 +14206,12 @@ public final class ProtoBuf {
       return setterValueParameter_;
     }
 
-    // optional int32 getter_flags = 7;
     public static final int GETTER_FLAGS_FIELD_NUMBER = 7;
     private int getterFlags_;
     /**
      * <code>optional int32 getter_flags = 7;</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -14113,7 +14226,6 @@ public final class ProtoBuf {
      * <code>optional int32 getter_flags = 7;</code>
      *
      * <pre>
-     *
      *hasAnnotations
      *Visibility
      *Modality
@@ -14125,7 +14237,6 @@ public final class ProtoBuf {
       return getterFlags_;
     }
 
-    // optional int32 setter_flags = 8;
     public static final int SETTER_FLAGS_FIELD_NUMBER = 8;
     private int setterFlags_;
     /**
@@ -14157,7 +14268,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasName()) {
         memoizedIsInitialized = 0;
@@ -14235,6 +14347,7 @@ public final class ProtoBuf {
         output.writeInt32(11, flags_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -14288,6 +14401,7 @@ public final class ProtoBuf {
           .computeInt32Size(11, flags_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -14364,7 +14478,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Property, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.PropertyOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.Property, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Property)
+        org.jetbrains.kotlin.serialization.ProtoBuf.PropertyOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Property.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -14515,6 +14631,8 @@ public final class ProtoBuf {
           setSetterFlags(other.getSetterFlags());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -14573,13 +14691,11 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 11 [default = 518];
       private int flags_ = 518;
       /**
        * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -14599,7 +14715,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -14619,7 +14734,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -14642,7 +14756,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -14662,7 +14775,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 old_flags = 1 [default = 2054];
       private int oldFlags_ = 2054;
       /**
        * <code>optional int32 old_flags = 1 [default = 2054];</code>
@@ -14695,7 +14807,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 name = 2;
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
@@ -14728,7 +14839,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type return_type = 3;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type return_type = 3;</code>
@@ -14789,7 +14899,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 return_type_id = 9;
       private int returnTypeId_ ;
       /**
        * <code>optional int32 return_type_id = 9;</code>
@@ -14822,7 +14931,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> typeParameter_ =
         java.util.Collections.emptyList();
       private void ensureTypeParameterIsMutable() {
@@ -14924,7 +15032,8 @@ public final class ProtoBuf {
       public Builder addAllTypeParameter(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter> values) {
         ensureTypeParameterIsMutable();
-        super.addAll(values, typeParameter_);
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, typeParameter_);
 
         return this;
       }
@@ -14947,7 +15056,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type receiverType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
@@ -15008,7 +15116,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 receiver_type_id = 10;
       private int receiverTypeId_ ;
       /**
        * <code>optional int32 receiver_type_id = 10;</code>
@@ -15041,7 +15148,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;
       private org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter setterValueParameter_ = org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.ValueParameter setter_value_parameter = 6;</code>
@@ -15102,13 +15208,11 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 getter_flags = 7;
       private int getterFlags_ ;
       /**
        * <code>optional int32 getter_flags = 7;</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -15123,7 +15227,6 @@ public final class ProtoBuf {
        * <code>optional int32 getter_flags = 7;</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -15138,7 +15241,6 @@ public final class ProtoBuf {
        * <code>optional int32 getter_flags = 7;</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -15156,7 +15258,6 @@ public final class ProtoBuf {
        * <code>optional int32 getter_flags = 7;</code>
        *
        * <pre>
-       *
        *hasAnnotations
        *Visibility
        *Modality
@@ -15171,7 +15272,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 setter_flags = 8;
       private int setterFlags_ ;
       /**
        * <code>optional int32 setter_flags = 8;</code>
@@ -15216,15 +15316,14 @@ public final class ProtoBuf {
   }
 
   public interface ValueParameterOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.ValueParameter)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<ValueParameter> {
 
-    // optional int32 flags = 1 [default = 0];
     /**
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *
      *declaresDefault
      *hasAnnotations
      *isCrossinline
@@ -15236,7 +15335,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *
      *declaresDefault
      *hasAnnotations
      *isCrossinline
@@ -15245,7 +15343,6 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
      */
@@ -15255,7 +15352,6 @@ public final class ProtoBuf {
      */
     int getName();
 
-    // optional .org.jetbrains.kotlin.serialization.Type type = 3;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type type = 3;</code>
      */
@@ -15265,7 +15361,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
 
-    // optional int32 type_id = 5;
     /**
      * <code>optional int32 type_id = 5;</code>
      */
@@ -15275,7 +15370,6 @@ public final class ProtoBuf {
      */
     int getTypeId();
 
-    // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
      */
@@ -15285,7 +15379,6 @@ public final class ProtoBuf {
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getVarargElementType();
 
-    // optional int32 vararg_element_type_id = 6;
     /**
      * <code>optional int32 vararg_element_type_id = 6;</code>
      */
@@ -15300,13 +15393,15 @@ public final class ProtoBuf {
    */
   public static final class ValueParameter extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        ValueParameter> implements ValueParameterOrBuilder {
+        ValueParameter> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.ValueParameter)
+      ValueParameterOrBuilder {
     // Use ValueParameter.newBuilder() to construct.
     private ValueParameter(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private ValueParameter(boolean noInit) {}
+    private ValueParameter(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final ValueParameter defaultInstance;
     public static ValueParameter getDefaultInstance() {
@@ -15317,12 +15412,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private ValueParameter(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15332,7 +15433,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -15392,6 +15493,13 @@ public final class ProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -15411,14 +15519,12 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 0];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *
      *declaresDefault
      *hasAnnotations
      *isCrossinline
@@ -15432,7 +15538,6 @@ public final class ProtoBuf {
      * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
-     *
      *declaresDefault
      *hasAnnotations
      *isCrossinline
@@ -15443,7 +15548,6 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // required int32 name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
     private int name_;
     /**
@@ -15459,7 +15563,6 @@ public final class ProtoBuf {
       return name_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type type = 3;
     public static final int TYPE_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
     /**
@@ -15475,7 +15578,6 @@ public final class ProtoBuf {
       return type_;
     }
 
-    // optional int32 type_id = 5;
     public static final int TYPE_ID_FIELD_NUMBER = 5;
     private int typeId_;
     /**
@@ -15491,7 +15593,6 @@ public final class ProtoBuf {
       return typeId_;
     }
 
-    // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
     public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 4;
     private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_;
     /**
@@ -15507,7 +15608,6 @@ public final class ProtoBuf {
       return varargElementType_;
     }
 
-    // optional int32 vararg_element_type_id = 6;
     public static final int VARARG_ELEMENT_TYPE_ID_FIELD_NUMBER = 6;
     private int varargElementTypeId_;
     /**
@@ -15534,7 +15634,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasName()) {
         memoizedIsInitialized = 0;
@@ -15585,6 +15686,7 @@ public final class ProtoBuf {
         output.writeInt32(6, varargElementTypeId_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -15618,6 +15720,7 @@ public final class ProtoBuf {
           .computeInt32Size(6, varargElementTypeId_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -15694,7 +15797,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameterOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.ValueParameter)
+        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameterOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -15792,6 +15897,8 @@ public final class ProtoBuf {
           setVarargElementTypeId(other.getVarargElementTypeId());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -15838,13 +15945,11 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 0];
       private int flags_ ;
       /**
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *
        *declaresDefault
        *hasAnnotations
        *isCrossinline
@@ -15858,7 +15963,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *
        *declaresDefault
        *hasAnnotations
        *isCrossinline
@@ -15872,7 +15976,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *
        *declaresDefault
        *hasAnnotations
        *isCrossinline
@@ -15889,7 +15992,6 @@ public final class ProtoBuf {
        * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
-       *
        *declaresDefault
        *hasAnnotations
        *isCrossinline
@@ -15903,7 +16005,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 name = 2;
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
@@ -15936,7 +16037,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type type = 3;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 3;</code>
@@ -15997,7 +16097,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 type_id = 5;
       private int typeId_ ;
       /**
        * <code>optional int32 type_id = 5;</code>
@@ -16030,7 +16129,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type varargElementType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type vararg_element_type = 4;</code>
@@ -16091,7 +16189,6 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 vararg_element_type_id = 6;
       private int varargElementTypeId_ ;
       /**
        * <code>optional int32 vararg_element_type_id = 6;</code>
@@ -16136,10 +16233,10 @@ public final class ProtoBuf {
   }
 
   public interface EnumEntryOrBuilder extends 
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.EnumEntry)
        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<EnumEntry> {
 
-    // optional int32 name = 1;
     /**
      * <code>optional int32 name = 1;</code>
      */
@@ -16154,13 +16251,15 @@ public final class ProtoBuf {
    */
   public static final class EnumEntry extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage<
-        EnumEntry> implements EnumEntryOrBuilder {
+        EnumEntry> implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.EnumEntry)
+      EnumEntryOrBuilder {
     // Use EnumEntry.newBuilder() to construct.
     private EnumEntry(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry, ?> builder) {
       super(builder);
-
+      this.unknownFields = builder.getUnknownFields();
     }
-    private EnumEntry(boolean noInit) {}
+    private EnumEntry(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
     private static final EnumEntry defaultInstance;
     public static EnumEntry getDefaultInstance() {
@@ -16171,12 +16270,18 @@ public final class ProtoBuf {
       return defaultInstance;
     }
 
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
     private EnumEntry(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       initFields();
       int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -16186,7 +16291,7 @@ public final class ProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input,
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
                                      extensionRegistry, tag)) {
                 done = true;
               }
@@ -16205,6 +16310,13 @@ public final class ProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -16224,7 +16336,6 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
@@ -16246,7 +16357,8 @@ public final class ProtoBuf {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!extensionsAreInitialized()) {
         memoizedIsInitialized = 0;
@@ -16266,6 +16378,7 @@ public final class ProtoBuf {
         output.writeInt32(1, name_);
       }
       extensionWriter.writeUntil(200, output);
+      output.writeRawBytes(unknownFields);
     }
 
     private int memoizedSerializedSize = -1;
@@ -16279,6 +16392,7 @@ public final class ProtoBuf {
           .computeInt32Size(1, name_);
       }
       size += extensionsSerializedSize();
+      size += unknownFields.size();
       memoizedSerializedSize = size;
       return size;
     }
@@ -16355,7 +16469,9 @@ public final class ProtoBuf {
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntryOrBuilder {
+          org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry, Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.EnumEntry)
+        org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntryOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -16408,6 +16524,8 @@ public final class ProtoBuf {
           setName(other.getName());
         }
         this.mergeExtensionFields(other);
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
@@ -16438,7 +16556,6 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 name = 1;
       private int name_ ;
       /**
        * <code>optional int32 name = 1;</code>
