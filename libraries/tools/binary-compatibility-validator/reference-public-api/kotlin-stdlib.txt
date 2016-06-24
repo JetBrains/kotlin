@@ -2079,18 +2079,7 @@ public final class kotlin/text/MatchGroup {
 }
 
 public abstract interface class kotlin/text/MatchGroupCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
-	public abstract synthetic fun add (Ljava/lang/Object;)Z
-	public abstract fun add (Lkotlin/text/MatchGroup;)Z
-	public abstract fun addAll (Ljava/util/Collection;)Z
-	public abstract fun clear ()V
 	public abstract fun get (I)Lkotlin/text/MatchGroup;
-	public abstract fun iterator ()Ljava/util/Iterator;
-	public abstract fun remove (Ljava/lang/Object;)Z
-	public abstract fun remove (Lkotlin/text/MatchGroup;)Z
-	public abstract fun removeAll (Ljava/util/Collection;)Z
-	public abstract fun retainAll (Ljava/util/Collection;)Z
-	public abstract fun toArray ()[Ljava/lang/Object;
-	public abstract fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public abstract interface class kotlin/text/MatchResult {
