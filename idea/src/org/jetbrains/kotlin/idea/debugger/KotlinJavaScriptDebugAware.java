@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.debugger;
 
-import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.jetbrains.javascript.debugger.JavaScriptDebugAware;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType;
 
 public class KotlinJavaScriptDebugAware extends JavaScriptDebugAware {
     @Nullable
     @Override
     public Class<? extends XLineBreakpointType<?>> getBreakpointTypeClass() {
-        return JavaLineBreakpointType.class;
+        return KotlinLineBreakpointType.class;
     }
 }
