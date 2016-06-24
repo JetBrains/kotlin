@@ -19,13 +19,17 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.google.common.collect.Sets
 import com.intellij.lang.Language
 import com.intellij.lang.refactoring.InlineActionHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
@@ -55,6 +59,10 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class KotlinInlineValHandler : InlineActionHandler() {
+    enum class InlineMode {
+        ALL, PRIMARY, NONE
+    }
+
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
@@ -152,12 +160,15 @@ class KotlinInlineValHandler : InlineActionHandler() {
         }
 
         fun performRefactoring() {
-            if (!showDialog(project,
-                            name,
-                            RefactoringBundle.message("inline.variable.title"),
-                            declaration,
-                            referenceExpressions,
-                            HelpID.INLINE_VARIABLE)) {
+            val primaryExpression = if (editor != null) {
+                val offset = editor.caretModel.offset
+                referenceExpressions.firstOrNull { it.textRange.contains(offset) }
+            }
+            else null
+            val primaryRef = primaryExpression?.mainReference
+
+            val inlineMode = showDialog(declaration, primaryRef, referenceExpressions.size)
+            if (inlineMode == InlineMode.NONE) {
                 if (isHighlighting) {
                     val statusBar = WindowManager.getInstance().getStatusBar(project)
                     statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
@@ -165,8 +176,10 @@ class KotlinInlineValHandler : InlineActionHandler() {
                 return
             }
 
+            val chosenExpressions = if (inlineMode == InlineMode.ALL) referenceExpressions else listOf(primaryExpression)
+
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
-                val inlinedExpressions = referenceExpressions
+                val inlinedExpressions = chosenExpressions
                         .flatMap { referenceExpression ->
                             if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
 
@@ -184,8 +197,10 @@ class KotlinInlineValHandler : InlineActionHandler() {
                         }
                         .mapNotNull { postProcessInternalReferences(it) }
 
-                assignments.forEach { it.delete() }
-                declaration.delete()
+                if (inlineMode == InlineMode.ALL) {
+                    assignments.forEach { it.delete() }
+                    declaration.delete()
+                }
 
                 if (inlinedExpressions.isNotEmpty()) {
                     if (typeArgumentsForCall != null) {
@@ -222,6 +237,15 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
     private fun showErrorHint(project: Project, editor: Editor?, message: String) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE)
+    }
+
+    private fun showDialog(property: KtProperty, ref: PsiReference?, occurrenceCount: Int): InlineMode {
+        if (ApplicationManager.getApplication().isUnitTestMode) return InlineMode.ALL
+        if ((ref == null || occurrenceCount <= 1) && !EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog) return InlineMode.ALL
+
+        val dialog = KotlinInlineValDialog(property, ref, occurrenceCount)
+        if (!dialog.showAndGet()) return InlineMode.NONE
+        return if (JavaRefactoringSettings.getInstance().INLINE_LOCAL_THIS) InlineMode.PRIMARY else InlineMode.ALL
     }
 
     private fun getParametersForFunctionLiteral(initializer: KtExpression): String? {
