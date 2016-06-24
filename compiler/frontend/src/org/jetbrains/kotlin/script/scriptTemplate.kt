@@ -28,14 +28,12 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
-import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.memberFunctions
-import kotlin.reflect.memberProperties
+import kotlin.reflect.*
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -56,12 +54,12 @@ annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KCla
 
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val environment: Map<String, Any?>?) : KotlinScriptDefinition {
 
-    private val definitionAnnotation by lazy { template.annotations.mapNotNull { it as? ScriptTemplateDefinition }.firstOrNull() }
+    private val definitionAnnotation by lazy { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() }
 
     override val name = template.simpleName!!
 
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-            template.constructors.first().parameters.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByFqName(scriptDescriptor, it.type.toString())) }
+            template.primaryConstructor!!.parameters.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByFqName(scriptDescriptor, it.type.toString())) }
 
     override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
             listOf(getKotlinTypeByFqName(scriptDescriptor, template.qualifiedName!!))
@@ -76,14 +74,19 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
     private class ResolverWithAcceptedAnnotations(val resolverClass: KClass<out ScriptDependenciesResolver>) {
-        val resolver by lazy { resolverClass.constructors.first().call() }
+        val resolver by lazy { resolverClass.primaryConstructor!!.call() }
         val acceptedAnnotations by lazy {
-            val resolveMethodName = ScriptDependenciesResolver::class.memberFunctions.first().name
-            resolverClass.memberFunctions.find { it.name == resolveMethodName }?.annotations
-                    ?.mapNotNull { it as? AcceptedAnnotations }
-                    ?.flatMap {
+            val resolveMethod = ScriptDependenciesResolver::resolve
+            val resolverMethodAnnotations =
+                    resolverClass.memberFunctions.find {
+                        it.name == resolveMethod.name &&
+                        sameSignature(it, resolveMethod)
+                    }
+                    ?.annotations
+                    ?.filterIsInstance<AcceptedAnnotations>()
+            resolverMethodAnnotations?.flatMap {
                         val v = it.supportedAnnotationClasses
-                        v.toList() // TODO: find out why if inlined, it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass"
+                        v.toList() // TODO: inline after KT-9453 is resolved (now it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass")
                     }
             ?: emptyList()
         }
@@ -103,23 +106,24 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
                 .map { KtAnnotationWrapper(it) }
                 .mapNotNull { wrappedAnn ->
                     // TODO: consider advanced matching using semantic similar to actual resolving
-                    supportedAnnotationClasses.find { wrappedAnn.name == it.simpleName || wrappedAnn.name == it.qualifiedName }
-                        ?.let { Pair(it, wrappedAnn) }
+                    supportedAnnotationClasses.find {
+                        wrappedAnn.name == it.simpleName || wrappedAnn.name == it.qualifiedName
+                    }?.let { it to wrappedAnn }
                 }
-        val annotations = fileAnnotations.map {
+        val annotations = fileAnnotations.map { annClassToWrapper ->
             try {
-                val handler = AnnProxyInvocationHandler(it.first, it.second.valueArguments)
-                val proxy = Proxy.newProxyInstance((template as Any).javaClass.classLoader, arrayOf(it.first.java), handler) as Annotation
-                Pair(it.first, proxy)
+                val handler = AnnProxyInvocationHandler(annClassToWrapper.first, annClassToWrapper.second.valueArguments)
+                val proxy = Proxy.newProxyInstance((template as Any).javaClass.classLoader, arrayOf(annClassToWrapper.first.java), handler) as Annotation
+                annClassToWrapper.first to proxy
             }
             catch (ex: Exception) {
-                Pair(it.first, InvalidScriptResolverAnnotation(it.second.name, it.second.valueArguments, ex))
+                annClassToWrapper.first to InvalidScriptResolverAnnotation(annClassToWrapper.second.name, annClassToWrapper.second.valueArguments, ex)
             }
         }
         val fileDeps = dependenciesResolvers.mapNotNull { resolverWrapper ->
-            val supportedAnnotations = annotations.mapNotNull { ann ->
-                val annFQN = ann.first.qualifiedName
-                if (resolverWrapper.acceptedAnnotations.any { it.qualifiedName == annFQN }) ann.second else null
+            val supportedAnnotations = annotations.mapNotNull { annClassToWrapper ->
+                val annFQN = annClassToWrapper.first.qualifiedName
+                if (resolverWrapper.acceptedAnnotations.any { it.qualifiedName == annFQN }) annClassToWrapper.second else null
             }
             resolverWrapper.resolver.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
         }
@@ -148,7 +152,6 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     }
 }
 
-@Suppress("unused")
 class InvalidScriptResolverAnnotation(val name: String, val params: Iterable<Any?>, val error: Exception? = null) : Annotation
 
 class AnnProxyInvocationHandler<out K: KClass<out Any>>(val targetAnnClass: K, val annParams: List<Pair<String?, Any?>>) : InvocationHandler {
@@ -162,3 +165,11 @@ class AnnProxyInvocationHandler<out K: KClass<out Any>>(val targetAnnClass: K, v
         return null
     }
 }
+
+internal fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
+        left.parameters.size == right.parameters.size &&
+        left.parameters.zip(right.parameters).all {
+            it.first.kind == KParameter.Kind.INSTANCE ||
+            it.first.type == it.second.type
+        }
+

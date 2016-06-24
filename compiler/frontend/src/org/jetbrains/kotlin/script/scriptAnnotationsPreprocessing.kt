@@ -16,54 +16,27 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.TypeUtils
 
 internal class KtAnnotationWrapper(val psi: KtAnnotationEntry) {
     val name: String
         get() = (psi.typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
 
-    val valueArguments by lazy {
+    val valueArguments: List<Pair<String?, Any?>> by lazy {
         psi.valueArguments.map {
-            Pair(it.getArgumentName()?.toString(), convert(it.getArgumentExpression()!!))
+            val evaluator = ConstantExpressionEvaluator(DefaultBuiltIns.Instance)
+            val trace = BindingTraceContext()
+            val result = evaluator.evaluateToConstantValue(it.getArgumentExpression()!!, trace, TypeUtils.NO_EXPECTED_TYPE)
+            it.getArgumentName()?.asName.toString() to result?.value
+            // TODO: consider inspecting `trace` to find diagnostics reported during the computation (such as division by zero, integer overflow, invalid annotation parameters etc.)
         }
     }
 
-    internal fun String?.orAnonymous(kind: String = ""): String {
-        return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
-    }
-
-    internal fun convert(expression: KtExpression): Any? = when (expression) {
-        is KtStringTemplateExpression -> {
-            if (expression.entries.isEmpty())
-                ""
-            else if (expression.entries.size == 1)
-                convert(expression.entries[0])
-            else
-                ""
-            // TODO: parse expressions, etc. e.g.:
-            //      convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
-        }
-        else -> null
-
-    }
-
-    internal fun convert(entry: KtStringTemplateEntry): Any? = when (entry) {
-        is KtStringTemplateEntryWithExpression -> convertOrEmpty(entry.expression)
-        is KtEscapeStringTemplateEntry -> entry.unescapedValue
-        else -> {
-            StringUtil.unescapeStringCharacters(entry.text)
-        }
-    }
-
-    internal fun convertOrEmpty(expression: KtExpression?): Any? {
-        return if (expression != null) convert(expression) else null
-    }
+    internal fun String?.orAnonymous(kind: String = ""): String =
+            this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 }
-
-fun parseAnnotation(ann: KtAnnotationEntry): Pair<String, Iterable<Any?>> {
-    val wann = KtAnnotationWrapper(ann)
-    val vals = wann.valueArguments
-    return Pair(wann.name, vals)
-}
-

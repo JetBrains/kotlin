@@ -69,13 +69,6 @@ class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScr
     override val sources: Iterable<File> get() = dependencies.flatMap { it.sources }
 }
 
-fun Iterable<File>.isSameClasspathAs(other: Iterable<File>): Boolean {
-    val c1 = map { it.canonicalPath }.toHashSet()
-    val c2 = other.map { it.canonicalPath }.toHashSet()
-    return c1.size == c2.size &&
-           c1.zip(c2).all { it.first == it.second }
-}
-
 data class ScriptParameter(val name: Name, val type: KotlinType)
 
 fun <TF> getFileName(file: TF): String = when (file) {
