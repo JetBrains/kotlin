@@ -218,8 +218,8 @@ class CollectionStubMethodGenerator(
                             else
                                 foundOverriddenFromDirectSuperClass.copy(
                                         fakeOverride.containingDeclaration,
-                                        fakeOverride.modality,
-                                        fakeOverride.visibility,
+                                        foundOverriddenFromDirectSuperClass.modality,
+                                        foundOverriddenFromDirectSuperClass.visibility,
                                         fakeOverride.kind, false)
 
                     newDescriptor.overriddenDescriptors =
