@@ -93,7 +93,7 @@ class CallCompleter(
                 resolvedCall.call.calleeExpression
 
             for (validator in symbolUsageValidators) {
-                validator.validateCall(resolvedCall, resolvedCall.resultingDescriptor, context.trace, element!!)
+                validator.validateCall(resolvedCall, context.trace, element!!)
             }
 
             resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)
