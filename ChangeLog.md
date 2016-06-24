@@ -13,6 +13,12 @@
 
 - [`KT-12830`](https://youtrack.jetbrains.com/issue/KT-12830) Remove spaces before *?* in nullable types
 
+#### Intention actions, inspections and quickfixes
+
+###### Issues fixed
+
+- [`KT-11115`](https://youtrack.jetbrains.com/issue/KT-11115) Implement Members: Fix base member detection when abstract and non-abstract members with matching signatures are inherited from an interface
+
 #### Refactorings
 
 ###### Issues fixed
