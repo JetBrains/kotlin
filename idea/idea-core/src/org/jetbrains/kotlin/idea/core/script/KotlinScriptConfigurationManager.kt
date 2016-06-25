@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.startup.StartupManager
@@ -44,9 +43,8 @@ import kotlin.concurrent.write
 
 class KotlinScriptConfigurationManager(
         private val project: Project,
-        private val dumbService: DumbService,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
-        private val scriptExternalImportsProvider: KotlinScriptExternalImportsProvider?
+        private val scriptExternalImportsProvider: KotlinScriptExternalImportsProvider
 ) {
 
     private val kotlinEnvVars: Map<String, List<String>> by lazy {
@@ -83,38 +81,32 @@ class KotlinScriptConfigurationManager(
     }
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
-            scriptExternalImportsProvider
-                    ?.getExternalImports(file)
-                    ?.flatMap { it.classpath }
-                    ?.map { it.classpathEntryToVfs() }
-            ?: emptyList()
+            scriptExternalImportsProvider.getExternalImports(file)
+                    .flatMap { it.classpath }
+                    .map { it.classpathEntryToVfs() }
 
     fun getAllScriptsClasspath(): List<VirtualFile> = cacheLock.read {
         if (allScriptsClasspathCache == null) {
-            dumbService.runWhenSmart {
-                cacheLock.write {
-                    allScriptsClasspathCache =
-                            (scriptExternalImportsProvider?.getKnownCombinedClasspath() ?: emptyList())
-                                    .distinct()
-                                    .mapNotNull { it.classpathEntryToVfs() }
-                }
-                notifyRootsChanged()
+            cacheLock.write {
+                allScriptsClasspathCache =
+                        scriptExternalImportsProvider.getKnownCombinedClasspath()
+                                .distinct()
+                                .mapNotNull { it.classpathEntryToVfs() }
             }
+            notifyRootsChanged()
         }
         return allScriptsClasspathCache ?: emptyList()
     }
 
     fun getAllLibrarySources(): List<VirtualFile> = cacheLock.read {
         if (allLibrarySourcesCache == null) {
-            dumbService.runWhenSmart {
-                cacheLock.write {
-                    allLibrarySourcesCache =
-                            (scriptExternalImportsProvider?.getKnownSourceRoots() ?: emptyList())
-                                    .distinct()
-                                    .mapNotNull { it.classpathEntryToVfs() }
-                }
-                notifyRootsChanged()
+            cacheLock.write {
+                allLibrarySourcesCache =
+                        scriptExternalImportsProvider.getKnownSourceRoots()
+                                .distinct()
+                                .mapNotNull { it.classpathEntryToVfs() }
             }
+            notifyRootsChanged()
         }
         return allLibrarySourcesCache ?: emptyList()
     }
@@ -150,7 +142,7 @@ class KotlinScriptConfigurationManager(
 
     private fun cacheAllScriptsExtraImports() {
         runReadAction {
-            scriptExternalImportsProvider?.apply {
+            scriptExternalImportsProvider.apply {
                 invalidateCaches()
                 cacheExternalImports(
                         scriptDefinitionProvider.getAllKnownFileTypes()
@@ -160,7 +152,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun updateExternalImportsCache(files: Iterable<VirtualFile>, onChange: () -> Unit) {
-        val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(files)?.any() ?: false
+        val isChanged = scriptExternalImportsProvider.updateExternalImportsCache(files).any()
         if (isChanged) {
             onChange()
         }
