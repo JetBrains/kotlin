@@ -50,12 +50,22 @@
 
 - Reduced number of IO operation when loading kotlin compiled classes
 
-#### Command line compiler
+#### Сompiler options
 
-- Support `-language-version` command line option for source compatibility with older releases
-- Support `-jvm-target` command line option to allow specifying java runtime target version
+- Allow to specify version of Kotlin language for source compatibility with older releases.
+    - CLI: `-language-version` command line option
+    - Maven: `languageVersion` configuration parameter, linked with `kotlin.compiler.languageVersion` property
+    - Gradle: `kotlinOptions.languageVersion` property in task configuration
+- Allow to specify which java runtime target version to generate bytecode for.
+    - CLI: `-jvm-target` command line option
+    - Maven: `jvmTarget` configuration parameter, linked with `kotlin.compiler.jvmTarget` property
+    - Gradle: `kotlinOptions.jvmTarget` property in task configuration
+- Allow to specify path to JDK to resolve classes from.
+    - CLI: `-jdk-home` command line option
+    - Maven: `jdkHome` configuration parameter, linked with `kotlin.compiler.jdkHome` property
+    - Gradle: `kotlinOptions.jdkHome` property in task configuration
 
-### Stdlib
+### Standard Library
 
 - Improve documentation (including [`KT-11632`](https://youtrack.jetbrains.com/issue/KT-11632))
 - List iteration used in collection operations is performed with an indexed loop when the list supports `RandomAccess` and the operation isn't inlined

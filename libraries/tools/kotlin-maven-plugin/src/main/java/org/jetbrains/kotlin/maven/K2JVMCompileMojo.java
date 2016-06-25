@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -30,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -60,6 +55,15 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(defaultValue = "${project.artifactId}-test", required = true, readonly = true)
     protected String testModuleName;
+
+    @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
+    protected String languageVersion;
+
+    @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
+    protected String jvmTarget;
+
+    @Parameter(property = "kotlin.compiler.jdkHome", required = false, readonly = false)
+    protected String jdkHome;
 
     @NotNull
     @Override
@@ -101,6 +105,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (arguments.noOptimize) {
             getLog().info("Optimization is turned off");
+        }
+
+        arguments.languageVersion = languageVersion;
+        arguments.jvmTarget = jvmTarget;
+
+        if (jdkHome != null) {
+            getLog().info("Overriding JDK home path with: " + jdkHome);
+            arguments.jdkHome = jdkHome;
         }
     }
 }
