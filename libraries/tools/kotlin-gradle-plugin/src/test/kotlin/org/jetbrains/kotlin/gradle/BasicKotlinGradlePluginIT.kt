@@ -99,6 +99,22 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertContains("This type is sealed")
         }
     }
+    @Test
+    fun testJvmTarget() {
+        Project("jvmTarget", "1.6").build("build") {
+            assertFailed()
+            assertContains("Unknown JVM target version: 1.7")
+        }
+    }
+
+    @Test
+    fun testCustomJdk() {
+        Project("customJdk", "1.6").build("build") {
+            assertFailed()
+            assertContains("Unresolved reference: stream")
+            assertNotContains("AutoCloseable")
+        }
+    }
 
     @Test
     fun testGradleSubplugin() {

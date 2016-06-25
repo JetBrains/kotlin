@@ -94,7 +94,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
         logger.kotlinDebug("modified ${modified.joinToString { it.path }}")
         logger.kotlinDebug("removed ${removed.joinToString { it.path }}")
-        var commonArgs = createBlankArgs()
         val args = createBlankArgs()
         val sources = getKotlinSources()
         if (sources.isEmpty()) {
@@ -195,6 +194,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         args.noStdlib = true
+        args.jdkHome = kotlinOptions.jdkHome
         args.noJdk = kotlinOptions.noJdk
         args.noInline = kotlinOptions.noInline
         args.noOptimize = kotlinOptions.noOptimize
@@ -202,6 +202,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.noParamAssertions = kotlinOptions.noParamAssertions
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
         args.languageVersion = kotlinOptions.languageVersion
+        args.jvmTarget = kotlinOptions.jvmTarget
 
         fun addFriendPathForTestTask(taskName: String) {
             logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")
