@@ -23,7 +23,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -315,22 +314,6 @@ data class ScriptDependenciesModuleInfo(val project: Project): IdeaModuleInfo {
 
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
-}
-
-class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
-
-    override fun contains(file: VirtualFile): Boolean =
-        VfsUtilCore.isAncestor(libraryRoot, file, false)
-
-    override fun isSearchInLibraries(): Boolean = true
-    override fun isSearchInModuleContent(aModule: Module): Boolean = false
-
-    // TODO: check if this is a valid decision for the case of a single root
-    override fun compare(file1: VirtualFile, file2: VirtualFile): Int = 0
-
-    override fun equals(other: Any?) = other is FileLibraryScope && libraryRoot == other.libraryRoot
-
-    override fun hashCode() = libraryRoot.hashCode()
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
