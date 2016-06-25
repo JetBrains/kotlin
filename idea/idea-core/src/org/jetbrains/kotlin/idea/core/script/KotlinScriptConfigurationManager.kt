@@ -29,8 +29,8 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.io.URLUtil
-import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
@@ -70,9 +70,15 @@ class KotlinScriptConfigurationManager(
         })
     }
 
-    private var allScriptsClasspathCache: List<VirtualFile>? = null
-    private var allLibrarySourcesCache: List<VirtualFile>? = null
     private val cacheLock = ReentrantReadWriteLock()
+
+    private val allScriptsClasspathCache = ClearableLazyValue(cacheLock) {
+        scriptExternalImportsProvider.getKnownCombinedClasspath().distinct().map { it.classpathEntryToVfs() }
+    }
+
+    private val allLibrarySourcesCache = ClearableLazyValue(cacheLock) {
+        scriptExternalImportsProvider.getKnownSourceRoots().distinct().mapNotNull { it.classpathEntryToVfs() }
+    }
 
     private fun notifyRootsChanged() {
         ApplicationManager.getApplication().invokeLater {
@@ -85,31 +91,9 @@ class KotlinScriptConfigurationManager(
                     .flatMap { it.classpath }
                     .map { it.classpathEntryToVfs() }
 
-    fun getAllScriptsClasspath(): List<VirtualFile> = cacheLock.read {
-        if (allScriptsClasspathCache == null) {
-            cacheLock.write {
-                allScriptsClasspathCache =
-                        scriptExternalImportsProvider.getKnownCombinedClasspath()
-                                .distinct()
-                                .mapNotNull { it.classpathEntryToVfs() }
-            }
-            notifyRootsChanged()
-        }
-        return allScriptsClasspathCache ?: emptyList()
-    }
+    fun getAllScriptsClasspath(): List<VirtualFile> = allScriptsClasspathCache.get()
 
-    fun getAllLibrarySources(): List<VirtualFile> = cacheLock.read {
-        if (allLibrarySourcesCache == null) {
-            cacheLock.write {
-                allLibrarySourcesCache =
-                        scriptExternalImportsProvider.getKnownSourceRoots()
-                                .distinct()
-                                .mapNotNull { it.classpathEntryToVfs() }
-            }
-            notifyRootsChanged()
-        }
-        return allLibrarySourcesCache ?: emptyList()
-    }
+    fun getAllLibrarySources(): List<VirtualFile> = allLibrarySourcesCache.get()
 
     private fun File.classpathEntryToVfs(): VirtualFile =
             if (isDirectory)
@@ -117,19 +101,9 @@ class KotlinScriptConfigurationManager(
             else
                 StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
 
-    fun getAllScriptsClasspathScope(): GlobalSearchScope {
-        return getAllScriptsClasspath().let { cp ->
-            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
-            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
-        }
-    }
+    fun getAllScriptsClasspathScope() = NonClasspathDirectoriesScope(getAllScriptsClasspath())
 
-    fun getAllLibrarySourcesScope(): GlobalSearchScope {
-        return getAllLibrarySources().let { cp ->
-            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
-            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
-        }
-    }
+    fun getAllLibrarySourcesScope() = NonClasspathDirectoriesScope(getAllLibrarySources())
 
     private fun reloadScriptDefinitions() {
         (makeScriptDefsFromTemplateProviderExtensions(project, { ep, ex -> /* TODO: add logging here */ }) +
@@ -159,10 +133,8 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun invalidateLocalCaches() {
-        cacheLock.write {
-            allScriptsClasspathCache = null
-            allLibrarySourcesCache = null
-        }
+        allScriptsClasspathCache.clear()
+        allLibrarySourcesCache.clear()
     }
 
 
@@ -173,3 +145,23 @@ class KotlinScriptConfigurationManager(
     }
 }
 
+private class ClearableLazyValue<out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T) {
+    private var value: T? = null
+
+    fun get(): T {
+        lock.read {
+            if (value == null) {
+                lock.write {
+                    value = compute()
+                }
+            }
+            return value!!
+        }
+    }
+
+    fun clear() {
+        lock.write {
+            value = null
+        }
+    }
+}
