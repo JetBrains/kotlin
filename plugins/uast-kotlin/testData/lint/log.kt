@@ -26,8 +26,8 @@ class LogTest {
     }
 
     fun checkWrongTag(tag: String) {
-        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `null` versus `null` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
-            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `null` versus `null`">TAG2</error>, "message") // warn: mismatched tags!
+        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `MyTag1` versus `MyTag2` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
+            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `MyTag1` versus `MyTag2`">TAG2</error>, "message") // warn: mismatched tags!
         }
         if (Log.isLoggable("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `my_tag` versus `other_tag` (Conflicting tag)">my_tag</error>", Log.DEBUG)) {
             Log.d("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `my_tag` versus `other_tag`">other_tag</error>", "message") // warn: mismatched tags!
@@ -50,12 +50,12 @@ class LogTest {
             Log.d(TAG1, "message") // ok: short
             Log.d(TAG22, "message") // ok: short
             Log.d(TAG23, "message") // ok: threshold
-            Log.d(TAG24, "message") // error: too long
-            Log.d(LONG_TAG, "message") // error: way too long
+            Log.<error descr="The logging tag can be at most 23 characters, was 24 (123456789012345678901234)">d(TAG24, "message")</error> // error: too long
+            Log.<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">d(LONG_TAG, "message")</error> // error: way too long
 
             // Locally defined variable tags
             val LOCAL_TAG = "MyReallyReallyReallyReallyReallyLongTag"
-            Log.d(LOCAL_TAG, "message") // error: too long
+            Log.<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">d(LOCAL_TAG, "message")</error> // error: too long
 
             // Concatenated tags
             Log.<error descr="The logging tag can be at most 23 characters, was 28 (1234567890123456789012MyTag1)">d(TAG22 + TAG1, "message")</error> // error: too long

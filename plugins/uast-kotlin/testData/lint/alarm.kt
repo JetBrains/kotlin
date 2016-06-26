@@ -12,10 +12,9 @@ class TestAlarm {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME, 5000,  // ERROR
                                   <warning descr="Value will be forced up to 60000 as of Android 5.1; don't rely on this to be exact">OtherClass.MY_INTERVAL</warning>, null);                          // ERROR
 
-        // Check value flow analysis, currently unsupported
         val interval = 10;
         val interval2 = 2L * interval;
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME, 5000, interval2, null); // ERROR
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME, 5000, <warning descr="Value will be forced up to 60000 as of Android 5.1; don't rely on this to be exact">interval2</warning>, null); // ERROR
     }
 
     private object OtherClass {

@@ -10,6 +10,7 @@ Compiling files:
 End of files
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseKt$WhenMappings.class
   out/production/module/UseKt.class
 End of files
 Compiling files:
