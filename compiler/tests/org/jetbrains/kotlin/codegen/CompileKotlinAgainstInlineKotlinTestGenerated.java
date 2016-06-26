@@ -1789,9 +1789,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("funImportedFromObject.kt")
+        public void testFunImportedFromObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/funImportedFromObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("params.kt")
         public void testParams() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/params.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propImportedFromObject.kt")
+        public void testPropImportedFromObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/propImportedFromObject.kt");
             doTest(fileName);
         }
 

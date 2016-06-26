@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -235,7 +236,7 @@ public class InlineCodegen extends CallGenerator {
                 : jvmSignature.getAsmMethod();
 
         MethodId methodId = new MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.getContainingDeclaration()), asmMethod);
-        final CallableMemberDescriptor directMember = JvmCodegenUtil.getDirectMember(functionDescriptor);
+        final CallableMemberDescriptor directMember = getDirectMemberAndCallableFromObject(functionDescriptor);
         if (!isBuiltInArrayIntrinsic(functionDescriptor) && !(directMember instanceof DeserializedCallableMemberDescriptor)) {
             return doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, codegen, context, callDefault, state, asmMethod);
         }
@@ -254,6 +255,15 @@ public class InlineCodegen extends CallGenerator {
         );
 
         return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.getNode()));
+    }
+
+    @NotNull
+    private static CallableMemberDescriptor getDirectMemberAndCallableFromObject(@NotNull FunctionDescriptor functionDescriptor) {
+        CallableMemberDescriptor directMember = JvmCodegenUtil.getDirectMember(functionDescriptor);
+        if (directMember instanceof ImportedFromObjectCallableDescriptor) {
+            return  ((ImportedFromObjectCallableDescriptor) directMember).getCallableFromObject();
+        }
+        return directMember;
     }
 
     @NotNull

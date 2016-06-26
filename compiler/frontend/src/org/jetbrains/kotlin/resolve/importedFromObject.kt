@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableDescriptor>(
+abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
         val callableFromObject: TCallable
 ) : CallableDescriptor {
     val containingObject = callableFromObject.containingDeclaration as ClassDescriptor
