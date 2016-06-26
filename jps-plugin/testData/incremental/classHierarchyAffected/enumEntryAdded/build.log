@@ -16,6 +16,7 @@ Cleaning output files:
   out/production/module/GetRandomEnumEntryKt.class
   out/production/module/META-INF/module.kotlin_module
   out/production/module/UseEnumImplicitlyKt.class
+  out/production/module/UseKt$WhenMappings.class
   out/production/module/UseKt.class
 End of files
 Compiling files:

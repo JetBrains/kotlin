@@ -161,6 +161,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, null, null, context);
         checkNull(expression, context, typeInfo.getType());
 
+        components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
         return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 
