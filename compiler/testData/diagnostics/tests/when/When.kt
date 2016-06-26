@@ -26,7 +26,7 @@ fun test() {
 
   when (x) {
     <!INCOMPATIBLE_TYPES!>s<!> -> <!UNUSED_EXPRESSION!>1<!>
-    <!INCOMPATIBLE_TYPES!>""<!> -> <!UNUSED_EXPRESSION!>1<!>
+    <!INCOMPATIBLE_TYPES, DUPLICATE_LABEL_IN_WHEN!>""<!> -> <!UNUSED_EXPRESSION!>1<!>
     x -> <!UNUSED_EXPRESSION!>1<!>
     1 -> <!UNUSED_EXPRESSION!>1<!>
   }
