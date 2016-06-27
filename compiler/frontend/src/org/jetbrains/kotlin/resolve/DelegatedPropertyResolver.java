@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -70,22 +69,19 @@ public class DelegatedPropertyResolver {
     private final ExpressionTypingServices expressionTypingServices;
     private final LanguageFeatureSettings languageFeatureSettings;
     private final Iterable<CallChecker> callCheckers;
-    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
 
     public DelegatedPropertyResolver(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull LanguageFeatureSettings languageFeatureSettings,
-            @NotNull Iterable<CallChecker> callCheckers,
-            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators
+            @NotNull Iterable<CallChecker> callCheckers
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
         this.expressionTypingServices = expressionTypingServices;
         this.languageFeatureSettings = languageFeatureSettings;
         this.callCheckers = callCheckers;
-        this.symbolUsageValidators = symbolUsageValidators;
     }
 
     @Nullable
@@ -239,9 +235,6 @@ public class DelegatedPropertyResolver {
                         new CallCheckerContext(trace, delegateFunctionsScope, languageFeatureSettings, dataFlowInfo, false);
                 for (CallChecker checker : callCheckers) {
                     checker.check(resultingCall, byKeyword, callCheckerContext);
-                }
-                for (SymbolUsageValidator validator : symbolUsageValidators) {
-                    validator.validateCall(resultingCall, trace, byKeyword);
                 }
             }
         }

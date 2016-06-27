@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -41,8 +40,7 @@ class DestructuringDeclarationResolver(
         private val localVariableResolver: LocalVariableResolver,
         private val typeResolver: TypeResolver,
         private val languageFeatureSettings: LanguageFeatureSettings,
-        private val callCheckers: Iterable<CallChecker>,
-        private val symbolUsageValidators: Iterable<SymbolUsageValidator>
+        private val callCheckers: Iterable<CallChecker>
 ) {
     fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
@@ -89,9 +87,6 @@ class DestructuringDeclarationResolver(
         val callCheckerContext = CallCheckerContext(context, languageFeatureSettings)
         for (checker in callCheckers) {
             checker.check(results.resultingCall, entry, callCheckerContext)
-        }
-        for (validator in symbolUsageValidators) {
-            validator.validateCall(results.resultingCall, context.trace, entry)
         }
 
         val functionReturnType = results.resultingDescriptor.returnType

@@ -573,9 +573,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (CallChecker checker : components.callCheckers) {
             checker.check(resolvedCall, expression, callCheckerContext);
         }
-        for (SymbolUsageValidator validator : components.symbolUsageValidators) {
-            validator.validateCall(resolvedCall, trace, expression);
-        }
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {

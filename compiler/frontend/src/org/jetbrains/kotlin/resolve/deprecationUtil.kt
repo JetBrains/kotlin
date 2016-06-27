@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -171,6 +174,15 @@ private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
     }
 
     return null
+}
+
+internal fun createDeprecationDiagnostic(element: PsiElement, deprecation: Deprecation): Diagnostic {
+    val targetOriginal = deprecation.target.original
+    if (deprecation.deprecationLevel == DeprecationLevelValue.ERROR) {
+        return Errors.DEPRECATION_ERROR.on(element, targetOriginal, deprecation.message)
+    }
+
+    return Errors.DEPRECATION.on(element, targetOriginal, deprecation.message)
 }
 
 // values from kotlin.DeprecationLevel
