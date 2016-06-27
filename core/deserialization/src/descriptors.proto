@@ -127,7 +127,7 @@ message Type {
   optional int32 type_parameter = 7; // id of the type parameter
   // Name of the type parameter in the immediate owner
   optional int32 type_parameter_name = 9 [(name_id_in_table) = true];
-  optional int32 type_alias_name = 12 [(name_id_in_table) = true];
+  optional int32 type_alias_name = 12 [(fq_name_id_in_table) = true];
 
   optional Type outer_type = 10;
   optional int32 outer_type_id = 11;

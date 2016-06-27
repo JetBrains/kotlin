@@ -24149,7 +24149,7 @@ public final class DebugProtoBuf {
       "Type\022\037\n\027flexible_upper_bound_id\030\010 \001(\005\022\030\n" +
       "\nclass_name\030\006 \001(\005B\004\220\265\030\001\022\026\n\016type_paramete" +
       "r\030\007 \001(\005\022!\n\023type_parameter_name\030\t \001(\005B\004\210\265",
-      "\030\001\022\035\n\017type_alias_name\030\014 \001(\005B\004\210\265\030\001\022<\n\nout" +
+      "\030\001\022\035\n\017type_alias_name\030\014 \001(\005B\004\220\265\030\001\022<\n\nout" +
       "er_type\030\n \001(\0132(.org.jetbrains.kotlin.ser" +
       "ialization.Type\022\025\n\router_type_id\030\013 \001(\005\022B" +
       "\n\020abbreviated_type\030\r \001(\0132(.org.jetbrains" +
@@ -24378,7 +24378,7 @@ public final class DebugProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
-    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
