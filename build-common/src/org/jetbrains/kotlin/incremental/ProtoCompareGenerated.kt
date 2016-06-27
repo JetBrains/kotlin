@@ -409,7 +409,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (old.hasTypeAliasName() != new.hasTypeAliasName()) return false
         if (old.hasTypeAliasName()) {
-            if (!checkStringEquals(old.typeAliasName, new.typeAliasName)) return false
+            if (!checkClassIdEquals(old.typeAliasName, new.typeAliasName)) return false
         }
 
         if (old.hasOuterType() != new.hasOuterType()) return false
@@ -1194,7 +1194,7 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
     }
 
     if (hasTypeAliasName()) {
-        hashCode = 31 * hashCode + stringIndexes(typeAliasName)
+        hashCode = 31 * hashCode + fqNameIndexes(typeAliasName)
     }
 
     if (hasOuterType()) {
