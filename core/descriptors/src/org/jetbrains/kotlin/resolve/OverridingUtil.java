@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -220,14 +221,14 @@ public class OverridingUtil {
     ) {
         assert firstParameters.size() == secondParameters.size() :
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
-        if (firstParameters.isEmpty()) return KotlinTypeChecker.withAxioms(equalityAxioms);
+        if (firstParameters.isEmpty()) return KotlinTypeCheckerImpl.withAxioms(equalityAxioms);
 
         final Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
         for (int i = 0; i < firstParameters.size(); i++) {
             matchingTypeConstructors.put(firstParameters.get(i).getTypeConstructor(), secondParameters.get(i).getTypeConstructor());
         }
 
-        return KotlinTypeChecker.withAxioms(new KotlinTypeChecker.TypeConstructorEquality() {
+        return KotlinTypeCheckerImpl.withAxioms(new KotlinTypeChecker.TypeConstructorEquality() {
             @Override
             public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
                 if (equalityAxioms.equals(a, b)) return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
 fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
@@ -32,7 +33,7 @@ fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descri
     if (descriptor1 !is CallableDescriptor) return true
     descriptor2 as CallableDescriptor
 
-    val typeChecker = KotlinTypeChecker.withAxioms(object: KotlinTypeChecker.TypeConstructorEquality {
+    val typeChecker = KotlinTypeCheckerImpl.withAxioms(object: KotlinTypeChecker.TypeConstructorEquality {
         override fun equals(a: TypeConstructor, b: TypeConstructor): Boolean {
             val typeParam1 = a.declarationDescriptor as? TypeParameterDescriptor
             val typeParam2 = b.declarationDescriptor as? TypeParameterDescriptor

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,49 +20,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
-public class KotlinTypeChecker {
+public interface KotlinTypeChecker {
 
-    public interface TypeConstructorEquality {
+    interface TypeConstructorEquality {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }
 
-    public static final KotlinTypeChecker DEFAULT = new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()));
+    KotlinTypeChecker DEFAULT = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()));
 
-    public static final KotlinTypeChecker ERROR_TYPES_ARE_EQUAL_TO_ANYTHING = new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
+    KotlinTypeChecker ERROR_TYPES_ARE_EQUAL_TO_ANYTHING = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
         @Override
         public boolean assertEqualTypes(@NotNull KotlinType a, @NotNull KotlinType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
             return a.isError() || b.isError() || super.assertEqualTypes(a, b, typeCheckingProcedure);
         }
     }));
 
-    public static final KotlinTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
+    KotlinTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
         @Override
         protected boolean heterogeneousEquivalence(KotlinType inflexibleType, KotlinType flexibleType) {
             return false;
         }
     });
 
-    @NotNull
-    public static KotlinTypeChecker withAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
-        return new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
-            @Override
-            public boolean assertEqualTypeConstructors(@NotNull TypeConstructor constructor1, @NotNull TypeConstructor constructor2) {
-                return constructor1.equals(constructor2) || equalityAxioms.equals(constructor1, constructor2);
-            }
-        }));
-    }
 
-    private final TypeCheckingProcedure procedure;
-
-    private KotlinTypeChecker(@NotNull TypeCheckingProcedure procedure) {
-        this.procedure = procedure;
-    }
-
-    public boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
-        return procedure.isSubtypeOf(subtype, supertype);
-    }
-
-    public boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b) {
-        return procedure.equalTypes(a, b);
-    }
+    boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype);
+    boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b);
 }
