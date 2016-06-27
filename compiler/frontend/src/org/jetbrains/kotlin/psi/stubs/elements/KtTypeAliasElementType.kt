@@ -33,7 +33,7 @@ class KtTypeAliasElementType(debugName: String) :
         val name = StringRef.fromString(psi.name)
         val fqName = StringRef.fromString(ResolveSessionUtils.safeFqNameForLazyResolve(psi)?.asString())
         val isTopLevel = psi.isTopLevel()
-        return KotlinTypeAliasStubImpl(KtStubElementTypes.TYPEALIAS, parentStub, name, fqName, isTopLevel)
+        return KotlinTypeAliasStubImpl(parentStub, name, fqName, isTopLevel)
     }
 
     override fun serialize(stub: KotlinTypeAliasStub, dataStream: StubOutputStream) {
@@ -46,7 +46,7 @@ class KtTypeAliasElementType(debugName: String) :
         val name = dataStream.readName()
         val fqName = dataStream.readName()
         val isTopLevel = dataStream.readBoolean()
-        return KotlinTypeAliasStubImpl(KtStubElementTypes.TYPEALIAS, parentStub, name, fqName, isTopLevel)
+        return KotlinTypeAliasStubImpl(parentStub, name, fqName, isTopLevel)
     }
 
     override fun indexStub(stub: KotlinTypeAliasStub, sink: IndexSink) {
