@@ -327,6 +327,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.expandedTypeId != new.expandedTypeId) return false
         }
 
+        if (!checkEqualsTypeAliasAnnotation(old, new)) return false
+
         return true
     }
 
@@ -795,6 +797,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsTypeAliasAnnotation(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
+        if (old.annotationCount != new.annotationCount) return false
+
+        for(i in 0..old.annotationCount - 1) {
+            if (!checkEquals(old.getAnnotation(i), new.getAnnotation(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeTableType(old: ProtoBuf.TypeTable, new: ProtoBuf.TypeTable): Boolean {
         if (old.typeCount != new.typeCount) return false
 
@@ -1109,6 +1121,10 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     if (hasExpandedTypeId()) {
         hashCode = 31 * hashCode + expandedTypeId
+    }
+
+    for(i in 0..annotationCount - 1) {
+        hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode

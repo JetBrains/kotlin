@@ -4819,6 +4819,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("Annotations.kt")
+            public void testAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Annotations.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("Basic.kt")
             public void testBasic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Basic.kt");

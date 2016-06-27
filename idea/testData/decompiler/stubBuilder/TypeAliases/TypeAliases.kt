@@ -17,7 +17,6 @@ class TypeAliases {
         b.invoke(a)
     }
 
-    // TODO: annotations are unsupported yet
     @Ann
     private typealias Parametrized<E, F> = Map<E, F>
 }

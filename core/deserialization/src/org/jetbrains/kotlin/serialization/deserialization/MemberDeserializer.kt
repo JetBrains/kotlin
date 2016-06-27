@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class MemberDeserializer(private val c: DeserializationContext) {
+    private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
@@ -173,7 +175,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     fun loadTypeAlias(proto: ProtoBuf.TypeAlias): TypeAliasDescriptor {
-        val annotations = Annotations.EMPTY // TODO generate & load type alias annotations
+        val annotations = AnnotationsImpl(proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) })
 
         val visibility = Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         val typeAlias = DeserializedTypeAliasDescriptor(
