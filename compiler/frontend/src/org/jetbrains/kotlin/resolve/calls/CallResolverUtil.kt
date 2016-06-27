@@ -20,7 +20,6 @@ import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.checkers.InfixCallChecker
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -127,13 +125,6 @@ fun isConventionCall(call: Call): Boolean {
 }
 
 fun isInfixCall(call: Call): Boolean = InfixCallChecker.isInfixCall(call.calleeExpression)
-
-fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
-    if (call.callElement !is KtPrefixExpression) return null
-    val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return null
-    val name = calleeExpression.getNameForConventionalOperation(unaryOperations = true, binaryOperations = false)
-    return if (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS) name else null
-}
 
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false

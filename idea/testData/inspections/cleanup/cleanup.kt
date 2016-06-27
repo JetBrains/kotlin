@@ -38,14 +38,7 @@ annotation class Fancy(val param: Int)
 
 @Fancy(<caret>i) class D
 
-class CustomDelegate {
-    operator fun get(thisRef: Any?, prop: KProperty<*>): String = ""
-    operator fun set(thisRef: Any?, prop: KProperty<*>, value: String) {}
-}
-
 class B {
-    var a: String by CustomDelegate()
-
     fun plus(a: A): A = A()
 }
 
