@@ -443,10 +443,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val psiFactory = KtPsiFactory(currentFile)
 
                 val modifiers =
-                        if (containingElement is KtClassOrObject
-                            && containingElement.isAncestor(config.originalElement)
-                            && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR)
-                            "private "
+                        if (callableInfo.isAbstract) {
+                            if (containingElement is KtClass && containingElement.isInterface()) "" else "abstract "
+                        }
+                        else if (containingElement is KtClassOrObject
+                                 && containingElement.isAncestor(config.originalElement)
+                                 && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR) "private "
                         else ""
 
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {
@@ -454,6 +456,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         val body = when {
                             containingElement is KtClass && containingElement.isInterface() && !config.isExtension -> ""
                             callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR -> ""
+                            callableInfo.isAbstract -> ""
                             else -> "{}"
                         }
                         @Suppress("USELESS_CAST") // KT-10755

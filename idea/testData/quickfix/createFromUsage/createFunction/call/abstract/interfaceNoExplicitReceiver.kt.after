@@ -1,0 +1,10 @@
+// "Create abstract function 'foo'" "true"
+interface A {
+    fun bar(b: Boolean) {}
+
+    fun test() {
+        bar(foo(1, "2"))
+    }
+
+    fun foo<caret>(i: Int, s: String): Boolean
+}
