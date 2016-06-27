@@ -24,4 +24,6 @@ private fun probablyNothing(): Nothing = throw IllegalStateException()
 
 private val certainlyNothing: kotlin.Nothing = throw IllegalStateException()
 
+private typealias Alias<E> = (E) -> E
+
 class Nothing
