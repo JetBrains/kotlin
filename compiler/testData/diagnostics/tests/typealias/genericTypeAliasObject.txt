@@ -3,7 +3,7 @@ package
 public typealias GenericTestObject</*0*/ T>  = AnObject
 public typealias TestGCWC</*0*/ T>  = GenericClassWithCompanion<T>
 public val test11: AnObject
-public val test12: GenericTestObject<*> [= AnObject]
+public val test12: GenericTestObject<*> /* = AnObject */
 public val test13: kotlin.String = "OK"
 public val test14: kotlin.String
 public val test25: GenericClassWithCompanion.Companion

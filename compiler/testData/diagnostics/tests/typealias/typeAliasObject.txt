@@ -4,11 +4,11 @@ public typealias TestCWC = ClassWithCompanion
 public typealias TestObject = AnObject
 public typealias TestObject2 = TestObject
 public val test11: AnObject
-public val test12: TestObject [= AnObject]
+public val test12: TestObject /* = AnObject */
 public val test13: kotlin.String = "OK"
 public val test14: kotlin.String
 public val test21: AnObject
-public val test22: TestObject2 [= AnObject]
+public val test22: TestObject2 /* = AnObject */
 public val test23: kotlin.String = "OK"
 public val test24: kotlin.String
 public val test35: ClassWithCompanion.Companion

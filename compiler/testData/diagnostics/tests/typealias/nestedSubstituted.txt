@@ -1,6 +1,6 @@
 package
 
-public val p1: C<kotlin.String>.P2 [= Pair<kotlin.String, kotlin.Int>]
+public val p1: C<kotlin.String>.P2 /* = Pair<kotlin.String, kotlin.Int> */
 
 public final class C</*0*/ T> {
     public typealias P2 /*captured type parameters: /*0*/ T*/ = Pair<T, kotlin.Int>

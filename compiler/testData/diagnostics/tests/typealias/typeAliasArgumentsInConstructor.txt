@@ -4,7 +4,7 @@ public typealias P2</*0*/ T>  = Pair<T, T>
 public val test1: Pair<kotlin.String, kotlin.String>
 public val test1x1: kotlin.String
 public val test1x2: kotlin.String
-public val test2: P2<kotlin.String> [= Pair<kotlin.String, kotlin.String>]
+public val test2: P2<kotlin.String> /* = Pair<kotlin.String, kotlin.String> */
 public val test2x1: kotlin.String
 public val test2x2: kotlin.String
 

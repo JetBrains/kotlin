@@ -4,9 +4,9 @@ public typealias TC = C
 public typealias TI = Interface
 public typealias TO = AnObject
 public val test1: C
-public val test2: TC [= C]
+public val test2: TC /* = C */
 public val test3: C
-public val test4: TC [= C]
+public val test4: TC /* = C */
 public val test5: [ERROR : Type for TC("", "")]
 public val test6: [ERROR : Type for TI()]
 public val test6a: [ERROR : Type for Interface()]

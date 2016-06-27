@@ -129,7 +129,7 @@ internal class DescriptorRendererImpl(
             // TODO nullability is lost for abbreviated type?
             val abbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.abbreviation)
             val unabbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.expandedType)
-            return "$abbreviatedRendered [= $unabbreviatedRendered]"
+            return "$abbreviatedRendered /* = $unabbreviatedRendered */"
         }
 
         return renderNormalizedTypeAsIs(type)

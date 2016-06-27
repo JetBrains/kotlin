@@ -12,7 +12,7 @@ public typealias Out1</*0*/ T>  = Out<T>
 public typealias Out2</*0*/ T>  = Out<in T>
 public typealias Out3</*0*/ T>  = Out<out T>
 public typealias Out4</*0*/ T>  = Out<*>
-public val inv1: Inv1<kotlin.Int> [= Inv<kotlin.Int>]
+public val inv1: Inv1<kotlin.Int> /* = Inv<kotlin.Int> */
 
 public final class In</*0*/ in T> {
     public constructor In</*0*/ in T>()

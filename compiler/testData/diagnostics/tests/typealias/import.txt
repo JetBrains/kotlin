@@ -17,7 +17,7 @@ package package2 {
 }
 
 package package3 {
-    public val testA: package2.Outer.A [= kotlin.Any]
-    public val testI: package2.I [= kotlin.Int] = 42
-    public val testS: package1.S [= kotlin.String] = ""
+    public val testA: package2.Outer.A /* = kotlin.Any */
+    public val testI: package2.I /* = kotlin.Int */ = 42
+    public val testS: package1.S /* = kotlin.String */ = ""
 }
