@@ -34,12 +34,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-class QualifiedExpressionResolver(val symbolUsageValidators: Iterable<SymbolUsageValidator>) {
+class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<ClassifierUsageChecker>) {
     fun resolvePackageHeader(
             packageDirective: KtPackageDirective,
             module: ModuleDescriptor,
@@ -549,8 +548,8 @@ class QualifiedExpressionResolver(val symbolUsageValidators: Iterable<SymbolUsag
         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
 
         if (descriptor is ClassifierDescriptor) {
-            for (validator in symbolUsageValidators) {
-                validator.validateTypeUsage(descriptor, trace, referenceExpression)
+            for (checker in classifierUsageCheckers) {
+                checker.check(descriptor, trace, referenceExpression)
             }
         }
 
