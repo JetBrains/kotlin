@@ -27,6 +27,9 @@ open class Base {
     }
     
     companion object : VeryBase() {
+        var prop = 42
+            protected set
+
         protected fun bar() {}
 
         @JvmStatic protected fun gav() {}       
@@ -46,6 +49,7 @@ class Derived : Base() {
         gav() // Ok
         <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
         <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
     }
 
     inner class DerivedInner {
@@ -54,6 +58,7 @@ class Derived : Base() {
             gav() // Ok
             <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
             <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
         }
     }
 
@@ -62,6 +67,7 @@ class Derived : Base() {
             gav() // Ok
             <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
             <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
         }
     }
 }

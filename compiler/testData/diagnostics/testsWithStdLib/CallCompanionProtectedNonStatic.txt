@@ -11,6 +11,7 @@ public open class Base {
 
     public companion object Companion : VeryBase {
         private constructor Companion()
+        public final var prop: kotlin.Int
         protected final fun bar(): kotlin.Unit
         protected final override /*1*/ /*fake_override*/ fun baz(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
