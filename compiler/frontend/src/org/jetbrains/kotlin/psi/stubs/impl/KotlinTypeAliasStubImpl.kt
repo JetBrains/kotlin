@@ -22,15 +22,14 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtTypeAliasElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinTypeAliasStubImpl(
-        type: KtTypeAliasElementType,
         parent: StubElement<out PsiElement>?,
         private val name: StringRef?,
         private val qualifiedName: StringRef?,
         private val isTopLevel: Boolean
-) : KotlinStubBaseImpl<KtTypeAlias>(parent, type), KotlinTypeAliasStub {
+) : KotlinStubBaseImpl<KtTypeAlias>(parent, KtStubElementTypes.TYPEALIAS), KotlinTypeAliasStub {
 
     override fun getName(): String? =
             StringRef.toString(name)
