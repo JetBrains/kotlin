@@ -63,9 +63,6 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.creat
 public class DelegatedPropertyResolver {
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
 
-    private static final Name OLD_GETTER_NAME = Name.identifier("get");
-    private static final Name OLD_SETTER_NAME = Name.identifier("set");
-
     private final ExpressionTypingServices expressionTypingServices;
     private final FakeCallResolver fakeCallResolver;
     private final KotlinBuiltIns builtIns;
@@ -142,7 +139,7 @@ public class DelegatedPropertyResolver {
         return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
     }
 
-    public void resolveDelegatedPropertyGetMethod(
+    private void resolveDelegatedPropertyGetMethod(
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
@@ -162,7 +159,7 @@ public class DelegatedPropertyResolver {
         }
     }
 
-    public void resolveDelegatedPropertySetMethod(
+    private void resolveDelegatedPropertySetMethod(
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
@@ -177,7 +174,7 @@ public class DelegatedPropertyResolver {
         return psiFactory.createExpression("null as " + KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString() + "<*>");
     }
 
-    public void resolveDelegatedPropertyPDMethod(
+    private void resolveDelegatedPropertyPDMethod(
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
@@ -273,7 +270,7 @@ public class DelegatedPropertyResolver {
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
-    public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
+    private OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull VariableDescriptorWithAccessors propertyDescriptor,
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
@@ -314,35 +311,8 @@ public class DelegatedPropertyResolver {
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);
 
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolutionResult.getSecond();
-
-        // Resolve get/set is getValue/setValue was not found. Temporary, for code migration
-        if (!resolutionResults.isSuccess() && !resolutionResults.isAmbiguity()) {
-            Name oldFunctionName = isGet ? OLD_GETTER_NAME : OLD_SETTER_NAME;
-            Pair<Call, OverloadResolutionResults<FunctionDescriptor>> additionalResolutionResult =
-                    fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, oldFunctionName, delegateExpression);
-            if (additionalResolutionResult.getSecond().isSuccess()) {
-                FunctionDescriptor resultingDescriptor = additionalResolutionResult.getSecond().getResultingDescriptor();
-
-                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-                if (declaration instanceof KtProperty) {
-                    KtProperty property = (KtProperty) declaration;
-                    KtPropertyDelegate delegate = property.getDelegate();
-                    if (delegate != null) {
-                        PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
-
-                        trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
-                                byKeyword, resultingDescriptor, delegateType, functionName.asString()));
-                    }
-                }
-
-                trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, additionalResolutionResult.getFirst());
-                return additionalResolutionResult.getSecond();
-            }
-        }
-
         trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.getFirst());
-        return resolutionResults;
+        return resolutionResult.getSecond();
     }
 
     //TODO: diagnostics rendering does not belong here

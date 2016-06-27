@@ -92,8 +92,6 @@ class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTo
             Errors.DEPRECATION_ERROR,
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
             Errors.OPERATOR_MODIFIER_REQUIRED,
-            Errors.DEPRECATED_UNARY_PLUS_MINUS,
-            Errors.DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION,
             Errors.INFIX_MODIFIER_REQUIRED,
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,

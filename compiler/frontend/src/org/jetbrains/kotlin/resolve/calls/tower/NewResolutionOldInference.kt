@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
@@ -141,21 +140,10 @@ class NewResolutionOldInference(
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
         val scopeTower = ScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
 
-        var processor = kind.createTowerProcessor(this, name, tracing, scopeTower, explicitReceiver, context)
+        val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, explicitReceiver, context)
 
         if (context.collectAllCandidates) {
             return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor))
-        }
-        // Temporary fix for code migration (unaryPlus()/unaryMinus())
-        val unaryConventionName = getUnaryPlusOrMinusOperatorFunctionName(context.call)
-        if (unaryConventionName != null) {
-            val deprecatedName = if (name == OperatorNameConventions.UNARY_PLUS)
-                OperatorNameConventions.PLUS
-            else
-                OperatorNameConventions.MINUS
-
-            val deprecatedProcessor = kind.createTowerProcessor(this, deprecatedName, tracing, scopeTower, explicitReceiver, context)
-            processor = CompositeScopeTowerProcessor(processor, deprecatedProcessor)
         }
 
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference)
