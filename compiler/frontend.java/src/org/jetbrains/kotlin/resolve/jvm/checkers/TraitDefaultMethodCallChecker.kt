@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
-import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class TraitDefaultMethodCallChecker : SimpleCallChecker {
-
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+class TraitDefaultMethodCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (getSuperCallExpression(resolvedCall.call) == null) return
 
         val targetDescriptor = resolvedCall.resultingDescriptor.original
@@ -40,13 +38,8 @@ class TraitDefaultMethodCallChecker : SimpleCallChecker {
             val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
 
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
-                context.trace.report(
-                        ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(
-                                PsiTreeUtil.getParentOfType(resolvedCall.call.callElement, KtExpression::class.java)!!
-                        )
-                )
+                context.trace.report(ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
             }
         }
-
     }
 }

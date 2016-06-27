@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
  * of reflection API which will fail at runtime.
  */
-class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : SimpleCallChecker {
+class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : CallChecker {
     private val isReflectionAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null
     }
@@ -44,7 +45,7 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
 
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (isReflectionAvailable) return
 
         val descriptor = resolvedCall.resultingDescriptor
@@ -63,6 +64,6 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
             kPropertyClasses.any { kProperty -> DescriptorUtils.isSubclass(containingClass, kProperty) } -> return
         }
 
-        context.trace.report(NO_REFLECTION_IN_CLASS_PATH.on(resolvedCall.getCall().getCallElement()))
+        context.trace.report(NO_REFLECTION_IN_CLASS_PATH.on(reportOn))
     }
 }
