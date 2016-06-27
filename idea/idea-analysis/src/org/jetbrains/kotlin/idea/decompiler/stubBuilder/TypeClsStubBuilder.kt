@@ -44,6 +44,7 @@ import java.util.*
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, type: Type) {
+        if (type.hasAbbreviatedType()) return createTypeReferenceStub(parent, type.abbreviatedType)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
@@ -61,7 +62,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         when {
-            type.hasClassName() -> createClassReferenceTypeStub(effectiveParent, type, annotations)
+            type.hasClassName() || type.hasTypeAliasName() -> createClassReferenceTypeStub(effectiveParent, type, annotations)
             type.hasTypeParameter() -> createTypeParameterStub(c.typeParameters[type.typeParameter])
             type.hasTypeParameterName() -> createTypeParameterStub(c.nameResolver.getName(type.typeParameterName))
         }
@@ -77,7 +78,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
         }
 
-        val classId = c.nameResolver.getClassId(type.className)
+        assert(type.hasClassName() || type.hasTypeAliasName()) {
+            "Class reference stub must have either class or type alias name"
+        }
+
+        val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
         val shouldBuildAsFunctionType = isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {

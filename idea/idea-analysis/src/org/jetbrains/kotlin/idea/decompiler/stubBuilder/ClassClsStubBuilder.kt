@@ -226,7 +226,8 @@ private class ClassClsStubBuilder(
             }
         }
 
-        createCallableStubs(classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList)
+        createDeclarationsStubs(
+                classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList, classProto.typeAliasList)
     }
 
     private fun isClass(): Boolean {

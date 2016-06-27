@@ -31,12 +31,23 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
 import org.jetbrains.kotlin.serialization.deserialization.*
 
-fun createCallableStubs(
+fun createDeclarationsStubs(
+        parentStub: StubElement<out PsiElement>,
+        outerContext: ClsStubBuilderContext,
+        protoContainer: ProtoContainer,
+        packageProto: ProtoBuf.Package
+) {
+    createDeclarationsStubs(
+            parentStub, outerContext, protoContainer, packageProto.functionList, packageProto.propertyList, packageProto.typeAliasList)
+}
+
+fun createDeclarationsStubs(
         parentStub: StubElement<out PsiElement>,
         outerContext: ClsStubBuilderContext,
         protoContainer: ProtoContainer,
         functionProtos: List<ProtoBuf.Function>,
-        propertyProtos: List<ProtoBuf.Property>
+        propertyProtos: List<ProtoBuf.Property>,
+        typeAliasesProtos: List<ProtoBuf.TypeAlias>
 ) {
     for (propertyProto in propertyProtos) {
         if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
@@ -47,6 +58,10 @@ fun createCallableStubs(
         if (!shouldSkip(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
             FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
         }
+    }
+
+    for (typeAliasProto in typeAliasesProtos) {
+        createTypeAliasStub(parentStub, typeAliasProto, protoContainer, outerContext)
     }
 }
 
