@@ -18,20 +18,14 @@ package org.jetbrains.kotlin.resolve.validation
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.checkers.DeprecatedCallChecker
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
 import org.jetbrains.kotlin.resolve.getDeprecation
 
 class DeprecatedSymbolValidator : SymbolUsageValidator {
-    override fun validatePropertyCall(targetDescriptor: PropertyAccessorDescriptor, trace: BindingTrace, element: PsiElement) {
-        DeprecatedCallChecker.check(targetDescriptor, trace, element)
-    }
-
     override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
         val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotationEntry::class.java, true)
