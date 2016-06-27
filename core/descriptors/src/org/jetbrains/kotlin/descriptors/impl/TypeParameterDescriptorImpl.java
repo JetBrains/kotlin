@@ -36,6 +36,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     @Nullable
     private final Function1<KotlinType, Void> reportCycleError;
 
+    @NotNull
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,

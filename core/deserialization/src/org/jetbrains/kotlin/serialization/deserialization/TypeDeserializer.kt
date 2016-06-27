@@ -96,7 +96,7 @@ class TypeDeserializer(
             when {
                 proto.hasClassName() -> {
                     classDescriptors(proto.className)?.typeConstructor
-                    ?: c.components.notFoundClasses.get(proto, c.nameResolver, c.typeTable)
+                    ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
                 }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
@@ -109,7 +109,7 @@ class TypeDeserializer(
                 }
                 proto.hasTypeAliasName() -> {
                     typeAliasDescriptors(proto.typeAliasName)?.typeConstructor
-                    ?: TODO("not found type aliases")
+                    ?: c.components.notFoundClasses.getTypeAlias(proto, c.nameResolver, c.typeTable)
                 }
                 else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
             }
