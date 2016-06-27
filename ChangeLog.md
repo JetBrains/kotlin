@@ -119,6 +119,10 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-11115`](https://youtrack.jetbrains.com/issue/KT-11115) Implement Members: Fix base member detection when abstract and non-abstract members with matching signatures are inherited from an interface
 
+###### New features
+
+- [`KT-7492`](https://youtrack.jetbrains.com/issue/KT-7492) Support "Create abstract function/property" inside an abstract class
+
 #### Refactorings
 
 ###### Issues fixed

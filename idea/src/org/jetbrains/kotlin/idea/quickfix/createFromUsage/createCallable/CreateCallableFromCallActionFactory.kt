@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
@@ -127,7 +128,21 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         }
     }
 
-    object Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
+    protected fun getAbstractCallableInfo(mainCallable: CallableInfo, originalExpression: KtExpression): CallableInfo? {
+        val containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
+        if (!containingClass.isAbstract()) return null
+
+        val receiverTypeInfo = mainCallable.receiverTypeInfo
+        if (receiverTypeInfo != TypeInfo.Empty) {
+            if (receiverTypeInfo !is TypeInfo.ByType) return null
+            val containingDescriptor = containingClass.resolveToDescriptor() as ClassDescriptor
+            if (receiverTypeInfo.theType.constructor.declarationDescriptor != containingDescriptor) return null
+        }
+
+        return mainCallable.copy(receiverTypeInfo = TypeInfo.Empty, possibleContainers = listOf(containingClass), isAbstract = true)
+    }
+
+    sealed class Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
             val refExpr = getExpressionOfInterest(diagnostic) as? KtNameReferenceExpression ?: return null
             if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
@@ -149,9 +164,23 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             )
             return PropertyInfo(name, receiverType, returnType, varExpected, possibleContainers)
         }
+
+        object Default : Property()
+
+        object Abstract : Property() {
+            override fun doCreateCallableInfo(
+                    expression: KtSimpleNameExpression,
+                    context: BindingContext,
+                    name: String,
+                    receiverType: TypeInfo,
+                    possibleContainers: List<KtElement>
+            ) = super.doCreateCallableInfo(expression, context, name, receiverType, possibleContainers)?.let {
+                getAbstractCallableInfo(it, expression)
+            }
+        }
     }
 
-    object Function: CreateCallableFromCallActionFactory<KtCallExpression>() {
+    sealed class Function: CreateCallableFromCallActionFactory<KtCallExpression>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
             return getExpressionOfInterest(diagnostic) as? KtCallExpression
         }
@@ -167,6 +196,20 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             val typeParameters = expression.getTypeInfoForTypeArguments()
             val returnType = TypeInfo(expression.getQualifiedExpressionForSelectorOrThis(), Variance.OUT_VARIANCE)
             return FunctionInfo(name, receiverType, returnType, possibleContainers, parameters, typeParameters)
+        }
+
+        object Default : Function()
+
+        object Abstract : Function() {
+            override fun doCreateCallableInfo(
+                    expression: KtCallExpression,
+                    context: BindingContext,
+                    name: String,
+                    receiverType: TypeInfo,
+                    possibleContainers: List<KtElement>
+            ) = super.doCreateCallableInfo(expression, context, name, receiverType, possibleContainers)?.let {
+                getAbstractCallableInfo(it, expression)
+            }
         }
     }
 
@@ -204,6 +247,13 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
     }
 
     companion object {
-        val INSTANCES = arrayOf(Function, Constructor, Property)
+        val FUNCTIONS = arrayOf(Function.Default,
+                                Function.Abstract,
+                                Constructor)
+        val INSTANCES = arrayOf(Function.Default,
+                                Function.Abstract,
+                                Constructor,
+                                Property.Default,
+                                Property.Abstract)
     }
 }

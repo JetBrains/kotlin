@@ -133,10 +133,15 @@ abstract class CallableInfo (
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
         val possibleContainers: List<KtElement>,
-        val typeParameterInfos: List<TypeInfo>
+        val typeParameterInfos: List<TypeInfo>,
+        val isAbstract: Boolean = false
 ) {
     abstract val kind: CallableKind
     abstract val parameterInfos: List<ParameterInfo>
+
+    abstract fun copy(receiverTypeInfo: TypeInfo = this.receiverTypeInfo,
+                      possibleContainers: List<KtElement> = this.possibleContainers,
+                      isAbstract: Boolean = this.isAbstract): CallableInfo
 }
 
 class FunctionInfo(name: String,
@@ -146,23 +151,40 @@ class FunctionInfo(name: String,
                    override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
                    val isOperator: Boolean = false,
-                   val isInfix: Boolean = false
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
+                   val isInfix: Boolean = false,
+                   isAbstract: Boolean = false
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isAbstract) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
+
+    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = FunctionInfo(
+            name,
+            receiverTypeInfo,
+            returnTypeInfo,
+            possibleContainers,
+            parameterInfos,
+            typeParameterInfos,
+            isOperator,
+            isInfix,
+            isAbstract
+    )
 }
 
 class PrimaryConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
-        classInfo.name, TypeInfo.Empty, expectedTypeInfo.forceNotNull(), Collections.emptyList(), classInfo.typeArguments
+        classInfo.name, TypeInfo.Empty, expectedTypeInfo.forceNotNull(), Collections.emptyList(), classInfo.typeArguments, false
 ) {
     override val kind: CallableKind get() = CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
     override val parameterInfos: List<ParameterInfo> get() = classInfo.parameterInfos
+
+    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
 }
 
 class SecondaryConstructorInfo(
         override val parameterInfos: List<ParameterInfo>,
         val targetClass: PsiElement
-): CallableInfo("", TypeInfo.Empty, TypeInfo.Empty, Collections.emptyList(), Collections.emptyList()) {
+): CallableInfo("", TypeInfo.Empty, TypeInfo.Empty, Collections.emptyList(), Collections.emptyList(), false) {
     override val kind: CallableKind get() = CallableKind.SECONDARY_CONSTRUCTOR
+
+    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
 }
 
 class PropertyInfo(name: String,
@@ -170,8 +192,19 @@ class PropertyInfo(name: String,
                    returnTypeInfo: TypeInfo,
                    val writable: Boolean,
                    possibleContainers: List<KtElement> = Collections.emptyList(),
-                   typeParameterInfos: List<TypeInfo> = Collections.emptyList()
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
+                   typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
+                   isAbstract: Boolean = false
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isAbstract) {
     override val kind: CallableKind get() = CallableKind.PROPERTY
     override val parameterInfos: List<ParameterInfo> get() = Collections.emptyList()
+
+    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = PropertyInfo(
+            name,
+            receiverTypeInfo,
+            returnTypeInfo,
+            writable,
+            possibleContainers,
+            typeParameterInfos,
+            isAbstract
+    )
 }

@@ -79,13 +79,23 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
     override fun getText(): String {
         val renderedCallables = callableInfos.map {
-            val kind = when (it.kind) {
-                CallableKind.FUNCTION -> "function"
-                CallableKind.PROPERTY -> "property"
-                CallableKind.SECONDARY_CONSTRUCTOR -> "secondary constructor"
-                else -> throw AssertionError("Unexpected callable info: $it")
+            buildString {
+                if (it.isAbstract) {
+                    append("abstract ")
+                }
+
+                val kind = when (it.kind) {
+                    CallableKind.FUNCTION -> "function"
+                    CallableKind.PROPERTY -> "property"
+                    CallableKind.SECONDARY_CONSTRUCTOR -> "secondary constructor"
+                    else -> throw AssertionError("Unexpected callable info: $it")
+                }
+                append(kind)
+
+                if (it.name.isNotEmpty()) {
+                    append(" '${it.name}'")
+                }
             }
-            if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
 
         return StringBuilder().apply {

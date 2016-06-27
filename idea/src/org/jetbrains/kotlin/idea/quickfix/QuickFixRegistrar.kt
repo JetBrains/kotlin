@@ -284,8 +284,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TOO_MANY_ARGUMENTS.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
         EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
         NONE_APPLICABLE.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
-        TYPE_MISMATCH.registerFactory(CreateCallableFromCallActionFactory.Function)
-        TYPE_MISMATCH.registerFactory(CreateCallableFromCallActionFactory.Constructor)
+        TYPE_MISMATCH.registerFactory(*CreateCallableFromCallActionFactory.FUNCTIONS)
 
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegationCallActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegationCallActionFactory)
