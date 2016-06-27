@@ -95,7 +95,7 @@ object KotlinJavascriptSerializationUtil {
             ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
         }
 
-        importedModules.forEach { contentBuilder.addImportedModules(it) }
+        importedModules.forEach { contentBuilder.addImportedModule(it) }
 
         contentMap.forEach {
             val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.key).setContent(ByteString.copyFrom(it.value)).build()
@@ -251,6 +251,6 @@ private fun ByteArray.readAsContentMap(name: String): JsModuleDescriptor<Map<Str
                 JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
                 JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
             },
-            imported = content.importedModulesList
+            imported = content.importedModuleList
     )
 }
