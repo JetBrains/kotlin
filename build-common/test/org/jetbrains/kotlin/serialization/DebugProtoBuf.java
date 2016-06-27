@@ -5449,10 +5449,20 @@ public final class DebugProtoBuf {
 
     /**
      * <code>optional int32 type_alias_name = 12;</code>
+     *
+     * <pre>
+     * Note that this may be present only for abbreviated_type
+     * Top level types are always fully expanded
+     * </pre>
      */
     boolean hasTypeAliasName();
     /**
      * <code>optional int32 type_alias_name = 12;</code>
+     *
+     * <pre>
+     * Note that this may be present only for abbreviated_type
+     * Top level types are always fully expanded
+     * </pre>
      */
     int getTypeAliasName();
 
@@ -6709,12 +6719,22 @@ public final class DebugProtoBuf {
     private int typeAliasName_;
     /**
      * <code>optional int32 type_alias_name = 12;</code>
+     *
+     * <pre>
+     * Note that this may be present only for abbreviated_type
+     * Top level types are always fully expanded
+     * </pre>
      */
     public boolean hasTypeAliasName() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional int32 type_alias_name = 12;</code>
+     *
+     * <pre>
+     * Note that this may be present only for abbreviated_type
+     * Top level types are always fully expanded
+     * </pre>
      */
     public int getTypeAliasName() {
       return typeAliasName_;
@@ -7951,18 +7971,33 @@ public final class DebugProtoBuf {
       private int typeAliasName_ ;
       /**
        * <code>optional int32 type_alias_name = 12;</code>
+       *
+       * <pre>
+       * Note that this may be present only for abbreviated_type
+       * Top level types are always fully expanded
+       * </pre>
        */
       public boolean hasTypeAliasName() {
         return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       /**
        * <code>optional int32 type_alias_name = 12;</code>
+       *
+       * <pre>
+       * Note that this may be present only for abbreviated_type
+       * Top level types are always fully expanded
+       * </pre>
        */
       public int getTypeAliasName() {
         return typeAliasName_;
       }
       /**
        * <code>optional int32 type_alias_name = 12;</code>
+       *
+       * <pre>
+       * Note that this may be present only for abbreviated_type
+       * Top level types are always fully expanded
+       * </pre>
        */
       public Builder setTypeAliasName(int value) {
         bitField0_ |= 0x00000100;
@@ -7972,6 +8007,11 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional int32 type_alias_name = 12;</code>
+       *
+       * <pre>
+       * Note that this may be present only for abbreviated_type
+       * Top level types are always fully expanded
+       * </pre>
        */
       public Builder clearTypeAliasName() {
         bitField0_ = (bitField0_ & ~0x00000100);
