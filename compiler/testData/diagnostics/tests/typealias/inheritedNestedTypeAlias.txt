@@ -27,7 +27,7 @@ public final class Cell</*0*/ T> : ICell<T> {
 public final class Derived : Base<kotlin.Int> {
     public constructor Derived()
     public final val test1: [ERROR : CT]
-    public final val test2: Base<kotlin.Int>.CT [= Cell<kotlin.Int>]
+    public final val test2: Base<kotlin.Int>.CT /* = Cell<kotlin.Int> */
     public final val x1: [ERROR : InnerCell]
     public final val x2: Base<kotlin.Int>.InnerCell
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
