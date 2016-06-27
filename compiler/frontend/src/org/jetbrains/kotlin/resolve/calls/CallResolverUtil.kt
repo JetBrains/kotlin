@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.coroutines.getExpectedTypeForCoroutineControllerHandleResult
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
@@ -137,13 +136,6 @@ fun isConventionCall(call: Call): Boolean {
 }
 
 fun isInfixCall(call: Call): Boolean = InfixCallChecker.isInfixCall(call.calleeExpression)
-
-fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
-    if (call.callElement !is KtPrefixExpression) return null
-    val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return null
-    val name = calleeExpression.getNameForConventionalOperation(unaryOperations = true, binaryOperations = false)
-    return if (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS) name else null
-}
 
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false

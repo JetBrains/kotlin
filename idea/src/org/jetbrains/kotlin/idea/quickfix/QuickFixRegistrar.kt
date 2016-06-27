@@ -386,9 +386,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         MISPLACED_TYPE_PARAMETER_CONSTRAINTS.registerFactory(MoveTypeParameterConstraintFix)
 
-        DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.registerFactory(DeprecatedFunctionConventionFix)
-        DEPRECATED_UNARY_PLUS_MINUS.registerFactory(DeprecatedFunctionConventionFix)
-
         COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
 
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)

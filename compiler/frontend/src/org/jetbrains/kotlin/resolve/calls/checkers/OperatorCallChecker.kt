@@ -20,7 +20,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -28,10 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 
 class OperatorCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -61,19 +59,6 @@ class OperatorCallChecker : CallChecker {
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)
-            }
-            if (isConventionOperator) {
-                checkDeprecatedUnaryConventions(call, functionDescriptor, context.trace)
-            }
-        }
-    }
-
-    private fun checkDeprecatedUnaryConventions(call: Call, functionDescriptor: FunctionDescriptor, sink: DiagnosticSink) {
-        (call.callElement as? KtPrefixExpression)?.let { expr ->
-            val functionName = functionDescriptor.name
-            if (functionName == PLUS || functionName == MINUS) {
-                val newName = if (functionName == PLUS) UNARY_PLUS else UNARY_MINUS
-                sink.report(Errors.DEPRECATED_UNARY_PLUS_MINUS.on(expr, functionDescriptor, newName.asString()))
             }
         }
     }
