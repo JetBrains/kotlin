@@ -5262,12 +5262,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("iinc.kt")
-            public void testIinc() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/iinc.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("inlineGetValue.kt")
             public void testInlineGetValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/inlineGetValue.kt");
@@ -5289,12 +5283,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("localVar.kt")
             public void testLocalVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("plusAssign.kt")
-            public void testPlusAssign() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/plusAssign.kt");
                 doTest(fileName);
             }
         }
