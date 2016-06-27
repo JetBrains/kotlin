@@ -180,7 +180,7 @@ public class ControlStructureTypingUtils {
         return function;
     }
 
-    /*package*/ static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
+    private static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
             @NotNull DataFlowInfo initialDataFlowInfo,
             final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
@@ -304,7 +304,7 @@ public class ControlStructureTypingUtils {
     }
 
     @NotNull
-    /*package*/ TracingStrategy createTracingForSpecialConstruction(
+    private TracingStrategy createTracingForSpecialConstruction(
             final @NotNull Call call,
             @NotNull String constructionName,
             final @NotNull ExpressionTypingContext context
@@ -604,11 +604,6 @@ public class ControlStructureTypingUtils {
         public void typeInferenceFailed(
                 @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData
         ) {
-            logError();
-        }
-
-        @Override
-        public void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace) {
             logError();
         }
     }
