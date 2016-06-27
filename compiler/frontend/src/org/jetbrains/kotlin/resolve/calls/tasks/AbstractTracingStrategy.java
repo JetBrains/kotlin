@@ -251,9 +251,4 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
         }
     }
-
-    @Override
-    public void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace) {
-        trace.report(INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION.on(reference, reference));
-    }
 }
