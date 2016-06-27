@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -27,7 +28,20 @@ import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 
 interface CallChecker {
+    /**
+     * Note that [reportOn] should only be used as a target element for diagnostics reported by checkers.
+     * Logic of the checker should not depend on what element is the target of the diagnostic!
+     */
     fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext)
+
+    /**
+     * This method is needed because for the simple assignment expression like "a = b" there is no resolved call that points to a's setter
+     * (the only resolved call is the one pointing to the property 'a' itself). So [check] which takes [ResolvedCall] is not applicable here
+     *
+     * TODO: construct a special ResolvedCall instead and call [check]
+     */
+    fun checkPropertyCall(descriptor: PropertyAccessorDescriptor, reportOn: PsiElement, context: CallCheckerContext) {
+    }
 }
 
 class CallCheckerContext(
