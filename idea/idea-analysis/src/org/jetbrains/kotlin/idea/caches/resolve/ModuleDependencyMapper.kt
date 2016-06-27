@@ -80,6 +80,7 @@ fun createModuleResolverProvider(
 
     return ModuleResolverProviderImpl(
             resolverForProject,
+            builtIns,
             globalContext
     )
 }
@@ -112,11 +113,13 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
 interface ModuleResolverProvider {
     val exceptionTracker: ExceptionTracker
     val resolverForProject: ResolverForProject<IdeaModuleInfo>
+    val builtIns: KotlinBuiltIns
 }
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        val globalContext: GlobalContextImpl
+        override val builtIns: KotlinBuiltIns,
+        globalContext: GlobalContextImpl
 ) : ModuleResolverProvider {
     override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
 }
