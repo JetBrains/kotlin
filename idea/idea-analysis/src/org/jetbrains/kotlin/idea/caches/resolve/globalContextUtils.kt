@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,16 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.context.GlobalContextImpl
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.ExceptionTracker
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-fun GlobalContextImpl.withCompositeExceptionTrackerUnderSameLock(): GlobalContextImpl {
+internal fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(): GlobalContextImpl {
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
-    val newStorageManager = LockBasedStorageManager.createDelegatingWithSameLock(this.storageManager, newExceptionTracker)
-    return GlobalContextImpl(newStorageManager, newExceptionTracker)
+    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(newExceptionTracker), newExceptionTracker)
 }
 
 private class CompositeExceptionTracker(val delegate: ExceptionTracker) : ExceptionTracker() {
     override fun getModificationCount(): Long {
         return super.getModificationCount() + delegate.modificationCount
     }
-}
-
-private class ExceptionTrackerWithProcessCanceledReport() : ExceptionTracker() {
-    override fun handleException(throwable: Throwable): RuntimeException {
-        if (throwable is ProcessCanceledException) {
-            LOG.info("ProcessCancelException was thrown while analyzing libraries. Cache has to be rebuilt.")
-        }
-        throw super.handleException(throwable)
-    }
-
-
-    companion object {
-        val LOG = Logger.getInstance(ExceptionTrackerWithProcessCanceledReport::class.java)
-    }
-}
-
-fun GlobalContext(logProcessCanceled: Boolean): GlobalContextImpl {
-    val tracker = if (logProcessCanceled) ExceptionTrackerWithProcessCanceledReport() else ExceptionTracker()
-    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }

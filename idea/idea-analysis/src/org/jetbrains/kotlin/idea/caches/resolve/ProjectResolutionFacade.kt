@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.getService
+import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
@@ -36,20 +37,19 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.storage.StorageManager
 
 internal class ProjectResolutionFacade(
         val project: Project,
-        private val storageManager: StorageManager,
-        computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
+        val globalContext: GlobalContextImpl,
+        computeModuleResolverProvider: (GlobalContextImpl, Project) -> CachedValueProvider.Result<ModuleResolverProvider>
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
-            computeModuleResolverProvider,
+            { computeModuleResolverProvider(globalContext, project) },
             /* trackValue = */ false
     )
 
     val moduleResolverProvider: ModuleResolverProvider
-        get() = storageManager.compute { cachedValue.value }
+        get() = globalContext.storageManager.compute { cachedValue.value }
 
     fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
     fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
