@@ -24,11 +24,14 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
@@ -62,21 +65,27 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.creat
 public class DelegatedPropertyResolver {
     public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
 
-    private final ExpressionTypingServices expressionTypingServices;
-    private final FakeCallResolver fakeCallResolver;
     private final KotlinBuiltIns builtIns;
+    private final FakeCallResolver fakeCallResolver;
+    private final ExpressionTypingServices expressionTypingServices;
+    private final LanguageFeatureSettings languageFeatureSettings;
+    private final Iterable<CallChecker> callCheckers;
     private final Iterable<SymbolUsageValidator> symbolUsageValidators;
 
     public DelegatedPropertyResolver(
-            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull LanguageFeatureSettings languageFeatureSettings,
+            @NotNull Iterable<CallChecker> callCheckers,
+            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators
     ) {
-        this.symbolUsageValidators = symbolUsageValidators;
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
         this.expressionTypingServices = expressionTypingServices;
+        this.languageFeatureSettings = languageFeatureSettings;
+        this.callCheckers = callCheckers;
+        this.symbolUsageValidators = symbolUsageValidators;
     }
 
     public void resolvePropertyDelegate(
@@ -274,6 +283,11 @@ public class DelegatedPropertyResolver {
                     OperatorCallChecker.Companion.report(byKeyword, resultingDescriptor, trace);
                 }
 
+                CallCheckerContext callCheckerContext =
+                        new CallCheckerContext(trace, delegateFunctionsScope, languageFeatureSettings, dataFlowInfo);
+                for (CallChecker checker : callCheckers) {
+                    checker.check(resultingCall, byKeyword, callCheckerContext);
+                }
                 for (SymbolUsageValidator validator : symbolUsageValidators) {
                     validator.validateCall(resultingCall, trace, byKeyword);
                 }
