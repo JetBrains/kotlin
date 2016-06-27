@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
@@ -919,8 +918,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = false;
             }
             else if (setter != null) {
-                for (SymbolUsageValidator validator : components.symbolUsageValidators) {
-                    validator.validatePropertyCall(setter, trace, reportOn);
+                CallCheckerContext callCheckerContext =
+                        new CallCheckerContext(trace, context.scope, components.languageFeatureSettings, context.dataFlowInfo, false);
+                for (CallChecker checker : components.callCheckers) {
+                    checker.checkPropertyCall(setter, reportOn, callCheckerContext);
                 }
             }
         }

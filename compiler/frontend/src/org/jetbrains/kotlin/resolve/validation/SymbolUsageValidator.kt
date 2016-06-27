@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.resolve.validation
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 interface SymbolUsageValidator {
     fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement)
-
-    fun validatePropertyCall(targetDescriptor: PropertyAccessorDescriptor, trace: BindingTrace, element: PsiElement)
 }
