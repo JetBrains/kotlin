@@ -37,14 +37,33 @@ import kotlin.reflect.*
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver>,
+annotation class ScriptTemplateDefinition(val resolver: KClass<out AnnotationBasedScriptDependenciesResolver>,
                                           val scriptFilePattern: String)
 
-interface ScriptDependenciesResolver {
+@Deprecated("Use ScriptTemplateDefinition")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ScriptFilePattern(val pattern: String)
+
+@Deprecated("Use ScriptTemplateDefinition")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
+
+interface AnnotationBasedScriptDependenciesResolver {
     fun resolve(scriptFile: File?,
                 annotations: Iterable<Annotation>,
                 environment: Map<String, Any?>?,
                 previousDependencies: KotlinScriptExternalDependencies? = null
+    ): KotlinScriptExternalDependencies? = null
+}
+
+@Deprecated("Use new resolver Ex")
+interface ScriptDependenciesResolver {
+    fun resolve(projectRoot: File?,
+                scriptFile: File?,
+                annotations: Iterable<KtAnnotationEntry>,
+                context: Any?
     ): KotlinScriptExternalDependencies? = null
 }
 
@@ -54,7 +73,51 @@ annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KCla
 
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val environment: Map<String, Any?>?) : KotlinScriptDefinition {
 
-    private val definitionAnnotation by lazy { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() }
+    // TODO: remove this and simplify definitionAnnotation as soon as deprecated annotations will be removed
+    internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out AnnotationBasedScriptDependenciesResolver>,
+                                                val resolver: AnnotationBasedScriptDependenciesResolver?,
+                                                val scriptFilePattern: String?) {
+        val acceptedAnnotations by lazy {
+            val resolveMethod = AnnotationBasedScriptDependenciesResolver::resolve
+            val resolverMethodAnnotations =
+                    resolverClass.memberFunctions.find {
+                        it.name == resolveMethod.name &&
+                        sameSignature(it, resolveMethod)
+                    }
+                            ?.annotations
+                            ?.filterIsInstance<AcceptedAnnotations>()
+            resolverMethodAnnotations?.flatMap {
+                val v = it.supportedAnnotationClasses
+                v.toList() // TODO: inline after KT-9453 is resolved (now it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass")
+            }
+            ?: emptyList()
+        }
+    }
+
+    internal class ObsoleteResolverProxy(val resolverAnn: ScriptDependencyResolver?) : AnnotationBasedScriptDependenciesResolver {
+        private val resolver by lazy { resolverAnn?.resolver?.primaryConstructor?.call() }
+        override fun resolve(scriptFile: File?,
+                             annotations: Iterable<Annotation>,
+                             environment: Map<String, Any?>?,
+                             previousDependencies: KotlinScriptExternalDependencies?
+        ): KotlinScriptExternalDependencies? =
+                resolver?.resolve(
+                        environment?.get("projectRoot") as? File?,
+                        scriptFile,
+                        emptyList(),
+                        environment as Any?
+                )
+    }
+
+    private val definitionData by lazy {
+        val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
+        if (defAnn == null) {
+            val resolverAnn = template.annotations.firstIsInstanceOrNull<ScriptDependencyResolver>()
+            val filePatternAnn = template.annotations.firstIsInstanceOrNull<ScriptFilePattern>()
+            ScriptTemplateDefinitionData(ObsoleteResolverProxy::class, ObsoleteResolverProxy(resolverAnn), filePatternAnn?.pattern)
+        }
+        else ScriptTemplateDefinitionData(defAnn.resolver, defAnn.resolver.primaryConstructor?.call(), defAnn.scriptFilePattern)
+    }
 
     override val name = template.simpleName!!
 
@@ -68,45 +131,17 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
             getScriptParameters(scriptDescriptor).map { it.name }
 
     override fun <TF> isScript(file: TF): Boolean =
-            definitionAnnotation?.let { Regex(it.scriptFilePattern).matches(getFileName(file)) } ?: false
+            definitionData.scriptFilePattern?.let { Regex(it).matches(getFileName(file)) } ?: false
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
-
-    private class ResolverWithAcceptedAnnotations(val resolverClass: KClass<out ScriptDependenciesResolver>) {
-        val resolver by lazy { resolverClass.primaryConstructor!!.call() }
-        val acceptedAnnotations by lazy {
-            val resolveMethod = ScriptDependenciesResolver::resolve
-            val resolverMethodAnnotations =
-                    resolverClass.memberFunctions.find {
-                        it.name == resolveMethod.name &&
-                        sameSignature(it, resolveMethod)
-                    }
-                    ?.annotations
-                    ?.filterIsInstance<AcceptedAnnotations>()
-            resolverMethodAnnotations?.flatMap {
-                        val v = it.supportedAnnotationClasses
-                        v.toList() // TODO: inline after KT-9453 is resolved (now it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass")
-                    }
-            ?: emptyList()
-        }
-    }
-
-    private val dependenciesResolvers by lazy {
-        definitionAnnotation?.resolver?.let { listOf(ResolverWithAcceptedAnnotations(it)) } ?: emptyList()
-    }
-
-    private val supportedAnnotationClasses: List<KClass<out Any>> by lazy {
-        dependenciesResolvers.flatMap { it.acceptedAnnotations }
-                .distinctBy { it.qualifiedName }
-    }
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
                 .map { KtAnnotationWrapper(it) }
                 .mapNotNull { wrappedAnn ->
                     // TODO: consider advanced matching using semantic similar to actual resolving
-                    supportedAnnotationClasses.find {
+                    definitionData.acceptedAnnotations.find {
                         wrappedAnn.name == it.simpleName || wrappedAnn.name == it.qualifiedName
                     }?.let { it to wrappedAnn }
                 }
@@ -120,14 +155,12 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
                 annClassToWrapper.first to InvalidScriptResolverAnnotation(annClassToWrapper.second.name, annClassToWrapper.second.valueArguments, ex)
             }
         }
-        val fileDeps = dependenciesResolvers.mapNotNull { resolverWrapper ->
-            val supportedAnnotations = annotations.mapNotNull { annClassToWrapper ->
-                val annFQN = annClassToWrapper.first.qualifiedName
-                if (resolverWrapper.acceptedAnnotations.any { it.qualifiedName == annFQN }) annClassToWrapper.second else null
-            }
-            resolverWrapper.resolver.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
+        val supportedAnnotations = annotations.mapNotNull { annClassToWrapper ->
+            val annFQN = annClassToWrapper.first.qualifiedName
+            if (definitionData.acceptedAnnotations.any { it.qualifiedName == annFQN }) annClassToWrapper.second else null
         }
-        return KotlinScriptExternalDependenciesUnion(fileDeps)
+        val fileDeps = definitionData.resolver?.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
+        return fileDeps
     }
 
     private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {

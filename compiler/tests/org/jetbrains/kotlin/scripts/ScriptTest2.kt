@@ -118,7 +118,7 @@ class ScriptTest2 {
     }
 }
 
-class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
+class TestKotlinScriptDependenciesResolver : AnnotationBasedScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
