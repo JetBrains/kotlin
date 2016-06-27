@@ -20,6 +20,7 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collections;
@@ -45,16 +49,22 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class ForLoopConventionsChecker {
     private final KotlinBuiltIns builtIns;
-    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
     private final FakeCallResolver fakeCallResolver;
+    private final LanguageFeatureSettings languageFeatureSettings;
+    private final Iterable<CallChecker> callCheckers;
+    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
 
     public ForLoopConventionsChecker(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
+            @NotNull LanguageFeatureSettings languageFeatureSettings,
+            @NotNull Iterable<CallChecker> callCheckers,
             @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
+        this.languageFeatureSettings = languageFeatureSettings;
+        this.callCheckers = callCheckers;
         this.symbolUsageValidators = symbolUsageValidators;
     }
 
@@ -63,10 +73,10 @@ public class ForLoopConventionsChecker {
         KtExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
-        Name iterator = Name.identifier("iterator");
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
-                fakeCallResolver.makeAndResolveFakeCall(loopRange, context, Collections.<KtExpression>emptyList(), iterator,
-                                                        loopRangeExpression, FakeCallKind.ITERATOR, loopRangeExpression);
+        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = fakeCallResolver.makeAndResolveFakeCall(
+                loopRange, context, Collections.<KtExpression>emptyList(), OperatorNameConventions.ITERATOR, loopRangeExpression,
+                FakeCallKind.ITERATOR, loopRangeExpression
+        );
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {
@@ -76,20 +86,27 @@ public class ForLoopConventionsChecker {
 
             checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
 
+            CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
+            for (CallChecker checker : callCheckers) {
+                checker.check(iteratorResolvedCall, loopRangeExpression, callCheckerContext);
+            }
             for (SymbolUsageValidator validator : symbolUsageValidators) {
                 validator.validateCall(iteratorResolvedCall, context.trace, loopRangeExpression);
             }
 
             KotlinType iteratorType = iteratorFunction.getReturnType();
-            KotlinType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
-                                                                HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
-                                                                LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
+            //noinspection ConstantConditions
+            KotlinType hasNextType = checkConventionForIterator(
+                    context, loopRangeExpression, iteratorType, OperatorNameConventions.HAS_NEXT,
+                    HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL
+            );
             if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
-            return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",
-                                              NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE,
-                                              LOOP_RANGE_NEXT_RESOLVED_CALL);
+            return checkConventionForIterator(
+                    context, loopRangeExpression, iteratorType, OperatorNameConventions.NEXT,
+                    NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE, LOOP_RANGE_NEXT_RESOLVED_CALL
+            );
         }
         return null;
     }
@@ -109,14 +126,15 @@ public class ForLoopConventionsChecker {
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression loopRangeExpression,
             @NotNull KotlinType iteratorType,
-            @NotNull String name,
+            @NotNull Name name,
             @NotNull DiagnosticFactory1<KtExpression, KotlinType> ambiguity,
             @NotNull DiagnosticFactory1<KtExpression, KotlinType> missing,
             @NotNull DiagnosticFactory1<KtExpression, KotlinType> noneApplicable,
             @NotNull WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(
-                context, new TransientReceiver(iteratorType), Name.identifier(name), loopRangeExpression);
+                context, new TransientReceiver(iteratorType), name, loopRangeExpression
+        );
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
         }
@@ -131,6 +149,11 @@ public class ForLoopConventionsChecker {
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
+
+            CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
+            for (CallChecker checker : callCheckers) {
+                checker.check(resolvedCall, loopRangeExpression, callCheckerContext);
+            }
             for (SymbolUsageValidator validator : symbolUsageValidators) {
                 validator.validateCall(resolvedCall, context.trace, loopRangeExpression);
             }
