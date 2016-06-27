@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
@@ -94,7 +93,6 @@ class CandidateResolver(
         checkValueArguments()
 
         checkAbstractAndSuper()
-        checkNonExtensionCalledWithReceiver()
     }
 
     private fun CallCandidateResolutionContext<*>.checkValueArguments() = checkAndReport {
@@ -293,20 +291,6 @@ class CandidateResolver(
             trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(superExtensionReceiver, superExtensionReceiver.text))
             candidateCall.addStatus(OTHER_ERROR)
         }
-    }
-
-    private fun CallCandidateResolutionContext<*>.checkNonExtensionCalledWithReceiver() = checkAndReport {
-        val call = candidateCall.call
-        if (call is CallTransformer.CallForImplicitInvoke &&
-            candidateCall.extensionReceiver != null &&
-            candidateCall.dispatchReceiver != null
-        ) {
-            if (call.dispatchReceiver == candidateCall.dispatchReceiver && !call.dispatchReceiver.type.isExtensionFunctionType) {
-                tracing.nonExtensionFunctionCalledAsExtension(trace)
-                return@checkAndReport OTHER_ERROR
-            }
-        }
-        SUCCESS
     }
 
     private fun getReceiverSuper(receiver: Receiver?): KtSuperExpression? {

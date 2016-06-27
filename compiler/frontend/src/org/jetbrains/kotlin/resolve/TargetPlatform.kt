@@ -67,7 +67,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
 
 private val DEFAULT_CALL_CHECKERS = listOf(
         CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker(), SafeCallChecker(),
-        InvokeConventionChecker(), CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
+        CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
