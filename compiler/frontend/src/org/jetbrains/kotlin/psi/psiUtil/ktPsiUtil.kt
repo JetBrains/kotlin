@@ -459,3 +459,8 @@ fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
 }
 
 fun KtElement.containingClass(): KtClass? = getStrictParentOfType<KtClass>()
+
+fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
+    return declarations.firstOrNull { it is KtProperty && it.name == name } as KtNamedDeclaration?
+           ?: getPrimaryConstructorParameters().firstOrNull { it.hasValOrVar() && it.name == name }
+}

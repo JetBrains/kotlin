@@ -40,7 +40,7 @@ public class InlineUtil {
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof SimpleFunctionDescriptor && getInlineStrategy(descriptor).isInline();
+        return descriptor instanceof FunctionDescriptor && getInlineStrategy(descriptor).isInline();
     }
 
     public static boolean isInlineOrContainingInline(@Nullable DeclarationDescriptor descriptor) {

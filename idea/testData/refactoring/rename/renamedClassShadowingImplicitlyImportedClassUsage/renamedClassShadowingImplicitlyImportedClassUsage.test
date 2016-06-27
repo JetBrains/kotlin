@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/ref.kt",
+  "newName": "String",
+  "withRuntime": "true"
+}

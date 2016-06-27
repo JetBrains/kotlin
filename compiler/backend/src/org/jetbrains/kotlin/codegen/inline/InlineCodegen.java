@@ -37,9 +37,7 @@ import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -212,16 +210,16 @@ public class InlineCodegen extends CallGenerator {
                 : jvmSignature.getAsmMethod();
 
         MethodId methodId = new MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.getContainingDeclaration()), asmMethod);
-
-        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !(functionDescriptor instanceof DeserializedSimpleFunctionDescriptor)) {
-            return doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, codegen, context, callDefault, state, asmMethod);
+        final FunctionDescriptor directMember = getCallableFromObject(functionDescriptor);
+        if (!isBuiltInArrayIntrinsic(directMember) && !(directMember instanceof DeserializedSimpleFunctionDescriptor)) {
+            return doCreateMethodNodeFromSource(directMember, jvmSignature, codegen, context, callDefault, state, asmMethod);
         }
 
         SMAPAndMethodNode resultInCache = InlineCacheKt.getOrPut(
                 state.getInlineCache().getMethodNodeById(), methodId, new Function0<SMAPAndMethodNode>() {
                     @Override
                     public SMAPAndMethodNode invoke() {
-                        SMAPAndMethodNode result = doCreateMethodNodeFromCompiled(functionDescriptor, state, asmMethod);
+                        SMAPAndMethodNode result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod);
                         if (result == null) {
                             throw new IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor);
                         }
@@ -231,6 +229,14 @@ public class InlineCodegen extends CallGenerator {
         );
 
         return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.getNode()));
+    }
+
+    @NotNull
+    private static FunctionDescriptor getCallableFromObject(@NotNull FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor instanceof FunctionImportedFromObject) {
+            return  ((FunctionImportedFromObject) functionDescriptor).getCallableFromObject();
+        }
+        return functionDescriptor;
     }
 
     @NotNull
