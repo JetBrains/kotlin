@@ -66,7 +66,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 JavaTypeAccessibilityChecker()
         ),
 
-        additionalSymbolUsageValidators = listOf(),
+        additionalClassifierUsageCheckers = listOf(),
 
         additionalAnnotationCheckers = listOf(
                 RepeatableAnnotationChecker,

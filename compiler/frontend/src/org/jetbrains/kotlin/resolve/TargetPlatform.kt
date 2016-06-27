@@ -26,9 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
-import org.jetbrains.kotlin.resolve.calls.checkers.DeprecatedCallChecker
-import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -72,7 +69,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
         CoroutineSuspendCallChecker, BuilderFunctionsCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
-private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator())
+private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(DeprecatedClassifierUsageChecker())
 
 
 abstract class PlatformConfigurator(
@@ -80,7 +77,7 @@ abstract class PlatformConfigurator(
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
-        additionalSymbolUsageValidators: List<SymbolUsageValidator>,
+        additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
         private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
         private val identifierChecker: IdentifierChecker,
         private val overloadFilter: OverloadFilter
@@ -88,7 +85,7 @@ abstract class PlatformConfigurator(
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
-    private val symbolUsageValidators: List<SymbolUsageValidator> = DEFAULT_VALIDATORS + additionalSymbolUsageValidators
+    private val classifierUsageCheckers: List<ClassifierUsageChecker> = DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
 
     open fun configure(container: StorageComponentContainer) {
         with (container) {
@@ -96,7 +93,7 @@ abstract class PlatformConfigurator(
             declarationCheckers.forEach { useInstance(it) }
             callCheckers.forEach { useInstance(it) }
             typeCheckers.forEach { useInstance(it) }
-            symbolUsageValidators.forEach { useInstance(it) }
+            classifierUsageCheckers.forEach { useInstance(it) }
             additionalAnnotationCheckers.forEach { useInstance(it) }
             useInstance(identifierChecker)
             useInstance(overloadFilter)
@@ -111,4 +108,3 @@ fun TargetPlatform.createModule(
         builtIns: KotlinBuiltIns,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
-
