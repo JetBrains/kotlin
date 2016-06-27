@@ -714,16 +714,19 @@ public class BodyResolver {
                 delegateExpression, property, propertyDescriptor, initializerScope, trace,
                 outerDataFlowInfo);
 
-        delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                    trace, delegateFunctionsScope);
+        delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(
+                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+        );
 
         if (property.isVar()) {
-            delegatedPropertyResolver.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                        trace, delegateFunctionsScope);
+            delegatedPropertyResolver.resolveDelegatedPropertySetMethod(
+                    propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+            );
         }
 
-        delegatedPropertyResolver.resolveDelegatedPropertyPDMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                   trace, delegateFunctionsScope);
+        delegatedPropertyResolver.resolveDelegatedPropertyPDMethod(
+                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+        );
     }
 
     private void resolvePropertyInitializer(
