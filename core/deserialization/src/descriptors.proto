@@ -348,6 +348,8 @@ message TypeAlias {
   optional Type expanded_type = 6;
   optional int32 expanded_type_id = 7;
 
+  repeated Annotation annotation = 8;
+
   extensions 100 to 199;
 }
 

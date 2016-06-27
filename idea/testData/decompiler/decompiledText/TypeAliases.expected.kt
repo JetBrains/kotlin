@@ -8,5 +8,5 @@ public final class TypeAliases public constructor() {
 
     public typealias B = (dependency.A) -> kotlin.Unit
 
-    private typealias Parametrized<E, F>  = kotlin.collections.Map<E, F>
+    @test.Ann private typealias Parametrized<E, F>  = kotlin.collections.Map<E, F>
 }

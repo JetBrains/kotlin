@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.types.KotlinType
 
 open class KotlinSerializerExtensionBase(private val protocol: SerializerExtensionProtocol) : SerializerExtension() {
     override final val stringTable = StringTableImpl()
-    private val annotationSerializer = AnnotationSerializer(stringTable)
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
         for (annotation in descriptor.annotations) {

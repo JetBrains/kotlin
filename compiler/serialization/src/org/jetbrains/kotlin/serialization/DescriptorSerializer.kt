@@ -306,6 +306,8 @@ class DescriptorSerializer private constructor(
             builder.setExpandedType(local.type(expandedType))
         }
 
+        builder.addAllAnnotation(descriptor.annotations.map { extension.annotationSerializer.serializeAnnotation(it) })
+
         return builder
     }
 

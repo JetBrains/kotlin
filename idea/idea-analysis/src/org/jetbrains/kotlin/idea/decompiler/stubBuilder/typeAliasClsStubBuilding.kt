@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.VISIBILITY
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 fun createTypeAliasStub(
         parent: StubElement<out PsiElement>,
@@ -46,7 +43,7 @@ fun createTypeAliasStub(
                 parent, classId.shortClassName.ref(), classId.asSingleFqName().ref(),
                 isTopLevel = !classId.isNestedClass)
 
-    createModifierListStubForDeclaration(typeAlias, typeAliasProto.flags, arrayListOf(VISIBILITY), listOf())
+    val modifierList = createModifierListStubForDeclaration(typeAlias, typeAliasProto.flags, arrayListOf(VISIBILITY), listOf())
 
     val typeStubBuilder = TypeClsStubBuilder(context)
     val restConstraints = typeStubBuilder.createTypeParameterListStub(typeAlias, typeAliasProto.typeParameterList)
@@ -55,8 +52,7 @@ fun createTypeAliasStub(
     }
 
     if (Flags.HAS_ANNOTATIONS.get(typeAliasProto.flags)) {
-        // TODO: support annotations
-        // createAnnotationStubs(context.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
+        createAnnotationStubs(typeAliasProto.annotationList.map { context.nameResolver.getClassId(it.id) }, modifierList)
     }
 
     typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasProto.underlyingType)

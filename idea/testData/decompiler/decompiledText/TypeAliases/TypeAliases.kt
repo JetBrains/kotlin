@@ -8,7 +8,7 @@ class Outer<E, F> {
     }
 }
 
-annotation class Ann
+annotation class Ann(val value: String)
 class TypeAliases {
 
     typealias B = (A) -> Unit
@@ -17,7 +17,6 @@ class TypeAliases {
         b.invoke(a)
     }
 
-    // TODO: annotations are unsupported yet
-    @Ann
+    @Ann("OK")
     private typealias Parametrized<E, F> = Map<E, F>
 }

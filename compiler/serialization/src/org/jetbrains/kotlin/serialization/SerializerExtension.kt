@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.types.KotlinType
 abstract class SerializerExtension {
     abstract val stringTable: StringTable
 
+    val annotationSerializer by lazy { AnnotationSerializer(stringTable) }
+
     open fun shouldUseTypeTable(): Boolean = false
 
     open fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {

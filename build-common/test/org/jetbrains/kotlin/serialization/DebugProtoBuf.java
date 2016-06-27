@@ -22266,6 +22266,30 @@ public final class DebugProtoBuf {
      * <code>optional int32 expanded_type_id = 7;</code>
      */
     int getExpandedTypeId();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> 
+        getAnnotationList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    int getAnnotationCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+        getAnnotationOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeAlias}
@@ -22374,6 +22398,14 @@ public final class DebugProtoBuf {
               expandedTypeId_ = input.readInt32();
               break;
             }
+            case 66: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+                annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              annotation_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -22384,6 +22416,9 @@ public final class DebugProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          annotation_ = java.util.Collections.unmodifiableList(annotation_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -22564,6 +22599,41 @@ public final class DebugProtoBuf {
       return expandedTypeId_;
     }
 
+    public static final int ANNOTATION_FIELD_NUMBER = 8;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> annotation_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> getAnnotationList() {
+      return annotation_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+        getAnnotationOrBuilderList() {
+      return annotation_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    public int getAnnotationCount() {
+      return annotation_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index) {
+      return annotation_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+        int index) {
+      return annotation_.get(index);
+    }
+
     private void initFields() {
       flags_ = 0;
       name_ = 0;
@@ -22572,6 +22642,7 @@ public final class DebugProtoBuf {
       underlyingTypeId_ = 0;
       expandedType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       expandedTypeId_ = 0;
+      annotation_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -22597,6 +22668,12 @@ public final class DebugProtoBuf {
       }
       if (hasExpandedType()) {
         if (!getExpandedType().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAnnotationCount(); i++) {
+        if (!getAnnotation(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -22636,6 +22713,9 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeInt32(7, expandedTypeId_);
       }
+      for (int i = 0; i < annotation_.size(); i++) {
+        output.writeMessage(8, annotation_.get(i));
+      }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
@@ -22673,6 +22753,10 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(7, expandedTypeId_);
+      }
+      for (int i = 0; i < annotation_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(8, annotation_.get(i));
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -22788,6 +22872,7 @@ public final class DebugProtoBuf {
           getTypeParameterFieldBuilder();
           getUnderlyingTypeFieldBuilder();
           getExpandedTypeFieldBuilder();
+          getAnnotationFieldBuilder();
         }
       }
       private static Builder create() {
@@ -22822,6 +22907,12 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000020);
         expandedTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          annotationBuilder_.clear();
+        }
         return this;
       }
 
@@ -22891,6 +22982,15 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.expandedTypeId_ = expandedTypeId_;
+        if (annotationBuilder_ == null) {
+          if (((bitField0_ & 0x00000080) == 0x00000080)) {
+            annotation_ = java.util.Collections.unmodifiableList(annotation_);
+            bitField0_ = (bitField0_ & ~0x00000080);
+          }
+          result.annotation_ = annotation_;
+        } else {
+          result.annotation_ = annotationBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -22951,6 +23051,32 @@ public final class DebugProtoBuf {
         if (other.hasExpandedTypeId()) {
           setExpandedTypeId(other.getExpandedTypeId());
         }
+        if (annotationBuilder_ == null) {
+          if (!other.annotation_.isEmpty()) {
+            if (annotation_.isEmpty()) {
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+            } else {
+              ensureAnnotationIsMutable();
+              annotation_.addAll(other.annotation_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.annotation_.isEmpty()) {
+            if (annotationBuilder_.isEmpty()) {
+              annotationBuilder_.dispose();
+              annotationBuilder_ = null;
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+              annotationBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getAnnotationFieldBuilder() : null;
+            } else {
+              annotationBuilder_.addAllMessages(other.annotation_);
+            }
+          }
+        }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -22975,6 +23101,12 @@ public final class DebugProtoBuf {
         }
         if (hasExpandedType()) {
           if (!getExpandedType().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getAnnotationCount(); i++) {
+          if (!getAnnotation(i).isInitialized()) {
             
             return false;
           }
@@ -23625,6 +23757,246 @@ public final class DebugProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> annotation_ =
+        java.util.Collections.emptyList();
+      private void ensureAnnotationIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>(annotation_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> annotationBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> getAnnotationList() {
+        if (annotationBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(annotation_);
+        } else {
+          return annotationBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public int getAnnotationCount() {
+        if (annotationBuilder_ == null) {
+          return annotation_.size();
+        } else {
+          return annotationBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation getAnnotation(int index) {
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);
+        } else {
+          return annotationBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder setAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.set(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder setAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder addAnnotation(org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder addAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation value) {
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder addAnnotation(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder addAnnotation(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder builderForValue) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder addAllAnnotation(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation> values) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, annotation_);
+          onChanged();
+        } else {
+          annotationBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder clearAnnotation() {
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+          onChanged();
+        } else {
+          annotationBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public Builder removeAnnotation(int index) {
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.remove(index);
+          onChanged();
+        } else {
+          annotationBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder getAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+          int index) {
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);  } else {
+          return annotationBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+           getAnnotationOrBuilderList() {
+        if (annotationBuilder_ != null) {
+          return annotationBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(annotation_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder addAnnotationBuilder() {
+        return getAnnotationFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder addAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Annotation annotation = 8;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder> 
+           getAnnotationBuilderList() {
+        return getAnnotationFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder> 
+          getAnnotationFieldBuilder() {
+        if (annotationBuilder_ == null) {
+          annotationBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation, org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.AnnotationOrBuilder>(
+                  annotation_,
+                  ((bitField0_ & 0x00000080) == 0x00000080),
+                  getParentForChildren(),
+                  isClean());
+          annotation_ = null;
+        }
+        return annotationBuilder_;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.TypeAlias)
     }
 
@@ -24269,7 +24641,7 @@ public final class DebugProtoBuf {
       "serialization.Type\022\017\n\007type_id\030\005 \001(\005\022E\n\023v" +
       "ararg_element_type\030\004 \001(\0132(.org.jetbrains" +
       ".kotlin.serialization.Type\022\036\n\026vararg_ele",
-      "ment_type_id\030\006 \001(\005*\005\010d\020\310\001\"\275\002\n\tTypeAlias\022" +
+      "ment_type_id\030\006 \001(\005*\005\010d\020\310\001\"\201\003\n\tTypeAlias\022" +
       "\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022I\n" +
       "\016type_parameter\030\003 \003(\01321.org.jetbrains.ko" +
       "tlin.serialization.TypeParameter\022A\n\017unde" +
@@ -24277,15 +24649,16 @@ public final class DebugProtoBuf {
       ".serialization.Type\022\032\n\022underlying_type_i" +
       "d\030\005 \001(\005\022?\n\rexpanded_type\030\006 \001(\0132(.org.jet" +
       "brains.kotlin.serialization.Type\022\030\n\020expa" +
-      "nded_type_id\030\007 \001(\005*\005\010d\020\310\001\"&\n\tEnumEntry\022\022" +
-      "\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001*9\n\010Modality\022\t\n",
-      "\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEAL" +
-      "ED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
-      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
-      "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017" +
-      "\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDE" +
-      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProt" +
-      "oBuf"
+      "nded_type_id\030\007 \001(\005\022B\n\nannotation\030\010 \003(\0132." +
+      ".org.jetbrains.kotlin.serialization.Anno",
+      "tation*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005" +
+      "B\004\210\265\030\001*\005\010d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004" +
+      "OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisi" +
+      "bility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPRO" +
+      "TECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020" +
+      "\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLARATIO" +
+      "N\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017" +
+      "\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -24401,7 +24774,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_TypeAlias_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_TypeAlias_descriptor,
-        new java.lang.String[] { "Flags", "Name", "TypeParameter", "UnderlyingType", "UnderlyingTypeId", "ExpandedType", "ExpandedTypeId", });
+        new java.lang.String[] { "Flags", "Name", "TypeParameter", "UnderlyingType", "UnderlyingTypeId", "ExpandedType", "ExpandedTypeId", "Annotation", });
     internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable = new
