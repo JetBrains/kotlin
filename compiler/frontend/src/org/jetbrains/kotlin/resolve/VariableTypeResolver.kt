@@ -141,7 +141,9 @@ class VariableTypeResolver(
                 delegateExpression, property, propertyDescriptor, scopeForInitializer, trace, dataFlowInfo)
 
         val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor)
-        val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope)
+        val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(
+                propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope, dataFlowInfo
+        )
         if (getterReturnType != null) {
             return getterReturnType
         }

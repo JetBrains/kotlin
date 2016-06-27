@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -110,19 +109,22 @@ public class DelegatedPropertyResolver {
             delegateFunctionsScope = initializerScope = propertyHeaderScope;
         }
 
-        KotlinType delegateType = resolveDelegateExpression(delegateExpression,
-                                                            property,
-                                                            variableDescriptor,
-                                                            initializerScope,
-                                                            trace,
-                                                            outerDataFlowInfo);
+        KotlinType delegateType = resolveDelegateExpression(
+                delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo
+        );
 
-        resolveDelegatedPropertyGetMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope);
+        resolveDelegatedPropertyGetMethod(
+                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+        );
         if (property.isVar()) {
-            resolveDelegatedPropertySetMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope);
+            resolveDelegatedPropertySetMethod(
+                    variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+            );
         }
 
-        resolveDelegatedPropertyPDMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope);
+        resolveDelegatedPropertyPDMethod(
+                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
+        );
     }
 
     @Nullable
@@ -131,9 +133,12 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope
+            @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-        resolveDelegatedPropertyConventionMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, true);
+        resolveDelegatedPropertyConventionMethod(
+                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, true
+        );
         ResolvedCall<FunctionDescriptor> resolvedCall =
                 trace.getBindingContext().get(DELEGATED_PROPERTY_RESOLVED_CALL, variableDescriptor.getGetter());
         return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
@@ -144,10 +149,12 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope
+            @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
         KotlinType returnType = getDelegatedPropertyGetMethodReturnType(
-                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope);
+                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo
+        );
         KotlinType propertyType = variableDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
@@ -164,9 +171,12 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope
+            @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-        resolveDelegatedPropertyConventionMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, false);
+        resolveDelegatedPropertyConventionMethod(
+                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, false
+        );
     }
 
     @NotNull
@@ -179,12 +189,13 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope
+            @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                traceToResolvePDMethod, delegateFunctionsScope,
-                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+                traceToResolvePDMethod, delegateFunctionsScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE
+        );
 
         KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
@@ -218,6 +229,7 @@ public class DelegatedPropertyResolver {
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo,
             boolean isGet
     ) {
         VariableAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
@@ -226,7 +238,8 @@ public class DelegatedPropertyResolver {
         if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
 
         OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
-                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, isGet, true);
+                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, isGet, true
+        );
         Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
         assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
 
@@ -276,6 +289,7 @@ public class DelegatedPropertyResolver {
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope delegateFunctionsScope,
+            @NotNull DataFlowInfo dataFlowInfo,
             boolean isGet,
             boolean isComplete
     ) {
@@ -285,9 +299,7 @@ public class DelegatedPropertyResolver {
         KotlinType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, delegateFunctionsScope,
-                DataFlowInfoFactory.EMPTY, expectedType);
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
@@ -349,7 +361,8 @@ public class DelegatedPropertyResolver {
         TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
         KtExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
         ConstraintSystemCompleter completer = createConstraintSystemCompleter(
-                property, variableDescriptor, delegateExpression, scopeForDelegate, trace);
+                property, variableDescriptor, delegateExpression, scopeForDelegate, trace, dataFlowInfo
+        );
         if (calleeExpression != null) {
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
         }
@@ -370,7 +383,8 @@ public class DelegatedPropertyResolver {
             @NotNull final VariableDescriptorWithAccessors variableDescriptor,
             @NotNull final KtExpression delegateExpression,
             @NotNull LexicalScope scopeForDelegate,
-            @NotNull final BindingTrace trace
+            @NotNull final BindingTrace trace,
+            @NotNull final DataFlowInfo dataFlowInfo
     ) {
         final LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForDelegate, variableDescriptor);
         final KotlinType expectedType = property.getTypeReference() != null ? variableDescriptor.getType() : NO_EXPECTED_TYPE;
@@ -391,7 +405,7 @@ public class DelegatedPropertyResolver {
                 OverloadResolutionResults<FunctionDescriptor>
                         getMethodResults = getDelegatedPropertyConventionMethod(
                                 variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
-                                true, false
+                                dataFlowInfo, true, false
                         );
 
                 if (conventionMethodFound(getMethodResults)) {
@@ -415,7 +429,7 @@ public class DelegatedPropertyResolver {
                 OverloadResolutionResults<FunctionDescriptor>
                         setMethodResults = getDelegatedPropertyConventionMethod(
                                 variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
-                                false, false
+                                dataFlowInfo, false, false
                         );
 
                 if (conventionMethodFound(setMethodResults)) {
