@@ -74,5 +74,5 @@ message Library {
 
   repeated FileEntry entry = 1;
   optional Kind kind = 2 [default = PLAIN];
-  repeated string importedModules = 3;
+  repeated string imported_module = 3;
 }
