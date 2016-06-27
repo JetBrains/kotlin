@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.calls.checkers.DeprecatedCallChecker
 import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.storage.StorageManager
@@ -66,7 +67,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
 
 private val DEFAULT_CALL_CHECKERS = listOf(
         CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker(), SafeCallChecker(),
-        CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
+        DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker,
         CoroutineSuspendCallChecker, BuilderFunctionsCallChecker
 )

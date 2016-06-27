@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -52,20 +51,17 @@ public class ForLoopConventionsChecker {
     private final FakeCallResolver fakeCallResolver;
     private final LanguageFeatureSettings languageFeatureSettings;
     private final Iterable<CallChecker> callCheckers;
-    private final Iterable<SymbolUsageValidator> symbolUsageValidators;
 
     public ForLoopConventionsChecker(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
             @NotNull LanguageFeatureSettings languageFeatureSettings,
-            @NotNull Iterable<CallChecker> callCheckers,
-            @NotNull Iterable<SymbolUsageValidator> symbolUsageValidators
+            @NotNull Iterable<CallChecker> callCheckers
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
         this.languageFeatureSettings = languageFeatureSettings;
         this.callCheckers = callCheckers;
-        this.symbolUsageValidators = symbolUsageValidators;
     }
 
     @Nullable
@@ -89,9 +85,6 @@ public class ForLoopConventionsChecker {
             CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
             for (CallChecker checker : callCheckers) {
                 checker.check(iteratorResolvedCall, loopRangeExpression, callCheckerContext);
-            }
-            for (SymbolUsageValidator validator : symbolUsageValidators) {
-                validator.validateCall(iteratorResolvedCall, context.trace, loopRangeExpression);
             }
 
             KotlinType iteratorType = iteratorFunction.getReturnType();
@@ -148,16 +141,13 @@ public class ForLoopConventionsChecker {
             assert nextResolutionResults.isSuccess();
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
-            FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
 
             CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
             for (CallChecker checker : callCheckers) {
                 checker.check(resolvedCall, loopRangeExpression, callCheckerContext);
             }
-            for (SymbolUsageValidator validator : symbolUsageValidators) {
-                validator.validateCall(resolvedCall, context.trace, loopRangeExpression);
-            }
 
+            FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
             checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
 
             return functionDescriptor.getReturnType();

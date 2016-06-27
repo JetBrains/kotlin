@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -58,7 +57,6 @@ class CallCompleter(
         private val candidateResolver: CandidateResolver,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
-        private val symbolUsageValidators: Iterable<SymbolUsageValidator>,
         private val builtIns: KotlinBuiltIns,
         private val fakeCallResolver: FakeCallResolver,
         private val languageFeatureSettings: LanguageFeatureSettings
@@ -93,10 +91,6 @@ class CallCompleter(
             val callCheckerContext = CallCheckerContext(context, languageFeatureSettings)
             for (callChecker in callCheckers) {
                 callChecker.check(resolvedCall, reportOn, callCheckerContext)
-            }
-
-            for (validator in symbolUsageValidators) {
-                validator.validateCall(resolvedCall, context.trace, element!!)
             }
 
             resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)
