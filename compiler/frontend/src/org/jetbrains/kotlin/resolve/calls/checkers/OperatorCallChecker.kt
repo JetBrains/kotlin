@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -36,16 +34,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 
 class OperatorCallChecker : CallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext, languageFeatureSettings: LanguageFeatureSettings) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
         if (!checkNotErrorOrDynamic(functionDescriptor)) return
 
         val element = resolvedCall.call.calleeExpression ?: resolvedCall.call.callElement
         val call = resolvedCall.call
-
-        fun isInvokeCall(): Boolean = call is CallTransformer.CallForImplicitInvoke
-
-        fun isMultiDeclaration(): Boolean = call.callElement is KtDestructuringDeclarationEntry
 
         if (resolvedCall is VariableAsFunctionResolvedCall &&
             call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
@@ -56,7 +50,7 @@ class OperatorCallChecker : CallChecker {
             }
         }
 
-        if (isMultiDeclaration() || isInvokeCall()) {
+        if (call.callElement is KtDestructuringDeclarationEntry || call is CallTransformer.CallForImplicitInvoke) {
             if (!functionDescriptor.isOperator) {
                 report(call.callElement, functionDescriptor, context.trace)
             }
@@ -66,7 +60,7 @@ class OperatorCallChecker : CallChecker {
         val isConventionOperator = element is KtOperationReferenceExpression && element.getNameForConventionalOperation() != null
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
-                report(element, functionDescriptor, context.trace)
+                report(reportOn, functionDescriptor, context.trace)
             }
             if (isConventionOperator) {
                 checkDeprecatedUnaryConventions(call, functionDescriptor, context.trace)
@@ -85,16 +79,16 @@ class OperatorCallChecker : CallChecker {
     }
 
     companion object {
-        fun report(element: PsiElement, descriptor: FunctionDescriptor, sink: DiagnosticSink) {
+        fun report(reportOn: PsiElement, descriptor: FunctionDescriptor, sink: DiagnosticSink) {
             if (!checkNotErrorOrDynamic(descriptor)) return
 
             val containingDeclaration = descriptor.containingDeclaration
             val containingDeclarationName = containingDeclaration.fqNameUnsafe.asString()
-            sink.report(Errors.OPERATOR_MODIFIER_REQUIRED.on(element, descriptor, containingDeclarationName))
+            sink.report(Errors.OPERATOR_MODIFIER_REQUIRED.on(reportOn, descriptor, containingDeclarationName))
         }
 
         private fun checkNotErrorOrDynamic(functionDescriptor: FunctionDescriptor): Boolean {
-            return (!functionDescriptor.isDynamic() && !ErrorUtils.isError(functionDescriptor))
+            return !functionDescriptor.isDynamic() && !ErrorUtils.isError(functionDescriptor)
         }
     }
 }

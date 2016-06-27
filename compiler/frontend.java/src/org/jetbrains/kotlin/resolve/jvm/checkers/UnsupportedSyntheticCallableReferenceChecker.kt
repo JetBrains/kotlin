@@ -16,22 +16,23 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-class UnsupportedSyntheticCallableReferenceChecker : SimpleCallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
-        val expression = context.call.callElement
+class UnsupportedSyntheticCallableReferenceChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        val expression = resolvedCall.call.callElement
         if (expression !is KtNameReferenceExpression || expression.parent !is KtCallableReferenceExpression) return
 
         // TODO: support references to synthetic Java extension properties (KT-8575)
         if (resolvedCall.resultingDescriptor is SyntheticJavaPropertyDescriptor) {
-            context.trace.report(UNSUPPORTED.on(expression, "reference to the synthetic extension property for a Java get/set method"))
+            context.trace.report(UNSUPPORTED.on(reportOn, "reference to the synthetic extension property for a Java get/set method"))
         }
     }
 }

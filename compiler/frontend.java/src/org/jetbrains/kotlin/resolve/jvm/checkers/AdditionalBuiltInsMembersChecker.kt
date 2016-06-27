@@ -30,21 +30,16 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.elementToReportOn
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 
 object AdditionalBuiltInsMembersCallChecker : CallChecker {
-    override fun check(
-            resolvedCall: ResolvedCall<*>,
-            context: BasicCallResolutionContext,
-            languageFeatureSettings: LanguageFeatureSettings
-    ) {
-        if (languageFeatureSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        if (context.languageFeatureSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
 
-        reportErrorIfAdditionalBuiltinDescriptor(resultingDescriptor, context.trace, resolvedCall.elementToReportOn)
+        reportErrorIfAdditionalBuiltinDescriptor(resultingDescriptor, context.trace, reportOn)
     }
 }
 

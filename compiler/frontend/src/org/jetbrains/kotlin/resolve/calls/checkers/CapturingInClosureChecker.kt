@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.expressions.CaptureKind
 
-class CapturingInClosureChecker : SimpleCallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+class CapturingInClosureChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val variableResolvedCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.variableCall else resolvedCall
         val variableDescriptor = variableResolvedCall.resultingDescriptor as? VariableDescriptor
         if (variableDescriptor != null) {
@@ -68,9 +68,9 @@ class CapturingInClosureChecker : SimpleCallChecker {
         if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return false
 
         if (InlineUtil.isInlinedArgument(scopeDeclaration as KtFunction, context, false)) {
-            val scopeContainerParent = scopeContainer.containingDeclaration
-            assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
-            return !isCapturedVariable(variableParent, scopeContainerParent!!) || isCapturedInInline(context, scopeContainerParent, variableParent)
+            val scopeContainerParent = scopeContainer.containingDeclaration ?: error("parent is null for $scopeContainer")
+            return !isCapturedVariable(variableParent, scopeContainerParent) ||
+                   isCapturedInInline(context, scopeContainerParent, variableParent)
         }
         return false
     }

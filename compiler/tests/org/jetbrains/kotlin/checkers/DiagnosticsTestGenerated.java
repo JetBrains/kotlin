@@ -16703,6 +16703,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("operatorCall.kt")
+                public void testOperatorCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/operatorCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("passingInstance.kt")
                 public void testPassingInstance() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/passingInstance.kt");

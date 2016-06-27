@@ -16,27 +16,28 @@
 
 package org.jetbrains.kotlin.android.synthetic.diagnostic
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid.*
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.calls.checkers.SimpleCallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class AndroidExtensionPropertiesCallChecker : SimpleCallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
-        val expression = context.call.calleeExpression ?: return
+class AndroidExtensionPropertiesCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        reportOn as? KtExpression ?: return
 
         val propertyDescriptor = resolvedCall.resultingDescriptor as? PropertyDescriptor ?: return
         val containingPackage = propertyDescriptor.containingDeclaration as? AndroidSyntheticPackageFragmentDescriptor ?: return
         val androidSyntheticProperty = propertyDescriptor as? AndroidSyntheticProperty ?: return
 
-        with (context.trace) {
-            checkUnresolvedWidgetType(expression, androidSyntheticProperty)
-            checkDeprecated(expression, containingPackage)
+        with(context.trace) {
+            checkUnresolvedWidgetType(reportOn, androidSyntheticProperty)
+            checkDeprecated(reportOn, containingPackage)
         }
     }
 

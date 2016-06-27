@@ -13,13 +13,13 @@ abstract class A {
 open class B : A() {
     fun test() {
         super.foo("123")
-        <!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>super.foo()<!>
+        super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>foo<!>()
 
         super.foo2("123")
-        <!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>super.foo2()<!>
+        super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>foo2<!>()
 
         super.foo3("123")
-        <!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>super.foo3()<!>
+        super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>foo3<!>()
     }
 
     override fun foo3(a: String) {

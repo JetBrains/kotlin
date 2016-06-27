@@ -16,30 +16,30 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeatureSettings
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 
 interface CallChecker {
-    // TODO: Think about encapsulating these parameters into specific class like CheckerParameters when you're about to add another one
-    fun check(
-            resolvedCall: ResolvedCall<*>,
-            context: BasicCallResolutionContext,
-            languageFeatureSettings: LanguageFeatureSettings
-    )
+    fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext)
 }
 
-interface SimpleCallChecker : CallChecker {
-    override fun check(
-            resolvedCall: ResolvedCall<*>,
-            context: BasicCallResolutionContext,
-            languageFeatureSettings: LanguageFeatureSettings
-    ) = check(resolvedCall, context)
-
-    fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext)
+class CallCheckerContext(
+        val trace: BindingTrace,
+        val scope: LexicalScope,
+        val languageFeatureSettings: LanguageFeatureSettings,
+        val dataFlowInfo: DataFlowInfo,
+        val isAnnotationContext: Boolean
+) {
+    constructor(c: ResolutionContext<*>, languageFeatureSettings: LanguageFeatureSettings) : this(
+            c.trace, c.scope, languageFeatureSettings, c.dataFlowInfo, c.isAnnotationContext
+    )
 }
 
 // Use this utility to avoid premature computation of deferred return type of a resolved callable descriptor.
@@ -48,6 +48,3 @@ interface SimpleCallChecker : CallChecker {
 @Suppress("unused")
 fun CallChecker.isComputingDeferredType(type: KotlinType) =
         type is DeferredType && type.isComputing
-
-val ResolvedCall<*>.elementToReportOn: KtElement
-    get() = call.calleeExpression ?: call.callElement

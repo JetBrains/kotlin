@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
 
-class InlineCheckerWrapper : SimpleCallChecker {
-    private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, SimpleCallChecker>>? = null
+class InlineCheckerWrapper : CallChecker {
+    private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
 
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (context.isAnnotationContext) return
 
         var parentDescriptor: DeclarationDescriptor? = context.scope.ownerDescriptor
@@ -34,14 +34,14 @@ class InlineCheckerWrapper : SimpleCallChecker {
         while (parentDescriptor != null) {
             if (InlineUtil.isInline(parentDescriptor)) {
                 val checker = getChecker(parentDescriptor as FunctionDescriptor)
-                checker.check(resolvedCall, context)
+                checker.check(resolvedCall, reportOn, context)
             }
 
             parentDescriptor = parentDescriptor.containingDeclaration
         }
     }
 
-    private fun getChecker(descriptor: FunctionDescriptor): SimpleCallChecker {
+    private fun getChecker(descriptor: FunctionDescriptor): CallChecker {
         val map = checkersCache?.get() ?: hashMapOf()
         checkersCache = checkersCache ?: WeakReference(map)
         return map.getOrPut(descriptor) { InlineChecker(descriptor) }

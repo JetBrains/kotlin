@@ -39,8 +39,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
@@ -586,10 +585,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        BasicCallResolutionContext resolutionContext =
-                BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE);
+        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageFeatureSettings);
         for (CallChecker checker : components.callCheckers) {
-            checker.check(resolvedCall, resolutionContext, components.languageFeatureSettings);
+            checker.check(resolvedCall, expression, callCheckerContext);
         }
         for (SymbolUsageValidator validator : components.symbolUsageValidators) {
             validator.validateCall(resolvedCall, trace, expression);
@@ -894,11 +892,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (resolvedCall != null) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
-                    BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
-                            context.replaceBindingTrace(trace), resolvedCall.getCall(), CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+                    CallCheckerContext callCheckerContext = new CallCheckerContext(
+                            trace, context.scope, components.languageFeatureSettings, context.dataFlowInfo, context.isAnnotationContext
                     );
                     for (CallChecker checker : components.callCheckers) {
-                        checker.check(resolvedCall, callResolutionContext, components.languageFeatureSettings);
+                        checker.check(resolvedCall, expression, callCheckerContext);
                     }
                 }
             }

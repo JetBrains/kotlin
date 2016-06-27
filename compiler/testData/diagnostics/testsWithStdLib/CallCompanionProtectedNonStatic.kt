@@ -44,24 +44,24 @@ class Derived : Base() {
     fun test() {
         foo() // Ok
         gav() // Ok
-        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar()<!>
-        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz()<!>
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
     }
 
     inner class DerivedInner {
         fun fromDerivedInner() {
             foo() // Ok
             gav() // Ok
-            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar()<!>
-            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz()<!>
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
         }
     }
 
     companion object {
         fun test2() {
             gav() // Ok
-            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar()<!>
-            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz()<!>
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
         }
     }
 }

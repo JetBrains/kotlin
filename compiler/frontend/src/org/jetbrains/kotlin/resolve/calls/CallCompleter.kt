@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
@@ -83,14 +84,16 @@ class CallCompleter(
         }
 
         if (resolvedCall != null) {
-            for (callChecker in callCheckers) {
-                callChecker.check(resolvedCall, context, languageFeatureSettings)
-            }
-
             val element = if (resolvedCall is VariableAsFunctionResolvedCall)
                 resolvedCall.variableCall.call.calleeExpression
             else
                 resolvedCall.call.calleeExpression
+            val reportOn = element ?: resolvedCall.call.callElement
+
+            val callCheckerContext = CallCheckerContext(context, languageFeatureSettings)
+            for (callChecker in callCheckers) {
+                callChecker.check(resolvedCall, reportOn, callCheckerContext)
+            }
 
             for (validator in symbolUsageValidators) {
                 validator.validateCall(resolvedCall, context.trace, element!!)
