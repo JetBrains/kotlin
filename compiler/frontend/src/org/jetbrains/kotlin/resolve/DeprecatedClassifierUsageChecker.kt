@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.validation
+package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
-import org.jetbrains.kotlin.resolve.getDeprecation
 
-class DeprecatedSymbolValidator : SymbolUsageValidator {
-    override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
+class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
+    override fun check(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
         val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotationEntry::class.java, true)
         if (annotationEntry != null && annotationEntry.calleeExpression!!.constructorReferenceExpression == element) return

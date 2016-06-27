@@ -22,16 +22,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueTypeDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
 fun resolveQualifierAsReceiverInExpression(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
         context: ExpressionTypingContext,
-        symbolUsageValidators: Iterable<SymbolUsageValidator>
+        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context, symbolUsageValidators)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context, classifierUsageCheckers)
 
     if (referenceTarget is TypeParameterDescriptor) {
         context.trace.report(Errors.TYPE_PARAMETER_ON_LHS_OF_DOT.on(qualifier.referenceExpression, referenceTarget))
@@ -43,9 +42,9 @@ fun resolveQualifierAsReceiverInExpression(
 fun resolveQualifierAsStandaloneExpression(
         qualifier: Qualifier,
         context: ExpressionTypingContext,
-        symbolUsageValidators: Iterable<SymbolUsageValidator>
+        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, symbolUsageValidators)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, classifierUsageCheckers)
 
     when (referenceTarget) {
         is TypeParameterDescriptor -> {
@@ -68,7 +67,7 @@ private fun resolveQualifierReferenceTarget(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
         context: ExpressionTypingContext,
-        symbolUsageValidators: Iterable<SymbolUsageValidator>
+        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ): DeclarationDescriptor {
     if (qualifier is TypeParameterQualifier) {
         return qualifier.descriptor
@@ -104,8 +103,8 @@ private fun resolveQualifierReferenceTarget(
             context.trace.recordType(qualifier.expression, classValueTypeDescriptor.defaultType)
             if (classifier.hasCompanionObject) {
                 context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, classifier)
-                for (validator in symbolUsageValidators) {
-                    validator.validateTypeUsage(classValueDescriptor, context.trace, qualifier.referenceExpression)
+                for (checker in classifierUsageCheckers) {
+                    checker.check(classValueDescriptor, context.trace, qualifier.referenceExpression)
                 }
             }
             return classValueTypeDescriptor

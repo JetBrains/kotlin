@@ -33,7 +33,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
                                                NativeInnerClassChecker()),
         additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
-        additionalSymbolUsageValidators = listOf(),
+        additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
         identifierChecker = IdentifierChecker.DEFAULT,
         overloadFilter = OverloadFilter.DEFAULT
