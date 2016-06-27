@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -30,9 +31,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 
 class MissingDependencyClassChecker : CallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         for (classId in collectNotFoundClasses(resolvedCall.resultingDescriptor)) {
-            context.trace.report(ErrorsJvm.MISSING_DEPENDENCY_CLASS.on(resolvedCall.call.callElement, classId.asSingleFqName()))
+            context.trace.report(ErrorsJvm.MISSING_DEPENDENCY_CLASS.on(reportOn, classId.asSingleFqName()))
         }
     }
 

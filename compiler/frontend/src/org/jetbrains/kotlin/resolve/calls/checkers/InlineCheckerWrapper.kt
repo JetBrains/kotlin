@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
 class InlineCheckerWrapper : CallChecker {
     private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
 
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (context.isAnnotationContext) return
 
         var parentDescriptor: DeclarationDescriptor? = context.scope.ownerDescriptor
@@ -35,7 +35,7 @@ class InlineCheckerWrapper : CallChecker {
         while (parentDescriptor != null) {
             if (InlineUtil.isInline(parentDescriptor)) {
                 val checker = getChecker(parentDescriptor as SimpleFunctionDescriptor)
-                checker.check(resolvedCall, context)
+                checker.check(resolvedCall, reportOn, context)
             }
 
             parentDescriptor = parentDescriptor.containingDeclaration

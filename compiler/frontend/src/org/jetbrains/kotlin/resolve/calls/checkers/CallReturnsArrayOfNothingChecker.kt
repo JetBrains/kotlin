@@ -16,20 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
 class CallReturnsArrayOfNothingChecker : CallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
-        val returnType = resolvedCall.resultingDescriptor.returnType
-
-        if (returnType.containsArrayOfNothing()) {
-            val callElement = resolvedCall.call.callElement
-            val diagnostic = Errors.UNSUPPORTED.on(callElement, "Array<Nothing> in return type is illegal")
-            context.trace.report(diagnostic)
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        if (resolvedCall.resultingDescriptor.returnType.containsArrayOfNothing()) {
+            context.trace.report(Errors.UNSUPPORTED.on(reportOn, "Array<Nothing> in return type is illegal"))
         }
     }
 

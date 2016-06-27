@@ -16,19 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 class JavaClassOnCompanionChecker : CallChecker {
-    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.resultingDescriptor
         if (descriptor !is PropertyDescriptor || descriptor.name.asString() != "javaClass") return
 
@@ -45,7 +46,7 @@ class JavaClassOnCompanionChecker : CallChecker {
                     Annotations.EMPTY, javaLangClass, actualType.isMarkedNullable,
                     listOf(TypeProjectionImpl(containingClass.defaultType))
             )
-            context.trace.report(ErrorsJvm.JAVA_CLASS_ON_COMPANION.on(resolvedCall.call.callElement, actualType, expectedType))
+            context.trace.report(ErrorsJvm.JAVA_CLASS_ON_COMPANION.on(reportOn, actualType, expectedType))
         }
     }
 }

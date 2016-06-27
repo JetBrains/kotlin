@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -67,8 +66,8 @@ class InlineChecker implements CallChecker {
     }
 
     @Override
-    public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull BasicCallResolutionContext context) {
-        KtExpression expression = context.call.getCalleeExpression();
+    public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull PsiElement reportOn, @NotNull CallCheckerContext context) {
+        KtExpression expression = resolvedCall.getCall().getCalleeExpression();
         if (expression == null) {
             return;
         }
@@ -80,7 +79,7 @@ class InlineChecker implements CallChecker {
 
         if (inlinableParameters.contains(targetDescriptor)) {
             if (!isInsideCall(expression)) {
-                context.trace.report(USAGE_IS_NOT_INLINABLE.on(expression, expression, descriptor));
+                context.getTrace().report(USAGE_IS_NOT_INLINABLE.on(expression, expression, descriptor));
             }
         }
 
@@ -123,10 +122,8 @@ class InlineChecker implements CallChecker {
         return parent != null;
     }
 
-
-
     private void checkValueParameter(
-            @NotNull BasicCallResolutionContext context,
+            @NotNull CallCheckerContext context,
             @NotNull CallableDescriptor targetDescriptor,
             @NotNull ValueArgument targetArgument,
             @NotNull ValueParameterDescriptor targetParameterDescriptor
@@ -140,20 +137,20 @@ class InlineChecker implements CallChecker {
         if (argumentCallee != null && inlinableParameters.contains(argumentCallee)) {
             if (InlineUtil.isInline(targetDescriptor) && isInlinableParameter(targetParameterDescriptor)) {
                 if (allowsNonLocalReturns(argumentCallee) && !allowsNonLocalReturns(targetParameterDescriptor)) {
-                    context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(argumentExpression, argumentExpression));
+                    context.getTrace().report(NON_LOCAL_RETURN_NOT_ALLOWED.on(argumentExpression, argumentExpression));
                 }
                 else {
                     checkNonLocalReturn(context, argumentCallee, argumentExpression);
                 }
             }
             else {
-                context.trace.report(USAGE_IS_NOT_INLINABLE.on(argumentExpression, argumentExpression, descriptor));
+                context.getTrace().report(USAGE_IS_NOT_INLINABLE.on(argumentExpression, argumentExpression, descriptor));
             }
         }
     }
 
     private void checkCallWithReceiver(
-            @NotNull BasicCallResolutionContext context,
+            @NotNull CallCheckerContext context,
             @NotNull CallableDescriptor targetDescriptor,
             @Nullable ReceiverValue receiver,
             @Nullable KtExpression expression
@@ -184,13 +181,13 @@ class InlineChecker implements CallChecker {
 
     @Nullable
     private static CallableDescriptor getCalleeDescriptor(
-            @NotNull BasicCallResolutionContext context,
+            @NotNull CallCheckerContext context,
             @NotNull KtExpression expression,
             boolean unwrapVariableAsFunction
     ) {
         if (!(expression instanceof KtSimpleNameExpression || expression instanceof KtThisExpression)) return null;
 
-        ResolvedCall<?> thisCall = CallUtilKt.getResolvedCall(expression, context.trace.getBindingContext());
+        ResolvedCall<?> thisCall = CallUtilKt.getResolvedCall(expression, context.getTrace().getBindingContext());
         if (unwrapVariableAsFunction && thisCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) thisCall).getVariableCall().getResultingDescriptor();
         }
@@ -198,27 +195,27 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkLambdaInvokeOrExtensionCall(
-            @NotNull BasicCallResolutionContext context,
+            @NotNull CallCheckerContext context,
             @NotNull CallableDescriptor lambdaDescriptor,
             @NotNull CallableDescriptor callDescriptor,
             @NotNull KtExpression receiverExpression
     ) {
         boolean inlinableCall = isInvokeOrInlineExtension(callDescriptor);
         if (!inlinableCall) {
-            context.trace.report(USAGE_IS_NOT_INLINABLE.on(receiverExpression, receiverExpression, descriptor));
+            context.getTrace().report(USAGE_IS_NOT_INLINABLE.on(receiverExpression, receiverExpression, descriptor));
         }
         else {
             checkNonLocalReturn(context, lambdaDescriptor, receiverExpression);
         }
     }
 
-    public void checkRecursion(
-            @NotNull BasicCallResolutionContext context,
+    private void checkRecursion(
+            @NotNull CallCheckerContext context,
             @NotNull CallableDescriptor targetDescriptor,
             @NotNull KtElement expression
     ) {
         if (targetDescriptor.getOriginal() == descriptor) {
-            context.trace.report(Errors.RECURSION_IN_INLINE.on(expression, expression, descriptor));
+            context.getTrace().report(Errors.RECURSION_IN_INLINE.on(expression, expression, descriptor));
         }
     }
 
@@ -240,10 +237,17 @@ class InlineChecker implements CallChecker {
         return isInvoke || InlineUtil.isInline(descriptor);
     }
 
-    private void checkVisibilityAndAccess(@NotNull CallableDescriptor declarationDescriptor, @NotNull KtElement expression, @NotNull BasicCallResolutionContext context){
-        boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
-        if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
-            context.trace.report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor, descriptor));
+    private void checkVisibilityAndAccess(
+            @NotNull CallableDescriptor declarationDescriptor,
+            @NotNull KtElement expression,
+            @NotNull CallCheckerContext context
+    ) {
+        boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) ||
+                                                   isDefinedInInlineFunction(declarationDescriptor);
+        if (isEffectivelyPublicApiFunction &&
+            !declarationDescriptorIsPublicApi &&
+            declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
+            context.getTrace().report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor, descriptor));
         }
         else {
             checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
@@ -253,11 +257,11 @@ class InlineChecker implements CallChecker {
     private void checkPrivateClassMemberAccess(
             @NotNull DeclarationDescriptor declarationDescriptor,
             @NotNull KtElement expression,
-            @NotNull BasicCallResolutionContext context
+            @NotNull CallCheckerContext context
     ) {
         if (!isEffectivelyPrivateApiFunction) {
             if (DescriptorUtilsKt.isInsidePrivateClass(declarationDescriptor)) {
-                context.trace.report(Errors.PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
+                context.getTrace().report(Errors.PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
             }
         }
     }
@@ -275,14 +279,14 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkNonLocalReturn(
-            @NotNull BasicCallResolutionContext context,
+            @NotNull CallCheckerContext context,
             @NotNull CallableDescriptor inlinableParameterDescriptor,
             @NotNull KtExpression parameterUsage
     ) {
         if (!allowsNonLocalReturns(inlinableParameterDescriptor)) return;
 
-        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
-            context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage));
+        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.getTrace())) {
+            context.getTrace().report(NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage));
         }
     }
 }
