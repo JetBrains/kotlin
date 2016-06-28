@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
+package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
-    return this is FunctionDescriptor && this.isExternal
-}
-
-class NativeFunChecker : SimpleDeclarationChecker {
+class ExternalFunChecker : SimpleDeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (!descriptor.hasNativeAnnotation()) return
+        if (descriptor !is FunctionDescriptor || !descriptor.isExternal) return
 
         if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
         else if (descriptor is CallableMemberDescriptor &&
-            descriptor.modality == Modality.ABSTRACT) {
+                 descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 
@@ -54,6 +50,5 @@ class NativeFunChecker : SimpleDeclarationChecker {
         if (InlineUtil.isInline(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED.on(declaration))
         }
-
     }
 }

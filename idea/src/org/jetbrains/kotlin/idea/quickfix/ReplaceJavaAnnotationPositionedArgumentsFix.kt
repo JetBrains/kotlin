@@ -21,12 +21,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
-import org.jetbrains.kotlin.load.kotlin.getJavaAnnotationCallValueArgumentsThatShouldBeNamed
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.jvm.checkers.JavaAnnotationCallChecker
 
 class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry)
 : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
@@ -37,12 +37,11 @@ class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry)
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return
         val psiFactory = KtPsiFactory(project)
 
-        getJavaAnnotationCallValueArgumentsThatShouldBeNamed(resolvedCall).forEach argumentProcessor@{
-            argument ->
-            val valueArgument = (argument.value as? ExpressionValueArgument)?.valueArgument ?: return@argumentProcessor
-            val expression = valueArgument.getArgumentExpression() ?: return@argumentProcessor
+        for ((key, value) in JavaAnnotationCallChecker.getJavaAnnotationCallValueArgumentsThatShouldBeNamed(resolvedCall)) {
+            val valueArgument = (value as? ExpressionValueArgument)?.valueArgument ?: continue
+            val expression = valueArgument.getArgumentExpression() ?: continue
 
-            valueArgument.asElement().replace(psiFactory.createArgument(expression, argument.key.name))
+            valueArgument.asElement().replace(psiFactory.createArgument(expression, key.name))
         }
     }
 
