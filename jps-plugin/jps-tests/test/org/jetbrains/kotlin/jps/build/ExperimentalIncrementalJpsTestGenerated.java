@@ -205,6 +205,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("addMemberTypeAlias")
+        public void testAddMemberTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/addMemberTypeAlias/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addTopLevelTypeAlias")
+        public void testAddTopLevelTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/addTopLevelTypeAlias/");
+            doTest(fileName);
+        }
+
         @TestMetadata("allConstants")
         public void testAllConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/allConstants/");
@@ -836,6 +848,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("removeFileWithFunctionOverload")
         public void testRemoveFileWithFunctionOverload() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeMemberTypeAlias")
+        public void testRemoveMemberTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeTopLevelTypeAlias")
+        public void testRemoveTopLevelTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeTopLevelTypeAlias/");
             doTest(fileName);
         }
 

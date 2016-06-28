@@ -57,6 +57,7 @@ internal val MessageLite.isPrivate: Boolean
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
+                is ProtoBuf.TypeAlias -> Flags.VISIBILITY.get(flags)
                 else -> error("Unknown message: $this")
             }))
 
@@ -65,6 +66,7 @@ private fun MessageLite.name(nameResolver: NameResolver): String {
         is ProtoBuf.Constructor -> "<init>"
         is ProtoBuf.Function -> nameResolver.getString(name)
         is ProtoBuf.Property -> nameResolver.getString(name)
+        is ProtoBuf.TypeAlias -> nameResolver.getString(name)
         else -> error("Unknown message: $this")
     }
 }
@@ -141,6 +143,7 @@ private abstract class DifferenceCalculator() {
             is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes)
+            is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes)
             else -> error("Unknown message: $this")
         }
     }
@@ -150,6 +153,7 @@ private abstract class DifferenceCalculator() {
             old is ProtoBuf.Constructor && new is ProtoBuf.Constructor -> checkEquals(old, new)
             old is ProtoBuf.Function && new is ProtoBuf.Function -> checkEquals(old, new)
             old is ProtoBuf.Property && new is ProtoBuf.Property -> checkEquals(old, new)
+            old is ProtoBuf.TypeAlias && new is ProtoBuf.TypeAlias -> checkEquals(old, new)
             else -> error("Unknown message: $this")
         }
     }
@@ -261,9 +265,10 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
+                ProtoBufPackageKind.TYPE_ALIAS_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.TYPE_TABLE,
-                ProtoBufPackageKind.PACKAGE_MODULE_NAME,
-                ProtoBufPackageKind.TYPE_ALIAS_LIST -> {
+                ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
                     // TODO
                 }
                 else -> throw IllegalArgumentException("Unsupported kind: $kind")
