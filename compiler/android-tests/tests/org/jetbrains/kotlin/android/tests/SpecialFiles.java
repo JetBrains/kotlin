@@ -90,6 +90,7 @@ public class SpecialFiles {
 
         excludedFiles.add("nestedClasses.kt"); // additional nested class in 'Thread' class on Android
         excludedFiles.add("kt12200Const.kt"); // no 'modifiers' field in 'java.lang.reflect.Field' class
+        excludedFiles.add("testImmutableRemove.kt"); // need to compile against java 6
 
         excludedFiles.add("closureOfInnerLocalClass.kt"); // KT-8120
         excludedFiles.add("closureWithSelfInstantiation.kt"); // KT-8120
