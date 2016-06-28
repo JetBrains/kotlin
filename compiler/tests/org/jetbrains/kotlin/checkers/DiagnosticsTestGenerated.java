@@ -19635,6 +19635,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("constructorCallThroughPrivateAlias.kt")
+            public void testConstructorCallThroughPrivateAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/constructorCallThroughPrivateAlias.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("exposedExpandedType.kt")
             public void testExposedExpandedType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/exposedExpandedType.kt");
