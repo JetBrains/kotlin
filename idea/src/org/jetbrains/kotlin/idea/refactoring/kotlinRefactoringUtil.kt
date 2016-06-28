@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.unwrap.RangeSplitter
 import com.intellij.codeInsight.unwrap.UnwrapHandler
 import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandAdapter
@@ -59,10 +60,8 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -91,6 +90,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
@@ -766,3 +767,30 @@ fun addTypeArgumentsIfNeeded(expression: KtExpression, typeArgumentList: KtTypeA
     callElement.addAfter(typeArgumentList, callElement.calleeExpression)
     ShortenReferences.DEFAULT.process(callElement.typeArgumentList!!)
 }
+
+internal fun DeclarationDescriptor.getThisLabelName(): String {
+    if (!name.isSpecial) return name.asString()
+    if (this is AnonymousFunctionDescriptor) {
+        val function = source.getPsi() as? KtFunction
+        val argument = function?.parent as? KtValueArgument
+        val callElement = argument?.getStrictParentOfType<KtCallElement>()
+        val callee = callElement?.calleeExpression as? KtSimpleNameExpression
+        if (callee != null) return callee.text
+    }
+    return ""
+}
+
+internal fun DeclarationDescriptor.explicateAsTextForReceiver(): String {
+    val labelName = getThisLabelName()
+    return if (labelName.isEmpty()) "this" else "this@$labelName"
+}
+
+internal fun ImplicitReceiver.explicateAsText(): String {
+    return declarationDescriptor.explicateAsTextForReceiver()
+}
+
+val PsiFile.isInjectedFragment: Boolean
+    get() = InjectedLanguageManager.getInstance(project).isInjectedFragment(this)
+
+val PsiElement.isInsideInjectedFragment: Boolean
+    get() = containingFile.isInjectedFragment

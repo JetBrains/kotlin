@@ -1,5 +1,6 @@
 // "Add non-null asserted (!!) call" "false"
 // ACTION: Change parameter 's' type of function 'other' to 'String?'
+// ACTION: Create function 'other'
 // ERROR: Type mismatch: inferred type is String? but Int was expected
 fun test() {
     val s: String? = ""

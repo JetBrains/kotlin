@@ -1968,6 +1968,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("argumentTypeMismatch.kt")
+                public void testArgumentTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/argumentTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("callInAnnotationEntry.kt")
                 public void testCallInAnnotationEntry() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/callInAnnotationEntry.kt");
@@ -2717,6 +2723,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static class CreateSecondaryConstructor extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateSecondaryConstructor() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("argumentTypeMismatch.kt")
+            public void testArgumentTypeMismatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/argumentTypeMismatch.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("callWithExpectedType.kt")

@@ -21,10 +21,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -469,6 +467,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return false
             if (selectorsSelectorTarget is ClassDescriptor) return false
+            // TODO: More generic solution may be possible
+            if (selectorsSelectorTarget is PropertyDescriptor) {
+                val source = selectorsSelectorTarget.source.getPsi() as? KtProperty
+                if (source != null && isEnumCompanionPropertyWithEntryConflict(source, source.name ?: "")) return false
+            }
 
             addElementToShorten(qualifiedExpression)
             return true

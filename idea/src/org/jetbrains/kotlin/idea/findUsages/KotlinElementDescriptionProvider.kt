@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
     override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
-        val targetElement = element.unwrapped ?: element
+        val shouldUnwrap = location !is UsageViewShortNameLocation && location !is UsageViewLongNameLocation
+        val targetElement = if (shouldUnwrap) element.unwrapped ?: element else element
 
         fun elementKind() = when (targetElement) {
             is KtClass -> if (targetElement.isInterface()) "interface" else "class"
@@ -65,7 +66,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         if (targetElement !is PsiNamedElement || targetElement.language != KotlinLanguage.INSTANCE) return null
         return when(location) {
             is UsageViewTypeLocation -> elementKind()
-            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> targetElement.getName()
+            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> targetElement.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null
