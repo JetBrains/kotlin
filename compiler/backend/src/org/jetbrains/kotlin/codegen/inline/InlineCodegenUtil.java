@@ -488,7 +488,7 @@ public class InlineCodegenUtil {
 
     public static int calcMarkerShift(@NotNull Parameters parameters, @NotNull MethodNode node) {
         int markerShiftTemp = getIndexAfterLastMarker(node);
-        return markerShiftTemp - parameters.getRealArgsSizeOnStack() + parameters.getArgsSizeOnStack();
+        return markerShiftTemp - parameters.getRealParametersSizeOnStack() + parameters.getArgsSizeOnStack();
     }
 
     private static int getIndexAfterLastMarker(@NotNull MethodNode node) {

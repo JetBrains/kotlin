@@ -18,49 +18,45 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
 internal class ParametersBuilder private constructor() {
-    private val valueAndHiddenParams = arrayListOf<ParameterInfo>()
-    private val capturedParams = arrayListOf<CapturedParamInfo>()
-    private var valueParamStart = 0
 
-    var nextValueParameterIndex = 0
+    private val params = arrayListOf<ParameterInfo>()
+
+    private var valueParamFirstIndex = 0
+
+    var nextParameterOffset = 0
         private set
 
-    private var nextCaptured = 0
+    private var nextValueParameterIndex = 0
 
     fun addThis(type: Type, skipped: Boolean): ParameterInfo {
-        val info = ParameterInfo(type, skipped, nextValueParameterIndex, -1, valueAndHiddenParams.size)
-        addParameter(info)
-        return info
+        return addParameter(ParameterInfo(type, skipped, nextParameterOffset, -1, nextValueParameterIndex))
     }
 
     fun addNextParameter(type: Type, skipped: Boolean): ParameterInfo {
-        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, null, valueAndHiddenParams.size))
+        return addParameter(ParameterInfo(type, skipped, nextParameterOffset, null, nextValueParameterIndex))
     }
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
         return addParameter(ParameterInfo(
-                type, skipped, nextValueParameterIndex, remapValue,
-                if (parameterIndex == -1) valueAndHiddenParams.size else parameterIndex + valueParamStart
+                type, skipped, nextParameterOffset, remapValue,
+                if (parameterIndex == -1) nextValueParameterIndex else parameterIndex + valueParamFirstIndex
         ))
     }
 
     fun addCapturedParam(original: CapturedParamInfo, newFieldName: String): CapturedParamInfo {
-        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextCapturedIndex(), original.index)
+        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextParameterOffset, original.index)
         info.lambda = original.lambda
-        return addCapturedParameter(info)
+        return addParameter(info)
     }
 
-    private fun nextCapturedIndex(): Int = nextCaptured
-
     fun addCapturedParam(desc: CapturedParamDesc, newFieldName: String, skipInConstructor: Boolean): CapturedParamInfo {
-        return addCapturedParameter(CapturedParamInfo(desc, newFieldName, false, nextCapturedIndex(), null, skipInConstructor))
+        return addParameter(CapturedParamInfo(desc, newFieldName, false, nextParameterOffset, null, skipInConstructor, -1))
     }
 
     fun addCapturedParamCopy(copyFrom: CapturedParamInfo): CapturedParamInfo {
-        return addCapturedParameter(copyFrom.newIndex(nextCapturedIndex()))
+        return addParameter(copyFrom.cloneWithNewDeclarationIndex(-1))
     }
 
     fun addCapturedParam(
@@ -72,41 +68,48 @@ internal class ParametersBuilder private constructor() {
             original: ParameterInfo?
     ): CapturedParamInfo {
         val info = CapturedParamInfo(
-                CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextCapturedIndex(), original?.index ?: -1
+                CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
         )
         if (original != null) {
             info.lambda = original.lambda
         }
-        return addCapturedParameter(info)
+        return addParameter(info)
     }
 
-    private fun addParameter(info: ParameterInfo): ParameterInfo {
-        valueAndHiddenParams.add(info)
-        nextValueParameterIndex += info.getType().size
-        return info
-    }
-
-    private fun addCapturedParameter(info: CapturedParamInfo): CapturedParamInfo {
-        capturedParams.add(info)
-        nextCaptured += info.getType().size
+    private fun <T: ParameterInfo> addParameter(info: T): T {
+        params.add(info)
+        nextParameterOffset += info.getType().size
+        if (info !is CapturedParamInfo) {
+            nextValueParameterIndex++
+        }
         return info
     }
 
     fun markValueParametersStart() {
-        this.valueParamStart = valueAndHiddenParams.size
+        this.valueParamFirstIndex = params.size
+        this.nextValueParameterIndex = valueParamFirstIndex
     }
 
     fun listCaptured(): List<CapturedParamInfo> {
-        return Collections.unmodifiableList(capturedParams)
+        return params.filterIsInstance<CapturedParamInfo>()
     }
 
     /*TODO use Parameters instead*/
     fun listAllParams(): List<ParameterInfo> {
-        return valueAndHiddenParams + capturedParams
+        return params
     }
 
     fun buildParameters(): Parameters {
-        return Parameters(Collections.unmodifiableList(valueAndHiddenParams), Parameters.shift(listCaptured(), nextValueParameterIndex))
+        var nextDeclarationIndex = (params.maxBy { it.declarationIndex }?.declarationIndex ?: -1) + 1
+
+        return Parameters(params.map { param ->
+            if (param is CapturedParamInfo) {
+                param.cloneWithNewDeclarationIndex(nextDeclarationIndex++)
+            }
+            else {
+                param
+            }
+        })
     }
 
     companion object {

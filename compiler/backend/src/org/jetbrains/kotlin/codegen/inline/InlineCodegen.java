@@ -726,7 +726,7 @@ public class InlineCodegen extends CallGenerator {
         }
 
         invocationParamBuilder.markValueParametersStart();
-        List<ParameterInfo> hiddenParameters = invocationParamBuilder.buildParameters().getReal();
+        List<ParameterInfo> hiddenParameters = invocationParamBuilder.buildParameters().getParameters();
         recordParameterValueInLocalVal(hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
     }
 

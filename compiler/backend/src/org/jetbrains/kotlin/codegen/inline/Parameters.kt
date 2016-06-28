@@ -19,15 +19,23 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-internal class Parameters(val real: List<ParameterInfo>, val captured: List<CapturedParamInfo>) : Iterable<ParameterInfo> {
+internal class Parameters(val parameters: List<ParameterInfo>) : Iterable<ParameterInfo> {
 
     private val actualDeclShifts: Array<ParameterInfo?>
     private val paramToDeclByteCodeIndex: HashMap<ParameterInfo, Int> = hashMapOf()
 
-    val realArgsSizeOnStack = real.sumBy { it.type.size }
-    val capturedArgsSizeOnStack = captured.sumBy { it.type.size }
+    val argsSizeOnStack = parameters.sumBy { it.type.size }
 
-    val argsSizeOnStack = realArgsSizeOnStack + capturedArgsSizeOnStack
+    val realParametersSizeOnStack: Int
+        get() = argsSizeOnStack - capturedParametersSizeOnStack
+
+    val capturedParametersSizeOnStack by lazy {
+        captured.sumBy { it.type.size }
+    }
+
+    val captured by lazy {
+        parameters.filterIsInstance<CapturedParamInfo>()
+    }
 
     init {
         val declIndexesToActual = arrayOfNulls<Int>(argsSizeOnStack)
@@ -54,21 +62,15 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
     }
 
     private fun get(index: Int): ParameterInfo {
-        return real.getOrNull(index) ?: captured[index - real.size]
+        return parameters[index]
     }
 
     override fun iterator(): Iterator<ParameterInfo> {
-        return (real + captured).iterator()
+        return parameters.iterator()
     }
 
     val capturedTypes: List<Type>
         get() = captured.map {
             it.getType()
         }
-
-    companion object {
-        fun shift(capturedParams: List<CapturedParamInfo>, realSize: Int): List<CapturedParamInfo> {
-            return capturedParams.withIndex().map { it.value.newIndex(it.index + realSize) }
-        }
-    }
 }

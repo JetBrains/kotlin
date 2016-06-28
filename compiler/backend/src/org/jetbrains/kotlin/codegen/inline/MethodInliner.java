@@ -340,8 +340,8 @@ public class MethodInliner {
 
     @NotNull
     private MethodNode prepareNode(@NotNull MethodNode node, int finallyDeepShift) {
-        final int capturedParamsSize = parameters.getCapturedArgsSizeOnStack();
-        final int realParametersSize = parameters.getRealArgsSizeOnStack();
+        final int capturedParamsSize = parameters.getCapturedParametersSizeOnStack();
+        final int realParametersSize = parameters.getRealParametersSizeOnStack();
         Type[] types = Type.getArgumentTypes(node.desc);
         Type returnType = Type.getReturnType(node.desc);
 

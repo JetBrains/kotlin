@@ -251,7 +251,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         List<Type> descTypes = new ArrayList<Type>();
 
         Parameters constructorParams = constructorInlineBuilder.buildParameters();
-        int[] capturedIndexes = new int[constructorParams.getReal().size() + constructorParams.getCaptured().size()];
+        int[] capturedIndexes = new int[constructorParams.getParameters().size()];
         int index = 0;
         int size = 0;
 
@@ -432,7 +432,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
         Type[] types = Type.getArgumentTypes(constructorDesc);
         for (Type type : types) {
-            LambdaInfo info = indexToLambda.get(constructorParamBuilder.getNextValueParameterIndex());
+            LambdaInfo info = indexToLambda.get(constructorParamBuilder.getNextParameterOffset());
             ParameterInfo parameterInfo = constructorParamBuilder.addNextParameter(type, info != null);
             parameterInfo.setLambda(info);
             if (capturedParams.contains(parameterInfo.getIndex())) {

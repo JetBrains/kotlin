@@ -26,7 +26,7 @@ public class CapturedParamInfo extends ParameterInfo {
     private final boolean skipInConstructor;
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
-        super(desc.getType(), skipped, index, remapIndex, index);
+        super(desc.getType(), skipped, index, remapIndex, -1);
         this.desc = desc;
         this.newFieldName = newFieldName;
         this.skipInConstructor = false;
@@ -38,9 +38,10 @@ public class CapturedParamInfo extends ParameterInfo {
             boolean skipped,
             int index,
             @Nullable StackValue remapIndex,
-            boolean skipInConstructor
+            boolean skipInConstructor,
+            int declarationIndex
     ) {
-        super(desc.getType(), skipped, index, remapIndex, index);
+        super(desc.getType(), skipped, index, remapIndex, declarationIndex);
         this.desc = desc;
         this.newFieldName = newFieldName;
         this.skipInConstructor = skipInConstructor;
@@ -57,13 +58,10 @@ public class CapturedParamInfo extends ParameterInfo {
     }
 
     @NotNull
-    public CapturedParamInfo newIndex(int newIndex) {
-        return clone(newIndex, getRemapValue());
-    }
-
-    @NotNull
-    private CapturedParamInfo clone(int newIndex, @Nullable StackValue newRemapIndex) {
-        CapturedParamInfo result = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRemapIndex, skipInConstructor);
+    public CapturedParamInfo cloneWithNewDeclarationIndex(int newDeclarationIndex) {
+        CapturedParamInfo result = new CapturedParamInfo(
+                desc, newFieldName, isSkipped, getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
+        );
         result.setLambda(getLambda());
         return result;
     }
