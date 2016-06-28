@@ -79,6 +79,8 @@ abstract class BasicBoxTest(
         val expectedText = KotlinTestUtils.doLoadFile(file)
 
         TestFileFactoryImpl().use { testFactory ->
+            testFactory.defaultModule.moduleKind
+
             val inputFiles = KotlinTestUtils.createTestFiles(file.name, expectedText, testFactory)
             val modules = inputFiles
                     .map { it.module }.distinct()
@@ -116,7 +118,7 @@ abstract class BasicBoxTest(
                     }
 
             val additionalFiles = mutableListOf<String>()
-            if (modules.size > 1) {
+            if (modules.size > 1 || MODULE_KIND_PATTERN.matcher(expectedText).find()) {
                 additionalFiles += MODULE_EMULATION_FILE
             }
             val additionalJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + JavaScript.DOT_EXTENSION
@@ -259,12 +261,14 @@ abstract class BasicBoxTest(
         return LibrarySourcesConfig(project, configuration)
     }
 
-    private inner class TestFileFactoryImpl() : TestFileFactory<TestModule, TestFile>, Closeable {
+    private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KotlinTestUtils.tmpDir("js-tests")
         val defaultModule = TestModule(TEST_MODULE, emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
+            val currentModule = module ?: defaultModule
+
             val ktFile = KtPsiFactory(project).createFile(text)
             val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION  }
             if (boxFunction != null) {
@@ -274,22 +278,20 @@ abstract class BasicBoxTest(
                 }
             }
 
-            if (module != null) {
-                val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(text)
-                if (moduleKindMatcher.find()) {
-                    module.moduleKind = ModuleKind.valueOf(moduleKindMatcher.group(1))
-                }
+            val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(text)
+            if (moduleKindMatcher.find()) {
+                currentModule.moduleKind = ModuleKind.valueOf(moduleKindMatcher.group(1))
             }
 
             if (NO_INLINE_PATTERN.matcher(text).find()) {
-                (module ?: defaultModule).inliningDisabled = true
+                currentModule.inliningDisabled = true
             }
 
-            val temporaryFile = File(tmpDir, "${(module ?: defaultModule).name}/$fileName")
+            val temporaryFile = File(tmpDir, "${currentModule.name}/$fileName")
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            return TestFile(temporaryFile.absolutePath, module ?: defaultModule)
+            return TestFile(temporaryFile.absolutePath, currentModule)
         }
 
         override fun createModule(name: String, dependencies: List<String>): TestModule? {

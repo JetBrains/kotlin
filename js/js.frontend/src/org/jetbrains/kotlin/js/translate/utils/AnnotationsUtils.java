@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -24,8 +25,18 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile;
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
@@ -174,10 +185,63 @@ public final class AnnotationsUtils {
     @Nullable
     public static String getModuleName(@NotNull DeclarationDescriptor declaration) {
         AnnotationDescriptor annotation = declaration.getAnnotations().findAnnotation(JS_MODULE_ANNOTATION);
-        if (annotation == null) return null;
+        return annotation != null ? extractJsModuleName(annotation) : null;
+    }
 
+    @Nullable
+    public static String getFileModuleName(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
+        for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
+            DeclarationDescriptor annotationType = annotation.getType().getConstructor().getDeclarationDescriptor();
+            if (annotationType == null) continue;
+
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotation.getType().getConstructor().getDeclarationDescriptor());
+            if (fqName.equals(JS_MODULE_ANNOTATION.toUnsafe())) {
+                return extractJsModuleName(annotation);
+            }
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private static String extractJsModuleName(@NotNull AnnotationDescriptor annotation) {
         ConstantValue<?> importValue = annotation.getAllValueArguments().values().iterator().next();
         assert importValue != null : "JsModule annotation should have at least one argument";
         return (String) importValue.getValue();
+    }
+
+    @NotNull
+    public static List<AnnotationDescriptor> getContainingFileAnnotations(
+            @NotNull BindingContext bindingContext,
+            @NotNull DeclarationDescriptor descriptor
+    ) {
+        PackageFragmentDescriptor containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class, false);
+        if (containingPackage instanceof KotlinJavascriptPackageFragment) {
+            return ((KotlinJavascriptPackageFragment) containingPackage).getContainingFileAnnotations(descriptor);
+        }
+
+        KtFile kotlinFile = getFile(descriptor);
+        if (kotlinFile != null) {
+            List<AnnotationDescriptor> annotations = new ArrayList<AnnotationDescriptor>();
+            for (KtAnnotationEntry psiAnnotation : kotlinFile.getAnnotationEntries()) {
+                AnnotationDescriptor annotation = bindingContext.get(BindingContext.ANNOTATION, psiAnnotation);
+                annotations.add(annotation);
+            }
+            return annotations;
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    private static KtFile getFile(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof DeclarationDescriptorWithSource)) return null;
+        SourceFile file = ((DeclarationDescriptorWithSource) descriptor).getSource().getContainingFile();
+        if (!(file instanceof PsiSourceFile)) return null;
+
+        PsiFile psiFile = ((PsiSourceFile) file).getPsiFile();
+        if (!(psiFile instanceof KtFile)) return null;
+
+        return (KtFile) psiFile;
     }
 }

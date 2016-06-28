@@ -16,15 +16,54 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.FlexibleType
 
-class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol) {
+class KotlinJavascriptSerializerExtension(private val fileRegistry: KotlinFileRegistry) :
+        KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
+    }
+
+    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
+        val id = getFileId(descriptor)
+        if (id != null) {
+            proto.setExtension(JsProtoBuf.classContainingFileId, id)
+        }
+        super.serializeClass(descriptor, proto)
+    }
+
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+        val id = getFileId(descriptor)
+        if (id != null) {
+            proto.setExtension(JsProtoBuf.propertyContainingFileId, id)
+        }
+        super.serializeProperty(descriptor, proto)
+    }
+
+    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+        val id = getFileId(descriptor)
+        if (id != null) {
+            proto.setExtension(JsProtoBuf.functionContainingFileId, id)
+        }
+        super.serializeFunction(descriptor, proto)
+    }
+
+    private fun getFileId(descriptor: DeclarationDescriptor): Int? {
+        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || descriptor !is DeclarationDescriptorWithSource) return null
+
+        val file = descriptor.source.containingFile
+        if (file !is PsiSourceFile) return null
+
+        val psiFile = file.psiFile
+        return (psiFile as? KtFile)?.let { fileRegistry.lookup(it) }
     }
 }
 

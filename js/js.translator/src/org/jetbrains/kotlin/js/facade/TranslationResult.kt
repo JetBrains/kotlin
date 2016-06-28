@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -45,7 +46,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val program: JsProgram,
             diagnostics: Diagnostics,
             private val importedModules: List<String>,
-            private val moduleDescriptor: ModuleDescriptor
+            private val moduleDescriptor: ModuleDescriptor,
+            private val bindingContext: BindingContext
     ) : TranslationResult(diagnostics) {
         @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
         fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
@@ -80,14 +82,14 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     kind = config.moduleKind,
                     imported = importedModules
                 )
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(moduleDescription)
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(bindingContext, moduleDescription)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
             }
 
             if (config.configuration.getBoolean(JSConfigurationKeys.KJSM)) {
-                KotlinJavascriptSerializationUtil.toContentMap(moduleDescriptor).forEach {
+                KotlinJavascriptSerializationUtil.toContentMap(bindingContext, moduleDescriptor).forEach {
                     // TODO Add correct source files
                     outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
                 }

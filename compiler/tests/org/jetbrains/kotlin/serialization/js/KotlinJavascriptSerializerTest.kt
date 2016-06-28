@@ -77,7 +77,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                     imported = listOf(),
                     data = analysisResult.moduleDescriptor
             )
-            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(description))
+            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(analysisResult.bindingContext, description))
         }
         finally {
             Disposer.dispose(rootDisposable)

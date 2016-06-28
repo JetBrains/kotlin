@@ -21,8 +21,14 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JsProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
+message File {
+  required int32 id = 1;
+  repeated Annotation annotation = 2;
+}
+
 extend Class {
   repeated Annotation class_annotation = 130;
+  optional int32 class_containing_file_id = 135;
 }
 
 extend Constructor {
@@ -31,11 +37,13 @@ extend Constructor {
 
 extend Function {
   repeated Annotation function_annotation = 130;
+  optional int32 function_containing_file_id = 135;
 }
 
 extend Property {
   repeated Annotation property_annotation = 130;
   optional Annotation.Argument.Value compile_time_value = 131;
+  optional int32 property_containing_file_id = 135;
 }
 
 extend EnumEntry {

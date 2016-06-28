@@ -4974,6 +4974,51 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/jsModule")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JsModule extends AbstractBoxJsTest {
+        public void testAllFilesPresentInJsModule() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("externalClass.kt")
+        public void testExternalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalFunction.kt")
+        public void testExternalFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalPackage.kt")
+        public void testExternalPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalPackageInDifferentFile.kt")
+        public void testExternalPackageInDifferentFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalPackageInDifferentFile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalProperty.kt")
+        public void testExternalProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/jsName")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5216,6 +5261,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         public static class Amd extends AbstractBoxJsTest {
             public void testAllFilesPresentInAmd() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("jsModuleOnPackage.kt")
+            public void testJsModuleOnPackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/amd/jsModuleOnPackage.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("moduleWithNonIdentifierName.kt")

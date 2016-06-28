@@ -235,6 +235,18 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
+        String moduleName = AnnotationsUtils.getModuleName(descriptor);
+        if (moduleName != null) {
+            return JsAstUtils.pureFqn(getModuleInternalName(moduleName), null);
+        }
+
+        if (isNativeObject(descriptor)) {
+            String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), descriptor);
+            if (fileModuleName != null) {
+                return pureFqn(getNameForDescriptor(descriptor), pureFqn(getModuleInternalName(fileModuleName), null));
+            }
+        }
+
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (KotlinBuiltIns.isAny(classDescriptor)) {
@@ -395,9 +407,6 @@ public final class StaticContext {
     public JsConfig getConfig() {
         return config;
     }
-
-    // TODO: add this to NameSuggestion:
-    // String moduleName = AnnotationsUtils.getModuleName(descriptor);
 
     @NotNull
     public JsName importDeclaration(@NotNull String suggestedName, @NotNull JsExpression declaration) {
@@ -599,12 +608,7 @@ public final class StaticContext {
 
         if (UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) return null;
 
-        return getModuleReference(moduleName);
-    }
-
-    @NotNull
-    private JsNameRef getModuleReference(@NotNull String baseName) {
-        return JsAstUtils.pureFqn(getModuleInternalName(baseName), null);
+        return getModuleInternalName(moduleName);
     }
 
     @NotNull

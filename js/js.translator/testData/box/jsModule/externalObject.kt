@@ -1,6 +1,8 @@
+// MODULE_KIND: AMD
 package foo
 
-@JsModule("lib") @native object A {
+@JsModule("lib")
+@native object A {
     @native val x: Int = noImpl
 
     @native fun foo(y: Int): Int = noImpl

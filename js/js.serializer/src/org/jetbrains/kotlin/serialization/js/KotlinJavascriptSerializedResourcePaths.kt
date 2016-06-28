@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 object KotlinJavascriptSerializedResourcePaths {
     private val CLASSES_FILE_EXTENSION = "kotlin_classes"
     private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
+    private val FILE_LIST_FILE_EXTENSION = "kotlin_file_table"
 
     fun getClassesInPackageFilePath(fqName: FqName): String =
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + CLASSES_FILE_EXTENSION
@@ -38,6 +39,8 @@ object KotlinJavascriptSerializedResourcePaths {
 
     fun getStringTableFilePath(fqName: FqName): String =
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
+
+    fun getFileListFilePath(fqName: FqName) = fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + FILE_LIST_FILE_EXTENSION
 
     private fun FqName.toPath() = this.asString().replace('.', '/')
 

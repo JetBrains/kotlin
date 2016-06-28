@@ -1,6 +1,8 @@
+// MODULE_KIND: AMD
 package foo
 
-@JsModule("lib") @native val foo: Int = noImpl
+@JsModule("lib")
+@native val foo: Int = noImpl
 
 fun box(): String {
     assertEquals(23, foo)

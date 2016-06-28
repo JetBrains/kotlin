@@ -33,20 +33,22 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
 
     @Override
     protected void checkFooBoxIsOkByPath(String filePath) throws Exception {
-        throw new UnsupportedOperationException("checkFooBoxIsOkByPath not supported yet in MultipleFilesTranslationTest");
+        runMultiFileTest(getTestName(true), TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 
-    protected void generateJsFromDir(@NotNull String dirName, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
+    private void generateJsFromDir(@NotNull String dirName, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
         generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), ecmaVersions);
     }
 
-    protected void runMultiFileTest(@NotNull String dirName, @NotNull String packageName,
-            @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
+    private void runMultiFileTest(
+            @NotNull String dirName, @NotNull String packageName,
+            @NotNull String functionName, @NotNull Object expectedResult
+    ) throws Exception {
         runMultiFileTests(DEFAULT_ECMA_VERSIONS, dirName, packageName, functionName, expectedResult);
     }
 
-    protected void runMultiFileTests(
+    private void runMultiFileTests(
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String dirName,
             @NotNull String packageName,
@@ -55,15 +57,6 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
     ) throws Exception {
         generateJsFromDir(dirName, ecmaVersions);
         runRhinoTests(dirName + ".kt", ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
-    }
-
-    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, TEST_PACKAGE, TEST_FUNCTION, true);
-    }
-
-    public void checkFooBoxIsOk() throws Exception {
-        String dir = getTestName(true);
-        runMultiFileTest(dir, TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 }
 

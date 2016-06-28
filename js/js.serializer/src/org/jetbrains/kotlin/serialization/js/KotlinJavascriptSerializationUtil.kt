@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ByteString
+import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -51,7 +54,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     private val STRING_TABLE_DEFAULT_BYTES = run {
-        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension())
+        val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension(KotlinFileRegistry()))
         val stream = ByteArrayOutputStream()
         serializer.stringTable.serializeTo(stream)
         stream.toByteArray()
@@ -75,8 +78,7 @@ object KotlinJavascriptSerializationUtil {
         val packageFqNames = getPackages(contentMap).map(::FqName).toSet()
         if (packageFqNames.isEmpty()) return null
 
-        return createKotlinJavascriptPackageFragmentProvider(storageManager, moduleDescriptor, packageFqNames, configuration) {
-            path ->
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, moduleDescriptor, packageFqNames, configuration) { path ->
             if (!contentMap.containsKey(path)) {
                 when {
                     isPackageMetadataFile(path) ->
@@ -118,16 +120,18 @@ object KotlinJavascriptSerializationUtil {
         return byteStream.toByteArray()
     }
 
-    fun metadataAsString(jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
-        KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.toBinaryMetadata())
+    fun metadataAsString(bindingContext: BindingContext, jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
+        KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.toBinaryMetadata(bindingContext))
 
-    fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArray) -> Unit) {
+    fun serializePackage(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName,
+                         writeFun: (String, ByteArray) -> Unit) {
         val packageView = module.getPackage(fqName)
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
 
-        val serializerExtension = KotlinJavascriptSerializerExtension()
+        val fileRegistry = KotlinFileRegistry()
+        val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
         val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(
@@ -140,6 +144,9 @@ object KotlinJavascriptSerializationUtil {
                 writeFun(getFileName(classDescriptor), stream.toByteArray())
             }
         }, skip)
+
+        writeFun(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName),
+                 serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(serializer.stringTable)))
 
         val packageStream = ByteArrayOutputStream()
         val fragments = packageView.fragments
@@ -190,15 +197,34 @@ object KotlinJavascriptSerializationUtil {
         }
     }
 
+    private fun serializeFiles(fileRegistry: KotlinFileRegistry, bindingContext: BindingContext,
+                               serializer: AnnotationSerializer): ByteArray {
+        val filesProto = JsProtoBuf.Files.newBuilder()
+        for ((file, id) in fileRegistry.fileIds) {
+            val fileProto = JsProtoBuf.File.newBuilder()
+            fileProto.id = id
+            for (annotationPsi in file.annotationEntries) {
+                val annotation = bindingContext[BindingContext.ANNOTATION, annotationPsi]!!
+                fileProto.addAnnotation(serializer.serializeAnnotation(annotation))
+            }
+            filesProto.addFile(fileProto)
+        }
+
+        return ByteArrayOutputStream().use { out ->
+            filesProto.build().writeTo(out)
+            out
+        }.toByteArray()
+    }
+
     private fun getFileName(classDescriptor: ClassDescriptor): String {
         return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId!!)
     }
 
-    fun toContentMap(module: ModuleDescriptor): Map<String, ByteArray> {
+    fun toContentMap(bindingContext: BindingContext, module: ModuleDescriptor): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
         getPackagesFqNames(module).forEach {
-            serializePackage(module, it) {
+            serializePackage(bindingContext, module, it) {
                 fileName, bytes -> contentMap[fileName] = bytes
             }
         }
@@ -243,7 +269,8 @@ object KotlinJavascriptSerializationUtil {
         return result.map { it.substringAfter('/').replace('/', '.') }.toSet()
     }
 
-    private fun JsModuleDescriptor<ModuleDescriptor>.toBinaryMetadata() = contentMapToByteArray(toContentMap(data), kind, imported)
+    private fun JsModuleDescriptor<ModuleDescriptor>.toBinaryMetadata(bindingContext: BindingContext) =
+            contentMapToByteArray(toContentMap(bindingContext, data), kind, imported)
 }
 
 private fun ByteArray.readAsContentMap(name: String): JsModuleDescriptor<Map<String, ByteArray>> {
