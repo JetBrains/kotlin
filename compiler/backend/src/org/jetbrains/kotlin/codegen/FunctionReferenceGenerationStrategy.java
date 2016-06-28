@@ -185,8 +185,10 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (receiverValue != null) return receiverValue;
 
         if (receiverType != null) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) codegen.getContext().getParentContext().getContextDescriptor();
+            Type asmType = codegen.getState().getTypeMapper().mapClass(classDescriptor);
             return StackValue.field(
-                    receiverType, Type.getObjectType(codegen.getParentCodegen().getClassName()), AsmUtil.CAPTURED_RECEIVER_FIELD,
+                    receiverType, asmType, AsmUtil.CAPTURED_RECEIVER_FIELD,
                     /* isStatic = */ false, StackValue.LOCAL_0
             );
         }

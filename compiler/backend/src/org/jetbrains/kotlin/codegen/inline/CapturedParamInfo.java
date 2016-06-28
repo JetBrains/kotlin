@@ -25,6 +25,9 @@ public class CapturedParamInfo extends ParameterInfo {
     private final String newFieldName;
     private final boolean skipInConstructor;
 
+    //Now used only for bound function reference receiver
+    private boolean synthetic;
+
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
         super(desc.getType(), skipped, index, remapIndex, -1);
         this.desc = desc;
@@ -63,6 +66,7 @@ public class CapturedParamInfo extends ParameterInfo {
                 desc, newFieldName, isSkipped, getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
         );
         result.setLambda(getLambda());
+        result.setSynthetic(synthetic);
         return result;
     }
 
@@ -73,5 +77,17 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public boolean isSkipInConstructor() {
         return skipInConstructor;
+    }
+
+    public boolean isSynthetic() {
+        return synthetic;
+    }
+
+    public void setSynthetic(boolean synthetic) {
+        this.synthetic = synthetic;
+    }
+
+    public static boolean isSynthetic(@NotNull ParameterInfo info) {
+        return info instanceof CapturedParamInfo && ((CapturedParamInfo) info).isSynthetic();
     }
 }

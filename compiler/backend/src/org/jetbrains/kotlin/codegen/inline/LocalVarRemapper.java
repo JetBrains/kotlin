@@ -48,6 +48,9 @@ public class LocalVarRemapper {
             }
             else {
                 remapValues[shift] = info.isRemapped() ? info.getRemapValue() : null;
+                if (CapturedParamInfo.isSynthetic(info)) {
+                    realSize += info.getType().getSize();
+                }
             }
         }
 

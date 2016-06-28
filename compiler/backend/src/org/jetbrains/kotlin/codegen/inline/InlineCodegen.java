@@ -544,17 +544,17 @@ public class InlineCodegen extends CallGenerator {
         if (expression instanceof KtCallableReferenceExpression) {
             KtCallableReferenceExpression callableReferenceExpression = (KtCallableReferenceExpression) expression;
             KtExpression receiverExpression = callableReferenceExpression.getReceiverExpression();
-            StackValue receiverValue =
+            Type receiverValue =
                     receiverExpression != null && codegen.getBindingContext().getType(receiverExpression) != null
-                    ? codegen.gen(receiverExpression)
+                    ? codegen.getState().getTypeMapper().mapType(codegen.getBindingContext().getType(receiverExpression))
                     : null;
 
             strategy = new FunctionReferenceGenerationStrategy(
                     state,
                     descriptor,
                     CallUtilKt.getResolvedCallWithAssert(callableReferenceExpression.getCallableReference(), codegen.getBindingContext()),
-                    receiverValue != null ? receiverValue.type : null,
-                    receiverValue
+                    receiverValue,
+                    null
             );
         }
         else {
@@ -640,16 +640,16 @@ public class InlineCodegen extends CallGenerator {
         if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
             boolean couldBeRemapped = !shouldPutValue(type, stackValue);
-            StackValue remappedIndex = couldBeRemapped ? stackValue : null;
+            StackValue remappedValue = couldBeRemapped ? stackValue : null;
 
             ParameterInfo info;
             if (capturedParamIndex >= 0) {
                 CapturedParamDesc capturedParamInfoInLambda = activeLambda.getCapturedVars().get(capturedParamIndex);
                 info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.getFieldName(), false);
-                info.setRemapValue(remappedIndex);
+                info.setRemapValue(remappedValue);
             }
             else {
-                info = invocationParamBuilder.addNextValueParameter(type, false, remappedIndex, parameterIndex);
+                info = invocationParamBuilder.addNextValueParameter(type, false, remappedValue, parameterIndex);
             }
 
             recordParameterValueInLocalVal(info);
@@ -707,7 +707,12 @@ public class InlineCodegen extends CallGenerator {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
                 Type type = info.type;
-                StackValue.local(index[i], type).store(StackValue.onStack(type), codegen.v);
+                StackValue.Local local = StackValue.local(index[i], type);
+                local.store(StackValue.onStack(type), codegen.v);
+                if (info instanceof CapturedParamInfo) {
+                    info.setRemapValue(local);
+                    ((CapturedParamInfo) info).setSynthetic(true);
+                }
             }
         }
     }
@@ -734,7 +739,7 @@ public class InlineCodegen extends CallGenerator {
         List<ParameterInfo> infos = invocationParamBuilder.listAllParams();
         for (ListIterator<? extends ParameterInfo> iterator = infos.listIterator(infos.size()); iterator.hasPrevious(); ) {
             ParameterInfo param = iterator.previous();
-            if (!param.isSkippedOrRemapped()) {
+            if (!param.isSkippedOrRemapped() || CapturedParamInfo.isSynthetic(param)) {
                 codegen.getFrameMap().leaveTemp(param.type);
             }
         }
@@ -749,13 +754,6 @@ public class InlineCodegen extends CallGenerator {
             // TODO: support inline of property references passed to inlinable function parameters
             SimpleFunctionDescriptor functionReference = state.getBindingContext().get(BindingContext.FUNCTION, deparenthesized);
             if (functionReference == null) return false;
-
-            KtExpression receiverExpression = ((KtCallableReferenceExpression) deparenthesized).getReceiverExpression();
-            if (receiverExpression != null) {
-                // TODO (!): support inline for bound function references
-                DoubleColonLHS lhs = state.getBindingContext().get(BindingContext.DOUBLE_COLON_LHS, receiverExpression);
-                if (lhs instanceof DoubleColonLHS.Expression) return false;
-            }
         }
 
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
@@ -768,7 +766,7 @@ public class InlineCodegen extends CallGenerator {
                deparenthesized instanceof KtCallableReferenceExpression;
     }
 
-    private void rememberClosure(@NotNull KtExpression expression, @NotNull Type type, @NotNull ValueParameterDescriptor parameter) {
+    private LambdaInfo rememberClosure(@NotNull KtExpression expression, @NotNull Type type, @NotNull ValueParameterDescriptor parameter) {
         KtExpression lambda = KtPsiUtil.deparenthesize(expression);
         assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
@@ -777,6 +775,8 @@ public class InlineCodegen extends CallGenerator {
         ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.getIndex());
         closureInfo.setLambda(info);
         expressionMap.put(closureInfo.getIndex(), info);
+        info.setBoundCallableReference(getBoundCallableReferenceReceiver(expression) != null);
+        return info;
     }
 
     @NotNull
@@ -801,9 +801,15 @@ public class InlineCodegen extends CallGenerator {
 
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
-            activeLambda = next;
-            codegen.pushClosureOnStack(next.getClassDescriptor(), true, this, /* functionReferenceReceiver = */ null);
+            //closure parameters for bounded callable references are generated inplace
+            if (next.isBoundCallableReference()) continue;
+            putClosureParametersOnStack(next, null);
         }
+    }
+
+    private void putClosureParametersOnStack(@NotNull LambdaInfo next, @Nullable StackValue functionReferenceReceiver) {
+        activeLambda = next;
+        codegen.pushClosureOnStack(next.getClassDescriptor(), true, this, functionReferenceReceiver);
         activeLambda = null;
     }
 
@@ -846,12 +852,31 @@ public class InlineCodegen extends CallGenerator {
             int parameterIndex
     ) {
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            rememberClosure(argumentExpression, parameterType, valueParameterDescriptor);
+            LambdaInfo lambdaInfo = rememberClosure(argumentExpression, parameterType, valueParameterDescriptor);
+
+            KtExpression receiver = getBoundCallableReferenceReceiver(argumentExpression);
+            if (receiver != null) {
+                putClosureParametersOnStack(lambdaInfo, codegen.gen(receiver));
+            }
         }
         else {
             StackValue value = codegen.gen(argumentExpression);
             putValueIfNeeded(parameterType, value, valueParameterDescriptor.getIndex());
         }
+    }
+
+    private KtExpression getBoundCallableReferenceReceiver(
+            @NotNull KtExpression argumentExpression
+    ) {
+        KtExpression deparenthesized = KtPsiUtil.deparenthesize(argumentExpression);
+        if (deparenthesized instanceof KtCallableReferenceExpression) {
+            KtExpression receiverExpression = ((KtCallableReferenceExpression) deparenthesized).getReceiverExpression();
+            if (receiverExpression != null) {
+                DoubleColonLHS lhs = state.getBindingContext().get(BindingContext.DOUBLE_COLON_LHS, receiverExpression);
+                if (lhs instanceof DoubleColonLHS.Expression) return receiverExpression;
+            }
+        }
+        return null;
     }
 
     @Override

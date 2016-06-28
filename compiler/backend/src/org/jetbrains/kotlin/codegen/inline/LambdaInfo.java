@@ -51,6 +51,7 @@ public class LambdaInfo implements LabelOwner {
 
     private SMAPAndMethodNode node;
     private List<CapturedParamDesc> capturedVars;
+    private boolean isBoundCallableReference;
 
     public LambdaInfo(@NotNull KtExpression expression, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline) {
         this.isCrossInline = isCrossInline;
@@ -164,5 +165,13 @@ public class LambdaInfo implements LabelOwner {
     @Override
     public boolean isMyLabel(@NotNull String name) {
         return labels.contains(name);
+    }
+
+    public boolean isBoundCallableReference() {
+        return isBoundCallableReference;
+    }
+
+    public void setBoundCallableReference(boolean boundCallableReference) {
+        isBoundCallableReference = boundCallableReference;
     }
 }
