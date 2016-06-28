@@ -58,6 +58,8 @@ interface DataFlowDecorator {
 interface ScopeTowerLevel {
     fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
 
+    fun getObjects(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+
     fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
 }
 

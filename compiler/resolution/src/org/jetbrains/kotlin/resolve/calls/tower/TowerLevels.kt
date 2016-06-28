@@ -138,6 +138,10 @@ internal class ReceiverScopeTowerLevel(
         return collectMembers { getContributedVariables(name, location) }
     }
 
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>> {
+        return emptyList()
+    }
+
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
         return collectMembers {
             getContributedFunctions(name, location) + it.getInnerConstructors(name, location)
@@ -147,7 +151,12 @@ internal class ReceiverScopeTowerLevel(
 
 internal class QualifierScopeTowerLevel(scopeTower: ScopeTower, val qualifier: QualifierReceiver) : AbstractScopeTowerLevel(scopeTower) {
     override fun getVariables(name: Name, extensionReceiver: ReceiverValue?) = qualifier.staticScope
-            .getContributedVariablesAndObjects(name, location).map {
+            .getContributedVariables(name, location).map {
+                createCandidateDescriptor(it, dispatchReceiver = null)
+            }
+
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValue?) = qualifier.staticScope
+            .getContributedObjectVariables(name, location).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 
@@ -166,7 +175,12 @@ internal open class ScopeBasedTowerLevel protected constructor(
     internal constructor(scopeTower: ScopeTower, lexicalScope: LexicalScope): this(scopeTower, lexicalScope as ResolutionScope)
 
     override fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
-            = resolutionScope.getContributedVariablesAndObjects(name, location).map {
+            = resolutionScope.getContributedVariables(name, location).map {
+                createCandidateDescriptor(it, dispatchReceiver = null)
+            }
+
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+            = resolutionScope.getContributedObjectVariables(name, location).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 
@@ -184,7 +198,6 @@ internal class SyntheticScopeBasedTowerLevel(
         scopeTower: ScopeTower,
         private val syntheticScopes: SyntheticScopes
 ): AbstractScopeTowerLevel(scopeTower) {
-
     override fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>> {
         if (extensionReceiver == null) return emptyList()
 
@@ -193,6 +206,9 @@ internal class SyntheticScopeBasedTowerLevel(
             createCandidateDescriptor(it, dispatchReceiver = null)
         }
     }
+
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+            = emptyList()
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
         if (extensionReceiver == null) return emptyList()
@@ -207,6 +223,9 @@ internal class SyntheticScopeBasedTowerLevel(
 internal class HidesMembersTowerLevel(scopeTower: ScopeTower): AbstractScopeTowerLevel(scopeTower) {
     override fun getVariables(name: Name, extensionReceiver: ReceiverValue?)
             = getCandidates(name, extensionReceiver, LexicalScope::collectVariables)
+
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValue?)
+            = emptyList<CandidateWithBoundDispatchReceiver<VariableDescriptor>>()
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?)
             = getCandidates(name, extensionReceiver, LexicalScope::collectFunctions)
@@ -247,10 +266,9 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(name: Name, l
            (classifier?.getTypeAliasConstructors() ?: emptyList())
 }
 
-private fun ResolutionScope.getContributedVariablesAndObjects(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
     val objectDescriptor = getFakeDescriptorForObject(getContributedClassifier(name, location))
-
-    return getContributedVariables(name, location) + listOfNotNull(objectDescriptor)
+    return listOfNotNull(objectDescriptor)
 }
 
 private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
