@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
+import org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesDialog.EAPChannels.EAP_1_0
+import org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesDialog.EAPChannels.EAP_1_1
 import javax.swing.JComponent
 
 class ConfigurePluginUpdatesAction : DumbAwareAction() {
@@ -79,7 +81,10 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
             resetUpdateStatus()
         }
 
-        initialSelectedChannel = if (hasEAPChannel()) 1 else 0
+        fun EAPChannels.indexIfAvailable() = if (hasChannel) uiIndex else null
+        initialSelectedChannel = EAP_1_1.indexIfAvailable() ?:
+                                 EAP_1_0.indexIfAvailable() ?: 0
+
         form.channelCombo.selectedIndex = initialSelectedChannel
         init()
     }
@@ -97,9 +102,10 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
 
     private fun saveSelectedChannel(channel: Int) {
         val hosts = UpdateSettings.getInstance().storedPluginHosts
+        EAPChannels.values().forEach { hosts.remove(it.url) }
         when (channel) {
-            0 -> hosts.remove(EAP_UPDATE_HOST)
-            1 -> if (EAP_UPDATE_HOST !in hosts) hosts.add(EAP_UPDATE_HOST)
+            EAP_1_0.uiIndex -> hosts.add(EAP_1_0.url)
+            EAP_1_1.uiIndex -> hosts.add(EAP_1_1.url)
         }
     }
 
@@ -113,9 +119,10 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
         super.doCancelAction()
     }
 
-    private fun hasEAPChannel() = EAP_UPDATE_HOST in UpdateSettings.getInstance().pluginHosts
+    enum class EAPChannels(val url: String, val uiIndex: Int) {
+        EAP_1_0("https://plugins.jetbrains.com/plugins/eap/6954", 1),
+        EAP_1_1("https://plugins.jetbrains.com/plugins/eap-1.1/6954", 2);
 
-    companion object {
-        val EAP_UPDATE_HOST = "https://plugins.jetbrains.com/plugins/eap/6954"
+        val hasChannel: Boolean get() = url in UpdateSettings.getInstance().pluginHosts
     }
 }
