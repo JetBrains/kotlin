@@ -2,9 +2,6 @@
 @file:kotlin.jvm.JvmName("PreconditionsKt")
 package kotlin
 
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
-
 /**
  * Throws an [IllegalArgumentException] if the [value] is false.
  */

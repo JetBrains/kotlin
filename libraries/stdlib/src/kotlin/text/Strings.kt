@@ -20,9 +20,6 @@
 
 package kotlin.text
 
-import java.util.NoSuchElementException
-import kotlin.text.MatchResult
-import kotlin.text.Regex
 
 /**
  * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] trimmed.

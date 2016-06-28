@@ -1,6 +1,5 @@
 package kotlin.collections
 
-import java.util.NoSuchElementException
 
 private enum class State {
     Ready,
