@@ -1,0 +1,11 @@
+package a
+
+class Outer {
+    inner class B(x: String)
+
+    typealias A1 = B
+    private typealias A2 = B
+
+    fun A1(x: Any) = x
+    fun A2(x: Any) = x
+}
