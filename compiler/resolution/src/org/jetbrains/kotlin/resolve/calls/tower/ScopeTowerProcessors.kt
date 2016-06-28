@@ -139,5 +139,11 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
 fun <C : Candidate<VariableDescriptor>> createVariableProcessor(context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getVariables)
 
+fun <C : Candidate<VariableDescriptor>> createVariableAndObjectProcessor(context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?) =
+        CompositeScopeTowerProcessor(
+                createVariableProcessor(context, explicitReceiver),
+                createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getObjects)
+        )
+
 fun <C : Candidate<FunctionDescriptor>> createFunctionProcessor(context: TowerContext<FunctionDescriptor, C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getFunctions)

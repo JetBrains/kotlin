@@ -90,7 +90,7 @@ class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<Vari
         explicitReceiver: Receiver?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
-        createVariableProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
+        createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
 ) {
 
     // todo filter by operator
@@ -106,7 +106,7 @@ class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candi
         private val explicitReceiver: ReceiverValue?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
-        createVariableProcessor(invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
+        createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
 ) {
 
     override fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F> {
