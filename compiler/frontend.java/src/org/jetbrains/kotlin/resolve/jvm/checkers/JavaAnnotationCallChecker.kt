@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin
+package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -65,5 +67,17 @@ class JavaAnnotationCallChecker : CallChecker {
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
             context.trace.report(diagnostic.on(argumentExpression))
         }
+    }
+
+    companion object {
+        fun getJavaAnnotationCallValueArgumentsThatShouldBeNamed(
+                resolvedCall: ResolvedCall<*>
+        ): Map<ValueParameterDescriptor, ResolvedValueArgument> =
+                resolvedCall.valueArguments.filter {
+                    p ->
+                    p.key.name != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
+                    p.value is ExpressionValueArgument &&
+                    !((p.value as ExpressionValueArgument).valueArgument?.isNamed() ?: true)
+                }
     }
 }
