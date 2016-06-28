@@ -44,6 +44,11 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         return visitor.visitSuperTypeList(this, data);
     }
 
+    @NotNull
+    public KtSuperTypeListEntry addEntry(@NotNull KtSuperTypeListEntry entry) {
+        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getEntries(), entry);
+    }
+
     public void removeEntry(@NotNull KtSuperTypeListEntry entry) {
         EditCommaSeparatedListHelper.INSTANCE.removeItem(entry);
         if (getEntries().isEmpty()) {

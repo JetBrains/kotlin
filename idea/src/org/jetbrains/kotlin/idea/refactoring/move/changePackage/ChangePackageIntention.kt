@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.move.changePackage;
+package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.*
@@ -26,6 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -84,7 +85,7 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
 
                         val document = editor.document
                         project.executeWriteCommand(text) {
-                            document.replaceString(affectedRange!!.startOffset, affectedRange!!.endOffset, currentName)
+                            document.replaceString(affectedRange!!.startOffset, affectedRange!!.endOffset, FqName(currentName).quoteSegmentsIfNeeded())
                         }
                         PsiDocumentManager.getInstance(project).commitDocument(document)
                         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)

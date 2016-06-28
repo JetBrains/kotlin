@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -83,5 +85,11 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
     @Override
     public boolean hasBody() {
         return getBodyExpression() != null;
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return new LocalSearchScope(this);
     }
 }

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.generation.ClassMember
 import com.intellij.codeInsight.generation.MemberChooserObject
 import com.intellij.codeInsight.generation.MemberChooserObjectBase
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -27,10 +28,14 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.TemplateKind
 import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
+import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
+import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 interface OverrideMemberChooserObject : ClassMember {
     enum class BodyType {
@@ -88,15 +93,33 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateMember(project: Project): KtCallableDeclaration {
+fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolean): KtCallableDeclaration {
     val descriptor = immediateSuper
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
-    return when (descriptor) {
+    val newMember: KtCallableDeclaration = when (descriptor) {
         is SimpleFunctionDescriptor -> generateFunction(project, descriptor, bodyType)
         is PropertyDescriptor -> generateProperty(project, descriptor, bodyType)
         else -> error("Unknown member to override: $descriptor")
     }
+
+    if (copyDoc) {
+        val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+        val kDoc = when (superDeclaration) {
+            is KtDeclaration ->
+                findDocComment(superDeclaration)
+            is PsiDocCommentOwner -> {
+                val kDocText = superDeclaration.docComment?.let { IdeaDocCommentConverter.convertDocComment(it) }
+                if (kDocText.isNullOrEmpty()) null else KDocElementFactory(project).createKDocFromText(kDocText!!)
+            }
+            else -> null
+        }
+        if (kDoc != null) {
+            newMember.addAfter(kDoc, null)
+        }
+    }
+
+    return newMember
 }
 
 private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
@@ -133,9 +156,12 @@ private fun generateConstructorParameter(project: Project, descriptor: PropertyD
 }
 
 private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtNamedFunction {
-    val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
-                                        descriptor.kind, /* copyOverrides = */ true)
-    newDescriptor.setSingleOverridden(descriptor)
+    val newDescriptor = object : FunctionDescriptor by descriptor {
+        override fun getModality() = Modality.OPEN
+        override fun getReturnType() = descriptor.returnType?.makeNotNullable()
+        override fun getOverriddenDescriptors() = listOf(descriptor)
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitFunctionDescriptor(this, data)
+    }
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
