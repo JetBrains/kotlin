@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
+    private static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
 
     private AnnotationsUtils() {
     }
@@ -168,5 +169,15 @@ public final class AnnotationsUtils {
             if (getJsName(accessor) != null) return true;
         }
         return false;
+    }
+
+    @Nullable
+    public static String getModuleName(@NotNull DeclarationDescriptor declaration) {
+        AnnotationDescriptor annotation = declaration.getAnnotations().findAnnotation(JS_MODULE_ANNOTATION);
+        if (annotation == null) return null;
+
+        ConstantValue<?> importValue = annotation.getAllValueArguments().values().iterator().next();
+        assert importValue != null : "JsModule annotation should have at least one argument";
+        return (String) importValue.getValue();
     }
 }

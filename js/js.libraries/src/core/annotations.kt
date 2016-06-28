@@ -49,3 +49,7 @@ internal annotation class marker
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 annotation class JsName(val name: String)
+
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, PROPERTY, FUNCTION, FILE)
+annotation class JsModule(val import: String)

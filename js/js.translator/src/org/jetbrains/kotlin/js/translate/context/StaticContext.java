@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.declaration.InterfaceFunctionCopier;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -395,6 +396,9 @@ public final class StaticContext {
         return config;
     }
 
+    // TODO: add this to NameSuggestion:
+    // String moduleName = AnnotationsUtils.getModuleName(descriptor);
+
     @NotNull
     public JsName importDeclaration(@NotNull String suggestedName, @NotNull JsExpression declaration) {
         // Adding prefix is a workaround for a problem with scopes.
@@ -595,13 +599,22 @@ public final class StaticContext {
 
         if (UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) return null;
 
-        JsName moduleId = moduleName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
-                          importedModules.get(moduleName);
-        if (moduleId == null) {
-            moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
-            importedModules.put(moduleName, moduleId);
-        }
+        return getModuleReference(moduleName);
+    }
 
+    @NotNull
+    private JsNameRef getModuleReference(@NotNull String baseName) {
+        return JsAstUtils.pureFqn(getModuleInternalName(baseName), null);
+    }
+
+    @NotNull
+    private JsName getModuleInternalName(@NotNull String baseName) {
+        JsName moduleId = baseName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
+                          importedModules.get(baseName);
+        if (moduleId == null) {
+            moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
+            importedModules.put(baseName, moduleId);
+        }
         return moduleId;
     }
 
