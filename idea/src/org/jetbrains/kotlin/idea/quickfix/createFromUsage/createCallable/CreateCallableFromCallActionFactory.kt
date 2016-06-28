@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -142,6 +143,23 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         return mainCallable.copy(receiverTypeInfo = TypeInfo.Empty, possibleContainers = listOf(containingClass), isAbstract = true)
     }
 
+    protected fun getCallableWithReceiverInsideExtension(
+            mainCallable: CallableInfo,
+            originalExpression: KtExpression,
+            context: BindingContext,
+            receiverType: TypeInfo
+    ): CallableInfo? {
+        if (receiverType != TypeInfo.Empty) return null
+        val callable = (originalExpression.getParentOfTypeAndBranch<KtFunction> { bodyExpression }
+                        ?: originalExpression.getParentOfTypeAndBranches<KtProperty> { listOf(getter, setter) })
+                       ?: return null
+        if (callable !is KtFunctionLiteral && callable.receiverTypeReference == null) return null
+        val callableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, callable] as? CallableDescriptor ?: return null
+        val extensionReceiverType = callableDescriptor.extensionReceiverParameter?.type ?: return null
+        val newReceiverTypeInfo = TypeInfo(extensionReceiverType, Variance.IN_VARIANCE)
+        return mainCallable.copy(receiverTypeInfo = newReceiverTypeInfo, possibleContainers = emptyList())
+    }
+
     sealed class Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
             val refExpr = getExpressionOfInterest(diagnostic) as? KtNameReferenceExpression ?: return null
@@ -178,6 +196,18 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 getAbstractCallableInfo(it, expression)
             }
         }
+
+        object ByImplicitExtensionReceiver : Property() {
+            override fun doCreateCallableInfo(
+                    expression: KtSimpleNameExpression,
+                    context: BindingContext,
+                    name: String,
+                    receiverType: TypeInfo,
+                    possibleContainers: List<KtElement>
+            ) = super.doCreateCallableInfo(expression, context, name, receiverType, possibleContainers)?.let {
+                ByImplicitExtensionReceiver.getCallableWithReceiverInsideExtension(it, expression, context, receiverType)
+            }
+        }
     }
 
     sealed class Function: CreateCallableFromCallActionFactory<KtCallExpression>() {
@@ -209,6 +239,18 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                     possibleContainers: List<KtElement>
             ) = super.doCreateCallableInfo(expression, context, name, receiverType, possibleContainers)?.let {
                 getAbstractCallableInfo(it, expression)
+            }
+        }
+
+        object ByImplicitExtensionReceiver : Function() {
+            override fun doCreateCallableInfo(
+                    expression: KtCallExpression,
+                    context: BindingContext,
+                    name: String,
+                    receiverType: TypeInfo,
+                    possibleContainers: List<KtElement>
+            ) = super.doCreateCallableInfo(expression, context, name, receiverType, possibleContainers)?.let {
+                getCallableWithReceiverInsideExtension(it, expression, context, receiverType)
             }
         }
     }
@@ -249,11 +291,14 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
     companion object {
         val FUNCTIONS = arrayOf(Function.Default,
                                 Function.Abstract,
+                                Function.ByImplicitExtensionReceiver,
                                 Constructor)
         val INSTANCES = arrayOf(Function.Default,
                                 Function.Abstract,
+                                Function.ByImplicitExtensionReceiver,
                                 Constructor,
                                 Property.Default,
-                                Property.Abstract)
+                                Property.Abstract,
+                                Property.ByImplicitExtensionReceiver)
     }
 }

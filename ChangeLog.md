@@ -122,6 +122,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ###### New features
 
 - [`KT-7492`](https://youtrack.jetbrains.com/issue/KT-7492) Support "Create abstract function/property" inside an abstract class
+- [`KT-10668`](https://youtrack.jetbrains.com/issue/KT-10668) Support "Create member/extension" corresponding to the extension receiver of enclosing function
 
 #### Refactorings
 

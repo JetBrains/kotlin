@@ -2301,6 +2301,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     }
                 }
 
+                @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ExtensionByExtensionReceiver extends AbstractQuickFixTest {
+                    public void testAllFilesPresentInExtensionByExtensionReceiver() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("extensionFunction.kt")
+                    public void testExtensionFunction() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver/extensionFunction.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("extensionLambda.kt")
+                    public void testExtensionLambda() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver/extensionLambda.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("extensionPropertyGetter.kt")
+                    public void testExtensionPropertyGetter() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver/extensionPropertyGetter.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("extensionPropertySetter.kt")
+                    public void testExtensionPropertySetter() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver/extensionPropertySetter.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("notExtensionCallable.kt")
+                    public void testNotExtensionCallable() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver/notExtensionCallable.kt");
+                        doTest(fileName);
+                    }
+                }
+
                 @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
