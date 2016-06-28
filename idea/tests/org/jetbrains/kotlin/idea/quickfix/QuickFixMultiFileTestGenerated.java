@@ -1165,6 +1165,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/varOnJavaType.before.Main.kt");
                     doTestWithExtraFile(fileName);
                 }
+
             }
         }
     }

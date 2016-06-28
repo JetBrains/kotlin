@@ -1,0 +1,13 @@
+// "Create extension property 'foo'" "true"
+// ERROR: Property must be initialized
+class A(val n: Int)
+
+var A.foo: Boolean<caret>
+
+class B {
+    var A.test: Boolean
+        get() = foo
+        set(v: Boolean) {
+            foo = v
+        }
+}
