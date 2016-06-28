@@ -3,7 +3,7 @@
 package test
 
 inline val <reified T: Any> T.value: String
-    get() = T::class.java.name
+    get() = T::class.java.simpleName
 
 // FILE: 2.kt
 import test.*
