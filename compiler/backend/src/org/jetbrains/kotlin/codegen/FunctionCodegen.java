@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
-import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -173,9 +172,7 @@ public class FunctionCodegen {
             flags |= ACC_SYNTHETIC;
         }
 
-        boolean isNative = NativeKt.hasNativeAnnotation(functionDescriptor);
-
-        if (isNative && owner instanceof MultifileClassFacadeContext) {
+        if (functionDescriptor.isExternal() && owner instanceof MultifileClassFacadeContext) {
             // Native methods are only defined in facades and do not need package part implementations
             return;
         }
@@ -217,7 +214,7 @@ public class FunctionCodegen {
             return;
         }
 
-        if (!isNative) {
+        if (!functionDescriptor.isExternal()) {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
         else if (staticInCompanionObject) {
