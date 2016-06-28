@@ -112,8 +112,8 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
     override fun getQualifiedName(): String? = null
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
-    override fun getExtendsList(): PsiReferenceList? = null
-    override fun getImplementsList(): PsiReferenceList? = null
+    override fun getExtendsList() = null
+    override fun getImplementsList() = null
     override fun getContainingClass(): PsiClass? = null
     override fun isInterface() = false
     override fun isAnnotationType() = false

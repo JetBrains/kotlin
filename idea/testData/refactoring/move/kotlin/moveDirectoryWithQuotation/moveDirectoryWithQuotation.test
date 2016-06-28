@@ -1,0 +1,6 @@
+{
+  "mainFile": "in/p1/M.kt",
+  "type": "MOVE_DIRECTORY_WITH_CLASSES",
+  "sourceDir": "in/p1/p",
+  "targetDir": "in/p2"
+}

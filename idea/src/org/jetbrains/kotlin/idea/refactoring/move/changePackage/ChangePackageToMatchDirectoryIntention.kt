@@ -32,7 +32,7 @@ class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentInt
         if (file.isInjectedFragment || file.packageMatchesDirectory()) return false
 
         val fqNameByDirectory = file.getFqNameByDirectory()
-        if (!fqNameByDirectory.toUnsafe().hasIdentifiersOnly()) {
+        if (!fqNameByDirectory.hasIdentifiersOnly()) {
             if (isIntentionBaseInspectionEnabled(file.project, element)) {
                 text = "File package doesn't match directory"
                 return true
@@ -47,7 +47,7 @@ class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentInt
     override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
         val newFqName = file.getFqNameByDirectory()
-        if (!newFqName.toUnsafe().hasIdentifiersOnly()) return
+        if (!newFqName.hasIdentifiersOnly()) return
         KotlinChangePackageRefactoring(file).run(newFqName)
     }
 }

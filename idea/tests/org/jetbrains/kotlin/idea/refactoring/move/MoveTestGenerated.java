@@ -233,6 +233,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveDirectoryWithQuotation/moveDirectoryWithQuotation.test")
+    public void testKotlin_moveDirectoryWithQuotation_MoveDirectoryWithQuotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveDirectoryWithQuotation/moveDirectoryWithQuotation.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveFile/addExtensionImport/addExtensionImport.test")
     public void testKotlin_moveFile_addExtensionImport_AddExtensionImport() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/addExtensionImport/addExtensionImport.test");
@@ -242,12 +248,6 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("kotlin/moveFile/internalReferences/internalReferences.test")
     public void testKotlin_moveFile_internalReferences_InternalReferences() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/internalReferences/internalReferences.test");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kotlin/moveFile/invalidTargetPackage/moveFileToInvalidPackage.test")
-    public void testKotlin_moveFile_invalidTargetPackage_MoveFileToInvalidPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/invalidTargetPackage/moveFileToInvalidPackage.test");
         doTest(fileName);
     }
 
@@ -272,6 +272,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("kotlin/moveFile/moveLastFileInPackageWithPackageRename/moveLastFileInPackageWithPackageRename.test")
     public void testKotlin_moveFile_moveLastFileInPackageWithPackageRename_MoveLastFileInPackageWithPackageRename() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/moveLastFileInPackageWithPackageRename/moveLastFileInPackageWithPackageRename.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveFile/packageWithQuotation/moveFileToPackageWithQuotation.test")
+    public void testKotlin_moveFile_packageWithQuotation_MoveFileToPackageWithQuotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/packageWithQuotation/moveFileToPackageWithQuotation.test");
         doTest(fileName);
     }
 

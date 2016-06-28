@@ -235,4 +235,16 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testEqualsInInterface() {
         doOverrideFileTest("equals")
     }
+
+    fun testCopyKDoc() {
+        doOverrideFileTest("foo")
+    }
+
+    fun testConvertJavaDoc() {
+        doOverrideDirectoryTest("foo")
+    }
+
+    fun testPlatformTypes() {
+        doOverrideDirectoryTest("foo")
+    }
 }
