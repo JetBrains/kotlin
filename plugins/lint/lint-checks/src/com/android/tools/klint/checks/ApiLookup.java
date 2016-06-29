@@ -29,11 +29,11 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSink;
 import com.google.common.io.Files;
 import com.google.common.primitives.UnsignedBytes;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
@@ -599,9 +599,9 @@ public class ApiLookup {
         if (file.exists()) {
             file.delete();
         }
-        FileOutputStream output = Files.newOutputStreamSupplier(file).getOutput();
-        output.write(b);
-        output.close();
+
+        ByteSink sink = Files.asByteSink(file);
+        sink.write(b);
     }
 
     // For debugging only
