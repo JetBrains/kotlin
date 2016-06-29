@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -211,6 +210,13 @@ fun KtExpression.getType(context: BindingContext): KotlinType? {
     return null
 }
 
+val KtElement.isFakeElement: Boolean
+    get() {
+        // Don't use getContainingKtFile() because in IDE we can get an element with JavaDummyHolder as containing file
+        val file = containingFile
+        return file is KtFile && file.doNotAnalyze != null
+    }
+
 fun Call.isSafeCall(): Boolean {
     if (this is CallTransformer.CallForImplicitInvoke) {
         //implicit safe 'invoke'
@@ -223,10 +229,10 @@ fun Call.isSafeCall(): Boolean {
 
 fun Call.isExplicitSafeCall(): Boolean = callOperationNode?.elementType == KtTokens.SAFE_ACCESS
 
-fun Call.createLookupLocation() = KotlinLookupLocation(run {
-    calleeExpression?.let {
-        // Can't use getContainingJetFile() because we can get from IDE an element with JavaDummyHolder as containing file
-        if ((it.containingFile as? KtFile)?.doNotAnalyze == null) it else null
-    }
-    ?: callElement
-})
+fun Call.createLookupLocation(): KotlinLookupLocation {
+    val calleeExpression = calleeExpression
+    val element =
+            if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
+            else callElement
+    return KotlinLookupLocation(element)
+}
