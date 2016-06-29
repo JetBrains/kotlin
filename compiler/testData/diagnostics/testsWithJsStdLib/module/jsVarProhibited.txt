@@ -1,0 +1,5 @@
+package
+
+package foo {
+    @kotlin.js.JsModule(import = "bar") @kotlin.js.native public var baz: kotlin.Int
+}

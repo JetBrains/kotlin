@@ -34,7 +34,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(
                 NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), NativeInnerClassChecker(),
-                JsNameChecker,
+                JsNameChecker, JsModuleChecker,
                 PlatformImplDeclarationChecker()
         ),
         additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker()),
