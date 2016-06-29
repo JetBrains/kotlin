@@ -24,9 +24,22 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
  * [Kotlin Eclipse Plugin](http://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
  * [Kotlin TextMate Bundle](https://github.com/vkostyukov/kotlin-sublime-package)
 
+## Build environment requirements
+
+In order to build Kotlin distribution you need to have:
+
+- Apache Ant 1.8 and higher
+- JDK 1.6, 1.7 and 1.8
+- Setup environment variables as following:
+
+        JAVA_HOME="path to JDK 1.6"
+        JDK_16="path to JDK 1.6"
+        JDK_17="path to JDK 1.7"
+        JDK_18="path to JDK 1.8"
+
 ## Building
 
-To build this project, first time you try to build you need to run this (requires Apache **Ant 1.8** or higher and **JDK 1.6**):
+To build this project, first time you try to build you need to run this:
 
     ant -f update_dependencies.xml
 
@@ -46,7 +59,7 @@ which will build the binaries of the compiler and put them into the 'dist' direc
 
     mvn package
 
-from 'libraries' directory after building the compiler. Refer to `libraries/ReadMe.md` for details.
+from 'libraries' directory after building the compiler. Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ## Working with the project in IntelliJ IDEA
 
