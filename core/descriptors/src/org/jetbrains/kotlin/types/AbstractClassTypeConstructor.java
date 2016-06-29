@@ -69,6 +69,10 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         // performance optimization: getFqName is slow method
         if (other.hashCode() != hashCode()) return false;
 
+        // Sometimes we can get two classes from different modules with different counts of type parameters.
+        // To avoid problems in type checker we suppose that it is different type constructors.
+        if (((TypeConstructor) other).getParameters().size() != getParameters().size()) return false;
+
         ClassifierDescriptor myDescriptor = getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
 
