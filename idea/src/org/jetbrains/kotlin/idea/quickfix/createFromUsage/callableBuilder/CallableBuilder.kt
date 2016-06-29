@@ -146,7 +146,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
-    var placement: CallablePlacement by Delegates.notNull()
+    var placement: CallablePlacement? = null
 
     private val elementsToShorten = ArrayList<KtElement>()
 

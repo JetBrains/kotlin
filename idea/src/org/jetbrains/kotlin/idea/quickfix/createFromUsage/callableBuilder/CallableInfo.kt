@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolvableApproximations
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 /**
@@ -86,14 +89,38 @@ abstract class TypeInfo(val variance: Variance) {
     open fun getPossibleNamesFromExpression(bindingContext: BindingContext): Array<String> = ArrayUtil.EMPTY_STRING_ARRAY
     abstract fun getPossibleTypes(builder: CallableBuilder): List<KotlinType>
 
+    private fun getScopeForTypeApproximation(config: CallableBuilderConfiguration, placement: CallablePlacement?): LexicalScope? {
+        if (placement == null) return config.originalElement.getResolutionScope()
+
+        val containingElement = when (placement) {
+            is CallablePlacement.NoReceiver -> {
+                placement.containingElement
+            }
+            is CallablePlacement.WithReceiver -> {
+                val receiverClassDescriptor =
+                        placement.receiverTypeCandidate.theType.constructor.declarationDescriptor
+                val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+                if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
+            }
+            else -> throw IllegalArgumentException("Unexpected placement: $placement")
+        }
+        return when (containingElement) {
+            is KtClassOrObject -> (containingElement.resolveToDescriptor() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
+            is KtBlockExpression -> (containingElement.statements.firstOrNull() ?: containingElement).getResolutionScope()
+            is KtElement -> containingElement.getContainingKtFile().getResolutionScope()
+            else -> null
+        }
+    }
+
     protected fun KotlinType?.getPossibleSupertypes(variance: Variance, callableBuilder: CallableBuilder): List<KotlinType> {
         if (this == null || ErrorUtils.containsErrorType(this)) {
             return Collections.singletonList(callableBuilder.currentFileModule.builtIns.anyType)
         }
-        val single = Collections.singletonList(this)
+        val scope = getScopeForTypeApproximation(callableBuilder.config, callableBuilder.placement)
+        val approximations = getResolvableApproximations(scope, false)
         return when (variance) {
-            Variance.IN_VARIANCE -> single + supertypes()
-            else -> single
+            Variance.IN_VARIANCE -> approximations.toList()
+            else -> listOf(approximations.firstOrNull() ?: this)
         }
     }
 }
