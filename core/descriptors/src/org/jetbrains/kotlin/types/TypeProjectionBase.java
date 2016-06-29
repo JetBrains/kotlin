@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ public abstract class TypeProjectionBase implements TypeProjection {
 
         TypeProjection that = (TypeProjection) o;
 
+        if (isStarProjection() != that.isStarProjection()) return false;
         if (getProjectionKind() != that.getProjectionKind()) return false;
         if (!getType().equals(that.getType())) return false;
 
