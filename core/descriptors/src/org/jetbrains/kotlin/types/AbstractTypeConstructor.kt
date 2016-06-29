@@ -28,7 +28,7 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     private class Supertypes(
             val allSupertypes: Collection<KotlinType>) {
             // initializer is only needed as a stub for case when 'getSupertypes' is called while 'supertypes' are being calculated
-            var supertypesWithoutCycles: List<KotlinType> = (allSupertypes as? List<KotlinType>) ?: allSupertypes.toList()
+            var supertypesWithoutCycles: List<KotlinType> = listOf(ERROR_TYPE)
     }
 
     private val supertypes = storageManager.createLazyValueWithPostCompute(
