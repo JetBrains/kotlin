@@ -1,4 +1,4 @@
-// "Create extension function 'bar'" "true"
+// "Create extension function '((Int) -> String).bar'" "true"
 
 fun foo(block: (Int) -> String) {
     block.bar()

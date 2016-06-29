@@ -119,8 +119,8 @@ fun List<TypeCandidate>.getTypeByRenderedType(renderedType: String): KotlinType?
 class CallableBuilderConfiguration(
         val callableInfos: List<CallableInfo>,
         val originalElement: KtElement,
-        val currentFile: KtFile,
-        val currentEditor: Editor?,
+        val currentFile: KtFile = originalElement.getContainingKtFile(),
+        val currentEditor: Editor? = null,
         val isExtension: Boolean = false,
         val enableSubstitutions: Boolean = true
 )

@@ -1,4 +1,4 @@
-// "Create extension property 'foo'" "true"
+// "Create extension property 'A.foo'" "true"
 // ERROR: Unresolved reference: foo
 
 val A.foo: String?

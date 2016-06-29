@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'A.foo'" "true"
 // ERROR: Unresolved reference: foo
 
 import package1.A

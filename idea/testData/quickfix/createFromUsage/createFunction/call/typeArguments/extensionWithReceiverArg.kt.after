@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'List<T>.foo'" "true"
 // WITH_RUNTIME
 
 class A<T>(val items: List<T>) {

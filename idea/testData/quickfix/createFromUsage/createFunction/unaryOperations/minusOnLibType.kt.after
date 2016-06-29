@@ -1,4 +1,4 @@
-// "Create extension function 'unaryMinus'" "true"
+// "Create extension function 'Boolean.unaryMinus'" "true"
 // WITH_RUNTIME
 
 fun test() {

@@ -66,7 +66,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
         ) : CreateParameterFromUsageFix<E>? {
             val receiverClassDescriptor: ClassDescriptor
 
-            val builder = CallableBuilderConfiguration(listOf(info), element, element.getContainingKtFile(), null, false).createBuilder()
+            val builder = CallableBuilderConfiguration(listOf(info), element).createBuilder()
             val receiverTypeCandidate = builder.computeTypeCandidates(info.receiverTypeInfo).firstOrNull()
             if (receiverTypeCandidate != null) {
                 builder.placement = CallablePlacement.WithReceiver(receiverTypeCandidate)

@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'A.foo'" "true"
 fun bar(b: Boolean) {
 
 }

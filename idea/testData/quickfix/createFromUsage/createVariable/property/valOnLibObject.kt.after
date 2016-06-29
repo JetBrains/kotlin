@@ -1,4 +1,4 @@
-// "Create extension property 'foo'" "true"
+// "Create extension property 'Unit.foo'" "true"
 // ERROR: Property must be initialized
 // WITH_RUNTIME
 

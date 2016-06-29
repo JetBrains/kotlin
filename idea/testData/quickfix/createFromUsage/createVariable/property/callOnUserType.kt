@@ -1,5 +1,5 @@
 // "Create property 'foo'" "false"
-// ACTION: Create extension function 'bar'
+// ACTION: Create extension function 'A<Int>.bar'
 // ACTION: Create member function 'bar'
 // ACTION: Rename reference
 // ERROR: Unresolved reference: bar
