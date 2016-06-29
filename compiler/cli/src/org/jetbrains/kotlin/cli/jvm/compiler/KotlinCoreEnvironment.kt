@@ -95,6 +95,7 @@ import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.*
 
 class KotlinCoreEnvironment private constructor(

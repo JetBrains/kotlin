@@ -20,6 +20,8 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.concurrency.AppScheduledExecutorService;
 import com.sampullara.cli.Args;
 import kotlin.Pair;
 import kotlin.collections.ArraysKt;
@@ -303,9 +305,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         // We depend on swing (indirectly through PSI or something), so we want to declare headless mode,
         // to avoid accidentally starting the UI thread
         System.setProperty("java.awt.headless", "true");
-        ExitCode exitCode = doMainNoExit(compiler, args);
-        if (exitCode != OK) {
-            System.exit(exitCode.getCode());
+        try {
+            ExitCode exitCode = doMainNoExit(compiler, args);
+
+            if (exitCode != OK) {
+                System.exit(exitCode.getCode());
+            }
+        }
+        finally {
+            AppScheduledExecutorService service = (AppScheduledExecutorService) AppExecutorUtil.getAppScheduledExecutorService();
+            service.shutdownAppScheduledExecutorService();
         }
     }
 
