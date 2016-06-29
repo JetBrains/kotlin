@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
+public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
     private final PathManager pathManager;
     private static final String testClassPackage = "org.jetbrains.kotlin.android.tests";
