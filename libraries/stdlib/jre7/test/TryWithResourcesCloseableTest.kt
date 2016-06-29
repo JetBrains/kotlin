@@ -2,9 +2,12 @@ package kotlin.jdk7.test
 
 import java.io.*
 import org.junit.Test
+import java.util.*
 import kotlin.test.*
 
 class TryWithResourcesCloseableTest {
+
+    @Suppress("HasPlatformType") fun <T> platformNull() = Collections.singletonList(null as T).first()
 
     class Resource(val faultyClose: Boolean = false) : Closeable {
 
@@ -81,4 +84,27 @@ class TryWithResourcesCloseableTest {
 
     }
 
+    @Test fun nullableResourceSuccess() {
+        val resource: Resource? = null
+        val result = resource.use { "ok" }
+        assertEquals("ok", result)
+    }
+
+    @Test fun nullableResourceOpFails() {
+        val resource: Resource? = null
+        val e = assertFails {
+            resource.use { requireNotNull(it) }
+        }
+        assertTrue(e is IllegalArgumentException)
+        assertTrue(e.suppressed.isEmpty())
+    }
+
+    @Test fun platformResourceOpFails() {
+        val resource = platformNull<Resource>()
+        val e = assertFails {
+            resource.use { requireNotNull(it) }
+        }
+        assertTrue(e is IllegalArgumentException)
+        assertTrue(e.suppressed.isEmpty())
+    }
 }

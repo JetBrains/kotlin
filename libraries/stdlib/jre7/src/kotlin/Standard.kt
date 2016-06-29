@@ -3,17 +3,17 @@ package kotlin
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
-public inline fun <T : AutoCloseable, R> T.use(block: (T) -> R): R {
+public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     var closed = false
     try {
         return block(this)
     } catch (e: Throwable) {
         closed = true
         @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-        closeSuppressed(e)
+        this?.closeSuppressed(e)
         throw e
     } finally {
-        if (!closed) {
+        if (this != null && !closed) {
             close()
         }
     }
