@@ -122,7 +122,7 @@ class TestKotlinScriptDependenciesResolver : AnnotationBasedScriptDependenciesRe
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    @AcceptedAnnotations(depends::class)
+    @AcceptedAnnotations(DependsOn::class)
     override fun resolve(scriptFile: File?,
                          annotations: Iterable<Annotation>,
                          environment: Map<String, Any?>?,
@@ -131,13 +131,14 @@ class TestKotlinScriptDependenciesResolver : AnnotationBasedScriptDependenciesRe
     {
         val cp = annotations.flatMap {
             when (it) {
-                is depends -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
+                is DependsOn -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
                 else -> throw Exception("Unknown annotation ${it.javaClass}")
             }
         }
         return object : KotlinScriptExternalDependencies {
             override val classpath: Iterable<File> = classpathFromClassloader() + cp
+            override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn")
         }
     }
 
@@ -165,4 +166,4 @@ abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWit
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class depends(val path: String)
+annotation class DependsOn(val path: String)
