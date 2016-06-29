@@ -1956,6 +1956,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("approximateAnonymousObjectRuntime.kt")
+                public void testApproximateAnonymousObjectRuntime() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/approximateAnonymousObjectRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("approximateLocalClassRuntime.kt")
+                public void testApproximateLocalClassRuntime() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/approximateLocalClassRuntime.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("argumentTypeMismatch.kt")
                 public void testArgumentTypeMismatch() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/argumentTypeMismatch.kt");

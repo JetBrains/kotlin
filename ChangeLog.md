@@ -117,6 +117,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 ###### Issues fixed
 
+- [`KT-7722`](https://youtrack.jetbrains.com/issue/KT-7722) Approximate unresolvable types in "Create from Usage" quickfixes
 - [`KT-11115`](https://youtrack.jetbrains.com/issue/KT-11115) Implement Members: Fix base member detection when abstract and non-abstract members with matching signatures are inherited from an interface
 
 ###### New features

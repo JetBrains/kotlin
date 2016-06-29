@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolvableApproximations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -40,9 +42,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention :
@@ -112,28 +114,7 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = (exprType.singletonList() + TypeUtils.getAllSupertypes(exprType))
-                    .filter { it.isResolvableInScope(scope, true) }
-                    .mapNotNull mapArgs@ {
-                        val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, true) }
-                        if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it
-
-                        val newArguments = (it.arguments zip it.constructor.parameters).map {
-                            val (arg, param) = it
-                            when {
-                                arg in resolvableArgs -> arg
-                                arg.projectionKind == Variance.OUT_VARIANCE ||
-                                param.variance == Variance.OUT_VARIANCE -> TypeProjectionImpl(
-                                        arg.projectionKind,
-                                        arg.type.approximateWithResolvableType(scope, true)
-                                )
-                                else -> return@mapArgs null
-                            }
-                        }
-
-                        it.replace(newArguments)
-                    }
-                    .ifEmpty { return null }
+            val types = exprType.getResolvableApproximations(scope, true).toList().ifEmpty { return null }
             return object : ChooseValueExpression<KotlinType>(types, types.first()) {
                 override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
                 override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)

@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinType {
     if (isDynamic()) return this
@@ -100,4 +102,31 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
         return immediateSupertypes().firstOrNull() ?: classDescriptor.builtIns.anyType
     }
     return null
+}
+
+fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParameters: Boolean): Sequence<KotlinType> {
+    return (singletonList() + TypeUtils.getAllSupertypes(this))
+            .asSequence()
+            .filter { it.isResolvableInScope(scope, checkTypeParameters) }
+            .mapNotNull mapArgs@ {
+                val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, checkTypeParameters) }
+                if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it
+
+                val newArguments = (it.arguments zip it.constructor.parameters).map {
+                    val (arg, param) = it
+                    when {
+                        arg in resolvableArgs -> arg
+
+                        arg.projectionKind == Variance.OUT_VARIANCE ||
+                        param.variance == Variance.OUT_VARIANCE -> TypeProjectionImpl(
+                                arg.projectionKind,
+                                arg.type.approximateWithResolvableType(scope, checkTypeParameters)
+                        )
+
+                        else -> return@mapArgs null
+                    }
+                }
+
+                it.replace(newArguments)
+            }
 }
