@@ -30,15 +30,17 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+import java.io.InputStream
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.util.concurrent.Future
 import kotlin.reflect.*
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptTemplateDefinition(val resolver: KClass<out AnnotationBasedScriptDependenciesResolver>,
-                                          val scriptFilePattern: String)
+annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolverEx> = BasicScriptDependenciesResolver::class,
+                                          val scriptFilePattern: String = "*.\\.kts")
 
 @Deprecated("Use ScriptTemplateDefinition")
 @Target(AnnotationTarget.CLASS)
@@ -50,15 +52,22 @@ annotation class ScriptFilePattern(val pattern: String)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
 
-interface AnnotationBasedScriptDependenciesResolver {
-    fun resolve(scriptFile: File?,
-                annotations: Iterable<Annotation>,
-                environment: Map<String, Any?>?,
-                previousDependencies: KotlinScriptExternalDependencies? = null
-    ): KotlinScriptExternalDependencies? = null
+interface ScriptContents {
+    val file: File?
+    val annotations: Iterable<Annotation>
+    val contents: CharSequence?
+    val contentsStream: InputStream?
 }
 
-@Deprecated("Use new resolver Ex")
+// TODO: rename to just ScriptDependenciesResolver as soon as current deprecated one will be dropped
+interface ScriptDependenciesResolverEx {
+    fun resolve(script: ScriptContents,
+                environment: Map<String, Any?>?,
+                previousDependencies: KotlinScriptExternalDependencies? = null
+    ): Future<KotlinScriptExternalDependencies>? = null
+}
+
+@Deprecated("Use new ScriptDependenciesResolverEx")
 interface ScriptDependenciesResolver {
     fun resolve(projectRoot: File?,
                 scriptFile: File?,
@@ -67,6 +76,8 @@ interface ScriptDependenciesResolver {
     ): KotlinScriptExternalDependencies? = null
 }
 
+class BasicScriptDependenciesResolver : ScriptDependenciesResolverEx
+
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KClass<out Annotation>)
@@ -74,11 +85,11 @@ annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KCla
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val environment: Map<String, Any?>?) : KotlinScriptDefinition {
 
     // TODO: remove this and simplify definitionAnnotation as soon as deprecated annotations will be removed
-    internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out AnnotationBasedScriptDependenciesResolver>,
-                                                val resolver: AnnotationBasedScriptDependenciesResolver?,
+    internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out ScriptDependenciesResolverEx>,
+                                                val resolver: ScriptDependenciesResolverEx?,
                                                 val scriptFilePattern: String?) {
-        val acceptedAnnotations by lazy {
-            val resolveMethod = AnnotationBasedScriptDependenciesResolver::resolve
+        val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
+            val resolveMethod = ScriptDependenciesResolverEx::resolve
             val resolverMethodAnnotations =
                     resolverClass.memberFunctions.find {
                         it.name == resolveMethod.name &&
@@ -94,19 +105,18 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         }
     }
 
-    internal class ObsoleteResolverProxy(val resolverAnn: ScriptDependencyResolver?) : AnnotationBasedScriptDependenciesResolver {
+    internal class ObsoleteResolverProxy(val resolverAnn: ScriptDependencyResolver?) : ScriptDependenciesResolverEx {
         private val resolver by lazy { resolverAnn?.resolver?.primaryConstructor?.call() }
-        override fun resolve(scriptFile: File?,
-                             annotations: Iterable<Annotation>,
+        override fun resolve(script: ScriptContents,
                              environment: Map<String, Any?>?,
                              previousDependencies: KotlinScriptExternalDependencies?
-        ): KotlinScriptExternalDependencies? =
+        ): Future<KotlinScriptExternalDependencies>? = makeNullableFakeFuture(
                 resolver?.resolve(
                         environment?.get("projectRoot") as? File?,
-                        scriptFile,
+                        script.file,
                         emptyList(),
                         environment as Any?
-                )
+                ))
     }
 
     private val definitionData by lazy {
@@ -136,7 +146,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies>? {
         val fileAnnotations = getAnnotationEntries(file, project)
                 .map { KtAnnotationWrapper(it) }
                 .mapNotNull { wrappedAnn ->
@@ -159,7 +169,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
             val annFQN = annClassToWrapper.first.qualifiedName
             if (definitionData.acceptedAnnotations.any { it.qualifiedName == annFQN }) annClassToWrapper.second else null
         }
-        val fileDeps = definitionData.resolver?.resolve(getFile(file), supportedAnnotations, environment, previousDependencies)
+        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, supportedAnnotations), environment, previousDependencies)
         return fileDeps
     }
 
@@ -182,6 +192,12 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file)
                                ?: throw java.lang.IllegalArgumentException("Unable to load PSI from ${file.canonicalPath}")
         return getAnnotationEntriesFromPsiFile(psiFile)
+    }
+
+    class BasicScriptContents<out TF>(val myFile: TF, override val annotations: Iterable<Annotation>) : ScriptContents {
+        override val file: File? get() = getFile(myFile)
+        override val contents: CharSequence? get() = getFileContents(myFile)
+        override val contentsStream: InputStream? get() = getFileContentsStream(myFile)
     }
 }
 
