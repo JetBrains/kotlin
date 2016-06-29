@@ -17,8 +17,8 @@ class PropertyHolder {
     @Deprecated("text")
     var name = "String"
 
-    val valDelegate <!DEPRECATION!>by<!> Delegate()
-    var varDelegate <!DEPRECATION, DEPRECATION!>by<!> Delegate()
+    val valDelegate by <!DEPRECATION!>Delegate()<!>
+    var varDelegate by <!DEPRECATION, DEPRECATION!>Delegate()<!>
 
     public val test1: String = ""
         @Deprecated("val-getter") get

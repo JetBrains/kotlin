@@ -24,14 +24,11 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
@@ -67,21 +64,15 @@ public class DelegatedPropertyResolver {
     private final KotlinBuiltIns builtIns;
     private final FakeCallResolver fakeCallResolver;
     private final ExpressionTypingServices expressionTypingServices;
-    private final LanguageFeatureSettings languageFeatureSettings;
-    private final Iterable<CallChecker> callCheckers;
 
     public DelegatedPropertyResolver(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull FakeCallResolver fakeCallResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull LanguageFeatureSettings languageFeatureSettings,
-            @NotNull Iterable<CallChecker> callCheckers
+            @NotNull ExpressionTypingServices expressionTypingServices
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
         this.expressionTypingServices = expressionTypingServices;
-        this.languageFeatureSettings = languageFeatureSettings;
-        this.callCheckers = callCheckers;
     }
 
     public void resolvePropertyDelegate(
@@ -277,12 +268,6 @@ public class DelegatedPropertyResolver {
 
                 if (!resultingDescriptor.isOperator()) {
                     OperatorCallChecker.Companion.report(byKeyword, resultingDescriptor, trace);
-                }
-
-                CallCheckerContext callCheckerContext =
-                        new CallCheckerContext(trace, delegateFunctionsScope, languageFeatureSettings, dataFlowInfo);
-                for (CallChecker checker : callCheckers) {
-                    checker.check(resultingCall, byKeyword, callCheckerContext);
                 }
             }
         }

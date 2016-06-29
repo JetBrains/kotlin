@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -81,11 +80,6 @@ public class ForLoopConventionsChecker {
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
 
             checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
-
-            CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
-            for (CallChecker checker : callCheckers) {
-                checker.check(iteratorResolvedCall, loopRangeExpression, callCheckerContext);
-            }
 
             KotlinType iteratorType = iteratorFunction.getReturnType();
             //noinspection ConstantConditions
@@ -141,11 +135,6 @@ public class ForLoopConventionsChecker {
             assert nextResolutionResults.isSuccess();
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
-
-            CallCheckerContext callCheckerContext = new CallCheckerContext(context, languageFeatureSettings);
-            for (CallChecker checker : callCheckers) {
-                checker.check(resolvedCall, loopRangeExpression, callCheckerContext);
-            }
 
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
             checkIfOperatorModifierPresent(loopRangeExpression, functionDescriptor, context.trace);
