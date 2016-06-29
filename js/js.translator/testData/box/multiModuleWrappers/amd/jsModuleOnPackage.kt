@@ -18,6 +18,7 @@ package foo
 
 @native val bar: Int = noImpl
 
+@native var mbar: Int = noImpl
 
 // MODULE: main(lib)
 // FILE: main.kt
@@ -34,6 +35,9 @@ fun box(): String {
 
     assertEquals(365, foo(42))
     assertEquals(423, bar)
+
+    mbar = 523
+    assertEquals(523, mbar)
 
     return "OK"
 }

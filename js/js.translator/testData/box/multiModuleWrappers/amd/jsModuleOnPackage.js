@@ -23,6 +23,7 @@ define("native-lib", [], function() {
         A: A,
         B: B,
         foo: foo,
-        bar: bar
+        bar: bar,
+        mbar: -1
     };
 });

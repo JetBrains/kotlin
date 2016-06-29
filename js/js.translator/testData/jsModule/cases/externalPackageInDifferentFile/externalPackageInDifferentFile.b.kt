@@ -13,5 +13,8 @@ fun box(): String {
 
     assertEquals(12345, C.f())
 
+    mbar = 523
+    assertEquals(523, mbar)
+
     return "OK"
 }

@@ -14,3 +14,5 @@ package foo
 @native fun foo(y: Int): Int = noImpl
 
 @native val bar: Int = noImpl
+
+@native var mbar: Int = noImpl
