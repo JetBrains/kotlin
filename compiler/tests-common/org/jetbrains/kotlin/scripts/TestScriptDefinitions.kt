@@ -25,16 +25,18 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.concurrent.Future
 import kotlin.reflect.KClass
 
 abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
     override fun <TF> isScript(file: TF): Boolean = getFileName(file).endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
-    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? =
-            object : KotlinScriptExternalDependencies {
-                override val classpath: Iterable<File> = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
-            }
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies>? =
+            makeNullableFakeFuture(
+                object : KotlinScriptExternalDependencies {
+                    override val classpath: Iterable<File> = cp ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
+                })
 }
 
 open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<File>? = null, val extraDependencies: KotlinScriptExternalDependencies? = null)

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.util.concurrent.Future
 
 
 data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
@@ -46,24 +47,25 @@ data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, va
 
     private val evaluatedClasspath by lazy { config.classpath.evalWithVars(environmentVars).map { File(it) }.distinctBy { it.canonicalPath } }
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? =
-            if (!isScript(file)) null
-            else {
-                val extDeps = getScriptDependenciesFromConfig(file)
-                when {
-                    extDeps != null ->
-                        object : KotlinScriptExternalDependencies {
-                            override val classpath: Iterable<File> = evaluatedClasspath + extDeps.classpath
-                            override val imports = extDeps.imports
-                            override val sources: Iterable<File> = extDeps.sources
-                        }
-                    !evaluatedClasspath.isEmpty() ->
-                        object : KotlinScriptExternalDependencies {
-                            override val classpath: Iterable<File> = evaluatedClasspath
-                        }
-                    else -> null
-                }
-            }
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies>? =
+            makeNullableFakeFuture(
+                if (!isScript(file)) null
+                else {
+                    val extDeps = getScriptDependenciesFromConfig(file)
+                    when {
+                        extDeps != null ->
+                            object : KotlinScriptExternalDependencies {
+                                override val classpath: Iterable<File> = evaluatedClasspath + extDeps.classpath
+                                override val imports = extDeps.imports
+                                override val sources: Iterable<File> = extDeps.sources
+                            }
+                        !evaluatedClasspath.isEmpty() ->
+                            object : KotlinScriptExternalDependencies {
+                                override val classpath: Iterable<File> = evaluatedClasspath
+                            }
+                        else -> null
+                    }
+                })
 }
 
 
