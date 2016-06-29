@@ -27,12 +27,8 @@ public abstract class A2 {
 @kotlin.Metadata
 public abstract class A3 {
     public method <init>(): void
-    public method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public method indexOf(p0: java.lang.Object): int
-    public method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
-    public method remove(p0: java.lang.Object): boolean
     public method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }
@@ -43,10 +39,7 @@ public abstract class A4 {
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
-    public method indexOf(p0: java.lang.Object): int
-    public method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
-    public method remove(p0: java.lang.Object): boolean
     public method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }

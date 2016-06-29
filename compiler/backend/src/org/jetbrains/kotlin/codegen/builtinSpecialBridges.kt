@@ -91,7 +91,12 @@ object BuiltinSpecialBridgesUtil {
 
         // Can be null if special builtin is final (e.g. 'name' in Enum)
         // because there should be no stubs for override in subclasses
-        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake, isBodyOwner)
+        val superImplementationDescriptor =
+                if (specialBridge != null)
+                    findSuperImplementationForStubDelegation(function, fake, isBodyOwner)
+                else
+                    null
+
         if (superImplementationDescriptor != null) {
             bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
         }
