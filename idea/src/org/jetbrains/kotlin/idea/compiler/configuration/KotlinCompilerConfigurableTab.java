@@ -196,7 +196,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
 
-        moduleKindComboBox.setSelectedItem(k2jsCompilerArguments.moduleKind);
+        String moduleKind = k2jsCompilerArguments.moduleKind;
+        if (moduleKind == null) {
+            moduleKind = K2JsArgumentConstants.MODULE_PLAIN;
+        }
+        moduleKindComboBox.setSelectedItem(moduleKind);
     }
 
     @Override
