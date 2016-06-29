@@ -50,7 +50,9 @@ public class AndroidRunner extends TestSuite {
 
         System.out.println("Run tests on android...");
         TestSuite suite = CodegenTestsOnAndroidRunner.getTestSuite(pathManager);
-        suite.addTest(new AndroidJpsBuildTestCase());
+        //AndroidJpsBuildTestCase indirectly depends on UsefulTestCase which compiled against java 8
+        //TODO: Need add separate run configuration for AndroidJpsBuildTestCase
+        //suite.addTest(new AndroidJpsBuildTestCase());
         return suite;
     }
 
