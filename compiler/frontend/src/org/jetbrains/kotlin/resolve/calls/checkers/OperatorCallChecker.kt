@@ -50,7 +50,7 @@ class OperatorCallChecker : CallChecker {
 
         if (call.callElement is KtDestructuringDeclarationEntry || call is CallTransformer.CallForImplicitInvoke) {
             if (!functionDescriptor.isOperator) {
-                report(call.callElement, functionDescriptor, context.trace)
+                report(reportOn, functionDescriptor, context.trace)
             }
             return
         }

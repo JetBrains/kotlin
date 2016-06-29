@@ -13,6 +13,6 @@ operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.component
 operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.component2() = 2
 
 inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
-    val (d1, e1) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>s<!>
-    val (d2, e2) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>ext<!>
+    val (d1, e1) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>s<!>
+    val (d2, e2) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>ext<!>
 }

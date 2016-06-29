@@ -5,7 +5,7 @@ class D : C {
             {
                 val s = ""
                 <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>s<!>()
-                ""() // TODO: see KT-12875
+                <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>""()<!>
                 42
             }())
 

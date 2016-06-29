@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -38,9 +35,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 class DestructuringDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
         private val localVariableResolver: LocalVariableResolver,
-        private val typeResolver: TypeResolver,
-        private val languageFeatureSettings: LanguageFeatureSettings,
-        private val callCheckers: Iterable<CallChecker>
+        private val typeResolver: TypeResolver
 ) {
     fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
@@ -83,11 +78,6 @@ class DestructuringDeclarationResolver(
         }
 
         context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
-
-        val callCheckerContext = CallCheckerContext(context, languageFeatureSettings)
-        for (checker in callCheckers) {
-            checker.check(results.resultingCall, entry, callCheckerContext)
-        }
 
         val functionReturnType = results.resultingDescriptor.returnType
         if (functionReturnType != null && !TypeUtils.noExpectedType(expectedType)
