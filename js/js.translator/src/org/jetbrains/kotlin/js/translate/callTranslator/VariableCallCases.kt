@@ -59,7 +59,7 @@ object NativeVariableAccessCase : VariableAccessCase() {
             JsInvocation(methodRef, *additionalArguments.toTypedArray())
         }
         else {
-            constructAccessExpression(variableName.makeRef())
+            constructAccessExpression(context.getQualifiedReference(callableDescriptor))
         }
     }
 }

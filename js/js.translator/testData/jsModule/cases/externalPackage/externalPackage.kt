@@ -1,5 +1,3 @@
-// MODULE_KIND: AMD
-// FILE: lib.kt
 @file:JsModule("lib")
 package foo
 
@@ -17,16 +15,6 @@ package foo
 
 @native val bar: Int = noImpl
 
-// FILE: lib2.kt
-package foo
-
-@native object C {
-    fun f(): Int = noImpl
-}
-
-// FILE: main.kt
-package foo
-
 fun box(): String {
     val a = A(23)
     assertEquals(23, a.x)
@@ -37,8 +25,6 @@ fun box(): String {
 
     assertEquals(365, foo(42))
     assertEquals(423, bar)
-
-    assertEquals(12345, C.f())
 
     return "OK"
 }

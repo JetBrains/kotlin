@@ -235,19 +235,7 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        String moduleName = AnnotationsUtils.getModuleName(descriptor);
-        if (moduleName != null) {
-            return JsAstUtils.pureFqn(getModuleInternalName(moduleName), null);
-        }
-
-        if (isNativeObject(descriptor)) {
-            String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), descriptor);
-            if (fileModuleName != null) {
-                return pureFqn(getNameForDescriptor(descriptor), pureFqn(getModuleInternalName(fileModuleName), null));
-            }
-        }
-
-        if (descriptor instanceof ClassDescriptor) {
+                if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (KotlinBuiltIns.isAny(classDescriptor)) {
                 return pureFqn("Object", null);
@@ -259,6 +247,18 @@ public final class StaticContext {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
             JsExpression result = getModuleExpressionFor(module);
             return result != null ? result : pureFqn(Namer.getRootPackageName(), null);
+        }
+
+        String moduleName = AnnotationsUtils.getModuleName(suggested.getDescriptor());
+        if (moduleName != null) {
+            return JsAstUtils.pureFqn(getModuleInternalName(moduleName), null);
+        }
+
+        if (isNativeObject(suggested.getDescriptor())) {
+            String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
+            if (fileModuleName != null) {
+                return pureFqn(getNameForDescriptor(suggested.getDescriptor()), pureFqn(getModuleInternalName(fileModuleName), null));
+            }
         }
 
         JsExpression expression;

@@ -11,5 +11,7 @@ fun box(): String {
     assertEquals(365, foo(42))
     assertEquals(423, bar)
 
+    assertEquals(12345, C.f())
+
     return "OK"
 }
