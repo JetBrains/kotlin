@@ -93,7 +93,24 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 append(kind)
 
                 if (it.name.isNotEmpty()) {
-                    append(" '${it.name}'")
+                    append(" '")
+
+                    if (isExtension) {
+                        val callableBuilder =
+                                CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
+                                .createBuilder()
+                        val receiverType = callableBuilder
+                                .computeTypeCandidates(callableInfos.first().receiverTypeInfo)
+                                .firstOrNull()
+                                ?.theType
+                        if (receiverType != null) {
+                            val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+                            val isFunctionType = receiverType.constructor.declarationDescriptor is FunctionClassDescriptor
+                            append(if (isFunctionType) "($receiverTypeText)" else receiverTypeText).append('.')
+                        }
+                    }
+
+                    append("${it.name}'")
                 }
             }
         }
@@ -123,7 +140,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         // TODO: Remove after companion object extensions are supported
         if (isExtension && receiverInfo.staticContextRequired) return false
 
-        val callableBuilder = CallableBuilderConfiguration(callableInfos, element, file, null, isExtension).createBuilder()
+        val callableBuilder = CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension).createBuilder()
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfos.first().receiverTypeInfo)
         val propertyInfo = callableInfos.firstOrNull { it is PropertyInfo } as PropertyInfo?
         val isFunction = callableInfos.any { it.kind == CallableKind.FUNCTION }

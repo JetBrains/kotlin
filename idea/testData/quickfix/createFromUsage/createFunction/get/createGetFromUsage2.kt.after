@@ -1,4 +1,4 @@
-// "Create extension function 'get'" "true"
+// "Create extension function 'Any.get'" "true"
 // WITH_RUNTIME
 
 fun x (y: Any) {

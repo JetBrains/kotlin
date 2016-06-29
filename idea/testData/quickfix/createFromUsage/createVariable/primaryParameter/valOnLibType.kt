@@ -1,5 +1,5 @@
 // "Create property 'foo' as constructor parameter" "false"
-// ACTION: Create extension property 'foo'
+// ACTION: Create extension property 'Int.foo'
 // ACTION: Rename reference
 // ERROR: Unresolved reference: foo
 // WITH_RUNTIME

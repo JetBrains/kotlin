@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'Unit.foo'" "true"
 // WITH_RUNTIME
 
 fun test() {

@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'Int.foo'" "true"
 // WITH_RUNTIME
 fun <T, U> T.map(f: (T) -> U) = f(this)
 

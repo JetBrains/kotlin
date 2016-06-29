@@ -1,4 +1,4 @@
-// "Create extension function 'set'" "true"
+// "Create extension function 'Any.set'" "true"
 // WITH_RUNTIME
 
 class Foo<T> {

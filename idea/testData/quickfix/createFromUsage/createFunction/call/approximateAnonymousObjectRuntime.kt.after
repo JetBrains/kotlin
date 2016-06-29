@@ -1,4 +1,4 @@
-// "Create extension function 'foo'" "true"
+// "Create extension function 'List<Int>.foo'" "true"
 
 open class A
 

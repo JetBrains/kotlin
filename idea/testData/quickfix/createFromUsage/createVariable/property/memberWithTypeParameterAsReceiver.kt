@@ -1,5 +1,5 @@
 // "Create member property 'bar'" "false"
-// ACTION: Create extension property 'bar'
+// ACTION: Create extension property 'T.bar'
 // ACTION: Rename reference
 // ACTION: Convert to expression body
 // ERROR: Unresolved reference: bar

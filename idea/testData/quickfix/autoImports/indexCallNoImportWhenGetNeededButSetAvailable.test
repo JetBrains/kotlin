@@ -2,7 +2,7 @@
 // "Import" "false"
 // ERROR: Unresolved reference: foo()["str"]
 // ERROR: No set method providing array access
-// ACTION: Create extension function 'set'
+// ACTION: Create extension function 'Some.set'
 // ACTION: Create member function 'set'
 // ACTION: Replace overloaded operator with function call
 

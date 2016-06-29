@@ -1,6 +1,6 @@
 // "Import" "false"
 // ERROR: Unresolved reference: foo
-// ACTION: Create extension function 'foo'
+// ACTION: Create extension function 'H.foo'
 // ACTION: Create member function 'foo'
 // ACTION: Replace infix call with ordinary call
 

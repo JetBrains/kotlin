@@ -1,7 +1,7 @@
 // FILE: first.before.kt
 // "Import" "false"
 // ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
-// ACTION: Create extension function 'component1'
+// ACTION: Create extension function 'Some.component1'
 // ACTION: Create member function 'component1'
 
 

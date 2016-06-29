@@ -1,5 +1,5 @@
 // "Create class 'A'" "false"
-// ACTION: Create extension property 'A'
+// ACTION: Create extension property 'X.A'
 // ACTION: Create member property 'A'
 // ACTION: Create property 'A' as constructor parameter
 // ACTION: Rename reference

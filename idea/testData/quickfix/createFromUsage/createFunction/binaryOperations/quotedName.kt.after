@@ -1,4 +1,4 @@
-// "Create extension function '!u00A0'" "true"
+// "Create extension function 'Int.!u00A0'" "true"
 // WITH_RUNTIME
 
 fun test() {
