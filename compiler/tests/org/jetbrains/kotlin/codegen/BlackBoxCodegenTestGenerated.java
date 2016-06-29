@@ -13639,6 +13639,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("entrySetSOE.kt")
+        public void testEntrySetSOE() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/entrySetSOE.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enumAsOrdinaled.kt")
         public void testEnumAsOrdinaled() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/enumAsOrdinaled.kt");
