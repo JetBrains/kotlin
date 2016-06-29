@@ -152,11 +152,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
-               !getSelectedModuleKind().equals(k2jsCompilerArguments.moduleKind);
+               !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
     }
 
+    @NotNull
     private String getSelectedModuleKind() {
-        return (String) moduleKindComboBox.getSelectedItem();
+        return getModuleKindOrDefault((String) moduleKindComboBox.getSelectedItem());
     }
 
     @Override
@@ -182,6 +183,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         BuildManager.getInstance().clearState(project);
     }
 
+    @NotNull
+    private static String getModuleKindOrDefault(@Nullable String moduleKindId) {
+        if (moduleKindId == null) {
+            moduleKindId = K2JsArgumentConstants.MODULE_PLAIN;
+        }
+        return moduleKindId;
+    }
+
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
@@ -196,11 +205,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
 
-        String moduleKind = k2jsCompilerArguments.moduleKind;
-        if (moduleKind == null) {
-            moduleKind = K2JsArgumentConstants.MODULE_PLAIN;
-        }
-        moduleKindComboBox.setSelectedItem(moduleKind);
+        moduleKindComboBox.setSelectedItem(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
     }
 
     @Override
