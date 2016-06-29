@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
+import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -49,7 +50,7 @@ fun Collection<KotlinType>.singleBestRepresentative(): KotlinType? {
             other ->
             // We consider error types equal to anything here, so that intersections like
             // {Array<String>, Array<[ERROR]>} work correctly
-            candidate == other || KotlinTypeChecker.ERROR_TYPES_ARE_EQUAL_TO_ANYTHING.equalTypes(candidate, other)
+            candidate == other || ErrorTypesAreEqualToAnything.equalTypes(candidate, other)
         }
     }
 }

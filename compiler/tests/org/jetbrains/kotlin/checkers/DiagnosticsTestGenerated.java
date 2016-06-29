@@ -18921,6 +18921,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaAndKotlinSuperType.kt")
+            public void testJavaAndKotlinSuperType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/javaAndKotlinSuperType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2069.kt")
             public void testKt2069() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/kt2069.kt");

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
+import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
@@ -178,7 +179,7 @@ class CandidateResolver(
         // TODO: use constraint system to check if candidateKCallableType can be a subtype of expectedType
         val substituteDontCare = makeConstantSubstitutor(candidateTypeParameters, TypeUtils.DONT_CARE)
         val subTypeSubstituted = substituteDontCare.substitute(subType, Variance.INVARIANT) ?: return true
-        return KotlinTypeChecker.ERROR_TYPES_ARE_EQUAL_TO_ANYTHING.isSubtypeOf(subTypeSubstituted, superType)
+        return ErrorTypesAreEqualToAnything.isSubtypeOf(subTypeSubstituted, superType)
     }
 
     private fun CallCandidateResolutionContext<*>.checkVisibilityWithoutReceiver() = checkAndReport {

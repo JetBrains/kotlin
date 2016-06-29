@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -53,7 +53,7 @@ fun FuzzyType.presentationType(): KotlinType {
     for ((argument, typeParameter) in type.arguments.zip(type.constructor.parameters)) {
         if (argument.projectionKind == Variance.INVARIANT) {
             val equalToFreeParameter = freeParameters.firstOrNull {
-                KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(it.defaultType, argument.type)
+                StrictEqualityTypeChecker.strictEqualTypes(it.defaultType, argument.type.unwrap())
             } ?: continue
 
             map[equalToFreeParameter.typeConstructor] = createProjection(typeParameter.defaultType, Variance.INVARIANT, null)
@@ -186,7 +186,7 @@ fun TypeSubstitution.hasConflictWith(other: TypeSubstitution, freeParameters: Co
         val type = parameter.defaultType
         val substituted1 = this[type] ?: return@any false
         val substituted2 = other[type] ?: return@any false
-        !KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(substituted1.type, substituted2.type) || substituted1.projectionKind != substituted2.projectionKind
+        !StrictEqualityTypeChecker.strictEqualTypes(substituted1.type.unwrap(), substituted2.type.unwrap()) || substituted1.projectionKind != substituted2.projectionKind
     }
 }
 

@@ -132,14 +132,14 @@ public class TypeIntersector {
             return TypeUtils.makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }
 
-        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.Companion.getEMPTY(), resultingTypes);
+        IntersectionTypeConstructor constructor = new IntersectionTypeConstructor(resultingTypes);
 
         return KotlinTypeFactory.simpleType(
                 Annotations.Companion.getEMPTY(),
                 constructor,
                 Collections.<TypeProjection>emptyList(),
                 allNullable,
-                TypeIntersectionScope.create("member scope for intersection type " + constructor, resultingTypes)
+                constructor.createScopeForKotlinType()
         );
     }
 

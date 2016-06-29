@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -63,7 +63,7 @@ sealed class KotlinType : Annotated {
         if (this === other) return true
         if (other !is KotlinType) return false
 
-        return isMarkedNullable == other.isMarkedNullable && KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, other)
+        return isMarkedNullable == other.isMarkedNullable && StrictEqualityTypeChecker.strictEqualTypes(unwrap(), other.unwrap())
     }
 }
 

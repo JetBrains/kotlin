@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 
 /**
  * This is temporary hack for type intersector.
@@ -33,7 +33,7 @@ internal fun hackForTypeIntersector(types: Collection<KotlinType>): KotlinType? 
 
     return types.firstOrNull { candidate ->
         types.all {
-            KotlinTypeChecker.ERROR_TYPES_ARE_EQUAL_TO_ANYTHING.isSubtypeOf(candidate, it)
+            ErrorTypesAreEqualToAnything.isSubtypeOf(candidate, it)
         }
     }
 }

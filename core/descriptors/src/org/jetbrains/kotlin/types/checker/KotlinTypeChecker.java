@@ -26,22 +26,7 @@ public interface KotlinTypeChecker {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }
 
-    KotlinTypeChecker DEFAULT = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()));
-
-    KotlinTypeChecker ERROR_TYPES_ARE_EQUAL_TO_ANYTHING = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
-        @Override
-        public boolean assertEqualTypes(@NotNull KotlinType a, @NotNull KotlinType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
-            return a.isError() || b.isError() || super.assertEqualTypes(a, b, typeCheckingProcedure);
-        }
-    }));
-
-    KotlinTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new KotlinTypeCheckerImpl(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
-        @Override
-        protected boolean heterogeneousEquivalence(KotlinType inflexibleType, KotlinType flexibleType) {
-            return false;
-        }
-    });
-
+    KotlinTypeChecker DEFAULT = NewKotlinTypeChecker.INSTANCE;
 
     boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype);
     boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b);

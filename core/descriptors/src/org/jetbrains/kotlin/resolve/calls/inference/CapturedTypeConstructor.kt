@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
+import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class CapturedTypeConstructor(
         val typeProjection: TypeProjection
 ): TypeConstructor {
+    var newTypeConstructor: NewCapturedTypeConstructor? = null
+
     init {
         assert(typeProjection.projectionKind != Variance.INVARIANT) {
             "Only nontrivial projections can be captured, not: $typeProjection"
@@ -59,8 +62,8 @@ class CapturedTypeConstructor(
 }
 
 class CapturedType(
-        private val typeProjection: TypeProjection,
-        override val constructor: TypeConstructor = CapturedTypeConstructor(typeProjection),
+        val typeProjection: TypeProjection,
+        override val constructor: CapturedTypeConstructor = CapturedTypeConstructor(typeProjection),
         override val isMarkedNullable: Boolean = false,
         override val annotations: Annotations = Annotations.EMPTY
 ): SimpleType(), SubtypingRepresentatives {
