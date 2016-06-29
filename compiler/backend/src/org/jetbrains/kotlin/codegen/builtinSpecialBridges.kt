@@ -76,7 +76,6 @@ object BuiltinSpecialBridgesUtil {
         val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
         commonBridges.removeAll(specialBridgesSignaturesInSuperClass + specialBridge?.from.singletonOrEmptyList())
 
-
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
                 if (!DescriptorBasedFunctionHandle(overridden).isAbstract) {
@@ -87,11 +86,9 @@ object BuiltinSpecialBridgesUtil {
 
         val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> = mutableSetOf()
 
-        // Can be null if special builtin is final (e.g. 'name' in Enum)
-        // because there should be no stubs for override in subclasses
         val superImplementationDescriptor =
                 if (specialBridge != null)
-                    findSuperImplementationForStubDelegation(function, fake)
+                    findSuperImplementationForStubDelegation(function, fake, signatureByDescriptor)
                 else
                     null
 
@@ -125,11 +122,31 @@ object BuiltinSpecialBridgesUtil {
     }
 }
 
-
-private fun findSuperImplementationForStubDelegation(function: FunctionDescriptor, fake: Boolean): FunctionDescriptor? {
+/**
+ * Stub is a method having signature from Kotlin built-ins that we generate for non-abstract declarations,
+ * it's bytecode consists of INVOKESPECIAL-call to real declaration in super class.
+ *
+ * Note that stub is needed only for first Kotlin class in the hierarchy.
+ *
+ * For example:
+ * class A : HashMap<String, Any>
+ *
+ * Here we generate `entrySet()` special bridge with INVOKEVIRTUAL getEntries(),
+ * But the latter does not exists yet, so we create a stub for it with delegation to super-class
+ *
+ * Also note that there is no special bridges for final declarations, thus no stubs either
+ */
+private fun <Signature> findSuperImplementationForStubDelegation(
+        function: FunctionDescriptor,
+        fake: Boolean,
+        signatureByDescriptor: (FunctionDescriptor) -> Signature
+): FunctionDescriptor? {
     if (function.modality != Modality.OPEN || !fake) return null
     val implementation = findConcreteSuperDeclaration(DescriptorBasedFunctionHandle(function)).descriptor
     if (DescriptorUtils.isInterface(implementation.containingDeclaration)) return null
+
+    // Implementation in super-class already has proper signature
+    if (signatureByDescriptor(function) == signatureByDescriptor(implementation)) return null
 
     return implementation
 }
