@@ -141,6 +141,15 @@ class ReadWriteTest {
         assertEquals(arrayListOf("Hello", "World"), list)
     }
 
+    @test fun testPlatformNullUse() {
+        fun <T> platformNull() = java.util.Collections.singleton(null as T).first()
+        val resource = platformNull<java.io.Closeable>()
+        val result = resource.use {
+            "ok"
+        }
+        assertEquals("ok", result)
+    }
+
     @test fun testURL() {
         val url = URL("http://kotlinlang.org")
         val text = url.readText()
