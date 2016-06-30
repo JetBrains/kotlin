@@ -54,10 +54,11 @@ interface KotlinScriptDefinition {
     fun getScriptName(script: KtScript): Name =
         ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies>? = null
+    fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 }
 
 interface KotlinScriptExternalDependencies {
+    val javaHome: String? get() = null
     val classpath: Iterable<File> get() = emptyList()
     val imports: Iterable<String> get() = emptyList()
     val sources: Iterable<File> get() = emptyList()
@@ -65,6 +66,7 @@ interface KotlinScriptExternalDependencies {
 }
 
 class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScriptExternalDependencies>) : KotlinScriptExternalDependencies {
+    override val javaHome: String? get() = dependencies.firstOrNull { it.javaHome != null }?.javaHome
     override val classpath: Iterable<File> get() = dependencies.flatMap { it.classpath }
     override val imports: Iterable<String> get() = dependencies.flatMap { it.imports }
     override val sources: Iterable<File> get() = dependencies.flatMap { it.sources }
@@ -100,14 +102,3 @@ fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): K
                 ClassId.topLevel(FqName(fqName)),
                 NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
         ).defaultType
-
-class FakeFuture<T: Any?>(val value: T) : Future<T> {
-    override fun isCancelled(): Boolean = false
-    override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
-    override fun get(): T = value
-    override fun get(timeout: Long, unit: TimeUnit): T = value
-    override fun isDone(): Boolean = true
-}
-
-fun <T: Any> makeNullableFakeFuture(value: T?): Future<T>? =
-        value?.let { FakeFuture(it) } ?: (null as Future<T>?)
