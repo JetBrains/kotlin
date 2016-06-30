@@ -5,6 +5,17 @@
 
 ## 1.1
 
+### Scripting
+
+- Implement support for [Script Definition Template](https://github.com/Kotlin/KEEP/blob/da9f3ec5f78429e7560bfc284cb7f52e02282b1f/proposals/script-definition-template.md)
+and related functionality, except the following parts:
+  - automatic script templates discovery is not implemented
+  - `@file:ScriptTemplate` annotation is not supported
+  - the parameters `javaHome` and `scripts` from `KotlinScriptExternalDependencies` are not used yet
+- Implement support for custom template-based scripts in IDEA: resolving, completion and navigation to symbols from script classpath and sources
+- Implement GradleScriptTemplateProvider extension that supplies a script template if gradle with
+[kotlin script support](https://github.com/gradle/gradle-script-kotlin) is used in the project
+
 ## 1.0.4
 
 ### IDE
