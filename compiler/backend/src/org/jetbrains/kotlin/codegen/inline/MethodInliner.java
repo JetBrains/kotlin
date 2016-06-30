@@ -260,16 +260,27 @@ public class MethodInliner {
                     assert transformationInfo instanceof AnonymousObjectTransformationInfo :
                             "<init> call doesn't correspond to object transformation info: " +
                             owner + "." + name + ", info " + transformationInfo;
-                    if (transformationInfo.shouldRegenerate(isSameModule)) {
+                    InliningContext parent = inliningContext.getParent();
+                    boolean shouldRegenerate = transformationInfo.shouldRegenerate(isSameModule);
+                    if (shouldRegenerate || (parent != null && parent.isContinuation())) {
+                        assert shouldRegenerate || inlineCallSiteInfo.getOwnerClassName().equals(transformationInfo.getOldClassName())
+                                : "Only coroutines can call their own constructors";
+
                         //put additional captured parameters on stack
                         AnonymousObjectTransformationInfo info = (AnonymousObjectTransformationInfo) transformationInfo;
+
+                        AnonymousObjectTransformationInfo oldInfo = inliningContext.findAnonymousObjectTransformationInfo(owner);
+                        if (oldInfo != null) {
+                            info = oldInfo;
+                        }
+
                         for (CapturedParamDesc capturedParamDesc : info.getAllRecapturedParameters()) {
                             visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
                                     "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor()
                             );
                         }
-                        super.visitMethodInsn(opcode, transformationInfo.getNewClassName(), name, info.getNewConstructorDescriptor(), itf);
+                        super.visitMethodInsn(opcode, info.getNewClassName(), name, info.getNewConstructorDescriptor(), itf);
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.getParent() instanceof RegeneratedClassContext) {
@@ -565,7 +576,9 @@ public class MethodInliner {
             @NotNull Map<Integer, LambdaInfo> lambdaMapping,
             boolean needReification
     ) {
-        return new AnonymousObjectTransformationInfo(
+        boolean memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType) == null;
+
+        AnonymousObjectTransformationInfo info = new AnonymousObjectTransformationInfo(
                 anonymousType, needReification, lambdaMapping,
                 inliningContext.classRegeneration,
                 isAlreadyRegenerated(anonymousType),
@@ -573,6 +586,11 @@ public class MethodInliner {
                 false,
                 inliningContext.nameGenerator
         );
+
+        if (memoizeAnonymousObject) {
+            inliningContext.getRoot().internalNameToAnonymousObjectTransformationInfo.put(anonymousType, info);
+        }
+        return info;
     }
 
     private boolean isAlreadyRegenerated(@NotNull String owner) {
