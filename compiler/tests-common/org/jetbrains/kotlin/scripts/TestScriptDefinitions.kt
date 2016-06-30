@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.concurrent.Future
 import kotlin.reflect.KClass
 
 abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? = null) : KotlinScriptDefinition {
