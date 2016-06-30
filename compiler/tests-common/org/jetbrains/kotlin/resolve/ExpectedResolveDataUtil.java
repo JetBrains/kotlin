@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -41,13 +42,12 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.FakeCallKind;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
 import static org.junit.Assert.assertNotNull;
 
 public class ExpectedResolveDataUtil {
@@ -150,8 +150,20 @@ public class ExpectedResolveDataUtil {
                 new BindingTraceContext(), lexicalScope,
                 DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
+        KtExpression callElement = KtPsiFactory(project).createExpression(name);
+
+        TemporaryBindingTrace traceWithFakeArgumentInfo =
+                TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
+        List<KtExpression> fakeArguments = new ArrayList<KtExpression>(parameterTypes.length);
+        for (KotlinType type : parameterTypes) {
+            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(
+                    project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size(), type
+            ));
+        }
+
         OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(
-                context, null, Name.identifier(name), null, null, FakeCallKind.OTHER, parameterTypes);
+                context, null, Name.identifier(name), callElement, callElement, FakeCallKind.OTHER, fakeArguments
+        );
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
