@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.io.InputStream
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -55,8 +54,7 @@ annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDepende
 interface ScriptContents {
     val file: File?
     val annotations: Iterable<Annotation>
-    val contents: CharSequence?
-    val contentsStream: InputStream?
+    val text: CharSequence?
 }
 
 // TODO: rename to just ScriptDependenciesResolver as soon as current deprecated one will be dropped
@@ -64,7 +62,7 @@ interface ScriptDependenciesResolverEx {
     fun resolve(script: ScriptContents,
                 environment: Map<String, Any?>?,
                 previousDependencies: KotlinScriptExternalDependencies? = null
-    ): Future<KotlinScriptExternalDependencies>? = null
+    ): KotlinScriptExternalDependencies? = null
 }
 
 @Deprecated("Use new ScriptDependenciesResolverEx")
@@ -110,13 +108,13 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         override fun resolve(script: ScriptContents,
                              environment: Map<String, Any?>?,
                              previousDependencies: KotlinScriptExternalDependencies?
-        ): Future<KotlinScriptExternalDependencies>? = makeNullableFakeFuture(
+        ): KotlinScriptExternalDependencies? =
                 resolver?.resolve(
                         environment?.get("projectRoot") as? File?,
                         script.file,
                         emptyList(),
                         environment as Any?
-                ))
+                )
     }
 
     private val definitionData by lazy {
@@ -146,7 +144,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): Future<KotlinScriptExternalDependencies>? {
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
                 .map { KtAnnotationWrapper(it) }
                 .mapNotNull { wrappedAnn ->
@@ -196,8 +194,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
 
     class BasicScriptContents<out TF>(val myFile: TF, override val annotations: Iterable<Annotation>) : ScriptContents {
         override val file: File? get() = getFile(myFile)
-        override val contents: CharSequence? get() = getFileContents(myFile)
-        override val contentsStream: InputStream? get() = getFileContentsStream(myFile)
+        override val text: CharSequence? get() = getFileContents(myFile)
     }
 }
 

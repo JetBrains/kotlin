@@ -127,7 +127,7 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
     override fun resolve(script: ScriptContents,
                          environment: Map<String, Any?>?,
                          previousDependencies: KotlinScriptExternalDependencies?
-    ): Future<KotlinScriptExternalDependencies>?
+    ): KotlinScriptExternalDependencies?
     {
         val cp = script.annotations.flatMap {
             when (it) {
@@ -136,10 +136,10 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
                 else -> throw Exception("Unknown annotation ${it.javaClass}")
             }
         }
-        return makeNullableFakeFuture(object : KotlinScriptExternalDependencies {
+        return object : KotlinScriptExternalDependencies {
             override val classpath: Iterable<File> = classpathFromClassloader() + cp
             override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn")
-        })
+        }
     }
 
     private fun classpathFromClassloader(): List<File> =
