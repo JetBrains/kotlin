@@ -26,43 +26,62 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.isDocumentedAnnotation
 
+/**
+ * This class contains Java-related overridability conditions that may force incompatibility
+ */
 class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
+    override fun isOverridable(
+            superDescriptor: CallableDescriptor,
+            subDescriptor: CallableDescriptor,
+            subClassDescriptor: ClassDescriptor?
+    ): Result {
+        if (isIncompatibleInAccordanceWithBuiltInOverridabilityRules(superDescriptor, subDescriptor, subClassDescriptor)) {
+            return Result.INCOMPATIBLE
+        }
+
+        return Result.UNKNOWN
+    }
+
+    // This overridability condition checks two things:
+    // 1. Method accidentally having the same signature as special builtin has does not supposed to be override for it in Java class
+    // 2. In such Java class (with special signature clash) special builtin is loaded as hidden function with special signature, and
+    // it should not override non-special method in further inheritance
+    // See java.nio.Buffer
+    private fun isIncompatibleInAccordanceWithBuiltInOverridabilityRules(
+            superDescriptor: CallableDescriptor,
+            subDescriptor: CallableDescriptor,
+            subClassDescriptor: ClassDescriptor?
+    ): Boolean {
         if (superDescriptor !is CallableMemberDescriptor || subDescriptor !is FunctionDescriptor || subDescriptor.isFromBuiltins()) {
-            return Result.UNKNOWN
+            return false
         }
 
         if (!subDescriptor.name.sameAsBuiltinMethodWithErasedValueParameters && !subDescriptor.name.sameAsRenamedInJvmBuiltin) {
-            return Result.UNKNOWN
+            return false
         }
-
-        // This overridability condition checks two things:
-        // 1. Method accidentally having the same signature as special builtin has does not supposed to be override for it in Java class
-        // 2. In such Java class (with special signature clash) special builtin is loaded as hidden function with special signature, and
-        // it should not override non-special method in further inheritance
-        // See java.nio.Buffer
 
         val overriddenBuiltin = superDescriptor.getOverriddenSpecialBuiltin()
 
         // Checking second condition: special hidden override is not supposed to be an override to non-special irrelevant Java declaration
         val isOneOfDescriptorsHidden =
                 subDescriptor.isHiddenToOvercomeSignatureClash != (superDescriptor as? FunctionDescriptor)?.isHiddenToOvercomeSignatureClash
-        if ((overriddenBuiltin == null || !subDescriptor.isHiddenToOvercomeSignatureClash) && isOneOfDescriptorsHidden) {
-            return Result.INCOMPATIBLE
+        if (isOneOfDescriptorsHidden &&
+                (overriddenBuiltin == null || !subDescriptor.isHiddenToOvercomeSignatureClash)) {
+            return true
         }
 
         // If new containing class is not Java class or subDescriptor signature was artificially changed, use basic overridability rules
         if (subClassDescriptor !is JavaClassDescriptor || subDescriptor.initialSignatureDescriptor != null) {
-            return Result.UNKNOWN
+            return false
         }
 
         // If current Java class has Kotlin super class with override of overriddenBuiltin, then common overridability rules can be applied
         // because of final special bridge generated in Kotlin super class
-        if (subClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltin ?: return Result.UNKNOWN)) return Result.UNKNOWN
+        if (overriddenBuiltin == null || subClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltin)) return false
 
         // Here we know that something in Java with common signature is going to override some special builtin that is supposed to be
         // incompatible override
-        return Result.INCOMPATIBLE
+        return true
     }
 
     override fun getContract() = ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY
