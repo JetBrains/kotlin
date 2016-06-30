@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -56,38 +54,35 @@ public class ForLoopConventionsChecker {
     }
 
     @Nullable
-    public KotlinType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
+    public KotlinType checkIterableConvention(@NotNull ExpressionReceiver loopRange, @NotNull ExpressionTypingContext context) {
         KtExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = fakeCallResolver.makeAndResolveFakeCall(
-                loopRange, context, Collections.<KtExpression>emptyList(), OperatorNameConventions.ITERATOR, loopRangeExpression,
-                FakeCallKind.ITERATOR, loopRangeExpression
+        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = fakeCallResolver.resolveFakeCall(
+                context, loopRange, OperatorNameConventions.ITERATOR, loopRangeExpression,
+                loopRangeExpression, FakeCallKind.ITERATOR, Collections.<KtExpression>emptyList()
         );
-        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
+        if (!iteratorResolutionResults.isSuccess()) return null;
 
-        if (iteratorResolutionResults.isSuccess()) {
-            ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
-            context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
-            FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
+        ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
+        context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
+        FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
 
-            checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
+        checkIfOperatorModifierPresent(loopRangeExpression, iteratorFunction, context.trace);
 
-            KotlinType iteratorType = iteratorFunction.getReturnType();
-            //noinspection ConstantConditions
-            KotlinType hasNextType = checkConventionForIterator(
-                    context, loopRangeExpression, iteratorType, OperatorNameConventions.HAS_NEXT,
-                    HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL
-            );
-            if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
-                context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
-            }
-            return checkConventionForIterator(
-                    context, loopRangeExpression, iteratorType, OperatorNameConventions.NEXT,
-                    NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE, LOOP_RANGE_NEXT_RESOLVED_CALL
-            );
+        KotlinType iteratorType = iteratorFunction.getReturnType();
+        //noinspection ConstantConditions
+        KotlinType hasNextType = checkConventionForIterator(
+                context, loopRangeExpression, iteratorType, OperatorNameConventions.HAS_NEXT,
+                HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL
+        );
+        if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
+            context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
         }
-        return null;
+        return checkConventionForIterator(
+                context, loopRangeExpression, iteratorType, OperatorNameConventions.NEXT,
+                NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE, LOOP_RANGE_NEXT_RESOLVED_CALL
+        );
     }
 
     private static void checkIfOperatorModifierPresent(KtExpression expression, FunctionDescriptor descriptor, DiagnosticSink sink) {
@@ -112,7 +107,8 @@ public class ForLoopConventionsChecker {
             @NotNull WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(
-                context, new TransientReceiver(iteratorType), name, loopRangeExpression
+                context, new TransientReceiver(iteratorType), name, loopRangeExpression, loopRangeExpression, FakeCallKind.OTHER,
+                Collections.<KtExpression>emptyList()
         );
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
