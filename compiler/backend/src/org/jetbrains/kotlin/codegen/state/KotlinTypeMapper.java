@@ -968,8 +968,12 @@ public class KotlinTypeMapper {
             }
 
             for (ValueParameterDescriptor parameter : valueParameters) {
-                if (writeCustomParameter(f, parameter, sw)) continue;
-                writeParameter(sw, parameter.getType(), f);
+                boolean forceBoxing = MethodSignatureMappingKt.forceSingleValueParameterBoxing(f);
+                writeParameter(
+                        sw,
+                        forceBoxing ? TypeUtils.makeNullable(parameter.getType()) : parameter.getType(),
+                        f
+                );
             }
 
             sw.writeReturnType();
@@ -1017,24 +1021,6 @@ public class KotlinTypeMapper {
                 incompatibleClassTracker.record(ownerClass);
             }
         }
-    }
-
-    private boolean writeCustomParameter(
-            @NotNull FunctionDescriptor f,
-            @NotNull ValueParameterDescriptor parameter,
-            @NotNull JvmSignatureWriter sw
-    ) {
-        FunctionDescriptor overridden =
-                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
-        if (overridden == null) return false;
-        if (SpecialBuiltinMembers.isFromJavaOrBuiltins(f)) return false;
-
-        if (overridden.getName().asString().equals("remove") && mapType(parameter.getType()).getSort() == Type.INT) {
-            writeParameter(sw, TypeUtils.makeNullable(parameter.getType()), f);
-            return true;
-        }
-
-        return false;
     }
 
     @NotNull

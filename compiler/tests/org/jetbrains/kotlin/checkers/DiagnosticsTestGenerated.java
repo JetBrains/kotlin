@@ -10683,6 +10683,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/primitiveOverrides")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrimitiveOverrides extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInPrimitiveOverrides() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt11140.kt")
+                public void testKt11140() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/kt11140.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("notNullAnnotated.kt")
+                public void testNotNullAnnotated() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/notNullAnnotated.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("specializedMap.kt")
+                public void testSpecializedMap() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/specializedMap.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/properties")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

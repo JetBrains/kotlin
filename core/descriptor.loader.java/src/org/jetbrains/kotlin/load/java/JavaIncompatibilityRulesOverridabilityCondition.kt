@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.kotlin.JvmType
+import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
+import org.jetbrains.kotlin.load.kotlin.mapToJvmType
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.isDocumentedAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /**
  * This class contains Java-related overridability conditions that may force incompatibility
@@ -36,6 +40,10 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
             subClassDescriptor: ClassDescriptor?
     ): Result {
         if (isIncompatibleInAccordanceWithBuiltInOverridabilityRules(superDescriptor, subDescriptor, subClassDescriptor)) {
+            return Result.INCOMPATIBLE
+        }
+
+        if (doesJavaOverrideHaveIncompatibleValueParameterKinds(superDescriptor, subDescriptor)) {
             return Result.INCOMPATIBLE
         }
 
@@ -84,5 +92,53 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         return true
     }
 
+
     override fun getContract() = ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY
+
+    companion object {
+        /**
+         * Checks if any pair of corresponding value parameters has different type kinds, e.g. one is primitive and another is not
+         *
+         * As it comes from it's name it only checks overrides in Java classes
+         */
+        fun doesJavaOverrideHaveIncompatibleValueParameterKinds(
+                superDescriptor: CallableDescriptor,
+                subDescriptor: CallableDescriptor
+        ): Boolean {
+            if (subDescriptor !is JavaMethodDescriptor || superDescriptor !is FunctionDescriptor) return false
+            assert(subDescriptor.valueParameters.size == superDescriptor.valueParameters.size) {
+                "External overridability condition with CONFLICTS_ONLY should not be run with different value parameters size"
+            }
+
+            for ((subParameter, superParameter) in subDescriptor.original.valueParameters.zip(superDescriptor.original.valueParameters)) {
+                val isSubPrimitive = mapValueParameterType(subDescriptor, subParameter) is JvmType.Primitive
+                val isSuperPrimitive = mapValueParameterType(superDescriptor, superParameter) is JvmType.Primitive
+
+                if (isSubPrimitive != isSuperPrimitive) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        private fun mapValueParameterType(f: FunctionDescriptor, valueParameterDescriptor: ValueParameterDescriptor) =
+                if (forceSingleValueParameterBoxing(f) || isPrimitiveCompareTo(f))
+                    valueParameterDescriptor.type.makeNullable().mapToJvmType()
+                else
+                    valueParameterDescriptor.type.mapToJvmType()
+
+        // It's useful here to suppose that 'Int.compareTo(Int)' requires boxing of it's value parameter
+        // As it happens in java.lang.Integer analogue
+        // It only affects additional built-ins loading (see 'testLoadBuiltIns' tests)
+        private fun isPrimitiveCompareTo(f: FunctionDescriptor): Boolean {
+            if (f.valueParameters.size != 1) return false
+            val classDescriptor =
+                    f.containingDeclaration as? ClassDescriptor ?: return false
+            val parameterClass =
+                    f.valueParameters.single().type.constructor.declarationDescriptor as? ClassDescriptor
+                    ?: return false
+            return KotlinBuiltIns.isPrimitiveClass(classDescriptor) && classDescriptor.fqNameSafe == parameterClass.fqNameSafe
+        }
+    }
 }
