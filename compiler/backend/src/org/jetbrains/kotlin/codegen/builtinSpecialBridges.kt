@@ -161,19 +161,19 @@ private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor)
 private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExists(
         signatureByDescriptor: (FunctionDescriptor) -> Signature
 ): Signature? {
-    // Ignore itself and non-functions (may be assertion)
+    // Only functions should be considered here (may be assertion)
     if (this !is FunctionDescriptor) return null
 
     // Only Kotlin classes can have special bridges
     if (containingDeclaration is JavaClassDescriptor || DescriptorUtils.isInterface(containingDeclaration)) return null
 
     // Getting original is necessary here, because we want to determine JVM signature of descriptor as it was declared in containing class
-    val originalOverridden = original
-    val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor() ?: return null
+    val originalOverride = original
+    val overriddenSpecial = originalOverride.getOverriddenBuiltinReflectingJvmDescriptor() ?: return null
     val specialBridgeSignature = signatureByDescriptor(overriddenSpecial)
 
     // Does special bridge has different signature
-    if (signatureByDescriptor(originalOverridden) == specialBridgeSignature) return null
+    if (signatureByDescriptor(originalOverride) == specialBridgeSignature) return null
 
     return specialBridgeSignature
 }
