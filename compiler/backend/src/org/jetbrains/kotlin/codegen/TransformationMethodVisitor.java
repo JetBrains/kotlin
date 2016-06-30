@@ -58,25 +58,30 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
 
         super.visitEnd();
 
-        if (shouldBeTransformed(methodNode)) {
-            performTransformations(methodNode);
-        }
-
-        methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));
-
-
-        // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
-        // So we just do it here
-        if (methodNode.instructions.size() == 0) {
-            List<LocalVariableNode> localVariables = methodNode.localVariables;
-            // visits local variables
-            int n = localVariables == null ? 0 : localVariables.size();
-            for (int i = 0; i < n; ++i) {
-                localVariables.get(i).accept(delegate);
+        try {
+            if (shouldBeTransformed(methodNode)) {
+                performTransformations(methodNode);
             }
-        }
 
-        delegate.visitEnd();
+            methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));
+
+
+            // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
+            // So we just do it here
+            if (methodNode.instructions.size() == 0) {
+                List<LocalVariableNode> localVariables = methodNode.localVariables;
+                // visits local variables
+                int n = localVariables == null ? 0 : localVariables.size();
+                for (int i = 0; i < n; ++i) {
+                    localVariables.get(i).accept(delegate);
+                }
+            }
+
+            delegate.visitEnd();
+        }
+        catch (Throwable t) {
+            throw new CompilationException("Couldn't transform method node: " + InlineCodegenUtil.getNodeText(methodNode), t, null);
+        }
     }
 
     protected abstract void performTransformations(@NotNull MethodNode methodNode);
