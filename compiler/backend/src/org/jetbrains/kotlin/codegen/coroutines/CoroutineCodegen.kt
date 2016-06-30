@@ -135,12 +135,15 @@ class CoroutineCodegen(
         with(codegen.v) {
             setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
 
+            // Save lambda parameters to fields
+            // 0 - this
+            // 1 - controller
+            var index = 2
             for (parameter in funDescriptor.valueParameters) {
-                // 0 - this
-                // 1 - controller
-                val parametersIndexShift = 2
+                val fieldInfoForCoroutineLambdaParameter = parameter.getFieldInfoForCoroutineLambdaParameter()
                 AsmUtil.genAssignInstanceFieldFromParam(
-                        parameter.getFieldInfoForCoroutineLambdaParameter(), parametersIndexShift + parameter.index, this)
+                        fieldInfoForCoroutineLambdaParameter, index, this)
+                index += fieldInfoForCoroutineLambdaParameter.fieldType.size
             }
 
             load(0, AsmTypes.OBJECT_TYPE)
