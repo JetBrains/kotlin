@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.load.java.isFromJavaOrBuiltins
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -43,6 +45,17 @@ fun FunctionDescriptor.computeJvmDescriptor()
                 appendErasedType(returnType!!)
             }
         }.toString()
+
+// Boxing is only necessary for 'remove(E): Boolean' of a MutableList<Int> implementation
+// Otherwise this method will clash with 'remove(I): E' also defined in the JDK interface (mapped to kotlin 'removeAt')
+fun forceSingleValueParameterBoxing(f: FunctionDescriptor): Boolean {
+    if (f.isFromJavaOrBuiltins()) return false
+
+    if (f.name.asString() != "remove" ||
+        (f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
+
+    return BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f) != null
+}
 
 // This method only returns not-null for class methods
 internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
@@ -72,16 +85,19 @@ internal val ClassId.internalName: String
     }
 
 private fun StringBuilder.appendErasedType(type: KotlinType) {
-    append(
-            JvmTypeFactoryImpl.toString(
-                    mapType(type, JvmTypeFactoryImpl, TypeMappingMode.DEFAULT, TypeMappingConfigurationImpl, descriptorTypeWriter = null)))
+    append(type.mapToJvmType())
 }
 
-private sealed class JvmType {
+internal fun KotlinType.mapToJvmType() =
+        mapType(this, JvmTypeFactoryImpl, TypeMappingMode.DEFAULT, TypeMappingConfigurationImpl, descriptorTypeWriter = null)
+
+sealed class JvmType {
     // null means 'void'
     class Primitive(val jvmPrimitiveType: JvmPrimitiveType?) : JvmType()
     class Object(val internalName: String) : JvmType()
     class Array(val elementType: JvmType) : JvmType()
+
+    override fun toString() = JvmTypeFactoryImpl.toString(this)
 }
 
 private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
