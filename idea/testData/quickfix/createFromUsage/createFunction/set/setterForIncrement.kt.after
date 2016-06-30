@@ -1,7 +1,6 @@
 // "Create member function 'set'" "true"
 class A {
     operator fun get(s: String): Int = 1
-
     operator fun set(s: String, value: Int) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

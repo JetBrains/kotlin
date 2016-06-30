@@ -3,7 +3,7 @@ class A(val result: Int, val s: String) {
 
     }
 
-    <caret>override fun equals(other: Any?): Boolean{
+    <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -15,7 +15,7 @@ class A(val result: Int, val s: String) {
         return true
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result1 = result
         result1 = 31 * result1 + s.hashCode()
         return result1

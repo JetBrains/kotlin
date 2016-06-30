@@ -4,7 +4,7 @@ class Test {
             field = value.toUpperCase()
         }
     var name: String = ""
-    <caret>override fun equals(other: Any?): Boolean{
+    <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -16,7 +16,7 @@ class Test {
         return true
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result = serial.hashCode()
         result = 31 * result + name.hashCode()
         return result

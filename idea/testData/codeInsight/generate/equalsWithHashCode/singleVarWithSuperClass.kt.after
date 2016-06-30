@@ -8,7 +8,7 @@ class A(val n: Int) : X() {
 
     }
 
-    <caret>override fun equals(other: Any?): Boolean{
+    <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
         if (!super.equals(other)) return false
@@ -20,7 +20,7 @@ class A(val n: Int) : X() {
         return true
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + n
         return result

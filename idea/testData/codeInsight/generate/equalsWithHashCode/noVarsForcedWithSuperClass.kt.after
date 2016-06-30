@@ -9,14 +9,14 @@ class A : X() {
 
     }
 
-    <caret>override fun equals(other: Any?): Boolean{
+    <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
         if (!super.equals(other)) return false
         return true
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         return super.hashCode()
     }
 }
