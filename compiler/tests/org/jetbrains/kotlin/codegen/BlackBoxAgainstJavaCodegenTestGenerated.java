@@ -366,6 +366,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes/genericUnit.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("specializedMapFull.kt")
+        public void testSpecializedMapFull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes/specializedMapFull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specializedMapPut.kt")
+        public void testSpecializedMapPut() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes/specializedMapPut.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/property")

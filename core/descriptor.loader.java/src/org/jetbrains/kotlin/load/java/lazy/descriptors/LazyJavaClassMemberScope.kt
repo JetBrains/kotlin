@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
@@ -164,9 +165,12 @@ class LazyJavaClassMemberScope(
     }
 
     private fun CallableDescriptor.doesOverride(superDescriptor: CallableDescriptor): Boolean {
-        return OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(
-                superDescriptor, this, /* checkReturnType = */ true
-        ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+        val commonOverridabilityResult =
+                OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(superDescriptor, this, true).result
+
+        return commonOverridabilityResult == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE &&
+                    !JavaIncompatibilityRulesOverridabilityCondition.doesJavaOverrideHaveIncompatibleValueParameterKinds(
+                            superDescriptor, this)
     }
 
     private fun PropertyDescriptor.findGetterOverride(
