@@ -327,9 +327,6 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
                 ZipHandler.clearFileAccessorCache()
-
-                val service = AppExecutorUtil.getAppScheduledExecutorService() as AppScheduledExecutorService
-                service.shutdownAppScheduledExecutorService()
             }
         }
 
