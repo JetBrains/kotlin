@@ -4,8 +4,8 @@ class Controller {
     }
 }
 
-fun builder(coroutine c: Controller.(String, Int) -> Continuation<Unit>) {
-    c(Controller(), "OK", 56).resume(Unit)
+fun builder(coroutine c: Controller.(Long, String) -> Continuation<Unit>) {
+    c(Controller(), 56L, "OK").resume(Unit)
 }
 
 fun noinline(l: () -> String) = l()
@@ -14,23 +14,23 @@ inline fun inline(l: () -> String) = l()
 fun box(): String {
     var result = ""
 
-    builder { s, i ->
-        result = suspendHere(s + "#" + i)
+    builder { l, s ->
+        result = suspendHere(s + "#" + l)
     }
 
     if (result != "OK#56") return "fail 1: $result"
 
-    builder { s, i ->
+    builder { l, s ->
         result = suspendHere(noinline {
-            s + "#" + i
+            s + "#" + l
         })
     }
 
     if (result != "OK#56") return "fail 2: $result"
 
-    builder { s, i ->
+    builder { l, s ->
         result = suspendHere(inline {
-            s + "#" + i
+            s + "#" + l
         })
     }
 
