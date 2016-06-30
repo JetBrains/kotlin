@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.ClassId
@@ -35,6 +33,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
@@ -58,39 +58,22 @@ interface KotlinScriptDefinition {
 }
 
 interface KotlinScriptExternalDependencies {
+    val javaHome: String? get() = null
     val classpath: Iterable<File> get() = emptyList()
     val imports: Iterable<String> get() = emptyList()
     val sources: Iterable<File> get() = emptyList()
+    val scripts: Iterable<File> get() = emptyList()
 }
 
 class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScriptExternalDependencies>) : KotlinScriptExternalDependencies {
+    override val javaHome: String? get() = dependencies.firstOrNull { it.javaHome != null }?.javaHome
     override val classpath: Iterable<File> get() = dependencies.flatMap { it.classpath }
     override val imports: Iterable<String> get() = dependencies.flatMap { it.imports }
     override val sources: Iterable<File> get() = dependencies.flatMap { it.sources }
+    override val scripts: Iterable<File> get() = dependencies.flatMap { it.scripts }
 }
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
-
-fun <TF> getFileName(file: TF): String = when (file) {
-    is PsiFile -> file.originalFile.name
-    is VirtualFile -> file.name
-    is File -> file.name
-    else -> throw IllegalArgumentException("Unsupported file type $file")
-}
-
-fun <TF> getFilePath(file: TF): String = when (file) {
-    is PsiFile -> file.originalFile.run { virtualFile?.path ?: name } // TODO: replace name with path of PSI elements
-    is VirtualFile -> file.path
-    is File -> file.canonicalPath
-    else -> throw IllegalArgumentException("Unsupported file type $file")
-}
-
-fun <TF> getFile(file: TF): File? = when (file) {
-    is PsiFile -> file.originalFile.run { File(virtualFile?.path) }
-    is VirtualFile -> File(file.path)
-    is File -> file
-    else -> throw IllegalArgumentException("Unsupported file type $file")
-}
 
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")

@@ -34,6 +34,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
+import java.util.concurrent.Future
 import kotlin.reflect.KClass
 
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
@@ -118,26 +119,26 @@ class ScriptTest2 {
     }
 }
 
-class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
+class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    @AcceptedAnnotations(depends::class)
-    override fun resolve(scriptFile: File?,
-                         annotations: Iterable<Annotation>,
+    @AcceptedAnnotations(DependsOn::class)
+    override fun resolve(script: ScriptContents,
                          environment: Map<String, Any?>?,
                          previousDependencies: KotlinScriptExternalDependencies?
     ): KotlinScriptExternalDependencies?
     {
-        val cp = annotations.flatMap {
+        val cp = script.annotations.flatMap {
             when (it) {
-                is depends -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
+                is DependsOn -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
                 else -> throw Exception("Unknown annotation ${it.javaClass}")
             }
         }
         return object : KotlinScriptExternalDependencies {
             override val classpath: Iterable<File> = classpathFromClassloader() + cp
+            override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn")
         }
     }
 
@@ -165,4 +166,4 @@ abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWit
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class depends(val path: String)
+annotation class DependsOn(val path: String)
