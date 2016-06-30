@@ -206,7 +206,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
                 val inlinedExpressions = chosenExpressions
                         .flatMap { referenceExpression ->
-                            if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
+                            if (assignments.contains(referenceExpression!!.parent)) return@flatMap emptyList<KtExpression>()
 
                             val importDirective = referenceExpression.getStrictParentOfType<KtImportDirective>()
                             if (importDirective != null) {
