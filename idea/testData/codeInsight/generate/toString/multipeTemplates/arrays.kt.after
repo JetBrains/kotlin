@@ -8,7 +8,7 @@ class A(val n: IntArray, val s: Array<String>) {
 
     }
 
-    override fun toString(): String{
+    override fun toString(): String {
         return "A(" +
                 "n=${Arrays.toString(n)}," +
                 "s=${Arrays.toString(s)}," +

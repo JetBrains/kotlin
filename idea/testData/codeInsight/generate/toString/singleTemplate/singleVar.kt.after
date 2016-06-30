@@ -4,7 +4,7 @@ class A(val n: Int) {
 
     }
 
-    <caret>override fun toString(): String{
+    <caret>override fun toString(): String {
         return "A(n=$n)"
     }
 }

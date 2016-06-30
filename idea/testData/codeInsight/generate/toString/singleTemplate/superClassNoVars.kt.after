@@ -9,7 +9,7 @@ class A : X() {
 
     }
 
-    <caret>override fun toString(): String{
+    <caret>override fun toString(): String {
         return "A() ${super.toString()}"
     }
 }

@@ -5,7 +5,7 @@ class Test {
             field = value.toUpperCase()
         }
     var name: String = ""
-    <caret>override fun toString(): String{
+    <caret>override fun toString(): String {
         return "Test(" +
                 "serial='$serial'," +
                 "name='$name'" +

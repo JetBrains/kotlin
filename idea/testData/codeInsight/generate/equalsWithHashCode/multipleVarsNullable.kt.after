@@ -5,7 +5,7 @@ class A(val n: Int?, val s: String) {
 
     }
 
-    <caret>override fun equals(other: Any?): Boolean{
+    <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -18,7 +18,7 @@ class A(val n: Int?, val s: String) {
         return true
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result = n ?: 0
         result = 31 * result + s.hashCode()
         result = 31 * result + (f?.hashCode() ?: 0)

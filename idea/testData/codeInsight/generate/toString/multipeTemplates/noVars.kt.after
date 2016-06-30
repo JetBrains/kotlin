@@ -4,7 +4,7 @@ class A {
 
     }
 
-    <caret>override fun toString(): String{
+    <caret>override fun toString(): String {
         return "A()"
     }
 }

@@ -3,7 +3,6 @@
 
 class CtorSecondary() {
     constructor(p: Int) : this()
-
     constructor<caret>(i: Int, i1: Int)
 }
 
