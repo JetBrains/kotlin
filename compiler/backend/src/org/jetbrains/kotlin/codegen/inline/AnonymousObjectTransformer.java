@@ -67,6 +67,14 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 InlineCodegenUtil.assertVersionNotGreaterThanGeneratedOne(version, name, inliningContext.state);
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces);
+                if (interfaces != null) {
+                    for (String anInterface : interfaces) {
+                        if("kotlin/coroutines/Continuation".equals(anInterface)) {
+                            inliningContext.setContinuation(true);
+                            break;
+                        }
+                    }
+                }
             }
 
             @Override
@@ -139,6 +147,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                                                             transformationInfo, parentRemapper);
         List<MethodVisitor> deferringMethods = new ArrayList<MethodVisitor>();
 
+        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams);
+
         for (MethodNode next : methodsToTransform) {
             MethodVisitor deferringVisitor = newMethod(classBuilder, next);
             InlineResult funResult =
@@ -158,8 +168,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         for (MethodVisitor method : deferringMethods) {
             method.visitEnd();
         }
-
-        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams);
 
         SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
 
@@ -362,7 +370,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             @NotNull MethodNode constructor,
             @NotNull ParametersBuilder capturedParamBuilder,
             @NotNull ParametersBuilder constructorParamBuilder,
-            @NotNull final AnonymousObjectTransformationInfo transformationInfo,
+            @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentFieldRemapper
     ) {
         Set<LambdaInfo> capturedLambdas = new LinkedHashSet<LambdaInfo>(); //captured var of inlined parameter
