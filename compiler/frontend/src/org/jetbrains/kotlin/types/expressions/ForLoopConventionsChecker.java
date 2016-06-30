@@ -20,7 +20,6 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -48,19 +46,13 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 public class ForLoopConventionsChecker {
     private final KotlinBuiltIns builtIns;
     private final FakeCallResolver fakeCallResolver;
-    private final LanguageFeatureSettings languageFeatureSettings;
-    private final Iterable<CallChecker> callCheckers;
 
     public ForLoopConventionsChecker(
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull FakeCallResolver fakeCallResolver,
-            @NotNull LanguageFeatureSettings languageFeatureSettings,
-            @NotNull Iterable<CallChecker> callCheckers
+            @NotNull FakeCallResolver fakeCallResolver
     ) {
         this.builtIns = builtIns;
         this.fakeCallResolver = fakeCallResolver;
-        this.languageFeatureSettings = languageFeatureSettings;
-        this.callCheckers = callCheckers;
     }
 
     @Nullable
