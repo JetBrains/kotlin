@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import java.lang.reflect.Constructor
@@ -89,7 +90,11 @@ internal open class KFunctionImpl protected constructor(
         when (member) {
             is Constructor<*> -> FunctionCaller.Constructor(member)
             is Method -> when {
-                descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
+                // Note that static $default methods for @JvmStatic functions are generated differently in objects and companion objects.
+                // In objects, $default's signature does _not_ contain the additional object instance parameter,
+                // as opposed to companion objects where the first parameter is the companion object instance.
+                descriptor.annotations.findAnnotation(JVM_STATIC) != null &&
+                !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
                     FunctionCaller.JvmStaticInObject(member)
 
                 else -> FunctionCaller.StaticMethod(member)
