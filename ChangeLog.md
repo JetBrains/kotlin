@@ -3,7 +3,35 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
-## 1.1
+## 1.1-M01 (EAP-1)
+
+### Language features
+
++ **Coroutines (async/await, generators)** ([proposal](https://github.com/Kotlin/kotlin-coroutines))
+    
+    Current limitations:
+    
+    - for some cases type inference is not supported yet
+    - limited IDE support
+    - allowed only one `handleResult` function: [design](https://github.com/Kotlin/kotlin-coroutines/blob/master/kotlin-coroutines-informal.md#result-handlers) 
+    - handling `finally` blocks is not supported: [issue](https://github.com/Kotlin/kotlin-coroutines/issues/1)
+
++ **Bound callable references** ([proposal](https://github.com/Kotlin/KEEP/issues/5))
+
++ **Type aliases** ([proposal](https://github.com/Kotlin/KEEP/issues/4))
+
+    Current limitations:
+    - type alias constructors for inner classes are not supported yet
+    - annotations on type alias are not supported yet
+    - limited IDE support
+
++ **Local delegated properties** ([proposal](https://github.com/Kotlin/KEEP/issues/25))
+
++ **JDK dependent built-in classes** ([proposal](https://github.com/Kotlin/KEEP/issues/30))
+
++ **Sealed class inheritors in the same file** ([proposal](https://github.com/Kotlin/KEEP/issues/29))
++ **Allow base classes for data classes** ([proposal](https://github.com/Kotlin/KEEP/issues/31))
+
 
 ### Scripting
 
@@ -15,6 +43,42 @@ and related functionality, except the following parts:
 - Implement support for custom template-based scripts in IDEA: resolving, completion and navigation to symbols from script classpath and sources
 - Implement GradleScriptTemplateProvider extension that supplies a script template if gradle with
 [kotlin script support](https://github.com/gradle/gradle-script-kotlin) is used in the project
+
+
+### Compiler
+
+###### Issues fixed
+- [`KT-4779`](https://youtrack.jetbrains.com/issue/KT-4779) Generate default methods for implementations in interfaces
+- [`KT-11780`](https://youtrack.jetbrains.com/issue/KT-11780) Fixed incorrect "No cast needed" warning 
+- [`KT-12156`](https://youtrack.jetbrains.com/issue/KT-12156) Fixed incorrect error on `inline` modifier inside final class
+- [`KT-12358`](https://youtrack.jetbrains.com/issue/KT-12358) Report missing error "Abstract member not implemented" when a fake method of 'Any' is inherited from an interface
+- [`KT-6206`](https://youtrack.jetbrains.com/issue/KT-6206) Generate equals/hashCode/toString in data class always unless it'll cause a JVM signature clash error
+- [`KT-8990`](https://youtrack.jetbrains.com/issue/KT-8990) Fixed incorrect error "virtual member hidden" for a private method of an inner class 
+- [`KT-12429`](https://youtrack.jetbrains.com/issue/KT-12429) Fixed visibility checks for annotation usage on top-level declarations    
+- [`KT-5068`](https://youtrack.jetbrains.com/issue/KT-5068) Introduced a special diagnostic message for "type mismatch" errors such as `fun f(): Int = { 1 }`.    
+
+
+### IDE
+
+###### New features
++ **"Leaking this" inspection**
+
+    This inspection reports dangerous operations inside constructors including:
+    
+    - Accessing non-final property in constructor
+    - Calling non-final function in constructor
+    - Using 'this' as function argument in constructor of non-final class
+
++ [`KT-12019`](https://youtrack.jetbrains.com/issue/KT-12019) Introduce "redundant `if`" inspection
+
+###### Issues fixed
+
++ [`KT-12389`](https://youtrack.jetbrains.com/issue/KT-12389) Do not exit from REPL when toString() of user class throws an exception
++ [`KT-12129`](https://youtrack.jetbrains.com/issue/KT-12129) Fixed link on api reference page in KDoc
+
+### Stdlib
+
+- Add assertFails overload with message to kotlin-test.
 
 ## 1.0.4
 
