@@ -10935,6 +10935,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("companionObject.kt")
+            public void testCompanionObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultAndNonDefaultIntertwined.kt")
             public void testDefaultAndNonDefaultIntertwined() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/defaultAndNonDefaultIntertwined.kt");
@@ -10944,6 +10950,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/extensionFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmStaticInCompanionObject.kt")
+            public void testJvmStaticInCompanionObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/jvmStaticInCompanionObject.kt");
                 doTest(fileName);
             }
 
