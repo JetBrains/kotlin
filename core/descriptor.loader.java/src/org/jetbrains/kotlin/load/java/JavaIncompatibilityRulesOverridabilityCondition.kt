@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.isDocumentedAnnotation
 
-class BuiltinOverridabilityCondition : ExternalOverridabilityCondition {
+class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
         if (superDescriptor !is CallableMemberDescriptor || subDescriptor !is FunctionDescriptor || subDescriptor.isFromBuiltins()) {
             return Result.UNKNOWN
