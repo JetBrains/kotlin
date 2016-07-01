@@ -41,6 +41,14 @@ class StreamsTest {
         assertEquals(expected.limit(7).toList(), stream.limit(7).toList())
     }
 
+    @Test fun asParallelStream() {
+        val sequence = generateSequence(0) { it + 2 } // even numbers
+        val stream = sequence.asStream().parallel().map { it / 2 }
 
+        val n = 100000
+        val expected = (0 until n).toList()
+
+        assertEquals(expected, stream.limit(n.toLong()).toList())
+    }
 
 }
