@@ -91,7 +91,7 @@ class CoroutineCodegen(
                         implementationClass = classDescriptor,
                         sourceElement = funDescriptor.source)
 
-        // private fun resume(result, throwable)
+        // private fun doResume(result, throwable)
         val combinedResumeFunctionDescriptor =
                 resumeFunctionDescriptor.newCopyBuilder()
                         .setVisibility(Visibilities.PRIVATE)
