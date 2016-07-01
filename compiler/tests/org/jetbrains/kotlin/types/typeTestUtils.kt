@@ -21,4 +21,4 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 
 fun KotlinBuiltIns.builtInPackageAsLexicalScope()
-        = LexicalScope.empty(builtInsPackageScope.memberScopeAsImportingScope(), builtInsModule)
+        = LexicalScope.Empty(builtInsPackageScope.memberScopeAsImportingScope(), builtInsModule)

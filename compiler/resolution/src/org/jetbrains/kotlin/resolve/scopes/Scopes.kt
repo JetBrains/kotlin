@@ -59,10 +59,6 @@ interface LexicalScope: HierarchicalScope {
             p.println("Empty lexical scope with owner = $ownerDescriptor and parent = $parent")
         }
     }
-
-    companion object {
-        fun empty(parent: HierarchicalScope, ownerDescriptor: DeclarationDescriptor): LexicalScope = Empty(parent, ownerDescriptor)
-    }
 }
 
 enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {

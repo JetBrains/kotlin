@@ -113,7 +113,7 @@ class FileScopeFactory(
 
         val importingScope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
-        val lexicalScope = LexicalScope.empty(importingScope, packageFragment)
+        val lexicalScope = LexicalScope.Empty(importingScope, packageFragment)
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {

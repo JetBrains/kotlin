@@ -60,7 +60,7 @@ class LazyAnnotations(
         entry: KtAnnotationEntry ->
 
         val descriptor = LazyAnnotationDescriptor(c, entry)
-        val target = entry.getUseSiteTarget()?.getAnnotationUseSiteTarget()
+        val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
         AnnotationWithTarget(descriptor, target)
     }
 
@@ -132,8 +132,9 @@ class LazyAnnotationDescriptor(
     private val source = annotationEntry.toSourceElement()
 
     val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
-        LexicalScope.Companion.empty(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
-    } else {
+        LexicalScope.Empty(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
+    }
+    else {
         c.scope
     }
 
