@@ -490,6 +490,11 @@ public final class JsAstUtils {
         return result;
     }
 
+    @NotNull
+    public static JsInvocation invokeBind(@NotNull JsExpression receiver, @NotNull JsExpression method) {
+        return invokeMethod(method, "bind", receiver);
+    }
+
     public static boolean isUndefinedExpression(JsExpression expression) {
         if (!(expression instanceof JsUnaryOperation)) return false;
 

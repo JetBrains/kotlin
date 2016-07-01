@@ -221,6 +221,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("methodDecomposedWithBind.kt")
+    public void testMethodDecomposedWithBind() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodDecomposedWithBind.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("methodInlineCallQualifierWithSideEffect.kt")
     public void testMethodInlineCallQualifierWithSideEffect() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodInlineCallQualifierWithSideEffect.kt");
