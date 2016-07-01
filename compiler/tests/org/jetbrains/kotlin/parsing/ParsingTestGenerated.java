@@ -2262,6 +2262,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("ValNoName.kt")
+            public void testValNoName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/ValNoName.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("ValueParameterNoTypeRecovery.kt")
             public void testValueParameterNoTypeRecovery() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");
