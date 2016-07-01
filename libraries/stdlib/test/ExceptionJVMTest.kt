@@ -6,6 +6,7 @@ import test.collections.assertArrayNotSameButEquals
 import org.junit.Test  as test
 import java.io.PrintWriter
 import java.io.*
+import java.nio.charset.Charset
 
 class ExceptionJVMTest {
 
@@ -24,7 +25,7 @@ class ExceptionJVMTest {
         val buffer = StringWriter()
         val writer = PrintWriter(buffer)
         t.printStackTrace(writer)
-        println(buffer)
+        comparePrintedThrowableResult(t, buffer.buffer)
     }
 
     fun assertPrintStackTraceStream(t: Throwable) {
@@ -40,7 +41,17 @@ class ExceptionJVMTest {
         }
 
         val bytes = assertNotNull(byteBuffer.toByteArray())
-        assertTrue(bytes.size > 10)
+        val content = bytes.toString(Charset.defaultCharset())
+        comparePrintedThrowableResult(t, content)
+    }
+
+    private fun comparePrintedThrowableResult(throwable: Throwable, printedThrowable: CharSequence) {
+        val stackTrace = throwable.stackTrace
+        val lines = printedThrowable.lines()
+        assertEquals(throwable.toString(), lines[0])
+        stackTrace.forEachIndexed { index, frame ->
+            assertTrue(lines.any { frame.toString() in it }, "frame at index $index is not found in the printed message")
+        }
     }
 
     @test fun changeStackTrace() {
