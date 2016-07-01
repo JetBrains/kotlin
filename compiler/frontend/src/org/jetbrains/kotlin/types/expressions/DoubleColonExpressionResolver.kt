@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
-import org.jetbrains.kotlin.resolve.callableReferences.resolveCallableReferenceTarget
+import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -197,14 +199,18 @@ class DoubleColonExpressionResolver(
             lhsType: KotlinType?,
             context: ExpressionTypingContext
     ): KotlinType? {
-        val reference = expression.callableReference
-
-        val resolved = BooleanArray(1)
-        val descriptor = resolveCallableReferenceTarget(expression, lhsType, context, resolved, callResolver)
-        if (!resolved[0]) {
-            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference))
-        }
-        if (descriptor == null) return null
+        val resolutionResults = resolvePossiblyAmbiguousCallableReference(
+                expression, lhsType, context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS, callResolver
+        )
+        val descriptor =
+                if (resolutionResults != null && !resolutionResults.isNothing) {
+                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)
+                    resolvedCall?.resultingDescriptor ?: return null
+                }
+                else {
+                    context.trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
+                    return null
+                }
 
         checkReferenceIsToAllowedMember(descriptor, context.trace, expression)
 
