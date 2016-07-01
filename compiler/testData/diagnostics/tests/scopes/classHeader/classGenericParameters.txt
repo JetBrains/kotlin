@@ -1,12 +1,12 @@
 package
 
-public final class A</*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]> {
-    public constructor A</*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]>()
+public final class A</*0*/ T, /*1*/ F, /*2*/ G> {
+    public constructor A</*0*/ T, /*1*/ F, /*2*/ G>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner /*captured type parameters: /*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]*/ {
+    public final inner class Inner /*captured type parameters: /*0*/ T, /*1*/ F, /*2*/ G*/ {
         public constructor Inner()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -27,13 +27,13 @@ public final class A</*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*
     }
 }
 
-public final class B</*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]> {
-    public constructor B</*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]>()
+public final class B</*0*/ T, /*1*/ F, /*2*/ G> {
+    public constructor B</*0*/ T, /*1*/ F, /*2*/ G>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner /*captured type parameters: /*0*/ T : [ERROR : Nested], /*1*/ F : [ERROR : Inner], /*2*/ G : [ERROR : Interace]*/ {
+    public final inner class Inner /*captured type parameters: /*0*/ T, /*1*/ F, /*2*/ G*/ {
         public constructor Inner()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

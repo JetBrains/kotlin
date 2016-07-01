@@ -76,7 +76,10 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
 
         for (KtTypeReference typeReference : getAllUpperBounds()) {
-            upperBounds.add(resolveBoundType(typeReference));
+            KotlinType resolvedType = resolveBoundType(typeReference);
+            if (!resolvedType.isError()) {
+                upperBounds.add(resolvedType);
+            }
         }
 
         if (upperBounds.isEmpty()) {

@@ -1,0 +1,26 @@
+package
+
+public val </*0*/ E> E.p1: kotlin.Int
+public val </*0*/ E> E.p2: kotlin.Int
+public val </*0*/ E> E.p3: kotlin.Int
+public fun </*0*/ E> foo0(): kotlin.Unit
+public fun </*0*/ E> foo1(): kotlin.Unit
+public fun </*0*/ E> foo2(): kotlin.Unit
+
+public interface I0</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I1</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

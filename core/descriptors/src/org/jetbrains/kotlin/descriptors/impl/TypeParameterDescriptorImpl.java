@@ -125,6 +125,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     }
 
     private void doAddUpperBound(KotlinType bound) {
+        if (bound.isError()) return;
         upperBounds.add(bound); // TODO : Duplicates?
     }
 
