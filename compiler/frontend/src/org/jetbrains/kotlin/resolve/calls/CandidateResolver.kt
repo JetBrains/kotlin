@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -52,6 +51,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import java.util.*
 
 class CandidateResolver(
@@ -157,7 +157,7 @@ class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkExpectedCallableType()
             = check {
                 if (!noExpectedType(expectedType)) {
-                    val candidateKCallableType = createKCallableTypeForReference(
+                    val candidateKCallableType = DoubleColonExpressionResolver.createKCallableTypeForReference(
                             candidateCall.candidateDescriptor,
                             (call.callElement.parent as? KtCallableReferenceExpression)?.receiverExpression?.let {
                                 trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, it)

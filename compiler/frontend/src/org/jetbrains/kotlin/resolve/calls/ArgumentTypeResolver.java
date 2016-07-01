@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.TypeResolver;
-import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -261,7 +260,7 @@ public class ArgumentTypeResolver {
                     OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
             if (resolvedCall == null) return null;
 
-            return CallableReferencesResolutionUtilsKt.createKCallableTypeForReference(
+            return DoubleColonExpressionResolver.Companion.createKCallableTypeForReference(
                     resolvedCall.getResultingDescriptor(), lhs, reflectionTypes, context.scope.getOwnerDescriptor()
             );
         }

@@ -30,17 +30,22 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.callableReferences.createKCallableTypeForReference
-import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -425,8 +430,111 @@ class DoubleColonExpressionResolver(
                 else resolveDoubleColonLHS(expression, context)
 
         val resolutionResults =
-                resolvePossiblyAmbiguousCallableReference(expression, lhsResult, context, resolveArgumentsMode, callResolver)
+                resolveCallableReferenceRHS(expression, lhsResult, context, resolveArgumentsMode)
 
         return lhsResult to resolutionResults
+    }
+
+    private fun tryResolveRHSWithReceiver(
+            traceTitle: String,
+            receiver: Receiver?,
+            reference: KtSimpleNameExpression,
+            outerContext: ResolutionContext<*>,
+            resolutionMode: ResolveArgumentsMode
+    ): OverloadResolutionResults<CallableDescriptor>? {
+        val call = CallMaker.makeCall(reference, receiver, null, reference, emptyList())
+        val temporaryTrace = TemporaryTraceAndCache.create(outerContext, traceTitle, reference)
+        val newContext =
+                if (resolutionMode == ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS)
+                    outerContext.replaceTraceAndCache(temporaryTrace).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                else
+                    outerContext.replaceTraceAndCache(temporaryTrace)
+
+        val resolutionResults = callResolver.resolveCallForMember(
+                reference, BasicCallResolutionContext.create(newContext, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE)
+        )
+
+        val shouldCommitTrace =
+                if (resolutionMode == ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS) resolutionResults.isSingleResult
+                else !resolutionResults.isNothing
+        if (shouldCommitTrace) temporaryTrace.commit()
+
+        return if (resolutionResults.isNothing) null else resolutionResults
+    }
+
+    private fun resolveCallableReferenceRHS(
+            expression: KtCallableReferenceExpression,
+            lhs: DoubleColonLHS?,
+            c: ResolutionContext<*>,
+            mode: ResolveArgumentsMode
+    ): OverloadResolutionResults<CallableDescriptor>? {
+        val reference = expression.callableReference
+
+        val lhsType = lhs?.type ?:
+                      return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode)
+
+        when (lhs) {
+            is DoubleColonLHS.Type -> {
+                val classifier = lhsType.constructor.declarationDescriptor
+                if (classifier !is ClassDescriptor) {
+                    c.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(expression))
+                    return null
+                }
+
+                val qualifier = c.trace.get(BindingContext.QUALIFIER, expression.receiverExpression!!)
+                if (qualifier is ClassQualifier) {
+                    val possibleStatic = tryResolveRHSWithReceiver(
+                            "resolve unbound callable reference in static scope", qualifier, reference, c, mode
+                    )
+                    if (possibleStatic != null) return possibleStatic
+                }
+
+                val possibleWithReceiver = tryResolveRHSWithReceiver(
+                        "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode
+                )
+                if (possibleWithReceiver != null) return possibleWithReceiver
+            }
+            is DoubleColonLHS.Expression -> {
+                val expressionReceiver = ExpressionReceiver.create(expression.receiverExpression!!, lhsType, c.trace.bindingContext)
+                val result = tryResolveRHSWithReceiver(
+                        "resolve bound callable reference", expressionReceiver, reference, c, mode
+                )
+                if (result != null) return result
+            }
+        }
+
+        return null
+    }
+
+    companion object {
+        fun createKCallableTypeForReference(
+                descriptor: CallableDescriptor,
+                lhs: DoubleColonLHS?,
+                reflectionTypes: ReflectionTypes,
+                scopeOwnerDescriptor: DeclarationDescriptor
+        ): KotlinType? {
+            val receiverType =
+                    if (descriptor.extensionReceiverParameter != null || descriptor.dispatchReceiverParameter != null)
+                        (lhs as? DoubleColonLHS.Type)?.type
+                    else null
+
+            return when (descriptor) {
+                is FunctionDescriptor -> {
+                    val returnType = descriptor.returnType ?: return null
+                    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
+                    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
+                }
+                is PropertyDescriptor -> {
+                    val mutable = descriptor.isVar && run {
+                        val setter = descriptor.setter
+                        // TODO: support private-to-this
+                        setter == null || Visibilities.isVisible(null, setter, scopeOwnerDescriptor)
+                    }
+                    reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, mutable)
+                }
+                is VariableDescriptor -> null
+                else -> throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")
+            }
+        }
     }
 }
