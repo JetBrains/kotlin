@@ -479,6 +479,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else if (redundantTypeArguments != null) {
                 context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
             }
+
+            if (result != null && (validClassifier || validType)) {
+                checkResolvedExplicitlyQualifiedSupertype(context.trace, result, supertypes, superTypeQualifier);
+            }
         }
         else {
             if (UnqualifiedSuperKt.isPossiblyAmbiguousUnqualifiedSuper(expression, supertypes)) {
@@ -520,6 +524,27 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         BindingContextUtilsKt.recordScope(context.trace, context.scope, superTypeQualifier);
         return result;
+    }
+
+    private static void checkResolvedExplicitlyQualifiedSupertype(
+            @NotNull BindingTrace trace,
+            @NotNull KotlinType result,
+            @NotNull Collection<KotlinType> supertypes,
+            @NotNull KtTypeReference superTypeQualifier
+    ) {
+        if (supertypes.size() > 1) {
+            ClassifierDescriptor resultClassifierDescriptor = result.getConstructor().getDeclarationDescriptor();
+            for (KotlinType otherSupertype : supertypes) {
+                ClassifierDescriptor otherSupertypeClassifierDescriptor = otherSupertype.getConstructor().getDeclarationDescriptor();
+                if (otherSupertypeClassifierDescriptor == resultClassifierDescriptor) {
+                    continue;
+                }
+                if (KotlinTypeChecker.DEFAULT.isSubtypeOf(otherSupertype, result)) {
+                    trace.report(QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE.on(superTypeQualifier, otherSupertype));
+                    break;
+                }
+            }
+        }
     }
 
     @NotNull // No class receivers

@@ -1,0 +1,29 @@
+package
+
+public interface IBase</*0*/ T> {
+    public open fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IDerived</*0*/ T> : IBase<T> {
+    public open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun qux(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test : IDerived<kotlin.String>, IBase<kotlin.String> {
+    public constructor Test()
+    public open override /*2*/ /*fake_override*/ fun bar(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun qux(): kotlin.Unit
+    public final fun test(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

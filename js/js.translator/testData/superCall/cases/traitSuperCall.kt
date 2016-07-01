@@ -5,12 +5,12 @@ interface A {
     fun foo(t: Int): Int = t + 1
 }
 
-interface B : A {
-    override fun bar(): Int = 3
+interface B {
+    fun foo(t: Int): Int = t
+    fun bar(): Int = 3
 }
 
 class C : B, A {
-
     override fun bar(): Int {
         return super<B>.bar() + super<A>.bar()
     }
@@ -23,7 +23,7 @@ class C : B, A {
 
 fun box(): String {
     val c = C()
-    if (c.foo(3) != 5) return "Trait super call fail. c.foo(3) is ${c.foo(3)}"
-    if (c.bar() != 5) return "Trait super call fail. c.bar() is ${c.bar()}"
+    if (c.foo(3) != 5) return "Interface super call fail. c.foo(3) is ${c.foo(3)}"
+    if (c.bar() != 5) return "Interface super call fail. c.bar() is ${c.bar()}"
     return "OK"
 }

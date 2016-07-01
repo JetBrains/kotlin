@@ -330,6 +330,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not an immediate supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
+        MAP.put(QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE, "Explicitly qualified supertype is extended by another supertype ''{0}''", RENDER_TYPE);
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");
