@@ -1,0 +1,258 @@
+JetFile: ValNoName.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// VAL')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiErrorElement:Parameter name expected
+            <empty list>
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace('\n        ')
+          PsiElement(IDENTIFIER)('private')
+          PsiErrorElement:Parameters must have type annotation
+            <empty list>
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('z')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiErrorElement:Parameter name expected
+            <empty list>
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiErrorElement:Expecting property name or receiver type
+      <empty list>
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiErrorElement:Expecting property name or receiver type
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiErrorElement:Expecting property name or receiver type
+              <empty list>
+          PsiWhiteSpace('\n        ')
+          FUN
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// VAR')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('C')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiErrorElement:Parameter name expected
+            <empty list>
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace('\n        ')
+          PsiElement(IDENTIFIER)('private')
+          PsiErrorElement:Parameters must have type annotation
+            <empty list>
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('z')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiErrorElement:Parameter name expected
+            <empty list>
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(var)('var')
+    PsiErrorElement:Expecting property name or receiver type
+      <empty list>
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('baz')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('D')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiErrorElement:Expecting property name or receiver type
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          PROPERTY
+            PsiElement(var)('var')
+            PsiErrorElement:Expecting property name or receiver type
+              <empty list>
+          PsiWhiteSpace('\n        ')
+          FUN
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
