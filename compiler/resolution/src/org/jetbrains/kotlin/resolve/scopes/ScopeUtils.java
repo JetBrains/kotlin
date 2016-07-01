@@ -20,25 +20,12 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.utils.Printer;
 
 public final class ScopeUtils {
     private ScopeUtils() {}
-
-    @NotNull
-    public static MemberScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
-        MemberScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(DeclarationDescriptor descriptor) {
-                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
-            }
-        });
-    }
 
     public static LexicalScope makeScopeForPropertyHeader(
             @NotNull LexicalScope parent,

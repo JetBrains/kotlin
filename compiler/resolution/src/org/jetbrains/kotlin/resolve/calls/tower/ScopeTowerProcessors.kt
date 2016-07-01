@@ -113,6 +113,7 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
 private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
         context: TowerContext<D, C>,
         explicitReceiver: Receiver?,
+        classValueReceiver: Boolean,
         collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
 ) : ScopeTowerProcessor<C> {
     if (explicitReceiver is ReceiverValue) {
@@ -120,6 +121,7 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
     }
     else if (explicitReceiver is QualifierReceiver) {
         val qualifierProcessor = QualifierScopeTowerProcessor(context, explicitReceiver, collectCandidates)
+        if (!classValueReceiver) return qualifierProcessor
 
         // todo enum entry, object.
         val classValue = explicitReceiver.classValueReceiver ?: return qualifierProcessor
@@ -136,14 +138,17 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
     }
 }
 
-fun <C : Candidate<VariableDescriptor>> createVariableProcessor(context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?)
-        = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getVariables)
+fun <C : Candidate<VariableDescriptor>> createVariableProcessor(
+        context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?, classValueReceiver: Boolean = true
+) = createSimpleProcessor(context, explicitReceiver, classValueReceiver, ScopeTowerLevel::getVariables)
 
-fun <C : Candidate<VariableDescriptor>> createVariableAndObjectProcessor(context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?) =
-        CompositeScopeTowerProcessor(
-                createVariableProcessor(context, explicitReceiver),
-                createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getObjects)
-        )
+fun <C : Candidate<VariableDescriptor>> createVariableAndObjectProcessor(
+        context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?, classValueReceiver: Boolean = true
+) = CompositeScopeTowerProcessor(
+        createVariableProcessor(context, explicitReceiver),
+        createSimpleProcessor(context, explicitReceiver, classValueReceiver, ScopeTowerLevel::getObjects)
+)
 
-fun <C : Candidate<FunctionDescriptor>> createFunctionProcessor(context: TowerContext<FunctionDescriptor, C>, explicitReceiver: Receiver?)
-        = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getFunctions)
+fun <C : Candidate<FunctionDescriptor>> createFunctionProcessor(
+        context: TowerContext<FunctionDescriptor, C>, explicitReceiver: Receiver?, classValueReceiver: Boolean = true
+) = createSimpleProcessor(context, explicitReceiver, classValueReceiver, ScopeTowerLevel::getFunctions)

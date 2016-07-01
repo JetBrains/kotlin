@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
@@ -32,17 +33,12 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.utils.Printer
 
 private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(results: OverloadResolutionResults<D>, trace: TemporaryTraceAndCache) {
     when (this) {
@@ -55,7 +51,7 @@ private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(resul
 
 private fun resolvePossiblyAmbiguousCallableReference(
         reference: KtSimpleNameExpression,
-        receiver: ReceiverValue?,
+        receiver: Receiver?,
         context: ResolutionContext<*>,
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
@@ -82,34 +78,9 @@ fun resolvePossiblyAmbiguousCallableReference(
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
 ): OverloadResolutionResults<CallableDescriptor>? {
-    val reference = callableReferenceExpression.getCallableReference()
+    val reference = callableReferenceExpression.callableReference
 
-    fun resolveInScope(traceTitle: String, classifier: ClassifierDescriptor, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
-
-        // todo: drop this class when new resolve will be finished
-        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), classifier) {
-            override val kind: LexicalScopeKind
-                get() = LexicalScopeKind.CALLABLE_REFERENCE
-
-            override fun printStructure(p: Printer) {
-                p.println(toString())
-            }
-
-            override fun toString(): String = "${javaClass.canonicalName} for $staticScope"
-
-            // this method is needed for correct rewrite LEXICAL_SCOPE in trace
-            override fun equals(other: Any?) = other is StaticScopeAsLexicalScope && other.staticScope == staticScope
-            override fun hashCode() = staticScope.hashCode()
-        }
-
-        val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
-        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(StaticScopeAsLexicalScope(staticScope))
-        val results = resolvePossiblyAmbiguousCallableReference(reference, null, newContext, resolutionMode, callResolver)
-        resolutionMode.acceptResolution(results, temporaryTraceAndCache)
-        return results
-    }
-
-    fun resolveWithReceiver(traceTitle: String, receiver: ReceiverValue): OverloadResolutionResults<CallableDescriptor> {
+    fun resolveWithReceiver(traceTitle: String, receiver: Receiver?): OverloadResolutionResults<CallableDescriptor> {
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
         val newContext = context.replaceTraceAndCache(temporaryTraceAndCache)
         val results = resolvePossiblyAmbiguousCallableReference(reference, receiver, newContext, resolutionMode, callResolver)
@@ -127,12 +98,12 @@ fun resolvePossiblyAmbiguousCallableReference(
         return null
     }
 
-    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.staticScope)
-    if (possibleStatic.isSomething()) return possibleStatic
-
-    val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
-                                        classifier, ScopeUtils.getStaticNestedClassesScope(classifier))
-    if (possibleNested.isSomething()) return possibleNested
+    val typeElement = callableReferenceExpression.typeReference?.typeElement
+    if (typeElement is KtUserType) {
+        val qualifier = ClassQualifier(typeElement.referenceExpression!!, classifier)
+        val possibleStatic = resolveWithReceiver("resolve unbound callable reference in static scope", qualifier)
+        if (possibleStatic.isSomething()) return possibleStatic
+    }
 
     val possibleWithReceiver = resolveWithReceiver("trace to resolve ::${reference.getReferencedName()} with receiver",
                                                    TransientReceiver(lhsType))
