@@ -7500,6 +7500,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("invalidArgumentsNumberInWhere.kt")
+            public void testInvalidArgumentsNumberInWhere() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/invalidArgumentsNumberInWhere.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");
@@ -7593,6 +7599,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("TypeParametersInTypeParameterBounds.kt")
             public void testTypeParametersInTypeParameterBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/TypeParametersInTypeParameterBounds.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unresolvedClassifierInWhere.kt")
+            public void testUnresolvedClassifierInWhere() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/unresolvedClassifierInWhere.kt");
                 doTest(fileName);
             }
 
