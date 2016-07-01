@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="IDE" pattern="file[idea]:src/*/||file[idea]:testData/*/||file[ide-common]:src/*/||file[idea-analysis]:src/*/||file[idea-android]:src/*/||file[idea-completion]:src/*/||file[idea-completion]:testData/*/||file[idea-core]:src/*/||file[idea-jps-common]:/*/||file[idea-live-templates]:/*/||file[idea-live-templates]:testData/*/||file[idea-repl]:/*/||src[idea-android-output-parser]:*..*" />
-</component>
