@@ -99,13 +99,15 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
             val editor = LightPlatformCodeInsightTestCase.getEditor()
             val dataContext = LightPlatformCodeInsightTestCase.getCurrentEditorDataContext()
 
-            val presentation = Presentation()
-            action.update(editor, presentation, dataContext)
-            TestCase.assertEquals(isApplicableExpected, presentation.isEnabled)
+            val before = editor.document.text
+            runWriteAction { action.actionPerformed(editor, dataContext) }
+
+            val after = editor.document.text
+            val actionDoesNothing = after == before
+
+            TestCase.assertEquals(isApplicableExpected, !actionDoesNothing)
 
             if (isApplicableExpected) {
-                runWriteAction { action.actionPerformed(editor, dataContext) }
-
                 val afterFilePath = path + ".after"
                 try {
                     checkResultByFile(afterFilePath)

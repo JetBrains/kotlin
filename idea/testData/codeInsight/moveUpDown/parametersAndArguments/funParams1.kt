@@ -1,8 +1,6 @@
 // MOVE: down
 class A {
-    fun foo<T,
-            U,
-            W>(
+    fun <T, U, W> foo(
             b:<caret> Int,
             a: Int,
             c: Int
