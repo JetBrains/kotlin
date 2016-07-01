@@ -95,8 +95,8 @@ class NewResolutionOldInference(
                 val simpleContextF = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
                 val simpleContextV = outer.SimpleContext<VariableDescriptor>(scopeTower, name, context, tracing)
                 return CompositeScopeTowerProcessor(
-                        createFunctionProcessor(simpleContextF, explicitReceiver),
-                        createVariableProcessor(simpleContextV, explicitReceiver)
+                        createFunctionProcessor(simpleContextF, explicitReceiver, classValueReceiver = false),
+                        createVariableProcessor(simpleContextV, explicitReceiver, classValueReceiver = false)
                 )
             }
         }

@@ -39,16 +39,29 @@ interface LexicalScope: HierarchicalScope {
 
     val kind: LexicalScopeKind
 
-    companion object {
-        fun empty(parent: HierarchicalScope, ownerDescriptor: DeclarationDescriptor): BaseLexicalScope {
-            return object : BaseLexicalScope(parent, ownerDescriptor) {
-                override val kind: LexicalScopeKind get() = LexicalScopeKind.EMPTY
+    class Empty(
+            parent: HierarchicalScope,
+            override val ownerDescriptor: DeclarationDescriptor
+    ) : BaseHierarchicalScope(parent), LexicalScope {
+        override val parent: HierarchicalScope
+            get() = super.parent!!
 
-                override fun printStructure(p: Printer) {
-                    p.println("Empty lexical scope with owner = $ownerDescriptor and parent = ${parent}.")
-                }
-            }
+        override val isOwnerDescriptorAccessibleByLabel: Boolean
+            get() = false
+
+        override val implicitReceiver: ReceiverParameterDescriptor?
+            get() = null
+
+        override val kind: LexicalScopeKind
+            get() = LexicalScopeKind.EMPTY
+
+        override fun printStructure(p: Printer) {
+            p.println("Empty lexical scope with owner = $ownerDescriptor and parent = $parent")
         }
+    }
+
+    companion object {
+        fun empty(parent: HierarchicalScope, ownerDescriptor: DeclarationDescriptor): LexicalScope = Empty(parent, ownerDescriptor)
     }
 }
 
@@ -114,20 +127,6 @@ abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
-}
-
-abstract class BaseLexicalScope(
-        parent: HierarchicalScope,
-        override val ownerDescriptor: DeclarationDescriptor
-): BaseHierarchicalScope(parent), LexicalScope {
-    override val parent: HierarchicalScope
-        get() = super.parent!!
-
-    override val isOwnerDescriptorAccessibleByLabel: Boolean
-        get() = false
-
-    override val implicitReceiver: ReceiverParameterDescriptor?
-        get() = null
 }
 
 abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalScope(parent), ImportingScope {
