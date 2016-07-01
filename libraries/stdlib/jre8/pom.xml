@@ -9,14 +9,15 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
         <version>1.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-stdlib</artifactId>
+    <artifactId>kotlin-stdlib-jre8</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
+            <artifactId>kotlin-stdlib-jre7</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -38,6 +39,7 @@
                 <version>${project.version}</version>
 
                  <configuration>
+                     <jdkHome>${env.JDK_18}</jdkHome>
                      <args>
                          <arg>-Xallow-kotlin-package</arg>
                      </args>
@@ -54,7 +56,7 @@
                             <args combine.children="append">
                                 <arg>-Xmultifile-parts-inherit</arg>
                                 <arg>-Xdump-declarations-to</arg>
-                                <arg>${basedir}/target/stdlib-declarations.json</arg>
+                                <arg>${basedir}/target/stdlib-jre8-declarations.json</arg>
                             </args>
                         </configuration>
                     </execution>
@@ -65,15 +67,34 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${basedir}/test</sourceDir>
+                                <sourceDir>${basedir}/../jdk7/test</sourceDir>
+                                <sourceDir>${basedir}/../test</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <jvm>${env.JDK_16}/bin/java</jvm>
+                    <jvm>${env.JDK_18}/bin/java</jvm>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>binary-compatibility-test</id>
+                        <goals> <goal>test</goal> </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <testSourceDirectory>${basedir}/../test</testSourceDirectory>
+                            <testClassesDirectory>${basedir}/../target/test-classes</testClassesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

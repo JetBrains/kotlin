@@ -1583,6 +1583,10 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
+public final class kotlin/internal/PlatformImplementationsKt {
+	public static final fun platformCloseSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
+}
+
 public final class kotlin/io/AccessDeniedException : kotlin/io/FileSystemException {
 	public fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2080,6 +2084,10 @@ public final class kotlin/text/MatchGroup {
 
 public abstract interface class kotlin/text/MatchGroupCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public abstract fun get (I)Lkotlin/text/MatchGroup;
+}
+
+public abstract interface class kotlin/text/MatchNamedGroupCollection : kotlin/text/MatchGroupCollection {
+	public abstract fun get (Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
 public abstract interface class kotlin/text/MatchResult {
