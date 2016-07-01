@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.isFromJavaOrBuiltins
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
@@ -46,15 +48,19 @@ fun FunctionDescriptor.computeJvmDescriptor()
             }
         }.toString()
 
-// Boxing is only necessary for 'remove(E): Boolean' of a MutableList<Int> implementation
-// Otherwise this method will clash with 'remove(I): E' also defined in the JDK interface (mapped to kotlin 'removeAt')
+// Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation
+// Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt')
 fun forceSingleValueParameterBoxing(f: FunctionDescriptor): Boolean {
-    if (f.isFromJavaOrBuiltins()) return false
+    if (f.valueParameters.size != 1 || f.isFromJavaOrBuiltins() || f.name.asString() != "remove") return false
+    if ((f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
 
-    if (f.name.asString() != "remove" ||
-        (f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
+    val overridden =
+            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f)
+            ?: return false
 
-    return BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f) != null
+    val overriddenParameterType = overridden.original.valueParameters.single().type.mapToJvmType()
+    return overridden.containingDeclaration.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.mutableCollection.toUnsafe()
+           && overriddenParameterType is JvmType.Object && overriddenParameterType.internalName == "java/lang/Object"
 }
 
 // This method only returns not-null for class methods
