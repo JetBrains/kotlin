@@ -417,23 +417,23 @@
     };
 
     Kotlin.getCallableRefForTopLevelProperty = function(packageName, name, isVar) {
-        var getFun = function() { return packageName[name]; };
+        var getFun = Function("p", "return function " + name + "() { return p['" + name + "']; }")(packageName);
         var setFun = isVar ? function(value) { packageName[name] = value; } : null;
-        return getPropertyRefClass(name, getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
+        return getPropertyRefClass(getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
     };
 
     Kotlin.getCallableRefForMemberProperty = function(name, isVar) {
-        var getFun = function(receiver) { return receiver[name]; };
+        var getFun = Function("return function " + name + "(receiver) { return receiver['" + name + "']; }")();
         var setFun = isVar ? function(receiver, value) { receiver[name] = value; } : null;
-        return getPropertyRefClass(name, getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+        return getPropertyRefClass(getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 
     Kotlin.getCallableRefForExtensionProperty = function(name, getFun, setFun) {
-        var getFunWrapper = function(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) };
-        return getPropertyRefClass(name, getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+        var getFunWrapper = Function("getFun", "return function " + name + "(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) }")(getFun);
+        return getPropertyRefClass(getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 
-    function getPropertyRefClass(name, getFun, getName, setFun, setName, cache) {
+    function getPropertyRefClass(getFun, getName, setFun, setName, cache) {
         var obj = getFun;
         var isMutable = typeof setFun === "function";
         obj.$metadata$ = getPropertyRefMetadata(isMutable ? cache.mutable : cache.immutable);
@@ -442,7 +442,6 @@
             obj[setName] = setFun;
         }
         obj.constructor = obj;
-        Object.defineProperty(obj, "name", { get : function() { return name; } });
         return obj;
     }
 
