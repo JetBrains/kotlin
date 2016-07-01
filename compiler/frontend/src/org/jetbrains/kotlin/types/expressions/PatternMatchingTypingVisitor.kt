@@ -47,7 +47,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     override fun visitIsExpression(expression: KtIsExpression, contextWithExpectedType: ExpressionTypingContext): KotlinTypeInfo {
         val context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
         val leftHandSide = expression.leftHandSide
-        val typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope))
+        val typeInfo = facade.safeGetTypeInfo(leftHandSide, context)
         val knownType = typeInfo.type
         val typeReference = expression.typeReference
         if (typeReference != null && knownType != null) {
