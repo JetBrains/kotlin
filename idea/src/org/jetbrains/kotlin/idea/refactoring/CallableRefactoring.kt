@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -194,7 +193,7 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
         val containingDescriptor = containingDeclaration ?: return null
         return when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
-            is PackageFragmentDescriptor -> LexicalScope.empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
+            is PackageFragmentDescriptor -> LexicalScope.Empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
     }

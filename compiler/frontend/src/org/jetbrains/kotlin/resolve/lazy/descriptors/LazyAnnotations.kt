@@ -18,13 +18,10 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -61,7 +58,7 @@ class LazyAnnotations(
         entry: KtAnnotationEntry ->
 
         val descriptor = LazyAnnotationDescriptor(c, entry)
-        val target = entry.getUseSiteTarget()?.getAnnotationUseSiteTarget()
+        val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
         AnnotationWithTarget(descriptor, target)
     }
 
