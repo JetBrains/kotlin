@@ -5,8 +5,8 @@
     <property name="idea.kotlin.branch" value="rc"/>
 
 
-    <property name="kotlin.bootstrap.branch" value="1.0.3"/>
-    <property name="kotlin.bootstrap.branch.locator" value=",branch:1.0.3"/>
+    <property name="kotlin.bootstrap.branch" value="1.0.4"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:1.0.4"/>
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
@@ -21,7 +21,7 @@
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
 
-    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:1.0.3"/>
+    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:1.0.4"/>
 
     <!--<property name="override.version.disabled" value="true"/>-->
 
