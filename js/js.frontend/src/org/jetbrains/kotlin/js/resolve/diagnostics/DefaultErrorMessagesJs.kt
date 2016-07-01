@@ -50,6 +50,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule annotation prohibited for 'var' declarations. Use 'val' instead.")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule annotation prohibited for non-@native declarations.")
+        put(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM, "Can't access declaration marked with @JsModule annotation " +
+                                                              "from non-modular project")
+        put(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM, "Can't access declaration marked with @JsNonModule annotation " +
+                                                              "from modular project")
         put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
         put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
         put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)

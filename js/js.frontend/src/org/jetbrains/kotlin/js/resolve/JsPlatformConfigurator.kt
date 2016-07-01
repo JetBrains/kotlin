@@ -37,7 +37,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
                 JsNameChecker, JsModuleChecker,
                 PlatformImplDeclarationChecker()
         ),
-        additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker()),
+        additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker(), JsModuleCallChecker),
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),

@@ -316,6 +316,18 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/prohibitedOnNonNative.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("wrongCallToModule.kt")
+        public void testWrongCallToModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/wrongCallToModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongCallToNonModule.kt")
+        public void testWrongCallToNonModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/wrongCallToNonModule.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")

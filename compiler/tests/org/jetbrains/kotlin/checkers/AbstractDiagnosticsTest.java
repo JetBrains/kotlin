@@ -537,10 +537,16 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             }
 
             dependencies.add(module.getBuiltIns().getBuiltInsModule());
+            dependencies.addAll(getAdditionalDependencies(module));
             module.setDependencies(dependencies);
         }
 
         return modules;
+    }
+
+    @NotNull
+    protected List<ModuleDescriptorImpl> getAdditionalDependencies(@NotNull ModuleDescriptorImpl module) {
+        return Collections.emptyList();
     }
 
     @NotNull

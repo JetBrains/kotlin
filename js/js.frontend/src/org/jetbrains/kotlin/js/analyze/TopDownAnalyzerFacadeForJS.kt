@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.analyze
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ContextForNewModule
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -39,7 +41,9 @@ object TopDownAnalyzerFacadeForJS {
                 config.moduleDescriptors.map { it.data } +
                 listOf(JsPlatform.builtIns.builtInsModule)
         )
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), context, config)
+        val trace = BindingTraceContext()
+        trace.record(MODULE_KIND, context.module, config.moduleKind)
+        return analyzeFilesWithGivenTrace(files, trace, context, config)
     }
 
     @JvmStatic

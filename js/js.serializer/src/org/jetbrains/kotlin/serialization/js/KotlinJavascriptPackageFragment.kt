@@ -49,10 +49,8 @@ class KotlinJavascriptPackageFragment(
     private val fileMap: Map<Int, FileHolder> by lazy {
         loadResource(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName))?.use { rawInput ->
             val input = CodedInputStream.newInstance(rawInput)
-            val count = input.readInt32()
-            val result = mutableListOf<JsProtoBuf.File>()
-            (1..count).forEach { result += JsProtoBuf.File.parseFrom(input) }
-            result.map { it.id to FileHolder(it.annotationList) }.toMap()
+            val filesProto = JsProtoBuf.Files.parseFrom(input).fileOrBuilderList
+            filesProto.map { it.id to FileHolder(it.annotationList) }.toMap()
         }.orEmpty()
     }
 

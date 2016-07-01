@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.checkers;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -29,11 +30,13 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.js.resolve.BindingContextSlicesJsKt;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -77,7 +80,38 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
         // TODO: support LANGUAGE directive in JS diagnostic tests
         assert languageVersionSettings == null
                 : BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests";
+        moduleTrace.record(BindingContextSlicesJsKt.MODULE_KIND, moduleContext.getModule(), getModuleKind(ktFiles));
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config);
+    }
+
+    @NotNull
+    private static ModuleKind getModuleKind(@NotNull List<KtFile> ktFiles) {
+        ModuleKind kind = ModuleKind.PLAIN;
+        for (KtFile file : ktFiles) {
+            String text = file.getText();
+            for (String line : StringUtil.splitByLines(text)) {
+                line = line.trim();
+                if (!line.startsWith("//")) continue;
+                line = line.substring(2).trim();
+                List<String> parts = StringUtil.split(line, ":");
+                if (parts.size() != 2) continue;
+
+                if (!parts.get(0).trim().equals("MODULE_KIND")) continue;
+                kind = ModuleKind.valueOf(parts.get(1).trim());
+            }
+        }
+
+        return kind;
+    }
+
+    @Override
+    @NotNull
+    protected List<ModuleDescriptorImpl> getAdditionalDependencies(@NotNull  ModuleDescriptorImpl module) {
+        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
+        for (JsModuleDescriptor<ModuleDescriptorImpl> moduleDescriptor : config.getModuleDescriptors()) {
+            dependencies.add(moduleDescriptor.getData());
+        }
+        return dependencies;
     }
 
     @Override
@@ -99,9 +133,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
         List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
         dependencies.add(module);
 
-        for (JsModuleDescriptor<ModuleDescriptorImpl> moduleDescriptor : config.getModuleDescriptors()) {
-            dependencies.add(moduleDescriptor.getData());
-        }
+        dependencies.addAll(getAdditionalDependencies(module));
 
         dependencies.add(module.getBuiltIns().getBuiltInsModule());
         module.setDependencies(dependencies);

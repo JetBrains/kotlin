@@ -26,6 +26,10 @@ message File {
   repeated Annotation annotation = 2;
 }
 
+message Files {
+  repeated File file = 1;
+}
+
 extend Class {
   repeated Annotation class_annotation = 130;
   optional int32 class_containing_file_id = 135;

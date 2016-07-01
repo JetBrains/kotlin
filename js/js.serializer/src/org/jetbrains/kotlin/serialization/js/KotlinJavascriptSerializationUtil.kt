@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ByteString
-import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId

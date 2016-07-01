@@ -53,3 +53,7 @@ annotation class JsName(val name: String)
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 annotation class JsModule(val import: String)
+
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, PROPERTY, FUNCTION, FILE)
+annotation class JsNonModule
