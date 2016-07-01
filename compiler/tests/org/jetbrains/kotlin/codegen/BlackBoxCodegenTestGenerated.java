@@ -10801,6 +10801,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInDownTo extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInForInDownTo() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("forIntInDownTo.kt")
+            public void testForIntInDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forIntInNonOptimizedDownTo.kt")
+            public void testForIntInNonOptimizedDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forIntInNonOptimizedDownTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forLongInDownTo.kt")
+            public void testForLongInDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forLongInDownTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forNullableIntInDownTo.kt")
+            public void testForNullableIntInDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forNullableIntInDownTo.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
