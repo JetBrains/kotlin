@@ -1891,6 +1891,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 doTest(fileName);
             }
 
+            @TestMetadata("kt12044.kt")
+            public void testKt12044() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt12044.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt12982_protectedPropertyReference.kt")
             public void testKt12982_protectedPropertyReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt12982_protectedPropertyReference.kt");

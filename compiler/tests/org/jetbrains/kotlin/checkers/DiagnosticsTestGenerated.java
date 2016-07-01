@@ -2199,6 +2199,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt12338.kt")
+                public void testKt12338() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt12338.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt8596.kt")
                 public void testKt8596() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt8596.kt");

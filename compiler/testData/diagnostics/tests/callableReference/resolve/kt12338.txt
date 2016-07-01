@@ -1,0 +1,4 @@
+package
+
+public fun a(): kotlin.Unit
+public fun test(): kotlin.Unit

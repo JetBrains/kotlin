@@ -355,10 +355,9 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
                 .replaceExpectedType(expectedTypeWithoutReturnType)
                 .replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
-        val argumentExpression = valueArgument.getArgumentExpression()!!
-        val type = argumentTypeResolver.getCallableReferenceTypeInfo(
-                argumentExpression, callableReference, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
-        return type
+        return argumentTypeResolver.getCallableReferenceTypeInfo(
+                callableReference, callableReference, newContext, RESOLVE_FUNCTION_ARGUMENTS
+        ).type
     }
 }
 
