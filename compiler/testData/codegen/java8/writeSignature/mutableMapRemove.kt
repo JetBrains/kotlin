@@ -21,5 +21,5 @@ class KotlinMap2 : java.util.AbstractMap<String, Int>() {
 // generic signature: null
 
 // method: KotlinMap2::remove
-// jvm signature: (Ljava/lang/String;Ljava/lang/Integer;)Z
+// jvm signature: (Ljava/lang/String;I)Z
 // generic signature: null
