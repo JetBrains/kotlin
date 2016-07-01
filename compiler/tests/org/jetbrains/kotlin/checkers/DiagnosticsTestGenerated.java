@@ -8776,6 +8776,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/typeReferenceError.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("valNoName.kt")
+                public void testValNoName() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/valNoName.kt");
+                    doTest(fileName);
+                }
             }
         }
 
