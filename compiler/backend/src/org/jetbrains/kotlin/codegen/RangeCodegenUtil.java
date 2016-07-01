@@ -132,6 +132,17 @@ public class RangeCodegenUtil {
         return false;
     }
 
+    public static boolean isOptimizableDownTo(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "downTo", "kotlin.ranges")) return false;
+
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        if (extensionReceiver == null) return false;
+        ClassifierDescriptor extensionReceiverClassifier = extensionReceiver.getType().getConstructor().getDeclarationDescriptor();
+        if (!isPrimitiveNumberClassDescriptor(extensionReceiverClassifier)) return false;
+
+        return true;
+    }
+
     public static boolean isArrayOrPrimitiveArrayIndices(@NotNull CallableDescriptor descriptor) {
         if (!isTopLevelInPackage(descriptor, "indices", "kotlin.collections")) return false;
 
