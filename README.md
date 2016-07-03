@@ -8,7 +8,7 @@ https://drive.google.com/file/d/0B16LpTmDcUUhLWwyMW5YUDZ5UW8/view?usp=sharing
 unbzip2 it, and put it to the card with
 sudo dd of=/dev/mmcblk0 if=./microsd.img bs=1M
 
- Use user 'kotlin', password 'JetBrains', or 'pi', password 'raspberri'.
+ Use user 'kotlin', password 'JetBrains', or 'pi', password 'raspberry'.
 
  If not using provided image, please add file 49-stlinkv2-1.rules
 with content 
