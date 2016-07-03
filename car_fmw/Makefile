@@ -1,6 +1,7 @@
 BIN_DIR=$(PWD)/bin
 SRC_DIR=$(PWD)/src
 LIB_DIR=$(SRC_DIR)/lib
+OS_ARCH=linux-arm
 
 LIB_CMSIS_DIR=$(LIB_DIR)/cmsis
 LIB_STDPERIPH_DIR=$(LIB_DIR)/stdperiph
@@ -12,18 +13,22 @@ LIB_STM32F4D_OBJ=$(BIN_DIR)/libstm32f4d.o
 CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
 CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
+ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
 
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-as
 LD=arm-none-eabi-ld
 OBJ_COPY=arm-none-eabi-objcopy
+GDB=arm-none-eabi-gdb
 
 INCLUDES=-I$(LIB_CMSIS_DIR) \
 		 -I$(LIB_STDPERIPH_DIR) \
 		 -I$(LIB_STM32F4D_DIR) \
 		 -I$(SRC_DIR)
+DEFINES=-DUSE_STM32_DISCOVERY=1 -DUSE_STDPERIPH_DRIVER=1 -DSTM32F4XX=1 -DHSE_VALUE=8000000
 CFLAGS=-g -nostdlib -ffreestanding -O0 \
-	   -mcpu=cortex-m3 -mfloat-abi=soft -mthumb
+       -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \
+       $(DEFINES)
 ASMFLAGS=-g -mthumb
 
 LD_ALL_DEPS=$(LD) -r $(filter %.o,$^) -o $@
@@ -50,6 +55,14 @@ $(BIN_DIR):
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC_ALL_DEPS)
+
+flash: $(CAR_FMW_BIN)
+	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000
+
+debug:
+	-killall st-util
+	(setsid $(ST_DIR)/st-util 2>/dev/null 1>&2)&
+	$(GDB) $(CAR_FMW_ELF) -x $(ST_DIR)/../gdb.cmds
 
 clean:
 	rm -rf bin/*
