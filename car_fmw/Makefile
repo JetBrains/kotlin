@@ -42,8 +42,11 @@ $(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
 	$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ)
 	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
 
-$(CAR_FMW_OBJ): $(call dircs_to_prefxd_objs,$(SRC_DIR))
+$(CAR_FMW_OBJ): $(BIN_DIR) $(call dircs_to_prefxd_objs,$(SRC_DIR))
 	$(LD_ALL_DEPS)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC_ALL_DEPS)

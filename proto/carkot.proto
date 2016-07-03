@@ -2,6 +2,7 @@ message Upload {
   message Method {
     enum TYPE {
       DFU = 1;
+      STLINK = 2;
     }
     // Type of upload method.
     optional TYPE type = 1;
@@ -14,8 +15,10 @@ message Upload {
   }
   // Firmware data.
   optional bytes data = 1;
+  // Firmware load address (string, to avoid 64-bit woes).
+  optional string base = 2;
   // Method of firmware upload.
-  optional Method method = 2;
+  optional Method method = 3;
 }
 
 message UploadResult {
