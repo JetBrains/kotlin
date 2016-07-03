@@ -86,7 +86,7 @@ object KotlinCompilerRunner {
             collector: OutputItemsCollector,
             stream: ByteArrayOutputStream,
             exitCode: String) {
-        val reader = BufferedReader(StringReader(stream.toString()))
+        val reader = BufferedReader(StringReader(stream.toString("UTF-8")))
         CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector)
 
         if (INTERNAL_ERROR == exitCode) {
@@ -118,7 +118,7 @@ object KotlinCompilerRunner {
                 KotlinBuilder.LOG.info("Compile in-process")
 
                 val stream = ByteArrayOutputStream()
-                val out = PrintStream(stream)
+                val out = PrintStream(stream, false, "UTF-8")
 
                 // the property should be set at least for parallel builds to avoid parallel building problems (racing between destroying and using environment)
                 // unfortunately it cannot be currently set by default globally, because it breaks many tests

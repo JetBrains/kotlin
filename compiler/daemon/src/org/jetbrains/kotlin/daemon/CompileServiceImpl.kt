@@ -414,8 +414,8 @@ class CompileServiceImpl(
                 compilationsCounter.incrementAndGet()
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                 val eventManger = EventMangerImpl()
-                val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
-                val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
+                val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096), false, "UTF-8")
+                val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096), false, "UTF-8")
                 try {
                     checkedCompile(args, serviceOutputStream, rpcProfiler) {
                         val res = body(compilerMessagesStream, eventManger, rpcProfiler).code
