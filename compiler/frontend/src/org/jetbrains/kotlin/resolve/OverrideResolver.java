@@ -28,6 +28,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.containers.hash.EqualityPolicy;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -544,6 +545,7 @@ public class OverrideResolver {
 
         int numImplementations = implementations.size();
 
+        // The most common case: there's one implementation in the supertypes with the matching return type
         if (numImplementations == 1 && isReturnTypeOkForOverride(descriptor, implementations.get(0))) return;
 
         List<CallableMemberDescriptor> abstractOverridden = new ArrayList<CallableMemberDescriptor>(allFilteredOverriddenDeclarations.size());
@@ -647,17 +649,14 @@ public class OverrideResolver {
     @NotNull
     private static List<CallableMemberDescriptor> collectAbstractMethodsWithMoreSpecificReturnType(
             @NotNull List<CallableMemberDescriptor> abstractOverridden,
-            @NotNull CallableMemberDescriptor implementation
+            @NotNull final CallableMemberDescriptor implementation
     ) {
-        List<CallableMemberDescriptor> result = new ArrayList<CallableMemberDescriptor>(abstractOverridden.size());
-        for (CallableMemberDescriptor abstractMember : abstractOverridden) {
-            if (!isReturnTypeOkForOverride(abstractMember, implementation)) {
-                result.add(abstractMember);
+        return CollectionsKt.filter(abstractOverridden, new Function1<CallableMemberDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(@NotNull CallableMemberDescriptor abstractMember) {
+                return !isReturnTypeOkForOverride(abstractMember, implementation);
             }
-        }
-        assert !result.isEmpty() : "Implementation (" + implementation + ") doesn't have the most specific type, " +
-                                   "but none of the other overridden methods does either: " + abstractOverridden;
-        return result;
+        });
     }
 
     @NotNull
