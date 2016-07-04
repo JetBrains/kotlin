@@ -4994,6 +4994,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("externalFunctionPlain.kt")
+        public void testExternalFunctionPlain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalFunctionPlain.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("externalObject.kt")
         public void testExternalObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalObject.kt");

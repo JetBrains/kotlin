@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.util.*;
 
@@ -249,15 +250,17 @@ public final class StaticContext {
             return result != null ? result : pureFqn(Namer.getRootPackageName(), null);
         }
 
-        String moduleName = AnnotationsUtils.getModuleName(suggested.getDescriptor());
-        if (moduleName != null) {
-            return JsAstUtils.pureFqn(getModuleInternalName(moduleName), null);
-        }
+        if (config.getModuleKind() != ModuleKind.PLAIN) {
+            String moduleName = AnnotationsUtils.getModuleName(suggested.getDescriptor());
+            if (moduleName != null) {
+                return JsAstUtils.pureFqn(getModuleInternalName(moduleName), null);
+            }
 
-        if (isNativeObject(suggested.getDescriptor())) {
-            String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
-            if (fileModuleName != null) {
-                return pureFqn(getNameForDescriptor(suggested.getDescriptor()), pureFqn(getModuleInternalName(fileModuleName), null));
+            if (isNativeObject(suggested.getDescriptor())) {
+                String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
+                if (fileModuleName != null) {
+                    return pureFqn(getNameForDescriptor(suggested.getDescriptor()), pureFqn(getModuleInternalName(fileModuleName), null));
+                }
             }
         }
 
