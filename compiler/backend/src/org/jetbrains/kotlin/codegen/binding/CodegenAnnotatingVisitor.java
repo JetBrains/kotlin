@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -270,7 +271,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         String name = inventAnonymousClassName();
         Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
         ClassDescriptor classDescriptor = recordClassForCallable(functionLiteral, functionDescriptor, supertypes, name);
-        recordClosure(classDescriptor, name);
+        MutableClosure closure = recordClosure(classDescriptor, name);
+
+        if (CoroutineUtilKt.getControllerTypeIfCoroutine(functionDescriptor) != null) {
+            closure.setCoroutine(true);
+        }
 
         classStack.push(classDescriptor);
         nameStack.push(name);

@@ -40,4 +40,6 @@ public interface CalculatedClosure {
 
     @NotNull
     List<Pair<String, Type>> getRecordedFields();
+
+    boolean isCoroutine();
 }
