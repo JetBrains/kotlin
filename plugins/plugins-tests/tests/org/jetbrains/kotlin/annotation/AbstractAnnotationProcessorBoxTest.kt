@@ -66,7 +66,7 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
             AnalysisCompletedHandlerExtension.registerExtension(project, stubProducerExtension)
         }
 
-        val testFiles = ktFiles.map { KotlinTestUtils.createFile(it.name, it.readText(), environment.project) }
+        val testFiles = ktFiles.map { KotlinTestUtils.createFile(it.name, KotlinTestUtils.doLoadFile(it), environment.project) }
 
         CodegenTestUtil.generateFiles(environment, CodegenTestFiles.create(testFiles))
 
