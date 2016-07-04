@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
@@ -33,6 +34,10 @@ class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
 
         @JvmField
         val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, List<String>> = Slices.createCollectiveSlice()
+
+        init {
+            BasicWritableSlice.initSliceDebugNames(TraceBasedErrorReporter::class.java)
+        }
     }
 
     override fun reportIncompatibleMetadataVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
