@@ -19629,6 +19629,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("classReference.kt")
+            public void testClassReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/classReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("conflictingProjections.kt")
             public void testConflictingProjections() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/conflictingProjections.kt");
@@ -19710,6 +19716,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("localTypeAliasConstructor.kt")
             public void testLocalTypeAliasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/localTypeAliasConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("methodReference.kt")
+            public void testMethodReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/methodReference.kt");
                 doTest(fileName);
             }
 
