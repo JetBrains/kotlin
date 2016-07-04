@@ -109,6 +109,10 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
+        if (properties.isEmpty()) {
+            throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
+        }
+
         if (properties.size != 1) {
             // Try working around the case of a Java class with a field 'foo' and a method 'getFoo' which overrides Kotlin property 'foo'.
             // Such class has two property descriptors with the name 'foo' in its scope and they may be indistinguishable from each other.
@@ -129,10 +133,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 return mostVisibleProperties.first()
             }
 
-            val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
-                    if (properties.isEmpty()) "Property $debugText not resolved in $this"
-                    else "${properties.size} properties $debugText resolved in $this: $properties"
+                    "${properties.size} properties '$name' (JVM signature: $signature) resolved in $this: $properties"
             )
         }
 

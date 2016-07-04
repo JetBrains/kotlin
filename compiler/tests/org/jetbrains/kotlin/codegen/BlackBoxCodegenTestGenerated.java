@@ -12024,6 +12024,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericProperty.kt")
+            public void testGenericProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/genericProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("getExtensionPropertiesMutableVsReadonly.kt")
             public void testGetExtensionPropertiesMutableVsReadonly() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getExtensionPropertiesMutableVsReadonly.kt");
