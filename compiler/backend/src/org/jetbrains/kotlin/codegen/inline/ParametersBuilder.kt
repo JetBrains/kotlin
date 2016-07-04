@@ -121,13 +121,11 @@ internal class ParametersBuilder private constructor() {
         @JvmOverloads
         @JvmStatic
         fun initializeBuilderFrom(
-                objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null, addThis: Boolean = true
+                objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null
         ): ParametersBuilder {
             val builder = newBuilder()
-            if (addThis) {
-                //skipped this for inlined lambda cause it will be removed
-                builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
-            }
+            //skipped this for inlined lambda cause it will be removed
+            builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
 
             for (type in Type.getArgumentTypes(descriptor)) {
                 builder.addNextParameter(type, false)
