@@ -38,10 +38,10 @@ import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.KotlinFrontEndException;
 import org.jetbrains.kotlin.util.LookupTrackerUtilKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
-import org.jetbrains.kotlin.utils.KotlinFrontEndException;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
@@ -155,7 +155,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
         if (!isStatement) return getTypeInfo(expression, newContext);
         return getTypeInfo(expression, newContext, getStatementVisitor(newContext));
     }
-    
+
     protected ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
         return new ExpressionTypingVisitorForStatements(this,
                                                         ExpressionTypingUtils.newWritableScopeImpl(context, LexicalScopeKind.CODE_BLOCK, components.overloadChecker),
