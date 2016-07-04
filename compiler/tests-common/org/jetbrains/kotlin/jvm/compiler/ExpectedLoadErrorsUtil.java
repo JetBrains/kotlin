@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.*;
@@ -109,9 +109,9 @@ public class ExpectedLoadErrorsUtil {
     private static Map<SourceElement, List<String>> getActualLoadErrors(@NotNull BindingContext bindingContext) {
         Map<SourceElement, List<String>> result = new HashMap<SourceElement, List<String>>();
 
-        Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
+        Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {
-            List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
+            List<String> errors = bindingContext.get(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
             if (errors == null) continue;
 
             putError(result, descriptor, errors);

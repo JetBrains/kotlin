@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.load.java.JavaBindingContext
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.java.components.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.util.*
@@ -63,14 +63,14 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
     private fun reportAlternativeSignatureErrors() {
         val bc = analysisResult.bindingContext
-        val descriptorsWithErrors = bc.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS)
+        val descriptorsWithErrors = bc.getKeys(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS)
         if (!descriptorsWithErrors.isEmpty()) {
             val message = StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n")
             for (descriptor in descriptorsWithErrors) {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
                 assert(declaration is PsiModifierListOwner)
 
-                val errors = bc.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor)
+                val errors = bc.get(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor)
                 assert(errors != null && !errors.isEmpty())
 
                 val externalName = PsiFormatUtil.getExternalName(declaration as PsiModifierListOwner)

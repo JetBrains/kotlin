@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm
+package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.jvm.bindingContextSlices.RUNTIME_ASSERTION_INFO
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -93,8 +92,7 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         )
 
         if (assertionInfo != null) {
-            c.trace.record(RUNTIME_ASSERTION_INFO, expression, assertionInfo)
+            c.trace.record(JvmBindingContextSlices.RUNTIME_ASSERTION_INFO, expression, assertionInfo)
         }
     }
-
 }
