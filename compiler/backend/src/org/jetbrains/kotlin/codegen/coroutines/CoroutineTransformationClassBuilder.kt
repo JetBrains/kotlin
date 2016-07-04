@@ -206,17 +206,6 @@ class CoroutineTransformerMethodVisitor(
                 "Stack should be spilled before suspension call"
             }
 
-            val variableTypeInTable = arrayOfNulls<Type>(methodNode.maxLocals)
-            methodNode.localVariables.filter {
-                it.start.index() < suspensionCallBegin.index() && suspensionCallEnd.index() < it.end.index()
-            }.forEach {
-                val type = Type.getType(it.desc)
-                variableTypeInTable[it.index] = type
-                if (type.size == 2) {
-                    variableTypeInTable[it.index + 1] = UNINITIALIZED_TYPE
-                }
-            }
-
             val frame = frames[suspensionCallBegin.index()]
             val localsCount = frame.locals
             val varsCountByType = mutableMapOf<Type, Int>()
@@ -243,10 +232,7 @@ class CoroutineTransformerMethodVisitor(
                             .map { Pair(it, frame.getLocal(it)) }
                             .filter {
                                 val (index, value) = it
-                                value != BasicValue.UNINITIALIZED_VALUE
-                                    && livenessFrame.isAlive(index)
-                                    && variableTypeInTable[index] !== UNINITIALIZED_TYPE
-                                    && (variableTypeInTable[index] == null || variableTypeInTable[index]?.sort == value.type.sort)
+                                value != BasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index)
                             }
 
             for ((index, basicValue) in variablesToSpill) {
@@ -478,7 +464,6 @@ private class SuspensionPoint(
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 }
 
-private val UNINITIALIZED_TYPE = Type.getObjectType("uninitialized")
 private val DEFAULT_VALUE_OPCODES =
         setOf(Opcodes.ICONST_0, Opcodes.LCONST_0, Opcodes.FCONST_0, Opcodes.DCONST_0, Opcodes.ACONST_NULL,
               // GETSTATIC Unit.Instance
