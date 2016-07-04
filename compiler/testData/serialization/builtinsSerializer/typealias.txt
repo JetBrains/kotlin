@@ -1,0 +1,19 @@
+package test
+
+public typealias TopLevel = kotlin.String
+public val testVal: test.TopLevel /* = kotlin.String */ = ""
+public fun testFun(/*0*/ x: test.TopLevel /* = kotlin.String */): test.TopLevel /* = kotlin.String */
+
+public final class Outer {
+    public typealias NestedAlias = kotlin.String
+    public constructor Outer()
+    public final val testVal: test.Outer.NestedAlias /* = kotlin.String */ = ""
+    public final fun testFun(/*0*/ x: test.Outer.NestedAlias /* = kotlin.String */): test.TopLevel /* = kotlin.String */
+
+    public final class Nested {
+        public typealias NestedAlias = kotlin.String
+        public constructor Nested()
+        public final val testVal: test.Outer.Nested.NestedAlias /* = kotlin.String */ = ""
+        public final fun testFun(/*0*/ x: test.Outer.Nested.NestedAlias /* = kotlin.String */): test.TopLevel /* = kotlin.String */
+    }
+}

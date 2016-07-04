@@ -108,4 +108,8 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     fun testVarArgs() {
         doTest("annotationArguments/varargs.kt")
     }
+
+    fun testTypealias() {
+        doTest("typealias.kt")
+    }
 }
