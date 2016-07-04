@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.bindingContextSlices
+package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
+import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlin.utils.DO_NOTHING
 
-val RUNTIME_ASSERTION_INFO: WritableSlice<KtExpression, RuntimeAssertionInfo> = BasicWritableSlice(RewritePolicy.DO_NOTHING)
+object JvmBindingContextSlices {
+    @JvmField
+    val RUNTIME_ASSERTION_INFO: WritableSlice<KtExpression, RuntimeAssertionInfo> = BasicWritableSlice(RewritePolicy.DO_NOTHING)
+
+    @JvmField
+    val LOAD_FROM_JAVA_SIGNATURE_ERRORS: WritableSlice<DeclarationDescriptor, List<String>> = Slices.createCollectiveSlice()
+
+    init {
+        BasicWritableSlice.initSliceDebugNames(JvmBindingContextSlices::class.java)
+    }
+}

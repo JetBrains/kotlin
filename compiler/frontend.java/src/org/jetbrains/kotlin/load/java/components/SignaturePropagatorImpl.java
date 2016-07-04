@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -57,6 +57,6 @@ public class SignaturePropagatorImpl implements SignaturePropagator {
 
     @Override
     public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
-        trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor.getOriginal(), signatureErrors);
+        trace.record(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor.getOriginal(), signatureErrors);
     }
 }
