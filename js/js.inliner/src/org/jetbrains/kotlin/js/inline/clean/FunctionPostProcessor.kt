@@ -23,6 +23,7 @@ class FunctionPostProcessor(root: JsFunction) {
         { TemporaryAssignmentElimination(root.body).apply() },
         { RedundantLabelRemoval(root.body).apply() },
         { TemporaryVariableElimination(root).apply() },
+        { RedundantBindElimination(root.body).apply() },
         { IfStatementReduction(root.body).apply() },
         { DeadCodeElimination(root.body).apply() },
         { RedundantVariableDeclarationElimination(root.body).apply() },
