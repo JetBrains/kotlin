@@ -50,6 +50,7 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
             case Type.SHORT:
                 return SHORT_VALUE;
             case Type.OBJECT:
+            case Type.ARRAY:
                 return new BasicValue(type);
             default:
                 return super.newValue(type);
@@ -78,12 +79,9 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
         }
 
         // if merge of two references then `lub` is java/lang/Object
-        // arrays also are BasicValues with reference type's
-        if (v.getType().getSort() == Type.OBJECT && w.getType().getSort() == Type.OBJECT) {
+        if (isReference(v) && isReference(w)) {
             return BasicValue.REFERENCE_VALUE;
         }
-
-        assert v.getType().getSort() != Type.ARRAY && w.getType().getSort() != Type.ARRAY : "There should not be arrays";
 
         // if merge of something can be stored in int var (int, char, boolean, byte, character)
         if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
@@ -92,5 +90,9 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
         }
 
         return BasicValue.UNINITIALIZED_VALUE;
+    }
+
+    private static boolean isReference(@NotNull BasicValue v) {
+        return v.getType().getSort() == Type.OBJECT || v.getType().getSort() == Type.ARRAY;
     }
 }
