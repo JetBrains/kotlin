@@ -88,6 +88,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             doTest(fileName);
         }
 
+        @TestMetadata("MultiFile.kt")
+        public void testMultiFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/MultiFile.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SingleFile.kt")
         public void testSingleFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleFile.kt");
