@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object JsModuleChecker : SimpleDeclarationChecker {
     override fun check(
@@ -31,14 +32,24 @@ object JsModuleChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        val moduleName = AnnotationsUtils.getModuleName(descriptor)
+        if (AnnotationsUtils.getModuleName(descriptor) == null && !AnnotationsUtils.isNonModule(descriptor)) return
 
-        if (moduleName != null && descriptor is PropertyDescriptor && descriptor.isVar) {
+        if (descriptor is PropertyDescriptor && descriptor.isVar) {
             diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR.on(declaration))
         }
 
-        if (moduleName != null && !AnnotationsUtils.isNativeObject(descriptor)) {
+        if (!AnnotationsUtils.isNativeObject(descriptor)) {
             diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE.on(declaration))
+        }
+
+        if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_TOPLEVEL.on(declaration))
+        }
+
+        val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(bindingContext, descriptor) != null ||
+                                      AnnotationsUtils.isFromNonModuleFile(bindingContext, descriptor)
+        if (isFileModuleOrNonModule) {
+            diagnosticHolder.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
         }
     }
 }

@@ -50,10 +50,19 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule annotation prohibited for 'var' declarations. Use 'val' instead.")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule annotation prohibited for non-@native declarations.")
+        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule and @JsNonModule annotations prohibited for 'var' declarations. " +
+                                                  "Use 'val' instead.")
+        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule and @JsNonModule annotations prohibited for non-@native declarations.")
+        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_TOPLEVEL, "@JsModule and @JsNonModule annotations are only allowed to appear " +
+                                                           "on packages and top-level declarations")
+        put(ErrorsJs.NESTED_JS_MODULE_PROHIBITED, "@JsModule and @JsNonModule can't appear on here since the file is already " +
+                                                  "marked by either @JsModule or @JsNonModule")
         put(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM, "Can't access declaration marked with @JsModule annotation " +
                                                               "from non-modular project")
         put(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM, "Can't access declaration marked with @JsNonModule annotation " +
-                                                              "from modular project")
+                                                               "from modular project")
+        put(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE, "When accessing module declarations from UMD, " +
+                                                                        "they must be marked by both @JsModule and @JsNonModule")
         put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
         put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
         put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)

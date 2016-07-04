@@ -1,20 +1,24 @@
 package
 
-package foo {
-    @kotlin.js.JsModule(import = "bar") public val bar: kotlin.Int = 42
-    @kotlin.js.JsNonModule public val baz: kotlin.Int = 99
-    @kotlin.js.JsModule(import = "foo") public fun foo(): kotlin.Int
+package bar {
+    public fun box(): kotlin.Unit
+}
 
-    @kotlin.js.JsModule(import = "A") public final class A {
-        public constructor A()
+package foo {
+
+    @kotlin.js.JsModule(import = "A") @kotlin.js.native public object A {
+        private constructor A()
+        public final val g: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun f(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsModule(import = "B") public object B {
-        private constructor B()
+    @kotlin.js.JsNonModule @kotlin.js.native public open class B {
+        public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

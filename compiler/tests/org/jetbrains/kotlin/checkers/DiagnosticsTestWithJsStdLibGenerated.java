@@ -305,9 +305,27 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("dualModuleFromUmd.kt")
+        public void testDualModuleFromUmd() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/dualModuleFromUmd.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsVarProhibited.kt")
         public void testJsVarProhibited() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsVarProhibited.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedProhibited.kt")
+        public void testNestedProhibited() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/nestedProhibited.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonTopLevelProhibited.kt")
+        public void testNonTopLevelProhibited() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/nonTopLevelProhibited.kt");
             doTest(fileName);
         }
 

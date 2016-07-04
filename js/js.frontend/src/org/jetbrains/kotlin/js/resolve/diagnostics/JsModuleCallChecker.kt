@@ -42,14 +42,21 @@ object JsModuleCallChecker : CallChecker {
                            AnnotationsUtils.getFileModuleName(bindingContext, callee) != null
         val callToNonModule = AnnotationsUtils.isNonModule(callee) || AnnotationsUtils.isFromNonModuleFile(bindingContext, callee)
 
-        if (moduleKind == ModuleKind.PLAIN || moduleKind == ModuleKind.UMD) {
-            if (!callToNonModule && callToModule) {
-                context.trace.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn))
+        if (moduleKind == ModuleKind.UMD) {
+            if (!callToNonModule && callToModule || callToNonModule && !callToModule) {
+                context.trace.report(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE.on(reportOn))
             }
         }
-        if (moduleKind != ModuleKind.PLAIN) {
-            if (!callToModule && callToNonModule) {
-                context.trace.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn))
+        else {
+            if (moduleKind == ModuleKind.PLAIN) {
+                if (!callToNonModule && callToModule) {
+                    context.trace.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn))
+                }
+            }
+            else {
+                if (!callToModule && callToNonModule) {
+                    context.trace.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn))
+                }
             }
         }
     }
