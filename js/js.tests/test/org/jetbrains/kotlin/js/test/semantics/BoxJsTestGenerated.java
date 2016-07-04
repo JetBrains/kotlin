@@ -5000,6 +5000,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("externalFunctionUmd.kt")
+        public void testExternalFunctionUmd() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalFunctionUmd.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("externalFunctionUmdFallback.kt")
+        public void testExternalFunctionUmdFallback() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalFunctionUmdFallback.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("externalObject.kt")
         public void testExternalObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalObject.kt");

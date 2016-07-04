@@ -118,9 +118,12 @@ abstract class BasicBoxTest(
                     }
 
             val additionalFiles = mutableListOf<String>()
-            if (modules.size > 1 || MODULE_KIND_PATTERN.matcher(expectedText).find()) {
+            if ((modules.size > 1 || MODULE_KIND_PATTERN.matcher(expectedText).find()) &&
+                !NO_MODULE_SYSTEM_PATTERN.matcher(expectedText).find()
+            ) {
                 additionalFiles += MODULE_EMULATION_FILE
             }
+
             val additionalJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + JavaScript.DOT_EXTENSION
             if (File(additionalJsFile).exists()) {
                 additionalFiles += additionalJsFile
@@ -327,6 +330,7 @@ abstract class BasicBoxTest(
         val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 
         private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
+        private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
     }
