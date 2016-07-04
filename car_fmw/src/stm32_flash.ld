@@ -3,8 +3,8 @@
 **
 **  File        : stm32_flash.ld
 **
-**  Abstract    : Linker script for STM32F207IG Device with
-**                1024KByte FLASH, 112KByte RAM
+**  Abstract    : Linker script for STM32F407VG Device with
+**                1024KByte FLASH, 192KByte RAM
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
@@ -32,8 +32,15 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-/* Highest address of the user mode stack */
-_estack = 0x2001c000;    /* end of 112K RAM */
+/*
+ * _estack is the highest address of user mode stack
+ * (sp initial value, stack grows down).
+ * We have 192K RAM on our MCU and _estack should be 0x20030000.
+ * But our MCU maps only 128K SRAM at 0x20000000 after boot.
+ * We need to perform some memory remapping to use more.
+ * This isn't implemented yet.
+ */
+_estack = 0x20020000; /* end of 128K SRAM region */
 
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0;      /* required amount of heap  */
@@ -43,7 +50,7 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 MEMORY
 {
   FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1024K
-  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 256K
+  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 128K
   MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
 }
 

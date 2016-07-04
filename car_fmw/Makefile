@@ -69,4 +69,4 @@ clean:
 
 include $(LIB_DIR)/**/Makefile
 
-.PHONY: clean
+.PHONY: clean debug flash
