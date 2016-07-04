@@ -61,10 +61,12 @@ class LazyTopDownAnalyzer(
 
         // fill in the context
         for (declaration in declarations) {
-            declaration.accept(object : KtVisitorVoid() {
+            // The 'visitor' variable is used inside
+            var visitor: KtVisitorVoid? = null
+            visitor = ExceptionWrappingKtVisitorVoid(object : KtVisitorVoid() {
                 private fun registerDeclarations(declarations: List<KtDeclaration>) {
                     for (jetDeclaration in declarations) {
-                        jetDeclaration.accept(this)
+                        jetDeclaration.accept(visitor!!)
                     }
                 }
 
@@ -177,6 +179,8 @@ class LazyTopDownAnalyzer(
                     typeAliases.add(typeAlias)
                 }
             })
+
+            declaration.accept(visitor)
         }
 
         createFunctionDescriptors(c, functions)

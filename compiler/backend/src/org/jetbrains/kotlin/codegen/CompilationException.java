@@ -16,59 +16,21 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.util.ExceptionUtilKt;
 
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
     public CompilationException(@NotNull String message, @Nullable Throwable cause, @Nullable PsiElement element) {
-        super(getMessage(message, cause, element), cause);
+        super(ExceptionUtilKt.getExceptionMessage("Back-end (JVM)", message, cause, element), cause);
         this.element = element;
     }
 
     @Nullable
     public PsiElement getElement() {
         return element;
-    }
-
-
-    private static String where(@NotNull Throwable cause) {
-        StackTraceElement[] stackTrace = cause.getStackTrace();
-        if (stackTrace != null && stackTrace.length > 0) {
-            return stackTrace[0].getFileName() + ":" + stackTrace[0].getLineNumber();
-        }
-        return "unknown";
-    }
-
-    public static String getMessage(@NotNull final String message, @Nullable final Throwable cause, @Nullable final PsiElement element) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-            @Override
-            public String compute() {
-                StringBuilder result =
-                        new StringBuilder("Back-end (JVM) Internal error: ").append(message).append("\n");
-                if (cause != null) {
-                    String causeMessage = cause.getMessage();
-                    result.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
-                }
-                if (element != null) {
-                    result.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
-                    result.append("PsiElement: ").append(element.getText()).append("\n");
-                }
-                else {
-                    result.append("Element is unknown");
-                }
-
-                if (cause != null) {
-                    result.append("The root cause was thrown at: ").append(where(cause));
-                }
-
-                return result.toString();
-            }
-        });
     }
 }

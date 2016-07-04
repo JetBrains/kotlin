@@ -16,4 +16,12 @@
 
 package org.jetbrains.kotlin.util
 
-class KotlinFrontEndException(message: String, cause: Throwable) : RuntimeException(message, cause)
+import com.intellij.psi.PsiElement
+
+class KotlinFrontEndException(message: String, cause: Throwable) : RuntimeException(message, cause) {
+    constructor(
+            message: String,
+            cause: Throwable,
+            element: PsiElement
+    ) : this(getExceptionMessage("Front-end", message, cause, element), cause)
+}
