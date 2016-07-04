@@ -120,7 +120,6 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
         genBackingFieldAndAnnotations(declaration, descriptor, false);
 
         if (isAccessorNeeded(declaration, descriptor, getter)) {
@@ -131,8 +130,10 @@ public class PropertyCodegen {
         }
     }
 
-    private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
-        boolean hasBackingField = hasBackingField(declaration, descriptor);
+    private void genBackingFieldAndAnnotations(
+            @Nullable KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter
+    ) {
+        boolean hasBackingField = hasBackingField(descriptor);
         boolean hasDelegate = declaration instanceof KtProperty && ((KtProperty) declaration).hasDelegate();
 
         AnnotationSplitter annotationSplitter =
@@ -150,6 +151,7 @@ public class PropertyCodegen {
         if (isBackingFieldOwner) {
             Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
             Annotations delegateAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD);
+            assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
             generateBackingField(declaration, descriptor, fieldAnnotations, delegateAnnotations);
             generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
         }
@@ -239,7 +241,7 @@ public class PropertyCodegen {
         mv.visitEnd();
     }
 
-    private boolean hasBackingField(@NotNull KtNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
+    private boolean hasBackingField(@NotNull PropertyDescriptor descriptor) {
         return !isJvmInterface(descriptor.getContainingDeclaration()) &&
                kind != OwnerKind.DEFAULT_IMPLS &&
                !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
