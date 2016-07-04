@@ -67,6 +67,9 @@ debug:
 clean:
 	rm -rf bin/*
 
+tags:
+	ctags -R *
+
 include $(LIB_DIR)/**/Makefile
 
 .PHONY: clean debug flash
