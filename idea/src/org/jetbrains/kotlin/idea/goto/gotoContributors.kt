@@ -25,10 +25,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
-import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
@@ -42,16 +39,20 @@ class KotlinGotoClassContributor : GotoClassContributor {
     override fun getQualifiedNameSeparator() = "."
 
     override fun getNames(project: Project, includeNonProjectItems: Boolean): Array<String> {
-        return KotlinClassShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
+        val classes = KotlinClassShortNameIndex.getInstance().getAllKeys(project)
+        val typeAliases = KotlinTypeAliasShortNameIndex.getInstance().getAllKeys(project)
+        return (classes + typeAliases).toTypedArray()
     }
 
     override fun getItemsByName(name: String, pattern: String, project: Project, includeNonProjectItems: Boolean): Array<NavigationItem> {
-        val scope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
-        val classesOrObjects = KotlinClassShortNameIndex.getInstance().get(name, project, KotlinSourceFilterScope.projectSourceAndClassFiles(scope, project))
+        val globalScope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
+        val scope = KotlinSourceFilterScope.projectSourceAndClassFiles(globalScope, project)
+        val classesOrObjects = KotlinClassShortNameIndex.getInstance().get(name, project, scope)
+        val typeAliases = KotlinTypeAliasShortNameIndex.getInstance().get(name, project, scope)
 
-        if (classesOrObjects.isEmpty()) return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY
+        if (classesOrObjects.isEmpty() && typeAliases.isEmpty()) return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY
 
-        return classesOrObjects.filter { it != null && it !is KtEnumEntry }.toTypedArray()
+        return (classesOrObjects + typeAliases).filter { it != null && it !is KtEnumEntry }.toTypedArray()
     }
 }
 
@@ -65,7 +66,8 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
         return listOf(
                 KotlinFunctionShortNameIndex.getInstance(),
                 KotlinPropertyShortNameIndex.getInstance(),
-                KotlinClassShortNameIndex.getInstance()
+                KotlinClassShortNameIndex.getInstance(),
+                KotlinTypeAliasShortNameIndex.getInstance()
         ).flatMap {
             StubIndex.getInstance().getAllKeys(it.key, project)
         }.toTypedArray()
@@ -79,6 +81,7 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
         result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
         result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
         result += KotlinClassShortNameIndex.getInstance().get(name, project, BuiltInClassesScope(noLibrarySourceScope))
+        result += KotlinTypeAliasShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
 
         return result.toTypedArray()
     }
