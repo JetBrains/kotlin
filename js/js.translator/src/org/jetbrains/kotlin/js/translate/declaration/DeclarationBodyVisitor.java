@@ -134,6 +134,11 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visitTypeAlias(@NotNull KtTypeAlias typeAlias, TranslationContext data) {
+        return null;
+    }
+
     private void addInitializerStatement(@NotNull JsStatement statement) {
         if (initializerStatements == null) {
             initializerStatements = new ArrayList<JsStatement>();

@@ -594,6 +594,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Override
+    public JsNode visitTypeAlias(@NotNull KtTypeAlias typeAlias, TranslationContext data) {
+        return JsEmpty.INSTANCE;
+    }
+
+    @Override
     public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
         context.getDefinitionPlace().getProperties().addAll(translateClassOrObject(klass, descriptor, context).getProperties());
