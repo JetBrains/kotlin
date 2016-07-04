@@ -62,7 +62,7 @@ public interface KParameter : KAnnotatedElement {
     }
 
     /**
-     * `true` if this parameter is optional and can be omitted when making a call via [KCallable.call], or `false` otherwise.
+     * `true` if this parameter is optional and can be omitted when making a call via [KCallable.callBy], or `false` otherwise.
      *
      * A parameter is optional in any of the two cases:
      * 1. The default value is provided at the declaration of this parameter.
