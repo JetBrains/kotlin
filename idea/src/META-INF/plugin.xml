@@ -593,6 +593,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex"/>

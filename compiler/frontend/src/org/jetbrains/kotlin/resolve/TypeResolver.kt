@@ -355,7 +355,7 @@ class TypeResolver(
                 type(resolveTypeForTypeParameter(c, annotations, descriptor, qualifierPart.expression, qualifierPart.typeArguments))
             }
             is ClassDescriptor -> resolveTypeForClass(c, annotations, descriptor, element, qualifierResolutionResult)
-            is TypeAliasDescriptor -> resolveTypeForTypeAlias(c, annotations, descriptor, element as KtUserType, qualifierResolutionResult)
+            is TypeAliasDescriptor -> resolveTypeForTypeAlias(c, annotations, descriptor, element, qualifierResolutionResult)
             else -> error("Unexpected classifier type: ${descriptor.javaClass}")
         }
     }
@@ -434,7 +434,7 @@ class TypeResolver(
             c: TypeResolutionContext,
             annotations: Annotations,
             descriptor: TypeAliasDescriptor,
-            type: KtUserType,
+            type: KtElement,
             qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult
     ): PossiblyBareType {
         val typeConstructor = descriptor.typeConstructor
@@ -487,7 +487,7 @@ class TypeResolver(
 
     private class TracingTypeAliasExpansionReportStrategy(
             val trace: BindingTrace,
-            val type: KtUserType?,
+            val type: KtElement?,
             val typeArgumentsOrTypeName: KtElement?,
             val typeAliasDescriptor: TypeAliasDescriptor,
             typeParameters: List<TypeParameterDescriptor>,
