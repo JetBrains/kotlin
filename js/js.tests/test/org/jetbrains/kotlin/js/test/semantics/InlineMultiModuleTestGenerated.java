@@ -59,6 +59,18 @@ public class InlineMultiModuleTestGenerated extends AbstractInlineMultiModuleTes
         doTest(fileName);
     }
 
+    @TestMetadata("externalInlineCallDecomposed")
+    public void testExternalInlineCallDecomposed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineCallDecomposed/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("externalInlineNewDecomposed")
+    public void testExternalInlineNewDecomposed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineNewDecomposed/");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambda")
     public void testLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambda/");
