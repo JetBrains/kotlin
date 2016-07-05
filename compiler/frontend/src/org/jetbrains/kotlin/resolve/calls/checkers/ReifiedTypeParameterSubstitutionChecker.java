@@ -20,7 +20,10 @@ import com.intellij.psi.PsiElement;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -30,13 +33,6 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import java.util.Map;
 
 public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
-    @Override
-    public void checkPropertyCall(
-            @NotNull PropertyAccessorDescriptor descriptor, @NotNull PsiElement reportOn, @NotNull CallCheckerContext context
-    ) {
-        CallChecker.DefaultImpls.checkPropertyCall(this, descriptor, reportOn, context);
-    }
-
     @Override
     public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull PsiElement reportOn, @NotNull CallCheckerContext context) {
         Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();

@@ -66,13 +66,6 @@ class InlineChecker implements CallChecker {
     }
 
     @Override
-    public void checkPropertyCall(
-            @NotNull PropertyAccessorDescriptor descriptor, @NotNull PsiElement reportOn, @NotNull CallCheckerContext context
-    ) {
-        CallChecker.DefaultImpls.checkPropertyCall(this, descriptor, reportOn, context);
-    }
-
-    @Override
     public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull PsiElement reportOn, @NotNull CallCheckerContext context) {
         KtExpression expression = resolvedCall.getCall().getCalleeExpression();
         if (expression == null) {

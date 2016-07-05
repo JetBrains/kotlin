@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
@@ -31,14 +29,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class ProtectedInSuperClassCompanionCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        check(resolvedCall.resultingDescriptor.original, reportOn, context)
-    }
+        val targetDescriptor = resolvedCall.resultingDescriptor.original
 
-    override fun checkPropertyCall(descriptor: PropertyAccessorDescriptor, reportOn: PsiElement, context: CallCheckerContext) {
-        check(descriptor, reportOn, context)
-    }
-
-    private fun check(targetDescriptor: CallableDescriptor, reportOn: PsiElement, context: CallCheckerContext) {
         // Protected non-JVM static
         if (targetDescriptor.visibility != Visibilities.PROTECTED) return
         if (targetDescriptor.hasJvmStaticAnnotation()) return
