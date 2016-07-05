@@ -63,3 +63,5 @@ abstract class AbstractNonLocalReturnsTest : KotlinJSMultiFileTest("inline.gener
 public abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
 
 public abstract class AbstractCastTest : SingleFileTranslationTest("expression/cast/")
+
+abstract class AbstractTypealiasTest : AbstractBlackBoxTest("typealias/")

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
@@ -201,6 +202,9 @@ public final class StaticContext {
         }
         if (descriptor instanceof PackageFragmentDescriptor) {
             return getQualifiedReference(((PackageFragmentDescriptor) descriptor).getFqName());
+        }
+        if (descriptor instanceof TypeAliasConstructorDescriptor) {
+            return getQualifiedReference(((TypeAliasConstructorDescriptor) descriptor).getUnderlyingConstructorDescriptor());
         }
 
         JsNameRef result = new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));

@@ -511,6 +511,7 @@ class DescriptorSerializer private constructor(
             when (declaration) {
                 is PropertyDescriptor -> builder.addProperty(propertyProto(declaration))
                 is FunctionDescriptor -> builder.addFunction(functionProto(declaration))
+                is TypeAliasDescriptor -> builder.addTypeAlias(typeAliasProto(declaration))
             }
         }
 
