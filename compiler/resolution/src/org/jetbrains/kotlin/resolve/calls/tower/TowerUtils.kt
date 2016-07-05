@@ -35,4 +35,7 @@ internal class CandidateWithBoundDispatchReceiverImpl<out D : CallableDescriptor
         override val dispatchReceiver: ReceiverValue?,
         override val descriptor: D,
         override val diagnostics: List<ResolutionDiagnostic>
-) : CandidateWithBoundDispatchReceiver<D>
+) : CandidateWithBoundDispatchReceiver<D> {
+    override fun copy(newDescriptor: @UnsafeVariance D) =
+            CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, newDescriptor, diagnostics)
+}
