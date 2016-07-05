@@ -1,4 +1,5 @@
 #include "car_leds.h"
+#include "car_engine.h"
 #include "delay.h"
 
 int main(void)
@@ -11,21 +12,31 @@ int main(void)
      */
 
     leds_init();
+    engine_init();
 
+    const int DELAY = 0x3FFFFF;
     while (1)
     {
         led_set(LED_GREEN, true);
-        Delay(0x3FFFFF);
+        Delay(DELAY);
+
+        engine_forward();
         led_set(LED_ORANGE, true);
-        Delay(0x3FFFFF);
+        Delay(DELAY);
+
+        engine_stop();
         led_set(LED_RED, true);
-        Delay(0x3FFFFF);
+        Delay(DELAY);
+
+        engine_backward();
         led_set(LED_BLUE, true);
-        Delay(0x7FFFFF);
+        Delay(DELAY);
+
+        engine_stop();
         led_set(LED_GREEN, false);
         led_set(LED_ORANGE, false);
         led_set(LED_RED, false);
         led_set(LED_BLUE, false);
-        Delay(0xFFFFFF);
+        Delay(DELAY);
     }
 }
