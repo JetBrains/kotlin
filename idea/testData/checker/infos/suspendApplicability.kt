@@ -1,8 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
-<error descr="[WRONG_MODIFIER_TARGET] Modifier 'suspend' is not applicable to 'top level function'"><info descr="null">suspend</info></error> fun notMember(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
+<error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that function must be either a class member or an extension"><info descr="null">suspend</info></error> fun notMember(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
 
 }
 
+<error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that controller class must be annotated with AllowSuspendExtensions annotation"><info descr="null">suspend</info></error> fun String.wrongExtension(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
+}
+
+<info descr="null">suspend</info> fun Controller.correctExtension(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
+}
+
+@AllowSuspendExtensions
 class Controller {
     <info descr="null">suspend</info> fun valid(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
 
@@ -20,7 +27,11 @@ class Controller {
 
     }
 
-    <info descr="null">suspend</info> fun starProjection(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<*>) {
+    <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that last parameter of suspend function should have a type of Continuation<T>"><info descr="null">suspend</info></error> fun starProjection(<info descr="null">vararg</info> <warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Any>) {
+
+    }
+
+    <info descr="null">suspend</info> fun String.memberExtension(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
 
     }
 }
