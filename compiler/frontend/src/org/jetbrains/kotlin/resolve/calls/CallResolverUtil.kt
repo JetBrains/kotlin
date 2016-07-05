@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.checkers.InfixCallChecker
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
@@ -124,7 +123,11 @@ fun isConventionCall(call: Call): Boolean {
     return calleeExpression.getNameForConventionalOperation() != null
 }
 
-fun isInfixCall(call: Call): Boolean = InfixCallChecker.isInfixCall(call.calleeExpression)
+fun isInfixCall(call: Call): Boolean {
+    val operationRefExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
+    val binaryExpression = operationRefExpression.parent as? KtBinaryExpression ?: return false
+    return binaryExpression.operationReference === operationRefExpression && !operationRefExpression.isPredefinedOperator()
+}
 
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false

@@ -610,7 +610,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_INFIX_MODIFIER = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtOperationReferenceExpression, FunctionDescriptor, String> INFIX_MODIFIER_REQUIRED = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> INFIX_MODIFIER_REQUIRED = DiagnosticFactory2.create(ERROR);
 
     // Labels
 
