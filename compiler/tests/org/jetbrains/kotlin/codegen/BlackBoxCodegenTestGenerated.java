@@ -10925,6 +10925,30 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/forNullableIntInCollectionIndices.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("kt12983_forInGenericArrayIndices.kt")
+            public void testKt12983_forInGenericArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInGenericArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt12983_forInGenericCollectionIndices.kt")
+            public void testKt12983_forInGenericCollectionIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInGenericCollectionIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt12983_forInSpecificArrayIndices.kt")
+            public void testKt12983_forInSpecificArrayIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInSpecificArrayIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt12983_forInSpecificCollectionIndices.kt")
+            public void testKt12983_forInSpecificCollectionIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInSpecificCollectionIndices.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/literal")
