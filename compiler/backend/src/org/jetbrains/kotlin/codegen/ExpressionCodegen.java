@@ -656,6 +656,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'Collection.indices' call";
             return new ForInCollectionIndicesRangeLoopGenerator(forExpression, extensionReceiver);
         }
+        else if (RangeCodegenUtil.isCharSequenceIndices(loopRangeCallee)) {
+            ReceiverValue extensionReceiver = loopRangeCall.getExtensionReceiver();
+            assert extensionReceiver != null : "Extension receiver should be non-null for optimizable 'CharSequence.indices' call";
+            return new ForInCharSequenceIndicesRangeLoopGenerator(forExpression, extensionReceiver);
+        }
 
         return null;
     }
@@ -1198,7 +1203,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             StackValue receiver = generateReceiverValue(receiverValue, false);
             Type receiverType = asmType(receiverValue.getType());
-            receiver.put(receiverType, v); // NB receiverType is a collection or an array
+            receiver.put(receiverType, v);
             getReceiverSizeAsInt();
             v.iconst(1);
             v.sub(Type.INT_TYPE);
@@ -1230,6 +1235,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         @Override
         protected void getReceiverSizeAsInt() {
             v.arraylength();
+        }
+    }
+
+    private class ForInCharSequenceIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
+        private ForInCharSequenceIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ReceiverValue receiverValue) {
+            super(forExpression, receiverValue);
+        }
+
+        @Override
+        protected void getReceiverSizeAsInt() {
+            v.invokeinterface("java/lang/CharSequence", "length", "()I");
         }
     }
 

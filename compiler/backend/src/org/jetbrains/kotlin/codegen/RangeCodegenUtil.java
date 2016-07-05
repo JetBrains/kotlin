@@ -165,6 +165,17 @@ public class RangeCodegenUtil {
         return true;
     }
 
+    public static boolean isCharSequenceIndices(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "indices", "kotlin.text")) return false;
+
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        if (extensionReceiver == null) return false;
+        KotlinType extensionReceiverType = extensionReceiver.getType();
+        if (!KotlinBuiltIns.isCharSequenceOrNullableCharSequence(extensionReceiverType)) return false;
+
+        return true;
+    }
+
     private static boolean isTopLevelInPackage(@NotNull CallableDescriptor descriptor, @NotNull String name, @NotNull String packageName) {
         if (!name.equals(descriptor.getName().asString())) return false;
 
