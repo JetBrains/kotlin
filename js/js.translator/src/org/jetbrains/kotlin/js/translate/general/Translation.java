@@ -274,13 +274,10 @@ public final class Translation {
 
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
-        List<String> importedModuleList = new ArrayList<String>();
-        JsName kotlinName = program.getScope().declareName(Namer.KOTLIN_NAME);
-        rootFunction.getParameters().add(new JsParameter((kotlinName)));
-        importedModuleList.add(Namer.KOTLIN_LOWER_NAME);
+        List<StaticContext.ImportedModule> importedModuleList = new ArrayList<StaticContext.ImportedModule>();
 
-        for (String importedModule : staticContext.getImportedModules().keySet()) {
-            rootFunction.getParameters().add(new JsParameter(staticContext.getImportedModules().get(importedModule)));
+        for (StaticContext.ImportedModule importedModule : staticContext.getImportedModules()) {
+            rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
             importedModuleList.add(importedModule);
         }
 

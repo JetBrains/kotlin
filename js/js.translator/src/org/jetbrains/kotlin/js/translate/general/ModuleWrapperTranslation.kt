@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.js.translate.general
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.StaticContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     @JvmStatic fun wrapIfNecessary(
-            moduleId: String, function: JsExpression, importedModules: List<String>,
+            moduleId: String, function: JsExpression, importedModules: List<StaticContext.ImportedModule>,
             program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
@@ -36,7 +37,7 @@ object ModuleWrapperTranslation {
 
     private fun wrapUmd(
             moduleId: String, function: JsExpression,
-            importedModules: List<String>, program: JsProgram
+            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
@@ -78,13 +79,13 @@ object ModuleWrapperTranslation {
 
     private fun wrapAmd(
             moduleId: String,function: JsExpression,
-            importedModules: List<String>, program: JsProgram
+            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
         val invocationArgs = listOf(
                 program.getStringLiteral(moduleId),
-                JsArrayLiteral(listOf(program.getStringLiteral("exports")) + importedModules.map { program.getStringLiteral(it) }),
+                JsArrayLiteral(listOf(program.getStringLiteral("exports")) + importedModules.map { program.getStringLiteral(it.externalName) }),
                 function
         )
 
@@ -92,19 +93,23 @@ object ModuleWrapperTranslation {
         return listOf(invocation.makeStmt())
     }
 
-    private fun wrapCommonJs(function: JsExpression, importedModules: List<String>, program: JsProgram): List<JsStatement> {
+    private fun wrapCommonJs(
+            function: JsExpression,
+            importedModules: List<StaticContext.ImportedModule>,
+            program: JsProgram
+    ): List<JsStatement> {
         val scope = program.scope
         val moduleName = scope.declareName("module")
         val requireName = scope.declareName("require")
 
-        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), program.getStringLiteral(it)) }
+        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), program.getStringLiteral(it.externalName)) }
         val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
         return listOf(invocation.makeStmt())
     }
 
     private fun wrapPlain(
             moduleId: String, function: JsExpression,
-            importedModules: List<String>, program: JsProgram
+            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val invocation = makePlainInvocation(moduleId, function, importedModules, program)
         val statements = mutableListOf<JsStatement>()
@@ -126,13 +131,13 @@ object ModuleWrapperTranslation {
     private fun addModuleValidation(
             currentModuleId: String,
             program: JsProgram,
-            moduleName: String
+            module: StaticContext.ImportedModule
     ): JsStatement {
-        val moduleRef = makePlainModuleRef(moduleName, program)
+        val moduleRef = makePlainModuleRef(module, program)
         val moduleExistsCond = JsAstUtils.typeOfIs(moduleRef, program.getStringLiteral("undefined"))
         val moduleNotFoundMessage = program.getStringLiteral(
-                "Error loading module '" + currentModuleId + "'. Its dependency '" + moduleName + "' was not found. " +
-                "Please, check whether '" + moduleName + "' is loaded prior to '" + currentModuleId + "'.")
+                "Error loading module '" + currentModuleId + "'. Its dependency '" + module.externalName + "' was not found. " +
+                "Please, check whether '" + module.externalName + "' is loaded prior to '" + currentModuleId + "'.")
         val moduleNotFoundThrow = JsThrow(JsNew(JsNameRef("Error"), listOf<JsExpression>(moduleNotFoundMessage)))
         return JsIf(moduleExistsCond, JsBlock(moduleNotFoundThrow))
     }
@@ -140,7 +145,7 @@ object ModuleWrapperTranslation {
     private fun makePlainInvocation(
             moduleId: String,
             function: JsExpression,
-            importedModules: List<String>,
+            importedModules: List<StaticContext.ImportedModule>,
             program: JsProgram
     ): JsInvocation {
         val invocationArgs = importedModules.map { makePlainModuleRef(it, program) }
@@ -149,6 +154,10 @@ object ModuleWrapperTranslation {
         val selfArg = JsConditional(testModuleDefined, JsObjectLiteral(false), moduleRef.deepCopy())
 
         return JsInvocation(function, listOf(selfArg) + invocationArgs)
+    }
+
+    private fun makePlainModuleRef(module: StaticContext.ImportedModule, program: JsProgram): JsExpression {
+        return module.plainReference ?: makePlainModuleRef(module.externalName, program)
     }
 
     private fun makePlainModuleRef(moduleId: String, program: JsProgram): JsExpression {

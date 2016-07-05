@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.inline.JsInliner;
+import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -96,7 +97,10 @@ public final class K2JSTranslator {
         expandIsCalls(program, context);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        List<String> importedModules = new ArrayList<String>(context.getImportedModules().keySet());
+        List<String> importedModules = new ArrayList<String>();
+        for (StaticContext.ImportedModule module : context.getImportedModules()) {
+            importedModules.add(module.getExternalName());
+        }
         return new TranslationResult.Success(config, files, program, diagnostics, importedModules, moduleDescriptor,
                                              bindingTrace.getBindingContext());
     }
