@@ -5322,15 +5322,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt12891.kt")
+            public void testKt12891() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/kt12891.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localVal.kt")
             public void testLocalVal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("localValNoExplicitType.kt")
+            public void testLocalValNoExplicitType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localValNoExplicitType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localVar.kt")
             public void testLocalVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localVarNoExplicitType.kt")
+            public void testLocalVarNoExplicitType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/localVarNoExplicitType.kt");
                 doTest(fileName);
             }
         }
