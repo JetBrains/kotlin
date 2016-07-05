@@ -1869,19 +1869,28 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue genCoroutineInstanceValueFromResolvedCall(ResolvedCall<?> resolvedCall) {
-        // Currently only handleResult/suspend members are supported
-        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
-        assert dispatchReceiver != null : "Dispatch receiver is null for handleResult/suspend to " + resolvedCall.getResultingDescriptor();
-        assert dispatchReceiver instanceof ExtensionReceiver
-                : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
-                  " should be a coroutine receiver parameter, but " + dispatchReceiver + " found";
+    public StackValue genCoroutineInstanceValueFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
+        ExtensionReceiver controllerReceiver = getControllerReceiverFromResolvedCall(resolvedCall);
         ClassDescriptor coroutineClassDescriptor =
-                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, ((ExtensionReceiver) dispatchReceiver).getDeclarationDescriptor());
+                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, controllerReceiver.getDeclarationDescriptor());
         assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
 
         // second argument for handleResult is always Continuation<T> ('this'-object in current implementation)
         return StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false);
+    }
+
+    private static ExtensionReceiver getControllerReceiverFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
+        ReceiverValue controllerReceiver =
+                resolvedCall.getDispatchReceiver() != null
+                ? resolvedCall.getDispatchReceiver()
+                : resolvedCall.getExtensionReceiver();
+
+        assert controllerReceiver != null : "Both dispatch and extension receivers are null for handleResult/suspend to " + resolvedCall.getResultingDescriptor();
+        assert controllerReceiver instanceof ExtensionReceiver
+                : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
+                  " should be a coroutine receiver parameter, but " + controllerReceiver + " found";
+
+        return (ExtensionReceiver) controllerReceiver;
     }
 
     @NotNull

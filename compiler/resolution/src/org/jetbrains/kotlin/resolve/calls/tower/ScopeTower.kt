@@ -69,6 +69,8 @@ interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
     val diagnostics: List<ResolutionDiagnostic>
 
     val dispatchReceiver: ReceiverValue?
+
+    fun copy(newDescriptor: @UnsafeVariance D): CandidateWithBoundDispatchReceiver<D>
 }
 
 data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
