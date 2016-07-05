@@ -336,7 +336,7 @@ message TypeAlias {
     hasAnnotations
     Visibility
   */
-  optional int32 flags = 1 [default = 0];
+  optional int32 flags = 1 [default = 6 /* public, no annotations */];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
