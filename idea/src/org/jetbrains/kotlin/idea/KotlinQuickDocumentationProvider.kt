@@ -32,9 +32,8 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -92,6 +91,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
+            else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {
+                return renderKotlinImplicitLambdaParameter(element, quickNavigation)
+            }
             else if (element is KtLightDeclaration<*, *>) {
                 val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
@@ -114,15 +116,25 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return null
         }
 
-        private fun renderKotlinDeclaration(declaration: KtDeclaration, quickNavigation: Boolean): String {
+        private fun renderKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean): String {
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
-            var declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
                 LOG.info("Failed to find descriptor for declaration " + declaration.getElementTextWithContext())
                 return "No documentation available"
             }
 
+            return renderKotlin(context, declarationDescriptor, quickNavigation)
+        }
+
+        private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
+            return renderKotlin(context, target, quickNavigation)
+        }
+
+        private fun renderKotlin(context: BindingContext, declarationDescriptor: DeclarationDescriptor, quickNavigation: Boolean): String {
             if (declarationDescriptor is ValueParameterDescriptor) {
                 val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor]
                 if (property != null) {
@@ -132,7 +144,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
             var renderedDecl = DESCRIPTOR_RENDERER.render(declarationDescriptor)
             if (!quickNavigation) {
-                renderedDecl = "<pre>" + renderedDecl + "</pre>"
+                renderedDecl = "<pre>$renderedDecl</pre>"
             }
             val comment = declarationDescriptor.findKDoc()
             if (comment != null) {
