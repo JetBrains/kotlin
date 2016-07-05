@@ -62,7 +62,7 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
                 append(constValue.toLong())
             }
             else {
-                append(element.text.takeWhile { it != 'l' && it != 'L' })
+                append(element.text.trimEnd('l', 'L'))
             }
 
             if (KotlinBuiltIns.isLong(type)) {
