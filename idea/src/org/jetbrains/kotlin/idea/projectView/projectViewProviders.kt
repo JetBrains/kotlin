@@ -91,6 +91,7 @@ class KotlinSelectInProjectViewProvider(private val project: Project) : Selectab
 
     // should be called before ClassesTreeStructureProvider
     override fun getTopLevelElement(element: PsiElement): PsiElement? {
+        if (!element.isValid) return null
         val file = element.containingFile as? KtFile ?: return null
 
         val virtualFile = file.virtualFile
