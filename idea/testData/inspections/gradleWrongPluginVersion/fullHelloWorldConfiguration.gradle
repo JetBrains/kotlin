@@ -1,0 +1,30 @@
+group 'OnlyGradleTest'
+version '1.0-SNAPSHOT'
+
+buildscript {
+  ext.kotlin_version = '0.0.1'
+
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.5
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compile 'org.codehaus.groovy:groovy-all:2.3.+'
+  testCompile group: 'junit', name: 'junit', version: '4.11'
+}

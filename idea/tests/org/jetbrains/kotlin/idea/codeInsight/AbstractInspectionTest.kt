@@ -29,8 +29,10 @@ import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -63,6 +65,11 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
         val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
 
+        val tool = toolWrapper.tool
+        if (tool is DifferentKotlinGradleVersionInspection) {
+            tool.testVersionMessage = "\$PLUGIN_VERSION"
+        }
+
         val fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(options, "// FIXTURE_CLASS: ")
 
         val inspectionsTestDir = optionsFile.parentFile!!
@@ -72,23 +79,27 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
 
             val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" } ?: emptyArray()
-            val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull {
-                file ->
-                if (file.isDirectory) {
-                    null
-                }
-                else if (file.extension != "kt") {
-                    val filePath = file.relativeTo(srcDir).invariantSeparatorsPath
-                    configureByFile(filePath)
-                }
-                else {
-                    val text = FileUtil.loadFile(file, true)
-                    val fileText =
-                            if (text.startsWith("package"))
-                                text
-                            else
-                                "package ${file.nameWithoutExtension};$text"
-                    configureByText(file.name, fileText)!!
+            val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull { file ->
+                when {
+                    file.isDirectory -> null
+                    file.extension == "kt" -> {
+                        val text = FileUtil.loadFile(file, true)
+                        val fileText =
+                                if (text.startsWith("package"))
+                                    text
+                                else
+                                    "package ${file.nameWithoutExtension};$text"
+                        configureByText(file.name, fileText)!!
+                    }
+                    file.extension == "gradle" -> {
+                        val text = FileUtil.loadFile(file, true)
+                        val fileText = text.replace("\$PLUGIN_VERSION", bundledRuntimeVersion())
+                        configureByText(file.name, fileText)!!
+                    }
+                    else -> {
+                        val filePath = file.relativeTo(srcDir).invariantSeparatorsPath
+                        configureByFile(filePath)
+                    }
                 }
             }.toList()
 
