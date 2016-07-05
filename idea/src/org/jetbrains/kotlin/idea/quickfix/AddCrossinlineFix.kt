@@ -21,18 +21,22 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class AddCrossInlineFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
-    override fun getText() = "Add 'crossinline' to parameter '${element.getReferencedName()}'"
-    override fun getFamilyName() = "Add 'crossinline' to parameter"
+class AddInlineModifierFix(
+        element: KtNameReferenceExpression,
+        private val modifier: KtModifierKeywordToken
+) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
+    override fun getText() = "Add '${modifier.value}' to parameter '${element.getReferencedName()}'"
+    override fun getFamilyName() = "Add '${modifier.value}' to parameter"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val parameter = element.findParameterWithName(element.getReferencedName()) ?: return
-        if (!parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)) {
-            parameter.addModifier(KtTokens.CROSSINLINE_KEYWORD)
+        if (!parameter.hasModifier(modifier)) {
+            parameter.addModifier(modifier)
         }
     }
 
@@ -41,11 +45,19 @@ class AddCrossInlineFix(element: KtNameReferenceExpression) : KotlinQuickFixActi
         return function.valueParameters.firstOrNull { it.name == name } ?: function.findParameterWithName(name)
     }
 
-    companion object Factory : KotlinIntentionActionsFactory() {
+    object CrossInlineFactory : KotlinIntentionActionsFactory() {
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val casted = Errors.NON_LOCAL_RETURN_NOT_ALLOWED.cast(diagnostic)
             val reference = casted.a as? KtNameReferenceExpression ?: return emptyList()
-            return listOf(AddCrossInlineFix(reference))
+            return listOf(AddInlineModifierFix(reference, KtTokens.CROSSINLINE_KEYWORD))
+        }
+    }
+
+    object NoInlineFactory : KotlinIntentionActionsFactory() {
+        override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+            val casted = Errors.USAGE_IS_NOT_INLINABLE.cast(diagnostic)
+            val reference = casted.a as? KtNameReferenceExpression ?: return emptyList()
+            return listOf(AddInlineModifierFix(reference, KtTokens.NOINLINE_KEYWORD))
         }
     }
 }
