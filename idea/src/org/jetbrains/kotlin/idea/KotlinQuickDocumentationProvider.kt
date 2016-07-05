@@ -131,13 +131,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            context.get(BindingContext.AUTO_CREATED_IT, target)
             return renderKotlin(context, target, quickNavigation)
         }
 
         private fun renderKotlin(context: BindingContext, declarationDescriptor: DeclarationDescriptor, quickNavigation: Boolean): String {
-            @Suppress("NAME_SHADOWING")
-            var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
                 val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor]
                 if (property != null) {
