@@ -72,21 +72,34 @@ fun FakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(
                     // should be Continuation<Nothing>
                     functionDescriptor.builtIns.nothingType)
 
+    fun tryToResolveCall(firstArgument: KtExpression): Boolean {
+        val resolutionResults = resolveFakeCall(
+                context.replaceBindingTrace(temporaryBindingTrace), functionDescriptor.extensionReceiverParameter!!.value,
+                OperatorNameConventions.COROUTINE_HANDLE_RESULT, callElement, callElement, FakeCallKind.OTHER,
+                listOf(firstArgument, continuation))
+
+        if (resolutionResults.isSuccess && resolutionResults.resultingDescriptor.isOperator) {
+            context.trace.record(BindingContext.RETURN_HANDLE_RESULT_RESOLVED_CALL, callElement, resolutionResults.resultingCall)
+            return true
+        }
+
+        return false
+    }
+
+    val unitExpression = ExpressionTypingUtils.createFakeExpressionOfType(
+            callElement.project, temporaryBindingTrace, "unit", functionDescriptor.builtIns.unitType)
     val firstArgument =
             if (expressionToReturn == null || info != null && info.type != null && KotlinBuiltIns.isUnit(info.type))
-                ExpressionTypingUtils.createFakeExpressionOfType(
-                        callElement.project, temporaryBindingTrace, "unit", functionDescriptor.builtIns.unitType)
-            else expressionToReturn
+                unitExpression
+            else
+                expressionToReturn
 
-    val resolutionResults = resolveFakeCall(
-            context.replaceBindingTrace(temporaryBindingTrace), functionDescriptor.extensionReceiverParameter!!.value,
-            OperatorNameConventions.COROUTINE_HANDLE_RESULT, callElement, callElement, FakeCallKind.OTHER,
-            listOf(firstArgument, continuation))
-
-    if (resolutionResults.isSuccess && resolutionResults.resultingDescriptor.isOperator) {
-        context.trace.record(BindingContext.RETURN_HANDLE_RESULT_RESOLVED_CALL, callElement, resolutionResults.resultingCall)
+    if (!tryToResolveCall(firstArgument) && firstArgument === expressionToReturn) {
+        tryToResolveCall(unitExpression)
     }
 }
+
+
 
 fun KotlinType.isValidContinuation() =
         (constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.toUnsafe()

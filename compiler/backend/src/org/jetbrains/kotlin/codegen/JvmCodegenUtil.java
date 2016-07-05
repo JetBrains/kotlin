@@ -101,7 +101,10 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {
-        return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
+        return closure.getCaptureThis() == null &&
+                    closure.getCaptureReceiverType() == null &&
+                    closure.getCaptureVariables().isEmpty() &&
+                    !closure.isCoroutine();
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {

@@ -4153,9 +4153,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("controllerAccessFromInnerLambda.kt")
+        public void testControllerAccessFromInnerLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controllerAccessFromInnerLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultParametersInSuspend.kt")
         public void testDefaultParametersInSuspend() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyClosure.kt")
+        public void testEmptyClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/emptyClosure.kt");
             doTest(fileName);
         }
 
@@ -4174,6 +4186,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("handleResultCallEmptyBody.kt")
         public void testHandleResultCallEmptyBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/handleResultCallEmptyBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("handleResultNonUnitExpression.kt")
+        public void testHandleResultNonUnitExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/handleResultNonUnitExpression.kt");
             doTest(fileName);
         }
 
@@ -4198,6 +4216,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("innerSuspensionCalls.kt")
         public void testInnerSuspensionCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/innerSuspensionCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt12958.kt")
+        public void testKt12958() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/kt12958.kt");
             doTest(fileName);
         }
 
