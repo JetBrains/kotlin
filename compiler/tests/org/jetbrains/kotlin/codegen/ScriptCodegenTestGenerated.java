@@ -71,6 +71,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("localDelegatedPropertyNoExplicitType.kts")
+    public void testLocalDelegatedPropertyNoExplicitType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localDelegatedPropertyNoExplicitType.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("localFunction.kts")
     public void testLocalFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localFunction.kts");
