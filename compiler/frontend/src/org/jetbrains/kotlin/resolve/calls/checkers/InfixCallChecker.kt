@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -31,20 +30,10 @@ class InfixCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
         if (functionDescriptor.isInfix || functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
-        val element = ((resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall ?: resolvedCall).call.calleeExpression
-        if (isInfixCall(element)) {
+        val call = ((resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall ?: resolvedCall).call
+        if (isInfixCall(call)) {
             val containingDeclarationName = functionDescriptor.containingDeclaration.fqNameUnsafe.asString()
-            context.trace.report(Errors.INFIX_MODIFIER_REQUIRED.on(
-                    reportOn as? KtOperationReferenceExpression ?: return, functionDescriptor, containingDeclarationName
-            ))
-        }
-    }
-
-    companion object {
-        fun isInfixCall(element: PsiElement?): Boolean {
-            val operationRefExpression = element as? KtOperationReferenceExpression ?: return false
-            val binaryExpression = operationRefExpression.parent as? KtBinaryExpression ?: return false
-            return binaryExpression.operationReference === operationRefExpression && !operationRefExpression.isPredefinedOperator()
+            context.trace.report(Errors.INFIX_MODIFIER_REQUIRED.on(reportOn, functionDescriptor, containingDeclarationName))
         }
     }
 }
