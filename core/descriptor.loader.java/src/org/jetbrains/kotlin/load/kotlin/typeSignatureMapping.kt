@@ -47,6 +47,8 @@ interface TypeMappingConfiguration<out T : Any> {
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
 }
 
+const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
+
 fun <T : Any> mapType(
         kotlinType: KotlinType,
         factory: JvmTypeFactory<T>,
@@ -81,7 +83,7 @@ fun <T : Any> mapType(
 
     when {
         ErrorUtils.isError(descriptor) -> {
-            val jvmType = factory.createObjectType("error/NonExistentClass")
+            val jvmType = factory.createObjectType(NON_EXISTENT_CLASS_NAME)
             typeMappingConfiguration.processErrorType(kotlinType, descriptor as ClassDescriptor)
             descriptorTypeWriter?.writeClass(jvmType)
             return jvmType

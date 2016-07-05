@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
+import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
@@ -164,7 +165,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     @Override
     public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
         if (classBuilderMode == ClassBuilderMode.KAPT) {
-            builder.setClassName(stringTable.getStringIndex("error.NonExistingClass"));
+            builder.setClassName(stringTable.getStringIndex(TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME));
             return;
         }
 
