@@ -31,3 +31,11 @@ interface Continuation<in P> {
      */
     fun resumeWithException(exception: Throwable)
 }
+
+
+/**
+ * Specifies that suspend extensions with a receiver based on corresponding controller class are allowed to be declared
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+annotation class AllowSuspendExtensions
