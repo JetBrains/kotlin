@@ -83,7 +83,12 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         }
 
         if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
-            actions.add(NumberConversionFix(diagnosticElement, expectedType))
+            var wrongPrimitiveLiteralFix: WrongPrimitiveLiteralFix? = null
+            if (diagnosticElement is KtConstantExpression && !KotlinBuiltIns.isChar(expectedType)) {
+                wrongPrimitiveLiteralFix = WrongPrimitiveLiteralFix(diagnosticElement, expectedType)
+                actions.add(wrongPrimitiveLiteralFix)
+            }
+            actions.add(NumberConversionFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
         }
 
         if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType)
