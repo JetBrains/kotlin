@@ -75,4 +75,4 @@ tags:
 
 include $(LIB_DIR)/**/Makefile
 
-.PHONY: clean debug flash
+.PHONY: clean debug flash tags
