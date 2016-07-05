@@ -90,6 +90,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ###### New features
 
 - Show versions in inspection about different version of Kotlin plugin in Maven and IDE plugin
+- [`KT-12730`](https://youtrack.jetbrains.com/issue/KT-12730) Warn about using different versions of Kotlin Gradle plugin and bundled compiler.
 
 ###### Issues fixed
 
