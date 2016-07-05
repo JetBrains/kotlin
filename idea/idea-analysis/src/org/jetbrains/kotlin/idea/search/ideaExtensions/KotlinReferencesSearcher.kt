@@ -146,7 +146,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
     companion object {
         fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
-            val className = element.name
+            val className = runReadAction { element.name }
             if (className != null) {
                 val lightClass = runReadAction { element.toLightClass() }
                 if (lightClass != null) {
