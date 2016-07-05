@@ -27,7 +27,8 @@ val REPLACED_SUSPENSION_POINT_KEY: FunctionDescriptor.UserDataKey<Boolean> = obj
 
 // Returns suspension function as it's visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
-fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunctionDescriptor? {
+fun <D : CallableDescriptor> D.createCoroutineSuspensionFunctionView(): D? {
+    if (this !is SimpleFunctionDescriptor) return null
     if (!isSuspend) return null
     val returnType = getSuspensionPointReturnType() ?: return null
 
@@ -36,6 +37,7 @@ fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunc
                 original.createCoroutineSuspensionFunctionView()
             else null
 
+    @Suppress("UNCHECKED_CAST")
     return newCopyBuilder().apply {
         setReturnType(returnType)
         setOriginal(newOriginal)
@@ -43,7 +45,7 @@ fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunc
         setSignatureChange()
         setPreserveSourceElement()
         putUserData(SUSPENSION_POINT_KEY, true)
-    }.build()!!
+    }.build()!! as D
 }
 
 fun SimpleFunctionDescriptor.getSuspensionPointReturnType(): KotlinType? = valueParameters.lastOrNull()?.returnType?.arguments?.getOrNull(0)?.type
