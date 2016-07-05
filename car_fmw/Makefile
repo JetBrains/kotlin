@@ -40,21 +40,24 @@ dircs=$(wildcard $(1)/*.c)
 dircs_to_prefxd_objs=\
 	$(patsubst $(1)/%.c,$(BIN_DIR)/$(2)%.o,$(call dircs,$1))
 
-$(CAR_FMW_BIN): $(CAR_FMW_ELF)
+$(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 	$(OBJ_COPY) -O binary $< $@
 
 $(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
-	$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ)
+		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ)
 	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
 
-$(CAR_FMW_OBJ): $(BIN_DIR) $(call dircs_to_prefxd_objs,$(SRC_DIR))
+CAR_OBJ_PREFIX=car_
+$(CAR_FMW_OBJ): \
+		$(call dircs_to_prefxd_objs,$(SRC_DIR),$(CAR_OBJ_PREFIX))
 	$(LD_ALL_DEPS)
+
+$(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
+		$(call dirhs,$(SRC_DIR))
+	$(CC_ALL_DEPS)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
-
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC_ALL_DEPS)
 
 flash: $(CAR_FMW_BIN)
 	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000
