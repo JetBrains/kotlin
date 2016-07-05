@@ -135,6 +135,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun renderKotlin(context: BindingContext, declarationDescriptor: DeclarationDescriptor, quickNavigation: Boolean): String {
+            @Suppress("NAME_SHADOWING")
+            var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
                 val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor]
                 if (property != null) {
