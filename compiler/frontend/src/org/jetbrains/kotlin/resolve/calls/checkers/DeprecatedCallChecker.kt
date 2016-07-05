@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -38,11 +37,7 @@ object DeprecatedCallChecker : CallChecker {
         check(resolvedCall.resultingDescriptor, context.trace, reportOn)
     }
 
-    override fun checkPropertyCall(descriptor: PropertyAccessorDescriptor, reportOn: PsiElement, context: CallCheckerContext) {
-        check(descriptor, context.trace, reportOn)
-    }
-
-    internal fun check(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    private fun check(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecation = targetDescriptor.getDeprecation()
 
         // avoid duplicating diagnostic when deprecation for property effectively deprecates setter
