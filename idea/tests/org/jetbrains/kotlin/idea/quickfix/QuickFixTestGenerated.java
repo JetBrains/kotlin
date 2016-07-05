@@ -8391,9 +8391,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("convertLiteral.kt")
-            public void testConvertLiteral() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/numberConversion/convertLiteral.kt");
+            @TestMetadata("convertExpression.kt")
+            public void testConvertExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/numberConversion/convertExpression.kt");
                 doTest(fileName);
             }
         }
@@ -8550,6 +8550,87 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("typeMismatchInReturnStatement.kt")
             public void testTypeMismatchInReturnStatement() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInReturnStatement.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WrongPrimitive extends AbstractQuickFixTest {
+            public void testAllFilesPresentInWrongPrimitive() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrongPrimitive"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("doubleToIntDecimalPlaces.kt")
+            public void testDoubleToIntDecimalPlaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/doubleToIntDecimalPlaces.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("doubleToLongNotInRange.kt")
+            public void testDoubleToLongNotInRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/doubleToLongNotInRange.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("doubleToShortNotInRange.kt")
+            public void testDoubleToShortNotInRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/doubleToShortNotInRange.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatToDoubleWithDecimal.kt")
+            public void testFloatToDoubleWithDecimal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/floatToDoubleWithDecimal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatToInt.kt")
+            public void testFloatToInt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/floatToInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatToInt2.kt")
+            public void testFloatToInt2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/floatToInt2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatToLong.kt")
+            public void testFloatToLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/floatToLong.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hexToFloat.kt")
+            public void testHexToFloat() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/hexToFloat.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("intToFloat.kt")
+            public void testIntToFloat() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/intToFloat.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("longToDouble.kt")
+            public void testLongToDouble() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/longToDouble.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("longToInt.kt")
+            public void testLongToInt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/longToInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("longToIntBinary.kt")
+            public void testLongToIntBinary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive/longToIntBinary.kt");
                 doTest(fileName);
             }
         }

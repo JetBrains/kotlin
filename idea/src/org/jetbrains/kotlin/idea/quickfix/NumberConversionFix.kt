@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -31,7 +32,11 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
-class NumberConversionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
+class NumberConversionFix(
+        element: KtExpression,
+        type: KotlinType,
+        private val disableIfAvailable: IntentionAction? = null
+) : KotlinQuickFixAction<KtExpression>(element) {
     private val isConversionAvailable: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
         expressionType != null && expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
@@ -39,7 +44,9 @@ class NumberConversionFix(element: KtExpression, type: KotlinType) : KotlinQuick
     private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = isConversionAvailable && super.isAvailable(project, editor, file)
+            = disableIfAvailable?.isAvailable(project, editor, file) != true
+              && isConversionAvailable
+              && super.isAvailable(project, editor, file)
 
     override fun getFamilyName() = "Insert number conversion"
     override fun getText() = "Convert expression to '$typePresentation'"

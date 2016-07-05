@@ -1,0 +1,3 @@
+// "Change to '15F'" "true"
+
+val a : Float = 15F<caret>
