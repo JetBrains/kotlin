@@ -39,6 +39,7 @@ public final class MutableClosure implements CalculatedClosure {
     private Map<DeclarationDescriptor, Integer> parameterOffsetInConstructor;
     private List<Pair<String, Type>> recordedFields;
     private KotlinType captureReceiverType;
+    private boolean isCoroutine;
 
     MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
         this.enclosingClass = enclosingClass;
@@ -107,6 +108,15 @@ public final class MutableClosure implements CalculatedClosure {
     @Override
     public List<Pair<String, Type>> getRecordedFields() {
         return recordedFields != null ? recordedFields : Collections.<Pair<String, Type>>emptyList();
+    }
+
+    @Override
+    public boolean isCoroutine() {
+        return isCoroutine;
+    }
+
+    public void setCoroutine(boolean coroutine) {
+        this.isCoroutine = coroutine;
     }
 
     public void recordField(String name, Type type) {
