@@ -10,5 +10,12 @@ fun foo(): Int {
 
     val prop2: Int <!LOCAL_VARIABLE_WITH_DELEGATE!>by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>123<!><!>
 
-    return prop + prop2
+    val obj = object {
+        fun v(): Int {
+            val prop3: Int <!LOCAL_VARIABLE_WITH_DELEGATE!>by Delegate()<!>
+            return prop3
+        }
+    }
+
+    return prop + prop2 + obj.v()
 }
