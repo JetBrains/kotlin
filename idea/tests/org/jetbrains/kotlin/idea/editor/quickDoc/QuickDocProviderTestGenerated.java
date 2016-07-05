@@ -41,6 +41,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("AtImplicitLambdaParameter.kt")
+    public void testAtImplicitLambdaParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtImplicitLambdaParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AtTypeParameter.kt")
     public void testAtTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtTypeParameter.kt");
