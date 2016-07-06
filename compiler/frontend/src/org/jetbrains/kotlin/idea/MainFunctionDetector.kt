@@ -14,150 +14,133 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.util.NotNullFunction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.KtAnnotationEntry;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.types.Variance
 
-import java.util.Collection;
-import java.util.List;
+class MainFunctionDetector {
+    private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor
 
-public class MainFunctionDetector {
-    private final NotNullFunction<KtNamedFunction, FunctionDescriptor> getFunctionDescriptor;
-
-    /** Assumes that the function declaration is already resolved and the descriptor can be found in the {@code bindingContext}. */
-    public MainFunctionDetector(@NotNull final BindingContext bindingContext) {
-        this.getFunctionDescriptor = new NotNullFunction<KtNamedFunction, FunctionDescriptor>() {
-            @NotNull
-            @Override
-            public FunctionDescriptor fun(KtNamedFunction function) {
-                SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
-                if (functionDescriptor == null) {
-                    throw new IllegalStateException("No descriptor resolved for " + function + " " + function.getText());
-                }
-                return functionDescriptor;
-            }
-        };
+    /** Assumes that the function declaration is already resolved and the descriptor can be found in the `bindingContext`.  */
+    constructor(bindingContext: BindingContext) {
+        this.getFunctionDescriptor = { function ->
+            bindingContext.get(BindingContext.FUNCTION, function) ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
+        }
     }
 
-    public MainFunctionDetector(@NotNull NotNullFunction<KtNamedFunction, FunctionDescriptor> functionResolver) {
-        this.getFunctionDescriptor = functionResolver;
+    constructor(functionResolver: (KtNamedFunction) -> FunctionDescriptor) {
+        this.getFunctionDescriptor = functionResolver
     }
 
-    public boolean hasMain(@NotNull List<KtDeclaration> declarations) {
-        return findMainFunction(declarations) != null;
+    fun hasMain(declarations: List<KtDeclaration>): Boolean {
+        return findMainFunction(declarations) != null
     }
 
-    public boolean isMain(@NotNull KtNamedFunction function) {
-        if (function.isLocal()) {
-            return false;
+    fun isMain(function: KtNamedFunction): Boolean {
+        if (function.isLocal) {
+            return false
         }
 
-        if (function.getValueParameters().size() != 1 || !function.getTypeParameters().isEmpty()) {
-            return false;
+        if (function.valueParameters.size != 1 || !function.typeParameters.isEmpty()) {
+            return false
         }
 
         /* Psi only check for kotlin.jvm.jvmName annotation */
-        if (!"main".equals(function.getName()) && !hasAnnotationWithExactNumberOfArguments(function, 1)) {
-            return false;
+        if ("main" != function.name && !hasAnnotationWithExactNumberOfArguments(function, 1)) {
+            return false
         }
 
         /* Psi only check for kotlin.jvm.jvmStatic annotation */
-        if (!function.isTopLevel() && !hasAnnotationWithExactNumberOfArguments(function, 0)) {
-            return false;
+        if (!function.isTopLevel && !hasAnnotationWithExactNumberOfArguments(function, 0)) {
+            return false
         }
 
-        return isMain(getFunctionDescriptor.fun(function));
+        return isMain(getFunctionDescriptor(function))
     }
 
-    public static boolean isMain(@NotNull DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof FunctionDescriptor)) return false;
-
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-        if (!getJVMFunctionName(functionDescriptor).equals("main")) {
-            return false;
-        }
-
-        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        if (parameters.size() != 1 || !functionDescriptor.getTypeParameters().isEmpty()) return false;
-
-        ValueParameterDescriptor parameter = parameters.get(0);
-        KotlinType parameterType = parameter.getType();
-        if (!KotlinBuiltIns.isArray(parameterType)) return false;
-
-        List<TypeProjection> typeArguments = parameterType.getArguments();
-        if (typeArguments.size() != 1) return false;
-
-        KotlinType typeArgument = typeArguments.get(0).getType();
-        if (!KotlinBuiltIns.isString(typeArgument)) {
-            return false;
-        }
-        if (typeArguments.get(0).getProjectionKind() == Variance.IN_VARIANCE) {
-            return false;
-        }
-
-        if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return true;
-
-        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        return containingDeclaration instanceof ClassDescriptor
-               && ((ClassDescriptor) containingDeclaration).getKind().isSingleton()
-               && AnnotationUtilKt.hasJvmStaticAnnotation(functionDescriptor);
-    }
-
-    @Nullable
-    public KtNamedFunction getMainFunction(@NotNull Collection<KtFile> files) {
-        for (KtFile file : files) {
-            KtNamedFunction mainFunction = findMainFunction(file.getDeclarations());
+    fun getMainFunction(files: Collection<KtFile>): KtNamedFunction? {
+        for (file in files) {
+            val mainFunction = findMainFunction(file.declarations)
             if (mainFunction != null) {
-                return mainFunction;
+                return mainFunction
             }
         }
-        return null;
+        return null
     }
 
-    @Nullable
-    private KtNamedFunction findMainFunction(@NotNull List<KtDeclaration> declarations) {
-        for (KtDeclaration declaration : declarations) {
-            if (declaration instanceof KtNamedFunction) {
-                KtNamedFunction candidateFunction = (KtNamedFunction) declaration;
-                if (isMain(candidateFunction)) {
-                    return candidateFunction;
+    private fun findMainFunction(declarations: List<KtDeclaration>): KtNamedFunction? {
+        for (declaration in declarations) {
+            if (declaration is KtNamedFunction) {
+                if (isMain(declaration)) {
+                    return declaration
                 }
             }
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    private static String getJVMFunctionName(FunctionDescriptor functionDescriptor) {
-        String platformName = DescriptorUtils.getJvmName(functionDescriptor);
-        if (platformName != null) {
-            return platformName;
-        }
+    companion object {
 
-        return functionDescriptor.getName().asString();
-    }
+        fun isMain(descriptor: DeclarationDescriptor): Boolean {
+            if (descriptor !is FunctionDescriptor) return false
 
-    private static boolean hasAnnotationWithExactNumberOfArguments(@NotNull KtNamedFunction function, int number) {
-        for (KtAnnotationEntry entry : function.getAnnotationEntries()) {
-            if (entry.getValueArguments().size() == number) {
-                return true;
+            if (getJVMFunctionName(descriptor) != "main") {
+                return false
             }
+
+            val parameters = descriptor.valueParameters
+            if (parameters.size != 1 || !descriptor.typeParameters.isEmpty()) return false
+
+            val parameter = parameters[0]
+            val parameterType = parameter.type
+            if (!KotlinBuiltIns.isArray(parameterType)) return false
+
+            val typeArguments = parameterType.arguments
+            if (typeArguments.size != 1) return false
+
+            val typeArgument = typeArguments[0].type
+            if (!KotlinBuiltIns.isString(typeArgument)) {
+                return false
+            }
+            if (typeArguments[0].projectionKind === Variance.IN_VARIANCE) {
+                return false
+            }
+
+            if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
+
+            val containingDeclaration = descriptor.containingDeclaration
+            return containingDeclaration is ClassDescriptor
+                   && containingDeclaration.kind.isSingleton
+                   && descriptor.hasJvmStaticAnnotation()
         }
 
-        return false;
+        private fun getJVMFunctionName(functionDescriptor: FunctionDescriptor): String {
+            val platformName = DescriptorUtils.getJvmName(functionDescriptor)
+            if (platformName != null) {
+                return platformName
+            }
+
+            return functionDescriptor.name.asString()
+        }
+
+        private fun hasAnnotationWithExactNumberOfArguments(function: KtNamedFunction, number: Int): Boolean {
+            for (entry in function.annotationEntries) {
+                if (entry.valueArguments.size == number) {
+                    return true
+                }
+            }
+
+            return false
+        }
     }
 }
