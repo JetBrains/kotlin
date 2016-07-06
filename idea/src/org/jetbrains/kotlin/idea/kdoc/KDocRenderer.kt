@@ -193,6 +193,7 @@ object KDocRenderer {
                 MarkdownTokenTypes.RPAREN,
                 MarkdownTokenTypes.LBRACKET,
                 MarkdownTokenTypes.RBRACKET,
+                MarkdownTokenTypes.EXCLAMATION_MARK,
                 MarkdownTokenTypes.CODE_FENCE_CONTENT-> {
                     sb.append(nodeText)
                 }
