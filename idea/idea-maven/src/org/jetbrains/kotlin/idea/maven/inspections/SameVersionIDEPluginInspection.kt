@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.util.xml.DomFileElement
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder
 import com.intellij.util.xml.highlighting.DomElementsInspection
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.project.MavenProjectsManager
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 class SameVersionIDEPluginInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     private val idePluginVersion by lazy { bundledRuntimeVersion() }
+
+    var testVersionMessage: String? = null
+        @TestOnly set
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
@@ -50,6 +54,6 @@ class SameVersionIDEPluginInspection : DomElementsInspection<MavenDomProjectMode
     private fun createProblem(holder: DomElementAnnotationHolder, plugin: MavenDomPlugin) {
         holder.createProblem(plugin.version,
                              HighlightSeverity.WARNING,
-                             "You use different IDE and Maven plugins' versions so you code's behaviour may be different")
+                             "Kotlin version that is used for building with Maven (${plugin.version.stringValue}) differs from the one bundled into the IDE plugin (${testVersionMessage ?: idePluginVersion})")
     }
 }
