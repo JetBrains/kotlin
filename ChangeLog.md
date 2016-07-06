@@ -8,12 +8,12 @@
 ### Language features
 
 + **Coroutines (async/await, generators)** ([proposal](https://github.com/Kotlin/kotlin-coroutines))
-    
+
     Current limitations:
-    
+
     - for some cases type inference is not supported yet
     - limited IDE support
-    - allowed only one `handleResult` function: [design](https://github.com/Kotlin/kotlin-coroutines/blob/master/kotlin-coroutines-informal.md#result-handlers) 
+    - allowed only one `handleResult` function: [design](https://github.com/Kotlin/kotlin-coroutines/blob/master/kotlin-coroutines-informal.md#result-handlers)
     - handling `finally` blocks is not supported: [issue](https://github.com/Kotlin/kotlin-coroutines/issues/1)
 
 + **Bound callable references** ([proposal](https://github.com/Kotlin/KEEP/issues/5))
@@ -49,13 +49,13 @@ and related functionality, except the following parts:
 
 ###### Issues fixed
 - [`KT-4779`](https://youtrack.jetbrains.com/issue/KT-4779) Generate default methods for implementations in interfaces
-- [`KT-11780`](https://youtrack.jetbrains.com/issue/KT-11780) Fixed incorrect "No cast needed" warning 
+- [`KT-11780`](https://youtrack.jetbrains.com/issue/KT-11780) Fixed incorrect "No cast needed" warning
 - [`KT-12156`](https://youtrack.jetbrains.com/issue/KT-12156) Fixed incorrect error on `inline` modifier inside final class
 - [`KT-12358`](https://youtrack.jetbrains.com/issue/KT-12358) Report missing error "Abstract member not implemented" when a fake method of 'Any' is inherited from an interface
 - [`KT-6206`](https://youtrack.jetbrains.com/issue/KT-6206) Generate equals/hashCode/toString in data class always unless it'll cause a JVM signature clash error
-- [`KT-8990`](https://youtrack.jetbrains.com/issue/KT-8990) Fixed incorrect error "virtual member hidden" for a private method of an inner class 
-- [`KT-12429`](https://youtrack.jetbrains.com/issue/KT-12429) Fixed visibility checks for annotation usage on top-level declarations    
-- [`KT-5068`](https://youtrack.jetbrains.com/issue/KT-5068) Introduced a special diagnostic message for "type mismatch" errors such as `fun f(): Int = { 1 }`.    
+- [`KT-8990`](https://youtrack.jetbrains.com/issue/KT-8990) Fixed incorrect error "virtual member hidden" for a private method of an inner class
+- [`KT-12429`](https://youtrack.jetbrains.com/issue/KT-12429) Fixed visibility checks for annotation usage on top-level declarations
+- [`KT-5068`](https://youtrack.jetbrains.com/issue/KT-5068) Introduced a special diagnostic message for "type mismatch" errors such as `fun f(): Int = { 1 }`.
 
 ### Standard Library
 
@@ -71,7 +71,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 + **"Leaking this" inspection**
 
     This inspection reports dangerous operations inside constructors including:
-    
+
     - Accessing non-final property in constructor
     - Calling non-final function in constructor
     - Using 'this' as function argument in constructor of non-final class
@@ -86,6 +86,10 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ## 1.0.4
 
 ### IDE
+
+###### New features
+
+- Show versions in inspection about different version of Kotlin plugin in Maven and IDE plugin
 
 ###### Issues fixed
 

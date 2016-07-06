@@ -37,6 +37,7 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
+import org.jetbrains.kotlin.idea.maven.inspections.SameVersionIDEPluginInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
@@ -153,6 +154,11 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
     private fun runInspection(inspectionClass: Class<*>): List<Pair<SimplifiedProblemDescription, ProblemDescriptorBase>> {
         val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
+
+        val tool = toolWrapper.tool
+        if (tool is SameVersionIDEPluginInspection) {
+            tool.testVersionMessage = "\$PLUGIN_VERSION"
+        }
 
         val scope = AnalysisScope(myProject)
         val inspectionManager = (InspectionManager.getInstance(myProject) as InspectionManagerEx)
