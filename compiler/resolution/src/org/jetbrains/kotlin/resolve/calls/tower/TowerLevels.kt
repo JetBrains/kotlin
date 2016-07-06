@@ -120,11 +120,8 @@ internal class ReceiverScopeTowerLevel(
 
         if (dispatchReceiver is CoroutineReceiverValue) {
             result.addAll(result.mapNotNull {
-                val realDescriptor = it.descriptor
-                val suspensionFunctionView =
-                        (realDescriptor as? SimpleFunctionDescriptor)?.createCoroutineSuspensionFunctionView() ?: return@mapNotNull null
-                @Suppress("UNCHECKED_CAST")
-                createCandidateDescriptor(suspensionFunctionView as D, dispatchReceiver)
+                val suspensionFunctionView = it.descriptor.createCoroutineSuspensionFunctionView() ?: return@mapNotNull null
+                createCandidateDescriptor(suspensionFunctionView, dispatchReceiver)
             })
         }
 

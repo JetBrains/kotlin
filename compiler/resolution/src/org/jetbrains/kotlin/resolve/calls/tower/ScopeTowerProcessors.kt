@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
+import org.jetbrains.kotlin.resolve.coroutine.createCoroutineSuspensionFunctionView
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -102,9 +104,23 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
                     }
                 }
                 is TowerData.BothTowerLevelAndImplicitReceiver -> {
-                    data.level.collectCandidates(name, data.implicitReceiver).filter { it.requiresExtensionReceiver }.map {
-                        context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver)
+                    val result = mutableListOf<C>()
+
+                    data.level.collectCandidates(name, data.implicitReceiver).filter { it.requiresExtensionReceiver }.forEach {
+                        result.add(
+                            context.createCandidate(
+                                    it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
+
+                        if (data.implicitReceiver is CoroutineReceiverValue) {
+                            val newDescriptor = it.descriptor.createCoroutineSuspensionFunctionView() ?: return@forEach
+                            result.add(
+                                context.createCandidate(
+                                        it.copy(newDescriptor = newDescriptor),
+                                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
+                        }
                     }
+
+                    result
                 }
                 else -> emptyList()
             }
