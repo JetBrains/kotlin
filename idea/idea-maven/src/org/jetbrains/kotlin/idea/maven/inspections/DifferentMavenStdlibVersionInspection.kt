@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
-class SameVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
+class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
             return

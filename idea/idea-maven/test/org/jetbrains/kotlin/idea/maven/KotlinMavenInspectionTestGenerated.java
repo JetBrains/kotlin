@@ -83,6 +83,12 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
         doTest(fileName);
     }
 
+    @TestMetadata("sameVersionPluginLibrarySuppression.xml")
+    public void testSameVersionPluginLibrarySuppression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/sameVersionPluginLibrarySuppression.xml");
+        doTest(fileName);
+    }
+
     @TestMetadata("wrongJsExecution.xml")
     public void testWrongJsExecution() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/wrongJsExecution.xml");
