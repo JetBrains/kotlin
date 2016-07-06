@@ -53,13 +53,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     override fun getDocumentationElementForLink(psiManager: PsiManager, link: String, context: PsiElement?): PsiElement? {
-        if (context !is KtElement) {
-            return null
-        }
-
-        val bindingContext = context.analyze(BodyResolveMode.PARTIAL)
-        val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context] ?: return null
-        val descriptors = resolveKDocLink(bindingContext, context.getResolutionFacade(),
+        val navElement = context?.navigationElement as? KtElement ?: return null
+        val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
+        val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
+        val descriptors = resolveKDocLink(bindingContext, navElement.getResolutionFacade(),
                                           contextDescriptor, null, StringUtil.split(link, ","))
         val target = descriptors.firstOrNull() ?: return null
         return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, target)
