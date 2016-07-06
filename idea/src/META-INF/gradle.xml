@@ -4,5 +4,6 @@
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
       <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
+      <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
   </extensions>
 </idea-plugin>
