@@ -101,6 +101,9 @@ class MainFunctionDetector {
                 return false
             }
 
+            val returnType = descriptor.returnType
+            if (returnType == null ||  !KotlinBuiltIns.isUnit(returnType)) return false
+
             if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
 
             val containingDeclaration = descriptor.containingDeclaration
