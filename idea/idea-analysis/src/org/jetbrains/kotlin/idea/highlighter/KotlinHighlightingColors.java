@@ -64,7 +64,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey INSTANCE_PROPERTY = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
     public static final TextAttributesKey PACKAGE_PROPERTY = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY", DefaultLanguageHighlighterColors.STATIC_FIELD);
     public static final TextAttributesKey BACKING_FIELD_VARIABLE = createTextAttributesKey("KOTLIN_BACKING_FIELD_VARIABLE");
-    public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY");
+    public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY", DefaultLanguageHighlighterColors.STATIC_FIELD);
     public static final TextAttributesKey DYNAMIC_PROPERTY_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_PROPERTY_CALL");
 
     // functions
@@ -72,7 +72,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey FUNCTION_DECLARATION = createTextAttributesKey("KOTLIN_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("KOTLIN_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
     public static final TextAttributesKey PACKAGE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_PACKAGE_FUNCTION_CALL", DefaultLanguageHighlighterColors.STATIC_METHOD);
-    public static final TextAttributesKey EXTENSION_FUNCTION_CALL = createTextAttributesKey("KOTLIN_EXTENSION_FUNCTION_CALL");
+    public static final TextAttributesKey EXTENSION_FUNCTION_CALL = createTextAttributesKey("KOTLIN_EXTENSION_FUNCTION_CALL", DefaultLanguageHighlighterColors.STATIC_METHOD);
     public static final TextAttributesKey CONSTRUCTOR_CALL = createTextAttributesKey("KOTLIN_CONSTRUCTOR", DefaultLanguageHighlighterColors.FUNCTION_CALL);
     public static final TextAttributesKey DYNAMIC_FUNCTION_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_FUNCTION_CALL");
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION");
