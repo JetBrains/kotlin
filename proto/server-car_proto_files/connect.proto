@@ -1,0 +1,13 @@
+package carkot;
+
+option java_package = "carkot";
+option java_out_classname = "CarConnect";
+
+message request {
+    string ip = 1;
+    int32 port = 2;
+}
+
+message response {
+    string uid = 1;
+}

@@ -1,0 +1,10 @@
+package carkot;
+
+option java_package = "carkot";
+option java_out_classname = "Location";
+
+message location {
+    double x = 1;
+    double y = 2;
+    double angle = 3;
+}
