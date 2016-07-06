@@ -17,6 +17,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <!--suppress DifferentMavenStdlibVersion -->
             <version>${kotlin.version.2}</version>
         </dependency>
     </dependencies>
@@ -26,12 +27,11 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version.2}</version>
+                <!--suppress DifferentMavenStdlibVersion -->
+                <version>${kotlin.version.1}</version>
             </plugin>
         </plugins>
     </build>
 </project>
 
 <!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.DifferentMavenStdlibVersionInspection -->
-<!-- problem: on ${kotlin.version.1}, title Plugin version (1.0.1) is not the same as library version (1.0.1-2) -->
-<!-- problem: on ${kotlin.version.2}, title Plugin version (1.0.1) is not the same as library version (1.0.1-2) -->

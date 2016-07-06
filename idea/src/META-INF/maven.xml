@@ -36,7 +36,7 @@
                      hasStaticDescription="true"
                      level="WARNING" />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.SameVersionInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.DifferentMavenStdlibVersionInspection"
                      displayName="Library and maven plugin versions are different"
                      groupName="Kotlin"
                      enabledByDefault="true"
