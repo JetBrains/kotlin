@@ -26,6 +26,7 @@ import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
@@ -92,7 +93,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
             quickfix.applyFix(problem)
 
-            assertEquals(file.readText().trim(), document.text.trim())
+            assertEquals(FileUtil.loadFile(file, true).trim(), document.text.trim())
 
             ApplicationManager.getApplication().runWriteAction {
                 document.setText(originalText)
