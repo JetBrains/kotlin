@@ -463,13 +463,44 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
         return null
     }
 
+    data class QualifiedExpressionResolveResult(val classOrPackage: DeclarationDescriptor?,
+                                                val memberName: Name?) {
+        companion object {
+            val UNRESOLVED = QualifiedExpressionResolveResult(null, null)
+        }
+    }
+
+    fun resolveClassOrPackageInQualifiedExpression(expression: KtQualifiedExpression,
+                                                   scope: LexicalScope,
+                                                   context: BindingContext): QualifiedExpressionResolveResult {
+        val qualifiedExpressions = unrollToLeftMostQualifiedExpression(expression)
+        val path = mapToQualifierParts(qualifiedExpressions, 0)
+        val trace = DelegatingBindingTrace(context, "Temp trace for resolving qualified expression")
+
+        val (result, index) = resolveToPackageOrClassPrefix(
+                path = path,
+                moduleDescriptor = scope.ownerDescriptor.module,
+                trace = trace,
+                shouldBeVisibleFrom = scope.ownerDescriptor,
+                scopeForFirstPart = scope,
+                position = QualifierPosition.EXPRESSION
+        )
+
+        if (result == null) return QualifiedExpressionResolveResult.UNRESOLVED
+        return when(index) {
+            path.size -> QualifiedExpressionResolveResult(result, null)
+            path.size - 1 -> QualifiedExpressionResolveResult(result, path[index].name)
+            else -> QualifiedExpressionResolveResult.UNRESOLVED
+        }
+    }
+
     fun resolveQualifierInExpressionAndUnroll(
             expression: KtQualifiedExpression,
             context: ExpressionTypingContext,
             isValue: (KtSimpleNameExpression) -> Boolean
     ): List<CallExpressionElement> {
         val qualifiedExpressions = unrollToLeftMostQualifiedExpression(expression)
-        val maxPossibleQualifierPrefix = getMaxPossibleQualifierPrefix(qualifiedExpressions)
+        val maxPossibleQualifierPrefix = mapToQualifierParts(qualifiedExpressions, 1)
 
         val nextIndexAfterPrefix = resolveToPackageOrClassPrefix(
                 path = maxPossibleQualifierPrefix,
@@ -489,7 +520,8 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
                 .map { CallExpressionElement(it) }
     }
 
-    private fun getMaxPossibleQualifierPrefix(qualifiedExpressions: List<KtQualifiedExpression>) : List<QualifierPart> {
+    private fun mapToQualifierParts(qualifiedExpressions: List<KtQualifiedExpression>,
+                                    skipLast: Int): List<QualifierPart> {
         if (qualifiedExpressions.isEmpty()) return emptyList()
 
         val first = qualifiedExpressions.first()
@@ -508,7 +540,7 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
         val qualifierParts = arrayListOf<QualifierPart>()
         qualifierParts.add(QualifierPart(firstReceiver))
 
-        for (qualifiedExpression in qualifiedExpressions.dropLast(1)) {
+        for (qualifiedExpression in qualifiedExpressions.dropLast(skipLast)) {
             if (qualifiedExpression !is KtDotQualifiedExpression) break
             val selector = qualifiedExpression.selectorExpression
             if (selector !is KtSimpleNameExpression) break
