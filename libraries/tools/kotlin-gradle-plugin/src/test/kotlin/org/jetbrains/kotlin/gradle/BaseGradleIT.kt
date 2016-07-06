@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
-import com.google.common.io.Files
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
@@ -21,7 +20,7 @@ abstract class BaseGradleIT {
 
     @Before
     fun setUp() {
-        workingDir = Files.createTempDir()
+        workingDir = FileUtil.createTempDirectory("BaseGradleIT", null)
     }
 
     @After
@@ -237,7 +236,7 @@ abstract class BaseGradleIT {
             targetFile.mkdir()
             source.listFiles()?.forEach { copyRecursively(it, targetFile) }
         } else {
-            Files.copy(source, targetFile)
+            source.copyTo(targetFile)
         }
     }
 
