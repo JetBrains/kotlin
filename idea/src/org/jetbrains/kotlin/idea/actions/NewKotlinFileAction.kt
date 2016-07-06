@@ -134,6 +134,6 @@ class NewKotlinFileAction
             return null
         }
 
-        return element.containingFile
+        return element?.containingFile
     }
 }
