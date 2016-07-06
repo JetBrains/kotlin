@@ -32,4 +32,4 @@
 </project>
 
 <!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.SameVersionIDEPluginInspection -->
-<!-- problem: on ${kotlin.version}, title You use different IDE and Maven plugins' versions so you code's behaviour may be different -->
+<!-- problem: on ${kotlin.version}, title Kotlin version that is used for building with Maven (1.0.0) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION) -->
