@@ -24,10 +24,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
@@ -62,12 +61,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context] ?: return null
         val descriptors = resolveKDocLink(bindingContext, context.getResolutionFacade(),
                                           contextDescriptor, null, StringUtil.split(link, ","))
-        val target = descriptors.firstOrNull()
-        if (target is DeclarationDescriptorWithSource) {
-            val source = target.source
-            return (source as? PsiSourceElement)?.psi
-        }
-        return null
+        val target = descriptors.firstOrNull() ?: return null
+        return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, target)
     }
 
     override fun getDocumentationElementForLookupItem(psiManager: PsiManager, `object`: Any?, element: PsiElement?): PsiElement? {
