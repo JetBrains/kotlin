@@ -27,7 +27,7 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
-class SameVersionIDEPluginInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
+class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     private val idePluginVersion by lazy { bundledRuntimeVersion() }
 
     var testVersionMessage: String? = null
