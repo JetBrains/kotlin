@@ -102,6 +102,18 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("QualifiedNameFunctionReference.kt")
+    public void testQualifiedNameFunctionReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedNameFunctionReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("QualifiedNameReference.kt")
+    public void testQualifiedNameReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedNameReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SeeReference.kt")
     public void testSeeReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");

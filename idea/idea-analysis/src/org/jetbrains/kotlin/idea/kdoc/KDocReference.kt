@@ -32,7 +32,8 @@ class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
         val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return arrayListOf()
 
         val kdocLink = element.getStrictParentOfType<KDocLink>()!!
-        return resolveKDocLink(element.getResolutionFacade(),
+        return resolveKDocLink(context,
+                               element.getResolutionFacade(),
                                declarationDescriptor,
                                kdocLink.getTagIfSubject(),
                                element.getQualifiedName())

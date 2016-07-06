@@ -59,11 +59,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         val bindingContext = context.analyze(BodyResolveMode.PARTIAL)
-        val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context]
-        if (contextDescriptor == null) {
-            return null
-        }
-        val descriptors = resolveKDocLink(context.getResolutionFacade(), contextDescriptor, null, StringUtil.split(link, ","))
+        val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context] ?: return null
+        val descriptors = resolveKDocLink(bindingContext, context.getResolutionFacade(),
+                                          contextDescriptor, null, StringUtil.split(link, ","))
         val target = descriptors.firstOrNull()
         if (target is DeclarationDescriptorWithSource) {
             val source = target.source

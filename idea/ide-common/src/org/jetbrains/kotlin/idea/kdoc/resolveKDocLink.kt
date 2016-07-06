@@ -22,44 +22,54 @@ import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-fun resolveKDocLink(resolutionFacade: ResolutionFacade,
+fun resolveKDocLink(context: BindingContext,
+                    resolutionFacade: ResolutionFacade,
                     fromDescriptor: DeclarationDescriptor,
                     fromSubjectOfTag: KDocTag?,
                     qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+
     if (fromSubjectOfTag?.knownTag == KDocKnownTag.PARAM) {
         return resolveParamLink(fromDescriptor, qualifiedName)
     }
 
-    // Try to find a matching local descriptor (parameter or type parameter) first.
-    if (qualifiedName.size == 1) {
-        val localResult = resolveInLocalScope(fromDescriptor, qualifiedName.single(), resolutionFacade)
-        if (!localResult.isEmpty()) {
-            return localResult
-        }
-    }
-
-    var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
-    qualifiedName.forEach { nameComponent ->
-        val scope = getKDocLinkResolutionScope(resolutionFacade, result.singleOrNull() ?: return emptyList())
-        result = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == nameComponent})
-    }
-
-    return result
-}
-
-private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
-                                name: String,
-                                resolutionFacade: ResolutionFacade): List<DeclarationDescriptor> {
     val scope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
-    return scope.collectDescriptorsFiltered(nameFilter = { it.asString() == name }).filter {
-        it.containingDeclaration == fromDescriptor
+
+    if (qualifiedName.size == 1) {
+        val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == qualifiedName.single() })
+        // Try to find a matching local descriptor (parameter or type parameter) first.
+        val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
+        if (localDescriptors.isNotEmpty()) return localDescriptors
+        return descriptorsByName
     }
+
+    val moduleDescriptor = fromDescriptor.module
+    val qualifiedExpressionResolver = resolutionFacade.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
+
+    val contextElement = DescriptorToSourceUtils.descriptorToDeclaration(fromDescriptor)
+    val factory = KtPsiFactory(resolutionFacade.project)
+    // TODO escape identifiers
+    val codeFragment = factory.createExpressionCodeFragment(qualifiedName.joinToString("."), contextElement)
+    val qualifiedExpression = codeFragment.findElementAt(codeFragment.textLength - 1)?.getStrictParentOfType<KtQualifiedExpression>() ?: return emptyList()
+    val (descriptor, memberName) = qualifiedExpressionResolver.resolveClassOrPackageInQualifiedExpression(qualifiedExpression, scope, context)
+    if (descriptor == null) return emptyList()
+    if (memberName != null) {
+        val memberScope = getKDocLinkResolutionScope(resolutionFacade, descriptor)
+        return memberScope.collectDescriptorsFiltered(nameFilter = { it == memberName })
+    }
+    return listOf(descriptor)
 }
 
 fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
