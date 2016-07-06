@@ -68,26 +68,11 @@ class MainFunctionDetector {
         return isMain(getFunctionDescriptor(function))
     }
 
-    fun getMainFunction(files: Collection<KtFile>): KtNamedFunction? {
-        for (file in files) {
-            val mainFunction = findMainFunction(file.declarations)
-            if (mainFunction != null) {
-                return mainFunction
-            }
-        }
-        return null
-    }
+    fun getMainFunction(files: Collection<KtFile>): KtNamedFunction? =
+        files.asSequence().map { findMainFunction(it.declarations) }.firstOrNull { it != null }
 
-    private fun findMainFunction(declarations: List<KtDeclaration>): KtNamedFunction? {
-        for (declaration in declarations) {
-            if (declaration is KtNamedFunction) {
-                if (isMain(declaration)) {
-                    return declaration
-                }
-            }
-        }
-        return null
-    }
+    private fun findMainFunction(declarations: List<KtDeclaration>) =
+        declarations.filterIsInstance<KtNamedFunction>().find { isMain(it) }
 
     companion object {
 
@@ -125,22 +110,10 @@ class MainFunctionDetector {
         }
 
         private fun getJVMFunctionName(functionDescriptor: FunctionDescriptor): String {
-            val platformName = DescriptorUtils.getJvmName(functionDescriptor)
-            if (platformName != null) {
-                return platformName
-            }
-
-            return functionDescriptor.name.asString()
+            return DescriptorUtils.getJvmName(functionDescriptor) ?: functionDescriptor.name.asString()
         }
 
-        private fun hasAnnotationWithExactNumberOfArguments(function: KtNamedFunction, number: Int): Boolean {
-            for (entry in function.annotationEntries) {
-                if (entry.valueArguments.size == number) {
-                    return true
-                }
-            }
-
-            return false
-        }
+        private fun hasAnnotationWithExactNumberOfArguments(function: KtNamedFunction, number: Int) =
+            function.annotationEntries.any { it.valueArguments.size == number }
     }
 }
