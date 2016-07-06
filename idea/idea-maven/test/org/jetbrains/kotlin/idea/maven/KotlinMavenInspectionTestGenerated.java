@@ -53,6 +53,12 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
         doTest(fileName);
     }
 
+    @TestMetadata("ideAndMavenVersionsSuppression.xml")
+    public void testIdeAndMavenVersionsSuppression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/ideAndMavenVersionsSuppression.xml");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlinTestWithJunit.xml")
     public void testKotlinTestWithJunit() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/kotlinTestWithJunit.xml");

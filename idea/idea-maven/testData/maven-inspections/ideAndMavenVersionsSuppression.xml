@@ -25,6 +25,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <!--suppress DifferentKotlinMavenVersion -->
                 <version>${kotlin.version}</version>
             </plugin>
         </plugins>
@@ -32,4 +33,3 @@
 </project>
 
 <!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection -->
-<!-- problem: on ${kotlin.version}, title Kotlin version that is used for building with Maven (1.0.0) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION) -->
