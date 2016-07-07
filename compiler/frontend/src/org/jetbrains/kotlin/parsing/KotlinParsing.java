@@ -473,10 +473,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
             else if (tryParseModifier(tokenConsumer, noModifiersBefore)) {
                 // modifier advanced
             }
-            else if (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER)) {
-                error("Use '@' symbol before annotations");
-                parseAnnotation(annotationParsingMode);
-            }
             else {
                 break;
             }
@@ -2282,22 +2278,19 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum AnnotationParsingMode {
-        DEFAULT(false, false, true),
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, true),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, true),
-        IN_ANNOTATION_LIST(true, false, true),
-        NO_ANNOTATIONS(false, false, false);
+        DEFAULT(false, true),
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(true, true),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(true, true),
+        IN_ANNOTATION_LIST(false, true),
+        NO_ANNOTATIONS(false, false);
 
-        boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
         boolean allowAnnotations;
 
         AnnotationParsingMode(
-                boolean allowShortAnnotations,
                 boolean isFileAnnotationParsingMode,
                 boolean allowAnnotations
         ) {
-            this.allowShortAnnotations = allowShortAnnotations;
             this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
             this.allowAnnotations = allowAnnotations;
         }
