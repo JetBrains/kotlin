@@ -1279,7 +1279,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
                 if (getLastToken() != SEMICOLON) {
-                    errorUntil("Property getter or setter expected", TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE));
+                    errorUntil(
+                            "Property getter or setter expected",
+                            TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
                 }
             }
             else {

@@ -278,21 +278,41 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiElement(val)('val')
     PsiErrorElement:Expecting property name or receiver type
       <empty list>
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(AT)('@')
-      PsiElement(IDENTIFIER)('a')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('T')
-      PsiElement(LT)('<')
-      PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
+      <empty list>
+  PsiWhiteSpace(' ')
+  DESTRUCTURING_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Receiver type is not allowed on a destructuring declaration
+      TYPE_REFERENCE
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+            PsiElement(GT)('>')
       PsiElement(DOT)('.')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
-      PsiElement(IDENTIFIER)('A')
-      PsiElement(LT)('<')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('A')
+      PsiErrorElement:Expecting ')'
+        PsiElement(LT)('<')
+    PsiErrorElement:Property getter or setter expected
       PsiElement(IDENTIFIER)('B')
       PsiElement(GT)('>')
       PsiElement(RPAR)(')')
