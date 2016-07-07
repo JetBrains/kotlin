@@ -52,4 +52,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
         <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
     </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithBracesCall.gradle</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithBracesCall.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
 </problems>

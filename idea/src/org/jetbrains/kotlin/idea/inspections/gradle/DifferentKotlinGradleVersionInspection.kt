@@ -106,8 +106,11 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
         val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
 
         private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
-            val argument = classpathStatement.getChildrenOfType<GrCommandArgumentList>().firstOrNull() ?: return null
-            val grLiteral = argument.children.firstOrNull()?.let { it as? GrLiteral } ?: return null
+            val argumentList = when {
+                classpathStatement is GrMethodCall -> classpathStatement.argumentList
+                else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull()
+            } ?: return null
+            val grLiteral = argumentList.children.firstOrNull() as? GrLiteral ?: return null
 
             if (grLiteral is GrString && grLiteral.injections.size == 1) {
                 val versionInjection = grLiteral.injections.first() ?: return null
