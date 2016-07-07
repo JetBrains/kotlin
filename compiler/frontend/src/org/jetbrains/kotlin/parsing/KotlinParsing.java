@@ -1252,26 +1252,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeConstraintsGuarded(typeParametersDeclared);
 
-        if (local) {
-            if (at(BY_KEYWORD)) {
-                parsePropertyDelegate();
-            }
-            else if (at(EQ)) {
-                advance(); // EQ
-                myExpressionParsing.parseExpression();
-                // "val a = 1; b" must not be an infix call of b on "val ...;"
-            }
-        }
-        else {
-            if (at(BY_KEYWORD)) {
-                parsePropertyDelegate();
-                consumeIf(SEMICOLON);
-            }
-            else if (at(EQ)) {
-                advance(); // EQ
-                myExpressionParsing.parseExpression();
-                consumeIf(SEMICOLON);
-            }
+        parsePropertyDelegateOrAssignment();
+        if (!local) {
+            // It's only needed for non-local properties, because in local ones:
+            // "val a = 1; b" must not be an infix call of b on "val ...;"
+            consumeIf(SEMICOLON);
 
             AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
             if (accessorKind != null) {
@@ -1289,6 +1274,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
+    }
+
+    private void parsePropertyDelegateOrAssignment() {
+        if (at(BY_KEYWORD)) {
+            parsePropertyDelegate();
+        }
+        else if (at(EQ)) {
+            advance(); // EQ
+            myExpressionParsing.parseExpression();
+        }
     }
 
     /*
