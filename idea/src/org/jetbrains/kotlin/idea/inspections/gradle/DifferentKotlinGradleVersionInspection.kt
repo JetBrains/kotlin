@@ -25,6 +25,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.BooleanFunction
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -86,7 +87,7 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             if (buildScriptCall.invokedExpression.text != "buildscript") return
 
             val kotlinPluginStatement = findClassPathStatements(closure).filter {
-                it.text.contains("org.jetbrains.kotlin:kotlin-gradle-plugin:")
+                it.text.contains(KOTLIN_PLUGIN_CLASSPATH_MARKER)
             }.firstOrNull() ?: return
 
             val kotlinPluginVersion =
@@ -101,6 +102,9 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
     }
 
     companion object {
+        val KOTLIN_PLUGIN_CLASSPATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}:${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}:"
+        val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
+
         private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
             val argument = classpathStatement.getChildrenOfType<GrCommandArgumentList>().firstOrNull() ?: return null
             val grLiteral = argument.children.firstOrNull()?.let { it as? GrLiteral } ?: return null
@@ -183,8 +187,8 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             for (classPathEntry in classpathData.classpathEntries) {
                 for (path in classPathEntry.classesFile) {
                     val uniformedPath = path.replace('\\', '/')
-                    if (uniformedPath.contains("org.jetbrains.kotlin/kotlin-gradle-plugin/")) {
-                        val versionSubstring = uniformedPath.substringAfter("org.jetbrains.kotlin/kotlin-gradle-plugin/").substringBefore('/', "<error>")
+                    if (uniformedPath.contains(KOTLIN_PLUGIN_PATH_MARKER)) {
+                        val versionSubstring = uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER).substringBefore('/', "<error>")
                         if (versionSubstring != "<error>") {
                             return versionSubstring;
                         }
