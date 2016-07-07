@@ -286,7 +286,7 @@ public class OverrideResolver {
         }
     }
 
-    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull final KtClassOrObject klass) {
+    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull KtClassOrObject klass) {
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
             checkOverrideForMember(member);
@@ -1056,7 +1056,7 @@ public class OverrideResolver {
 
     @NotNull
     private static PsiElement findDataModifierForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        KtClass classDeclaration = (KtClass) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
+        KtClassOrObject classDeclaration = (KtClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
         if (classDeclaration != null && classDeclaration.getModifierList() != null) {
             PsiElement modifier = classDeclaration.getModifierList().getModifier(KtTokens.DATA_KEYWORD);
             if (modifier != null) {
