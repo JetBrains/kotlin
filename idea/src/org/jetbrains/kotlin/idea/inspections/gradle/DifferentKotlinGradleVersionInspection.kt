@@ -107,16 +107,16 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
         val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
 
         private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
-            val argumentList = when {
-                classpathStatement is GrMethodCall -> classpathStatement.argumentList
-                else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull()
+            val argumentList = when (classpathStatement) {
+                is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
+                else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull() // classpath 'argument'
             } ?: return null
             val grLiteral = argumentList.children.firstOrNull() as? GrLiteral ?: return null
 
             if (grLiteral is GrString && grLiteral.injections.size == 1) {
                 val versionInjection = grLiteral.injections.first() ?: return null
-                val expression = versionInjection.expression as? GrReferenceExpression ?:
-                                 versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?:
+                val expression = versionInjection.expression as? GrReferenceExpression ?: // $some_variable
+                                 versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?: // ${some_variable}
                                  return null
 
                 return resolveVariableInBuildScript(classpathStatement, expression.text)
@@ -136,7 +136,7 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             for (child in buildScriptClosure.children) {
                 when (child) {
                     is GrAssignmentExpression -> {
-                        if (child.lValue.text == "ext.$name") {
+                        if (child.lValue.text == "ext.$name") { // ext.variable = '1.0.0'
                             val assignValue = child.rValue
                             if (assignValue is GrLiteral) {
                                 return assignValue.value.toString()
@@ -144,7 +144,7 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
                         }
                     }
                     is GrVariableDeclaration -> {
-                        for (variable in child.variables) {
+                        for (variable in child.variables) { // def variable = '1.0.0'
                             if (variable.name == name) {
                                 val assignValue = variable.initializerGroovy
                                 if (assignValue is GrLiteral) {
