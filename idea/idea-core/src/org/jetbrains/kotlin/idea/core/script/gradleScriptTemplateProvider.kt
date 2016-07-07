@@ -20,7 +20,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.script.ScriptTemplateProvider
-import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
+import org.jetbrains.plugins.gradle.service.project.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
 
