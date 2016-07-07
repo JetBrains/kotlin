@@ -17,14 +17,20 @@
 package org.jetbrains.kotlin.idea.inspections.gradle
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.util.BooleanFunction
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
+import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
@@ -84,15 +90,18 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             }.firstOrNull() ?: return
 
             val kotlinPluginVersion =
-                    getKotlinPluginVersion(kotlinPluginStatement) ?:
+                    getHeuristicKotlinPluginVersion(kotlinPluginStatement) ?:
+                    getResolvedKotlinGradleVersion(closure.project) ?:
                     return
 
             if (kotlinPluginVersion != idePluginVersion) {
                 registerError(kotlinPluginStatement, kotlinPluginVersion, testVersionMessage ?: idePluginVersion)
             }
         }
+    }
 
-        private fun getKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
+    companion object {
+        private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
             val argument = classpathStatement.getChildrenOfType<GrCommandArgumentList>().firstOrNull() ?: return null
             val grLiteral = argument.children.firstOrNull()?.let { it as? GrLiteral } ?: return null
 
@@ -156,6 +165,34 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
 
             return classPathStatements
         }
+
+        private fun getResolvedKotlinGradleVersion(project: Project): String? {
+            val projectPath = project.basePath ?: return null
+            val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, projectPath) ?: return null
+            val externalProjectStructure = projectInfo.externalProjectStructure ?: return null
+
+            val buildScriptClasspathDataNode = ExternalSystemApiUtil.findFirstRecursively(externalProjectStructure, BooleanFunction { node ->
+                BuildScriptClasspathData.KEY == node.key
+            }) ?: return null
+
+            val buildScriptClasspathData = buildScriptClasspathDataNode.getData(BuildScriptClasspathData.KEY) ?: return null
+            return findKotlinPluginVersion(buildScriptClasspathData)
+        }
+
+        private fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
+            for (classPathEntry in classpathData.classpathEntries) {
+                for (path in classPathEntry.classesFile) {
+                    val uniformedPath = path.replace('\\', '/')
+                    if (uniformedPath.contains("org.jetbrains.kotlin/kotlin-gradle-plugin/")) {
+                        val versionSubstring = uniformedPath.substringAfter("org.jetbrains.kotlin/kotlin-gradle-plugin/").substringBefore('/', "<error>")
+                        if (versionSubstring != "<error>") {
+                            return versionSubstring;
+                        }
+                    }
+                }
+            }
+
+            return null
+        }
     }
 }
-
