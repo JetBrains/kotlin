@@ -1,0 +1,2 @@
+fun fo<caret>o() {
+}
