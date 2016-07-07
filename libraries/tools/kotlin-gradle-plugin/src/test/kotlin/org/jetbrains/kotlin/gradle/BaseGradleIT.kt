@@ -72,7 +72,7 @@ abstract class BaseGradleIT {
             val androidHome: File? = null,
             val androidGradlePluginVersion: String? = null)
 
-    open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
+    open inner class Project(val projectName: String, val wrapperVersion: String, val minLogLevel: LogLevel = LogLevel.DEBUG) {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 

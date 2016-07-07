@@ -1,13 +1,17 @@
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Test
 import org.gradle.api.logging.LogLevel
+import org.junit.Test
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
+    companion object {
+        private val GRADLE_VERSION = "2.3"
+    }
+
     @Test
     fun testSimpleCompile() {
-        val project = Project("simpleProject", "1.12")
+        val project = Project("simpleProject", GRADLE_VERSION)
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
@@ -23,7 +27,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSuppressWarningsAndVersionInVerboseMode() {
-        val project = Project("suppressWarningsAndVersion", "1.6")
+        val project = Project("suppressWarningsAndVersion", GRADLE_VERSION)
 
         project.build("build") {
             assertSuccessful()
@@ -40,7 +44,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSuppressWarningsAndVersionInNonVerboseMode() {
-        val project = Project("suppressWarningsAndVersion", "1.6", minLogLevel = LogLevel.INFO)
+        val project = Project("suppressWarningsAndVersion", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
 
         project.build("build") {
             assertSuccessful()
@@ -57,14 +61,14 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinCustomDirectory() {
-        Project("customSrcDir", "1.6").build("build") {
+        Project("customSrcDir", GRADLE_VERSION).build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testKotlinCustomModuleName() {
-        Project("moduleNameCustom", "1.6").build("build") {
+        Project("moduleNameCustom", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertContains("args.moduleName = myTestName")
         }
@@ -72,7 +76,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinDefaultModuleName() {
-        Project("moduleNameDefault", "1.6").build("build") {
+        Project("moduleNameDefault", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertContains("args.moduleName = moduleNameDefault-compileKotlin")
         }
@@ -80,28 +84,28 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testAdvancedOptions() {
-        Project("advancedOptions", "1.6").build("build") {
+        Project("advancedOptions", GRADLE_VERSION).build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testKotlinExtraJavaSrc() {
-        Project("additionalJavaSrc", "1.6").build("build") {
+        Project("additionalJavaSrc", GRADLE_VERSION).build("build") {
             assertSuccessful()
         }
     }
 
     @Test
     fun testLanguageVersion() {
-        Project("languageVersion", "1.6").build("build") {
+        Project("languageVersion", GRADLE_VERSION).build("build") {
             assertFailed()
             assertContains("This type is sealed")
         }
     }
     @Test
     fun testJvmTarget() {
-        Project("jvmTarget", "1.6").build("build") {
+        Project("jvmTarget", GRADLE_VERSION).build("build") {
             assertFailed()
             assertContains("Unknown JVM target version: 1.7")
         }
@@ -109,7 +113,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testCustomJdk() {
-        Project("customJdk", "1.6").build("build") {
+        Project("customJdk", GRADLE_VERSION).build("build") {
             assertFailed()
             assertContains("Unresolved reference: stream")
             assertNotContains("AutoCloseable")
@@ -118,7 +122,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testGradleSubplugin() {
-        val project = Project("kotlinGradleSubplugin", "1.6")
+        val project = Project("kotlinGradleSubplugin", GRADLE_VERSION)
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
