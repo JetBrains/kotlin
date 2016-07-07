@@ -26,23 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
 
 public class KotlinParsing extends AbstractKotlinParsing {
     private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
-
-    // TODO: token sets to constants, including derived methods
-    public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
-    static {
-        for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
-            MODIFIER_KEYWORD_MAP.put(((KtKeywordToken) softKeyword).getValue(), softKeyword);
-        }
-    }
 
     private static final TokenSet TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
             TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
@@ -68,15 +57,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
             RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
 
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        KotlinParsing jetParsing = new KotlinParsing(builder);
-        jetParsing.myExpressionParsing = new KotlinExpressionParsing(builder, jetParsing);
-        return jetParsing;
+        KotlinParsing kotlinParsing = new KotlinParsing(builder);
+        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builder, kotlinParsing);
+        return kotlinParsing;
     }
 
     private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
         final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
-        KotlinParsing jetParsing = new KotlinParsing(builderForByClause);
-        jetParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, jetParsing) {
+        KotlinParsing kotlinParsing = new KotlinParsing(builderForByClause);
+        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, kotlinParsing) {
             @Override
             protected boolean parseCallWithClosure() {
                 if (builderForByClause.getStackSize() > 0) {
@@ -90,7 +79,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 return createForByClause(builder);
             }
         };
-        return jetParsing;
+        return kotlinParsing;
     }
 
     private KotlinExpressionParsing myExpressionParsing;
@@ -100,7 +89,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * [start] jetlFile
+     * [start] kotlinFile
      *   : preamble toplevelObject* [eof]
      *   ;
      */
@@ -409,10 +398,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         IElementType keywordToken = tt();
         IElementType declType = null;
-//        if (keywordToken == PACKAGE_KEYWORD) {
-//            declType = parsePackageBlock();
-//        }
-//        else
+
         if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(detector.isEnumDetected());
         }
@@ -458,6 +444,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * (modifier | annotation)*
      *
      * Feeds modifiers (not annotations) into the passed consumer, if it is not null
+     *
+     * @param noModifiersBefore is a token set with elements indicating when met them
+     *                          that previous token must be parsed as an identifier rather than modifier
      */
     boolean parseModifierList(
             @Nullable Consumer<IElementType> tokenConsumer,
@@ -2067,10 +2056,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             recoverOnParenthesizedWordForPlatformTypes(0, "out", true);
 
-//            TokenSet lookFor = TokenSet.create(IDENTIFIER);
-//            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
-//            parseModifierListWithUnescapedAnnotations(MODIFIER_LIST, lookFor, stopAt);
-            // Currently we do not allow annotations
+            // Currently we do not allow annotations on star projections and probably we should not
+            // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
             parseModifierList(NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
 
             if (at(MUL)) {
