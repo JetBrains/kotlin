@@ -1,0 +1,9 @@
+syntax = "proto3";
+package carkot;
+
+option java_package = "proto.car";
+option java_outer_classname = "RouteDoneP";
+
+message RouteDone {
+    string uid = 1;
+}

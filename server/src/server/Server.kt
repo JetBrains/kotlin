@@ -1,4 +1,4 @@
-package Server
+package server
 
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.nio.NioEventLoopGroup
@@ -12,9 +12,11 @@ import io.netty.handler.logging.LoggingHandler
 class Server : Runnable {
 
     val port: Int;
+    val handlerThreadsCount: Int;
 
-    constructor(port: Int) {
+    constructor(port: Int, handlerThreadsCount: Int) {
         this.port = port
+        this.handlerThreadsCount = handlerThreadsCount
     }
 
     override fun run() {
@@ -24,7 +26,7 @@ class Server : Runnable {
         b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel().javaClass)
                 .handler(LoggingHandler(LogLevel.INFO))
-                .childHandler(ServerInitializer())
+                .childHandler(ServerInitializer(handlerThreadsCount))
 
         try {
             val channel = b.bind(port).sync().channel()

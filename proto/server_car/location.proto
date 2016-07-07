@@ -1,9 +1,10 @@
+syntax = "proto3";
 package carkot;
 
-option java_package = "carkot";
-option java_out_classname = "Location";
+option java_package = "proto.car";
+option java_outer_classname = "LocationP";
 
-message location {
+message Location {
     double x = 1;
     double y = 2;
     double angle = 3;

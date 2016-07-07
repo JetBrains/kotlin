@@ -1,7 +1,8 @@
+syntax = "proto3";
 package carkot;
 
-option java_package = "carkot";
-option java_out_classname = "Route";
+option java_package = "proto.car";
+option java_outer_classname = "RouteP";
 
 message Route {
    repeated WayPoint way_points = 1; 
