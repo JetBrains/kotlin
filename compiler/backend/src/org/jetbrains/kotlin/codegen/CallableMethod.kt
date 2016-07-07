@@ -79,5 +79,5 @@ class CallableMethod(
             invokeOpcode == INVOKESTATIC
 
     override fun toString(): String =
-            "${Printer.OPCODES[invokeOpcode]} ${owner.internalName}.$signature"
+            "${Printer.OPCODES[invokeOpcode]} $owner.$signature"
 }
