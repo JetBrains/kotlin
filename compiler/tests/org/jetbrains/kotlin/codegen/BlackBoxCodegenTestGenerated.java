@@ -9766,6 +9766,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt13023.kt")
+        public void testKt13023() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/kt13023.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1508.kt")
         public void testKt1508() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/kt1508.kt");
