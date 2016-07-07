@@ -1,0 +1,6 @@
+package
+
+public val propertyNameOnTheNextLine: kotlin.Int = 1
+public fun foo(): kotlin.Unit
+public fun println(/*0*/ x: kotlin.String): kotlin.Unit
+public fun run(/*0*/ block: () -> kotlin.Unit): kotlin.Unit

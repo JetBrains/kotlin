@@ -1232,6 +1232,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration");
 
+        boolean isNameOnTheNextLine = eol();
+        PsiBuilder.Marker beforeName = mark();
+
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationName(propertyNameFollow);
@@ -1243,7 +1246,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         myBuilder.restoreJoiningComplexTokensState();
 
+        boolean noTypeReference = true;
         if (at(COLON)) {
+            noTypeReference = false;
             PsiBuilder.Marker type = mark();
             advance(); // COLON
             parseTypeRef();
@@ -1252,7 +1257,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeConstraintsGuarded(typeParametersDeclared);
 
-        parsePropertyDelegateOrAssignment();
+        if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
+            // Do not parse property identifier on the next line if declaration is invalid
+            // In most cases this identifier relates to next statement/declaration
+            beforeName.rollbackTo();
+            error("Expecting property name or receiver type");
+            return PROPERTY;
+        }
+
+        beforeName.drop();
+
         if (!local) {
             // It's only needed for non-local properties, because in local ones:
             // "val a = 1; b" must not be an infix call of b on "val ...;"
@@ -1276,14 +1290,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
     }
 
-    private void parsePropertyDelegateOrAssignment() {
+    private boolean parsePropertyDelegateOrAssignment() {
         if (at(BY_KEYWORD)) {
             parsePropertyDelegate();
+            return true;
         }
         else if (at(EQ)) {
             advance(); // EQ
             myExpressionParsing.parseExpression();
+            return true;
         }
+
+        return false;
     }
 
     /*
