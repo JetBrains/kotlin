@@ -618,7 +618,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     continue;
                 }
 
-                parseAnnotation(IN_ANNOTATION_LIST);
+                parseAnnotation(DEFAULT);
                 while (at(COMMA)) {
                     errorAndAdvance("No commas needed to separate annotations");
                 }
@@ -2263,7 +2263,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
         DEFAULT(false, true),
         FILE_ANNOTATIONS_BEFORE_PACKAGE(true, true),
         FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(true, true),
-        IN_ANNOTATION_LIST(false, true),
         NO_ANNOTATIONS(false, false);
 
         boolean isFileAnnotationParsingMode;
