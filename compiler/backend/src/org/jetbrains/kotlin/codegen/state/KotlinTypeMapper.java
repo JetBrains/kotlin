@@ -113,7 +113,7 @@ public class KotlinTypeMapper {
 
         @Override
         public void processErrorType(@NotNull KotlinType kotlinType, @NotNull ClassDescriptor descriptor) {
-            if (classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
+            if (classBuilderMode == ClassBuilderMode.FULL) {
                 throw new IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor));
             }
         }
