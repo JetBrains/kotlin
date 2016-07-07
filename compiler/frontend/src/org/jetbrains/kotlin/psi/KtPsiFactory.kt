@@ -138,7 +138,7 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createWhiteSpace(text: String): PsiElement {
-        return createProperty("val${text}x").findElementAt(3)!!
+        return createProperty("val${text}x: Int").findElementAt(3)!!
     }
 
     // Remove when all Java usages are rewritten to Kotlin
