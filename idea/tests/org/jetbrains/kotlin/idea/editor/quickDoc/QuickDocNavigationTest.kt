@@ -16,25 +16,52 @@
 
 package org.jetbrains.kotlin.idea.editor.quickDoc
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.Assert
 
-class QuickDocNavigationTest() : LightPlatformCodeInsightFixtureTestCase() {
+class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/navigate/"
     }
 
+    override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
+
     fun testSimple() {
+        val target = resolveDocLink("C")
+        UsefulTestCase.assertInstanceOf(target, KtClass::class.java)
+        Assert.assertEquals("C", (target as KtClass).name)
+    }
+
+    fun testJdkClass() {
+        val target = resolveDocLink("ArrayList")
+        UsefulTestCase.assertInstanceOf(target, PsiClass::class.java)
+        Assert.assertEquals("ArrayList", (target as PsiClass).name)
+    }
+
+    fun testStdlibFunction() {
+        val target = resolveDocLink("arrayListOf")
+        UsefulTestCase.assertInstanceOf(target, KtFunction::class.java)
+        Assert.assertEquals("arrayListOf", (target as KtFunction).name)
+
+        val secondaryTarget = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
+                myFixture.psiManager, "ArrayList", target)
+        UsefulTestCase.assertInstanceOf(secondaryTarget, PsiClass::class.java)
+        Assert.assertEquals("ArrayList", (secondaryTarget as PsiClass).name)
+    }
+
+    private fun resolveDocLink(linkText: String): PsiElement? {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val source = myFixture.elementAtCaret.getParentOfType<KtFunction>(false)
-        val target = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.psiManager, "C", source)
-        Assert.assertTrue(target is KtClass)
-        Assert.assertEquals("C", (target as KtClass).name)
+        return KotlinQuickDocumentationProvider().getDocumentationElementForLink(
+                myFixture.psiManager, linkText, source)
     }
 }
