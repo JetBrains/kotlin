@@ -32,14 +32,25 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
         val returnType = method.returnType
         assert(method.getValueParameters().size == 1)
-        val operandType = numberFunctionOperandType(returnType)
-        val paramType = if (shift()) Type.INT_TYPE else operandType
 
-        return createBinaryIntrinsicCallable(returnType, paramType, operandType) {
-            v ->
-                v.visitInsn(returnType.getOpcode(opcode))
-            if (operandType != returnType)
-                    StackValue.coerce(operandType, returnType, v)
+        val arg0Type: Type
+        val arg1Type: Type
+        val intermediateResultType: Type
+
+        if (method.owner != Type.CHAR_TYPE) {
+            intermediateResultType = numberFunctionOperandType(returnType)
+            arg0Type = intermediateResultType
+            arg1Type = if (shift()) Type.INT_TYPE else arg0Type
+        }
+        else {
+            arg0Type = Type.CHAR_TYPE
+            arg1Type = method.getValueParameters()[0].asmType
+            intermediateResultType = numberFunctionOperandType(returnType)
+        }
+
+        return createBinaryIntrinsicCallable(returnType, arg1Type, arg0Type) { v ->
+            v.visitInsn(returnType.getOpcode(opcode))
+            StackValue.coerce(intermediateResultType, returnType, v)
         }
     }
 }
