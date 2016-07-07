@@ -1,0 +1,14 @@
+package
+
+public abstract class A {
+    public constructor A()
+    private final val <no name provided>: [ERROR : No type, no body]
+    private final val <no name provided>: [ERROR : No type, no body]
+    private final val <no name provided>: [ERROR : No type, no body]
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private final fun foo1(): kotlin.Unit
+    protected abstract fun foo2(): kotlin.Unit
+    public final fun foo3(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
