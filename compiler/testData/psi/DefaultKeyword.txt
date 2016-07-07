@@ -293,14 +293,15 @@ JetFile: DefaultKeyword.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('companion')
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(object)('object')
-  PsiWhiteSpace(' ')
-  FUN
-    PsiErrorElement:Expecting a top level declaration
       <empty list>
-    BLOCK
+  PsiWhiteSpace(' ')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiErrorElement:Name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')

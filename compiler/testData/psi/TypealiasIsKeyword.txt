@@ -7,10 +7,16 @@ JetFile: TypealiasIsKeyword.kt
     PsiElement(val)('val')
     PsiErrorElement:Expecting property name or receiver type
       <empty list>
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(typealias)('typealias')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      PsiElement(INTEGER_LITERAL)('0')
+      <empty list>
+  PsiWhiteSpace(' ')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        PsiElement(INTEGER_LITERAL)('0')

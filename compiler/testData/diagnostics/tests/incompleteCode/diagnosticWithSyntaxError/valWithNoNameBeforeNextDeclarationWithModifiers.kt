@@ -10,4 +10,6 @@ abstract class A {
     private val<!SYNTAX!><!>
     fun foo3() {
     }
+
+    private val private<!SYNTAX!><!> fun foo() {}
 }
