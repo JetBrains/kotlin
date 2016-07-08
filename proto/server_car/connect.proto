@@ -1,5 +1,6 @@
 syntax = "proto3";
 package carkot;
+import "error.proto";
 
 option java_package = "proto.car";
 option java_outer_classname = "ConnectP";
@@ -10,5 +11,8 @@ message ConnectionRequest {
 }
 
 message ConnectionResponse {
-    string uid = 1;
+    oneof response {
+        Error error = 2;
+        int32 uid = 1;
+    }
 }

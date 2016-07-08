@@ -5,5 +5,5 @@ option java_package = "proto.car";
 option java_outer_classname = "RouteDoneP";
 
 message RouteDone {
-    string uid = 1;
+    int32 uid = 1;
 }
