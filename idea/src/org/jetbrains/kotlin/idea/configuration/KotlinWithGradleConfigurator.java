@@ -60,7 +60,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     public static final String GROUP_ID = "org.jetbrains.kotlin";
     public static final String GRADLE_PLUGIN_ID = "kotlin-gradle-plugin";
 
-    protected static final String CLASSPATH = "classpath \"" + GROUP_ID + ":" + GRADLE_PLUGIN_ID + ":kotlin-gradle-plugin:$kotlin_version\"";
+    protected static final String CLASSPATH = "classpath \"" + GROUP_ID + ":" + GRADLE_PLUGIN_ID + ":$kotlin_version\"";
 
     protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.SNAPSHOT_REPOSITORY.getUrl() + "'\n}";
     protected static final String EAP_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.EAP_REPOSITORY.getUrl() + "'\n}";
