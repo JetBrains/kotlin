@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
+import org.kotlinnative.translator.utils.FunctionDescriptor
+import java.util.*
 
 
-class TranslationState(sources: List<String>, disposer: Disposable) {
+class TranslationState(val sources: List<String>, disposer: Disposable) {
 
     val environment: KotlinCoreEnvironment
     val bindingContext: BindingContext
+    var functions = HashMap<String, FunctionDescriptor>()
 
     init {
         val configuration = CompilerConfiguration()
@@ -73,7 +76,7 @@ class TranslationState(sources: List<String>, disposer: Disposable) {
                 collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
                 println(runtimes.joinToString { it.toString() })
             }
-        });
+        })
 
         return if (analyzer.hasErrors()) null else analyzer.analysisResult
     }
