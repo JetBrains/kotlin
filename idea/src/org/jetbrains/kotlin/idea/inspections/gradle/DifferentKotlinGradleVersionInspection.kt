@@ -189,8 +189,7 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             for (buildScriptClasspathDataNode in buildScriptClasspathDataNodes) {
                 val moduleNode = buildScriptClasspathDataNode.parent
                 val moduleData = moduleNode?.getData(ProjectKeys.MODULE)
-
-                if (moduleData?.externalName == module.name) {
+                if (moduleData?.internalName == module.name) {
                     val buildScriptClasspathData = buildScriptClasspathDataNode.getData(BuildScriptClasspathData.KEY)
                     if (buildScriptClasspathData != null) {
                         val kotlinPluginVersion = findKotlinPluginVersion(buildScriptClasspathData)
