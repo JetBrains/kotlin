@@ -659,7 +659,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(propertyDescriptor.getType());
                 String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
                 iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
-                return type.getReturnType();
+                return type;
             }
             else {
                 //noinspection ConstantConditions
