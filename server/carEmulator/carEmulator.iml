@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="netty-all-4.1.2.Final-sources" level="project" />
+    <orderEntry type="library" name="protobuf-java-3.0.0-beta-3" level="project" />
   </component>
 </module>

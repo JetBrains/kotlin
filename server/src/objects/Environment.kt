@@ -1,5 +1,7 @@
 package objects
 
+import java.util.*
+
 /**
  * Created by user on 7/7/16.
  */
@@ -14,6 +16,23 @@ class Environment private constructor() {
 
     init {
         map = mutableMapOf();
+    }
+
+    @Synchronized
+    fun connectCar(host:String, port:Int):String {
+        //todo учетка памяти, тут машинки добавляются,но никогда не удаляются. Если включать и выключать одну и ту же машинку, то либо сервер зациклится, либо out of memory
+        //todo в зависимости от того, что кончится раньше, память или айдишники:) Может сделать поток, который мониторит раз в N минут все машинки и дропает те, которые не активны более какого-то времени?
+        var unique = false
+        val random = Random()
+        var stringUid = ""
+        while (!unique) {
+            stringUid = "id:" + random.nextInt(1000000)
+            if (map.get(stringUid) == null) {
+                unique = true;
+            }
+        }
+        map.put(stringUid, Car(stringUid, host, port))
+        return stringUid
     }
 
 

@@ -1,17 +1,18 @@
-package server
+package car.server
 
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelPipeline
 import io.netty.channel.socket.SocketChannel
 import io.netty.handler.codec.http.HttpRequestDecoder
 import io.netty.handler.codec.http.HttpResponseEncoder
+import io.netty.handler.codec.http.HttpServerCodec
 import io.netty.util.concurrent.DefaultEventExecutorGroup
 import io.netty.util.concurrent.EventExecutorGroup
 
 /**
  * Created by user on 7/6/16.
  */
-class ServerInitializer : ChannelInitializer<SocketChannel> {
+class Initializer : ChannelInitializer<SocketChannel> {
 
     val group: EventExecutorGroup;
 
@@ -21,8 +22,10 @@ class ServerInitializer : ChannelInitializer<SocketChannel> {
 
     override fun initChannel(channel: SocketChannel) {
         val p: ChannelPipeline = channel.pipeline()
-        p.addLast(HttpRequestDecoder())
-        p.addLast(HttpResponseEncoder())
-        p.addLast(group, ServerHandler())
+
+        p.addLast(HttpServerCodec())
+//        p.addLast(HttpRequestDecoder())
+//        p.addLast(HttpResponseEncoder())
+        p.addLast(group, Handler())
     }
 }
