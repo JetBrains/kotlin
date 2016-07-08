@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.codegen.CodegenTestUtil.generateFiles;
+
 public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     private static final String LINE_NUMBER_FUN = "lineNumber";
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
@@ -97,16 +99,21 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFile(psiFile, environment);
 
-        if (custom) {
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false);
-            String text = psiFile.getText();
-            String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
-            KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
-        }
-        else {
-            List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true);
-            assertSameElements(actualLineNumbers, expectedLineNumbers);
+        try {
+            if (custom) {
+                List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false);
+                String text = psiFile.getText();
+                String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
+                KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
+            }
+            else {
+                List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
+                List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true);
+                assertSameElements(actualLineNumbers, expectedLineNumbers);
+            }
+        } catch (Throwable e) {
+            System.out.println(classFileFactory.createText());
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
     }
