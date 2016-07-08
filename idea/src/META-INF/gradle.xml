@@ -16,4 +16,15 @@
             hasStaticDescription="true"
             level="WARNING"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
+            displayName="Kotlin library and Gradle plugin versions are different"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING"/>
+    </extensions>
 </idea-plugin>
