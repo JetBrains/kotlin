@@ -1,4 +1,5 @@
 package org.kotlinnative.translator
+
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys

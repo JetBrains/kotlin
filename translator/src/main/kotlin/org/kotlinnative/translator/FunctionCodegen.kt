@@ -10,21 +10,19 @@ import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.kotlin.native.translator.llvm.LLVMBuilder
-import org.kotlin.native.translator.llvm.LLVMVariable
-import org.kotlinnative.translator.llvm.LLVMDescriptorGenearte
+import org.kotlinnative.translator.llvm.LLVMBuilder
+import org.kotlinnative.translator.llvm.LLVMVariable
+import org.kotlinnative.translator.llvm.LLVMDescriptorGenerate
 import org.kotlinnative.translator.llvm.LLVMMapStandardType
 
 
 class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
 
-    private var variableCount = 0
-
     fun generate() {
         generateDeclaration(function)
-        codeBuilder.addLlvmCode("{")
+        codeBuilder.addStartExpression()
         expressionWalker(function.bodyExpression)
-        codeBuilder.addLlvmCode("}")
+        codeBuilder.addEndExpression()
     }
 
     private fun generateDeclaration(function: KtNamedFunction) {
@@ -34,8 +32,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
         val returnType = LLVMMapStandardType(descriptor?.returnType.toString())
 
-
-        codeBuilder.addLlvmCode(LLVMDescriptorGenearte(function.fqName.toString(), args, returnType))
+        codeBuilder.addLLVMCode(LLVMDescriptorGenerate(function.fqName.toString(), args, returnType))
     }
 
     private fun expressionWalker(expr: Any?) {
@@ -48,17 +45,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluateBlockExpression(expr: KtBlockExpression) {
-        var element = expr
-        expressionWalker(element.firstChild)
-
-        expressionWalker(element.getNextSiblingIgnoringWhitespaceAndComments())
+        expressionWalker(expr.firstChild)
+        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments())
     }
 
     private fun evaluatePsiExpression(expr: PsiElement) {
-        var element = expr
-        evaluateExpression(element.firstChild)
-
-        evaluatePsiExpression(element.getNextSiblingIgnoringWhitespaceAndComments() ?: return)
+        evaluateExpression(expr.firstChild)
+        evaluatePsiExpression(expr.getNextSiblingIgnoringWhitespaceAndComments() ?: return)
     }
 
     private fun evaluateExpression(expr: Any?): LLVMVariable? {
@@ -73,21 +66,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluateBinaryExpression(expr: KtBinaryExpression): LLVMVariable {
-        val left = evaluateExpression(expr.firstChild)
-        val right = evaluateExpression(expr.lastChild)
+        val left = evaluateExpression(expr.firstChild) ?: throw UnsupportedOperationException("Wrong binary exception")
+        val right = evaluateExpression(expr.lastChild) ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
 
-
-        val llvmOperator = when (operator) {
-            KtTokens.PLUS -> "add nsw i32"
-            KtTokens.MINUS -> "sub nsw i32"
-            KtTokens.MUL -> "mul nsw i32"
-            else -> throw UnsupportedOperationException("Unkbown binary operator")
-        }
-
-        variableCount++
-        codeBuilder.addLlvmCode("%var$variableCount = $llvmOperator ${left?.label}, ${right?.label}")
-        return LLVMVariable("%var$variableCount")
+        return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMVariable {
@@ -109,14 +92,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element)
             else -> LLVMVariable("")
         }
-
     }
 
     private fun evaluateReturnInstruction(element: LeafPsiElement): LLVMVariable? {
         var next = element.getNextSiblingIgnoringWhitespaceAndComments();
         val retVar = evaluateExpression(next)
 
-        codeBuilder.addLlvmCode("ret i32 ${retVar?.label}")
+        codeBuilder.addLLVMCode("ret i32 ${retVar?.label}")
         return null
     }
 }
