@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -54,12 +55,8 @@ abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
 }
 
 fun getResolvedKotlinGradleVersion(file: PsiFile): String? {
-    val project = file.project
     val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
-    val projectPath = project.basePath ?: return null
-
-    val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, projectPath) ?: return null
-    val projectStructureNode = projectInfo.externalProjectStructure ?: return null
+    val projectStructureNode = findGradleProjectStructure(file) ?: return null
 
     for (moduleData in projectStructureNode.findAll(ProjectKeys.MODULE).filter { it.data.internalName == module.name }) {
         val buildScriptClasspathData = moduleData.node.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data ?: continue
@@ -98,3 +95,11 @@ fun <T: Any> DataNode<*>.findAll(key: Key<T>): List<NodeWithData<T>> {
     }
 }
 
+fun findGradleProjectStructure(file: PsiFile): DataNode<ProjectData>? {
+    val project = file.project
+    val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
+    val externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
+
+    val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, externalProjectPath) ?: return null
+    return projectInfo.externalProjectStructure
+}
