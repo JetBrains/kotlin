@@ -205,7 +205,9 @@ class ClassTranslator private constructor(
 
         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
             superCallGenerators += {
-                it += CallTranslator.translate(context, resolvedCall).toInvocationWith(leadingArgs, thisNameRef).makeStmt()
+                val delegationConstructor = resolvedCall.resultingDescriptor
+                it += CallTranslator.translate(context, resolvedCall)
+                        .toInvocationWith(leadingArgs, delegationConstructor.valueParameters.size, thisNameRef).makeStmt()
             }
         }
 
