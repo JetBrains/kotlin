@@ -104,18 +104,23 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, environment);
 
-        if (custom) {
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
-            String text = psiFile.getText();
-            String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
-            KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
+        try {
+            if (custom) {
+                List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
+                String text = psiFile.getText();
+                String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
+                KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
+            }
+            else {
+                List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
+                List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
+                assertSameElements(actualLineNumbers, expectedLineNumbers);
+            }
         }
-        else {
-            List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
-            assertSameElements(actualLineNumbers, expectedLineNumbers);
+        catch (Throwable e) {
+            System.out.println(state.getFactory().createText());
+            throw ExceptionUtilsKt.rethrow(e);
         }
-
     }
 
     private static String getActualLineNumbersAsString(List<Integer> list) {
