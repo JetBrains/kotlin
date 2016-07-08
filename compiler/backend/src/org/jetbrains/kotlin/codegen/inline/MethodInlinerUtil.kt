@@ -57,7 +57,7 @@ fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
     else if (processSwap && insnNode.opcode == Opcodes.SWAP) {
         val swapFrame = frames[insnList.indexOf(insnNode)] ?: return null
         val dispatchReceiver = swapFrame.top()!!.singleOrNullInsn()
-        getLambdaIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete).let {
+        getLambdaIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete)?.let {
             //remove swap instruction (dispatch receiver would be deleted on recursion call): see 'complexStack/simpleExtension.1.kt' test
             toDelete.add(insnNode)
             return it
