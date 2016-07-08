@@ -561,6 +561,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KtExpression condition = expression.getCondition();
         StackValue conditionValue;
 
+        StackValueWithLeaveTask leaveTask = null;
         if (body instanceof KtBlockExpression) {
             // If body's a block, it can contain variable declarations which may be used in the condition of a do-while loop.
             // We handle this case separately because otherwise such variable will be out of the frame map after the block ends
@@ -570,7 +571,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock((KtBlockExpression) body, statements, false, continueLabel, null);
+            //Need to split leave task and condition cause otherwise BranchedValue optimizations wouldn't work
+            leaveTask = generateBlock((KtBlockExpression) body, statements, false, continueLabel, null);
+            conditionValue = leaveTask.getStackValue();
         }
         else {
             if (body != null) {
@@ -581,6 +584,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         BranchedValue.Companion.loopJump(conditionValue, beginLoopLabel, false, v);
+        if (leaveTask != null) {
+            leaveTask.getLeaveTasks().invoke(conditionValue);
+        }
         v.mark(breakLabel);
 
         blockStackElements.pop();
@@ -1759,7 +1765,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         throw new IllegalStateException("Can't get outer value in " + this + " for " + d);
     }
 
-    private StackValue generateBlock(
+    private StackValueWithLeaveTask generateBlock(
             @NotNull KtBlockExpression block,
             @NotNull List<KtExpression> statements,
             boolean isStatement,
