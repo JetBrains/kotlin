@@ -1,7 +1,4 @@
-/**
- * Created by user on 7/8/16.
- */
-package org.kotlin.native.translator.debug
+package org.kotlinnative.translator.debug
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace

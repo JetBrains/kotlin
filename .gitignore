@@ -1,14 +1,14 @@
 .DS_Store
 .idea/shelf
-/dependencies
-/dist
+dependencies
+dist
 out
 tmp
 workspace.xml
 *.versionsBackup
 
 .gradle
-/build/
+build
 
 # Ignore Gradle GUI config
 gradle-app.setting
