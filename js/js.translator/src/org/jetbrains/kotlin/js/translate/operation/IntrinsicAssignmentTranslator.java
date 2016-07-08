@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
+import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -29,9 +31,11 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleNameExpressionNotDelegatedLocalVar;
+import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateRightExpression;
 
 public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
-
+    private JsExpression right;
+    private AccessTranslator accessTranslator;
 
     @NotNull
     public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
@@ -42,6 +46,11 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
     private IntrinsicAssignmentTranslator(@NotNull KtBinaryExpression expression,
                                           @NotNull TranslationContext context) {
         super(expression, context);
+
+        JsBlock rightBlock = new JsBlock();
+        right = translateRightExpression(context, expression, rightBlock);
+        accessTranslator = createAccessTranslator(expression.getLeft(), !rightBlock.isEmpty());
+        context.addStatementsToCurrentBlockFrom(rightBlock);
     }
 
     @NotNull

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
+import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
+    private boolean forceOrderOfEvaluation;
 
     @NotNull
     public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
@@ -52,11 +54,18 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression reassignment() {
-        return accessTranslator.translateAsSet(overloadedMethodInvocation());
+        JsExpression newValue = overloadedMethodInvocation();
+        return createAccessTranslator(expression.getLeft(), forceOrderOfEvaluation).translateAsSet(newValue);
     }
 
     @NotNull
     private JsExpression overloadedMethodInvocation() {
-        return CallTranslator.translate(context(), resolvedCall, accessTranslator.translateAsGet());
+        JsBlock innerBlock = new JsBlock();
+        TranslationContext innerContext = context().innerBlock(innerBlock);
+        JsExpression oldValue = createAccessTranslator(expression.getLeft(), false).translateAsGet();
+        JsExpression result = CallTranslator.translate(innerContext, resolvedCall, oldValue);
+        forceOrderOfEvaluation = !innerBlock.isEmpty();
+        context().addStatementsToCurrentBlockFrom(innerBlock);
+        return result;
     }
 }
