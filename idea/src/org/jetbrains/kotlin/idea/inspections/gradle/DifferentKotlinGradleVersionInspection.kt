@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.idea.inspections.gradle
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.psi.PsiFile
 import com.intellij.util.BooleanFunction
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -92,7 +93,7 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
 
             val kotlinPluginVersion =
                     getHeuristicKotlinPluginVersion(kotlinPluginStatement) ?:
-                    getResolvedKotlinGradleVersion(closure.project) ?:
+                    getResolvedKotlinGradleVersion(closure.containingFile) ?:
                     return
 
             if (kotlinPluginVersion != idePluginVersion) {
@@ -173,17 +174,34 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             return classPathStatements
         }
 
-        private fun getResolvedKotlinGradleVersion(project: Project): String? {
+        private fun getResolvedKotlinGradleVersion(file: PsiFile): String? {
+            val project = file.project
+            val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
             val projectPath = project.basePath ?: return null
+
             val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, projectPath) ?: return null
             val externalProjectStructure = projectInfo.externalProjectStructure ?: return null
 
-            val buildScriptClasspathDataNode = ExternalSystemApiUtil.findFirstRecursively(externalProjectStructure, BooleanFunction { node ->
+            val buildScriptClasspathDataNodes = ExternalSystemApiUtil.findAllRecursively(externalProjectStructure, BooleanFunction { node ->
                 BuildScriptClasspathData.KEY == node.key
-            }) ?: return null
+            })
 
-            val buildScriptClasspathData = buildScriptClasspathDataNode.getData(BuildScriptClasspathData.KEY) ?: return null
-            return findKotlinPluginVersion(buildScriptClasspathData)
+            for (buildScriptClasspathDataNode in buildScriptClasspathDataNodes) {
+                val moduleNode = buildScriptClasspathDataNode.parent
+                val moduleData = moduleNode?.getData(ProjectKeys.MODULE)
+
+                if (moduleData?.externalName == module.name) {
+                    val buildScriptClasspathData = buildScriptClasspathDataNode.getData(BuildScriptClasspathData.KEY)
+                    if (buildScriptClasspathData != null) {
+                        val kotlinPluginVersion = findKotlinPluginVersion(buildScriptClasspathData)
+                        if (kotlinPluginVersion != null) {
+                            return kotlinPluginVersion
+                        }
+                    }
+                }
+            }
+
+            return null
         }
 
         private fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
