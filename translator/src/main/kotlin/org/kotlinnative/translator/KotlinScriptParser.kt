@@ -29,11 +29,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
 import java.util.logging.Logger
-import org.kotlin.native.translator.debug.*
 
-/**
- * Created by user on 7/8/16.
- */
 class KotlinScriptParser {
     companion object {
         private val LOG = Logger.getLogger(KotlinScriptParser.javaClass.name)
