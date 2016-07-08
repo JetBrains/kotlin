@@ -1,10 +1,7 @@
 package car.client
 
 import io.netty.bootstrap.Bootstrap
-import io.netty.channel.ChannelFutureListener
-import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
-import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
 import io.netty.util.AttributeKey
@@ -21,14 +18,14 @@ object Client {
         val b = Bootstrap();
         b.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
                 .attr(AttributeKey.newInstance<String>("url"), "")
-                .attr(AttributeKey.newInstance<String>("uid"), "")
+                .attr(AttributeKey.newInstance<Int>("uid"), 0)
         return b
     }
 
-    fun sendRequest(request: HttpRequest, host: String, port: Int, carUid: String) {
+    fun sendRequest(request: HttpRequest, host: String, port: Int, carUid: Int) {
         try {
             bootstrap.attr(AttributeKey.valueOf<String>("url"), request.uri())
-            bootstrap.attr(AttributeKey.valueOf<String>("uid"), carUid)
+            bootstrap.attr(AttributeKey.valueOf<Int>("uid"), carUid)
             val ch = bootstrap.connect(host, port).sync().channel()
             ch.writeAndFlush(request)
             ch.closeFuture().sync()//wait for answer

@@ -13,14 +13,9 @@ public final class RouteDoneP {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string uid = 1;</code>
+     * <code>optional int32 uid = 1;</code>
      */
-    java.lang.String getUid();
-    /**
-     * <code>optional string uid = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getUidBytes();
+    int getUid();
   }
   /**
    * Protobuf type {@code carkot.RouteDone}
@@ -34,7 +29,7 @@ public final class RouteDoneP {
       super(builder);
     }
     private RouteDone() {
-      uid_ = "";
+      uid_ = 0;
     }
 
     @java.lang.Override
@@ -62,10 +57,9 @@ public final class RouteDoneP {
               }
               break;
             }
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 8: {
 
-              uid_ = s;
+              uid_ = input.readInt32();
               break;
             }
           }
@@ -92,37 +86,12 @@ public final class RouteDoneP {
     }
 
     public static final int UID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object uid_;
+    private int uid_;
     /**
-     * <code>optional string uid = 1;</code>
+     * <code>optional int32 uid = 1;</code>
      */
-    public java.lang.String getUid() {
-      java.lang.Object ref = uid_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        uid_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string uid = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getUidBytes() {
-      java.lang.Object ref = uid_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        uid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getUid() {
+      return uid_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -137,8 +106,8 @@ public final class RouteDoneP {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getUidBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, uid_);
+      if (uid_ != 0) {
+        output.writeInt32(1, uid_);
       }
     }
 
@@ -147,8 +116,9 @@ public final class RouteDoneP {
       if (size != -1) return size;
 
       size = 0;
-      if (!getUidBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, uid_);
+      if (uid_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, uid_);
       }
       memoizedSize = size;
       return size;
@@ -267,7 +237,7 @@ public final class RouteDoneP {
       }
       public Builder clear() {
         super.clear();
-        uid_ = "";
+        uid_ = 0;
 
         return this;
       }
@@ -307,9 +277,8 @@ public final class RouteDoneP {
 
       public Builder mergeFrom(proto.car.RouteDoneP.RouteDone other) {
         if (other == proto.car.RouteDoneP.RouteDone.getDefaultInstance()) return this;
-        if (!other.getUid().isEmpty()) {
-          uid_ = other.uid_;
-          onChanged();
+        if (other.getUid() != 0) {
+          setUid(other.getUid());
         }
         onChanged();
         return this;
@@ -337,71 +306,28 @@ public final class RouteDoneP {
         return this;
       }
 
-      private java.lang.Object uid_ = "";
+      private int uid_ ;
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional int32 uid = 1;</code>
        */
-      public java.lang.String getUid() {
-        java.lang.Object ref = uid_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          uid_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getUid() {
+        return uid_;
       }
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional int32 uid = 1;</code>
        */
-      public com.google.protobuf.ByteString
-          getUidBytes() {
-        java.lang.Object ref = uid_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          uid_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string uid = 1;</code>
-       */
-      public Builder setUid(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setUid(int value) {
+        
         uid_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional int32 uid = 1;</code>
        */
       public Builder clearUid() {
         
-        uid_ = getDefaultInstance().getUid();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string uid = 1;</code>
-       */
-      public Builder setUidBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        uid_ = value;
+        uid_ = 0;
         onChanged();
         return this;
       }
@@ -469,7 +395,7 @@ public final class RouteDoneP {
   static {
     java.lang.String[] descriptorData = {
       "\n\017routeDone.proto\022\006carkot\"\030\n\tRouteDone\022\013" +
-      "\n\003uid\030\001 \001(\tB\027\n\tproto.carB\nRouteDonePb\006pr" +
+      "\n\003uid\030\001 \001(\005B\027\n\tproto.carB\nRouteDonePb\006pr" +
       "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =

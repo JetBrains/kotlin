@@ -77,7 +77,7 @@ fun main(args: Array<String>) {
                 val data = scanner.nextLine()
                 val datas = data.split(" ")
                 try {
-                    val id = datas[0]
+                    val id = datas[0].toInt()
                     val distance = datas[1].toDouble()
                     val angle = datas[2].toDouble()
 
@@ -106,7 +106,7 @@ fun main(args: Array<String>) {
                     request.headers().set(HttpHeaderNames.HOST, car.host)
                     request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
                     request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-                    Client.sendRequest(request, car.host, car.port, car.id)
+                    Client.sendRequest(request, car.host, car.port, car.uid)
                 }
             }
         }

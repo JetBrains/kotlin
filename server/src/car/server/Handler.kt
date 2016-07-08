@@ -27,15 +27,14 @@ class Handler : SimpleChannelInboundHandler<Any>() {
 
         val environment = Environment.instance
         var success = true;
-
-        var answer:ByteArray = ByteArray(0)
+        var answer: ByteArray = ByteArray(0)
         when (url) {
             connectUrl -> {
                 var data: ConnectionRequest? = null
                 try {
                     data = ConnectionRequest.parseFrom(contentBytes)
                 } catch (e: InvalidProtocolBufferException) {
-                    //todo error answer
+                    success = false;
                 }
                 if (data != null) {
                     val uid = environment.connectCar(data.ip, data.port)
@@ -47,7 +46,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 try {
                     data = RouteDone.parseFrom(contentBytes)
                 } catch (e: InvalidProtocolBufferException) {
-                    //todo error answer
+                    success = false;
                 }
                 if (data != null) {
                     val id = data.uid
@@ -63,11 +62,9 @@ class Handler : SimpleChannelInboundHandler<Any>() {
             }
             else -> {
                 success = false
-                //todo unsup operation. error answer
             }
         }
-
-        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.NOT_FOUND, Unpooled.copiedBuffer(answer))
+        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(answer))
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }

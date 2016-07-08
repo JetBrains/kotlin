@@ -518,14 +518,20 @@ public final class ConnectP {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string uid = 1;</code>
+     * <code>optional .carkot.Error error = 2;</code>
      */
-    java.lang.String getUid();
+    proto.car.ErrorP.Error getError();
     /**
-     * <code>optional string uid = 1;</code>
+     * <code>optional .carkot.Error error = 2;</code>
      */
-    com.google.protobuf.ByteString
-        getUidBytes();
+    proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder();
+
+    /**
+     * <code>optional int32 uid = 1;</code>
+     */
+    int getUid();
+
+    public proto.car.ConnectP.ConnectionResponse.ResponseCase getResponseCase();
   }
   /**
    * Protobuf type {@code carkot.ConnectionResponse}
@@ -539,7 +545,6 @@ public final class ConnectP {
       super(builder);
     }
     private ConnectionResponse() {
-      uid_ = "";
     }
 
     @java.lang.Override
@@ -567,10 +572,23 @@ public final class ConnectP {
               }
               break;
             }
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              uid_ = s;
+            case 8: {
+              responseCase_ = 1;
+              response_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              proto.car.ErrorP.Error.Builder subBuilder = null;
+              if (responseCase_ == 2) {
+                subBuilder = ((proto.car.ErrorP.Error) response_).toBuilder();
+              }
+              response_ =
+                  input.readMessage(proto.car.ErrorP.Error.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((proto.car.ErrorP.Error) response_);
+                response_ = subBuilder.buildPartial();
+              }
+              responseCase_ = 2;
               break;
             }
           }
@@ -596,38 +614,73 @@ public final class ConnectP {
               proto.car.ConnectP.ConnectionResponse.class, proto.car.ConnectP.ConnectionResponse.Builder.class);
     }
 
-    public static final int UID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object uid_;
-    /**
-     * <code>optional string uid = 1;</code>
-     */
-    public java.lang.String getUid() {
-      java.lang.Object ref = uid_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        uid_ = s;
-        return s;
+    private int responseCase_ = 0;
+    private java.lang.Object response_;
+    public enum ResponseCase
+        implements com.google.protobuf.Internal.EnumLite {
+      ERROR(2),
+      UID(1),
+      RESPONSE_NOT_SET(0);
+      private final int value;
+      private ResponseCase(int value) {
+        this.value = value;
       }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ResponseCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ResponseCase forNumber(int value) {
+        switch (value) {
+          case 2: return ERROR;
+          case 1: return UID;
+          case 0: return RESPONSE_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ResponseCase
+    getResponseCase() {
+      return ResponseCase.forNumber(
+          responseCase_);
+    }
+
+    public static final int ERROR_FIELD_NUMBER = 2;
+    /**
+     * <code>optional .carkot.Error error = 2;</code>
+     */
+    public proto.car.ErrorP.Error getError() {
+      if (responseCase_ == 2) {
+         return (proto.car.ErrorP.Error) response_;
+      }
+      return proto.car.ErrorP.Error.getDefaultInstance();
     }
     /**
-     * <code>optional string uid = 1;</code>
+     * <code>optional .carkot.Error error = 2;</code>
      */
-    public com.google.protobuf.ByteString
-        getUidBytes() {
-      java.lang.Object ref = uid_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        uid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
+    public proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder() {
+      if (responseCase_ == 2) {
+         return (proto.car.ErrorP.Error) response_;
       }
+      return proto.car.ErrorP.Error.getDefaultInstance();
+    }
+
+    public static final int UID_FIELD_NUMBER = 1;
+    /**
+     * <code>optional int32 uid = 1;</code>
+     */
+    public int getUid() {
+      if (responseCase_ == 1) {
+        return (java.lang.Integer) response_;
+      }
+      return 0;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -642,8 +695,12 @@ public final class ConnectP {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getUidBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, uid_);
+      if (responseCase_ == 1) {
+        output.writeInt32(
+            1, (int)((java.lang.Integer) response_));
+      }
+      if (responseCase_ == 2) {
+        output.writeMessage(2, (proto.car.ErrorP.Error) response_);
       }
     }
 
@@ -652,8 +709,14 @@ public final class ConnectP {
       if (size != -1) return size;
 
       size = 0;
-      if (!getUidBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, uid_);
+      if (responseCase_ == 1) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(
+              1, (int)((java.lang.Integer) response_));
+      }
+      if (responseCase_ == 2) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, (proto.car.ErrorP.Error) response_);
       }
       memoizedSize = size;
       return size;
@@ -772,8 +835,8 @@ public final class ConnectP {
       }
       public Builder clear() {
         super.clear();
-        uid_ = "";
-
+        responseCase_ = 0;
+        response_ = null;
         return this;
       }
 
@@ -796,7 +859,17 @@ public final class ConnectP {
 
       public proto.car.ConnectP.ConnectionResponse buildPartial() {
         proto.car.ConnectP.ConnectionResponse result = new proto.car.ConnectP.ConnectionResponse(this);
-        result.uid_ = uid_;
+        if (responseCase_ == 2) {
+          if (errorBuilder_ == null) {
+            result.response_ = response_;
+          } else {
+            result.response_ = errorBuilder_.build();
+          }
+        }
+        if (responseCase_ == 1) {
+          result.response_ = response_;
+        }
+        result.responseCase_ = responseCase_;
         onBuilt();
         return result;
       }
@@ -812,9 +885,18 @@ public final class ConnectP {
 
       public Builder mergeFrom(proto.car.ConnectP.ConnectionResponse other) {
         if (other == proto.car.ConnectP.ConnectionResponse.getDefaultInstance()) return this;
-        if (!other.getUid().isEmpty()) {
-          uid_ = other.uid_;
-          onChanged();
+        switch (other.getResponseCase()) {
+          case ERROR: {
+            mergeError(other.getError());
+            break;
+          }
+          case UID: {
+            setUid(other.getUid());
+            break;
+          }
+          case RESPONSE_NOT_SET: {
+            break;
+          }
         }
         onChanged();
         return this;
@@ -841,73 +923,179 @@ public final class ConnectP {
         }
         return this;
       }
+      private int responseCase_ = 0;
+      private java.lang.Object response_;
+      public ResponseCase
+          getResponseCase() {
+        return ResponseCase.forNumber(
+            responseCase_);
+      }
 
-      private java.lang.Object uid_ = "";
+      public Builder clearResponse() {
+        responseCase_ = 0;
+        response_ = null;
+        onChanged();
+        return this;
+      }
+
+
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder> errorBuilder_;
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public java.lang.String getUid() {
-        java.lang.Object ref = uid_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          uid_ = s;
-          return s;
+      public proto.car.ErrorP.Error getError() {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2) {
+            return (proto.car.ErrorP.Error) response_;
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
         } else {
-          return (java.lang.String) ref;
+          if (responseCase_ == 2) {
+            return errorBuilder_.getMessage();
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
         }
       }
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public com.google.protobuf.ByteString
-          getUidBytes() {
-        java.lang.Object ref = uid_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          uid_ = b;
-          return b;
+      public Builder setError(proto.car.ErrorP.Error value) {
+        if (errorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          response_ = value;
+          onChanged();
         } else {
-          return (com.google.protobuf.ByteString) ref;
+          errorBuilder_.setMessage(value);
+        }
+        responseCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public Builder setError(
+          proto.car.ErrorP.Error.Builder builderForValue) {
+        if (errorBuilder_ == null) {
+          response_ = builderForValue.build();
+          onChanged();
+        } else {
+          errorBuilder_.setMessage(builderForValue.build());
+        }
+        responseCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public Builder mergeError(proto.car.ErrorP.Error value) {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2 &&
+              response_ != proto.car.ErrorP.Error.getDefaultInstance()) {
+            response_ = proto.car.ErrorP.Error.newBuilder((proto.car.ErrorP.Error) response_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            response_ = value;
+          }
+          onChanged();
+        } else {
+          if (responseCase_ == 2) {
+            errorBuilder_.mergeFrom(value);
+          }
+          errorBuilder_.setMessage(value);
+        }
+        responseCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public Builder clearError() {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2) {
+            responseCase_ = 0;
+            response_ = null;
+            onChanged();
+          }
+        } else {
+          if (responseCase_ == 2) {
+            responseCase_ = 0;
+            response_ = null;
+          }
+          errorBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public proto.car.ErrorP.Error.Builder getErrorBuilder() {
+        return getErrorFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder() {
+        if ((responseCase_ == 2) && (errorBuilder_ != null)) {
+          return errorBuilder_.getMessageOrBuilder();
+        } else {
+          if (responseCase_ == 2) {
+            return (proto.car.ErrorP.Error) response_;
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
         }
       }
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public Builder setUid(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        uid_ = value;
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder> 
+          getErrorFieldBuilder() {
+        if (errorBuilder_ == null) {
+          if (!(responseCase_ == 2)) {
+            response_ = proto.car.ErrorP.Error.getDefaultInstance();
+          }
+          errorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder>(
+                  (proto.car.ErrorP.Error) response_,
+                  getParentForChildren(),
+                  isClean());
+          response_ = null;
+        }
+        responseCase_ = 2;
+        onChanged();;
+        return errorBuilder_;
+      }
+
+      /**
+       * <code>optional int32 uid = 1;</code>
+       */
+      public int getUid() {
+        if (responseCase_ == 1) {
+          return (java.lang.Integer) response_;
+        }
+        return 0;
+      }
+      /**
+       * <code>optional int32 uid = 1;</code>
+       */
+      public Builder setUid(int value) {
+        responseCase_ = 1;
+        response_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string uid = 1;</code>
+       * <code>optional int32 uid = 1;</code>
        */
       public Builder clearUid() {
-        
-        uid_ = getDefaultInstance().getUid();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string uid = 1;</code>
-       */
-      public Builder setUidBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        uid_ = value;
-        onChanged();
+        if (responseCase_ == 1) {
+          responseCase_ = 0;
+          response_ = null;
+          onChanged();
+        }
         return this;
       }
       public final Builder setUnknownFields(
@@ -978,10 +1166,11 @@ public final class ConnectP {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rconnect.proto\022\006carkot\"-\n\021ConnectionReq" +
-      "uest\022\n\n\002ip\030\001 \001(\t\022\014\n\004port\030\002 \001(\005\"!\n\022Connec" +
-      "tionResponse\022\013\n\003uid\030\001 \001(\tB\025\n\tproto.carB\010" +
-      "ConnectPb\006proto3"
+      "\n\rconnect.proto\022\006carkot\032\013error.proto\"-\n\021" +
+      "ConnectionRequest\022\n\n\002ip\030\001 \001(\t\022\014\n\004port\030\002 " +
+      "\001(\005\"O\n\022ConnectionResponse\022\036\n\005error\030\002 \001(\013" +
+      "2\r.carkot.ErrorH\000\022\r\n\003uid\030\001 \001(\005H\000B\n\n\010resp" +
+      "onseB\025\n\tproto.carB\010ConnectPb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -994,6 +1183,7 @@ public final class ConnectP {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          proto.car.ErrorP.getDescriptor(),
         }, assigner);
     internal_static_carkot_ConnectionRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -1006,7 +1196,8 @@ public final class ConnectP {
     internal_static_carkot_ConnectionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_carkot_ConnectionResponse_descriptor,
-        new java.lang.String[] { "Uid", });
+        new java.lang.String[] { "Error", "Uid", "Response", });
+    proto.car.ErrorP.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

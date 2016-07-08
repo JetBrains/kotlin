@@ -21,7 +21,6 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     var url: String = ""
     var contentBytes: ByteArray = ByteArray(0);
 
-
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
 
         val url = ctx.channel().attr(AttributeKey.valueOf<String>("url")).get()
@@ -29,16 +28,16 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
         when (url) {
             connectUrl -> {
                 try {
-                    val uid = ConnectP.ConnectionResponse.parseFrom(contentBytes).uid
-                    synchronized(ThisCar.instance, {
-                        ThisCar.instance.id = uid;
-                    })
+                    val response = ConnectP.ConnectionResponse.parseFrom(contentBytes)
+                    if (response.responseCase == ConnectP.ConnectionResponse.ResponseCase.UID) {
+                        val uid = response.uid
+                        synchronized(ThisCar.instance, {
+                            ThisCar.instance.id = uid;
+                        })
+                    }
                 } catch (e: InvalidProtocolBufferException) {
-                    e.printStackTrace()
+
                 }
-            }
-            else -> {
-                //todo error
             }
         }
         ctx.close()

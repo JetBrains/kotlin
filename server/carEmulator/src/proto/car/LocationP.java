@@ -13,19 +13,24 @@ public final class LocationP {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional double x = 1;</code>
+     * <code>optional .carkot.Error error = 2;</code>
      */
-    double getX();
+    proto.car.ErrorP.Error getError();
+    /**
+     * <code>optional .carkot.Error error = 2;</code>
+     */
+    proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder();
 
     /**
-     * <code>optional double y = 2;</code>
+     * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
      */
-    double getY();
-
+    proto.car.LocationP.Location.LocationResponse getLocationResponse();
     /**
-     * <code>optional double angle = 3;</code>
+     * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
      */
-    double getAngle();
+    proto.car.LocationP.Location.LocationResponseOrBuilder getLocationResponseOrBuilder();
+
+    public proto.car.LocationP.Location.ResponseCase getResponseCase();
   }
   /**
    * Protobuf type {@code carkot.Location}
@@ -39,9 +44,6 @@ public final class LocationP {
       super(builder);
     }
     private Location() {
-      x_ = 0D;
-      y_ = 0D;
-      angle_ = 0D;
     }
 
     @java.lang.Override
@@ -69,19 +71,32 @@ public final class LocationP {
               }
               break;
             }
-            case 9: {
-
-              x_ = input.readDouble();
+            case 10: {
+              proto.car.LocationP.Location.LocationResponse.Builder subBuilder = null;
+              if (responseCase_ == 1) {
+                subBuilder = ((proto.car.LocationP.Location.LocationResponse) response_).toBuilder();
+              }
+              response_ =
+                  input.readMessage(proto.car.LocationP.Location.LocationResponse.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((proto.car.LocationP.Location.LocationResponse) response_);
+                response_ = subBuilder.buildPartial();
+              }
+              responseCase_ = 1;
               break;
             }
-            case 17: {
-
-              y_ = input.readDouble();
-              break;
-            }
-            case 25: {
-
-              angle_ = input.readDouble();
+            case 18: {
+              proto.car.ErrorP.Error.Builder subBuilder = null;
+              if (responseCase_ == 2) {
+                subBuilder = ((proto.car.ErrorP.Error) response_).toBuilder();
+              }
+              response_ =
+                  input.readMessage(proto.car.ErrorP.Error.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((proto.car.ErrorP.Error) response_);
+                response_ = subBuilder.buildPartial();
+              }
+              responseCase_ = 2;
               break;
             }
           }
@@ -107,31 +122,572 @@ public final class LocationP {
               proto.car.LocationP.Location.class, proto.car.LocationP.Location.Builder.class);
     }
 
-    public static final int X_FIELD_NUMBER = 1;
-    private double x_;
+    public interface LocationResponseOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:carkot.Location.LocationResponse)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       * <code>optional double x = 1;</code>
+       */
+      double getX();
+
+      /**
+       * <code>optional double y = 2;</code>
+       */
+      double getY();
+
+      /**
+       * <code>optional double angle = 3;</code>
+       */
+      double getAngle();
+    }
     /**
-     * <code>optional double x = 1;</code>
+     * Protobuf type {@code carkot.Location.LocationResponse}
      */
-    public double getX() {
-      return x_;
+    public  static final class LocationResponse extends
+        com.google.protobuf.GeneratedMessage implements
+        // @@protoc_insertion_point(message_implements:carkot.Location.LocationResponse)
+        LocationResponseOrBuilder {
+      // Use LocationResponse.newBuilder() to construct.
+      private LocationResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+      }
+      private LocationResponse() {
+        x_ = 0D;
+        y_ = 0D;
+        angle_ = 0D;
+      }
+
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+      getUnknownFields() {
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      }
+      private LocationResponse(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        int mutable_bitField0_ = 0;
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!input.skipField(tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 9: {
+
+                x_ = input.readDouble();
+                break;
+              }
+              case 17: {
+
+                y_ = input.readDouble();
+                break;
+              }
+              case 25: {
+
+                angle_ = input.readDouble();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e).setUnfinishedMessage(this);
+        } finally {
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.car.LocationP.internal_static_carkot_Location_LocationResponse_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.car.LocationP.internal_static_carkot_Location_LocationResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                proto.car.LocationP.Location.LocationResponse.class, proto.car.LocationP.Location.LocationResponse.Builder.class);
+      }
+
+      public static final int X_FIELD_NUMBER = 1;
+      private double x_;
+      /**
+       * <code>optional double x = 1;</code>
+       */
+      public double getX() {
+        return x_;
+      }
+
+      public static final int Y_FIELD_NUMBER = 2;
+      private double y_;
+      /**
+       * <code>optional double y = 2;</code>
+       */
+      public double getY() {
+        return y_;
+      }
+
+      public static final int ANGLE_FIELD_NUMBER = 3;
+      private double angle_;
+      /**
+       * <code>optional double angle = 3;</code>
+       */
+      public double getAngle() {
+        return angle_;
+      }
+
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        if (x_ != 0D) {
+          output.writeDouble(1, x_);
+        }
+        if (y_ != 0D) {
+          output.writeDouble(2, y_);
+        }
+        if (angle_ != 0D) {
+          output.writeDouble(3, angle_);
+        }
+      }
+
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (x_ != 0D) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(1, x_);
+        }
+        if (y_ != 0D) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(2, y_);
+        }
+        if (angle_ != 0D) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(3, angle_);
+        }
+        memoizedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseWithIOException(PARSER, input);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseDelimitedWithIOException(PARSER, input);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseWithIOException(PARSER, input);
+      }
+      public static proto.car.LocationP.Location.LocationResponse parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessage
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+      public static Builder newBuilder(proto.car.LocationP.Location.LocationResponse prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code carkot.Location.LocationResponse}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:carkot.Location.LocationResponse)
+          proto.car.LocationP.Location.LocationResponseOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return proto.car.LocationP.internal_static_carkot_Location_LocationResponse_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return proto.car.LocationP.internal_static_carkot_Location_LocationResponse_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  proto.car.LocationP.Location.LocationResponse.class, proto.car.LocationP.Location.LocationResponse.Builder.class);
+        }
+
+        // Construct using proto.car.LocationP.Location.LocationResponse.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        public Builder clear() {
+          super.clear();
+          x_ = 0D;
+
+          y_ = 0D;
+
+          angle_ = 0D;
+
+          return this;
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return proto.car.LocationP.internal_static_carkot_Location_LocationResponse_descriptor;
+        }
+
+        public proto.car.LocationP.Location.LocationResponse getDefaultInstanceForType() {
+          return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+        }
+
+        public proto.car.LocationP.Location.LocationResponse build() {
+          proto.car.LocationP.Location.LocationResponse result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public proto.car.LocationP.Location.LocationResponse buildPartial() {
+          proto.car.LocationP.Location.LocationResponse result = new proto.car.LocationP.Location.LocationResponse(this);
+          result.x_ = x_;
+          result.y_ = y_;
+          result.angle_ = angle_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof proto.car.LocationP.Location.LocationResponse) {
+            return mergeFrom((proto.car.LocationP.Location.LocationResponse)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(proto.car.LocationP.Location.LocationResponse other) {
+          if (other == proto.car.LocationP.Location.LocationResponse.getDefaultInstance()) return this;
+          if (other.getX() != 0D) {
+            setX(other.getX());
+          }
+          if (other.getY() != 0D) {
+            setY(other.getY());
+          }
+          if (other.getAngle() != 0D) {
+            setAngle(other.getAngle());
+          }
+          onChanged();
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          proto.car.LocationP.Location.LocationResponse parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (proto.car.LocationP.Location.LocationResponse) e.getUnfinishedMessage();
+            throw e.unwrapIOException();
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        private double x_ ;
+        /**
+         * <code>optional double x = 1;</code>
+         */
+        public double getX() {
+          return x_;
+        }
+        /**
+         * <code>optional double x = 1;</code>
+         */
+        public Builder setX(double value) {
+          
+          x_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional double x = 1;</code>
+         */
+        public Builder clearX() {
+          
+          x_ = 0D;
+          onChanged();
+          return this;
+        }
+
+        private double y_ ;
+        /**
+         * <code>optional double y = 2;</code>
+         */
+        public double getY() {
+          return y_;
+        }
+        /**
+         * <code>optional double y = 2;</code>
+         */
+        public Builder setY(double value) {
+          
+          y_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional double y = 2;</code>
+         */
+        public Builder clearY() {
+          
+          y_ = 0D;
+          onChanged();
+          return this;
+        }
+
+        private double angle_ ;
+        /**
+         * <code>optional double angle = 3;</code>
+         */
+        public double getAngle() {
+          return angle_;
+        }
+        /**
+         * <code>optional double angle = 3;</code>
+         */
+        public Builder setAngle(double value) {
+          
+          angle_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional double angle = 3;</code>
+         */
+        public Builder clearAngle() {
+          
+          angle_ = 0D;
+          onChanged();
+          return this;
+        }
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return this;
+        }
+
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return this;
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:carkot.Location.LocationResponse)
+      }
+
+      // @@protoc_insertion_point(class_scope:carkot.Location.LocationResponse)
+      private static final proto.car.LocationP.Location.LocationResponse DEFAULT_INSTANCE;
+      static {
+        DEFAULT_INSTANCE = new proto.car.LocationP.Location.LocationResponse();
+      }
+
+      public static proto.car.LocationP.Location.LocationResponse getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<LocationResponse>
+          PARSER = new com.google.protobuf.AbstractParser<LocationResponse>() {
+        public LocationResponse parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LocationResponse(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<LocationResponse> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<LocationResponse> getParserForType() {
+        return PARSER;
+      }
+
+      public proto.car.LocationP.Location.LocationResponse getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
     }
 
-    public static final int Y_FIELD_NUMBER = 2;
-    private double y_;
-    /**
-     * <code>optional double y = 2;</code>
-     */
-    public double getY() {
-      return y_;
+    private int responseCase_ = 0;
+    private java.lang.Object response_;
+    public enum ResponseCase
+        implements com.google.protobuf.Internal.EnumLite {
+      ERROR(2),
+      LOCATIONRESPONSE(1),
+      RESPONSE_NOT_SET(0);
+      private final int value;
+      private ResponseCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ResponseCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ResponseCase forNumber(int value) {
+        switch (value) {
+          case 2: return ERROR;
+          case 1: return LOCATIONRESPONSE;
+          case 0: return RESPONSE_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ResponseCase
+    getResponseCase() {
+      return ResponseCase.forNumber(
+          responseCase_);
     }
 
-    public static final int ANGLE_FIELD_NUMBER = 3;
-    private double angle_;
+    public static final int ERROR_FIELD_NUMBER = 2;
     /**
-     * <code>optional double angle = 3;</code>
+     * <code>optional .carkot.Error error = 2;</code>
      */
-    public double getAngle() {
-      return angle_;
+    public proto.car.ErrorP.Error getError() {
+      if (responseCase_ == 2) {
+         return (proto.car.ErrorP.Error) response_;
+      }
+      return proto.car.ErrorP.Error.getDefaultInstance();
+    }
+    /**
+     * <code>optional .carkot.Error error = 2;</code>
+     */
+    public proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder() {
+      if (responseCase_ == 2) {
+         return (proto.car.ErrorP.Error) response_;
+      }
+      return proto.car.ErrorP.Error.getDefaultInstance();
+    }
+
+    public static final int LOCATIONRESPONSE_FIELD_NUMBER = 1;
+    /**
+     * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+     */
+    public proto.car.LocationP.Location.LocationResponse getLocationResponse() {
+      if (responseCase_ == 1) {
+         return (proto.car.LocationP.Location.LocationResponse) response_;
+      }
+      return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+    }
+    /**
+     * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+     */
+    public proto.car.LocationP.Location.LocationResponseOrBuilder getLocationResponseOrBuilder() {
+      if (responseCase_ == 1) {
+         return (proto.car.LocationP.Location.LocationResponse) response_;
+      }
+      return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -146,14 +702,11 @@ public final class LocationP {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (x_ != 0D) {
-        output.writeDouble(1, x_);
+      if (responseCase_ == 1) {
+        output.writeMessage(1, (proto.car.LocationP.Location.LocationResponse) response_);
       }
-      if (y_ != 0D) {
-        output.writeDouble(2, y_);
-      }
-      if (angle_ != 0D) {
-        output.writeDouble(3, angle_);
+      if (responseCase_ == 2) {
+        output.writeMessage(2, (proto.car.ErrorP.Error) response_);
       }
     }
 
@@ -162,17 +715,13 @@ public final class LocationP {
       if (size != -1) return size;
 
       size = 0;
-      if (x_ != 0D) {
+      if (responseCase_ == 1) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, x_);
+          .computeMessageSize(1, (proto.car.LocationP.Location.LocationResponse) response_);
       }
-      if (y_ != 0D) {
+      if (responseCase_ == 2) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, y_);
-      }
-      if (angle_ != 0D) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(3, angle_);
+          .computeMessageSize(2, (proto.car.ErrorP.Error) response_);
       }
       memoizedSize = size;
       return size;
@@ -291,12 +840,8 @@ public final class LocationP {
       }
       public Builder clear() {
         super.clear();
-        x_ = 0D;
-
-        y_ = 0D;
-
-        angle_ = 0D;
-
+        responseCase_ = 0;
+        response_ = null;
         return this;
       }
 
@@ -319,9 +864,21 @@ public final class LocationP {
 
       public proto.car.LocationP.Location buildPartial() {
         proto.car.LocationP.Location result = new proto.car.LocationP.Location(this);
-        result.x_ = x_;
-        result.y_ = y_;
-        result.angle_ = angle_;
+        if (responseCase_ == 2) {
+          if (errorBuilder_ == null) {
+            result.response_ = response_;
+          } else {
+            result.response_ = errorBuilder_.build();
+          }
+        }
+        if (responseCase_ == 1) {
+          if (locationResponseBuilder_ == null) {
+            result.response_ = response_;
+          } else {
+            result.response_ = locationResponseBuilder_.build();
+          }
+        }
+        result.responseCase_ = responseCase_;
         onBuilt();
         return result;
       }
@@ -337,14 +894,18 @@ public final class LocationP {
 
       public Builder mergeFrom(proto.car.LocationP.Location other) {
         if (other == proto.car.LocationP.Location.getDefaultInstance()) return this;
-        if (other.getX() != 0D) {
-          setX(other.getX());
-        }
-        if (other.getY() != 0D) {
-          setY(other.getY());
-        }
-        if (other.getAngle() != 0D) {
-          setAngle(other.getAngle());
+        switch (other.getResponseCase()) {
+          case ERROR: {
+            mergeError(other.getError());
+            break;
+          }
+          case LOCATIONRESPONSE: {
+            mergeLocationResponse(other.getLocationResponse());
+            break;
+          }
+          case RESPONSE_NOT_SET: {
+            break;
+          }
         }
         onChanged();
         return this;
@@ -371,83 +932,280 @@ public final class LocationP {
         }
         return this;
       }
+      private int responseCase_ = 0;
+      private java.lang.Object response_;
+      public ResponseCase
+          getResponseCase() {
+        return ResponseCase.forNumber(
+            responseCase_);
+      }
 
-      private double x_ ;
-      /**
-       * <code>optional double x = 1;</code>
-       */
-      public double getX() {
-        return x_;
-      }
-      /**
-       * <code>optional double x = 1;</code>
-       */
-      public Builder setX(double value) {
-        
-        x_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional double x = 1;</code>
-       */
-      public Builder clearX() {
-        
-        x_ = 0D;
+      public Builder clearResponse() {
+        responseCase_ = 0;
+        response_ = null;
         onChanged();
         return this;
       }
 
-      private double y_ ;
+
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder> errorBuilder_;
       /**
-       * <code>optional double y = 2;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public double getY() {
-        return y_;
+      public proto.car.ErrorP.Error getError() {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2) {
+            return (proto.car.ErrorP.Error) response_;
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
+        } else {
+          if (responseCase_ == 2) {
+            return errorBuilder_.getMessage();
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
+        }
       }
       /**
-       * <code>optional double y = 2;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public Builder setY(double value) {
-        
-        y_ = value;
-        onChanged();
+      public Builder setError(proto.car.ErrorP.Error value) {
+        if (errorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          response_ = value;
+          onChanged();
+        } else {
+          errorBuilder_.setMessage(value);
+        }
+        responseCase_ = 2;
         return this;
       }
       /**
-       * <code>optional double y = 2;</code>
+       * <code>optional .carkot.Error error = 2;</code>
        */
-      public Builder clearY() {
-        
-        y_ = 0D;
-        onChanged();
+      public Builder setError(
+          proto.car.ErrorP.Error.Builder builderForValue) {
+        if (errorBuilder_ == null) {
+          response_ = builderForValue.build();
+          onChanged();
+        } else {
+          errorBuilder_.setMessage(builderForValue.build());
+        }
+        responseCase_ = 2;
         return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public Builder mergeError(proto.car.ErrorP.Error value) {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2 &&
+              response_ != proto.car.ErrorP.Error.getDefaultInstance()) {
+            response_ = proto.car.ErrorP.Error.newBuilder((proto.car.ErrorP.Error) response_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            response_ = value;
+          }
+          onChanged();
+        } else {
+          if (responseCase_ == 2) {
+            errorBuilder_.mergeFrom(value);
+          }
+          errorBuilder_.setMessage(value);
+        }
+        responseCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public Builder clearError() {
+        if (errorBuilder_ == null) {
+          if (responseCase_ == 2) {
+            responseCase_ = 0;
+            response_ = null;
+            onChanged();
+          }
+        } else {
+          if (responseCase_ == 2) {
+            responseCase_ = 0;
+            response_ = null;
+          }
+          errorBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public proto.car.ErrorP.Error.Builder getErrorBuilder() {
+        return getErrorFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      public proto.car.ErrorP.ErrorOrBuilder getErrorOrBuilder() {
+        if ((responseCase_ == 2) && (errorBuilder_ != null)) {
+          return errorBuilder_.getMessageOrBuilder();
+        } else {
+          if (responseCase_ == 2) {
+            return (proto.car.ErrorP.Error) response_;
+          }
+          return proto.car.ErrorP.Error.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .carkot.Error error = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder> 
+          getErrorFieldBuilder() {
+        if (errorBuilder_ == null) {
+          if (!(responseCase_ == 2)) {
+            response_ = proto.car.ErrorP.Error.getDefaultInstance();
+          }
+          errorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              proto.car.ErrorP.Error, proto.car.ErrorP.Error.Builder, proto.car.ErrorP.ErrorOrBuilder>(
+                  (proto.car.ErrorP.Error) response_,
+                  getParentForChildren(),
+                  isClean());
+          response_ = null;
+        }
+        responseCase_ = 2;
+        onChanged();;
+        return errorBuilder_;
       }
 
-      private double angle_ ;
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.LocationP.Location.LocationResponse, proto.car.LocationP.Location.LocationResponse.Builder, proto.car.LocationP.Location.LocationResponseOrBuilder> locationResponseBuilder_;
       /**
-       * <code>optional double angle = 3;</code>
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
        */
-      public double getAngle() {
-        return angle_;
+      public proto.car.LocationP.Location.LocationResponse getLocationResponse() {
+        if (locationResponseBuilder_ == null) {
+          if (responseCase_ == 1) {
+            return (proto.car.LocationP.Location.LocationResponse) response_;
+          }
+          return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+        } else {
+          if (responseCase_ == 1) {
+            return locationResponseBuilder_.getMessage();
+          }
+          return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+        }
       }
       /**
-       * <code>optional double angle = 3;</code>
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
        */
-      public Builder setAngle(double value) {
-        
-        angle_ = value;
-        onChanged();
+      public Builder setLocationResponse(proto.car.LocationP.Location.LocationResponse value) {
+        if (locationResponseBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          response_ = value;
+          onChanged();
+        } else {
+          locationResponseBuilder_.setMessage(value);
+        }
+        responseCase_ = 1;
         return this;
       }
       /**
-       * <code>optional double angle = 3;</code>
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
        */
-      public Builder clearAngle() {
-        
-        angle_ = 0D;
-        onChanged();
+      public Builder setLocationResponse(
+          proto.car.LocationP.Location.LocationResponse.Builder builderForValue) {
+        if (locationResponseBuilder_ == null) {
+          response_ = builderForValue.build();
+          onChanged();
+        } else {
+          locationResponseBuilder_.setMessage(builderForValue.build());
+        }
+        responseCase_ = 1;
         return this;
+      }
+      /**
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+       */
+      public Builder mergeLocationResponse(proto.car.LocationP.Location.LocationResponse value) {
+        if (locationResponseBuilder_ == null) {
+          if (responseCase_ == 1 &&
+              response_ != proto.car.LocationP.Location.LocationResponse.getDefaultInstance()) {
+            response_ = proto.car.LocationP.Location.LocationResponse.newBuilder((proto.car.LocationP.Location.LocationResponse) response_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            response_ = value;
+          }
+          onChanged();
+        } else {
+          if (responseCase_ == 1) {
+            locationResponseBuilder_.mergeFrom(value);
+          }
+          locationResponseBuilder_.setMessage(value);
+        }
+        responseCase_ = 1;
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+       */
+      public Builder clearLocationResponse() {
+        if (locationResponseBuilder_ == null) {
+          if (responseCase_ == 1) {
+            responseCase_ = 0;
+            response_ = null;
+            onChanged();
+          }
+        } else {
+          if (responseCase_ == 1) {
+            responseCase_ = 0;
+            response_ = null;
+          }
+          locationResponseBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+       */
+      public proto.car.LocationP.Location.LocationResponse.Builder getLocationResponseBuilder() {
+        return getLocationResponseFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+       */
+      public proto.car.LocationP.Location.LocationResponseOrBuilder getLocationResponseOrBuilder() {
+        if ((responseCase_ == 1) && (locationResponseBuilder_ != null)) {
+          return locationResponseBuilder_.getMessageOrBuilder();
+        } else {
+          if (responseCase_ == 1) {
+            return (proto.car.LocationP.Location.LocationResponse) response_;
+          }
+          return proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .carkot.Location.LocationResponse locationResponse = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          proto.car.LocationP.Location.LocationResponse, proto.car.LocationP.Location.LocationResponse.Builder, proto.car.LocationP.Location.LocationResponseOrBuilder> 
+          getLocationResponseFieldBuilder() {
+        if (locationResponseBuilder_ == null) {
+          if (!(responseCase_ == 1)) {
+            response_ = proto.car.LocationP.Location.LocationResponse.getDefaultInstance();
+          }
+          locationResponseBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              proto.car.LocationP.Location.LocationResponse, proto.car.LocationP.Location.LocationResponse.Builder, proto.car.LocationP.Location.LocationResponseOrBuilder>(
+                  (proto.car.LocationP.Location.LocationResponse) response_,
+                  getParentForChildren(),
+                  isClean());
+          response_ = null;
+        }
+        responseCase_ = 1;
+        onChanged();;
+        return locationResponseBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -503,6 +1261,11 @@ public final class LocationP {
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_carkot_Location_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_carkot_Location_LocationResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_carkot_Location_LocationResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -512,9 +1275,13 @@ public final class LocationP {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016location.proto\022\006carkot\"/\n\010Location\022\t\n\001" +
-      "x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\r\n\005angle\030\003 \001(\001B\026\n\tpro" +
-      "to.carB\tLocationPb\006proto3"
+      "\n\016location.proto\022\006carkot\032\013error.proto\"\256\001" +
+      "\n\010Location\022\036\n\005error\030\002 \001(\0132\r.carkot.Error" +
+      "H\000\022=\n\020locationResponse\030\001 \001(\0132!.carkot.Lo" +
+      "cation.LocationResponseH\000\0327\n\020LocationRes" +
+      "ponse\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\r\n\005angle\030\003 \001" +
+      "(\001B\n\n\010responseB\026\n\tproto.carB\tLocationPb\006" +
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -527,13 +1294,21 @@ public final class LocationP {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          proto.car.ErrorP.getDescriptor(),
         }, assigner);
     internal_static_carkot_Location_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_carkot_Location_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_carkot_Location_descriptor,
+        new java.lang.String[] { "Error", "LocationResponse", "Response", });
+    internal_static_carkot_Location_LocationResponse_descriptor =
+      internal_static_carkot_Location_descriptor.getNestedTypes().get(0);
+    internal_static_carkot_Location_LocationResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_carkot_Location_LocationResponse_descriptor,
         new java.lang.String[] { "X", "Y", "Angle", });
+    proto.car.ErrorP.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

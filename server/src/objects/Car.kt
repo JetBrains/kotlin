@@ -5,9 +5,9 @@ import car.client.Client
 /**
  * Created by user on 7/7/16.
  */
-class Car constructor(id: String, host: String, port: Int) {
+class Car constructor(uid: Int, host: String, port: Int) {
 
-    val id: String
+    val uid: Int
     val host: String
     val port: Int
 
@@ -17,7 +17,7 @@ class Car constructor(id: String, host: String, port: Int) {
     var y: Double
 
     init {
-        this.id = id
+        this.uid = uid
         this.host = host
         this.port = port
         this.free = true
@@ -26,6 +26,6 @@ class Car constructor(id: String, host: String, port: Int) {
     }
 
     override fun toString(): String {
-        return "$id ; x:$x; y:$y"
+        return "$uid ; x:$x; y:$y"
     }
 }

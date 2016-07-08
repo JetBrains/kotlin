@@ -9,7 +9,7 @@ import proto.car.RouteP.Route.WayPoint
  */
 class ThisCar private constructor() {
 
-    var id = ""
+    var id = 0
 
 
     //metr

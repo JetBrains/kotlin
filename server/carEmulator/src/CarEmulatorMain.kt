@@ -59,21 +59,20 @@ fun main(args: Array<String>) {
     val car = ThisCar.instance
     var lastTime: Long = System.currentTimeMillis()
     while (true) {
+        Thread.sleep(50)
         val deltaTimeMs = (System.currentTimeMillis() - lastTime)
-        if (deltaTimeMs > 50) {
-            if (!car.pathDone) {
-                println(car)
-            }
-            var pathDone = car.move(deltaTimeMs.toDouble()/ 1000)
-            if (pathDone) {
-                val routeDone = RouteDoneP.RouteDone.newBuilder().setUid(car.id).build()
-                val pathDoneRequest = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, setRouteUrl, Unpooled.copiedBuffer(routeDone.toByteArray()))
-                pathDoneRequest.headers().set(HttpHeaderNames.HOST, serverHost)
-                pathDoneRequest.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
-                pathDoneRequest.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, pathDoneRequest.content().readableBytes())
-                Client.sendRequest(pathDoneRequest, serverHost, serverPort)
-            }
-            lastTime = System.currentTimeMillis()
+        if (!car.pathDone) {
+            println(car)
         }
+        var pathDone = car.move(deltaTimeMs.toDouble() / 1000)
+        if (pathDone) {
+            val routeDone = RouteDoneP.RouteDone.newBuilder().setUid(car.id).build()
+            val pathDoneRequest = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, setRouteUrl, Unpooled.copiedBuffer(routeDone.toByteArray()))
+            pathDoneRequest.headers().set(HttpHeaderNames.HOST, serverHost)
+            pathDoneRequest.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
+            pathDoneRequest.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, pathDoneRequest.content().readableBytes())
+            Client.sendRequest(pathDoneRequest, serverHost, serverPort)
+        }
+        lastTime = System.currentTimeMillis()
     }
 }

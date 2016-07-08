@@ -1,20 +1,16 @@
 package server
 
+import ThisCar
 import com.google.protobuf.InvalidProtocolBufferException
-import connectUrl
 import getLocationUrl
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.*
-import proto.car.ConnectP.ConnectionRequest
 import proto.car.LocationP
-import proto.car.RouteDoneP.RouteDone
 import proto.car.RouteP
-import routeDoneUrl
 import setRouteUrl
-import java.util.*
 
 /**
  * Created by user on 7/6/16.
@@ -32,14 +28,14 @@ class Handler : SimpleChannelInboundHandler<Any>() {
         var dataAnswer: ByteArray = ByteArray(0)
         when (url) {
             getLocationUrl -> {
-                dataAnswer = LocationP.Location.newBuilder().setAngle(car.angle).setX(car.x).setY(car.y).build().toByteArray();
+                dataAnswer = LocationP.Location.newBuilder().setLocationResponse(LocationP.Location.LocationResponse.newBuilder().setAngle(car.angle).setX(car.x).setY(car.y)).build().toByteArray()
             }
             setRouteUrl -> {
                 var data: RouteP.Route? = null;
                 try {
                     data = RouteP.Route.parseFrom(contentBytes)
                 } catch (e: InvalidProtocolBufferException) {
-                    //todo error answer
+                    success = false;
                 }
                 if (data != null) {
                     val wayPoints = data.wayPointsList
@@ -49,11 +45,10 @@ class Handler : SimpleChannelInboundHandler<Any>() {
             }
             else -> {
                 success = false
-                //todo unsup operation. error answer
             }
         }
 
-        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.NOT_FOUND, Unpooled.copiedBuffer(dataAnswer))
+        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(dataAnswer))
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
