@@ -1255,6 +1255,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -1588,6 +1593,14 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBePrimaryConstructorPropertyInspection"
                      displayName="Property is explicitly assigned to constructor parameter"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveAtFromAnnotationArgumentInspection"
+                     displayName="Unnecessary @"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
