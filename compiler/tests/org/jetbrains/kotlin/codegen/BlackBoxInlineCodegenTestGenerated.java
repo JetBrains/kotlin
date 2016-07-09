@@ -619,6 +619,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTest(fileName);
         }
 
+        @TestMetadata("swapAndWith.kt")
+        public void testSwapAndWith() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complex/swapAndWith.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("swapAndWith2.kt")
+        public void testSwapAndWith2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complex/swapAndWith2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("use.kt")
         public void testUse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complex/use.kt");
