@@ -216,10 +216,6 @@ public abstract class AbstractModelBuilderTest {
   public static class DistributionLocator {
     private static final String RELEASE_REPOSITORY_ENV = "GRADLE_RELEASE_REPOSITORY";
     private static final String SNAPSHOT_REPOSITORY_ENV = "GRADLE_SNAPSHOT_REPOSITORY";
-    private static final String INTELLIJ_LABS_GRADLE_RELEASE_MIRROR =
-      "http://services.gradle.org-mirror.labs.intellij.net/distributions";
-    private static final String INTELLIJ_LABS_GRADLE_SNAPSHOT_MIRROR =
-      "http://services.gradle.org-mirror.labs.intellij.net/distributions-snapshots";
     private static final String GRADLE_RELEASE_REPO = "http://services.gradle.org/distributions";
     private static final String GRADLE_SNAPSHOT_REPO = "http://services.gradle.org/distributions-snapshots";
 
@@ -256,10 +252,6 @@ public abstract class AbstractModelBuilderTest {
     public static String getRepoUrl(boolean isSnapshotUrl) {
       String envRepoUrl = System.getenv(isSnapshotUrl ? SNAPSHOT_REPOSITORY_ENV : RELEASE_REPOSITORY_ENV);
       if (envRepoUrl != null) return envRepoUrl;
-
-      if (UsefulTestCase.IS_UNDER_TEAMCITY) {
-        return isSnapshotUrl ? INTELLIJ_LABS_GRADLE_SNAPSHOT_MIRROR : INTELLIJ_LABS_GRADLE_RELEASE_MIRROR;
-      }
 
       return isSnapshotUrl ? GRADLE_SNAPSHOT_REPO : GRADLE_RELEASE_REPO;
     }
