@@ -1,0 +1,7 @@
+fun foo(x: Any?) {
+    try {
+        x
+    } catch (e: Exception) {
+
+    }
+}

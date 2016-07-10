@@ -35,6 +35,18 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("else.kt")
+    public void testElse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/else.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("if.kt")
+    public void testIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/if.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("notBoolean.kt")
     public void testNotBoolean() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notBoolean.kt");
@@ -44,6 +56,30 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("notString.kt")
     public void testNotString() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notString.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("notnull.kt")
+    public void testNotnull() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notnull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("null.kt")
+    public void testNull() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/null.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("try.kt")
+    public void testTry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/try.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("when.kt")
+    public void testWhen() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/when.kt");
         doTest(fileName);
     }
 }
