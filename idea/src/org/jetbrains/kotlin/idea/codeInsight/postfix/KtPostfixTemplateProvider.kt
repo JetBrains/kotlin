@@ -33,7 +33,16 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 
 class KtPostfixTemplateProvider : PostfixTemplateProvider {
-    override fun getTemplates() = setOf<PostfixTemplate>(KtNotPostfixTemplate)
+    override fun getTemplates() = setOf(
+            KtNotPostfixTemplate,
+            KtIfExpressionPostfixTemplate,
+            KtElseExpressionPostfixTemplate,
+            KtNotNullPostfixTemplate("notnull"),
+            KtNotNullPostfixTemplate("nn"),
+            KtIsNullPostfixTemplate,
+            KtWhenExpressionPostfixTemplate,
+            KtTryPostfixTemplate
+    )
 
     override fun isTerminalSymbol(currentChar: Char) = currentChar == '.' || currentChar == '!'
 
@@ -51,7 +60,7 @@ private object KtNotPostfixTemplate : NotPostfixTemplate(
         createExpressionSelector { it.isBoolean() }
 )
 
-private object KtPostfixTemplatePsiInfo : PostfixTemplatePsiInfo() {
+internal object KtPostfixTemplatePsiInfo : PostfixTemplatePsiInfo() {
     override fun createExpression(context: PsiElement, prefix: String, suffix: String) =
             KtPsiFactory(context.project).createExpression(prefix + context.text + suffix)
 
