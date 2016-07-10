@@ -4386,6 +4386,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tryFinallyWithHandleResult.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("varValueConflictsWithTable.kt")
+        public void testVarValueConflictsWithTable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/varValueConflictsWithTable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varValueConflictsWithTableSameSort.kt")
+        public void testVarValueConflictsWithTableSameSort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
