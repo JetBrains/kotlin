@@ -239,7 +239,7 @@ public class OverridingUtil {
     }
 
     @Nullable
-    static OverrideCompatibilityInfo checkReceiverAndParameterCount(
+    private static OverrideCompatibilityInfo checkReceiverAndParameterCount(
             CallableDescriptor superDescriptor,
             CallableDescriptor subDescriptor
     ) {
@@ -290,7 +290,7 @@ public class OverridingUtil {
         return true;
     }
 
-    static List<KotlinType> compiledValueParameters(CallableDescriptor callableDescriptor) {
+    private static List<KotlinType> compiledValueParameters(CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
         List<KotlinType> parameters = new ArrayList<KotlinType>();
         if (receiverParameter != null) {
@@ -501,6 +501,7 @@ public class OverridingUtil {
 
         H firstNonFlexible = null;
         for (H candidate : candidates) {
+            //noinspection ConstantConditions
             if (!FlexibleTypesKt.isFlexible(descriptorByHandle.invoke(candidate).getReturnType())) {
                 firstNonFlexible = candidate;
                 break;
