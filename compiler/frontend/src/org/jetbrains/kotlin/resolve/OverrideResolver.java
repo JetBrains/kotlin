@@ -55,8 +55,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractM
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public class OverrideResolver {
-
-    @NotNull private final BindingTrace trace;
+    private final BindingTrace trace;
 
     public OverrideResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
@@ -123,7 +122,7 @@ public class OverrideResolver {
         };
     }
 
-    private static enum Filtering {
+    private enum Filtering {
         RETAIN_OVERRIDING,
         RETAIN_OVERRIDDEN
     }
@@ -135,7 +134,7 @@ public class OverrideResolver {
     }
 
     @NotNull
-    public static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
+    private static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
         //noinspection unchecked
         return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDDEN);
     }
@@ -731,7 +730,7 @@ public class OverrideResolver {
 
     /**
      * @return overridden real descriptors (not fake overrides). Note that all usages of this method should be followed by calling
-     * {@link #filterOutOverridden(java.util.Set)} or {@link #filterOutOverriding(java.util.Set)}, because some of the declarations
+     * {@link #filterOutOverridden(Set)} or {@link #filterOutOverriding(Set)}, because some of the declarations
      * can override the other
      * TODO: merge this method with filterOutOverridden
      */
@@ -930,7 +929,7 @@ public class OverrideResolver {
         }
     }
 
-    public static boolean isReturnTypeOkForOverride(
+    private static boolean isReturnTypeOkForOverride(
             @NotNull CallableDescriptor superDescriptor,
             @NotNull CallableDescriptor subDescriptor
     ) {
@@ -966,7 +965,7 @@ public class OverrideResolver {
         return new IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor();
     }
 
-    public static boolean isPropertyTypeOkForOverride(
+    private static boolean isPropertyTypeOkForOverride(
             @NotNull PropertyDescriptor superDescriptor,
             @NotNull PropertyDescriptor subDescriptor
     ) {
