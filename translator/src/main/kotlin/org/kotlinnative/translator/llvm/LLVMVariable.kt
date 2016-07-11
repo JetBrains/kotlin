@@ -1,6 +1,9 @@
 package org.kotlinnative.translator.llvm
 
-data class LLVMVariable(val label: String){
+import org.kotlinnative.translator.llvm.types.LLVMType
+
+class LLVMVariable(val label: String, val type: LLVMType?) : LLVMNode() {
+
     override fun toString(): String {
         return label
     }

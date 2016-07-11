@@ -14,6 +14,7 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMDescriptorGenerate
 import org.kotlinnative.translator.llvm.LLVMMapStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
+import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.utils.FunctionArgument
 
 
@@ -84,7 +85,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMVariable {
         val node = expr.node
-        return LLVMVariable(node.firstChildNode.text)
+        return LLVMVariable(node.firstChildNode.text, ::LLVMIntType.invoke())
     }
 
     private fun evaluatePsiElement(element: PsiElement): LLVMVariable? {
@@ -99,7 +100,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     private fun evaluateLeafPsiElement(element: LeafPsiElement): LLVMVariable? {
         return when (element.elementType) {
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element)
-            else -> LLVMVariable("")
+            else -> null
         }
     }
 
