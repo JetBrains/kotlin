@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToDefaultImpls
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.util.*
@@ -77,8 +78,8 @@ class InterfaceImplBodyCodegen(
 
             val implementation = findImplementationFromInterface(memberDescriptor) ?: continue
 
-            // If implementation is located in a Java interface, it will be inherited via normal Java rules
-            if (implementation is JavaMethodDescriptor) continue
+            // If implementation is a default interface method (JVM 8 only)
+            if (implementation.isDefinitelyNotDefaultImplsMethod()) continue
 
             // We create a copy of the function with kind = DECLARATION so that FunctionCodegen will generate its body
             val copy = memberDescriptor.copy(memberDescriptor.containingDeclaration, Modality.OPEN, memberDescriptor.visibility,

@@ -187,6 +187,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/mapRemove"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("noDefaultImpls.kt")
+        public void testNoDefaultImpls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/mapRemove/noDefaultImpls.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("readOnlyMap.kt")
         public void testReadOnlyMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/mapRemove/readOnlyMap.kt");
