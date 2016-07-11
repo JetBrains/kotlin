@@ -19,15 +19,15 @@ fun testTrivialPositiveVarInts() {
     outs.writeInt64(9, -32132132132131L)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(1, 42, ins.readInt32())
-    assertSuccessfulRead(42, 1, ins.readInt32())
-    assertSuccessfulRead(2, -2, ins.readInt32())
-    assertSuccessfulRead(3, -21321, ins.readInt32())
-    assertSuccessfulRead(5, 42L, ins.readInt64())
-    assertSuccessfulRead(6, 1232132131212321L, ins.readInt64())
-    assertSuccessfulRead(7, -2, ins.readInt64())
-    assertSuccessfulRead(8, -21321L, ins.readInt64())
-    assertSuccessfulRead(9, -32132132132131L, ins.readInt64())
+    assertSuccessfulRead(42, ins.readInt32(1))
+    assertSuccessfulRead(1, ins.readInt32(16))
+    assertSuccessfulRead(-2, ins.readInt32(2))
+    assertSuccessfulRead(-21321, ins.readInt32(3))
+    assertSuccessfulRead(42L, ins.readInt64(5))
+    assertSuccessfulRead(1232132131212321L, ins.readInt64(6))
+    assertSuccessfulRead(-2, ins.readInt64(7))
+    assertSuccessfulRead(-21321L, ins.readInt64(8))
+    assertSuccessfulRead(-32132132132131L, ins.readInt64(9))
 }
 
 
@@ -38,8 +38,8 @@ fun testMinPossibleVarInts() {
     outs.writeInt64(2, Long.MIN_VALUE)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(1, Int.MIN_VALUE, ins.readInt32())
-    assertSuccessfulRead(2, Long.MIN_VALUE, ins.readInt64())
+    assertSuccessfulRead(Int.MIN_VALUE, ins.readInt32(1))
+    assertSuccessfulRead(Long.MIN_VALUE, ins.readInt64(2))
 }
 
 fun testMaxPossibleVarInts() {
@@ -49,8 +49,8 @@ fun testMaxPossibleVarInts() {
     outs.writeInt64(2, Long.MAX_VALUE)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(1, Int.MAX_VALUE, ins.readInt32())
-    assertSuccessfulRead(2, Long.MAX_VALUE, ins.readInt64())
+    assertSuccessfulRead(Int.MAX_VALUE, ins.readInt32(1))
+    assertSuccessfulRead(Long.MAX_VALUE, ins.readInt64(2))
 }
 
 fun testMaxPossibleFieldNumber() {
@@ -59,7 +59,7 @@ fun testMaxPossibleFieldNumber() {
     outs.writeInt64(536870911, Long.MAX_VALUE)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(536870911, Long.MAX_VALUE, ins.readInt64())
+    assertSuccessfulRead(Long.MAX_VALUE, ins.readInt64(536870911))
 }
 
 fun testZigZag32() {
@@ -70,9 +70,9 @@ fun testZigZag32() {
     outs.writeSInt32(4, -12345675)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(5, -213123, ins.readSInt32())
-    assertSuccessfulRead(1, 3123123, ins.readSInt32())
-    assertSuccessfulRead(4, -12345675, ins.readSInt32())
+    assertSuccessfulRead(-213123, ins.readSInt32(5))
+    assertSuccessfulRead(3123123, ins.readSInt32(1))
+    assertSuccessfulRead(-12345675, ins.readSInt32(4))
 }
 
 fun testZigZag64() {
@@ -85,11 +85,11 @@ fun testZigZag64() {
     outs.writeSInt64(42, 483567314231L)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(5, -213123L, ins.readSInt64())
-    assertSuccessfulRead(1, 3123123L, ins.readSInt64())
-    assertSuccessfulRead(4, -12345675L, ins.readSInt64())
-    assertSuccessfulRead(12, -123456789012L, ins.readSInt64())
-    assertSuccessfulRead(42, 483567314231L, ins.readSInt64())
+    assertSuccessfulRead(-213123L, ins.readSInt64(5))
+    assertSuccessfulRead(3123123L, ins.readSInt64(1))
+    assertSuccessfulRead(-12345675L, ins.readSInt64(4))
+    assertSuccessfulRead(-123456789012L, ins.readSInt64(12))
+    assertSuccessfulRead(483567314231L, ins.readSInt64(42))
 }
 
 fun testBoolean() {
@@ -99,8 +99,8 @@ fun testBoolean() {
     outs.writeBool(2, false)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(1, true, ins.readBool())
-    assertSuccessfulRead(2, false, ins.readBool())
+    assertSuccessfulRead(true, ins.readBool(1))
+    assertSuccessfulRead(false, ins.readBool(2))
 }
 
 fun testEnum() {
@@ -110,8 +110,8 @@ fun testEnum() {
     outs.writeEnum(2, WireType.FIX_64.ordinal)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(1, WireType.END_GROUP.ordinal, ins.readEnum())
-    assertSuccessfulRead(2, WireType.FIX_64.ordinal, ins.readEnum())
+    assertSuccessfulRead(WireType.END_GROUP.ordinal, ins.readEnum(1))
+    assertSuccessfulRead(WireType.FIX_64.ordinal, ins.readEnum(2))
 }
 
 fun testFloatAndDouble() {
@@ -122,9 +122,9 @@ fun testFloatAndDouble() {
     outs.writeFloat(14, -1.32131321f)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(42, 123212.34282, ins.readDouble())
-    assertSuccessfulRead(15, Math.PI, ins.readDouble())
-    assertSuccessfulRead(14, -1.32131321f, ins.readFloat())
+    assertSuccessfulRead(123212.34282, ins.readDouble(42))
+    assertSuccessfulRead(Math.PI, ins.readDouble(15))
+    assertSuccessfulRead(-1.32131321f, ins.readFloat(14))
 }
 
 fun testStrings() {
@@ -134,14 +134,12 @@ fun testStrings() {
     outs.writeString(15, """!@#$%^&*()QWERTYUI выфвфывфы""")
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    assertSuccessfulRead(42, "dasddasd asd ", ins.readString())
-    assertSuccessfulRead(15, """!@#$%^&*()QWERTYUI выфвфывфы""", ins.readString())
+    assertSuccessfulRead("dasddasd asd ", ins.readString(42))
+    assertSuccessfulRead("""!@#$%^&*()QWERTYUI выфвфывфы""", ins.readString(15))
 }
 
-fun <T> assertSuccessfulRead(fieldNumber: Int, value: T, field: CodedInputStream.Field<T>) {
-    assert(field.fieldNumber == fieldNumber)
-    assert(field.wireType == WireType.VARINT)
-    assert(field.value == value)
+fun <T> assertSuccessfulRead(value: T, actualValue: T) {
+    assert(actualValue == value)
 }
 
 fun main(args: Array<String>) {

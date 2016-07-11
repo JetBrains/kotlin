@@ -12,9 +12,9 @@ class PersonMessage(val name: String, val id: Long, val hasCat: Boolean) // : Me
     }
 
     fun readFrom(input: CodedInputStream) : PersonMessage {
-        val newName = input.readString().value
-        val newId = input.readInt64().value
-        val newHasCatFlag = input.readBool().value
+        val newName = input.readString(1)
+        val newId = input.readInt64(2)
+        val newHasCatFlag = input.readBool(3)
         return PersonMessage(newName, newId, newHasCatFlag)
     }
 

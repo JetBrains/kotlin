@@ -116,14 +116,23 @@ class CodedOutputStream(val output: java.io.OutputStream) {
 
     fun writeVarint32(value: Int) {
         var curValue = value
+
+        // we have at most 32 information bits. With overhead of 1 bit per 7 bits we need at most 5 bytes for encoding
         val res = ByteArray(5)
+
         var resSize = 0
         do {
-            var curByte = (curValue and 127)
-            curValue = curValue ushr 7
+            // encode current 7 bits
+            var curByte = (curValue and VARINT_INFO_BITS_MASK)
+
+            // discard encoded bits. Note that unsigned shift is needed for cases with negative numbers
+            curValue = curValue ushr VARINT_INFO_BITS_COUNT
+
+            // check if there will be next byte in encoding and set util bit if needed
             if (curValue != 0) {
-                curByte = curByte or 128
+                curByte = curByte or VARINT_UTIL_BIT_MASK
             }
+
             res[resSize] = curByte.toByte()
             resSize++
         } while(curValue != 0)
@@ -132,13 +141,21 @@ class CodedOutputStream(val output: java.io.OutputStream) {
 
     fun writeVarint64(value: Long) {
         var curValue = value
-        val res = ByteArray(10) // we reserve 10 bytes for the cases when value was negative int32/int64
+
+        // we have at most 64 information bits. With overhead of 1 bit per 7 bits we need at most 10 bytes for encoding
+        val res = ByteArray(10)
+
         var resSize = 0
         while(curValue != 0L) {
-            var curByte = (curValue and 127L)
-            curValue = curValue ushr 7
+            // encode current 7 bits
+            var curByte = (curValue and VARINT_INFO_BITS_MASK.toLong())
+
+            // discard encoded bits. Note that unsigned shift is needed for cases with negative numbers
+            curValue = curValue ushr VARINT_INFO_BITS_COUNT
+
+            // check if there will be next byte and set util bit if needed
             if (curValue != 0L) {
-                curByte = curByte or 128L
+                curByte = curByte or VARINT_UTIL_BIT_MASK.toLong()
             }
 
             res[resSize] = curByte.toByte()
@@ -146,4 +163,9 @@ class CodedOutputStream(val output: java.io.OutputStream) {
         }
         output.write(res, 0, resSize)
     }
+
+    // couple of constants for magic numbers
+    val VARINT_INFO_BITS_COUNT: Int = 7
+    val VARINT_INFO_BITS_MASK: Int = 0b01111111    // mask for separating lowest 7 bits, where actual information stored
+    val VARINT_UTIL_BIT_MASK: Int = 0b10000000     // mask for separating highest bit, that indicates next byte presence
 }
