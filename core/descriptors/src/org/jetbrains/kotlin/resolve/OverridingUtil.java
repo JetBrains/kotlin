@@ -612,6 +612,9 @@ public class OverridingUtil {
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
 
+        Modality modality = determineModality(effectiveOverridden);
+        Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
+
         // FIXME doesn't work as expected for flexible types: should create a refined signature.
         // Current algorithm produces bad results in presence of annotated Java signatures such as:
         //      J: foo(s: String!): String -- @NotNull String foo(String s);
@@ -619,8 +622,6 @@ public class OverridingUtil {
         //  --> 'foo(s: String!): String' as an inherited signature with most specific return type.
         // This is bad because it can be overridden by 'foo(s: String?): String', which is not override-equivalent with K::foo above.
         // Should be 'foo(s: String): String'.
-        Modality modality = getMinimalModality(effectiveOverridden);
-        Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
         CallableMemberDescriptor mostSpecific =
                 selectMostSpecificMember(effectiveOverridden,
                                          new Function1<CallableMemberDescriptor, CallableDescriptor>() {
@@ -635,6 +636,36 @@ public class OverridingUtil {
         assert !fakeOverride.getOverriddenDescriptors().isEmpty()
                 : "Overridden descriptors should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         strategy.addFakeOverride(fakeOverride);
+    }
+
+    @NotNull
+    private static Modality determineModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
+        // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
+        boolean hasOpen = false;
+        boolean hasAbstract = false;
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            switch (descriptor.getModality()) {
+                case FINAL:
+                    return Modality.FINAL;
+                case SEALED:
+                    throw new IllegalStateException("Member cannot have SEALED modality: " + descriptor);
+                case OPEN:
+                    hasOpen = true;
+                    break;
+                case ABSTRACT:
+                    hasAbstract = true;
+                    break;
+            }
+        }
+
+        if (hasOpen && !hasAbstract) return Modality.OPEN;
+        if (!hasOpen && hasAbstract) return Modality.ABSTRACT;
+
+        Set<CallableMemberDescriptor> allOverriddenDeclarations = new HashSet<CallableMemberDescriptor>();
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            allOverriddenDeclarations.addAll(getOverriddenDeclarations(descriptor));
+        }
+        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations));
     }
 
     @NotNull

@@ -6,4 +6,4 @@ interface B
 
 abstract class C : A(), B
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Test<!> : C()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Test<!> : C()
