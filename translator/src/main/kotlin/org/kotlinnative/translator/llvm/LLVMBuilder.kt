@@ -56,6 +56,10 @@ class LLVMBuilder {
         llvmCode.appendln("ret i32 $llvmVariable")
     }
 
+    fun addVoidReturn() {
+        llvmCode.appendln("ret void")
+    }
+
     override fun toString(): String {
         return llvmCode.toString()
     }
