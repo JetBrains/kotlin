@@ -12534,6 +12534,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FakeOverrideModality1.kt")
+            public void testFakeOverrideModality1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/FakeOverrideModality1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FakeOverrideModality2.kt")
+            public void testFakeOverrideModality2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/FakeOverrideModality2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FakeOverrideModality3.kt")
+            public void testFakeOverrideModality3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/FakeOverrideModality3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Generics.kt")
             public void testGenerics() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/Generics.kt");
@@ -12543,6 +12561,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt12467.kt")
+            public void testKt12467() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/kt12467.kt");
                 doTest(fileName);
             }
 
