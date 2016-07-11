@@ -203,9 +203,13 @@ class KotlinFunctionCallUsage(
                                                         KtSuperTypeListEntry::class.java,
                                                         KtParameter::class.java) == null) {
 
-                KotlinIntroduceVariableHandler.doRefactoring(project, null, argumentExpression, listOf(argumentExpression)) {
+                KotlinIntroduceVariableHandler.doRefactoring(
+                        project, null, argumentExpression,
+                        isVar = false,
+                        occurrencesToReplace = listOf(argumentExpression),
+                        onNonInteractiveFinish = {
                     argumentExpression = psiFactory.createExpression(it.name!!)
-                }
+                })
             }
 
             var expressionToReplace: KtExpression = nameCounterpartMap[ref.element] ?: continue
