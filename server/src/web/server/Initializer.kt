@@ -22,7 +22,6 @@ class Initializer : ChannelInitializer<SocketChannel> {
 
     override fun initChannel(channel: SocketChannel) {
         val p: ChannelPipeline = channel.pipeline()
-
         p.addLast(HttpServerCodec())
         p.addLast(group, Handler())
     }

@@ -5,6 +5,8 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
 import io.netty.util.AttributeKey
+import objects.Environment
+import java.net.ConnectException
 
 /**
  * Created by user on 7/8/16.
@@ -14,8 +16,8 @@ object Client {
     val bootstrap: Bootstrap = makeBootstrap()
 
     private fun makeBootstrap(): Bootstrap {
-        val group = NioEventLoopGroup();
-        val b = Bootstrap();
+        val group = NioEventLoopGroup()
+        val b = Bootstrap()
         b.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
                 .attr(AttributeKey.newInstance<String>("url"), "")
                 .attr(AttributeKey.newInstance<Int>("uid"), 0)
@@ -31,6 +33,11 @@ object Client {
             ch.closeFuture().sync()//wait for answer
         } catch (e: InterruptedException) {
 
+        } catch (e: ConnectException) {
+            val carMap = Environment.instance.map
+            synchronized(carMap, {
+                carMap.remove(carUid)
+            })
         }
     }
 

@@ -40,6 +40,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                     val uid = environment.connectCar(data.ip, data.port)
                     answer = ConnectP.ConnectionResponse.newBuilder().setUid(uid).build().toByteArray()
                 }
+                //todo return connection error
             }
             routeDoneUrl -> {
                 var data: RouteDone? = null
@@ -58,6 +59,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                             success = false
                         }
                     })
+                    //todo return connection error
                 }
             }
             else -> {
