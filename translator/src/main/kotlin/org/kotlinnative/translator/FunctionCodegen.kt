@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMIntType
-import org.kotlinnative.translator.llvm.types.parseLLVMType
+import org.kotlinnative.translator.llvm.types.LLVMType
+import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import org.kotlinnative.translator.utils.FunctionArgument
 import java.util.*
 
@@ -17,8 +18,9 @@ import java.util.*
 class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
 
     var name = function.fqName.toString()
-    var returnType: String
+    var returnType: LLVMType
     var args: List<FunctionArgument>?
+    val variableManager = state.variableManager
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)
@@ -35,9 +37,10 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
 
         codeBuilder.addStartExpression()
+        generateLoadArguments(function)
         expressionWalker(function.bodyExpression)
 
-        if (returnType == "void") {
+        if (returnType is LLVMVoidType) {
             codeBuilder.addVoidReturn()
         }
 
@@ -61,29 +64,45 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return external
     }
 
-    private fun expressionWalker(expr: PsiElement?) {
+    private fun generateLoadArguments(function: KtNamedFunction) {
+        args?.forEach {
+            val loadVariable = LLVMVariable("%${it.name}", it.type)
+            codeBuilder.loadVariable(loadVariable)
+            variableManager.addVariable(it.name, loadVariable, 2)
+        }
+    }
+
+    private fun expressionWalker(expr: PsiElement?, scopeDepth: Int = 0) {
         when (expr) {
-            is KtBlockExpression -> expressionWalker(expr.firstChild)
-            is KtProperty -> evaluateLeafPsiElement(expr.firstChild as LeafPsiElement)
-            is KtCallExpression -> codeBuilder.addLLVMCode(evaluateCallExpression(expr).toString())
-            is PsiElement -> evaluateExpression(expr.firstChild)
-            null -> return
+            is KtBlockExpression -> expressionWalker(expr.firstChild, scopeDepth + 1)
+            is KtProperty -> evaluateLeafPsiElement(expr.firstChild as LeafPsiElement, scopeDepth)
+            is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
+            null -> {
+                variableManager.pullUpwardsLevel(scopeDepth)
+                return
+            }
             else -> UnsupportedOperationException()
         }
 
-        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments())
+        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth)
     }
 
-    private fun evaluateExpression(expr: PsiElement?): LLVMNode? {
+    private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMNode? {
         return when (expr) {
-            is KtBinaryExpression -> evaluateBinaryExpression(expr)
+            is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr)
+            is KtReferenceExpression -> evaluateReferenceExpression(expr)
             is PsiWhiteSpace -> null
-            is PsiElement -> evaluatePsiElement(expr)
+            is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
             else -> throw UnsupportedOperationException()
         }
+    }
+
+    private fun evaluateReferenceExpression(expr: KtReferenceExpression): LLVMNode? {
+        val variableName = expr.firstChild.text
+        return variableManager.getLLVMvalue(variableName)
     }
 
     private fun evaluateCallExpression(expr: KtCallExpression): LLVMNode? {
@@ -94,7 +113,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 .getNextSiblingIgnoringWhitespaceAndComments()
                 ?.firstChild)
 
-        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.argTypes.mapIndexed { i: Int, type: String -> LLVMVariable(names[i], parseLLVMType(type)) })
+        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.argTypes.mapIndexed { i: Int, type: LLVMType -> LLVMVariable(names[i], type) })
     }
 
     private fun parseArgList(argumentList: PsiElement?): List<String> {
@@ -112,9 +131,9 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return args
     }
 
-    private fun evaluateBinaryExpression(expr: KtBinaryExpression): LLVMNode {
-        val left = evaluateExpression(expr.firstChild) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
-        val right = evaluateExpression(expr.lastChild) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
+    private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMNode {
+        val left = evaluateExpression(expr.firstChild, scopeDepth) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
+        val right = evaluateExpression(expr.lastChild, scopeDepth) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
 
         return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
@@ -125,36 +144,39 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return LLVMVariable(node.firstChildNode.text, ::LLVMIntType.invoke())
     }
 
-    private fun evaluatePsiElement(element: PsiElement): LLVMVariable? {
+    private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMVariable? {
         return when (element) {
-            is LeafPsiElement -> evaluateLeafPsiElement(element)
+            is LeafPsiElement -> evaluateLeafPsiElement(element, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(element)
             KtTokens.INTEGER_LITERAL -> null
             else -> null
         }
     }
 
-    private fun evaluateLeafPsiElement(element: LeafPsiElement): LLVMVariable? {
+    private fun evaluateLeafPsiElement(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         return when (element.elementType) {
-            KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element)
-            KtTokens.VAL_KEYWORD -> evaluateValExpression(element)
-            KtTokens.VAR_KEYWORD -> evaluateValExpression(element)
+            KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element, scopeDepth)
+            KtTokens.VAL_KEYWORD -> evaluateValExpression(element, scopeDepth)
+            KtTokens.VAR_KEYWORD -> evaluateValExpression(element, scopeDepth)
             else -> null
         }
     }
 
-    private fun evaluateValExpression(element: LeafPsiElement): LLVMVariable? {
+    private fun evaluateValExpression(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         val identifier = element.getNextSiblingIgnoringWhitespaceAndComments()
         val eq = identifier?.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
-        val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments()) ?: return null
+        val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth) ?: return null
+        when (assignExpression) {
+            is LLVMVariable -> variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth);
+        }
         codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}"), assignExpression)
         return null
     }
 
-    private fun evaluateReturnInstruction(element: LeafPsiElement): LLVMVariable? {
+    private fun evaluateReturnInstruction(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         var next = element.getNextSiblingIgnoringWhitespaceAndComments()
-        val retVar = evaluateExpression(next) as LLVMVariable
+        val retVar = evaluateExpression(next, scopeDepth) as LLVMVariable
 
         codeBuilder.addReturnOperator(retVar)
         return null

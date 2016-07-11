@@ -1,5 +1,7 @@
 package org.kotlinnative.translator.utils
 
-data class FunctionArgument(val type: String, val name: String)
+import org.kotlinnative.translator.llvm.types.LLVMType
 
-data class FunctionDescriptor(val returnType: String, val argTypes: List<String>)
+data class FunctionArgument(val type: LLVMType, val name: String)
+
+data class FunctionDescriptor(val returnType: LLVMType, val argTypes: List<LLVMType>)

@@ -20,4 +20,5 @@ class LLVMIntType() : LLVMType() {
 
     override fun toString() = "i32"
 
+    override fun getAlign() = 4
 }

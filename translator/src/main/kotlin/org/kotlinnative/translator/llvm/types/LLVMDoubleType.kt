@@ -18,8 +18,7 @@ class LLVMDoubleType() : LLVMType() {
     override fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression =
             LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, $secondOp")
 
-    override fun toString(): String {
-        return "double"
-    }
+    override fun toString() = "double"
 
+    override fun getAlign() = 8
 }

@@ -32,7 +32,7 @@ class LLVMBuilder {
             KtTokens.PLUS -> firstOp.type!!.operatorPlus(newVar, firstOp, secondOp)
             KtTokens.MINUS -> firstOp.type!!.operatorMinus(newVar, firstOp, secondOp)
             KtTokens.MUL -> firstOp.type!!.operatorTimes(newVar, firstOp, secondOp)
-            else -> throw UnsupportedOperationException("Unkbown binary operator")
+            else -> throw UnsupportedOperationException("Unknown binary operator")
         }
 
         addAssignment(newVar, llvmExpression)
@@ -58,6 +58,11 @@ class LLVMBuilder {
 
     fun addVoidReturn() {
         llvmCode.appendln("ret void")
+    }
+
+    fun loadVariable(llvmVariable: LLVMVariable) {
+        llvmCode.appendln("$llvmVariable.addr = alloca ${llvmVariable.type}, align ${llvmVariable.type?.getAlign()}")
+        llvmCode.appendln("store ${llvmVariable.type} $llvmVariable, ${llvmVariable.type}* ${llvmVariable.type}.addr, align ${llvmVariable.type?.getAlign()}")
     }
 
     override fun toString(): String {
