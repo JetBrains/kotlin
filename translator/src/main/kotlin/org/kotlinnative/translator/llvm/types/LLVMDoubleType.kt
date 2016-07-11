@@ -8,17 +8,17 @@ class LLVMDoubleType() : LLVMType() {
 
     override fun operatorMinus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression {
         //TODO switch by types: int + double = int
-        return LLVMExpression(::LLVMIntType, "fsub double i32 $firstOp, $secondOp")
+        return LLVMExpression(LLVMDoubleType(), "fsub double i32 $firstOp, $secondOp")
     }
 
     override fun operatorTimes(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression {
         //TODO switch by types: int + double = int
-        return LLVMExpression(::LLVMIntType, "fmul double i32 $firstOp, $secondOp")
+        return LLVMExpression(LLVMDoubleType(), "fmul double i32 $firstOp, $secondOp")
     }
 
     override fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression {
         //TODO switch by types: int + double = int
-        return LLVMExpression(::LLVMIntType, "fadd double $firstOp, $secondOp")
+        return LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, $secondOp")
     }
 
 }

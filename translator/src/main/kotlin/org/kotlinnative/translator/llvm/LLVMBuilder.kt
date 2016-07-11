@@ -29,17 +29,21 @@ class LLVMBuilder {
 
     fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMVariable {
         val newVar = getNewVariable(::LLVMIntType)
-        val llvmOperator = when (operation) {
-            KtTokens.PLUS -> firstOp.type?.operatorPlus(newVar, firstOp, secondOp)?.generateExpression(this)
-            KtTokens.MINUS -> firstOp.type?.operatorMinus(newVar, firstOp, secondOp)?.generateExpression(this)
-            KtTokens.MUL -> firstOp.type?.operatorTimes(newVar, firstOp, secondOp)?.generateExpression(this)
+        val llvmExpression = when (operation) {
+            KtTokens.PLUS -> firstOp.type!!.operatorPlus(newVar, firstOp, secondOp)
+            KtTokens.MINUS -> firstOp.type!!.operatorMinus(newVar, firstOp, secondOp)
+            KtTokens.MUL -> firstOp.type!!.operatorTimes(newVar, firstOp, secondOp)
             else -> throw UnsupportedOperationException("Unkbown binary operator")
         }
 
-        llvmCode.appendln("$newVar = $llvmOperator $firstOp, $secondOp")
+        addAssignment(newVar, llvmExpression)
+
         return newVar
     }
 
+    fun addAssignment(llvmVariable: LLVMNode, assignExpression: LLVMNode) {
+        llvmCode.appendln("$llvmVariable = $assignExpression")
+    }
 
     fun clean() {
         llvmCode = StringBuilder()
