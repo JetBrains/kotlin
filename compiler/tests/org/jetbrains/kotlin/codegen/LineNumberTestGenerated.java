@@ -148,6 +148,12 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("beforeGotoToWhileStart.kt")
+        public void testBeforeGotoToWhileStart() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/beforeGotoToWhileStart.kt");
+            doTestCustom(fileName);
+        }
+
         @TestMetadata("callWithCallInArguments.kt")
         public void testCallWithCallInArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/callWithCallInArguments.kt");

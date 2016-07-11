@@ -528,6 +528,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         generateLoopBody(expression.getBody());
 
+        markStartLineNumber(expression);
         v.goTo(condition);
 
         v.mark(end);

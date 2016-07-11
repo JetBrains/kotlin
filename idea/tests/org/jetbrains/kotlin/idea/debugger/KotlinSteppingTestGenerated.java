@@ -385,6 +385,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stepOverFalseConditionInLastIfInWhile.kt")
+        public void testStepOverFalseConditionInLastIfInWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverFalseConditionInLastIfInWhile.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverForWithInline.kt")
         public void testStepOverForWithInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverForWithInline.kt");

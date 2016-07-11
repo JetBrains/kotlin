@@ -97,6 +97,12 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-12830`](https://youtrack.jetbrains.com/issue/KT-12830) Remove spaces before *?* in nullable types
 
+#### Debugger
+
+###### Issues fixed
+
+- [`KT-13059`](https://youtrack.jetbrains.com/issue/KT-13059) Fix error stepping on *Step Over* action in the end of while block
+
 ## 1.0.3
 
 ### Compiler
