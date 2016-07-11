@@ -21,4 +21,8 @@ class LLVMDoubleType() : LLVMType() {
         return LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, $secondOp")
     }
 
+    override fun toString(): String {
+        return "double"
+    }
+
 }

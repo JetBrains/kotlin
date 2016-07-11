@@ -49,7 +49,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             else -> UnsupportedOperationException()
         }
 
-        expressionWalker(expr?.getNextSiblingIgnoringWhitespaceAndComments())
+        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments())
     }
 
     private fun evaluateExpression(expr: PsiElement?): LLVMNode? {
@@ -81,10 +81,10 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         var currentArg = argumentList?.getNextSiblingIgnoringWhitespaceAndComments()
 
         while (currentArg?.text != ")" && currentArg != null) {
-            args.add(currentArg?.text)
+            args.add(currentArg.text)
 
             currentArg = currentArg
-                    ?.getNextSiblingIgnoringWhitespaceAndComments()
+                    .getNextSiblingIgnoringWhitespaceAndComments()
                     ?.getNextSiblingIgnoringWhitespaceAndComments()
         }
         return args
@@ -125,7 +125,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val identifier = element.getNextSiblingIgnoringWhitespaceAndComments()
         val eq = identifier?.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
-        val assignExpression = evaluateExpression(eq?.getNextSiblingIgnoringWhitespaceAndComments()) ?: return null
+        val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments()) ?: return null
         codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}"), assignExpression)
         return null
     }
@@ -134,7 +134,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         var next = element.getNextSiblingIgnoringWhitespaceAndComments()
         val retVar = evaluateExpression(next) as LLVMVariable
 
-        codeBuilder.addLLVMCode("ret i32 ${retVar?.label}")
+        codeBuilder.addReturnOperator(retVar)
         return null
     }
 }

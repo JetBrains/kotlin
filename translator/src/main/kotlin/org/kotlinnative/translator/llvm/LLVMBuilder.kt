@@ -52,6 +52,10 @@ class LLVMBuilder {
         llvmCode.appendln("$llvmVariable = $rhs")
     }
 
+    fun addReturnOperator(llvmVariable: LLVMVariable) {
+        llvmCode.appendln("ret i32 $llvmVariable")
+    }
+
     override fun toString(): String {
         return llvmCode.toString()
     }
