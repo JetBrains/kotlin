@@ -1,0 +1,5 @@
+fun bar() = 1
+fun foo() {
+    val <caret>bar = bar()
+    val x = bar
+}
