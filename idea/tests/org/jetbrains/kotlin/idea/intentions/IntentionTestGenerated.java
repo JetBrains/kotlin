@@ -1711,6 +1711,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("whenWithIf.kt")
+                public void testWhenWithIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithIf.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("whenWithMultiConditions.kt")
                 public void testWhenWithMultiConditions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithMultiConditions.kt");
