@@ -33,19 +33,24 @@ class LLVMBuilder {
             KtTokens.PLUS -> "add nsw i32"
             KtTokens.MINUS -> "sub nsw i32"
             KtTokens.MUL -> "mul nsw i32"
-            else -> throw UnsupportedOperationException("Unkbown binary operator")
+            else -> throw UnsupportedOperationException("Unknown binary operator")
         }
 
         llvmCode.appendln("$newVar = $llvmOperator $firstOp, $secondOp")
         return newVar
     }
 
-
     fun clean() {
         llvmCode = StringBuilder()
+    }
+
+    fun addAssignment(llvmVariable: LLVMVariable, rhs: LLVMNode) {
+        llvmCode.appendln("%$llvmVariable = $rhs")
     }
 
     override fun toString(): String {
         return llvmCode.toString()
     }
+
+
 }

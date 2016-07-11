@@ -22,7 +22,7 @@ import org.kotlinnative.translator.utils.FunctionDescriptor
 import java.util.*
 
 
-class TranslationState(val sources: List<String>, disposer: Disposable) {
+class TranslationState(sources: List<String>, disposer: Disposable) {
 
     val environment: KotlinCoreEnvironment
     val bindingContext: BindingContext
