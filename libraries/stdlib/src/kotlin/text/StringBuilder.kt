@@ -13,7 +13,7 @@ public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
  * Builds new string by populating newly created [StringBuilder] initialized with the given capacity using provided [builderAction] and then converting it to [String].
  */
 @kotlin.internal.InlineOnly
-inline fun buildString(length : Int, builderAction: StringBuilder.() -> Unit): String = StringBuilder(length).apply(builderAction).toString()
+inline fun buildString(capacity : Int, builderAction: StringBuilder.() -> Unit): String = StringBuilder(capacity).apply(builderAction).toString()
 
 /**
  * Appends all arguments to the given [Appendable].
