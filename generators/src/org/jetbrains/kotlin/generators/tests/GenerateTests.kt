@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSuppor
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
+import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.kotlin.idea.completion.test.*
@@ -811,6 +812,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIdeReplCompletionTest>() {
             model("repl/completion")
+        }
+
+        testClass<AbstractPostfixTemplateProviderTest> {
+            model("codeInsight/postfix")
         }
     }
 

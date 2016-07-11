@@ -1,0 +1,5 @@
+fun foo(x: Boolean) {
+    if (<spot>x</spot>$key) {
+
+    }
+}
