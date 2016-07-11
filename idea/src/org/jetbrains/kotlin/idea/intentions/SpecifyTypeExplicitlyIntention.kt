@@ -48,7 +48,7 @@ class SpecifyTypeExplicitlyIntention :
 
     private fun KotlinType.isFlexibleRecursive(): Boolean {
         if (isFlexible()) return true
-        return arguments.any { it.type.isFlexibleRecursive() }
+        return arguments.any { !it.isStarProjection && it.type.isFlexibleRecursive() }
     }
 
     fun dangerousFlexibleTypeOrNull(declaration: KtCallableDeclaration, publicAPIOnly: Boolean): KotlinType? {
