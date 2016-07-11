@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
+import org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -49,7 +50,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private JPanel contentPane;
     private TitledSeparator inputParametersPanel;
     private JComboBox visibilityBox;
-    private KotlinFunctionSignatureComponent signaturePreviewField;
+    private KotlinSignatureComponent signaturePreviewField;
     private JPanel functionNamePanel;
     private NameSuggestionsField functionNameField;
     private JLabel functionNameLabel;
@@ -82,7 +83,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private void createUIComponents() {
-        this.signaturePreviewField = new KotlinFunctionSignatureComponent("", project);
+        this.signaturePreviewField = new KotlinSignatureComponent("", project);
     }
 
     private boolean isVisibilitySectionAvailable() {
