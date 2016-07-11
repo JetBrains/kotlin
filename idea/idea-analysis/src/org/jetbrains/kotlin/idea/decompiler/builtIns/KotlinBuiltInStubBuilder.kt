@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 class KotlinBuiltInStubBuilder : ClsStubBuilder() {
-    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 2
+    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.BUILTIN_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
