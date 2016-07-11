@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -56,6 +57,8 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 if (nameIdentifier.text != assignedDescriptor.name.asString()) return
 
                 val assignedParameter = DescriptorToSourceUtils.descriptorToDeclaration(assignedDescriptor) as? KtParameter ?: return
+                if (property.containingClassOrObject !== assignedParameter.containingClassOrObject) return
+
                 holder.registerProblem(holder.manager.createProblemDescriptor(
                         nameIdentifier,
                         nameIdentifier,

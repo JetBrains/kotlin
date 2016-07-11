@@ -32,3 +32,16 @@ class Incorrect(val property: String, withGetter: Double, withSetter: Int, diffe
 data class Data(name: String) {
     val name = name
 }
+
+// Case from KT-12876: also should not work, property lives in different class here
+interface Foo {
+    val x : String
+}
+
+class Bar(x : String) {
+    init {
+        object : Foo {
+            override val x = x // Property is assigned to parameter, can be declared in ctor
+        }
+    }
+}
