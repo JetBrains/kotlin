@@ -30,9 +30,9 @@ class LLVMBuilder {
     fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMVariable {
         val newVar = getNewVariable(::LLVMIntType)
         val llvmOperator = when (operation) {
-            KtTokens.PLUS -> "add nsw i32"
-            KtTokens.MINUS -> "sub nsw i32"
-            KtTokens.MUL -> "mul nsw i32"
+            KtTokens.PLUS -> firstOp.type?.operatorPlus(newVar, firstOp, secondOp)?.generateExpression(this)
+            KtTokens.MINUS -> firstOp.type?.operatorMinus(newVar, firstOp, secondOp)?.generateExpression(this)
+            KtTokens.MUL -> firstOp.type?.operatorTimes(newVar, firstOp, secondOp)?.generateExpression(this)
             else -> throw UnsupportedOperationException("Unkbown binary operator")
         }
 
