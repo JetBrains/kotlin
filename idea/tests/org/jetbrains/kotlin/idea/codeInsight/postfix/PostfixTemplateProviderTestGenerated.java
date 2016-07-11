@@ -77,6 +77,18 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("val.kt")
+    public void testVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/val.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("var.kt")
+    public void testVar() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/var.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("when.kt")
     public void testWhen() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/when.kt");
