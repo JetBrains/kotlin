@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClsStubBuilderComponents
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createPackageFacadeStub
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createTopLevelClassStub
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourceP
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
-    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
+    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.JS_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val file = content.file
