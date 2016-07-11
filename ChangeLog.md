@@ -40,6 +40,12 @@
 
 - [`KT-12017`](https://youtrack.jetbrains.com/issue/KT-12017) Inline Property: Support "Do not show this dialog" and "Inline this occurrence" options
 
+#### Debugger
+
+###### Issues fixed
+
+- [`KT-13059`](https://youtrack.jetbrains.com/issue/KT-13059) Fix error stepping on *Step Over* action in the end of while block
+
 ## 1.0.3
 
 ### Compiler
