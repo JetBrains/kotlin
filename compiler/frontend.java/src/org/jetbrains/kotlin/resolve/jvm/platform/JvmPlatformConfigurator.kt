@@ -47,7 +47,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
         additionalCallCheckers = listOf(
                 JavaAnnotationCallChecker(),
-                TraitDefaultMethodCallChecker(),
+                InterfaceDefaultMethodCallChecker(),
                 JavaClassOnCompanionChecker(),
                 ProtectedInSuperClassCompanionCallChecker(),
                 UnsupportedSyntheticCallableReferenceChecker(),

@@ -377,7 +377,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (declaration instanceof KtClass && ((KtClass) declaration).isInterface()) {
             Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
-            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.TraitImpl(declaration, descriptor), traitImplType, declaration.getContainingFile());
+            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(declaration, descriptor), traitImplType, declaration.getContainingFile());
             ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
             new InterfaceImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
         }

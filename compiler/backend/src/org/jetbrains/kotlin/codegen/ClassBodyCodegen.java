@@ -87,7 +87,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
             for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
                 if (memberDescriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
-                    if (!member.getKind().isReal() && ImplKt.findTraitImplementation(member) == null) {
+                    if (!member.getKind().isReal() && ImplKt.findInterfaceImplementation(member) == null) {
                         if (member instanceof FunctionDescriptor) {
                             functionCodegen.generateBridges((FunctionDescriptor) member);
                         }

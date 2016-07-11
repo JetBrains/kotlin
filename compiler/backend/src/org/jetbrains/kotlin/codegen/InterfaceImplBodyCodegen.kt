@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToTraitImpl
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToDefaultImpls
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -85,19 +85,19 @@ class InterfaceImplBodyCodegen(
                                              CallableMemberDescriptor.Kind.DECLARATION, true)
 
             if (memberDescriptor is FunctionDescriptor) {
-                generateDelegationToSuperTraitImpl(copy as FunctionDescriptor, implementation as FunctionDescriptor)
+                generateDelegationToSuperDefaultImpls(copy as FunctionDescriptor, implementation as FunctionDescriptor)
             }
             else if (memberDescriptor is PropertyDescriptor) {
                 implementation as PropertyDescriptor
                 val getter = (copy as PropertyDescriptor).getter
                 val implGetter = implementation.getter
                 if (getter != null && implGetter != null) {
-                    generateDelegationToSuperTraitImpl(getter, implGetter)
+                    generateDelegationToSuperDefaultImpls(getter, implGetter)
                 }
                 val setter = copy.setter
                 val implSetter = implementation.setter
                 if (setter != null && implSetter != null) {
-                    generateDelegationToSuperTraitImpl(setter, implSetter)
+                    generateDelegationToSuperDefaultImpls(setter, implSetter)
                 }
             }
         }
@@ -105,14 +105,14 @@ class InterfaceImplBodyCodegen(
         generateSyntheticAccessors()
     }
 
-    private fun generateDelegationToSuperTraitImpl(descriptor: FunctionDescriptor, implementation: FunctionDescriptor) {
+    private fun generateDelegationToSuperDefaultImpls(descriptor: FunctionDescriptor, implementation: FunctionDescriptor) {
         val delegateTo = firstSuperMethodFromKotlin(descriptor, implementation) as FunctionDescriptor? ?: return
 
         // We can't call super methods from Java 1.8 interfaces because that requires INVOKESPECIAL which is forbidden from TImpl class
         if (delegateTo is JavaMethodDescriptor) return
 
         functionCodegen.generateMethod(
-                DelegationToTraitImpl(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor),
+                DelegationToDefaultImpls(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor),
                 descriptor,
                 object : FunctionGenerationStrategy.CodegenBased(state) {
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {

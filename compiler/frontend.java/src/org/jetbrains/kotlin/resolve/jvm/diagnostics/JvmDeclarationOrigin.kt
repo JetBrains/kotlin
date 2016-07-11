@@ -72,8 +72,8 @@ fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescr
 fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
-fun TraitImpl(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
-fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
+fun DefaultImpls(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
+fun DelegationToDefaultImpls(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
 
 fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)

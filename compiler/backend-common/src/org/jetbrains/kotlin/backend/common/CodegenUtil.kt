@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.common.bridges.findTraitImplementation
+import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -105,7 +105,7 @@ object CodegenUtil {
         for (declaration in DescriptorUtils.getAllDescriptors(descriptor.defaultType.memberScope)) {
             if (declaration !is CallableMemberDescriptor) continue
 
-            val traitMember = findTraitImplementation(declaration)
+            val traitMember = findInterfaceImplementation(declaration)
             if (traitMember == null || Visibilities.isPrivate(traitMember.visibility)) continue
 
             assert(traitMember.modality !== Modality.ABSTRACT) { "Cannot delegate to abstract trait method: $declaration" }

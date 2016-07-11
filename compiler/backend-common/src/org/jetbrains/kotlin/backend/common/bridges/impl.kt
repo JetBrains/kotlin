@@ -65,7 +65,7 @@ class DescriptorBasedFunctionHandle(
 
     override val isDeclaration: Boolean =
             descriptor.kind.isReal ||
-            findTraitImplementation(descriptor) != null
+            findInterfaceImplementation(descriptor) != null
 
     override val isAbstract: Boolean =
             descriptor.modality == Modality.ABSTRACT ||
@@ -88,7 +88,7 @@ class DescriptorBasedFunctionHandle(
  * trait implementation should be generated into the class containing the fake override; or null if the given function is not a fake
  * override of any trait implementation or such method was already generated into the superclass or is a method from Any.
  */
-fun findTraitImplementation(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
+fun findInterfaceImplementation(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     if (descriptor.kind.isReal) return null
     if (isOrOverridesSynthesized(descriptor)) return null
 

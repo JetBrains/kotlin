@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class TraitDefaultMethodCallChecker : CallChecker {
+class InterfaceDefaultMethodCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (getSuperCallExpression(resolvedCall.call) == null) return
 
