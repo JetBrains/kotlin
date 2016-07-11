@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.kotlinnative.translator.debug.printFunction
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.parseLLVMType
@@ -73,7 +72,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 .getNextSiblingIgnoringWhitespaceAndComments()
                 ?.firstChild)
 
-        return LLVMCall(descriptor.returnType, function.text, descriptor.argTypes.mapIndexed { i: Int, type: String -> LLVMVariable(names[i], parseLLVMType(type)) })
+        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.argTypes.mapIndexed { i: Int, type: String -> LLVMVariable(names[i], parseLLVMType(type)) })
     }
 
     private fun parseArgList(argumentList: PsiElement?): List<String> {
@@ -127,7 +126,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val eq = identifier?.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
         val assignExpression = evaluateExpression(eq?.getNextSiblingIgnoringWhitespaceAndComments()) ?: return null
-        codeBuilder.addAssignment(LLVMVariable(identifier!!.text), assignExpression)
+        codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}"), assignExpression)
         return null
     }
 

@@ -49,7 +49,7 @@ class LLVMBuilder {
     }
 
     fun addAssignment(llvmVariable: LLVMVariable, rhs: LLVMNode) {
-        llvmCode.appendln("%$llvmVariable = $rhs")
+        llvmCode.appendln("$llvmVariable = $rhs")
     }
 
     override fun toString(): String {
