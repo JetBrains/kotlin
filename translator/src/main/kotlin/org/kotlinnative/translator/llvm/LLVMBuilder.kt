@@ -4,15 +4,14 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
-import kotlin.reflect.KFunction0
 
 class LLVMBuilder {
     private var llvmCode: StringBuilder = StringBuilder()
     private var variableCount = 0
 
-    fun getNewVariable(type: KFunction0<LLVMType>?): LLVMVariable {
+    fun getNewVariable(type: LLVMType?): LLVMVariable {
         variableCount++
-        return LLVMVariable("%var$variableCount", type?.invoke())
+        return LLVMVariable("%var$variableCount", type)
     }
 
     fun addLLVMCode(code: String) {
@@ -28,7 +27,7 @@ class LLVMBuilder {
     }
 
     fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMVariable {
-        val newVar = getNewVariable(::LLVMIntType)
+        val newVar = getNewVariable(LLVMIntType())
         val llvmExpression = when (operation) {
             KtTokens.PLUS -> firstOp.type!!.operatorPlus(newVar, firstOp, secondOp)
             KtTokens.MINUS -> firstOp.type!!.operatorMinus(newVar, firstOp, secondOp)
