@@ -57,7 +57,10 @@ import java.util.Set;
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
     private static final String VERSION_TEMPLATE = "$VERSION$";
 
-    protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
+    public static final String GROUP_ID = "org.jetbrains.kotlin";
+    public static final String GRADLE_PLUGIN_ID = "kotlin-gradle-plugin";
+
+    protected static final String CLASSPATH = "classpath \"" + GROUP_ID + ":" + GRADLE_PLUGIN_ID + ":$kotlin_version\"";
 
     protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.SNAPSHOT_REPOSITORY.getUrl() + "'\n}";
     protected static final String EAP_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.EAP_REPOSITORY.getUrl() + "'\n}";
