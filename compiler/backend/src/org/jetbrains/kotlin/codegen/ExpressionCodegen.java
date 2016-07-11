@@ -1311,44 +1311,44 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         assert expression instanceof KtContinueExpression || expression instanceof KtBreakExpression;
 
-        if (!blockStackElements.isEmpty()) {
-            BlockStackElement stackElement = blockStackElements.peek();
-
-            if (stackElement instanceof FinallyBlockStackElement) {
-                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-                //noinspection ConstantConditions
-                genFinallyBlockOrGoto(finallyBlockStackElement, null, afterBreakContinueLabel);
-            }
-            else if (stackElement instanceof LoopBlockStackElement) {
-                LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
-                KtSimpleNameExpression labelElement = expression.getTargetLabel();
-                //noinspection ConstantConditions
-                if (labelElement == null ||
-                    loopBlockStackElement.targetLabel != null &&
-                    labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
-                    final Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
-                    return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
-                                                    @Override
-                                                    public Unit invoke(InstructionAdapter adapter) {
-                                                        PseudoInsnsKt.fixStackAndJump(v, label);
-                                                        v.mark(afterBreakContinueLabel);
-                                                        return Unit.INSTANCE;
-                                                    }
-                                                }
-                    );
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("Wrong BlockStackElement in processing stack");
-            }
-
-            blockStackElements.pop();
-            StackValue result = generateBreakOrContinueExpression(expression, isBreak, afterBreakContinueLabel);
-            blockStackElements.push(stackElement);
-            return result;
+        if (blockStackElements.isEmpty()) {
+            throw new UnsupportedOperationException("Target label for break/continue not found");
         }
 
-        throw new UnsupportedOperationException("Target label for break/continue not found");
+        BlockStackElement stackElement = blockStackElements.peek();
+
+        if (stackElement instanceof FinallyBlockStackElement) {
+            FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
+            //noinspection ConstantConditions
+            genFinallyBlockOrGoto(finallyBlockStackElement, null, afterBreakContinueLabel);
+        }
+        else if (stackElement instanceof LoopBlockStackElement) {
+            LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
+            KtSimpleNameExpression labelElement = expression.getTargetLabel();
+            //noinspection ConstantConditions
+            if (labelElement == null ||
+                loopBlockStackElement.targetLabel != null &&
+                labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
+                final Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
+                return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+                                                @Override
+                                                public Unit invoke(InstructionAdapter adapter) {
+                                                    PseudoInsnsKt.fixStackAndJump(v, label);
+                                                    v.mark(afterBreakContinueLabel);
+                                                    return Unit.INSTANCE;
+                                                }
+                                            }
+                );
+            }
+        }
+        else {
+            throw new UnsupportedOperationException("Wrong BlockStackElement in processing stack");
+        }
+
+        blockStackElements.pop();
+        StackValue result = generateBreakOrContinueExpression(expression, isBreak, afterBreakContinueLabel);
+        blockStackElements.push(stackElement);
+        return result;
     }
 
     private StackValue generateSingleBranchIf(
