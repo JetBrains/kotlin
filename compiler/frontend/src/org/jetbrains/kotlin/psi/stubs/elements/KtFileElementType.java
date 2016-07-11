@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions;
 
 import java.io.IOException;
 
 public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 67;
-
     private static final String NAME = "kotlin.FILE";
 
     public KtFileElementType() {
@@ -53,7 +52,7 @@ public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
 
     @Override
     public int getStubVersion() {
-        return STUB_VERSION;
+        return KotlinStubVersions.SOURCE_STUB_VERSION;
     }
 
     @NotNull
