@@ -12431,6 +12431,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("genericArrayElementType.kt")
+                public void testGenericArrayElementType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/genericArrayElementType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("memberFunctions.kt")
                 public void testMemberFunctions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/memberFunctions.kt");
@@ -12443,6 +12449,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("parameterizedTypeArgument.kt")
+                public void testParameterizedTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/parameterizedTypeArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("parameterizedTypes.kt")
                 public void testParameterizedTypes() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/parameterizedTypes.kt");
@@ -12452,6 +12464,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("propertyAccessors.kt")
                 public void testPropertyAccessors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/propertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawTypeArgument.kt")
+                public void testRawTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/rawTypeArgument.kt");
                     doTest(fileName);
                 }
 
@@ -12966,6 +12984,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("platformTypeToString.kt")
             public void testPlatformTypeToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/platformTypeToString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeArguments.kt")
+            public void testTypeArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/typeArguments.kt");
                 doTest(fileName);
             }
         }

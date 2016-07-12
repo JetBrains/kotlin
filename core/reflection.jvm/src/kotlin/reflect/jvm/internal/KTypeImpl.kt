@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
 import org.jetbrains.kotlin.load.java.structure.reflect.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import java.lang.reflect.GenericArrayType
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
+import java.lang.reflect.WildcardType
+import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.reflect.*
 
 internal class KTypeImpl(
         val type: KotlinType,
@@ -72,6 +74,53 @@ internal class KTypeImpl(
             else -> return null
         }
     }
+
+    override val arguments: List<KTypeProjection>
+        get() {
+            val typeArguments = type.arguments
+            if (typeArguments.isEmpty()) return emptyList()
+
+            // Lazy because it's not needed to compute javaType right away, only inside the lazy value for each argument,
+            // and also because sometimes (e.g. in case of star projections), this won't be needed at all.
+            // Note that this instance is created before the loop because ParameterizedType#actualTypeArguments clones the array
+            val javaTypeArguments by lazy(PUBLICATION) {
+                (javaType as ParameterizedType).actualTypeArguments
+            }
+
+            return typeArguments.mapIndexed { i, typeProjection ->
+                if (typeProjection.isStarProjection) {
+                    KTypeProjection.Star
+                }
+                else {
+                    val type = KTypeImpl(typeProjection.type) {
+                        val javaType = javaType
+                        when (javaType) {
+                            is Class<*> -> {
+                                // It's either an array or a raw type.
+                                // TODO: return upper bound of the corresponding parameter for a raw type?
+                                if (javaType.isArray) javaType.componentType else Any::class.java
+                            }
+                            is GenericArrayType -> {
+                                if (i != 0) throw KotlinReflectionInternalError("Array type has been queried for a non-0th argument: $this")
+                                javaType.genericComponentType
+                            }
+                            is ParameterizedType -> {
+                                val argument = javaTypeArguments[i]
+                                // In "Foo<out Bar>", the JVM type of the first type argument should be "Bar", not "? extends Bar"
+                                if (argument !is WildcardType) argument
+                                else argument.lowerBounds.firstOrNull() ?: argument.upperBounds.first()
+                            }
+                            else -> throw KotlinReflectionInternalError("Non-generic type has been queried for arguments: $this")
+                        }
+                    }
+                    when (typeProjection.projectionKind) {
+                        Variance.INVARIANT -> KTypeProjection.Invariant(type)
+                        Variance.IN_VARIANCE -> KTypeProjection.In(type)
+                        Variance.OUT_VARIANCE -> KTypeProjection.Out(type)
+                    }
+                }
+            }
+        }
 
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
