@@ -36,6 +36,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -109,8 +111,8 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             with (handler) {
                 val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
-                    KotlinRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->
-                        invoke(fixture.getProject(), fixture.getEditor(), expression!!, target)
+                    KotlinRefactoringUtil.selectElement(fixture.getEditor(), file, true, CodeInsightUtils.ElementKind.EXPRESSION) { element ->
+                        invoke(fixture.getProject(), fixture.getEditor(), element as KtExpression, target)
                     }
                 }
                 else {

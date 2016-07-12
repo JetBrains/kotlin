@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -325,118 +326,144 @@ public class KotlinRefactoringUtil {
         }
     }
 
-    public interface SelectExpressionCallback {
-        void run(@Nullable KtExpression expression);
+    public interface SelectElementCallback {
+        void run(@Nullable PsiElement element);
     }
 
-    public static void selectExpression(
+    public static void selectElement(
             @NotNull Editor editor,
             @NotNull KtFile file,
-            @NotNull SelectExpressionCallback callback) throws IntroduceRefactoringException {
-        selectExpression(editor, file, true, callback);
+            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull SelectElementCallback callback
+    ) throws IntroduceRefactoringException {
+        selectElement(editor, file, true, elementKind, callback);
     }
 
-    public static void selectExpression(@NotNull Editor editor,
+    public static void selectElement(@NotNull Editor editor,
             @NotNull KtFile file,
             boolean failOnEmptySuggestion,
-            @NotNull SelectExpressionCallback callback) throws IntroduceRefactoringException {
+            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull SelectElementCallback callback
+    ) throws IntroduceRefactoringException {
         if (editor.getSelectionModel().hasSelection()) {
             int selectionStart = editor.getSelectionModel().getSelectionStart();
             int selectionEnd = editor.getSelectionModel().getSelectionEnd();
             String text = file.getText();
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
-            callback.run(findExpression(file, selectionStart, selectionEnd, failOnEmptySuggestion));
+            callback.run(findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, elementKind));
         }
         else {
             int offset = editor.getCaretModel().getOffset();
-            smartSelectExpression(editor, file, offset, failOnEmptySuggestion, callback);
+            smartSelectElement(editor, file, offset, failOnEmptySuggestion, elementKind, callback);
         }
     }
 
-    public static List<KtExpression> getSmartSelectSuggestions(
+    public static List<KtElement> getSmartSelectSuggestions(
             @NotNull PsiFile file,
-            int offset
+            int offset,
+            @NotNull CodeInsightUtils.ElementKind elementKind
     ) throws IntroduceRefactoringException {
         if (offset < 0) {
-            return new ArrayList<KtExpression>();
+            return new ArrayList<KtElement>();
         }
 
         PsiElement element = file.findElementAt(offset);
         if (element == null) {
-            return new ArrayList<KtExpression>();
+            return new ArrayList<KtElement>();
         }
         if (element instanceof PsiWhiteSpace) {
-            return getSmartSelectSuggestions(file, offset - 1);
+            return getSmartSelectSuggestions(file, offset - 1, elementKind);
         }
 
-        List<KtExpression> expressions = new ArrayList<KtExpression>();
+        List<KtElement> elements = new ArrayList<KtElement>();
         while (element != null && !(element instanceof KtBlockExpression && !(element.getParent() instanceof KtFunctionLiteral)) &&
                !(element instanceof KtNamedFunction)
                && !(element instanceof KtClassBody)) {
-            if (element instanceof KtExpression && !(element instanceof KtStatementExpression)) {
-                boolean addExpression = true;
+            boolean addElement = false;
+            boolean keepPrevious = true;
 
-                if (element instanceof KtParenthesizedExpression) {
-                    addExpression = false;
+            if (element instanceof KtTypeElement) {
+                addElement = elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT;
+                if (!addElement) {
+                    keepPrevious = false;
                 }
-                else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
-                    addExpression = false;
-                }
-                else if (element.getParent() instanceof KtQualifiedExpression) {
-                    KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) element.getParent();
-                    if (qualifiedExpression.getReceiverExpression() != element) {
-                        addExpression = false;
+            }
+            else if (element instanceof KtExpression && !(element instanceof KtStatementExpression)) {
+                addElement = elementKind == CodeInsightUtils.ElementKind.EXPRESSION;
+
+                if (addElement) {
+                    if (element instanceof KtParenthesizedExpression) {
+                        addElement = false;
                     }
-                }
-                else if (element.getParent() instanceof KtCallElement
-                         || element.getParent() instanceof KtThisExpression
-                         || PsiTreeUtil.getParentOfType(element, KtSuperExpression.class) != null) {
-                    addExpression = false;
-                }
-                else if (element.getParent() instanceof KtOperationExpression) {
-                    KtOperationExpression operationExpression = (KtOperationExpression) element.getParent();
-                    if (operationExpression.getOperationReference() == element) {
-                        addExpression = false;
+                    else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
+                        addElement = false;
                     }
-                }
-                if (addExpression) {
-                    KtExpression expression = (KtExpression)element;
-                    BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
-                    KotlinType expressionType = bindingContext.getType(expression);
-                    if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
-                        expressions.add(expression);
+                    else if (element.getParent() instanceof KtQualifiedExpression) {
+                        KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) element.getParent();
+                        if (qualifiedExpression.getReceiverExpression() != element) {
+                            addElement = false;
+                        }
+                    }
+                    else if (element.getParent() instanceof KtCallElement
+                             || element.getParent() instanceof KtThisExpression
+                             || PsiTreeUtil.getParentOfType(element, KtSuperExpression.class) != null) {
+                        addElement = false;
+                    }
+                    else if (element.getParent() instanceof KtOperationExpression) {
+                        KtOperationExpression operationExpression = (KtOperationExpression) element.getParent();
+                        if (operationExpression.getOperationReference() == element) {
+                            addElement = false;
+                        }
+                    }
+                    if (addElement) {
+                        KtExpression expression = (KtExpression)element;
+                        BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
+                        KotlinType expressionType = bindingContext.getType(expression);
+                        if (expressionType != null && KotlinBuiltIns.isUnit(expressionType)) {
+                            addElement = false;
+                        }
                     }
                 }
             }
-            else if (element instanceof KtTypeElement) {
-                expressions.clear();
+
+            if (addElement) {
+                elements.add((KtElement) element);
             }
+
+            if (!keepPrevious) {
+                elements.clear();
+            }
+
             element = element.getParent();
         }
-        return expressions;
+        return elements;
     }
 
-    private static void smartSelectExpression(
-            @NotNull Editor editor, @NotNull PsiFile file, int offset,
+    private static void smartSelectElement(
+            @NotNull Editor editor,
+            @NotNull PsiFile file,
+            int offset,
             boolean failOnEmptySuggestion,
-            @NotNull final SelectExpressionCallback callback) throws IntroduceRefactoringException {
-        List<KtExpression> expressions = getSmartSelectSuggestions(file, offset);
-        if (expressions.size() == 0) {
+            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull final SelectElementCallback callback
+    ) throws IntroduceRefactoringException {
+        List<KtElement> elements = getSmartSelectSuggestions(file, offset, elementKind);
+        if (elements.size() == 0) {
             if (failOnEmptySuggestion) throw new IntroduceRefactoringException(
                     KotlinRefactoringBundle.message("cannot.refactor.not.expression"));
             callback.run(null);
             return;
         }
 
-        if (expressions.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            callback.run(expressions.get(0));
+        if (elements.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
+            callback.run(elements.get(0));
             return;
         }
 
         final DefaultListModel model = new DefaultListModel();
-        for (KtExpression expression : expressions) {
-            model.addElement(expression);
+        for (PsiElement element : elements) {
+            model.addElement(element);
         }
 
         final ScopeHighlighter highlighter = new ScopeHighlighter(editor);
@@ -447,7 +474,7 @@ public class KotlinRefactoringUtil {
             @Override
             public Component getListCellRendererComponent(@NotNull JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                KtExpression element = (KtExpression) value;
+                KtElement element = (KtElement) value;
                 if (element.isValid()) {
                     setText(getExpressionShortText(element));
                 }
@@ -461,7 +488,7 @@ public class KotlinRefactoringUtil {
                 highlighter.dropHighlight();
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex < 0) return;
-                KtExpression expression = (KtExpression) model.get(selectedIndex);
+                KtElement expression = (KtElement) model.get(selectedIndex);
                 List<PsiElement> toExtract = new ArrayList<PsiElement>();
                 toExtract.add(expression);
                 highlighter.highlight(expression, toExtract);
@@ -473,7 +500,7 @@ public class KotlinRefactoringUtil {
                 setRequestFocus(true).setItemChoosenCallback(new Runnable() {
             @Override
             public void run() {
-                callback.run((KtExpression) list.getSelectedValue());
+                callback.run((KtElement) list.getSelectedValue());
             }
         }).addListener(new JBPopupAdapter() {
             @Override
@@ -493,10 +520,17 @@ public class KotlinRefactoringUtil {
     }
 
     @Nullable
-    private static KtExpression findExpression(
-            @NotNull KtFile file, int startOffset, int endOffset, boolean failOnNoExpression
+    private static PsiElement findElement(
+            @NotNull KtFile file,
+            int startOffset,
+            int endOffset,
+            boolean failOnNoExpression,
+            @NotNull CodeInsightUtils.ElementKind elementKind
     ) throws IntroduceRefactoringException {
-        KtExpression element = IntroduceUtilKt.findExpressionOrStringFragment(file, startOffset, endOffset);
+        PsiElement element = CodeInsightUtils.findElement(file, startOffset, endOffset, elementKind);
+        if (element == null && elementKind == CodeInsightUtils.ElementKind.EXPRESSION) {
+            element = IntroduceUtilKt.findExpressionOrStringFragment(file, startOffset, endOffset);
+        }
         if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
 

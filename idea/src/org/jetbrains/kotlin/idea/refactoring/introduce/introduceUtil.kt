@@ -45,6 +45,7 @@ fun selectElementsWithTargetSibling(
         editor: Editor,
         file: KtFile,
         title: String,
+        elementKind: CodeInsightUtils.ElementKind,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
@@ -67,7 +68,7 @@ fun selectElementsWithTargetSibling(
         continuation(elements, outermostParent)
     }
 
-    selectElementsWithTargetParent(operationName, editor, file, title, getContainers, ::onSelectionComplete)
+    selectElementsWithTargetParent(operationName, editor, file, title, elementKind, getContainers, ::onSelectionComplete)
 }
 
 fun selectElementsWithTargetParent(
@@ -75,6 +76,7 @@ fun selectElementsWithTargetParent(
         editor: Editor,
         file: KtFile,
         title: String,
+        elementKind: CodeInsightUtils.ElementKind,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
@@ -103,11 +105,11 @@ fun selectElementsWithTargetParent(
         )
     }
 
-    fun selectMultipleExpressions() {
+    fun selectMultipleElements() {
         val startOffset = editor.selectionModel.selectionStart
         val endOffset = editor.selectionModel.selectionEnd
 
-        val elements = CodeInsightUtils.findStatements(file, startOffset, endOffset)
+        val elements = CodeInsightUtils.findElements(file, startOffset, endOffset, elementKind)
         if (elements.isEmpty()) {
             showErrorHintByKey("cannot.refactor.no.expression")
             return
@@ -116,27 +118,29 @@ fun selectElementsWithTargetParent(
         selectTargetContainer(elements.toList())
     }
 
-    fun selectSingleExpression() {
-        KotlinRefactoringUtil.selectExpression(editor, file, false) { expr ->
+    fun selectSingleElement() {
+        KotlinRefactoringUtil.selectElement(editor, file, false, elementKind) { expr ->
             if (expr != null) {
                 selectTargetContainer(listOf(expr))
             }
             else {
                 if (!editor.selectionModel.hasSelection()) {
-                    val elementAtCaret = file.findElementAt(editor.caretModel.offset)
-                    elementAtCaret?.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
-                        return@selectExpression selectTargetContainer(listOf(it))
+                    if (elementKind == CodeInsightUtils.ElementKind.EXPRESSION) {
+                        val elementAtCaret = file.findElementAt(editor.caretModel.offset)
+                        elementAtCaret?.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
+                            return@selectElement selectTargetContainer(listOf(it))
+                        }
                     }
 
                     editor.selectionModel.selectLineAtCaret()
                 }
-                selectMultipleExpressions()
+                selectMultipleElements()
             }
         }
     }
 
     editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
-    selectSingleExpression()
+    selectSingleElement()
 }
 
 fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): KtExpression {
@@ -158,8 +162,6 @@ fun PsiElement.findExpressionsByCopyableDataAndClearIt(key: Key<Boolean>): List<
 }
 
 fun findExpressionOrStringFragment(file: KtFile, startOffset: Int, endOffset: Int): KtExpression? {
-    CodeInsightUtils.findExpression(file, startOffset, endOffset)?.let { return it }
-
     val entry1 = file.findElementAt(startOffset)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
     val entry2 = file.findElementAt(endOffset - 1)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
 

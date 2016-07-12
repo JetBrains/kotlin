@@ -27,9 +27,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -47,8 +45,23 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 public class CodeInsightUtils {
 
     @Nullable
-    public static KtExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
-        KtExpression element = findElementOfClassAtRange(file, startOffset, endOffset, KtExpression.class);
+    public static PsiElement findElement(
+            @NotNull PsiFile file,
+            int startOffset,
+            int endOffset,
+            @NotNull CodeInsightUtils.ElementKind elementKind
+    ) {
+        Class<? extends KtElement> elementClass;
+        switch (elementKind) {
+            case EXPRESSION: elementClass = KtExpression.class;
+                break;
+            case TYPE_ELEMENT: elementClass = KtTypeElement.class;
+                break;
+            default: throw new IllegalArgumentException(elementKind.name());
+        }
+        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, elementClass);
+
+        if (elementKind == ElementKind.TYPE_ELEMENT) return element;
 
         if (element instanceof KtScriptInitializer) {
             element = ((KtScriptInitializer) element).getBody();
@@ -78,24 +91,26 @@ public class CodeInsightUtils {
             }
         }
 
-        KtExpression expression = element;
+        KtExpression expression = (KtExpression) element;
 
         BindingContext context = ResolutionUtils.analyze(expression);
 
         Qualifier qualifier = context.get(BindingContext.QUALIFIER, expression);
         if (qualifier != null) {
             if (!(qualifier instanceof ClassQualifier)) return null;
-            ClassifierDescriptor classifier = ((ClassQualifier) qualifier).getDescriptor();
-            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) {
-                return null;
-            }
+            if (((ClassQualifier) qualifier).getDescriptor().getKind() != ClassKind.OBJECT) return null;
         }
 
         return expression;
     }
 
+    public enum ElementKind {
+        EXPRESSION,
+        TYPE_ELEMENT
+    }
+
     @NotNull
-    public static PsiElement[] findStatements(@NotNull PsiFile file, int startOffset, int endOffset) {
+    public static PsiElement[] findElements(@NotNull PsiFile file, int startOffset, int endOffset, @NotNull ElementKind kind) {
         PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
         PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
 
@@ -129,7 +144,9 @@ public class CodeInsightUtils {
         }
 
         for (PsiElement element : array) {
-            if (!(element instanceof KtExpression
+            boolean correctType = kind == ElementKind.EXPRESSION && element instanceof KtExpression
+                                  || kind == ElementKind.TYPE_ELEMENT && element instanceof KtTypeElement;
+            if (!(correctType
                   || element.getNode().getElementType() == KtTokens.SEMICOLON
                   || element instanceof PsiWhiteSpace
                   || element instanceof PsiComment)) {

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import com.intellij.openapi.application.*
 import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import java.util.*
 
@@ -58,6 +59,7 @@ class KotlinIntroducePropertyHandler(
                 editor,
                 file,
                 "Select target code block",
+                CodeInsightUtils.ElementKind.EXPRESSION,
                 { elements, parent ->
                     parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript) }
                 },

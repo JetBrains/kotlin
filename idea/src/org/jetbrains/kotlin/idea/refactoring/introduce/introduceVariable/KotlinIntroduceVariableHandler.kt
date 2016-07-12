@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.refactoring.*
@@ -718,7 +719,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         if (file !is KtFile) return
 
         try {
-            KotlinRefactoringUtil.selectExpression(editor, file) { doRefactoring(project, editor, it, null, null) }
+            KotlinRefactoringUtil.selectElement(editor, file, CodeInsightUtils.ElementKind.EXPRESSION) { doRefactoring(project, editor, it as KtExpression?, null, null) }
         }
         catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
             showErrorHint(project, editor, e.message!!)

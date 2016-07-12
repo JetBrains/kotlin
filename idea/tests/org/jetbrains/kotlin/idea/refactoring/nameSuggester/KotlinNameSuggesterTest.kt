@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.refactoring.nameSuggester
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -88,9 +90,15 @@ class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
             }
-            KotlinRefactoringUtil.selectExpression(myFixture.editor, file, object : KotlinRefactoringUtil.SelectExpressionCallback {
-                override fun run(expression: KtExpression?) {
-                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, null, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
+            KotlinRefactoringUtil.selectElement(myFixture.editor, file, CodeInsightUtils.ElementKind.EXPRESSION, object : KotlinRefactoringUtil.SelectElementCallback {
+                override fun run(element: PsiElement?) {
+                    val names = KotlinNameSuggester
+                            .suggestNamesByExpressionAndType(element as KtExpression,
+                                                             null,
+                                                             element.analyze(BodyResolveMode.PARTIAL),
+                                                             { true },
+                                                             "value")
+                            .sorted()
                     val result = StringUtil.join(names, "\n").trim()
                     assertEquals(expectedResultText, result)
                 }
