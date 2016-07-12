@@ -18,6 +18,9 @@
 package kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
@@ -170,3 +173,53 @@ val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2
             .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
             .filterIsInstance<KProperty2<T, *, *>>()
             .toList()
+
+
+/**
+ * Immediate superclasses of this class, in the order they are listed in the source code.
+ * Includes superclasses and superinterfaces of the class, but does not include the class itself.
+ */
+val KClass<*>.superclasses: List<KClass<*>>
+    get() = supertypes.mapNotNull { it.classifier as? KClass<*> }
+
+/**
+ * All supertypes of this class, including indirect ones, in no particular order.
+ * There is not more than one type in the returned collection that has any given classifier.
+ */
+val KClass<*>.allSupertypes: Collection<KType>
+    get() = DFS.dfs(
+            supertypes,
+            DFS.Neighbors { current ->
+                val klass = current.classifier as? KClass<*> ?: throw KotlinReflectionInternalError("Supertype not a class: $current")
+                val supertypes = klass.supertypes
+                val typeArguments = current.arguments
+                if (typeArguments.isEmpty()) supertypes
+                else TypeSubstitutor.create((current as KTypeImpl).type).let { substitutor ->
+                    supertypes.map { supertype ->
+                        val substituted = substitutor.substitute((supertype as KTypeImpl).type, Variance.INVARIANT)
+                                          ?: throw KotlinReflectionInternalError("Type substitution failed: $supertype ($current)")
+                        KTypeImpl(substituted) {
+                            // TODO
+                            TODO("Java type for supertype")
+                        }
+                    }
+                }
+            },
+            DFS.VisitedWithSet(),
+            object : DFS.NodeHandlerWithListResult<KType, KType>() {
+                override fun beforeChildren(current: KType): Boolean {
+                    result.add(current)
+                    return true
+                }
+            }
+    )
+
+/**
+ * All superclasses of this class, including indirect ones, in no particular order.
+ * Includes superclasses and superinterfaces of the class, but does not include the class itself.
+ * The returned collection does not contain more than one instance of any given class.
+ */
+val KClass<*>.allSuperclasses: Collection<KClass<*>>
+    get() = allSupertypes.map { supertype ->
+        supertype.classifier as? KClass<*> ?: throw KotlinReflectionInternalError("Supertype not a class: $supertype")
+    }

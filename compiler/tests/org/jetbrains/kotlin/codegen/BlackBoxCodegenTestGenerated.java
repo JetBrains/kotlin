@@ -12473,6 +12473,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("supertypes.kt")
+                public void testSupertypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/supertypes.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("topLevelFunctions.kt")
                 public void testTopLevelFunctions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/topLevelFunctions.kt");
@@ -12963,6 +12969,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("getMembersOfStandardJavaClasses.kt")
             public void testGetMembersOfStandardJavaClasses() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/specialBuiltIns/getMembersOfStandardJavaClasses.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Supertypes extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInSupertypes() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("builtInClassSupertypes.kt")
+            public void testBuiltInClassSupertypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/builtInClassSupertypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericSubstitution.kt")
+            public void testGenericSubstitution() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/genericSubstitution.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleSupertypes.kt")
+            public void testSimpleSupertypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/simpleSupertypes.kt");
                 doTest(fileName);
             }
         }

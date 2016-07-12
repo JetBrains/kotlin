@@ -139,6 +139,26 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
     override val typeParameters: List<KTypeParameter>
         get() = descriptor.declaredTypeParameters.map(::KTypeParameterImpl)
 
+    override val supertypes: List<KType>
+        get() = descriptor.typeConstructor.supertypes.map { kotlinType ->
+            KTypeImpl(kotlinType) {
+                val superClass = kotlinType.constructor.declarationDescriptor
+                if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
+
+                val superJavaClass = superClass.toJavaClass()
+                                     ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
+
+                if (jClass.superclass == superJavaClass) {
+                    jClass.genericSuperclass
+                }
+                else {
+                    val index = jClass.interfaces.indexOf(superJavaClass)
+                    if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClass")
+                    jClass.genericInterfaces[index]
+                }
+            }
+        }
+
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass
 

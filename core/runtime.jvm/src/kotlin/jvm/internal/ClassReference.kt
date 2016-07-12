@@ -16,10 +16,7 @@
 
 package kotlin.jvm.internal
 
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KTypeParameter
+import kotlin.reflect.*
 
 class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
     override val simpleName: String?
@@ -44,6 +41,9 @@ class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDec
         get() = error()
 
     override val typeParameters: List<KTypeParameter>
+        get() = error()
+
+    override val supertypes: List<KType>
         get() = error()
 
     private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
