@@ -29,7 +29,11 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.reflect.*
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
         val type: KotlinType,
@@ -48,19 +52,10 @@ internal class KTypeImpl(
                 if (jClass.isArray) {
                     // There may be no argument if it's a primitive array (such as IntArray)
                     val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
-
-                    val elementClassifier = convert(argument)
-                    val elementType = when (elementClassifier) {
-                        is KClass<*> -> elementClassifier
-                        is KTypeParameter -> {
-                            // For arrays of type parameters (`Array<T>`) we return the KClass representing `Array<Any>`
-                            // since there's no other sensible option
-                            // TODO: return `Array<erasure-of-T>`
-                            Any::class
-                        }
-                        else -> TODO("Arrays of type alias classifiers are not yet supported")
-                    }
-                    return KClassImpl(elementType.java.createArrayType())
+                    val elementClassifier =
+                            convert(argument)
+                            ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
+                    return KClassImpl(elementClassifier.jvmErasure.java.createArrayType())
                 }
 
                 if (!TypeUtils.isNullableType(type)) {

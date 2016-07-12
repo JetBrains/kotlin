@@ -13008,6 +13008,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmErasureOfClass.kt")
+            public void testJvmErasureOfClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/jvmErasureOfClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmErasureOfTypeParameter.kt")
+            public void testJvmErasureOfTypeParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/jvmErasureOfTypeParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("platformTypeClassifier.kt")
             public void testPlatformTypeClassifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/platformTypeClassifier.kt");
