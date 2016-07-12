@@ -33,6 +33,9 @@ import java.util.*
 fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
         = createByPattern(pattern, *args) { createExpression(it) }
 
+fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any): KtValueArgumentList
+        = createByPattern(pattern, *args) { createCallArguments(it) }
+
 fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
@@ -312,6 +315,10 @@ class BuilderByPattern<TElement> {
 
 fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
     return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
+}
+
+fun KtPsiFactory.buildValueArgumentList(build: BuilderByPattern<KtValueArgumentList>.() -> Unit): KtValueArgumentList {
+    return buildByPattern({ pattern, args -> this.createValueArgumentListByPattern(pattern, *args) }, build)
 }
 
 fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {

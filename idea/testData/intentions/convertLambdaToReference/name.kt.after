@@ -1,0 +1,3 @@
+class Person(val name: String)
+
+val reader = Person::name

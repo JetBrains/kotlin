@@ -262,6 +262,8 @@ class KtPsiFactory(private val project: Project) {
         return createDeclaration(funDecl)
     }
 
+    fun createCallableReferenceExpression(text: String) = createExpression(text) as? KtCallableReferenceExpression
+
     fun createSecondaryConstructor(decl: String): KtSecondaryConstructor {
         return createClass("class Foo {\n $decl \n}").getSecondaryConstructors().first()
     }

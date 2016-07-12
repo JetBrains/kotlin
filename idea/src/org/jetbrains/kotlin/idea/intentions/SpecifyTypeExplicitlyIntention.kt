@@ -49,11 +49,6 @@ class SpecifyTypeExplicitlyIntention :
         SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"),
         LowPriorityAction {
 
-    private fun KotlinType.isFlexibleRecursive(): Boolean {
-        if (isFlexible()) return true
-        return arguments.any { !it.isStarProjection && it.type.isFlexibleRecursive() }
-    }
-
     fun dangerousFlexibleTypeOrNull(declaration: KtCallableDeclaration, publicAPIOnly: Boolean): KotlinType? {
         when (declaration) {
             is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return null

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isFlexible
 
 fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
     if (type.isError) return
@@ -203,3 +204,10 @@ private fun getNegatedOperatorText(token: IElementType): String {
         else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
     }
 }
+
+internal fun KotlinType.isFlexibleRecursive(): Boolean {
+    if (isFlexible()) return true
+    return arguments.any { !it.isStarProjection && it.type.isFlexibleRecursive() }
+}
+
+
