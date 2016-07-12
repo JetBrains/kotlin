@@ -48,6 +48,9 @@ class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDec
     override val supertypes: List<KType>
         get() = error()
 
+    override val visibility: KVisibility?
+        get() = error()
+
     override val isFinal: Boolean
         get() = error()
 

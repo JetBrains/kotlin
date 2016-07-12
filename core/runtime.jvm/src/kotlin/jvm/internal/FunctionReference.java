@@ -19,6 +19,7 @@ package kotlin.jvm.internal;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -82,6 +83,12 @@ public class FunctionReference extends FunctionImpl implements KFunction {
     @Override
     public Object callBy(@NotNull Map args) {
         return getReflected().callBy(args);
+    }
+
+    @Nullable
+    @Override
+    public KVisibility getVisibility() {
+        return getReflected().getVisibility();
     }
 
     @Override

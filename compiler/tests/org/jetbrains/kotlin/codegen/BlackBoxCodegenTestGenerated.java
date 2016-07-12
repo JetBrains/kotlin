@@ -12633,9 +12633,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callableVisibility.kt")
+            public void testCallableVisibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/modifiers/callableVisibility.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classModality.kt")
             public void testClassModality() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/modifiers/classModality.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classVisibility.kt")
+            public void testClassVisibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/modifiers/classVisibility.kt");
                 doTest(fileName);
             }
 
@@ -12648,6 +12660,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("functions.kt")
             public void testFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/modifiers/functions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaVisibility.kt")
+            public void testJavaVisibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/modifiers/javaVisibility.kt");
                 doTest(fileName);
             }
 

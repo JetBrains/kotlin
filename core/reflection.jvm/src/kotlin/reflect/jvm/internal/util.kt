@@ -17,6 +17,8 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.IllegalCallableAccessException
+import kotlin.reflect.KVisibility
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -72,6 +75,15 @@ internal fun loadClass(classLoader: ClassLoader, packageName: String, className:
 
     return classLoader.tryLoadClass("$packageName.${className.replace('.', '$')}")
 }
+
+internal fun Visibility.toKVisibility(): KVisibility? =
+        when (this) {
+            Visibilities.PUBLIC -> KVisibility.PUBLIC
+            Visibilities.PROTECTED -> KVisibility.PROTECTED
+            Visibilities.INTERNAL -> KVisibility.INTERNAL
+            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+            else -> null
+        }
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =

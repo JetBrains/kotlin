@@ -63,6 +63,9 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     override val typeParameters: List<KTypeParameter>
         get() = descriptor.typeParameters.map(::KTypeParameterImpl)
 
+    override val visibility: KVisibility?
+        get() = descriptor.visibility.toKVisibility()
+
     override val isFinal: Boolean
         get() = descriptor.modality == Modality.FINAL
 

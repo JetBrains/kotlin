@@ -74,6 +74,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     public val supertypes: List<KType>
 
     /**
+     * Visibility of this class, or `null` if its visibility cannot be represented in Kotlin.
+     */
+    public val visibility: KVisibility?
+
+    /**
      * `true` if this class is `final`.
      */
     public val isFinal: Boolean

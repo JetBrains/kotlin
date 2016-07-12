@@ -64,6 +64,11 @@ public interface KCallable<out R> : KAnnotatedElement {
     public fun callBy(args: Map<KParameter, Any?>): R
 
     /**
+     * Visibility of this callable, or `null` if its visibility cannot be represented in Kotlin.
+     */
+    public val visibility: KVisibility?
+
+    /**
      * `true` if this callable is `final`.
      */
     public val isFinal: Boolean
