@@ -22,6 +22,14 @@ package kotlin.reflect
  */
 public interface KType {
     /**
+     * The declaration of the classifier used in this type.
+     * For example, in the type `List<String>` the classifier would be the [KClass] instance for [List].
+     *
+     * Returns `null` if this type is not denotable in Kotlin, for example if it is an intersection type.
+     */
+    public val classifier: KClassifier?
+
+    /**
      * `true` if this type was marked nullable in the source code.
      *
      * For Kotlin types, it means that `null` value is allowed to be represented by this type.

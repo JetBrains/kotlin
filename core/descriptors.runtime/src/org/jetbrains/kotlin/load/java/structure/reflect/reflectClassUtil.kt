@@ -27,6 +27,13 @@ val Class<*>.safeClassLoader: ClassLoader
 fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         Enum::class.java.isAssignableFrom(this)
 
+private val WRAPPER_TO_PRIMITIVE = listOf(
+       Boolean::class, Byte::class, Char::class, Double::class, Float::class, Int::class, Long::class, Short::class
+).map { it.javaObjectType to it.javaPrimitiveType }.toMap()
+
+val Class<*>.primitiveByWrapper: Class<*>?
+    get() = WRAPPER_TO_PRIMITIVE[this]
+
 /**
  * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead
  */
