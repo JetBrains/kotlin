@@ -1,0 +1,1 @@
+val x = { arg: Int -> <caret>arg.toString() }

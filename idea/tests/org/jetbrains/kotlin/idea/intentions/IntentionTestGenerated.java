@@ -3713,6 +3713,189 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertLambdaToReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertLambdaToReference extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertLambdaToReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/constructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conversion.kt")
+        public void testConversion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/conversion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultArgument.kt")
+        public void testDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultBeforeLambda.kt")
+        public void testDefaultBeforeLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultBeforeLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultOverridden.kt")
+        public void testDefaultOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/defaultOverridden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyBrackets.kt")
+        public void testEmptyBrackets() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/emptyBrackets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("erasedReceiver.kt")
+        public void testErasedReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/erasedReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/extension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionProperty.kt")
+        public void testExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/extensionProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("globalProperty.kt")
+        public void testGlobalProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/globalProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("globalPropertyNoArgs.kt")
+        public void testGlobalPropertyNoArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/globalPropertyNoArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapTo.kt")
+        public void testMapTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/mapTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("member.kt")
+        public void testMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/member.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberExtension.kt")
+        public void testMemberExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("name.kt")
+        public void testName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/name.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/object.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiverParameter.kt")
+        public void testReceiverParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/receiverParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiverParameterReversed.kt")
+        public void testReceiverParameterReversed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/receiverParameterReversed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("syntheticProperty.kt")
+        public void testSyntheticProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/syntheticProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("threeParameters.kt")
+        public void testThreeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/threeParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/toString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unit.kt")
+        public void testUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/unit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unwrap.kt")
+        public void testUnwrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/unwrap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongParameterNumber.kt")
+        public void testWrongParameterNumber() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/wrongParameterNumber.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongParameterOrder.kt")
+        public void testWrongParameterOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/wrongParameterOrder.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertNegatedBooleanSequence")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
