@@ -91,7 +91,8 @@ public annotation class Retention(val value: AnnotationRetention = AnnotationRet
 public annotation class Repeatable
 
 /**
- * This meta-annotation determines that an annotation is a part of public API and therefore must be documented
+ * This meta-annotation determines that an annotation is a part of public API and therefore should be included in the generated
+ * documentation for the element to which the annotation is applied.
  */
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 public annotation class MustBeDocumented
