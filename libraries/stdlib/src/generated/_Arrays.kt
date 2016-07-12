@@ -10973,7 +10973,7 @@ public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
             throw IllegalArgumentException("null element found in $this.")
         }
     }
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return this as Array<T>
 }
 

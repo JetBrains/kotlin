@@ -253,11 +253,9 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
     companion object {
         // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
-        @Suppress("CAST_NEVER_SUCCEEDS")
         private fun <D : CallableDescriptor> uniquifyCandidatesSet(candidates: Collection<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> =
                 THashSet<MutableResolvedCall<D>>(candidates.size, getCallHashingStrategy<MutableResolvedCall<D>>()).apply { addAll(candidates) }
 
-        @Suppress("CAST_NEVER_SUCCEEDS")
         private fun <C> newResolvedCallSet(expectedSize: Int): MutableSet<C> =
                 THashSet<C>(expectedSize, getCallHashingStrategy<C>())
 

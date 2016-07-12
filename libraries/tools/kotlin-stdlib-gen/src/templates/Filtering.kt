@@ -159,7 +159,7 @@ fun filtering(): List<GenericFunction> {
             val list = ArrayList<T>(n)
             for (item in this) {
                 if (count++ == n)
-                    break;
+                    break
                 list.add(item)
             }
             return list
@@ -292,7 +292,7 @@ fun filtering(): List<GenericFunction> {
             val list = ArrayList<T>()
             for (item in this) {
                 if (!predicate(item))
-                    break;
+                    break
                 list.add(item)
             }
             return list

@@ -827,7 +827,7 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
     if (this is Collection) {
         if (size <= 1) return this.toList()
-        @Suppress("CAST_NEVER_SUCCEEDS")
+        @Suppress("UNCHECKED_CAST")
         return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
     }
     return toMutableList().apply { sort() }
@@ -860,7 +860,7 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     if (this is Collection) {
        if (size <= 1) return this.toList()
-       @Suppress("CAST_NEVER_SUCCEEDS")
+       @Suppress("UNCHECKED_CAST")
        return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
     }
     return toMutableList().apply { sortWith(comparator) }
