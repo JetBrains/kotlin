@@ -14,291 +14,219 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.ui;
+package org.jetbrains.kotlin.idea.refactoring.introduce.ui
 
-import com.intellij.ui.BooleanTableCellRenderer;
-import com.intellij.ui.TableUtil;
-import com.intellij.ui.ToolbarDecorator;
-import com.intellij.ui.table.JBTable;
-import com.intellij.util.ui.EditableModel;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter;
+import com.intellij.ui.BooleanTableCellRenderer
+import com.intellij.ui.TableUtil
+import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.table.JBTable
+import com.intellij.util.ui.EditableModel
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import javax.swing.*
+import javax.swing.table.AbstractTableModel
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.List;
-
-public abstract class AbstractParameterTablePanel<Param, UIParam extends AbstractParameterTablePanel.AbstractParameterInfo<Param>> extends JPanel {
-    public static abstract class AbstractParameterInfo<Param> {
-        private final Param originalParameter;
-        private boolean enabled = true;
-        private String name;
-
-        public AbstractParameterInfo(Param originalParameter) {
-            this.originalParameter = originalParameter;
-        }
-
-        public Param getOriginalParameter() {
-            return originalParameter;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public abstract Param toParameter();
+abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTablePanel.AbstractParameterInfo<Param>> : JPanel(BorderLayout()) {
+    companion object {
+        val CHECKMARK_COLUMN = 0
+        val PARAMETER_NAME_COLUMN = 1
     }
 
-    protected List<UIParam> parameterInfos;
+    abstract class AbstractParameterInfo<out Param>(val originalParameter: Param) {
+        var isEnabled = true
+        lateinit var name: String
 
-    private JBTable myTable;
-    private TableModelBase myTableModel;
-
-    public AbstractParameterTablePanel() {
-        super(new BorderLayout());
+        abstract fun toParameter(): Param
     }
 
-    protected TableModelBase createTableModel() {
-        return new TableModelBase();
-    }
+    protected lateinit var parameterInfos: MutableList<UIParam>
 
-    protected void createAdditionalColumns() {
+    lateinit var table: JBTable
+        private set
+
+    protected lateinit var tableModel: TableModelBase
+        private set
+
+    protected open fun createTableModel() = TableModelBase()
+
+    protected open fun createAdditionalColumns() {
 
     }
 
-    public void init() {
-        myTableModel = createTableModel();
-        myTable = new JBTable(myTableModel);
-        DefaultCellEditor defaultEditor = (DefaultCellEditor) myTable.getDefaultEditor(Object.class);
-        defaultEditor.setClickCountToStart(1);
+    fun init() {
+        tableModel = createTableModel()
+        table = JBTable(tableModel)
 
-        myTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        myTable.setCellSelectionEnabled(true);
+        val defaultEditor = table.getDefaultEditor(Any::class.java) as DefaultCellEditor
+        defaultEditor.clickCountToStart = 1
 
-        TableColumn checkBoxColumn = myTable.getColumnModel().getColumn(TableModelBase.CHECKMARK_COLUMN);
-        TableUtil.setupCheckboxColumn(checkBoxColumn);
-        checkBoxColumn.setHeaderValue("");
-        checkBoxColumn.setCellRenderer(
-                new BooleanTableCellRenderer() {
-                    @NotNull
-                    @Override
-                    public Component getTableCellRendererComponent(
-                            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
-                    ) {
-                        Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                        rendererComponent.setEnabled(AbstractParameterTablePanel.this.isEnabled());
-                        return rendererComponent;
-                    }
+        table.selectionModel.selectionMode = ListSelectionModel.SINGLE_SELECTION
+        table.cellSelectionEnabled = true
+
+        with(table.columnModel.getColumn(CHECKMARK_COLUMN)) {
+            TableUtil.setupCheckboxColumn(this)
+            headerValue = ""
+            cellRenderer = object : BooleanTableCellRenderer() {
+                override fun getTableCellRendererComponent(
+                        table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int
+                ): Component {
+                    val rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+                    rendererComponent.isEnabled = this@AbstractParameterTablePanel.isEnabled
+                    return rendererComponent
                 }
-        );
+            }
+        }
 
-        myTable.getColumnModel().getColumn(TableModelBase.PARAMETER_NAME_COLUMN).setHeaderValue("Name");
+        table.columnModel.getColumn(PARAMETER_NAME_COLUMN).headerValue = "Name"
 
-        createAdditionalColumns();
+        createAdditionalColumns()
 
-        myTable.setPreferredScrollableViewportSize(new Dimension(250, myTable.getRowHeight() * 5));
-        myTable.setShowGrid(false);
-        myTable.setIntercellSpacing(new Dimension(0, 0));
+        table.preferredScrollableViewportSize = Dimension(250, table.rowHeight * 5)
+        table.setShowGrid(false)
+        table.intercellSpacing = Dimension(0, 0)
 
-        @NonNls InputMap inputMap = myTable.getInputMap();
-        @NonNls ActionMap actionMap = myTable.getActionMap();
+        @NonNls val inputMap = table.inputMap
+        @NonNls val actionMap = table.actionMap
 
         // SPACE: toggle enable/disable
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "enable_disable");
-        actionMap.put("enable_disable", new AbstractAction() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                if (myTable.isEditing()) return;
-                int[] rows = myTable.getSelectedRows();
-                if (rows.length > 0) {
-                    boolean valueToBeSet = false;
-                    for (int row : rows) {
-                        if (!parameterInfos.get(row).isEnabled()) {
-                            valueToBeSet = true;
-                            break;
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "enable_disable")
+        actionMap.put("enable_disable", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                if (table.isEditing) return
+                val rows = table.selectedRows
+                if (rows.size > 0) {
+                    var valueToBeSet = false
+                    for (row in rows) {
+                        if (!parameterInfos[row].isEnabled) {
+                            valueToBeSet = true
+                            break
                         }
                     }
-                    for (int row : rows) {
-                        parameterInfos.get(row).setEnabled(valueToBeSet);
+                    for (row in rows) {
+                        parameterInfos[row].isEnabled = valueToBeSet
                     }
-                    myTableModel.fireTableRowsUpdated(rows[0], rows[rows.length - 1]);
-                    TableUtil.selectRows(myTable, rows);
+                    tableModel.fireTableRowsUpdated(rows[0], rows[rows.size - 1])
+                    TableUtil.selectRows(table, rows)
                 }
             }
-        });
+        })
 
         // make ENTER work when the table has focus
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "invoke_impl");
-        actionMap.put("invoke_impl", new AbstractAction() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                TableCellEditor editor = myTable.getCellEditor();
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "invoke_impl")
+        actionMap.put("invoke_impl", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                val editor = table.cellEditor
                 if (editor != null) {
-                    editor.stopCellEditing();
+                    editor.stopCellEditing()
                 }
                 else {
-                    onEnterAction();
+                    onEnterAction()
                 }
             }
-        });
+        })
 
         // make ESCAPE work when the table has focus
-        actionMap.put("doCancel", new AbstractAction() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                TableCellEditor editor = myTable.getCellEditor();
+        actionMap.put("doCancel", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                val editor = table.cellEditor
                 if (editor != null) {
-                    editor.stopCellEditing();
+                    editor.stopCellEditing()
                 }
                 else {
-                    onCancelAction();
+                    onCancelAction()
                 }
             }
-        });
+        })
 
-        JPanel listPanel = ToolbarDecorator.createDecorator(myTable).disableAddAction().disableRemoveAction().createPanel();
-        add(listPanel, BorderLayout.CENTER);
+        val listPanel = ToolbarDecorator.createDecorator(table).disableAddAction().disableRemoveAction().createPanel()
+        add(listPanel, BorderLayout.CENTER)
     }
 
-    protected void updateSignature() {
-
-    }
-
-    protected void onEnterAction() {
+    protected open fun updateSignature() {
 
     }
 
-    protected void onCancelAction() {
+    protected open fun onEnterAction() {
 
     }
 
-    protected class TableModelBase extends AbstractTableModel implements EditableModel {
-        public static final int CHECKMARK_COLUMN = 0;
-        public static final int PARAMETER_NAME_COLUMN = 1;
+    protected open fun onCancelAction() {
 
-        @Override
-        public void addRow() {
-            throw new IllegalAccessError("Not implemented");
+    }
+
+    protected open inner class TableModelBase : AbstractTableModel(), EditableModel {
+        override fun addRow() = throw IllegalAccessError("Not implemented")
+
+        override fun removeRow(index: Int) = throw IllegalAccessError("Not implemented")
+
+        override fun exchangeRows(oldIndex: Int, newIndex: Int) {
+            if (oldIndex < 0 || newIndex < 0) return
+            if (oldIndex >= parameterInfos.size || newIndex >= parameterInfos.size) return
+
+            val old = parameterInfos[oldIndex]
+            parameterInfos[oldIndex] = parameterInfos[newIndex]
+            parameterInfos[newIndex] = old
+
+            fireTableRowsUpdated(Math.min(oldIndex, newIndex), Math.max(oldIndex, newIndex))
+            updateSignature()
         }
 
-        @Override
-        public void removeRow(int index) {
-            throw new IllegalAccessError("Not implemented");
-        }
-
-        @Override
-        public void exchangeRows(int oldIndex, int newIndex) {
-            if (oldIndex < 0 || newIndex < 0) return;
-            if (oldIndex >= parameterInfos.size() || newIndex >= parameterInfos.size()) return;
-
-            UIParam old = parameterInfos.get(oldIndex);
-            parameterInfos.set(oldIndex, parameterInfos.get(newIndex));
-            parameterInfos.set(newIndex, old);
-
-            fireTableRowsUpdated(Math.min(oldIndex, newIndex), Math.max(oldIndex, newIndex));
-            updateSignature();
-        }
-
-        @Override
-        public boolean canExchangeRows(int oldIndex, int newIndex) {
-            if (oldIndex < 0 || newIndex < 0) return false;
-            if (oldIndex >= parameterInfos.size() || newIndex >= parameterInfos.size()) return false;
-            return true;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 2;
-        }
-
-        @Override
-        public int getRowCount() {
-            return parameterInfos.size();
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            switch (columnIndex) {
-                case CHECKMARK_COLUMN:
-                    return parameterInfos.get(rowIndex).isEnabled();
-                case PARAMETER_NAME_COLUMN:
-                    return parameterInfos.get(rowIndex).getName();
-                default:
-                    return null;
+        override fun canExchangeRows(oldIndex: Int, newIndex: Int): Boolean {
+            return when {
+                oldIndex < 0 || newIndex < 0 -> false
+                oldIndex >= parameterInfos.size || newIndex >= parameterInfos.size -> false
+                else -> true
             }
         }
 
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            AbstractParameterInfo info = parameterInfos.get(rowIndex);
-            switch (columnIndex) {
-                case CHECKMARK_COLUMN: {
-                    info.setEnabled((Boolean) aValue);
-                    fireTableRowsUpdated(rowIndex, rowIndex);
-                    myTable.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-                    updateSignature();
-                    break;
+        override fun getColumnCount() = 2
+
+        override fun getRowCount() = parameterInfos.size
+
+        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
+            return when (columnIndex) {
+                CHECKMARK_COLUMN -> parameterInfos[rowIndex].isEnabled
+                PARAMETER_NAME_COLUMN -> parameterInfos[rowIndex].name
+                else -> null
+            }
+        }
+
+        override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
+            val info = parameterInfos[rowIndex]
+            when (columnIndex) {
+                CHECKMARK_COLUMN -> {
+                    info.isEnabled = aValue as Boolean
+                    fireTableRowsUpdated(rowIndex, rowIndex)
+                    table.selectionModel.setSelectionInterval(rowIndex, rowIndex)
+                    updateSignature()
                 }
-                case PARAMETER_NAME_COLUMN: {
-                    String name = (String) aValue;
-                    if (KotlinNameSuggester.INSTANCE.isIdentifier(name)) {
-                        info.setName(name);
+                PARAMETER_NAME_COLUMN -> {
+                    val name = aValue as String
+                    if (KotlinNameSuggester.isIdentifier(name)) {
+                        info.name = name
                     }
-                    updateSignature();
-                    break;
+                    updateSignature()
                 }
             }
         }
 
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            AbstractParameterInfo info = parameterInfos.get(rowIndex);
-            switch (columnIndex) {
-                case CHECKMARK_COLUMN:
-                    return isEnabled();
-                case PARAMETER_NAME_COLUMN:
-                    return isEnabled() && info.isEnabled();
-                default:
-                    return false;
+        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+            val info = parameterInfos[rowIndex]
+            return when (columnIndex) {
+                CHECKMARK_COLUMN -> isEnabled
+                PARAMETER_NAME_COLUMN -> isEnabled && info.isEnabled
+                else -> false
             }
         }
 
-        @NotNull
-        @Override
-        public Class getColumnClass(int columnIndex) {
-            if (columnIndex == CHECKMARK_COLUMN) {
-                return Boolean.class;
-            }
-            return super.getColumnClass(columnIndex);
+        override fun getColumnClass(columnIndex: Int): Class<*> {
+            if (columnIndex == CHECKMARK_COLUMN) return Boolean::class.java
+            return super.getColumnClass(columnIndex)
         }
-    }
-
-    @NotNull
-    public JBTable getTable() {
-        return myTable;
-    }
-
-    @NotNull
-    public TableModelBase getTableModel() {
-        return myTableModel;
     }
 }
