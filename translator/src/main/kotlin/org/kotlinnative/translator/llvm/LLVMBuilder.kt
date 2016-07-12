@@ -25,7 +25,7 @@ class LLVMBuilder {
         llvmCode.appendln("}")
     }
 
-    fun receiveNativeValue(firstOp: LLVMSingleValue) : LLVMSingleValue = when (firstOp) {
+    fun receiveNativeValue(firstOp: LLVMSingleValue): LLVMSingleValue = when (firstOp) {
         is LLVMConstant -> firstOp
         is LLVMVariable -> when (firstOp.pointer) {
             false -> firstOp
@@ -95,12 +95,6 @@ class LLVMBuilder {
         if (store) {
             llvmCode.appendln("store ${sourceVariable.getType()} $sourceVariable, ${targetVariable.getType()} $targetVariable, align ${targetVariable.type?.align}")
         }
-    }
-
-    fun addVariableByValue(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, allocVariable: LLVMVariable) {
-        llvmCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type?.align}")
-        llvmCode.appendln("store ${allocVariable.type} $sourceVariable, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type?.align}")
-        llvmCode.appendln("$targetVariable = load ${targetVariable.type}, ${allocVariable.getType()} $allocVariable, align ${targetVariable.type?.align}")
     }
 
     fun addConstant(allocVariable: LLVMVariable, constantValue: LLVMConstant) {
