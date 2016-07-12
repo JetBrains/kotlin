@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.io.FileNotFoundException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
+@Suppress("SimplifyAssertNotNull")
 class KotlinScriptConfigurationManager(
         private val project: Project,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
@@ -73,7 +73,7 @@ class KotlinScriptConfigurationManager(
     private val cacheLock = ReentrantReadWriteLock()
 
     private val allScriptsClasspathCache = ClearableLazyValue(cacheLock) {
-        scriptExternalImportsProvider.getKnownCombinedClasspath().distinct().map { it.classpathEntryToVfs() }
+        scriptExternalImportsProvider.getKnownCombinedClasspath().distinct().mapNotNull { it.classpathEntryToVfs() }
     }
 
     private val allLibrarySourcesCache = ClearableLazyValue(cacheLock) {
@@ -89,17 +89,22 @@ class KotlinScriptConfigurationManager(
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
             scriptExternalImportsProvider.getExternalImports(file)
                     .flatMap { it.classpath }
-                    .map { it.classpathEntryToVfs() }
+                    .mapNotNull { it.classpathEntryToVfs() }
 
     fun getAllScriptsClasspath(): List<VirtualFile> = allScriptsClasspathCache.get()
 
     fun getAllLibrarySources(): List<VirtualFile> = allLibrarySourcesCache.get()
 
-    private fun File.classpathEntryToVfs(): VirtualFile =
-            if (isDirectory)
-                StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
-            else
-                StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
+    private fun File.classpathEntryToVfs(): VirtualFile? {
+        val res = when {
+            !exists() -> null
+            isDirectory -> StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: null
+            isFile -> StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: null
+            else -> null
+        }
+        // TODO: report this somewhere, but do not throw: assert(res != null, { "Invalid classpath entry '$this': exists: ${exists()}, is directory: $isDirectory, is file: $isFile" })
+        return res
+    }
 
     fun getAllScriptsClasspathScope() = NonClasspathDirectoriesScope(getAllScriptsClasspath())
 
