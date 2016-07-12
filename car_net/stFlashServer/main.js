@@ -30,7 +30,7 @@ handle["/other"] = handlers.other;
 
 server.start(router.route, handle);
 exports.protoConstructor = protoConstructor;
-exports.commandPrefix = "./data/macosx-x86_64/st-flash write";
+exports.commandPrefix = "./st-flash write";
 exports.binFilePath = (commander.binfile ? commander.binfile : "./") + "f.bin";
 console.log(exports.binFilePath);
 console.log(exports.commandPrefix);

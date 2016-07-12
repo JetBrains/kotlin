@@ -1,3 +1,4 @@
+import com.beust.jcommander.JCommander
 import com.google.protobuf.ByteString
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
@@ -12,6 +13,11 @@ import java.util.*
 fun main(args: Array<String>) {
     //2 argm path to bin and server ip
     //1 option - 0x000...
+    var asss:ArrayList<String> = ArrayList();
+
+    val clArgs:CommandLineArgs = CommandLineArgs();
+    val jcom = JCommander(clArgs)
+
     val host = "127.0.0.1"
     val port = 8888
     val base = "0x08000000"

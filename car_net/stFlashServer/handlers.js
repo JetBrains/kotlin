@@ -3,12 +3,13 @@
  */
 const fs = require("fs");
 const main = require("./main.js");
+var exec = require('child_process').exec;
 
 function loadBin(httpContent, response) {
 
     var uploadClass = main.protoConstructor.Upload;
     var uploadObject = uploadClass.decode(httpContent);
-    fs.writeFile(binFilePath, uploadObject.data.buffer, "binary", function (error) {
+    fs.writeFile(main.binFilePath, uploadObject.data.buffer, "binary", function (error) {
         var uploadResultClass = main.protoConstructor.UploadResult;
         var code = 0;
         var stdErr = "";
@@ -17,21 +18,32 @@ function loadBin(httpContent, response) {
             stdErr = error.toString();
         } else {
             code = 0;
-            console.log(main.commandPrefix + " " + main.binFilePath + " " + uploadObject.base);
+            var shCommand = main.commandPrefix + " " + main.binFilePath + " " + uploadObject.base;
+            exec(shCommand, function (error, stdout, stderr) {
+                // TODO get program result code and error textual representation and send
+                // back in the response
+                if (error) {
+                    code = 1;
+                    console.error(error);
+                }
+
+                var resultObject = new uploadResultClass({
+                    "stdOut": stdout.toString(),
+                    "resultCode": code,
+                    "stdErr": stderr.toString()
+                });
+                var byteBuffer = resultObject.encode();
+                var byteArray = [];
+                for (var i = 0; i < byteBuffer.limit; i++) {
+                    byteArray.push(byteBuffer.buffer[i]);
+                }
+                response.writeHead(200, {"Content-Type": "text/plain", "Content-length": byteArray.length});
+                response.write(new Buffer(byteArray));
+                response.end();
+                console.log(shCommand);
+            });
         }
-        var resultObject = new uploadResultClass({
-            "stdOut": "",
-            "resultCode": code,
-            "stdErr": stdErr
-        });
-        var byteBuffer = resultObject.encode();
-        var byteArray = [];
-        for (var i = 0; i < byteBuffer.limit; i++) {
-            byteArray.push(byteBuffer.buffer[i]);
-        }
-        response.writeHead(200, {"Content-Type": "text/plain", "Content-length": byteArray.length});
-        response.write(new Buffer(byteArray));
-        response.end();
+
     });
 }
 
