@@ -272,3 +272,16 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
 fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return if (isInstance(value)) value as T else null
 }
+
+
+/**
+ * Creates a new instance of the class, calling a constructor which either has no parameters or all parameters of which are optional
+ * (see [KParameter.isOptional]). If there are no or many such constructors, an exception is thrown.
+ */
+fun <T : Any> KClass<T>.createInstance(): T {
+    // TODO: throw a meaningful exception
+    val noArgsConstructor = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) }
+                            ?: throw IllegalArgumentException("Class should have a single no-arg constructor: $this")
+
+    return noArgsConstructor.callBy(emptyMap())
+}
