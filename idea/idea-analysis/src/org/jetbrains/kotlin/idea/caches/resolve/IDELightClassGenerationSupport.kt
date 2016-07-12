@@ -348,7 +348,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             correspondingClassOrObject: KtClassOrObject?
     ): ClsClassImpl? {
         val javaFileStub = ClsJavaStubByVirtualFileCache.getInstance(project).get(classFile) ?: return null
-        javaFileStub.psiFactory = ClsWrapperStubPsiFactory()
+        javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
         val manager = PsiManager.getInstance(mirrorFile.project)
         val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, classFile)) {
             override fun getNavigationElement(): PsiElement {

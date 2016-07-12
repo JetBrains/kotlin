@@ -127,7 +127,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
 
     private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
         val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), true)
-        javaFileStub.psiFactory = ClsWrapperStubPsiFactory()
+        javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
         val manager = PsiManager.getInstance(project)
 

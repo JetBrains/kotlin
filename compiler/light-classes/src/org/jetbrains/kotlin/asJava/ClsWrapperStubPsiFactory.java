@@ -31,7 +31,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
+    public static final ClsWrapperStubPsiFactory INSTANCE = new ClsWrapperStubPsiFactory();
+
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
+
+    private ClsWrapperStubPsiFactory() { }
 
     @Nullable
     public static LightMemberOriginForDeclaration getMemberOrigin(@NotNull PsiMember member) {
