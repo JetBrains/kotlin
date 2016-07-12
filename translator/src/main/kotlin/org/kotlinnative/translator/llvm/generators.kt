@@ -1,14 +1,13 @@
 package org.kotlinnative.translator.llvm
 
 import org.kotlinnative.translator.llvm.types.*
-import org.kotlinnative.translator.utils.FunctionArgument
 
 
-fun LLVMFunctionDescriptor(name: String, argTypes: List<FunctionArgument>?, returnType: LLVMType, declare: Boolean = false) =
+fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnType: LLVMType, declare: Boolean = false) =
         "${if (declare) "declare" else "define"} $returnType @$name(${
-        argTypes?.mapIndexed { i: Int, s: FunctionArgument ->
-            "${s.type} %${s.name}"
-        }?.joinToString() ?: ""})"
+        argTypes?.mapIndexed { i: Int, s: LLVMVariable ->
+            "${s.type} %${s.label}"
+        }?.joinToString() })"
 
 fun LLVMMapStandardType(type: String): LLVMType = when (type) {
     "Int" -> LLVMIntType()

@@ -11,7 +11,6 @@ import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
 import org.kotlinnative.translator.llvm.types.LLVMVoidType
-import org.kotlinnative.translator.utils.FunctionArgument
 import java.util.*
 
 
@@ -19,13 +18,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     var name = function.fqName.toString()
     var returnType: LLVMType
-    var args: List<FunctionArgument>?
+    var args: List<LLVMVariable>?
     val variableManager = state.variableManager
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)
         args = descriptor?.valueParameters?.map {
-            FunctionArgument(LLVMMapStandardType(it.type.toString()), it.name.toString())
+            LLVMVariable(it.name.toString(), LLVMMapStandardType(it.type.toString()))
         }
 
         returnType = LLVMMapStandardType(descriptor?.returnType.toString())
@@ -37,7 +36,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
 
         codeBuilder.addStartExpression()
-        generateLoadArguments(function)
+        generateLoadArguments()
         expressionWalker(function.bodyExpression)
 
         if (returnType is LLVMVoidType) {
@@ -64,11 +63,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return external
     }
 
-    private fun generateLoadArguments(function: KtNamedFunction) {
+    private fun generateLoadArguments() {
         args?.forEach {
-            val loadVariable = LLVMVariable("%${it.name}", it.type, it.name, true)
+            val loadVariable = LLVMVariable("%${it.label}", it.type, it.label, true)
             codeBuilder.loadVariable(loadVariable)
-            variableManager.addVariable(it.name, loadVariable, 2)
+            variableManager.addVariable(it.label, loadVariable, 2)
         }
     }
 
@@ -107,14 +106,35 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluateCallExpression(expr: KtCallExpression): LLVMNode? {
+        val function = expr.firstChild.firstChild.text
+
+        if (state.functions.containsKey(function)) {
+            return evaluteFunctionCallExpression(expr)
+        }
+
+        if (state.classes.containsKey(function)) {
+            return evaluteConstructorCallExpression(expr)
+        }
+
+        return null
+    }
+
+    private fun evaluteConstructorCallExpression(expr: KtCallExpression): LLVMNode? {
+        return null
+    }
+
+    private fun evaluteFunctionCallExpression(expr: KtCallExpression): LLVMNode? {
         val function = expr.firstChild.firstChild
+
         val descriptor = state.functions[function.text] ?: return null
         val names = parseArgList(expr
                 .firstChild
                 .getNextSiblingIgnoringWhitespaceAndComments()
                 ?.firstChild)
 
-        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.argTypes.mapIndexed { i: Int, type: LLVMType -> LLVMVariable(names[i], type) })
+        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.args?.mapIndexed {
+            i: Int, variable: LLVMVariable -> LLVMVariable(names[i], variable.type)
+        } ?: listOf())
     }
 
     private fun parseArgList(argumentList: PsiElement?): List<String> {

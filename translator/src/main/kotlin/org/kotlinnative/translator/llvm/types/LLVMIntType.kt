@@ -18,8 +18,8 @@ class LLVMIntType() : LLVMType() {
     override fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression =
             LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, $secondOp")
 
-    override fun toString() = "i32"
-
     override val align = 4
+    override val size: Byte = 4
 
+    override fun toString() = "i32"
 }

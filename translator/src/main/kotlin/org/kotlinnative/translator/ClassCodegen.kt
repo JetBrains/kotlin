@@ -10,48 +10,71 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.kotlinnative.translator.exceptions.TranslationException
 import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMClassVariable
+import org.kotlinnative.translator.llvm.LLVMFunctionDescriptor
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.types.LLVMType
+import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import org.kotlinnative.translator.llvm.types.parseLLVMType
 import java.util.*
 
 class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuilder: LLVMBuilder) {
 
-    var native = false
+    val annotation: Boolean
+    val native: Boolean
+    val fields = ArrayList<LLVMVariable>()
+    val size: Int
 
-    fun generate() {
+    init {
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
+        val parameterList = clazz.getPrimaryConstructorParameterList()!!.parameters
 
-        if (descriptor.kind == ClassKind.ANNOTATION_CLASS) {
-            return
+        var offset = 0
+        var currentSize = 0
+        annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
+
+        if (!annotation) {
+            for (field in parameterList) {
+                val type = getNativeType(field) ?: parseLLVMType((field.typeReference?.typeElement as KtUserType).referencedName!!)
+                val field = LLVMClassVariable(field.name!!, type, offset)
+                fields.add(field)
+
+                currentSize += type.size
+                offset++
+            }
         }
 
         native = isNative(descriptor.annotations)
-
-        generateBody()
+        size = currentSize
     }
 
-    private fun generateBody() {
+    fun generate() {
+        if (annotation) {
+            return
+        }
+
+        generateStruct()
+        generateDefaultConstructor()
+    }
+
+    private fun generateStruct() {
         val name = clazz.name!!
-        val fields = getFields()
 
         codeBuilder.createClass(name, fields)
     }
 
-    private fun getFields(): List<LLVMVariable> {
-        val fields = ArrayList<LLVMVariable>()
-        val parameterList = clazz.getPrimaryConstructorParameterList()!!.parameters
-        var offset = 0
+    private fun generateDefaultConstructor() {
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(clazz.name!!, fields, LLVMVoidType()))
 
-        for (field in parameterList) {
-            val type = getNativeType(field) ?: parseLLVMType((field.typeReference?.typeElement as KtUserType).referencedName!!)
-            val field = LLVMClassVariable(field.name!!, type, offset)
-            fields.add(field)
+        codeBuilder.addStartExpression()
+        generateLoadArguments()
+        codeBuilder.addEndExpression()
+    }
 
-            offset++
+    private fun generateLoadArguments() {
+        fields.forEach {
+            val loadVariable = LLVMVariable("%${it.label}", it.type, it.label)
+            codeBuilder.loadVariable(loadVariable)
         }
-
-        return fields
     }
 
     private fun getNativeType(field: KtParameter): LLVMType? {

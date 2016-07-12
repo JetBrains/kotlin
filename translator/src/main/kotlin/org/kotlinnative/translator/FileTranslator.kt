@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.kotlinnative.translator.llvm.LLVMBuilder
-import org.kotlinnative.translator.utils.FunctionDescriptor
 
 class FileTranslator(val state: TranslationState, val file: KtFile) {
 
@@ -21,18 +20,24 @@ class FileTranslator(val state: TranslationState, val file: KtFile) {
             when (declaration) {
                 is KtNamedFunction -> {
                     val function = FunctionCodegen(state, declaration, codeBuilder)
-                    state.functions.put(function.name, FunctionDescriptor(
-                            function.returnType,
-                            function.args?.map { it.type }?.toList() ?: listOf()
-                    ))
+                    state.functions.put(function.name, function)
 
-                    function.generate()
                 }
                 is KtClass -> {
-                    ClassCodegen(state, declaration, codeBuilder).generate()
+                    val codegen = ClassCodegen(state, declaration, codeBuilder)
+                    state.classes.put(declaration.name!!, codegen)
                 }
             }
         }
+
+        for (clazz in state.classes.values) {
+            clazz.generate()
+        }
+
+        for (function in state.functions.values) {
+            function.generate()
+        }
+
     }
 
 }

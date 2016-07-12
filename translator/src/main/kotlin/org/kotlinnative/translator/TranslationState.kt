@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
-import org.kotlinnative.translator.utils.FunctionDescriptor
 import java.util.*
 
 
@@ -26,7 +25,9 @@ class TranslationState(sources: List<String>, disposer: Disposable) {
 
     val environment: KotlinCoreEnvironment
     val bindingContext: BindingContext
-    var functions = HashMap<String, FunctionDescriptor>()
+    var functions = HashMap<String, FunctionCodegen>()
+    var classes = HashMap<String, ClassCodegen>()
+
     val variableManager = VariableManager()
 
     init {
