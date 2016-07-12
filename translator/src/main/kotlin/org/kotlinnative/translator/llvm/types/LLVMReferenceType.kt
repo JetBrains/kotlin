@@ -12,13 +12,11 @@ class LLVMReferenceType(val type: String) : LLVMType() {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun getAlign(): Int {
-        throw UnsupportedOperationException("not implemented")
-    }
-
     override fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression {
         throw UnsupportedOperationException("not implemented")
     }
+
     override fun toString() = type
 
+    override val align = -1
 }

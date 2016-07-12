@@ -21,4 +21,3 @@ fun main(args: Array<String>) {
     println(FileTranslator(state, files[0]).generateCode())
 }
 
-    

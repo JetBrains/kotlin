@@ -4,4 +4,5 @@ class LLVMShortType() : LLVMType() {
 
     override fun toString(): String = "i16"
 
+    override val align = 1
 }

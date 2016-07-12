@@ -34,9 +34,7 @@ class TranslationState(sources: List<String>, disposer: Disposable) {
         val messageCollector = GroupingMessageCollector(object : MessageCollector {
             private var hasError = false
 
-            override fun hasErrors(): Boolean {
-                return hasError
-            }
+            override fun hasErrors(): Boolean = hasError
 
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
                 println("[report] $message")

@@ -20,5 +20,5 @@ class LLVMDoubleType() : LLVMType() {
 
     override fun toString() = "double"
 
-    override fun getAlign() = 8
+    override val align = 8
 }

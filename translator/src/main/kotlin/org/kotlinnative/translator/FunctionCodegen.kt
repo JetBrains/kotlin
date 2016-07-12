@@ -66,7 +66,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun generateLoadArguments(function: KtNamedFunction) {
         args?.forEach {
-            val loadVariable = LLVMVariable("%${it.name}", it.type, it.name)
+            val loadVariable = LLVMVariable("%${it.name}", it.type, it.name, true)
             codeBuilder.loadVariable(loadVariable)
             variableManager.addVariable(it.name, loadVariable, 2)
         }
@@ -142,7 +142,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMVariable {
         val node = expr.node
-        return codeBuilder.addConstant(LLVMVariable(node.firstChildNode.text, LLVMIntType()))
+        return codeBuilder.addConstant(LLVMVariable(node.firstChildNode.text, LLVMIntType(), pointer = false))
     }
 
     private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMVariable? {
@@ -168,9 +168,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val eq = identifier?.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
         val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth) ?: return null
+
         when (assignExpression) {
             is LLVMVariable -> {
-                variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth)
+                assignExpression.kotlinName = identifier!!.text
+                assignExpression.pointer = false
+                variableManager.addVariable(identifier.text, assignExpression, scopeDepth)
                 return null
             }
         }
