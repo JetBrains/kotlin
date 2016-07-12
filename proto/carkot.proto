@@ -1,31 +1,39 @@
+syntax = "proto3";
+package carkot;
+
+option java_package = "proto";
+option java_outer_classname = "Carkot";
+
 message Upload {
   message Method {
     enum TYPE {
-      DFU = 1;
-      STLINK = 2;
+      DFU = 0;
+      STLINK = 1;
     }
     // Type of upload method.
-    optional TYPE type = 1;
+    TYPE type = 1;
     // Upload port.
-    optional string port = 2;
+    string port = 2;
     // Device address, smth like 8087:0ABA.
-    optional string device = 3;
+    string device = 3;
     // Additional programmator-specific arguments.
     repeated string arguments = 4;
   }
   // Firmware data.
-  optional bytes data = 1;
+  bytes data = 1;
   // Firmware load address (string, to avoid 64-bit woes).
-  optional string base = 2;
+  string base = 2;
   // Method of firmware upload.
-  optional Method method = 3;
+  Method method = 3;
 }
 
 message UploadResult {
-  optional string error = 1;
+  string stdOut = 1;
+  string stdErr = 2;
+  int32 resultCode = 3;
 }
 
 message LogMessage {
-  optional string source = 1;
-  optional bytes message = 2;
+  string source = 1;
+  bytes message = 2;
 }
