@@ -4,7 +4,7 @@
 
 The Kotlin Standard Library provides living essentials for everyday work with Kotlin.
 These include:
-  - Higher-order functions implementing idiomatic patterns ([let], [apply], [use], [synchronized], etc).
+  - Higher-order functions implementing idiomatic patterns ([let][kotlin.let], [apply][kotlin.apply], [use][kotlin.io.use], [synchronized][kotlin.synchronized], etc).
   - Extension functions providing querying operations for collections (eager) and sequences (lazy).
   - Various utilities for working with strings and char sequences.
   - Extensions for JDK classes making it convenient to work with files, IO, and threading.
@@ -19,11 +19,12 @@ Library support for the Kotlin annotation facility.
 
 # Package kotlin.collections
 
-Collection types, such as [Iterable], [Collection], [List], [Set], [Map] and related top-level and extension functions.
+Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][kotlin.collections.Collection],
+[List][kotlin.collections.List], [Set][kotlin.collections.Set], [Map][kotlin.collections.Map] and related top-level and extension functions.
 
 # Package kotlin.comparisons
 
-[Comparator] factory and extension functions and comparison helper functions.
+Helper functions for creating [Comparator][java.util.Comparator] instances.
 
 # Package kotlin.concurrent
 
@@ -57,7 +58,7 @@ Java reflection.
 
 # Package kotlin.sequences
 
-[Sequence] type that represents lazily evaluated collections. Top-level functions for instantiating sequences
+[Sequence][kotlin.sequences.Sequence] type that represents lazily evaluated collections. Top-level functions for instantiating sequences
 and extension functions for sequences.
 
 # Package kotlin.system
