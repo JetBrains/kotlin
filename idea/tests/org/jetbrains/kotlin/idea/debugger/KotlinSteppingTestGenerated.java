@@ -589,6 +589,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stepOverInlineFunWithRecursionCall.kt")
+        public void testStepOverInlineFunWithRecursionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlineFunWithRecursionCall.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverInlineFunctionInReturn.kt")
         public void testStepOverInlineFunctionInReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlineFunctionInReturn.kt");
