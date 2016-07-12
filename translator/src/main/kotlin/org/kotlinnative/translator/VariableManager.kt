@@ -9,7 +9,7 @@ class VariableManager {
     private var globalVariableCollection = HashMap<String, LLVMVariable>()
 
     fun getLLVMvalue(variableName: String): LLVMVariable? {
-        return fileVariableCollectionTree.get(variableName)?.peek()?.first ?: globalVariableCollection.get(variableName)
+        return fileVariableCollectionTree[variableName]?.peek()?.first ?: globalVariableCollection[variableName]
     }
 
     fun pullUpwardsLevel(level: Int) {

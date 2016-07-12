@@ -41,10 +41,6 @@ class LLVMBuilder {
         return newVar
     }
 
-    fun addAssignment(llvmVariable: LLVMNode, assignExpression: LLVMNode) {
-        llvmCode.appendln("$llvmVariable = $assignExpression")
-    }
-
     fun clean() {
         llvmCode = StringBuilder()
     }
@@ -67,13 +63,13 @@ class LLVMBuilder {
 
     fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable) {
         llvmCode.appendln("$sourceVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type?.getAlign()}")
-        llvmCode.appendln("store ${targetVariable.type} $targetVariable, ${targetVariable.type}* ${sourceVariable}, align ${targetVariable.type?.getAlign()}")
+        llvmCode.appendln("store ${targetVariable.type} $targetVariable, ${targetVariable.type}* $sourceVariable, align ${targetVariable.type?.getAlign()}")
     }
 
     fun addVariableByValue(targetVariable: LLVMVariable, sourceVariable: LLVMVariable) {
         val tmp = getNewVariable(targetVariable.type)
         llvmCode.appendln("$tmp   = alloca ${tmp.type}, align ${tmp.type?.getAlign()}")
-        llvmCode.appendln("store ${tmp.type} $sourceVariable, ${tmp.type}* ${tmp}, align ${tmp.type?.getAlign()}")
+        llvmCode.appendln("store ${tmp.type} $sourceVariable, ${tmp.type}* $tmp, align ${tmp.type?.getAlign()}")
         llvmCode.appendln("$targetVariable = load ${targetVariable.type}, ${targetVariable.type}* $tmp, align ${targetVariable.type?.getAlign()}")
     }
 
@@ -83,9 +79,12 @@ class LLVMBuilder {
         return target
     }
 
-    override fun toString(): String {
-        return llvmCode.toString()
+
+    fun  createClass(name: String, fields: List<LLVMVariable>) {
+        val code = "@class.$name = type { ${ fields.map { it.type }.joinToString() } }"
+        llvmCode.appendln(code)
     }
 
+    override fun toString() = llvmCode.toString()
 
 }

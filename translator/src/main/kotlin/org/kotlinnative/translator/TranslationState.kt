@@ -72,8 +72,8 @@ class TranslationState(sources: List<String>, disposer: Disposable) {
             }
 
             override fun reportEnvironmentErrors() {
-                var files = environment.configuration.jvmClasspathRoots
-                var runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+                val files = environment.configuration.jvmClasspathRoots
+                val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
                 collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
                 println(runtimes.joinToString { it.toString() })
             }
