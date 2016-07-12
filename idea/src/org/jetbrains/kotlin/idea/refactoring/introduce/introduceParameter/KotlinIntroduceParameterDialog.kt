@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.ExtractFunctionParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -87,7 +87,7 @@ class KotlinIntroduceParameterDialog private constructor(
     private var replaceAllCheckBox: JCheckBox? = null
     private var defaultValueCheckBox: JCheckBox? = null
     private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, KtElement>(descriptor.parametersToRemove.size)
-    private var parameterTablePanel: KotlinParameterTablePanel? = null
+    private var parameterTablePanel: ExtractFunctionParameterTablePanel? = null
     private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
     init {
@@ -152,7 +152,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
         if (lambdaExtractionDescriptor != null
             && (lambdaExtractionDescriptor.parameters.isNotEmpty() || lambdaExtractionDescriptor.receiverParameter != null)) {
-            val parameterTablePanel = object : KotlinParameterTablePanel() {
+            val parameterTablePanel = object : ExtractFunctionParameterTablePanel() {
                 override fun onEnterAction() {
                     doOKAction()
                 }
