@@ -109,6 +109,24 @@ internal open class KFunctionImpl protected constructor(
                (if (descriptor.extensionReceiverParameter != null) 1 else 0)
     }
 
+    override val isInline: Boolean
+        get() = descriptor.isInline
+
+    override val isExternal: Boolean
+        get() = descriptor.isExternal
+
+    override val isOperator: Boolean
+        get() = descriptor.isOperator
+
+    override val isInfix: Boolean
+        get() = descriptor.isInfix
+
+    override val isTailrec: Boolean
+        get() = descriptor.isTailrec
+
+    override val isSuspend: Boolean
+        get() = descriptor.isSuspend
+
     override fun equals(other: Any?): Boolean {
         val that = other.asKFunctionImpl() ?: return false
         return container == that.container && name == that.name && signature == that.signature

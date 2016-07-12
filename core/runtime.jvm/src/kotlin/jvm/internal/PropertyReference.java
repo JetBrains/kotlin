@@ -20,6 +20,21 @@ import kotlin.reflect.KProperty;
 
 public abstract class PropertyReference extends CallableReference implements KProperty {
     @Override
+    protected KProperty getReflected() {
+        return (KProperty) super.getReflected();
+    }
+
+    @Override
+    public boolean isLateinit() {
+        return getReflected().isLateinit();
+    }
+
+    @Override
+    public boolean isConst() {
+        return getReflected().isConst();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj instanceof PropertyReference) {

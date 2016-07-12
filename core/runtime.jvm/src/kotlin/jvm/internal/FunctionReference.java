@@ -85,6 +85,51 @@ public class FunctionReference extends FunctionImpl implements KFunction {
     }
 
     @Override
+    public boolean isFinal() {
+        return getReflected().isFinal();
+    }
+
+    @Override
+    public boolean isOpen() {
+        return getReflected().isOpen();
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return getReflected().isAbstract();
+    }
+
+    @Override
+    public boolean isInline() {
+        return getReflected().isInline();
+    }
+
+    @Override
+    public boolean isExternal() {
+        return getReflected().isExternal();
+    }
+
+    @Override
+    public boolean isOperator() {
+        return getReflected().isOperator();
+    }
+
+    @Override
+    public boolean isInfix() {
+        return getReflected().isInfix();
+    }
+
+    @Override
+    public boolean isTailrec() {
+        return getReflected().isTailrec();
+    }
+
+    @Override
+    public boolean isSuspend() {
+        return getReflected().isSuspend();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj instanceof FunctionReference) {

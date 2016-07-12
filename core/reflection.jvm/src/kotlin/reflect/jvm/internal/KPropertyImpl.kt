@@ -42,10 +42,40 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val defaultCaller: FunctionCaller<*>? get() = getter.defaultCaller
 
+    override val isLateinit: Boolean
+        get() = descriptor.isLateInit
+
+    override val isConst: Boolean
+        get() = descriptor.isConst
+
     abstract class Accessor<out R> : KProperty.Accessor<R> {
         abstract override val property: KPropertyImpl<R>
 
         internal abstract val descriptor: PropertyAccessorDescriptor
+
+        @Suppress("unused") // Used as an implementation of KFunction#isInline in subclasses
+        val isInline: Boolean
+            get() = descriptor.isInline
+
+        @Suppress("unused")
+        val isExternal: Boolean
+            get() = descriptor.isExternal
+
+        @Suppress("unused")
+        val isOperator: Boolean
+            get() = descriptor.isOperator
+
+        @Suppress("unused")
+        val isInfix: Boolean
+            get() = descriptor.isInfix
+
+        @Suppress("unused")
+        val isTailrec: Boolean
+            get() = descriptor.isTailrec
+
+        @Suppress("unused")
+        val isSuspend: Boolean
+            get() = descriptor.isSuspend
     }
 
     abstract class Getter<out R> : Accessor<R>(), KProperty.Getter<R>, KCallableImpl<R> {

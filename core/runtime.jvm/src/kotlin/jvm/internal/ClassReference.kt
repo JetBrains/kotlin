@@ -48,6 +48,27 @@ class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDec
     override val supertypes: List<KType>
         get() = error()
 
+    override val isFinal: Boolean
+        get() = error()
+
+    override val isOpen: Boolean
+        get() = error()
+
+    override val isAbstract: Boolean
+        get() = error()
+
+    override val isSealed: Boolean
+        get() = error()
+
+    override val isData: Boolean
+        get() = error()
+
+    override val isInner: Boolean
+        get() = error()
+
+    override val isCompanion: Boolean
+        get() = error()
+
     private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
 
     override fun equals(other: Any?) =

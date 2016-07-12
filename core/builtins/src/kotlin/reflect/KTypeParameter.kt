@@ -40,4 +40,11 @@ public interface KTypeParameter : KClassifier {
      * for more information.
      */
     public val variance: KVariance
+
+    /**
+     * `true` if this type parameter is `reified`.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html#reified-type-parameters)
+     * for more information.
+     */
+    public val isReified: Boolean
 }

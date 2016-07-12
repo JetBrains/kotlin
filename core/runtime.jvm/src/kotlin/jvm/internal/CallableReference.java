@@ -99,6 +99,21 @@ public abstract class CallableReference implements KCallable {
         return getReflected().callBy(args);
     }
 
+    @Override
+    public boolean isFinal() {
+        return getReflected().isFinal();
+    }
+
+    @Override
+    public boolean isOpen() {
+        return getReflected().isOpen();
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return getReflected().isAbstract();
+    }
+
     public KCallable compute() {
         if (reflected == null) {
             reflected = computeReflected();

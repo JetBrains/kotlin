@@ -170,6 +170,27 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             }
         }
 
+    override val isFinal: Boolean
+        get() = descriptor.modality == Modality.FINAL
+
+    override val isOpen: Boolean
+        get() = descriptor.modality == Modality.OPEN
+
+    override val isAbstract: Boolean
+        get() = descriptor.modality == Modality.ABSTRACT
+
+    override val isSealed: Boolean
+        get() = descriptor.modality == Modality.SEALED
+
+    override val isData: Boolean
+        get() = descriptor.isData
+
+    override val isInner: Boolean
+        get() = descriptor.isInner
+
+    override val isCompanion: Boolean
+        get() = descriptor.isCompanionObject
+
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass
 

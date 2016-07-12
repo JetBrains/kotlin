@@ -69,4 +69,30 @@ public interface KParameter : KAnnotatedElement {
      * 2. The parameter is declared in a member function and one of the corresponding parameters in the super functions is optional.
      */
     public val isOptional: Boolean
+
+    /**
+     * `true` if this parameter is `vararg`.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/functions.html#variable-number-of-arguments-varargs)
+     * for more information.
+     */
+    public val isVararg: Boolean
+
+    /**
+     * `true` if this parameter is `noinline`.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html#noinline)
+     * for more information.
+     */
+    public val isNoinline: Boolean
+
+    /**
+     * `true` if this parameter is `crossinline`.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html#non-local-returns)
+     * for more information.
+     */
+    public val isCrossinline: Boolean
+
+    /**
+     * `true` if this parameter is `coroutine`.
+     */
+    public val isCoroutine: Boolean
 }

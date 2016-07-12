@@ -40,6 +40,9 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
             Variance.OUT_VARIANCE -> KVariance.OUT
         }
 
+    override val isReified: Boolean
+        get() = descriptor.isReified
+
     override fun equals(other: Any?) =
             other is KTypeParameterImpl && descriptor == other.descriptor
 
