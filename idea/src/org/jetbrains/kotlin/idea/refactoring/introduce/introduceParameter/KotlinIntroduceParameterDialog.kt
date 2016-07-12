@@ -268,8 +268,8 @@ class KotlinIntroduceParameterDialog private constructor(
                                     oldDescriptor,
                                     chosenName,
                                     "",
-                                    parameterTablePanel?.receiverInfo,
-                                    parameterTablePanel?.parameterInfos ?: listOf(),
+                                    parameterTablePanel?.selectedReceiverInfo,
+                                    parameterTablePanel?.selectedParameterInfos ?: listOf(),
                                     null
                             )
                             val options = ExtractionGeneratorOptions.DEFAULT.copy(

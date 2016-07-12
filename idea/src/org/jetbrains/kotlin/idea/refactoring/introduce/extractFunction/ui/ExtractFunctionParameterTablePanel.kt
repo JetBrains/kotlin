@@ -14,170 +14,119 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui;
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui
 
-import com.intellij.ui.components.JBComboBoxLabel;
-import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
-import com.intellij.ui.table.JBTable;
-import com.intellij.util.Function;
-import com.intellij.util.ui.AbstractTableCellEditor;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter;
-import org.jetbrains.kotlin.idea.refactoring.introduce.ui.AbstractParameterTablePanel;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.ui.components.JBComboBoxLabel
+import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent
+import com.intellij.util.ui.AbstractTableCellEditor
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter
+import org.jetbrains.kotlin.idea.refactoring.introduce.ui.AbstractParameterTablePanel
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.types.KotlinType
+import java.awt.Component
+import javax.swing.JTable
+import javax.swing.table.DefaultTableCellRenderer
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ExtractFunctionParameterTablePanel extends AbstractParameterTablePanel<Parameter, ParameterInfo> {
-    @Override
-    protected TableModelBase createTableModel() {
-        return new MyTableModel();
+open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Parameter, ExtractFunctionParameterTablePanel.ParameterInfo>() {
+    companion object {
+        val PARAMETER_TYPE_COLUMN = 2
     }
 
-    @Override
-    protected void createAdditionalColumns() {
-        JBTable table = getTable();
+    class ParameterInfo(
+            originalParameter: Parameter,
+            val isReceiver: Boolean
+    ) : AbstractParameterTablePanel.AbstractParameterInfo<Parameter>(originalParameter) {
+        var type = originalParameter.getParameterType(false)
 
-        TableColumn parameterTypeColumn = table.getColumnModel().getColumn(MyTableModel.PARAMETER_TYPE_COLUMN);
-        parameterTypeColumn.setHeaderValue("Type");
-        parameterTypeColumn.setCellRenderer(new DefaultTableCellRenderer() {
-            private final JBComboBoxLabel myLabel = new JBComboBoxLabel();
-
-            @Override
-            @NotNull
-            public Component getTableCellRendererComponent(
-                    @NotNull JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
-            ) {
-                myLabel.setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) value));
-                myLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-                myLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
-                if (isSelected) {
-                    myLabel.setSelectionIcon();
-                }
-                else {
-                    myLabel.setRegularIcon();
-                }
-                return myLabel;
-            }
-        });
-        parameterTypeColumn.setCellEditor(new AbstractTableCellEditor() {
-            final JBComboBoxTableCellEditorComponent myEditorComponent = new JBComboBoxTableCellEditorComponent();
-
-            @Override
-            @Nullable
-            public Object getCellEditorValue() {
-                return myEditorComponent.getEditorValue();
-            }
-
-            @Override
-            public Component getTableCellEditorComponent(
-                    JTable table, Object value, boolean isSelected, int row, int column
-            ) {
-                ParameterInfo info = parameterInfos.get(row);
-
-                myEditorComponent.setCell(table, row, column);
-                myEditorComponent.setOptions(info.getOriginalParameter().getParameterTypeCandidates(false).toArray());
-                myEditorComponent.setDefaultValue(info.getType());
-                myEditorComponent.setToString(new Function<Object, String>() {
-                    @Override
-                    public String fun(Object o) {
-                        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) o);
-                    }
-                });
-
-                return myEditorComponent;
-            }
-        });
-    }
-
-    public void init(@Nullable Parameter receiver, @NotNull List<Parameter> parameters) {
-        parameterInfos = CollectionsKt.mapTo(
-                parameters,
-                receiver != null
-                ? CollectionsKt.arrayListOf(new ParameterInfo(receiver, true))
-                : new ArrayList<ParameterInfo>(),
-                new Function1<Parameter, ParameterInfo>() {
-                    @Override
-                    public ParameterInfo invoke(Parameter parameter) {
-                        return new ParameterInfo(parameter, false);
-                    }
-                }
-        );
-
-        super.init();
-    }
-
-    private class MyTableModel extends TableModelBase {
-        public static final int PARAMETER_TYPE_COLUMN = 2;
-
-        @Override
-        public int getColumnCount() {
-            return 3;
+        init {
+            name = if (isReceiver) "<receiver>" else originalParameter.name
         }
 
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            if (columnIndex == PARAMETER_TYPE_COLUMN) return parameterInfos.get(rowIndex).getType();
-            return super.getValueAt(rowIndex, columnIndex);
+        override fun toParameter() = originalParameter.copy(name, type)
+    }
+
+    override fun createTableModel(): AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase = MyTableModel()
+
+    override fun createAdditionalColumns() {
+        with(table.columnModel.getColumn(PARAMETER_TYPE_COLUMN)) {
+            headerValue = "Type"
+            cellRenderer = object : DefaultTableCellRenderer() {
+                private val myLabel = JBComboBoxLabel()
+
+                override fun getTableCellRendererComponent(
+                        table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int
+                ): Component {
+                    myLabel.text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(value as KotlinType)
+                    myLabel.background = if (isSelected) table.selectionBackground else table.background
+                    myLabel.foreground = if (isSelected) table.selectionForeground else table.foreground
+                    if (isSelected) {
+                        myLabel.setSelectionIcon()
+                    }
+                    else {
+                        myLabel.setRegularIcon()
+                    }
+                    return myLabel
+                }
+            }
+            cellEditor = object : AbstractTableCellEditor() {
+                internal val myEditorComponent = JBComboBoxTableCellEditorComponent()
+
+                override fun getCellEditorValue() = myEditorComponent.editorValue
+
+                override fun getTableCellEditorComponent(
+                        table: JTable, value: Any, isSelected: Boolean, row: Int, column: Int): Component {
+                    val info = parameterInfos[row]
+
+                    myEditorComponent.setCell(table, row, column)
+                    myEditorComponent.setOptions(*info.originalParameter.getParameterTypeCandidates(false).toTypedArray())
+                    myEditorComponent.setDefaultValue(info.type)
+                    myEditorComponent.setToString { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it as KotlinType) }
+
+                    return myEditorComponent
+                }
+            }
+        }
+    }
+
+    fun init(receiver: Parameter?, parameters: List<Parameter>) {
+        parameterInfos = parameters.mapTo(
+                if (receiver != null) arrayListOf(ParameterInfo(receiver, true)) else arrayListOf()
+        ) { ParameterInfo(it, false) }
+
+        super.init()
+    }
+
+    private inner class MyTableModel : AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase() {
+        override fun getColumnCount() = 3
+
+        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
+            if (columnIndex == PARAMETER_TYPE_COLUMN) return parameterInfos[rowIndex].type
+            return super.getValueAt(rowIndex, columnIndex)
         }
 
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
             if (columnIndex == PARAMETER_TYPE_COLUMN) {
-                parameterInfos.get(rowIndex).setType((KotlinType) aValue);
-                updateSignature();
-                return;
+                parameterInfos[rowIndex].type = aValue as KotlinType
+                updateSignature()
+                return
             }
 
-            super.setValueAt(aValue, rowIndex, columnIndex);
+            super.setValueAt(aValue, rowIndex, columnIndex)
         }
 
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            ParameterInfo info = parameterInfos.get(rowIndex);
-            switch (columnIndex) {
-                case PARAMETER_NAME_COLUMN:
-                    return super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver();
-                case PARAMETER_TYPE_COLUMN:
-                    return isEnabled() && info.isEnabled() && info.getOriginalParameter().getParameterTypeCandidates(false).size() > 1;
-                default:
-                    return super.isCellEditable(rowIndex, columnIndex);
+        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+            val info = parameterInfos[rowIndex]
+            when (columnIndex) {
+                AbstractParameterTablePanel.TableModelBase.PARAMETER_NAME_COLUMN -> return super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
+                PARAMETER_TYPE_COLUMN -> return isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
+                else -> return super.isCellEditable(rowIndex, columnIndex)
             }
         }
     }
 
-    @Nullable
-    public ParameterInfo getReceiverInfo() {
-        return CollectionsKt.singleOrNull(
-                parameterInfos,
-                new Function1<ParameterInfo, Boolean>() {
-                    @Override
-                    public Boolean invoke(ParameterInfo info) {
-                        return info.isEnabled() && info.isReceiver();
-                    }
-                }
-        );
-    }
+    val selectedReceiverInfo: ParameterInfo?
+        get() = parameterInfos.singleOrNull { it.isEnabled && it.isReceiver }
 
-    @NotNull
-    public List<ParameterInfo> getParameterInfos() {
-        return CollectionsKt.filter(
-                parameterInfos,
-                new Function1<ParameterInfo, Boolean>() {
-                    @Override
-                    public Boolean invoke(ParameterInfo info) {
-                        return info.isEnabled() && !info.isReceiver();
-                    }
-                }
-        );
-    }
+    val selectedParameterInfos: List<ParameterInfo>
+        get() = parameterInfos.filter { it.isEnabled && !it.isReceiver }
 }
