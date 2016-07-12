@@ -76,8 +76,6 @@ These artifacts include extensions for the types available in the latter JDKs, s
     - Calling non-final function in constructor
     - Using 'this' as function argument in constructor of non-final class
 
-+ [`KT-12019`](https://youtrack.jetbrains.com/issue/KT-12019) Introduce "redundant `if`" inspection
-
 ###### Issues fixed
 
 + [`KT-12389`](https://youtrack.jetbrains.com/issue/KT-12389) Do not exit from REPL when toString() of user class throws an exception
@@ -90,6 +88,8 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ###### New features
 
 - [`KT-12730`](https://youtrack.jetbrains.com/issue/KT-12730) Warn about using different versions of Kotlin Gradle plugin and bundled compiler.
+- [`KT-12019`](https://youtrack.jetbrains.com/issue/KT-12019) Introduce "redundant `if`" inspection
+- [`KT-12730`](https://youtrack.jetbrains.com/issue/KT-12730) Warn about using different versions of Kotlin plugin and standard library in Gradle
 
 ## 1.0.3
 

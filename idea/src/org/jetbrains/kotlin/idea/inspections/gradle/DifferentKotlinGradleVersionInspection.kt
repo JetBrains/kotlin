@@ -16,27 +16,13 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.psi.PsiFile
-import com.intellij.util.BooleanFunction
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
-import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
-import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
-import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrVariableDeclaration
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
@@ -60,23 +46,8 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
         return "Kotlin version that is used for building with Gradle (${args[0]}) differs from the one bundled into the IDE plugin (${args[1]})"
     }
 
-    private inner class MyVisitor : BaseInspectionVisitor() {
+    private inner class MyVisitor : KotlinGradleInspectionVisitor() {
         private val idePluginVersion by lazy { bundledRuntimeVersion() }
-
-        override fun visitFile(file: GroovyFileBase?) {
-            if (file == null || !FileUtilRt.extensionEquals(file.name, GradleConstants.EXTENSION)) return
-
-            val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
-
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
-                val module = fileIndex.getModuleForFile(file.virtualFile) ?: return
-                if (!KotlinPluginUtil.isGradleModule(module)) return
-            }
-
-            if (fileIndex.isExcluded(file.virtualFile)) return
-
-            super.visitFile(file)
-        }
 
         override fun visitClosure(closure: GrClosableBlock) {
             super.visitClosure(closure)
@@ -103,9 +74,6 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
     }
 
     companion object {
-        val KOTLIN_PLUGIN_CLASSPATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}:${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}:"
-        val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
-
         private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
             val argumentList = when (classpathStatement) {
                 is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
@@ -172,52 +140,6 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
             }
 
             return classPathStatements
-        }
-
-        private fun getResolvedKotlinGradleVersion(file: PsiFile): String? {
-            val project = file.project
-            val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
-            val projectPath = project.basePath ?: return null
-
-            val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, projectPath) ?: return null
-            val externalProjectStructure = projectInfo.externalProjectStructure ?: return null
-
-            val buildScriptClasspathDataNodes = ExternalSystemApiUtil.findAllRecursively(externalProjectStructure, BooleanFunction { node ->
-                BuildScriptClasspathData.KEY == node.key
-            })
-
-            for (buildScriptClasspathDataNode in buildScriptClasspathDataNodes) {
-                val moduleNode = buildScriptClasspathDataNode.parent
-                val moduleData = moduleNode?.getData(ProjectKeys.MODULE)
-
-                if (moduleData?.externalName == module.name) {
-                    val buildScriptClasspathData = buildScriptClasspathDataNode.getData(BuildScriptClasspathData.KEY)
-                    if (buildScriptClasspathData != null) {
-                        val kotlinPluginVersion = findKotlinPluginVersion(buildScriptClasspathData)
-                        if (kotlinPluginVersion != null) {
-                            return kotlinPluginVersion
-                        }
-                    }
-                }
-            }
-
-            return null
-        }
-
-        private fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
-            for (classPathEntry in classpathData.classpathEntries) {
-                for (path in classPathEntry.classesFile) {
-                    val uniformedPath = path.replace('\\', '/')
-                    if (uniformedPath.contains(KOTLIN_PLUGIN_PATH_MARKER)) {
-                        val versionSubstring = uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER).substringBefore('/', "<error>")
-                        if (versionSubstring != "<error>") {
-                            return versionSubstring;
-                        }
-                    }
-                }
-            }
-
-            return null
         }
     }
 }
