@@ -120,7 +120,23 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluteConstructorCallExpression(expr: KtCallExpression): LLVMNode? {
-        return null
+        val function = expr.firstChild.firstChild
+        val descriptor = state.classes[function.text] ?: return null
+        val names = parseArgList(expr
+                .firstChild
+                .getNextSiblingIgnoringWhitespaceAndComments()
+                ?.firstChild).mapIndexed { i: Int, s: String ->
+            LLVMVariable(s, descriptor.fields[i].type, pointer = descriptor.fields[i].pointer)
+        }.toList()
+
+
+        return LLVMConstructorCall(
+                descriptor.type, fun(thisVar): LLVMCall {
+            val args = ArrayList<LLVMVariable>()
+            args.add(thisVar)
+            args.addAll(names)
+            return LLVMCall(LLVMVoidType(), descriptor.constructorName, args)
+        })
     }
 
     private fun evaluteFunctionCallExpression(expr: KtCallExpression): LLVMNode? {
@@ -132,7 +148,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 .getNextSiblingIgnoringWhitespaceAndComments()
                 ?.firstChild)
 
-        return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.args?.mapIndexed {
+        return LLVMCall(descriptor.returnType, "@${descriptor.name}", descriptor.args?.mapIndexed {
             i: Int, variable: LLVMVariable ->
             LLVMVariable(names[i], variable.type)
         } ?: listOf())
@@ -200,6 +216,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 val newVar = LLVMVariable("%${identifier!!.text}.addr", type = LLVMIntType(), kotlinName = identifier.text, pointer = true)
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
+            }
+            is LLVMConstructorCall -> {
+                val result = LLVMVariable("%${identifier!!.text}", assignExpression.type)
+                codeBuilder.allocVar(result)
+                result.pointer = true
+                codeBuilder.addLLVMCode(assignExpression.call(result).toString())
             }
             else -> {
                 codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", null, identifier.text), assignExpression)

@@ -8,6 +8,15 @@ class LLVMBuilder {
     private var llvmCode: StringBuilder = StringBuilder()
     private var variableCount = 0
 
+    init {
+        initBuilder()
+    }
+
+    private fun initBuilder() {
+        val memcpy = "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)"
+        llvmCode.appendln(memcpy)
+    }
+
     fun getNewVariable(type: LLVMType?, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {
         variableCount++
         return LLVMVariable("%var$variableCount", type, kotlinName = kotlinName, pointer = pointer)
@@ -56,6 +65,7 @@ class LLVMBuilder {
 
     fun clean() {
         llvmCode = StringBuilder()
+        initBuilder()
     }
 
     fun addAssignment(llvmVariable: LLVMVariable, rhs: LLVMNode) {
@@ -87,6 +97,10 @@ class LLVMBuilder {
     fun loadVariable(target: LLVMVariable, source: LLVMVariable) {
         val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type?.align!!}"
         llvmCode.appendln(code)
+    }
+
+    fun allocVar(target: LLVMVariable) {
+        llvmCode.appendln("$target = alloca ${target.type}, align ${target.type?.align!!}")
     }
 
     fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, store: Boolean) {

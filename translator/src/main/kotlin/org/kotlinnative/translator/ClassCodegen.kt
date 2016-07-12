@@ -21,6 +21,7 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
     val native: Boolean
     val fields = ArrayList<LLVMVariable>()
     val name = "%class.${clazz.name}"
+    val constructorName = "@${clazz.name}"
     val type: LLVMType = parseLLVMType(name)
     val size: Int
 
@@ -66,7 +67,7 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
         val refType = type.makeClone() as LLVMReferenceType
         refType.addParam("sret")
 
-        val thisField = LLVMVariable("instance", refType,  clazz.name, true)
+        val thisField = LLVMVariable("instance", refType, clazz.name, true)
 
         argFields.add(thisField)
         argFields.addAll(fields)
@@ -95,16 +96,16 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
     private fun generateAssignments() {
         fields.forEach {
             val argument = codeBuilder.getNewVariable(it.type)
-            codeBuilder.loadVariable(argument, LLVMVariable("%${it.label}.addr", it.type, "", true))
+            codeBuilder.loadVariable(argument, LLVMVariable("%${it.label}.addr", it.type, pointer = true))
             val classField = codeBuilder.getNewVariable(it.type, true)
-            codeBuilder.loadClassField(classField, LLVMVariable("%instance.addr", type, "", true), (it as LLVMClassVariable).offset)
+            codeBuilder.loadClassField(classField, LLVMVariable("%instance.addr", type, pointer = true), (it as LLVMClassVariable).offset)
             codeBuilder.storeVariable(classField, argument)
         }
     }
 
     private fun generateReturn() {
-        val dst = LLVMVariable("%instance", type, "", true)
-        val src = LLVMVariable("%instance.addr", type, "", true)
+        val dst = LLVMVariable("%instance", type, pointer = true)
+        val src = LLVMVariable("%instance.addr", type, pointer = true)
 
         val castedDst = codeBuilder.bitcast(dst, LLVMCharType())
         val castedSrc = codeBuilder.bitcast(src, LLVMCharType())
