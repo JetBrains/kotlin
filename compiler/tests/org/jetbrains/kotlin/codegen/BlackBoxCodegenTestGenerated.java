@@ -12584,6 +12584,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeToString.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("typeToStringInnerGeneric.kt")
+            public void testTypeToStringInnerGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeToStringInnerGeneric.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
@@ -13048,6 +13054,45 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testUseSiteVariance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/useSiteVariance.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CreateType extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInCreateType() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("equality.kt")
+                public void testEquality() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/equality.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerGeneric.kt")
+                public void testInnerGeneric() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/innerGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleCreateType.kt")
+                public void testSimpleCreateType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/simpleCreateType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeParameter.kt")
+                public void testTypeParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/typeParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("wrongNumberOfArguments.kt")
+                public void testWrongNumberOfArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/wrongNumberOfArguments.kt");
+                    doTest(fileName);
+                }
             }
         }
     }
