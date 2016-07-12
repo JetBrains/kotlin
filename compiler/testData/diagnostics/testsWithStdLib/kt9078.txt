@@ -1,16 +1,10 @@
 package
 
-public abstract class KFunctionKt9005WorkAround</*0*/ out R> : kotlin.reflect.KCallable<R> {
+public abstract class KFunctionKt9005WorkAround</*0*/ out R> {
     public constructor KFunctionKt9005WorkAround</*0*/ out R>(/*0*/ _functionInstance: kotlin.Function<R>)
     private final val _functionInstance: kotlin.Function<R>
     private final val _parameters: kotlin.collections.List<kotlin.reflect.KParameter>
     private final val _reflectedFunction: kotlin.reflect.KFunction<R>
-    public abstract override /*1*/ /*fake_override*/ val annotations: kotlin.collections.List<kotlin.Annotation>
-    public abstract override /*1*/ /*fake_override*/ val name: kotlin.String
-    public abstract override /*1*/ /*fake_override*/ val parameters: kotlin.collections.List<kotlin.reflect.KParameter>
-    public abstract override /*1*/ /*fake_override*/ val returnType: kotlin.reflect.KType
-    public abstract override /*1*/ /*fake_override*/ fun call(/*0*/ vararg args: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): R
-    public abstract override /*1*/ /*fake_override*/ fun callBy(/*0*/ args: kotlin.collections.Map<kotlin.reflect.KParameter, kotlin.Any?>): R
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

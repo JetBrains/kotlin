@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.*
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KAnnotatedElementImpl {
@@ -138,6 +135,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
 
     override val objectInstance: T?
         get() = objectInstance_()
+
+    override val typeParameters: List<KTypeParameter>
+        get() = descriptor.declaredTypeParameters.map(::KTypeParameterImpl)
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

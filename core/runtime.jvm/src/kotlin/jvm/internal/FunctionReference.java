@@ -17,10 +17,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.jvm.KotlinReflectionNotSupportedError;
-import kotlin.reflect.KDeclarationContainer;
-import kotlin.reflect.KFunction;
-import kotlin.reflect.KParameter;
-import kotlin.reflect.KType;
+import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
@@ -69,6 +66,12 @@ public class FunctionReference extends FunctionImpl implements KFunction {
     @Override
     public List<Annotation> getAnnotations() {
         return getReflected().getAnnotations();
+    }
+
+    @NotNull
+    @Override
+    public List<KTypeParameter> getTypeParameters() {
+        return getReflected().getTypeParameters();
     }
 
     @Override

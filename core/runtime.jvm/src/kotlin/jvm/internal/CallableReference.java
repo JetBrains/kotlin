@@ -83,6 +83,12 @@ public abstract class CallableReference implements KCallable {
         return getReflected().getAnnotations();
     }
 
+    @NotNull
+    @Override
+    public List<KTypeParameter> getTypeParameters() {
+        return getReflected().getTypeParameters();
+    }
+
     @Override
     public Object call(@NotNull Object... args) {
         return getReflected().call(args);

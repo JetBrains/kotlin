@@ -45,6 +45,11 @@ public interface KCallable<out R> : KAnnotatedElement {
     public val returnType: KType
 
     /**
+     * The list of type parameters of this callable.
+     */
+    public val typeParameters: List<KTypeParameter>
+
+    /**
      * Calls this callable with the specified list of arguments and returns the result.
      * Throws an exception if the number of specified arguments is not equal to the size of [parameters],
      * or if their types do not match the types of the parameters.
