@@ -3961,4 +3961,139 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceJavaParameterTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/refactoring/introduceTypeAlias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceTypeAlias extends AbstractExtractionTest {
+        public void testAllFilesPresentInIntroduceTypeAlias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceTypeAlias"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("emptyName.kt")
+        public void testEmptyName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/emptyName.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("entireTypeExtracted.kt")
+        public void testEntireTypeExtracted() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/entireTypeExtracted.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("equivalentNestedTypeElements.kt")
+        public void testEquivalentNestedTypeElements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/equivalentNestedTypeElements.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("existingTypeClash.kt")
+        public void testExistingTypeClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/existingTypeClash.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("functionTypeDuplicatesNoTypeParameters.kt")
+        public void testFunctionTypeDuplicatesNoTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/functionTypeDuplicatesNoTypeParameters.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("functionTypeDuplicatesWithTypeParameters.kt")
+        public void testFunctionTypeDuplicatesWithTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/functionTypeDuplicatesWithTypeParameters.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("functionalType.kt")
+        public void testFunctionalType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/functionalType.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("localTypeAlias.kt")
+        public void testLocalTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localTypeAlias.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("localTypeExtracted.kt")
+        public void testLocalTypeExtracted() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localTypeExtracted.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("localWithVisibility.kt")
+        public void testLocalWithVisibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localWithVisibility.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("memberTypeAlias.kt")
+        public void testMemberTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/memberTypeAlias.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("nestedTypesExtracted.kt")
+        public void testNestedTypesExtracted() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/nestedTypesExtracted.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("noTypeElement.kt")
+        public void testNoTypeElement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/noTypeElement.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("nonIdentifierName.kt")
+        public void testNonIdentifierName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/nonIdentifierName.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("nullableType.kt")
+        public void testNullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/nullableType.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("privateTypeAlias.kt")
+        public void testPrivateTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/privateTypeAlias.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("protectedInFile.kt")
+        public void testProtectedInFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/protectedInFile.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("topLevelTypeAlias.kt")
+        public void testTopLevelTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/topLevelTypeAlias.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("typesExtractedWithFunctionalType.kt")
+        public void testTypesExtractedWithFunctionalType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/typesExtractedWithFunctionalType.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("userTypeDuplicatesNoTypeParameters.kt")
+        public void testUserTypeDuplicatesNoTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/userTypeDuplicatesNoTypeParameters.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("userTypeDuplicatesWithTypeParameters.kt")
+        public void testUserTypeDuplicatesWithTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/userTypeDuplicatesWithTypeParameters.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+    }
 }

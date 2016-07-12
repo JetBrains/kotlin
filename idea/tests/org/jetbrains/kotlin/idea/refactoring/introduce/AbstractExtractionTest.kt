@@ -44,14 +44,17 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODUCE_PROPERTY
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -305,6 +308,25 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             )
             handler.selectElements(editor, file) { elements, previousSibling ->
                 handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
+            }
+        }
+    }
+
+    protected fun doIntroduceTypeAliasTest(path: String) {
+        doTest(path) { file ->
+            file as KtFile
+
+            val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
+            val fileText = file.text
+            val aliasName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NAME:")!!
+            val aliasVisibility = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// VISIBILITY:")?.let {
+                KtPsiFactory(project).createModifierList(it).firstChild.node.elementType as KtModifierKeywordToken
+            }
+            val editor = fixture.editor
+            KotlinIntroduceTypeAliasHandler.selectElements(editor, file) { elements, previousSibling ->
+                KotlinIntroduceTypeAliasHandler.doInvoke(project, editor, elements, explicitPreviousSibling ?: previousSibling) {
+                    it.copy(name = aliasName, visibility = aliasVisibility ?: it.visibility)
+                }
             }
         }
     }

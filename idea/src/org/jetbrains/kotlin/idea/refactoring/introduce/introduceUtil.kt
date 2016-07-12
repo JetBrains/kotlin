@@ -111,7 +111,11 @@ fun selectElementsWithTargetParent(
 
         val elements = CodeInsightUtils.findElements(file, startOffset, endOffset, elementKind)
         if (elements.isEmpty()) {
-            showErrorHintByKey("cannot.refactor.no.expression")
+            val messageKey = when (elementKind) {
+                CodeInsightUtils.ElementKind.EXPRESSION -> "cannot.refactor.no.expression"
+                CodeInsightUtils.ElementKind.TYPE_ELEMENT -> "cannot.refactor.no.type"
+            }
+            showErrorHintByKey(messageKey)
             return
         }
 

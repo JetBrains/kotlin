@@ -20,8 +20,9 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.Stat
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -45,9 +47,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
@@ -71,18 +71,18 @@ interface UnificationResult {
 
     interface Matched: UnificationResult {
         val range: KotlinPsiRange
-        val substitution: Map<UnifierParameter, KtExpression>
+        val substitution: Map<UnifierParameter, KtElement>
         override val status: Status get() = MATCHED
     }
 
     class StronglyMatched(
             override val range: KotlinPsiRange,
-            override val substitution: Map<UnifierParameter, KtExpression>
+            override val substitution: Map<UnifierParameter, KtElement>
     ): Matched
 
     class WeaklyMatched(
             override val range: KotlinPsiRange,
-            override val substitution: Map<UnifierParameter, KtExpression>,
+            override val substitution: Map<UnifierParameter, KtElement>,
             val weakMatches: Map<KtElement, KtElement>
     ): Matched
 
@@ -92,7 +92,7 @@ interface UnificationResult {
 
 class UnifierParameter(
         val descriptor: DeclarationDescriptor,
-        val expectedType: KotlinType
+        val expectedType: KotlinType?
 )
 
 class KotlinPsiUnifier(
@@ -109,7 +109,7 @@ class KotlinPsiUnifier(
     ) {
         val patternContext: BindingContext = originalPattern.getBindingContext()
         val targetContext: BindingContext = originalTarget.getBindingContext()
-        val substitution = HashMap<UnifierParameter, KtExpression>()
+        val substitution = HashMap<UnifierParameter, KtElement>()
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
         val weakMatches = HashMap<KtElement, KtElement>()
         var checkEquivalence: Boolean = false
@@ -118,7 +118,7 @@ class KotlinPsiUnifier(
         private fun KotlinPsiRange.getBindingContext(): BindingContext {
             val element = (this as? KotlinPsiRange.ListRange)?.startElement as? KtElement
             if ((element?.containingFile as? KtFile)?.doNotAnalyze != null) return BindingContext.EMPTY
-            return element?.getContextForContainingDeclarationBody() ?: BindingContext.EMPTY
+            return element?.analyze() ?: BindingContext.EMPTY
         }
 
         private fun matchDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
@@ -322,13 +322,20 @@ class KotlinPsiUnifier(
         }
 
         private fun KtTypeReference.getType(): KotlinType? {
-            val t = bindingContext[BindingContext.TYPE, this]
+            val t = bindingContext.let { it[BindingContext.ABBREVIATED_TYPE, this] ?: it[BindingContext.TYPE, this] }
             return if (t == null || t.isError) null else t
         }
 
-        private fun matchTypes(type1: KotlinType?, type2: KotlinType?): Status? {
+        private fun matchTypes(
+                type1: KotlinType?,
+                type2: KotlinType?,
+                typeRef1: KtTypeReference? = null,
+                typeRef2: KtTypeReference? = null
+        ): Status? {
             if (type1 != null && type2 != null) {
                 if (type1.isError || type2.isError) return null
+                if (type1 is AbbreviatedType != type2 is AbbreviatedType) return UNMATCHED
+                if (type1.isExtensionFunctionType != type2.isExtensionFunctionType) return UNMATCHED
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
 
                 if (type1.isMarkedNullable != type2.isMarkedNullable) return UNMATCHED
@@ -339,14 +346,42 @@ class KotlinPsiUnifier(
                 val args1 = type1.arguments
                 val args2 = type2.arguments
                 if (args1.size != args2.size) return UNMATCHED
-                if (!args1.zip(args2).all {
-                    it.first.projectionKind == it.second.projectionKind && matchTypes(it.first.type, it.second.type) == MATCHED }
-                ) return UNMATCHED
+                if (!args1.withIndex().all { p ->
+                    val (i, arg1) = p
+                    val arg2 = args2[i]
+                    matchTypeArguments(i, arg1, arg2, typeRef1, typeRef2)
+                }) return UNMATCHED
 
                 return MATCHED
             }
 
             return if (type1 == null && type2 == null) null else UNMATCHED
+        }
+
+        private fun matchTypeArguments(
+                argIndex: Int,
+                arg1: TypeProjection,
+                arg2: TypeProjection,
+                typeRef1: KtTypeReference?,
+                typeRef2: KtTypeReference?
+        ): Boolean {
+            val typeArgRef1 = typeRef1?.typeElement?.typeArgumentsAsTypes?.getOrNull(argIndex)
+            val typeArgRef2 = typeRef2?.typeElement?.typeArgumentsAsTypes?.getOrNull(argIndex)
+
+            if (arg1.projectionKind != arg2.projectionKind) return false
+            val argType1 = arg1.type
+            val argType2 = arg2.type
+            // Substitution attempt using either arg1, or arg2 as a pattern type. Falls back to exact matching if substitution is not possible
+            val status = if (!checkEquivalence && typeRef1 != null && typeRef2 != null) {
+                val typePsi1 = argType1.constructor.declarationDescriptor?.source?.getPsi()
+                val typePsi2 = argType2.constructor.declarationDescriptor?.source?.getPsi()
+                descriptorToParameter[typePsi1]?.let { substitute(it, typeArgRef2) } ?:
+                descriptorToParameter[typePsi2]?.let { substitute(it, typeArgRef1) } ?:
+                matchTypes(argType1, argType2, typeArgRef1, typeArgRef2)
+            }
+            else matchTypes(argType1, argType2, typeArgRef1, typeArgRef2)
+
+            return status == MATCHED
         }
 
         private fun matchTypes(types1: Collection<KotlinType>, types2: Collection<KotlinType>): Boolean {
@@ -367,6 +402,7 @@ class KotlinPsiUnifier(
             }
             is KtBinaryExpression -> operationReference.getReferencedNameElementType() == KtTokens.ELVIS
             is KtThisExpression -> true
+            is KtSimpleNameExpression -> getStrictParentOfType<KtTypeElement>() != null
             else -> false
         }
 
@@ -641,7 +677,14 @@ class KotlinPsiUnifier(
                 desc2: DeclarationDescriptor?): Status? {
             if (decl1.javaClass != decl2.javaClass) return UNMATCHED
 
-            if (desc1 == null || desc2 == null || ErrorUtils.isError(desc1) || ErrorUtils.isError(desc2)) return UNMATCHED
+            if (desc1 == null || desc2 == null) {
+                if (decl1 is KtParameter
+                    && decl2 is KtParameter
+                    && decl1.getStrictParentOfType<KtTypeElement>() != null
+                    && decl2.getStrictParentOfType<KtTypeElement>() != null) return null
+                return UNMATCHED
+            }
+            if (ErrorUtils.isError(desc1) || ErrorUtils.isError(desc2)) return UNMATCHED
             if (desc1.javaClass != desc2.javaClass) return UNMATCHED
 
             declarationPatternsToTargets.putValue(desc1, desc2)
@@ -682,8 +725,11 @@ class KotlinPsiUnifier(
                 e2 is KtDeclaration ->
                     e2.matchDeclarations(e1)
 
+                e1 is KtTypeElement && e2 is KtTypeElement && e1.parent is KtTypeReference && e2.parent is KtTypeReference ->
+                    matchResolvedInfo(e1.parent, e2.parent)
+
                 e1 is KtTypeReference && e2 is KtTypeReference ->
-                    matchTypes(e1.getType(), e2.getType())
+                    matchTypes(e1.getType(), e2.getType(), e1, e2)
 
                 KtPsiUtil.isAssignment(e1) ->
                     (e1 as KtBinaryExpression).matchAssignment(e2)
@@ -708,8 +754,9 @@ class KotlinPsiUnifier(
         }
 
         private fun PsiElement.checkType(parameter: UnifierParameter): Boolean {
+            val expectedType = parameter.expectedType ?: return true
             val targetElementType = (this as? KtExpression)?.let { it.bindingContext.getType(it) }
-            return targetElementType != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
+            return targetElementType != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(targetElementType, expectedType)
         }
 
         private fun doUnifyStringTemplateFragments(target: KtStringTemplateExpression, pattern: ExtractableSubstringInfo): Status {
@@ -820,6 +867,23 @@ class KotlinPsiUnifier(
             return status
         }
 
+        private fun substitute(parameter: UnifierParameter, targetElement: PsiElement?): Status {
+            val existingArgument = substitution[parameter]
+            return when {
+                existingArgument == null -> {
+                    substitution[parameter] = targetElement as KtElement
+                    MATCHED
+                }
+                else -> {
+                    checkEquivalence = true
+                    val status = doUnify(existingArgument, targetElement)
+                    checkEquivalence = false
+
+                    status
+                }
+            }
+        }
+
         fun doUnify(
                 targetElement: PsiElement?,
                 patternElement: PsiElement?
@@ -831,29 +895,26 @@ class KotlinPsiUnifier(
             if (targetElementUnwrapped == null || patternElementUnwrapped == null) return UNMATCHED
 
             if (!checkEquivalence && targetElementUnwrapped !is KtBlockExpression) {
-                val referencedPatternDescriptor = (patternElementUnwrapped as? KtReferenceExpression)?.let {
-                    it.bindingContext[BindingContext.REFERENCE_TARGET, it]
+                val referencedPatternDescriptor = when (patternElementUnwrapped) {
+                    is KtReferenceExpression -> {
+                        if (targetElementUnwrapped !is KtExpression) return UNMATCHED
+                        patternElementUnwrapped.bindingContext[BindingContext.REFERENCE_TARGET, patternElementUnwrapped]
+                    }
+                    is KtUserType -> {
+                        if (targetElementUnwrapped !is KtUserType) return UNMATCHED
+                        patternElementUnwrapped.bindingContext[BindingContext.REFERENCE_TARGET, patternElementUnwrapped.referenceExpression]
+                    }
+                    else -> null
                 }
                 val referencedPatternDeclaration = (referencedPatternDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
                 val parameter = descriptorToParameter[referencedPatternDeclaration]
                 if (referencedPatternDeclaration != null && parameter != null) {
-                    if (targetElementUnwrapped !is KtExpression) return UNMATCHED
-                    if (!targetElementUnwrapped.checkType(parameter)) return UNMATCHED
-
-                    val existingArgument = substitution[parameter]
-                    return when {
-                        existingArgument == null -> {
-                            substitution[parameter] = targetElementUnwrapped
-                            MATCHED
-                        }
-                        else -> {
-                            checkEquivalence = true
-                            val status = doUnify(existingArgument, targetElementUnwrapped)
-                            checkEquivalence = false
-
-                            status
-                        }
+                    if (targetElementUnwrapped is KtExpression) {
+                        if (!targetElementUnwrapped.checkType(parameter)) return UNMATCHED
                     }
+                    else if (targetElementUnwrapped !is KtUserType) return UNMATCHED
+
+                    return substitute(parameter, targetElementUnwrapped)
                 }
             }
 

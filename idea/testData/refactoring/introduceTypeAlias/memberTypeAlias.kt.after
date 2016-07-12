@@ -1,0 +1,9 @@
+// NAME: B
+class A<X, Y>
+
+class Test {
+    typealias B = A<Int, String>
+
+    // SIBLING
+    val a: B
+}

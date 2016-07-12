@@ -6,8 +6,4 @@ kotlin.Function1<kotlin.Int, kotlin.String>
 
 (n: Int) -> kotlin.String
 
-Int.() -> String
-
 (m: Int) -> kotlin.String
-
-@ExtensionFunctionType Function1<Int, String>

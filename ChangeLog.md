@@ -9,6 +9,7 @@
 
 ###### New features
 - [`KT-12903`](https://youtrack.jetbrains.com/issue/KT-12903) Implement "Inline type alias" refactoring
+- [`KT-12902`](https://youtrack.jetbrains.com/issue/KT-12902) Implement "Introduce type alias" refactoring
 
 ## 1.1-M01 (EAP-1)
 

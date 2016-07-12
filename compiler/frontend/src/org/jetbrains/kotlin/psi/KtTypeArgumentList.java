@@ -41,4 +41,9 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
     public List<KtTypeProjection> getArguments() {
         return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_PROJECTION);
     }
+
+    @NotNull
+    public KtTypeProjection addArgument(@NotNull KtTypeProjection argument) {
+        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getArguments(), argument);
+    }
 }

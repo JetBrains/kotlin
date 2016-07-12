@@ -24,11 +24,11 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.substringContextOrThis
@@ -114,7 +114,7 @@ data class ExtractionData(
 
     val commonParent = PsiTreeUtil.findCommonParent(physicalElements) as KtElement
 
-    val bindingContext: BindingContext? by lazy { commonParent.getContextForContainingDeclarationBody() }
+    val bindingContext: BindingContext? by lazy { commonParent.analyze() }
 
     private val itFakeDeclaration by lazy { KtPsiFactory(originalFile).createParameter("it: Any?") }
     private val synthesizedInvokeDeclaration by lazy { KtPsiFactory(originalFile).createFunction("fun invoke() {}") }
