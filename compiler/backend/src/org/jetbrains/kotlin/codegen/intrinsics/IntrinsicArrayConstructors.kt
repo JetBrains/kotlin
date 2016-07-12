@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
+@file:Suppress("unused", "UNCHECKED_CAST")
 
 package org.jetbrains.kotlin.codegen.intrinsics
 

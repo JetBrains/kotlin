@@ -21,7 +21,7 @@ abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
 
     protected var position: Int = 0
 
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     private val spreads: Array<T?> = arrayOfNulls<Any>(size) as Array<T?>
 
     fun addSpread(spreadArgument: T) {

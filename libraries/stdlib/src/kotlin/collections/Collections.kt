@@ -159,7 +159,7 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
 private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
         if (isVarargs && this.javaClass == Array<Any?>::class.java)
             // if the array came from varargs and already is array of Any, copying isn't required
-            @Suppress("CAST_NEVER_SUCCEEDS") (this as Array<Any?>)
+            @Suppress("UNCHECKED_CAST") (this as Array<Any?>)
         else
             Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
