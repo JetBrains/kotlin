@@ -3,9 +3,7 @@ package org.kotlinnative.translator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.kotlinnative.translator.llvm.LLVMBuilder
-import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.utils.FunctionDescriptor
-import java.util.*
 
 class FileTranslator(val state: TranslationState, val file: KtFile) {
 

@@ -6,4 +6,4 @@ enum class LLVMTypes {
     int, double, float, char
 }
 
-val typesMap = mapOf(Pair(LLVMTypes.int, ::LLVMIntType));
+val typesMap = mapOf(Pair(LLVMTypes.int, ::LLVMIntType))

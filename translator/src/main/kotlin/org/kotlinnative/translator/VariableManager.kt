@@ -16,9 +16,9 @@ class VariableManager {
         fileVariableCollectionTree.forEach { s, stack -> if (!stack.empty() && stack.peek().second >= level) stack.pop() else Unit }
     }
 
-    fun addVariable(name: String, variable: LLVMVariable, level: Int){
-        val stack = fileVariableCollectionTree.getOrDefault(String, Stack<Pair<LLVMVariable, Int>>());
-        stack.push(Pair(variable, level));
+    fun addVariable(name: String, variable: LLVMVariable, level: Int) {
+        val stack = fileVariableCollectionTree.getOrDefault(String, Stack<Pair<LLVMVariable, Int>>())
+        stack.push(Pair(variable, level))
         fileVariableCollectionTree.put(name, stack)
     }
 

@@ -32,6 +32,7 @@ class LLVMBuilder {
             KtTokens.PLUS -> firstOp.type!!.operatorPlus(newVar, firstOp, secondOp)
             KtTokens.MINUS -> firstOp.type!!.operatorMinus(newVar, firstOp, secondOp)
             KtTokens.MUL -> firstOp.type!!.operatorTimes(newVar, firstOp, secondOp)
+            KtTokens.EQ -> throw UnsupportedOperationException()
             else -> throw UnsupportedOperationException("Unknown binary operator")
         }
 
@@ -61,8 +62,25 @@ class LLVMBuilder {
     }
 
     fun loadVariable(llvmVariable: LLVMVariable) {
-        llvmCode.appendln("$llvmVariable.addr = alloca ${llvmVariable.type}, align ${llvmVariable.type?.getAlign()}")
-        llvmCode.appendln("store ${llvmVariable.type} $llvmVariable, ${llvmVariable.type}* ${llvmVariable.type}.addr, align ${llvmVariable.type?.getAlign()}")
+        addVariableByRef(llvmVariable, LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName))
+    }
+
+    fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable) {
+        llvmCode.appendln("$sourceVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type?.getAlign()}")
+        llvmCode.appendln("store ${targetVariable.type} $targetVariable, ${targetVariable.type}* ${sourceVariable}, align ${targetVariable.type?.getAlign()}")
+    }
+
+    fun addVariableByValue(targetVariable: LLVMVariable, sourceVariable: LLVMVariable) {
+        val tmp = getNewVariable(targetVariable.type)
+        llvmCode.appendln("$tmp   = alloca ${tmp.type}, align ${tmp.type?.getAlign()}")
+        llvmCode.appendln("store ${tmp.type} $sourceVariable, ${tmp.type}* ${tmp}, align ${tmp.type?.getAlign()}")
+        llvmCode.appendln("$targetVariable = load ${targetVariable.type}, ${targetVariable.type}* $tmp, align ${targetVariable.type?.getAlign()}")
+    }
+
+    fun addConstant(sourceVariable: LLVMVariable): LLVMVariable {
+        val target = getNewVariable(sourceVariable.type)
+        addVariableByValue(target, sourceVariable)
+        return target
     }
 
     override fun toString(): String {

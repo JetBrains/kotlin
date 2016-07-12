@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
-import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.utils.FunctionDescriptor
 import java.util.*
 
@@ -36,7 +35,7 @@ class TranslationState(sources: List<String>, disposer: Disposable) {
             private var hasError = false
 
             override fun hasErrors(): Boolean {
-                return hasError;
+                return hasError
             }
 
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {

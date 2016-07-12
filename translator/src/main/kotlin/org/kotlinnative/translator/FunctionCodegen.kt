@@ -66,7 +66,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun generateLoadArguments(function: KtNamedFunction) {
         args?.forEach {
-            val loadVariable = LLVMVariable("%${it.name}", it.type)
+            val loadVariable = LLVMVariable("%${it.name}", it.type, it.name)
             codeBuilder.loadVariable(loadVariable)
             variableManager.addVariable(it.name, loadVariable, 2)
         }
@@ -76,6 +76,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         when (expr) {
             is KtBlockExpression -> expressionWalker(expr.firstChild, scopeDepth + 1)
             is KtProperty -> evaluateLeafPsiElement(expr.firstChild as LeafPsiElement, scopeDepth)
+            is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
             null -> {
                 variableManager.pullUpwardsLevel(scopeDepth)
@@ -141,7 +142,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMVariable {
         val node = expr.node
-        return LLVMVariable(node.firstChildNode.text, ::LLVMIntType.invoke())
+        return codeBuilder.addConstant(LLVMVariable(node.firstChildNode.text, LLVMIntType()))
     }
 
     private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMVariable? {
@@ -168,9 +169,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth) ?: return null
         when (assignExpression) {
-            is LLVMVariable -> variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth);
+            is LLVMVariable -> {
+                variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth)
+                return null
+            }
         }
-        codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}"), assignExpression)
+        codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", null, identifier.text), assignExpression)
         return null
     }
 
