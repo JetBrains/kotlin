@@ -19,7 +19,8 @@ Library support for the Kotlin annotation facility.
 
 # Package kotlin.collections
 
-Collection types, such as [Iterable], [Collection], [List], [Set], [Map] and related top-level and extension functions.
+Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][kotlin.collections.Collection],
+[List][kotlin.collections.List], [Set][kotlin.collections.Set], [Map][kotlin.collections.Map] and related top-level and extension functions.
 
 # Package kotlin.comparisons
 
