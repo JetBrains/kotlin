@@ -9953,4 +9953,40 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveAtmarkUsedAsAnnotationArgument extends AbstractIntentionTest {
+        @TestMetadata("stringAtmark.kt")
+        public void testStringAtmark() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument/stringAtmark.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("atmarkArgument.kt")
+        public void testAtmarkArgument() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata(
+                            "idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument/atmarkArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("atmarkArrayArguments.kt")
+        public void testAtmarkArrayArguments() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata(
+                            "idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument/atmarkArrayArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleAtmarkArguments.kt")
+        public void testMultipleAtmarkArguments() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata(
+                            "idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument/multipleAtmarkArguments.kt");
+            doTest(fileName);
+        }
+    }
 }
