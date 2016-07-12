@@ -25,7 +25,7 @@ class LLVMBuilder {
         llvmCode.appendln("}")
     }
 
-    fun receiveNativeValue(firstOp: LLVMSingleValue) = when (firstOp) {
+    fun receiveNativeValue(firstOp: LLVMSingleValue) : LLVMSingleValue = when (firstOp) {
         is LLVMConstant -> firstOp
         is LLVMVariable -> when (firstOp.pointer) {
             false -> firstOp
@@ -41,7 +41,11 @@ class LLVMBuilder {
             KtTokens.PLUS -> firstOp.type!!.operatorPlus(resultOp, firstNativeOp, secondNativeOp)
             KtTokens.MINUS -> firstOp.type!!.operatorMinus(resultOp, firstNativeOp, secondNativeOp)
             KtTokens.MUL -> firstOp.type!!.operatorTimes(resultOp, firstNativeOp, secondNativeOp)
-            KtTokens.EQ -> return resultOp
+            KtTokens.EQ -> {
+                val result = firstOp as LLVMVariable
+                storeVariable(result, secondNativeOp)
+                return result
+            }
             else -> throw UnsupportedOperationException("Unknown binary operator")
         }
 
@@ -71,7 +75,7 @@ class LLVMBuilder {
         llvmCode.appendln(code)
     }
 
-    fun storeVariable(target: LLVMVariable, source: LLVMVariable) {
+    fun storeVariable(target: LLVMVariable, source: LLVMSingleValue) {
         val code = "store ${source.type} $source, ${target.getType()} $target, align ${source.type?.align!!}"
         llvmCode.appendln(code)
     }
