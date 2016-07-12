@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -179,7 +180,14 @@ object InvokeIntrinsic : FunctionCallCase() {
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        return JsInvocation(dispatchReceiver!!, argumentsInfo.translateArguments)
+        val receiver = resolvedCall.dispatchReceiver!!
+        val jsReceiver = if (receiver.type.isExtensionFunctionType) {
+            pureFqn(Namer.CALL_FUNCTION, dispatchReceiver)
+        }
+        else {
+            dispatchReceiver!!
+        }
+        return JsInvocation(jsReceiver, argumentsInfo.translateArguments)
     }
 
     /**
