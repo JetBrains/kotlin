@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.psi.*
 
 class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove braces") {
     override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
-        if (element.statements.size != 1) return false
+        val singleStatement = element.statements.singleOrNull() ?: return false
 
         val containerNode = element.parent as? KtContainerNode ?: return false
+        if (singleStatement is KtIfExpression && containerNode.parent is KtIfExpression) return false
 
         val lBrace = element.lBrace ?: return false
         val rBrace = element.rBrace ?: return false

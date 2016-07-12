@@ -7697,6 +7697,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifInsideIf.kt")
+        public void testIfInsideIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifWithComment.kt")
         public void testIfWithComment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifWithComment.kt");
