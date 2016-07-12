@@ -37,7 +37,7 @@ public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
     @Override
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        return CodeInsightUtils.findStatements(file, startOffset, endOffset);
+        return CodeInsightUtils.findElements(file, startOffset, endOffset, CodeInsightUtils.ElementKind.EXPRESSION);
     }
 
     @Override
