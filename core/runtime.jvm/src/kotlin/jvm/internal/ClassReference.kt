@@ -40,6 +40,8 @@ class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDec
     override val objectInstance: Any?
         get() = error()
 
+    override fun isInstance(value: Any?): Boolean = error()
+
     override val typeParameters: List<KTypeParameter>
         get() = error()
 

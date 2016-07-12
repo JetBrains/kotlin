@@ -236,3 +236,29 @@ fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
  */
 fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
         derived.isSubclassOf(this)
+
+
+/**
+ * Casts the given [value] to the class represented by this [KClass] object.
+ * Throws an exception if the value is `null` or if it is not an instance of this class.
+ *
+ * @see [KClass.isInstance]
+ * @see [KClass.safeCast]
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> KClass<T>.cast(value: Any?): T {
+    if (!isInstance(value)) throw TypeCastException("Value cannot be cast to $qualifiedName")
+    return value as T
+}
+
+/**
+ * Casts the given [value] to the class represented by this [KClass] object.
+ * Returns `null` if the value is `null` or if it is not an instance of this class.
+ *
+ * @see [KClass.isInstance]
+ * @see [KClass.cast]
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
+    return if (isInstance(value)) value as T else null
+}

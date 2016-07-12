@@ -59,6 +59,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     public val objectInstance: T?
 
     /**
+     * Returns `true` if [value] is an instance of this class on a given platform.
+     */
+    public fun isInstance(value: Any?): Boolean
+
+    /**
      * The list of type parameters of this class. This list does *not* include type parameters of outer classes.
      */
     public val typeParameters: List<KTypeParameter>
