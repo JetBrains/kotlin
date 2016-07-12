@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import java.util.*
 
 
@@ -49,15 +53,12 @@ class VariableLivenessFrame(val maxLocals: Int) {
 }
 
 fun analyzeLiveness(node: MethodNode): Array<VariableLivenessFrame> {
+    val typeAnnotatedFrames = MethodTransformer.analyze("fake", node, OptimizationBasicInterpreter())
+
     val graph = ControlFlowGraph.build(node)
     val insnList = node.instructions
     val frames = Array(insnList.size()) { VariableLivenessFrame(node.maxLocals) }
     val insnArray = insnList.toArray()
-
-    val varVisibility = Array(node.maxLocals) { BitSet(insnArray.size) }
-    for (localVar in node.localVariables) {
-        varVisibility[localVar.index].set(insnList.indexOf(localVar.start), insnList.indexOf(localVar.end), true)
-    }
 
     // see Figure 9.16 from Dragon book
     var wereChanges: Boolean
@@ -72,7 +73,7 @@ fun analyzeLiveness(node: MethodNode): Array<VariableLivenessFrame> {
             }
 
             def(newFrame, insn)
-            use(newFrame, insn, index, varVisibility)
+            use(newFrame, insn, node, typeAnnotatedFrames[index])
 
             if (frames[index] != newFrame) {
                 frames[index] = newFrame
@@ -91,11 +92,19 @@ private fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
     }
 }
 
-private fun use(frame: VariableLivenessFrame, insn: AbstractInsnNode, index: Int, varVisibility: Array<BitSet>) {
-    for (i in 0..frame.maxLocals - 1) {
-        if (varVisibility[i].get(index)) {
-            frame.markAlive(i)
-        }
+private fun use(
+        frame: VariableLivenessFrame,
+        insn: AbstractInsnNode,
+        node: MethodNode,
+        // May be null in case of dead code
+        typeAnnotatedFrame: Frame<BasicValue>?
+) {
+    val index = node.instructions.indexOf(insn)
+    node.localVariables.filter {
+        node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
+            Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
+    }.forEach {
+        frame.markAlive(it.index)
     }
 
     if (insn is VarInsnNode && insn.isLoadOperation()) {

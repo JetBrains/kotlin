@@ -39,6 +39,7 @@ public class SpecialFiles {
         excludedFiles.add("enclosing"); //reflection tests
         excludedFiles.add("noReflectAtRuntime"); //reflection tests
         excludedFiles.add("methodsFromAny"); //reflection tests
+        excludedFiles.add("genericProperty.kt"); //reflection tests
 
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection
