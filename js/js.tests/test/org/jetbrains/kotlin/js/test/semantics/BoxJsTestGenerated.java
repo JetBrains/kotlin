@@ -4879,6 +4879,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("importedDeclarationMangling.kt")
+        public void testImportedDeclarationMangling() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/importedDeclarationMangling.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("packageAndMangledMethodDoNotClash.kt")
         public void testPackageAndMangledMethodDoNotClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/packageAndMangledMethodDoNotClash.kt");
