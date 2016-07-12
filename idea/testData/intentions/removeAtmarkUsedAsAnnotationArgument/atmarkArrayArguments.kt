@@ -4,6 +4,6 @@
 annotation class X(val value: Array<Y>)
 annotation class Y()
 
-@X(arrayOf(@Y(), @Y(), @Y())<caret>)
+@X(arrayOf(Y(), @Y()<caret>))
 fun foo() {
 }

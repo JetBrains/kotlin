@@ -9961,14 +9961,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("atmarkArgumentsWithMultipleAnnotations.kt")
-        public void testAtmarkArgumentWithMultipleAnnotations() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata(
-                            "idea/testData/intentions/removeAtmarkUsedAsAnnotationArgument/atmarkArgumentsWithMultipleAnnotations.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("atmarkArrayArguments.kt")
         public void testAtmarkArrayArguments() throws Exception {
             String fileName =

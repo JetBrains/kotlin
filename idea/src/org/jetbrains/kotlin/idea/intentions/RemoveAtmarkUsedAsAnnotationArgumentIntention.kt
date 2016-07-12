@@ -17,84 +17,25 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotatedExpression
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
-class RemoveAtmarkUsedAsAnnotationArgumentInspection : IntentionBasedInspection<KtAnnotated>(RemoveAtmarkUsedAsAnnotationArgumentIntention())
+class RemoveAtmarkUsedAsAnnotationArgumentInspection : IntentionBasedInspection<KtAnnotatedExpression>(RemoveAtmarkUsedAsAnnotationArgumentIntention())
 
-class RemoveAtmarkUsedAsAnnotationArgumentIntention : SelfTargetingRangeIntention<KtAnnotated>(KtAnnotated::class.java, "Remove @ used as annotation argument") {
-    override fun applicabilityRange(element: KtAnnotated): TextRange? {
-        val annotationEntries = element.annotationEntries
-        val isApplicable = annotationEntries.firstOrNull {
-            it.valueArguments.firstOrNull { hasAnnotatedExpression(it) } != null
-        } != null
-        return if (isApplicable) TextRange(annotationEntries.first().textRange.startOffset, annotationEntries.last().textRange.endOffset) else null
-    }
-
-    private fun hasAnnotatedExpression(expression: ValueArgument): Boolean {
-        expression.getArgumentExpression()?.let {
-            when (it) {
-                is KtAnnotatedExpression -> return true
-                is KtCallExpression -> return hasAnnotatedExpression(it)
-                else -> return false
-            }
+class RemoveAtmarkUsedAsAnnotationArgumentIntention : SelfTargetingOffsetIndependentIntention<KtAnnotatedExpression>(KtAnnotatedExpression::class.java, "Remove @ used as annotation argument") {
+    override fun isApplicableTo(expression: KtAnnotatedExpression): Boolean {
+        var parent = expression.parent
+        while (parent != null) {
+            if (parent is KtAnnotationEntry) return true
+            parent = parent.parent
         }
         return false
     }
 
-    private fun hasAnnotatedExpression(expression: KtCallExpression): Boolean {
-        expression.children.forEach {
-            when (it) {
-                is KtAnnotatedExpression -> return true
-                is KtCallExpression -> return hasAnnotatedExpression(it)
-                is KtValueArgument -> return hasAnnotatedExpression(it)
-                is KtValueArgumentList -> {
-                    return it.arguments.firstOrNull { hasAnnotatedExpression(it) } != null
-                }
-            }
-        }
-        return false
-    }
-
-    override fun applyTo(element: KtAnnotated, editor: Editor?) {
-        element.annotationEntries.forEach {
-            it.valueArguments.filter {
-                hasAnnotatedExpression(it)
-            }.forEach {
-                removeAtmark(it)
-            }
-        }
-    }
-
-    private fun removeAtmark(expression: ValueArgument) {
-        expression.getArgumentExpression()?.let {
-            when (it) {
-                is KtAnnotatedExpression -> it.removeAtmarkFromAnnotatedExpression()
-                is KtCallExpression -> removeAtmark(it)
-            }
-        }
-    }
-
-    private fun removeAtmark(expression: KtCallExpression) {
-        expression.children.forEach {
-            when (it) {
-                is KtAnnotatedExpression -> it.removeAtmarkFromAnnotatedExpression()
-                is KtCallExpression -> removeAtmark(it)
-                is KtValueArgument -> removeAtmark(it)
-                is KtValueArgumentList -> {
-                    it.arguments.filter {
-                        hasAnnotatedExpression(it)
-                    }.forEach {
-                        removeAtmark(it)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun KtAnnotatedExpression.removeAtmarkFromAnnotatedExpression() {
-        val expression = KtPsiFactory(this.project).createExpression(this.text.replaceFirst("@", ""))
-        this.replace(expression)
+    override fun applyTo(expression: KtAnnotatedExpression, editor: Editor?) {
+        val element = KtPsiFactory(expression.project).createExpression(expression.text.replaceFirst("@", ""))
+        expression.replace(element)
     }
 }
