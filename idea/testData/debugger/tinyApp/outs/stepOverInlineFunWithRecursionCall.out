@@ -1,0 +1,10 @@
+LineBreakpoint created at stepOverInlineFunWithRecursionCall.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepOverInlineFunWithRecursionCall.StepOverInlineFunWithRecursionCallKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+stepOverInlineFunWithRecursionCall.kt:6
+stepOverInlineFunWithRecursionCall.kt:6
+stepOverInlineFunWithRecursionCall.kt:9
+stepOverInlineFunWithRecursionCall.kt:14
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
