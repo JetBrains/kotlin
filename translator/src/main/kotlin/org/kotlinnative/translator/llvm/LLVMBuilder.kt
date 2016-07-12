@@ -2,16 +2,15 @@ package org.kotlinnative.translator.llvm
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
 
 class LLVMBuilder {
     private var llvmCode: StringBuilder = StringBuilder()
     private var variableCount = 0
 
-    fun getNewVariable(type: LLVMType?, pointer: Boolean = false): LLVMVariable {
+    fun getNewVariable(type: LLVMType?, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {
         variableCount++
-        return LLVMVariable("%var$variableCount", type, "", pointer)
+        return LLVMVariable("%var$variableCount", type, kotlinName = kotlinName, pointer = pointer)
     }
 
     fun addLLVMCode(code: String) {
@@ -26,18 +25,29 @@ class LLVMBuilder {
         llvmCode.appendln("}")
     }
 
-    fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMVariable {
-        val newVar = getNewVariable(LLVMIntType())
+    fun receiveNativeValue(firstOp: LLVMSingleValue) = when (firstOp) {
+        is LLVMConstant -> firstOp
+        is LLVMVariable -> when (firstOp.pointer) {
+            false -> firstOp
+            else -> loadAndGetVariable(firstOp)
+        }
+        else -> throw UnsupportedOperationException()
+    }
+
+    fun addPrimitiveBinaryOperation(operation: IElementType, resultOp: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
+        val firstNativeOp = receiveNativeValue(firstOp)
+        val secondNativeOp = receiveNativeValue(secondOp)
         val llvmExpression = when (operation) {
-            KtTokens.PLUS -> firstOp.type!!.operatorPlus(newVar, firstOp, secondOp)
-            KtTokens.MINUS -> firstOp.type!!.operatorMinus(newVar, firstOp, secondOp)
-            KtTokens.MUL -> firstOp.type!!.operatorTimes(newVar, firstOp, secondOp)
+            KtTokens.PLUS -> firstOp.type!!.operatorPlus(resultOp, firstNativeOp, secondNativeOp)
+            KtTokens.MINUS -> firstOp.type!!.operatorMinus(resultOp, firstNativeOp, secondNativeOp)
+            KtTokens.MUL -> firstOp.type!!.operatorTimes(resultOp, firstNativeOp, secondNativeOp)
+            KtTokens.EQ -> return resultOp
             else -> throw UnsupportedOperationException("Unknown binary operator")
         }
 
-        addAssignment(newVar, llvmExpression)
+        addAssignment(resultOp, llvmExpression)
 
-        return newVar
+        return resultOp
     }
 
     fun clean() {
@@ -48,12 +58,22 @@ class LLVMBuilder {
         llvmCode.appendln("$llvmVariable = $rhs")
     }
 
-    fun addReturnOperator(llvmVariable: LLVMVariable) {
+    fun addReturnOperator(llvmVariable: LLVMSingleValue) {
         llvmCode.appendln("ret ${llvmVariable.type} $llvmVariable")
     }
 
     fun addVoidReturn() {
         llvmCode.appendln("ret void")
+    }
+
+    fun loadClassField(target: LLVMVariable, source: LLVMVariable, offset: Int) {
+        val code = "$target = getelementptr inbounds ${source.type}, ${source.type}* $source, i32 0, i32 $offset"
+        llvmCode.appendln(code)
+    }
+
+    fun storeVariable(target: LLVMVariable, source: LLVMVariable) {
+        val code = "store ${source.type} $source, ${target.getType()} $target, align ${source.type?.align!!}"
+        llvmCode.appendln(code)
     }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true) {
@@ -65,16 +85,6 @@ class LLVMBuilder {
         llvmCode.appendln(code)
     }
 
-    fun loadClassField(target: LLVMVariable, source: LLVMVariable, offset: Int) {
-        var code = "$target = getelementptr inbounds ${source.type}, ${source.type}* $source, i32 0, i32 $offset"
-        llvmCode.appendln(code)
-    }
-
-    fun storeVariable(target: LLVMVariable, source: LLVMVariable) {
-        var code = "store ${source.type} $source, ${target.getType()} $target, align ${source.type?.align!!}"
-        llvmCode.appendln(code)
-    }
-
     fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, store: Boolean) {
         llvmCode.appendln("$targetVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type?.align}")
 
@@ -83,18 +93,22 @@ class LLVMBuilder {
         }
     }
 
-    fun addVariableByValue(targetVariable: LLVMVariable, sourceVariable: LLVMVariable) {
-        val tmp = getNewVariable(targetVariable.type, true)
-
-        llvmCode.appendln("$tmp   = alloca ${tmp.type}, align ${tmp.type?.align}")
-        llvmCode.appendln("store ${tmp.type} $sourceVariable, ${tmp.getType()} $tmp, align ${tmp.type?.align}")
-        llvmCode.appendln("$targetVariable = load ${targetVariable.type}, ${tmp.getType()} $tmp, align ${targetVariable.type?.align}")
-
+    fun addVariableByValue(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, allocVariable: LLVMVariable) {
+        llvmCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type?.align}")
+        llvmCode.appendln("store ${allocVariable.type} $sourceVariable, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type?.align}")
+        llvmCode.appendln("$targetVariable = load ${targetVariable.type}, ${allocVariable.getType()} $allocVariable, align ${targetVariable.type?.align}")
     }
 
-    fun addConstant(sourceVariable: LLVMVariable): LLVMVariable {
-        val target = getNewVariable(sourceVariable.type, sourceVariable.pointer)
-        addVariableByValue(target, sourceVariable)
+    fun addConstant(allocVariable: LLVMVariable, constantValue: LLVMConstant) {
+        llvmCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type?.align}")
+        llvmCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type?.align}")
+    }
+
+    fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
+        assert(!source.pointer)
+        val target = getNewVariable(type = source.type, pointer = source.pointer, kotlinName = source.kotlinName)
+        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type?.align!!}"
+        llvmCode.appendln(code)
         return target
     }
 
@@ -104,15 +118,15 @@ class LLVMBuilder {
     }
 
     fun bitcast(dst: LLVMVariable, llvmType: LLVMType): LLVMVariable {
-        var empty = getNewVariable(llvmType, true)
-        var code = "$empty = bitcast ${dst.getType()} $dst to $llvmType*"
+        val empty = getNewVariable(llvmType, true)
+        val code = "$empty = bitcast ${dst.getType()} $dst to $llvmType*"
         llvmCode.appendln(code)
 
         return empty
     }
 
-    fun  memcpy(castedDst: LLVMVariable, castedSrc: LLVMVariable, size: Int, align: Int = 4, volatile: Boolean = false) {
-        var code = "call void @llvm.memcpy.p0i8.p0i8.i64(i8* $castedDst, i8* $castedSrc, i64 $size, i32 $align, i1 $volatile)"
+    fun memcpy(castedDst: LLVMVariable, castedSrc: LLVMVariable, size: Int, align: Int = 4, volatile: Boolean = false) {
+        val code = "call void @llvm.memcpy.p0i8.p0i8.i64(i8* $castedDst, i8* $castedSrc, i64 $size, i32 $align, i1 $volatile)"
         llvmCode.appendln(code)
     }
 

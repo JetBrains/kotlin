@@ -1,21 +1,22 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.llvm.LLVMExpression
+import org.kotlinnative.translator.llvm.LLVMSingleValue
 import org.kotlinnative.translator.llvm.LLVMVariable
 
 
 class LLVMIntType() : LLVMType() {
 
     //TODO switch by types: int + double = int
-    override fun operatorMinus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression =
+    override fun operatorMinus(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "sub nsw i32 $firstOp, $secondOp")
 
     //TODO switch by types: int + double = int
-    override fun operatorTimes(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression =
+    override fun operatorTimes(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "mul nsw i32 $firstOp, $secondOp")
 
     //TODO switch by types: int + double = int
-    override fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression =
+    override fun operatorPlus(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, $secondOp")
 
     override val align = 4

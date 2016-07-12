@@ -2,13 +2,14 @@ package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
+import org.kotlinnative.translator.llvm.LLVMSingleValue
 import org.kotlinnative.translator.llvm.LLVMVariable
 
 abstract class LLVMType() : Cloneable {
 
-    open fun operatorPlus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression = throw UnimplementedException()
-    open fun operatorTimes(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression = throw UnimplementedException()
-    open fun operatorMinus(result: LLVMVariable, firstOp: LLVMVariable, secondOp: LLVMVariable): LLVMExpression = throw UnimplementedException()
+    open fun operatorPlus(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
+    open fun operatorTimes(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
+    open fun operatorMinus(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
 
     fun makeClone() = clone()
 

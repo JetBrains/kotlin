@@ -133,7 +133,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 ?.firstChild)
 
         return LLVMCall(descriptor.returnType, "@${function.text}", descriptor.args?.mapIndexed {
-            i: Int, variable: LLVMVariable -> LLVMVariable(names[i], variable.type)
+            i: Int, variable: LLVMVariable ->
+            LLVMVariable(names[i], variable.type)
         } ?: listOf())
     }
 
@@ -153,19 +154,19 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMNode {
-        val left = evaluateExpression(expr.firstChild, scopeDepth) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
-        val right = evaluateExpression(expr.lastChild, scopeDepth) as LLVMVariable? ?: throw UnsupportedOperationException("Wrong binary exception")
+        val left = evaluateExpression(expr.firstChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
+        val right = evaluateExpression(expr.lastChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
-
-        return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
+        val newVar = codeBuilder.getNewVariable(LLVMIntType())
+        return codeBuilder.addPrimitiveBinaryOperation(operator, newVar, left, right)
     }
 
-    private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMVariable {
+    private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
         val node = expr.node
-        return codeBuilder.addConstant(LLVMVariable(node.firstChildNode.text, LLVMIntType(), pointer = false))
+        return LLVMConstant(node.firstChildNode.text, LLVMIntType(), pointer = false)
     }
 
-    private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMVariable? {
+    private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMSingleValue? {
         return when (element) {
             is LeafPsiElement -> evaluateLeafPsiElement(element, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(element)
@@ -194,16 +195,22 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 assignExpression.kotlinName = identifier!!.text
                 assignExpression.pointer = false
                 variableManager.addVariable(identifier.text, assignExpression, scopeDepth)
-                return null
+            }
+            is LLVMConstant -> {
+                val newVar = LLVMVariable("%${identifier!!.text}.addr", type = LLVMIntType(), kotlinName = identifier.text, pointer = true)
+                codeBuilder.addConstant(newVar, assignExpression)
+                variableManager.addVariable(identifier.text, newVar, scopeDepth)
+            }
+            else -> {
+                codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", null, identifier.text), assignExpression)
             }
         }
-        codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", null, identifier.text), assignExpression)
         return null
     }
 
     private fun evaluateReturnInstruction(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         val next = element.getNextSiblingIgnoringWhitespaceAndComments()
-        val retVar = evaluateExpression(next, scopeDepth) as LLVMVariable
+        val retVar = evaluateExpression(next, scopeDepth) as LLVMSingleValue
 
         codeBuilder.addReturnOperator(retVar)
         return null
