@@ -2,29 +2,27 @@
  * Created by user on 7/11/16.
  */
 const fs = require("fs");
-const protoBuf = require("./protobufjs");
-const builder = protoBuf.loadProtoFile("./proto/carkot.proto");//todo перенести как аргумент при запуске.
-const protoConstructor = builder.build("carkot");
-var commandPrefix = "./data/macosx-x86_64/st-flash write";
-var binFilePath = "./f.bin";
+const main = require("./main.js");
 
 function loadBin(httpContent, response) {
 
-    var uploadClass = protoConstructor.Upload;
+    var uploadClass = main.protoConstructor.Upload;
     var uploadObject = uploadClass.decode(httpContent);
     fs.writeFile(binFilePath, uploadObject.data.buffer, "binary", function (error) {
-        var uploadResultClass = protoConstructor.UploadResult;
+        var uploadResultClass = main.protoConstructor.UploadResult;
         var code = 0;
+        var stdErr = "";
         if (error) {
             code = 2;
+            stdErr = error.toString();
         } else {
             code = 0;
-            console.log(commandPrefix + " " + binFilePath + " " + uploadObject.base);
+            console.log(main.commandPrefix + " " + main.binFilePath + " " + uploadObject.base);
         }
         var resultObject = new uploadResultClass({
             "stdOut": "",
             "resultCode": code,
-            "stdErr": ""
+            "stdErr": stdErr
         });
         var byteBuffer = resultObject.encode();
         var byteArray = [];
@@ -37,7 +35,7 @@ function loadBin(httpContent, response) {
     });
 }
 
-function other(request, response) {
+function other(httpContent, response) {
     console.log("other");
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end();
