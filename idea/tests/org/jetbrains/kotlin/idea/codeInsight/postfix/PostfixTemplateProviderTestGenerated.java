@@ -35,6 +35,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("assert.kt")
+    public void testAssert() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/assert.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("else.kt")
     public void testElse() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/else.kt");
@@ -83,6 +89,24 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("par.kt")
+    public void testPar() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/par.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("return.kt")
+    public void testReturn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/return.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("sout.kt")
+    public void testSout() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/sout.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("try.kt")
     public void testTry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/try.kt");
@@ -104,6 +128,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("when.kt")
     public void testWhen() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/when.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("while.kt")
+    public void testWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/while.kt");
         doTest(fileName);
     }
 }
