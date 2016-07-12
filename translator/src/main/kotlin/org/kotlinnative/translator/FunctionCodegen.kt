@@ -65,8 +65,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun generateLoadArguments() {
         args?.forEach {
-            val loadVariable = LLVMVariable("%${it.label}", it.type, it.label, true)
-            codeBuilder.loadVariable(loadVariable)
+            val loadVariable = LLVMVariable("%${it.label}", it.type, it.label, false)
+            codeBuilder.loadArgument(loadVariable)
             variableManager.addVariable(it.label, loadVariable, 2)
         }
     }

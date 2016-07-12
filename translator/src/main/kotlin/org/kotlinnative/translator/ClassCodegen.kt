@@ -12,9 +12,7 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMClassVariable
 import org.kotlinnative.translator.llvm.LLVMFunctionDescriptor
 import org.kotlinnative.translator.llvm.LLVMVariable
-import org.kotlinnative.translator.llvm.types.LLVMType
-import org.kotlinnative.translator.llvm.types.LLVMVoidType
-import org.kotlinnative.translator.llvm.types.parseLLVMType
+import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuilder: LLVMBuilder) {
@@ -22,6 +20,8 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
     val annotation: Boolean
     val native: Boolean
     val fields = ArrayList<LLVMVariable>()
+    val name = "%class.${clazz.name}"
+    val type: LLVMType = parseLLVMType(name)
     val size: Int
 
     init {
@@ -35,8 +35,7 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
         if (!annotation) {
             for (field in parameterList) {
                 val type = getNativeType(field) ?: parseLLVMType((field.typeReference?.typeElement as KtUserType).referencedName!!)
-                val field = LLVMClassVariable(field.name!!, type, offset)
-                fields.add(field)
+                fields.add(LLVMClassVariable(field.name!!, type, offset))
 
                 currentSize += type.size
                 offset++
@@ -63,18 +62,54 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
     }
 
     private fun generateDefaultConstructor() {
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(clazz.name!!, fields, LLVMVoidType()))
+        val argFields = ArrayList<LLVMVariable>()
+        val refType = type.makeClone() as LLVMReferenceType
+        refType.addParam("sret")
+
+        val thisField = LLVMVariable("instance", refType,  clazz.name, true)
+
+        argFields.add(thisField)
+        argFields.addAll(fields)
+
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(clazz.name!!, argFields, LLVMVoidType()))
 
         codeBuilder.addStartExpression()
-        generateLoadArguments()
+        generateLoadArguments(thisField)
+        generateAssignments()
+        generateReturn()
+        codeBuilder.addVoidReturn()
         codeBuilder.addEndExpression()
     }
 
-    private fun generateLoadArguments() {
+    private fun generateLoadArguments(thisField: LLVMVariable) {
+
+        val thisVariable = LLVMVariable("%${thisField.label}", thisField.type, thisField.label, true)
+        codeBuilder.loadArgument(thisVariable, false)
+
         fields.forEach {
             val loadVariable = LLVMVariable("%${it.label}", it.type, it.label)
-            codeBuilder.loadVariable(loadVariable)
+            codeBuilder.loadArgument(loadVariable)
         }
+    }
+
+    private fun generateAssignments() {
+        fields.forEach {
+            val argument = codeBuilder.getNewVariable(it.type)
+            codeBuilder.loadVariable(argument, LLVMVariable("%${it.label}.addr", it.type, "", true))
+            val classField = codeBuilder.getNewVariable(it.type, true)
+            codeBuilder.loadClassField(classField, LLVMVariable("%instance.addr", type, "", true), (it as LLVMClassVariable).offset)
+            codeBuilder.storeVariable(classField, argument)
+        }
+    }
+
+    private fun generateReturn() {
+        val dst = LLVMVariable("%instance", type, "", true)
+        val src = LLVMVariable("%instance.addr", type, "", true)
+
+        val castedDst = codeBuilder.bitcast(dst, LLVMCharType())
+        val castedSrc = codeBuilder.bitcast(src, LLVMCharType())
+
+        codeBuilder.memcpy(castedDst, castedSrc, size)
     }
 
     private fun getNativeType(field: KtParameter): LLVMType? {
