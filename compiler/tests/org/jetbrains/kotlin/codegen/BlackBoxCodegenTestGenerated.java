@@ -12789,9 +12789,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("findParameterByName.kt")
+            public void testFindParameterByName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/findParameterByName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionParameterNameAndIndex.kt")
             public void testFunctionParameterNameAndIndex() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/functionParameterNameAndIndex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instanceExtensionReceiverAndValueParameters.kt")
+            public void testInstanceExtensionReceiverAndValueParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/instanceExtensionReceiverAndValueParameters.kt");
                 doTest(fileName);
             }
 
