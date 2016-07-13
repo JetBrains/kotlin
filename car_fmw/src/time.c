@@ -5,6 +5,8 @@ static volatile uint32_t pending_timer_ticks, ticks_since_boot;
 
 void time_init(void)
 {
+    // XXX this is copy pasted and it doesn't provide 1ms periodic
+    // timer interrupt
     if (SysTick_Config(SystemCoreClock / 1000))
         while (1){};
 }
