@@ -24,14 +24,14 @@ class LLVMBuilder(val arm: Boolean) {
         }
     }
 
-    fun getNewVariable(type: LLVMType?, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {
+    fun getNewVariable(type: LLVMType, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {
         variableCount++
         return LLVMVariable("%var$variableCount", type, kotlinName, pointer)
     }
 
-    fun getNewLabel(scope: LLVMScope = LLVMLocalScope()): LLVMLabel {
+    fun getNewLabel(scope: LLVMScope = LLVMLocalScope(), prefix: String): LLVMLabel {
         labelCount++
-        return LLVMLabel("label$labelCount", scope)
+        return LLVMLabel("label.$prefix.$labelCount", scope)
     }
 
     fun addLLVMCode(code: String) {
@@ -117,36 +117,38 @@ class LLVMBuilder(val arm: Boolean) {
         llvmCode.appendln(code)
     }
 
-    fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true) {
-        addVariableByRef(LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, true), llvmVariable, store)
+    fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
+        val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, true)
+        addVariableByRef(allocVar, llvmVariable, store)
+        return allocVar
     }
 
     fun loadVariable(target: LLVMVariable, source: LLVMVariable) {
-        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type?.align!!}"
+        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type.align}"
         llvmCode.appendln(code)
     }
 
     fun allocVar(target: LLVMVariable) {
-        llvmCode.appendln("$target = alloca ${target.type}, align ${target.type?.align!!}")
+        llvmCode.appendln("$target = alloca ${target.type}, align ${target.type.align}")
     }
 
     fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, store: Boolean) {
-        llvmCode.appendln("$targetVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type?.align}")
+        llvmCode.appendln("$targetVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type.align}")
 
         if (store) {
-            llvmCode.appendln("store ${sourceVariable.getType()} $sourceVariable, ${targetVariable.getType()} $targetVariable, align ${targetVariable.type?.align}")
+            llvmCode.appendln("store ${sourceVariable.getType()} $sourceVariable, ${targetVariable.getType()} $targetVariable, align ${targetVariable.type.align}")
         }
     }
 
     fun addConstant(allocVariable: LLVMVariable, constantValue: LLVMConstant) {
-        llvmCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type?.align}")
-        llvmCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type?.align}")
+        llvmCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type.align}")
+        llvmCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(!source.pointer)
         val target = getNewVariable(source.type, source.pointer, source.kotlinName)
-        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type?.align!!}"
+        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type.align}"
         llvmCode.appendln(code)
         return target
     }
