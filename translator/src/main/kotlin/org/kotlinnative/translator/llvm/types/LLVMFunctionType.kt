@@ -3,7 +3,6 @@ package org.kotlinnative.translator.llvm.types
 import org.jetbrains.kotlin.types.KotlinType
 import org.kotlinnative.translator.llvm.LLVMMapStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
-import java.util.*
 
 class LLVMFunctionType(type: KotlinType) : LLVMType() {
     override val align: Int = 4

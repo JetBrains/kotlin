@@ -105,11 +105,26 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             is KtCallExpression -> evaluateCallExpression(expr)
             is KtReferenceExpression -> evaluateReferenceExpression(expr)
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, true)
+            is KtDotQualifiedExpression -> evaluteDotExpression(expr, scopeDepth)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
             else -> throw UnsupportedOperationException()
         }
+    }
+
+    private fun evaluteDotExpression(expr: KtDotQualifiedExpression, scopeDepth: Int): LLVMSingleValue? {
+        val receiverName = expr.receiverExpression.text
+        val selectorName = expr.selectorExpression!!.text
+
+        val receiver = variableManager.getLLVMvalue(receiverName)!!
+
+        val clazz = state.classes[(receiver.type as LLVMReferenceType).type]!!
+        val field = clazz.fieldsIndex[selectorName]!!
+
+        val result = codeBuilder.getNewVariable(field.type, pointer = true)
+        codeBuilder.loadClassField(result, receiver, field.offset)
+        return result
     }
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression): LLVMSingleValue? {
@@ -313,10 +328,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
             }
             is LLVMConstructorCall -> {
-                val result = LLVMVariable("%${identifier!!.text}", assignExpression.type)
+                val result = variableManager.getVariable(identifier!!.text, assignExpression.type, pointer = false)
                 codeBuilder.allocVar(result)
                 result.pointer = true
                 codeBuilder.addLLVMCode(assignExpression.call(result).toString())
+                variableManager.addVariable(identifier.text, result, scopeDepth)
             }
             else -> {
                 codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", LLVMIntType(), identifier.text), assignExpression)
