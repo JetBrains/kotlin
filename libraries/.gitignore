@@ -1,4 +1,5 @@
 target
+/doc/
 .idea
 *.iml
 *.ipr
