@@ -154,12 +154,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("gradleWrongPluginVersion/inspectionData/inspections.test")
-        public void testGradleWrongPluginVersion_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/gradleWrongPluginVersion/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("hasPlatformType/inspectionData/inspections.test")
         public void testHasPlatformType_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/hasPlatformType/inspectionData/inspections.test");

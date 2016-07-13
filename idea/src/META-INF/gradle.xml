@@ -1,29 +1,8 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
-    </extensions>
-    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
-    </extensions>
-    <extensions defaultExtensionNs="com.intellij">
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
-            displayName="Kotlin Gradle and IDE plugins versions are different"
-            groupName="Kotlin"
-            enabledByDefault="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="WARNING"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
-            displayName="Kotlin library and Gradle plugin versions are different"
-            groupName="Kotlin"
-            enabledByDefault="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="WARNING"/>
-    </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+      <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
+  </extensions>
 </idea-plugin>
