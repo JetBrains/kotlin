@@ -7,7 +7,7 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
         "${if (declare) "declare" else "define"} $returnType @$name(${
         argTypes?.mapIndexed { i: Int, s: LLVMVariable ->
             "${s.getType()} %${s.label}"
-        }?.joinToString() }) ${ if (arm) "#0 " else ""}"
+        }?.joinToString() }) ${ if (arm) "#0" else ""}"
 
 fun LLVMMapStandardType(type: String): LLVMType = when (type) {
     "Int" -> LLVMIntType()
