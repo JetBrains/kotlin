@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="jcommander-1.48">
+  <library name="JSAP-2.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/jcommander-1.48.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/JSAP-2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
