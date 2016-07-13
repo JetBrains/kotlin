@@ -248,7 +248,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 variableManager.addVariable(identifier.text, assignExpression, scopeDepth)
             }
             is LLVMConstant -> {
-                val newVar = LLVMVariable("%${identifier!!.text}.addr", type = LLVMIntType(), kotlinName = identifier.text, pointer = true)
+                val newVar = variableManager.getVariable(identifier!!.text, type = LLVMIntType(), pointer = true)
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
             }
