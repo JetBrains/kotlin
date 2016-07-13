@@ -12,18 +12,18 @@ fun test() {
     val x1 =
         if (1 == 1)
             // TODO: Diagnostic content could be better
-            <!EXPECTED_TYPE_MISMATCH(\(\) -> Int)!>fun named4(): Int {return 1}<!>
-        else
-            <!EXPECTED_TYPE_MISMATCH!>fun named5() = 1<!>
+            <!SYNTAX!><!>fun named4(): Int {return 1}
+        <!SYNTAX!>else<!>
+            fun named5() = 1
 
     val x2 =
             if (1 == 1) {
-                <!EXPECTED_TYPE_MISMATCH!>fun named6(): Int {
+                fun named6(): Int {
                     return 1
-                }<!>
+                }
             }
             else
-                <!EXPECTED_TYPE_MISMATCH!>fun named7() = 1<!>
+                <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
         0 -> <!EXPECTED_TYPE_MISMATCH!>fun named8(): Int {return 1}<!>

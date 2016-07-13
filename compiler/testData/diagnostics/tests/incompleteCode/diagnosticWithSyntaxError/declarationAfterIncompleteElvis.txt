@@ -1,0 +1,15 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Any?): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final val q: kotlin.String.() -> kotlin.Int
+    public final val x: kotlin.Int = 4
+    public final val y: [ERROR : Type for null ?:]
+    public final val z: [ERROR : Type for null ?:]
+    public final fun baz(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

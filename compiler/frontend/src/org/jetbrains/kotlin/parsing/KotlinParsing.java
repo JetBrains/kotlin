@@ -21,6 +21,7 @@ import com.intellij.lang.WhitespacesBinders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
@@ -1444,6 +1445,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return accessorKind;
     }
 
+    @NotNull
+    IElementType parseFunction() {
+        return parseFunction(false);
+    }
+
     /*
      * function
      *   : modifiers "fun" typeParameters?
@@ -1454,7 +1460,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *       functionBody?
      *   ;
      */
-    IElementType parseFunction() {
+    @Contract("false -> !null")
+    IElementType parseFunction(boolean failIfIdentifierExists) {
         assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
@@ -1475,6 +1482,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         TokenSet functionNameFollow = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
         boolean receiverFound = parseReceiverType("function", functionNameFollow);
+
+        if (at(IDENTIFIER) && failIfIdentifierExists) {
+            myBuilder.restoreJoiningComplexTokensState();
+            return null;
+        }
 
         // function as expression has no name
         parseFunctionOrPropertyName(receiverFound, "function", functionNameFollow, /*nameRequired = */ false);
@@ -1598,15 +1610,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * IDENTIFIER
      */
-    private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, boolean nameRequired) {
-        if (!nameRequired && atSet(nameFollow)) return; // no name
+    private boolean parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, boolean nameRequired) {
+        if (!nameRequired && atSet(nameFollow)) return true; // no name
 
         TokenSet recoverySet = TokenSet.orSet(nameFollow, TokenSet.create(LBRACE, RBRACE), TOP_LEVEL_DECLARATION_FIRST);
         if (!receiverFound) {
-            expect(IDENTIFIER, "Expecting " + title + " name or receiver type", recoverySet);
+            return expect(IDENTIFIER, "Expecting " + title + " name or receiver type", recoverySet);
         }
         else {
-            expect(IDENTIFIER, "Expecting " + title + " name", recoverySet);
+            return expect(IDENTIFIER, "Expecting " + title + " name", recoverySet);
         }
     }
 

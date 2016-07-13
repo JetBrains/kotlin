@@ -1992,6 +1992,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("DeclarationAfterDotSelectorExpected.kt")
+            public void testDeclarationAfterDotSelectorExpected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/DeclarationAfterDotSelectorExpected.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("DeclarationAfterIncompleteElvis.kt")
+            public void testDeclarationAfterIncompleteElvis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/DeclarationAfterIncompleteElvis.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("DoWhileWithEmptyCondition.kt")
             public void testDoWhileWithEmptyCondition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/DoWhileWithEmptyCondition.kt");
