@@ -297,11 +297,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val assignExpression = evaluateExpression(eq.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth) ?: return null
 
         when (assignExpression) {
-        //TODO resolving
             is LLVMVariable -> {
-                assignExpression.kotlinName = identifier!!.text
-                assignExpression.pointer = false
-                variableManager.addVariable(identifier.text, assignExpression, scopeDepth)
+                val allocVar = variableManager.getVariable(identifier!!.text, LLVMIntType(), pointer = true)
+                codeBuilder.allocVar(allocVar)
+                variableManager.addVariable(identifier.text, allocVar, scopeDepth)
+                codeBuilder.copyVariableValue(assignExpression, allocVar)
             }
             is LLVMConstant -> {
                 val newVar = variableManager.getVariable(identifier!!.text, LLVMIntType(), pointer = true)

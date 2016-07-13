@@ -117,6 +117,13 @@ class LLVMBuilder(val arm: Boolean) {
         llvmCode.appendln(code)
     }
 
+    fun copyVariableValue(from: LLVMVariable, to: LLVMVariable) {
+        val tmp = getNewVariable(from.type, from.pointer)
+        llvmCode.appendln("$tmp = load ${tmp.type}, ${from.getType()} $from, align ${tmp.type.align}")
+        llvmCode.appendln("store ${to.type} $tmp, ${to.getType()} $to, align ${tmp.type.align}")
+
+    }
+
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
         val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, true)
         addVariableByRef(allocVar, llvmVariable, store)
