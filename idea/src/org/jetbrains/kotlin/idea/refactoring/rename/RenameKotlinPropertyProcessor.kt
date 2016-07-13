@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
@@ -249,6 +250,12 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         return declarationToRename
     }
 
+    class PropertyMethodWrapper(val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
+        override fun getName() = propertyMethod.name
+        override fun setName(name: String) = this
+        override fun copy() = this
+    }
+
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
 
@@ -281,10 +288,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
 
         for (propertyMethod in propertyMethods) {
             if (element is KtDeclaration && newPropertyName != null) {
-                val wrapper = object : PsiNamedElement by propertyMethod {
-                    override fun setName(name: String) = this
-                    override fun copy() = this
-                }
+                val wrapper = PropertyMethodWrapper(propertyMethod)
                 when {
                     JvmAbi.isGetterName(propertyMethod.name) && getterJvmName == null ->
                         allRenames[wrapper] = JvmAbi.getterName(newPropertyName)

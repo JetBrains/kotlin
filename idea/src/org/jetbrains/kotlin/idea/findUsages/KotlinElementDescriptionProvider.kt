@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
+import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -52,6 +53,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtDestructuringDeclarationEntry -> "variable"
             is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> "property"
             is KtLightClassForFacade -> "facade class"
+            is RenameKotlinPropertyProcessor.PropertyMethodWrapper -> "property accessor"
             else -> null
         }
 
