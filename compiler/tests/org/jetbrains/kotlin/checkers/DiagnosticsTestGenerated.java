@@ -8348,6 +8348,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("declarationAfterDotSelectorExpected.kt")
+                public void testDeclarationAfterDotSelectorExpected() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/declarationAfterDotSelectorExpected.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("declarationAfterIncompleteElvis.kt")
+                public void testDeclarationAfterIncompleteElvis() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/declarationAfterIncompleteElvis.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("funEquals.kt")
                 public void testFunEquals() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funEquals.kt");
