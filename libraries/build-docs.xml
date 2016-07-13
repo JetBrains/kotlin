@@ -16,7 +16,7 @@
     <target name="document">
         <delete dir="doc/stdlib"/>
         <mkdir dir="doc/stdlib"/>
-        <dokka src="stdlib/src:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt"
+        <dokka src="stdlib/src:stdlib/jre7/src:stdlib/jre8/src:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt"
             samples="stdlib/test" outputDir="doc" moduleName="stdlib" skipDeprecated="true" outputFormat="kotlin-website"
             include="stdlib/src/Module.md">
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
