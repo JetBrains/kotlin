@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>
+
+
+
+
+
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  
+  <link rel="File-List" href="Library_files/filelist.xml">
+
+  
+  <link rel="Edit-Time-Data" href="Library_files/editdata.mso"><!--[if !mso]> <style> v\:* {behavior:url(#default#VML);} o\:* {behavior:url(#default#VML);} w\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style> <![endif]--><title>Release Notes for STM32F4-Discovery Board Drivers</title><!--[if gte mso 9]><xml> <o:DocumentProperties> <o:Author>STMicroelectronics</o:Author> <o:LastAuthor>STMicroelectronics</o:LastAuthor> <o:Revision>37</o:Revision> <o:TotalTime>136</o:TotalTime> <o:Created>2009-02-27T19:26:00Z</o:Created> <o:LastSaved>2009-03-01T17:56:00Z</o:LastSaved> <o:Pages>1</o:Pages> <o:Words>522</o:Words> <o:Characters>2977</o:Characters> <o:Company>STMicroelectronics</o:Company> <o:Lines>24</o:Lines> <o:Paragraphs>6</o:Paragraphs> <o:CharactersWithSpaces>3493</o:CharactersWithSpaces> <o:Version>11.6568</o:Version> </o:DocumentProperties> </xml><![endif]--><!--[if gte mso 9]><xml> <w:WordDocument> <w:Zoom>110</w:Zoom> <w:ValidateAgainstSchemas/> <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid> <w:IgnoreMixedContent>false</w:IgnoreMixedContent> <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText> <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> </w:WordDocument> </xml><![endif]--><!--[if gte mso 9]><xml> <w:LatentStyles DefLockedState="false" LatentStyleCount="156"> </w:LatentStyles> </xml><![endif]-->
+
+
+  
+
+  
+
+  
+  <style>
+<!--
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+{mso-style-parent:"";
+margin:0in;
+margin-bottom:.0001pt;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+h2
+{mso-style-next:Normal;
+margin-top:12.0pt;
+margin-right:0in;
+margin-bottom:3.0pt;
+margin-left:0in;
+mso-pagination:widow-orphan;
+page-break-after:avoid;
+mso-outline-level:2;
+font-size:14.0pt;
+font-family:Arial;
+font-weight:bold;
+font-style:italic;}
+a:link, span.MsoHyperlink
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+p
+{mso-margin-top-alt:auto;
+margin-right:0in;
+mso-margin-bottom-alt:auto;
+margin-left:0in;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+@page Section1
+{size:8.5in 11.0in;
+margin:1.0in 1.25in 1.0in 1.25in;
+mso-header-margin:.5in;
+mso-footer-margin:.5in;
+mso-paper-source:0;}
+div.Section1
+{page:Section1;}
+-->
+  </style><!--[if gte mso 10]> <style> /* Style Definitions */ table.MsoNormalTable {mso-style-name:"Table Normal"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; mso-style-noshow:yes; mso-style-parent:""; mso-padding-alt:0in 5.4pt 0in 5.4pt; mso-para-margin:0in; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} </style> <![endif]--><!--[if gte mso 9]><xml> <o:shapedefaults v:ext="edit" spidmax="5122"/> </xml><![endif]--><!--[if gte mso 9]><xml> <o:shapelayout v:ext="edit"> <o:idmap v:ext="edit" data="1"/> </o:shapelayout></xml><![endif]-->
+  <meta content="MCD Application Team" name="author"></head>
+<body link="blue" vlink="blue">
+<div class="Section1">
+<p class="MsoNormal"><span style="font-family: Arial;"><o:p><br>
+</o:p></span></p>
+<div align="center">
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+  <tbody>
+    <tr>
+      <td style="padding: 0cm;" valign="top">
+      <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+            <p class="MsoNormal"><span style="font-size: 8pt; font-family: Arial; color: blue;"><a href="../../Release_Notes.html">Back to Release page</a><o:p></o:p></span></p>
+            </td>
+          </tr>
+          <tr style="">
+            <td style="padding: 1.5pt;">
+            <h1 style="margin-bottom: 18pt; text-align: center;" align="center"><span style="font-size: 20pt; font-family: Verdana; color: rgb(51, 102, 255);">Release
+Notes for STM32F4-Discovery Board Drivers</span><span style="font-size: 20pt; font-family: Verdana;"><o:p></o:p></span></h1>
+            <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;">Copyright
+2011 STMicroelectronics</span><span style="color: black;"><u1:p></u1:p><o:p></o:p></span></p>
+            <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;"><img alt="" id="_x0000_i1025" src="../../_htmresc/logo.bmp" style="border: 0px solid ; width: 86px; height: 65px;"></span><span style="font-size: 10pt;"><o:p></o:p></span></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="MsoNormal"><span style="font-family: Arial; display: none;"><o:p>&nbsp;</o:p></span></p>
+      <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" width="900">
+        <tbody>
+          <tr style="">
+            <td style="padding: 0cm;" valign="top">
+            <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><span style="font-size: 12pt; color: white;">Contents<o:p></o:p></span></h2>
+            <ol style="margin-top: 0cm;" start="1" type="1">
+              <li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"><a href="#History">STM32F4-Discovery Board&nbsp;Drivers&nbsp;update History</a><o:p></o:p></span></li>
+              <li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"><a href="#License">License</a><o:p></o:p></span></li>
+            </ol>
+            <span style="font-family: &quot;Times New Roman&quot;;">
+            </span>
+            <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">STM32F4-Discovery Board Drivers&nbsp;update History</span></h2><div style="margin-left: 40px;"><span style="font-size: 10pt; font-family: Verdana;">For more information on the STM32F4-Discovery board&nbsp;visit <a href="http://www.st.com/stm32f4-discovery" target="_blank">www.st.com/stm32f4-discovery</a>.</span></div><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 186px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.0 / 28-October-2011</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;<span style="font-weight: bold; font-style: italic;">PDM audio software decoding Library</span><span style="font-weight: bold;"></span> drivers, used to decode and reconstruct the audio signal produced by&nbsp;MP45DT02 MEMS microphone from </span><span style="font-size: 10pt; font-family: Arial; color: black;">STMicroelectronics.</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;"> </span><span style="font-weight: bold;"></span>For more details about this Library, please refer to document<span style="font-weight: bold; font-style: italic;"> "PDM audio software decoding on STM32 microcontrollers (AN3998)".</span></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm32f4_discovery_audio_codec.c/.h: update to use DMA instead of Interrupt in I2S communication with the external codec.</span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 186px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.0 / 19-September-2011</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">First official version of the<span style="font-weight: bold; font-style: italic;"> STM32F4-Discovery Board&nbsp;Drivers</span></span></li></ul><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="License"></a><span style="font-size: 12pt; color: white;">License<o:p></o:p></span></h2><p class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana; color: black;">The use of the&nbsp;<span style="font-weight: bold; font-style: italic;">PDM audio software decoding Library</span> is governed by the terms and conditions of the License Agreement </span><span style="font-size: 10pt; font-family: Verdana; color: black;"><span style="font-weight: bold; font-style: italic;">"MCD-ST Image SW License Agreement 19Jul2011 v0.1.pdf"</span> </span><span style="font-size: 10pt; font-family: Verdana; color: black;">available in the root of this folder.</span></p><p class="MsoNormal"></p><p class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana; color: black;">The use of the other STM32F4-Discovery board drivers is governed by the terms and conditions of the License Agreement </span><span style="font-size: 10pt; font-family: Verdana; color: black;"><span style="font-weight: bold; font-style: italic;">"MCD-ST Liberty SW License Agreement 20Jul2011 v0.1.pdf"</span> </span><span style="font-size: 10pt; font-family: Verdana; color: black;">available in the root of this package.</span><span style="color: black;"><o:p>&nbsp;</o:p></span></p><b><span style="font-size: 10pt; font-family: Verdana; color: black;"></span></b>
+            
+            <div class="MsoNormal" style="text-align: center;" align="center"><span style="color: black;">
+            <hr align="center" size="2" width="100%"></span></div>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; text-align: center;" align="center"><span style="font-size: 10pt; font-family: Verdana; color: black;">For
+complete documentation on </span><span style="font-size: 10pt; font-family: Verdana;">STMicroelectronics<span style="color: black;"> Microcontrollers visit </span><a target="_blank" href="http://www.st.com/internet/mcu/family/141.jsp"><u><span style="color: blue;">www.st.com</span></u></a></span><span style="font-size: 10pt; font-family: Verdana;"><u><span style="color: blue;"><a href="http://www.st.com/stm32l" target="_blank"></a></span></u></span><span style="color: black;"><o:p></o:p></span></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="MsoNormal"><span style="font-size: 10pt;"><o:p></o:p></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+
+</body></html>

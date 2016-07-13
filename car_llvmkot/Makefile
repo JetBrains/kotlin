@@ -1,0 +1,90 @@
+BIN_DIR=$(PWD)/bin
+SRC_DIR=$(PWD)/src
+LIB_DIR=$(SRC_DIR)/lib
+OS_ARCH=linux-arm
+
+LIB_CMSIS_DIR=$(LIB_DIR)/cmsis
+LIB_STDPERIPH_DIR=$(LIB_DIR)/stdperiph
+LIB_STM32F4D_DIR=$(LIB_DIR)/stm32f4d
+
+LIB_CMSIS_OBJ=$(BIN_DIR)/libcmsis.o
+LIB_STDPERIPH_OBJ=$(BIN_DIR)/libstdperiph.o
+LIB_STM32F4D_OBJ=$(BIN_DIR)/libstm32f4d.o
+CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
+CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
+CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
+ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
+
+LIB_KOTLIN=$(BIN_DIR)/kotlib.o
+
+CC=arm-none-eabi-gcc
+AS=arm-none-eabi-as
+LD=arm-none-eabi-ld
+LL=llc
+OBJ_COPY=arm-none-eabi-objcopy
+GDB=arm-none-eabi-gdb
+
+INCLUDES=-I$(LIB_CMSIS_DIR) \
+		 -I$(LIB_STDPERIPH_DIR) \
+		 -I$(LIB_STM32F4D_DIR) \
+		 -I$(SRC_DIR)
+DEFINES=-DUSE_STM32_DISCOVERY=1 -DUSE_STDPERIPH_DRIVER=1 -DSTM32F4XX=1 -DHSE_VALUE=8000000
+CFLAGS=-g -nostdlib -ffreestanding -O0 \
+       -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \
+       $(DEFINES)
+LLFLAGS=-march=thumb -mtriple=arm-none-eabi -mcpu=cortex-m3
+ASMFLAGS=-g -mthumb
+
+LD_ALL_DEPS=$(LD) -r $(filter %.o,$^) -o $@
+CC_ALL_DEPS=$(CC) $(CFLAGS) -c $(INCLUDES) $(filter %.c,$^) -o $@
+AS_ALL_DEPS=$(AS) $(ASMFLAGS) $(filter %.s,$^) -o $@
+LL_ALL_DEPS=$(LL) $(LLFLAGS) $(filter %.ll, $^) -o $@
+
+dirhs=$(wildcard $(1)/*.h)
+dircs=$(wildcard $(1)/*.c)
+dircs_to_prefxd_objs=\
+	$(patsubst $(1)/%.c,$(BIN_DIR)/$(2)%.o,$(call dircs,$1))
+
+$(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
+	$(OBJ_COPY) -O binary $< $@
+
+$(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
+		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) $(LIB_KOTLIN)
+	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
+
+CAR_OBJ_PREFIX=car_
+$(CAR_FMW_OBJ): \
+		$(call dircs_to_prefxd_objs,$(SRC_DIR),$(CAR_OBJ_PREFIX))
+	$(LD_ALL_DEPS)
+
+$(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
+		$(call dirhs,$(SRC_DIR))
+	$(CC_ALL_DEPS)
+
+$(LIB_KOTLIN): $(BIN_DIR)/kotlin_main.s
+	$(AS_ALL_DEPS)
+
+$(BIN_DIR)/kotlin_main.s: $(SRC_DIR)/kotlin_main.ll
+	$(LL_ALL_DEPS)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+
+flash: $(CAR_FMW_BIN)
+	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000
+
+debug:
+	-killall st-util
+	(setsid $(ST_DIR)/st-util 2>/dev/null 1>&2)&
+	$(GDB) $(CAR_FMW_ELF) -x $(ST_DIR)/../gdb.cmds
+
+clean:
+	rm -rf bin/*
+
+tags:
+	ctags -R *
+
+include $(LIB_DIR)/**/Makefile
+
+.PHONY: clean debug flash tags
