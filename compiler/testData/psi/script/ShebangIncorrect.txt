@@ -28,10 +28,19 @@ JetFile: ShebangIncorrect.kts
               PsiElement(DIV)('/')
           OPERATION_REFERENCE
             PsiElement(IDENTIFIER)('usr')
-          PsiWhiteSpace('\n\n')
           PsiErrorElement:Expecting an element
-            PsiElement(HASH)('#')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(EXCL)('!')
-        PsiElement(DIV)('/')
-        PsiElement(IDENTIFIER)('hi')
+            <empty list>
+      PsiWhiteSpace('\n\n')
+      PsiErrorElement:Expecting an element
+        PsiElement(HASH)('#')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(EXCL)('!')
+            PsiErrorElement:Expecting an element
+              PsiElement(DIV)('/')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('hi')
+          PsiErrorElement:Expecting an element
+            <empty list>

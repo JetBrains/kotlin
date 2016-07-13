@@ -128,7 +128,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                     TokenSet.create(EOL_OR_SEMICOLON));
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
+            EOL_OR_SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
