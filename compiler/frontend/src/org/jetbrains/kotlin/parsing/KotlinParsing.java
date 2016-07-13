@@ -1241,7 +1241,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             errorIf(multiDecl, !local, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
-            parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ false);
+            parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ true);
         }
 
         myBuilder.restoreJoiningComplexTokensState();
@@ -1477,7 +1477,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         boolean receiverFound = parseReceiverType("function", functionNameFollow);
 
         // function as expression has no name
-        parseFunctionOrPropertyName(receiverFound, "function", functionNameFollow, /*nameRequired = */ true);
+        parseFunctionOrPropertyName(receiverFound, "function", functionNameFollow, /*nameRequired = */ false);
 
         myBuilder.restoreJoiningComplexTokensState();
 
@@ -1599,7 +1599,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * IDENTIFIER
      */
     private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, boolean nameRequired) {
-        if (nameRequired && atSet(nameFollow)) return; // no name
+        if (!nameRequired && atSet(nameFollow)) return; // no name
 
         TokenSet recoverySet = TokenSet.orSet(nameFollow, TokenSet.create(LBRACE, RBRACE), TOP_LEVEL_DECLARATION_FIRST);
         if (!receiverFound) {
