@@ -7,6 +7,7 @@ import org.kotlinnative.translator.llvm.types.LLVMType
 class LLVMBuilder {
     private var llvmCode: StringBuilder = StringBuilder()
     private var variableCount = 0
+    private var labelCount = 0
 
     init {
         initBuilder()
@@ -20,6 +21,11 @@ class LLVMBuilder {
     fun getNewVariable(type: LLVMType?, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {
         variableCount++
         return LLVMVariable("%var$variableCount", type, kotlinName = kotlinName, pointer = pointer)
+    }
+
+    fun getNewLabel(): LLVMLabel {
+        labelCount++
+        return LLVMLabel("%label$labelCount")
     }
 
     fun addLLVMCode(code: String) {
@@ -43,13 +49,19 @@ class LLVMBuilder {
         else -> throw UnsupportedOperationException()
     }
 
-    fun addPrimitiveBinaryOperation(operation: IElementType, resultOp: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
+    fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
         val firstNativeOp = receiveNativeValue(firstOp)
         val secondNativeOp = receiveNativeValue(secondOp)
         val llvmExpression = when (operation) {
-            KtTokens.PLUS -> firstOp.type!!.operatorPlus(resultOp, firstNativeOp, secondNativeOp)
-            KtTokens.MINUS -> firstOp.type!!.operatorMinus(resultOp, firstNativeOp, secondNativeOp)
-            KtTokens.MUL -> firstOp.type!!.operatorTimes(resultOp, firstNativeOp, secondNativeOp)
+            KtTokens.PLUS -> firstOp.type!!.operatorPlus(firstNativeOp, secondNativeOp)
+            KtTokens.MINUS -> firstOp.type!!.operatorMinus(firstNativeOp, secondNativeOp)
+            KtTokens.MUL -> firstOp.type!!.operatorTimes(firstNativeOp, secondNativeOp)
+            KtTokens.LT -> firstOp.type!!.operatorLt(firstNativeOp, secondNativeOp)
+            KtTokens.GT -> firstOp.type!!.operatorGt(firstNativeOp, secondNativeOp)
+            KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
+            KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
+            KtTokens.EQEQ -> firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
+            KtTokens.EXCLEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
             KtTokens.EQ -> {
                 val result = firstOp as LLVMVariable
                 storeVariable(result, secondNativeOp)
@@ -57,7 +69,7 @@ class LLVMBuilder {
             }
             else -> throw UnsupportedOperationException("Unknown binary operator")
         }
-
+        val resultOp = getNewVariable(llvmExpression.variableType)
         addAssignment(resultOp, llvmExpression)
 
         return resultOp
@@ -122,6 +134,10 @@ class LLVMBuilder {
         val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type?.align!!}"
         llvmCode.appendln(code)
         return target
+    }
+
+    fun addCondition(condition: LLVMSingleValue, thenLabel: LLVMLabel, elseLabel: LLVMLabel) {
+        llvmCode.appendln("br ${condition.getType()} $condition, label $thenLabel, label $elseLabel")
     }
 
     fun createClass(name: String, fields: List<LLVMVariable>) {

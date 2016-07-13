@@ -169,12 +169,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return args
     }
 
-    private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMNode {
+    private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {
         val left = evaluateExpression(expr.firstChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
         val right = evaluateExpression(expr.lastChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
-        val newVar = codeBuilder.getNewVariable(LLVMIntType())
-        return codeBuilder.addPrimitiveBinaryOperation(operator, newVar, left, right)
+        return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
@@ -196,8 +195,30 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element, scopeDepth)
             KtTokens.VAL_KEYWORD -> evaluateValExpression(element, scopeDepth)
             KtTokens.VAR_KEYWORD -> evaluateValExpression(element, scopeDepth)
+            KtTokens.IF_KEYWORD -> evaluateIfExpression(element, scopeDepth)
             else -> null
         }
+    }
+
+    private fun evaluateIfExpression(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
+        var getBrackets = element.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val condition = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        getBrackets = condition.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val thenExpression = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val elseExpression = thenExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+
+
+        return executeCondition(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
+    }
+
+    private fun executeCondition(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
+        val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
+        val thenLabel = codeBuilder.getNewLabel()
+        val elseLabel = codeBuilder.getNewLabel()
+
+        codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
+
+        return null
     }
 
     private fun evaluateValExpression(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {

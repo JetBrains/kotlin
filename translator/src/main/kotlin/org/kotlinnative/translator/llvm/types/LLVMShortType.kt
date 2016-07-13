@@ -2,26 +2,25 @@ package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
-import org.kotlinnative.translator.llvm.LLVMVariable
 
 class LLVMShortType() : LLVMType() {
-    override fun operatorLt(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp slt i16 $firstOp, $secondOp")
+    override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp slt i16 $firstOp, $secondOp")
 
-    override fun operatorGt(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp sgt i16 $firstOp, $secondOp")
+    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp sgt i16 $firstOp, $secondOp")
 
-    override fun operatorLeq(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp sle i16 $firstOp, $secondOp")
+    override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp sle i16 $firstOp, $secondOp")
 
-    override fun operatorGeq(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp sge i16 $firstOp, $secondOp")
+    override fun operatorGeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp sge i16 $firstOp, $secondOp")
 
-    override fun operatorEq(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp eq i16 $firstOp, $secondOp")
+    override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp eq i16 $firstOp, $secondOp")
 
-    override fun operatorNeq(result: LLVMVariable, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMIntType(), "icmp ne i16 $firstOp, $secondOp")
+    override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp ne i16 $firstOp, $secondOp")
 
     override val size: Byte = 2
     override val align = 2
