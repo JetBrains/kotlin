@@ -1,1 +1,2 @@
-OK
+compiler/testData/cli/jvm/wrongAbiVersionLib/bin/wrong/ClassWithInnerLambda.class: error: class 'wrong/ClassWithInnerLambda' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$
+COMPILATION_ERROR
