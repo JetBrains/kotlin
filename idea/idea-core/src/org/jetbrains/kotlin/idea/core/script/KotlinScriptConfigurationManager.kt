@@ -87,9 +87,7 @@ class KotlinScriptConfigurationManager(
     }
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
-            scriptExternalImportsProvider.getExternalImports(file)
-                    .flatMap { it.classpath }
-                    .mapNotNull { it.classpathEntryToVfs() }
+            scriptExternalImportsProvider.getExternalImports(file)?.classpath?.mapNotNull { it.classpathEntryToVfs() } ?: emptyList()
 
     fun getAllScriptsClasspath(): List<VirtualFile> = allScriptsClasspathCache.get()
 

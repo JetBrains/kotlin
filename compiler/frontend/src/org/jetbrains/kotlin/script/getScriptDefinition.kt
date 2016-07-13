@@ -26,11 +26,5 @@ fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefini
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
     KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile)
 
-fun getScriptExternalDependencies(file: VirtualFile, project: Project): List<KotlinScriptExternalDependencies>  =
-        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(file) ?: emptyList()
-
-fun getScriptExternalDependencies(psiFile: PsiFile): List<KotlinScriptExternalDependencies>  =
-        psiFile.virtualFile?.let { file ->
-            KotlinScriptExternalImportsProvider.getInstance(psiFile.project)?.getExternalImports(file)
-        } ?: emptyList()
-
+fun getScriptExternalDependencies(file: VirtualFile, project: Project): KotlinScriptExternalDependencies?  =
+        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(file)

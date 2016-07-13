@@ -29,16 +29,20 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
     private val cache = hashMapOf<String, KotlinScriptExternalDependencies>()
     private val cacheOfNulls = hashSetOf<String>()
 
-    fun <TF> getExternalImports(vararg files: TF): List<KotlinScriptExternalDependencies> = getExternalImports(files.asIterable())
+    fun <TF> getExternalImports(file: TF): KotlinScriptExternalDependencies? = cacheLock.read { calculateExternalDependencies(file) }
 
     fun <TF> getExternalImports(files: Iterable<TF>): List<KotlinScriptExternalDependencies> = cacheLock.read {
-        files.mapNotNull { file ->
-            val path = getFilePath(file)
-            cache[path]
-            ?: if (cacheOfNulls.contains(path)) null
+        files.mapNotNull { calculateExternalDependencies(it) }
+    }
+
+    private fun <TF> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
+        val path = getFilePath(file)
+        return cache[path]
+               ?: if (cacheOfNulls.contains(path)) null
                else scriptDefinitionProvider.findScriptDefinition(file)
-                    ?.let { it.getDependenciesFor(file, project, null) }
-                    .apply { cacheLock.write {
+                ?.let { it.getDependenciesFor(file, project, null) }
+                .apply {
+                    cacheLock.write {
                         if (this == null) {
                             cacheOfNulls.add(path)
                         }
@@ -46,8 +50,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                             cache.put(path, this)
                         }
                     }
-            }
-        }
+                }
     }
 
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
