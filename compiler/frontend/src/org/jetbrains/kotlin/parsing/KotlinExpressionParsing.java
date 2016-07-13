@@ -594,15 +594,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
     }
 
-    private boolean isAtLabelDefinitionBeforeLBrace() {
-        if (at(IDENTIFIER)) {
-            if (myBuilder.rawLookup(1) != AT) return false;
-            return lookahead(2) == LBRACE;
-        }
-
-        return at(AT) && lookahead(1) == LBRACE;
-    }
-
     private boolean isAtLabelDefinitionOrMissingIdentifier() {
         return (at(IDENTIFIER) && myBuilder.rawLookup(1) == AT) || at(AT);
     }
