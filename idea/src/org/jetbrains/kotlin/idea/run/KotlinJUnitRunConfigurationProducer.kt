@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isProducedBy(JUnitConfigurationProducer::class.java)
+        return other.isProducedBy(JUnitConfigurationProducer::class.java) || other.isProducedBy(PatternConfigurationProducer::class.java)
     }
 
     override fun isConfigurationFromContext(configuration: JUnitConfiguration,
