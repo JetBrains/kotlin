@@ -3,15 +3,14 @@ package org.kotlinnative.translator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.kotlinnative.translator.llvm.*
-import org.kotlinnative.translator.llvm.types.LLVMIntType
-import org.kotlinnative.translator.llvm.types.LLVMType
-import org.kotlinnative.translator.llvm.types.LLVMVoidType
+import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 
@@ -186,7 +185,15 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
         val node = expr.node
-        return LLVMConstant(node.firstChildNode.text, LLVMIntType(), pointer = false)
+
+        val type = when (node.elementType) {
+            KtNodeTypes.BOOLEAN_CONSTANT -> LLVMBooleanType()
+            KtNodeTypes.INTEGER_CONSTANT -> LLVMIntType()
+            KtNodeTypes.FLOAT_CONSTANT -> LLVMDoubleType()
+            KtNodeTypes.CHARACTER_CONSTANT -> LLVMCharType()
+            else -> throw IllegalArgumentException("Unknown type")
+        }
+        return LLVMConstant(node.firstChildNode.text, type, pointer = false)
     }
 
     private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMSingleValue? {

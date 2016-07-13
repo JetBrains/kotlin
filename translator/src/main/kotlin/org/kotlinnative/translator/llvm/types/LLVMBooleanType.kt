@@ -36,6 +36,12 @@ class LLVMBooleanType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i1 $firstOp, $secondOp")
 
+    override fun parseArg(inputArg: String) = when(inputArg.toLowerCase()){
+        "true" -> "1"
+        "false" -> "0"
+        else -> throw IllegalArgumentException("Failed to parse boolean type")
+    }
+
     override val align = 4
     override val size: Byte = 1
 

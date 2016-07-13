@@ -15,6 +15,7 @@ abstract class LLVMType() : Cloneable {
     open fun operatorGeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
+    open fun parseArg(inputArg: String) = inputArg
 
     fun makeClone() = clone()
 
@@ -26,6 +27,8 @@ fun parseLLVMType(type: String): LLVMType = when (type) {
     "i32" -> LLVMIntType()
     "i16" -> LLVMShortType()
     "i8" -> LLVMCharType()
+    "i1" -> LLVMBooleanType()
+    "double" -> LLVMDoubleType()
     "Unit" -> LLVMVoidType()
     else -> LLVMReferenceType(type)
 }
