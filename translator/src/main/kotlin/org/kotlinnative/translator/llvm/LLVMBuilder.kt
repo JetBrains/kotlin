@@ -2,6 +2,7 @@ package org.kotlinnative.translator.llvm
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
 
 class LLVMBuilder {
@@ -23,9 +24,9 @@ class LLVMBuilder {
         return LLVMVariable("%var$variableCount", type, kotlinName = kotlinName, pointer = pointer)
     }
 
-    fun getNewLabel(): LLVMLabel {
+    fun getNewLabel(scope: LLVMScope = LLVMLocalScope()): LLVMLabel {
         labelCount++
-        return LLVMLabel("%label$labelCount")
+        return LLVMLabel("label$labelCount", scope)
     }
 
     fun addLLVMCode(code: String) {
@@ -97,6 +98,15 @@ class LLVMBuilder {
         llvmCode.appendln(code)
     }
 
+    fun markWithLabel(label: LLVMLabel?) {
+        if (label != null)
+            llvmCode.appendln("${label.label}:")
+    }
+
+    fun addNopInstruction() {
+        llvmCode.appendln(getNewVariable(LLVMIntType()).toString() + " = add i1 0, 0     ; nop instruction")
+    }
+
     fun storeVariable(target: LLVMVariable, source: LLVMSingleValue) {
         val code = "store ${source.type} $source, ${target.getType()} $target, align ${source.type?.align!!}"
         llvmCode.appendln(code)
@@ -138,6 +148,10 @@ class LLVMBuilder {
 
     fun addCondition(condition: LLVMSingleValue, thenLabel: LLVMLabel, elseLabel: LLVMLabel) {
         llvmCode.appendln("br ${condition.getType()} $condition, label $thenLabel, label $elseLabel")
+    }
+
+    fun addUnconditionJump(label: LLVMLabel) {
+        llvmCode.appendln("br label $label")
     }
 
     fun createClass(name: String, fields: List<LLVMVariable>) {

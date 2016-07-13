@@ -37,7 +37,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         codeBuilder.addStartExpression()
         generateLoadArguments()
-        expressionWalker(function.bodyExpression)
+        evaluateCodeBlock(function.bodyExpression, startLabel = null, finishLabel = null, scopeDepth = 0)
+
 
         if (returnType is LLVMVoidType) {
             codeBuilder.addVoidReturn()
@@ -71,7 +72,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
     }
 
-    private fun expressionWalker(expr: PsiElement?, scopeDepth: Int = 0) {
+    private fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel?, finishLabel: LLVMLabel?, scopeDepth: Int) {
+        codeBuilder.markWithLabel(startLabel)
+        expressionWalker(expr, scopeDepth = scopeDepth)
+        codeBuilder.addUnconditionJump(finishLabel ?: return)
+    }
+
+    private fun expressionWalker(expr: PsiElement?, scopeDepth: Int) {
         when (expr) {
             is KtBlockExpression -> expressionWalker(expr.firstChild, scopeDepth + 1)
             is KtProperty -> evaluateLeafPsiElement(expr.firstChild as LeafPsiElement, scopeDepth)
@@ -205,7 +212,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val condition = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         getBrackets = condition.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         val thenExpression = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
-        val elseExpression = thenExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val elseKeyword = thenExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val elseExpression = elseKeyword.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
 
         return executeCondition(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
@@ -215,8 +223,14 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
         val thenLabel = codeBuilder.getNewLabel()
         val elseLabel = codeBuilder.getNewLabel()
+        val endLabel = codeBuilder.getNewLabel()
 
         codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
+
+        evaluateCodeBlock(thenExpression, thenLabel, endLabel, scopeDepth + 1)
+        evaluateCodeBlock(elseExpression, elseLabel, endLabel, scopeDepth + 1)
+
+        codeBuilder.markWithLabel(endLabel)
 
         return null
     }
@@ -254,8 +268,9 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     private fun evaluateReturnInstruction(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         val next = element.getNextSiblingIgnoringWhitespaceAndComments()
         val retVar = evaluateExpression(next, scopeDepth) as LLVMSingleValue
+        val retNativeValue = codeBuilder.receiveNativeValue(retVar)
 
-        codeBuilder.addReturnOperator(retVar)
+        codeBuilder.addReturnOperator(retNativeValue)
         return null
     }
 }
