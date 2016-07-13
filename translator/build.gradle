@@ -13,8 +13,6 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
-sourceCompatibility = 1.5
-
 repositories {
     mavenCentral()
 }

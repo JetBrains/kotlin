@@ -20,65 +20,64 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
 import java.util.*
 
+class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext) {
 
-class TranslationState(sources: List<String>, disposer: Disposable) {
-
-    val environment: KotlinCoreEnvironment
-    val bindingContext: BindingContext
     var functions = HashMap<String, FunctionCodegen>()
     var classes = HashMap<String, ClassCodegen>()
-
     val variableManager = VariableManager()
-
-    init {
-        val configuration = CompilerConfiguration()
-        val messageCollector = GroupingMessageCollector(object : MessageCollector {
-            private var hasError = false
-
-            override fun hasErrors(): Boolean = hasError
-
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-                println("[report] $message")
-                hasError = severity.isError || hasError
-            }
-        })
-
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
-
-        configuration.addKotlinSourceRoots(sources)
-
-        environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException()
-    }
-
-    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
-        val collector = environment.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        val analyzer = AnalyzerWithCompilerReport(collector)
-        analyzer.analyzeAndReport(environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult {
-                val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-                val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
-
-                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                        moduleContext,
-                        environment.getSourceFiles(),
-                        sharedTrace,
-                        environment.configuration.get(JVMConfigurationKeys.MODULES),
-                        environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                        JvmPackagePartProvider(environment))
-            }
-
-            override fun reportEnvironmentErrors() {
-                val files = environment.configuration.jvmClasspathRoots
-                val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
-                collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
-                println(runtimes.joinToString { it.toString() })
-            }
-        })
-
-        return if (analyzer.hasErrors()) null else analyzer.analysisResult
-    }
-
 }
+
+fun parseAndAnalyze(sources: List<String>, disposer: Disposable): TranslationState {
+
+    val configuration = CompilerConfiguration()
+    val messageCollector = GroupingMessageCollector(object : MessageCollector {
+        private var hasError = false
+
+        override fun hasErrors(): Boolean = hasError
+
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+            println("[report] $message")
+            hasError = severity.isError || hasError
+        }
+    })
+
+    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+    configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
+
+    configuration.addKotlinSourceRoots(sources)
+
+    val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException()
+
+    return TranslationState(environment, bindingContext)
+}
+
+fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
+    val collector = environment.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+    val analyzer = AnalyzerWithCompilerReport(collector)
+    analyzer.analyzeAndReport(environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
+        override fun analyze(): AnalysisResult {
+            val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+            val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
+
+            return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                    moduleContext,
+                    environment.getSourceFiles(),
+                    sharedTrace,
+                    environment.configuration.get(JVMConfigurationKeys.MODULES),
+                    environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                    JvmPackagePartProvider(environment))
+        }
+
+        override fun reportEnvironmentErrors() {
+            val files = environment.configuration.jvmClasspathRoots
+            val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+            collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
+            println(runtimes.joinToString { it.toString() })
+        }
+    })
+
+    return if (analyzer.hasErrors()) null else analyzer.analysisResult
+}
+
