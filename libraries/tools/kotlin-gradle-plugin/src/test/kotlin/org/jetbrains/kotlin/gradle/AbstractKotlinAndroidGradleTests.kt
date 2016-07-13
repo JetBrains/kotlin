@@ -174,6 +174,16 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testAndroidIcepickProject() {
+        val project = Project("AndroidIcepickProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testAndroidExtensions() {
         val project = Project("AndroidExtensionsProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
