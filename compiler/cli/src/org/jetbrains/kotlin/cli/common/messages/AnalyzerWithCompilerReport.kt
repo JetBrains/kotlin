@@ -130,9 +130,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         }
         val abiVersionErrors = abiVersionErrors
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, !abiVersionErrors.isEmpty())
-        if (hasErrors()) {
-            reportMetadataVersionErrors(abiVersionErrors)
-        }
+        reportMetadataVersionErrors(abiVersionErrors)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }
