@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
 
-class LLVMBuilder {
+class LLVMBuilder(val arm: Boolean) {
     private var llvmCode: StringBuilder = StringBuilder()
     private var variableCount = 0
     private var labelCount = 0
@@ -16,7 +16,12 @@ class LLVMBuilder {
 
     private fun initBuilder() {
         val memcpy = "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)"
+        val funcAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
         llvmCode.appendln(memcpy)
+
+        if (arm) {
+            llvmCode.appendln(funcAttributes)
+        }
     }
 
     fun getNewVariable(type: LLVMType?, pointer: Boolean = false, kotlinName: String? = null): LLVMVariable {

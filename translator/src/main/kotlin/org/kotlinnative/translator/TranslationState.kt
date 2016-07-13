@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
 import java.util.*
 
-class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext) {
+class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val arm: Boolean) {
 
     var functions = HashMap<String, FunctionCodegen>()
     var classes = HashMap<String, ClassCodegen>()
     val variableManager = VariableManager()
 }
 
-fun parseAndAnalyze(sources: List<String>, disposer: Disposable): TranslationState {
+fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = false): TranslationState {
 
     val configuration = CompilerConfiguration()
     val messageCollector = GroupingMessageCollector(object : MessageCollector {
@@ -49,7 +49,7 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable): TranslationSta
     val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException()
 
-    return TranslationState(environment, bindingContext)
+    return TranslationState(environment, bindingContext, arm)
 }
 
 fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {

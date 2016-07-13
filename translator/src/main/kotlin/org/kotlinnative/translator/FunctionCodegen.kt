@@ -60,7 +60,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             keyword = keyword.getNextSiblingIgnoringWhitespaceAndComments()
         }
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(function.fqName.toString(), args, returnType, external))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(function.fqName.toString(), args, returnType, external, state.arm))
         return external
     }
 
