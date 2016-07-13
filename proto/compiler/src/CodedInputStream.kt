@@ -24,14 +24,22 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
-        return readRawVarint32()
+        return readInt32NoTag()
     }
 
     // Note that unsigned integer types are stored as their signed counterparts with top bit
     // simply stored in the sign bit - similar to Java's protobuf implementation. Hence, all
     // methods reading unsigned ints simply redirect call to corresponding signed-reading method
     fun readUInt32(expectedFieldNumber: Int): Int {
-        return readInt32(expectedFieldNumber)
+        val tag = readTag()
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        return readUInt32NoTag()
+    }
+
+    fun readUInt32NoTag(): Int {
+        return readInt32NoTag()
     }
 
     fun readInt64(expectedFieldNumber: Int): Long {
@@ -39,12 +47,20 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
-        return readRawVarint64()
+        return readInt64NoTag()
     }
 
     // See note on unsigned integers implementations above
     fun readUInt64(expectedFieldNumber: Int): Long {
-        return readUInt64(expectedFieldNumber)
+        val tag = readTag()
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
+        return readUInt64NoTag()
+    }
+
+    fun readUInt64NoTag(): Long {
+        return readInt64NoTag()
     }
 
     fun readBool(expectedFieldNumber: Int): Boolean {
@@ -52,7 +68,11 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
-        val readValue = readRawVarint32()
+        return readBoolNoTag()
+    }
+
+    fun readBoolNoTag(): Boolean {
+        val readValue = readInt32NoTag()
         val boolValue = when (readValue) {
             0 -> false
             1 -> true
@@ -63,7 +83,15 @@ class CodedInputStream(input: java.io.InputStream) {
 
     // Reading enums is like reading one int32 number. Caller is responsible for converting this ordinal to enum-object
     fun readEnum(expectedFieldNumber: Int): Int {
-        return readInt32(expectedFieldNumber)
+        val tag = readTag()
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        return readEnumNoTag()
+    }
+
+    fun readEnumNoTag(): Int {
+        return readUInt32NoTag()
     }
 
     fun readSInt32(expectedFieldNumber: Int): Int {
@@ -71,7 +99,11 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
-        return readZigZag32()
+        return readSInt32NoTag()
+    }
+
+    fun readSInt32NoTag(): Int {
+        return readZigZag32NoTag()
     }
 
     fun readSInt64(expectedFieldNumber: Int): Long {
@@ -79,7 +111,7 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
-        return readZigZag64()
+        return readZigZag64NoTag()
     }
 
     fun readFixed32(expectedFieldNumber: Int): Int {
@@ -87,11 +119,23 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        return readFixed32NoInt()
+    }
+
+    fun readFixed32NoInt(): Int {
         return readLittleEndianInt()
     }
 
     fun readSFixed32(expectedFieldNumber: Int): Int {
-        return readFixed32(expectedFieldNumber)
+        val tag = readTag()
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        return readSFixed32NoTag()
+    }
+
+    fun readSFixed32NoTag(): Int {
+        return readLittleEndianInt()
     }
 
     fun readFixed64(expectedFieldNumber: Int): Long {
@@ -99,11 +143,23 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        return readFixed64NoTag()
+    }
+
+    fun readFixed64NoTag(): Long {
         return readLittleEndianLong()
     }
 
     fun readSFixed64(expectedFieldNumber: Int): Long {
-        return readFixed64(expectedFieldNumber)
+        val tag = readTag()
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        return readSFixed64NoTag()
+    }
+
+    fun readSFixed64NoTag(): Long {
+        return readLittleEndianLong()
     }
 
     fun readDouble(expectedFieldNumber: Int): Double {
@@ -111,6 +167,10 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        return readDoubleNoTag()
+    }
+
+    fun readDoubleNoTag(): Double {
         return readLittleEndianDouble()
     }
 
@@ -119,6 +179,10 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        return readFloatNoTag()
+    }
+
+    fun readFloatNoTag(): Float {
         return readLittleEndianFloat()
     }
 
@@ -127,11 +191,14 @@ class CodedInputStream(input: java.io.InputStream) {
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.LENGTH_DELIMITED, actualWireType)
-        val length = readRawVarint32()
+        return readStringNoTag()
+    }
+
+    fun readStringNoTag(): String {
+        val length = readInt32NoTag()
         val value = String(readRawBytes(length))
         return value
     }
-
     /** ============ Utility methods ==================
      *  They are left non-private for cases when one wants to implement her/his own protocol format.
      *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
@@ -191,7 +258,7 @@ class CodedInputStream(input: java.io.InputStream) {
         if (isAtEnd()) {
             return 0        // we can safely return 0 as sign of end of message, because 0-tags are illegal
         }
-        val tag = readRawVarint32()
+        val tag = readInt32NoTag()
         if (tag == 0) {     // if we somehow had read 0-tag, then message is corrupted
             throw InvalidProtocolBufferException("Invalid tag 0")
         }
@@ -199,7 +266,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     // reads varint not larger than 32-bit integer according to protobuf varint-encoding
-    fun readRawVarint32(): Int {
+    fun readInt32NoTag(): Int {
         var done: Boolean = false
         var result: Int = 0
         var step: Int = 0
@@ -207,10 +274,10 @@ class CodedInputStream(input: java.io.InputStream) {
             val byte: Int = bufferedInput.read()
             result = result or
                     (
-                            (byte and VARINT_INFO_BITS_MASK)
-                                    shl
-                                    (VARINT_INFO_BITS_COUNT * step)
-                            )
+                        (byte and VARINT_INFO_BITS_MASK)
+                        shl
+                        (VARINT_INFO_BITS_COUNT * step)
+                    )
             step++
             if ((byte and VARINT_UTIL_BIT_MASK) == 0) {
                 done = true
@@ -220,7 +287,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     // reads varint not larger than 64-bit integer according to protobuf varint-encoding
-    fun readRawVarint64(): Long {
+    fun readInt64NoTag(): Long {
         var done: Boolean = false
         var result: Long = 0
         var step: Int = 0
@@ -228,10 +295,10 @@ class CodedInputStream(input: java.io.InputStream) {
             val byte: Int = bufferedInput.read()
             result = result or
                     (
-                            (byte and VARINT_INFO_BITS_MASK).toLong()
-                                    shl
-                                    (VARINT_INFO_BITS_COUNT * step)
-                            )
+                        (byte and VARINT_INFO_BITS_MASK).toLong()
+                        shl
+                        (VARINT_INFO_BITS_COUNT * step)
+                    )
             step++
             if ((byte and VARINT_UTIL_BIT_MASK) == 0 || byte == -1) {
                 done = true
@@ -241,14 +308,14 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     // reads zig-zag encoded integer not larger than 32-bit long
-    fun readZigZag32(): Int {
-        val value = readRawVarint32()
+    fun readZigZag32NoTag(): Int {
+        val value = readInt32NoTag()
         return (value shr 1) xor (-(value and 1))   // bit magic for decoding zig-zag number
     }
 
     // reads zig-zag encoded integer not larger than 64-bit long
-    fun readZigZag64(): Long {
-        val value = readRawVarint64()
+    fun readZigZag64NoTag(): Long {
+        val value = readInt64NoTag()
         return (value shr 1) xor (-(value and 1L))  // bit magic for decoding zig-zag number
     }
 

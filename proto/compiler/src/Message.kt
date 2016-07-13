@@ -4,7 +4,6 @@
 
 interface Message {
     fun writeTo(output: CodedOutputStream)
-    fun readFrom(input: CodedInputStream) : Message
     fun getBuilder() : Builder
 
     //TODO: think about something similar to static method getDefaultInstance()

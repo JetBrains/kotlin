@@ -47,10 +47,56 @@ void EnumGenerator::generateCode(io::Printer * printer) const {
         if (i + 1 != enumValues.size()) {
             printer->Print(",");
         }
+        else {
+            printer->Print(";");    // semicolon is necessary as companion object will follow
+        }
         printer->Print("\n");
     }
+
+    printer->Print("\n");
+    gemerateEnumConverters(printer);
+
     printer->Outdent();
     printer->Print("}");
+}
+
+void EnumGenerator::gemerateEnumConverters(io::Printer *printer) const {
+    map <string, string> vars;
+    vars["dollar"] = "$";
+    vars["type"] = simpleName;
+
+    printer->Print("companion object {\n");
+    printer->Indent();
+
+    printer->Print(vars, "fun fromIntTo$type$ (ord: Int): $type$ {\n");
+    printer->Indent();
+
+    printer->Print("return when (ord) {\n");
+    printer->Indent();
+
+    // map ints to enum values
+    for (int j = 0; j < enumValues.size(); ++j) {
+        vars["ordinal"] = std::to_string(enumValues[j]->ordinal);
+        vars["value"] = enumValues[j]->simpleName;
+
+        printer->Print(vars,
+                       "$ordinal$ -> $type$.$value$\n");
+    }
+
+    // catch cast errors in else-clause
+    printer->Print(vars,
+                   "else -> throw InvalidProtocolBufferException("
+                           "\"Error: got unexpected int $dollar${ord} while parsing $type$ \""
+                           ");\n");
+
+    printer->Outdent();     // when-clause
+    printer->Print("}\n");
+
+    printer->Outdent();     // function body
+    printer->Print("}\n");
+
+    printer->Outdent();     // companion object body
+    printer->Print("}\n");
 }
 
 EnumGenerator::~EnumGenerator() {

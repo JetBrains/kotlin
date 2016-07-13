@@ -8,114 +8,184 @@ import java.nio.ByteOrder
 class CodedOutputStream(val output: java.io.OutputStream) {
     fun writeTag(fieldNumber: Int, type: WireType) {
         val tag = (fieldNumber shl 3) or type.ordinal
-        writeVarint32(tag)
+        writeInt32NoTag(tag)
     }
 
-    fun writeInt32(fieldNumber: Int, value: Int) {
+    fun writeInt32(fieldNumber: Int, value: Int?) {
+        value ?: return
         writeTag(fieldNumber, WireType.VARINT)
-        writeVarint32(value)
+        writeInt32NoTag(value)
     }
 
     // Note that unsigned integer types are stored as their signed counterparts with top bit
     // simply stored in the sign bit - similar to Java's protobuf implementation. Hence, all
     // methods, writing unsigned ints simply redirect call to corresponding signed-writing method
-    fun writeUInt32(fieldNumber: Int, value: Int) {
+    fun writeUInt32(fieldNumber: Int, value: Int?) {
+        value ?: return
         writeInt32(fieldNumber, value)
     }
 
-    fun writeInt64(fieldNumber: Int, value: Long) {
+    fun writeInt64(fieldNumber: Int, value: Long?) {
+        value ?: return
         writeTag(fieldNumber, WireType.VARINT)
-        writeVarint64(value)
+        writeInt64NoTag(value)
     }
 
     // See notes on unsigned integers implementation above
-    fun writeUIn64(fieldNumber: Int, value: Long) {
+    fun writeUInt64(fieldNumber: Int, value: Long?) {
+        value ?: return
         writeInt64(fieldNumber, value)
     }
 
-    fun writeBool(fieldNumber: Int, value: Boolean) {
-        writeInt32(fieldNumber, if (value) 1 else 0)
+    fun writeBool(fieldNumber: Int, value: Boolean?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.VARINT)
+        writeBoolNoTag(value)
+    }
+
+    fun writeBoolNoTag(value: Boolean) {
+        writeInt32NoTag(if (value) 1 else 0)
     }
 
     // Writing enums is like writing one int32 number. Caller is responsible for converting enum-object to ordinal
-    fun writeEnum(fieldNumber: Int, value: Int) {
-        writeInt32(fieldNumber, value)
+    fun writeEnum(fieldNumber: Int, value: Int?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.VARINT)
+        writeEnumNoTag(value)
     }
 
-    fun writeSInt32(fieldNumber: Int, value: Int) {
-        writeInt32(fieldNumber, (value shl 1) xor (value shr 31))
+    fun writeEnumNoTag(value: Int) {
+        writeInt32NoTag(value)
     }
 
-    fun writeSInt64(fieldNumber: Int, value: Long) {
-        writeInt64(fieldNumber, (value shl 1) xor (value shr 31))
+    fun writeSInt32(fieldNumber: Int, value: Int?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.VARINT)
+        writeSInt32NoTag(value)
     }
 
-    fun writeFixed32(fieldNumber: Int, value: Int) {
+    fun writeSInt32NoTag(value: Int) {
+        writeInt32NoTag((value shl 1) xor (value shr 31))
+    }
+
+    fun writeSInt64(fieldNumber: Int, value: Long?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.VARINT)
+        writeSInt64NoTag(value)
+    }
+
+    fun writeSInt64NoTag(value: Long) {
+        writeInt64NoTag((value shl 1) xor (value shr 31))
+    }
+
+    fun writeFixed32(fieldNumber: Int, value: Int?) {
+        value ?: return
         writeTag(fieldNumber, WireType.FIX_32)
+        writeFixed32NoTag(value)
+    }
+
+    fun writeFixed32NoTag(value: Int) {
         writeLittleEndian(value)
     }
 
     // See notes on unsigned integers implementation above
-    fun writeSFixed32(fieldNumber: Int, value: Int) {
-        writeFixed32(fieldNumber, value)
+    fun writeSFixed32(fieldNumber: Int, value: Int?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.FIX_32)
+        writeSFixed32NoTag(value)
     }
 
-    fun writeFixed64(fieldNumber: Int, value: Long) {
+    fun writeSFixed32NoTag(value: Int) {
+        writeLittleEndian(value)
+    }
+
+    fun writeFixed64(fieldNumber: Int, value: Long?) {
+        value ?: return
         writeTag(fieldNumber, WireType.FIX_64)
+        writeFixed64NoTag(value)
+    }
+
+    fun writeFixed64NoTag(value: Long) {
         writeLittleEndian(value)
     }
 
     // See notes on unsigned integers implementation above
-    fun writeSFixed64(fieldNumber: Int, value: Long) {
-        writeFixed64(fieldNumber, value)
-    }
-
-    fun writeDouble(fieldNumber: Int, value: Double) {
+    fun writeSFixed64(fieldNumber: Int, value: Long?) {
+        value ?: return
         writeTag(fieldNumber, WireType.FIX_64)
+        writeSFixed64NoTag(value)
+    }
+
+    fun writeSFixed64NoTag(value: Long) {
         writeLittleEndian(value)
     }
 
-    fun writeFloat(fieldNumber: Int, value: Float) {
+    fun writeDouble(fieldNumber: Int, value: Double?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.FIX_64)
+        writeDoubleNoTag(value)
+    }
+
+    fun writeDoubleNoTag(value: Double) {
+        writeLittleEndian(value)
+    }
+
+    fun writeFloat(fieldNumber: Int, value: Float?) {
+        value ?: return
         writeTag(fieldNumber, WireType.FIX_32)
+        writeFloatNoTag(value)
+    }
+
+    fun writeFloatNoTag(value: Float) {
         writeLittleEndian(value)
     }
 
-    fun writeString(fieldNumber: Int, value: String) {
+    fun writeString(fieldNumber: Int, value: String?) {
+        value ?: return
         writeTag(fieldNumber, WireType.LENGTH_DELIMITED)
-        writeVarint32(value.length)
+        writeStringNoTag(value)
+    }
+
+    fun writeStringNoTag(value: String) {
+        writeInt32NoTag(value.length)
         output.write(value.toByteArray())
     }
 
-    fun writeLittleEndian(value: Int) {
+    fun writeLittleEndian(value: Int?) {
+        value ?: return
         val bb = ByteBuffer.allocate(4)
         bb.order(ByteOrder.LITTLE_ENDIAN)
         bb.putInt(value)
         output.write(bb.array())
     }
 
-    fun writeLittleEndian(value: Long) {
+    fun writeLittleEndian(value: Long?) {
+        value ?: return
         val bb = ByteBuffer.allocate(8)
         bb.order(ByteOrder.LITTLE_ENDIAN)
         bb.putLong(value)
         output.write(bb.array())
     }
 
-    fun writeLittleEndian(value: Double) {
+    fun writeLittleEndian(value: Double?) {
+        value ?: return
         val bb = ByteBuffer.allocate(8)
         bb.order(ByteOrder.LITTLE_ENDIAN)
         bb.putDouble(value)
         output.write(bb.array())
     }
 
-    fun writeLittleEndian(value: Float) {
+    fun writeLittleEndian(value: Float?) {
+        value ?: return
         val bb = ByteBuffer.allocate(4)
         bb.order(ByteOrder.LITTLE_ENDIAN)
         bb.putFloat(value)
         output.write(bb.array())
     }
 
-    fun writeVarint32(value: Int) {
-        var curValue = value
+    fun writeInt32NoTag(value: Int?) {
+        value ?: return
+        var curValue: Int = value
 
         // we have at most 32 information bits. With overhead of 1 bit per 7 bits we need at most 5 bytes for encoding
         val res = ByteArray(5)
@@ -139,8 +209,9 @@ class CodedOutputStream(val output: java.io.OutputStream) {
         output.write(res, 0, resSize)
     }
 
-    fun writeVarint64(value: Long) {
-        var curValue = value
+    fun writeInt64NoTag(value: Long?) {
+        value ?: return
+        var curValue: Long = value
 
         // we have at most 64 information bits. With overhead of 1 bit per 7 bits we need at most 10 bytes for encoding
         val res = ByteArray(10)

@@ -8,12 +8,20 @@ import java.io.ByteArrayOutputStream
 fun testMessageSerialization() {
     val s = ByteArrayOutputStream()
     val outs = CodedOutputStream(s)
-    val msg = PersonMessage(name = "John Doe", id = 42, hasCat = true)
+    val msg = Person(
+            name = "John Doe",
+            id = 42,
+            email = "wtf@dsada.com",
+            phones = arrayOf (
+                    Person.PhoneNumber("8-800-555-35-35", Person.PhoneType.WORK),
+                    Person.PhoneNumber("228-322", Person.PhoneType.HOME)
+            )
+    )
     msg.writeTo(outs)
 
     val ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-    val readMsg = PersonMessage("", 0, false)
-    readMsg.readFrom(ins)
+    val readMsg = Person("", 0, "", arrayOf())
+    readMsg.mergeFrom(ins)
 
     assert(msg == readMsg)
 }

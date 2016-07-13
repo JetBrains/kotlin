@@ -1,0 +1,18 @@
+class Person {
+  class PhoneNumber {
+    val number : kotlin.String?
+    val type : PhoneType?
+  }
+  enum class PhoneType(val ord: Int) {
+    MOBILE (0),
+    HOME (1),
+    WORK (2)
+  }
+  val name : kotlin.String?
+  val id : Int?
+  val email : kotlin.String?
+  val phones : List <PhoneNumber> 
+}
+class AddressBook {
+  val people : List <Person> 
+}

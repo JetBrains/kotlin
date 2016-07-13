@@ -32,7 +32,6 @@ public:
 
 class ClassGenerator {
 public:
-    ClassModifier               modifier;
     string                      simpleName;
     vector <FieldGenerator *>   properties;
     vector <ClassGenerator *>   classesDeclarations;
@@ -41,15 +40,30 @@ public:
     ClassGenerator          (Descriptor const * descriptor);
     ~ClassGenerator         ();
 
+
+    void generateCode (io::Printer * printer, bool isBuilder = false) const;
+private:
+    Descriptor const * descriptor;
+    void generateBuilder (io::Printer * printer) const;
+    void generateBuildMethod (io::Printer * printer) const;
+    void generateInitSection (io::Printer * printer) const;
+
     /**
      * Flag isBuilder used for reducing code repeating, as code for class itself
      * and for its inner builder are structurally very alike and can be generated
      * with very little differences (like changing 'val's to 'var's and etc.)
      */
-    void generateCode (io::Printer * printer, bool isBuilder = false) const;
-private:
-    void generateBuilder    (io::Printer * printer)                         const;
-    void generateConstructor(io::Printer * printer, bool isBuilder = false) const;
+    void generateHeader(io::Printer * printer, bool isBuilder = false) const;
+
+    /**
+     * IsRead flag indicates that readFrom method should be generated, otherwise
+     * writeTo method is generated. Motivation is similar to the isBuilder flag:
+     * both methods are structurally the same with some trivial substitutions
+     * (read -> write and etc.)
+     */
+    void generateSerializersNoTag(io::Printer *printer, bool isRead = false) const;
+    void generateSerializers(io::Printer * printer, bool isRead = false) const;
+    void generateMergeFrom(io::Printer * printer) const;
 };
 
 } // namespace kotlin

@@ -30,6 +30,9 @@ public:
     vector <EnumValueGenerator *> enumValues;
 
     void generateCode(io::Printer *) const;
+
+private:
+    void gemerateEnumConverters(io::Printer *printer) const;
 };
 
 } // namespace kotlin

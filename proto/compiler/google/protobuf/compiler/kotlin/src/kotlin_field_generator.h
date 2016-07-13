@@ -21,13 +21,24 @@ private:
     string protobufToKotlinType () const;
     string getInitValue() const;
 
+    /**
+    * Converts one of protobuf wire types to corresponding Kotlin type with proper
+    * naming, so it could be used as suffix after read/write, resulting in function
+    * in CodedInputStream/CodedOutputStream.
+    * Example: protobufToKotlinFunctionSuffix(TYPE_SFIXED32) returns "SFixed32", and
+    *          in Kotlin runtime exists method
+    *          CodedInputStream.readSFixed32(fieldNumber: Int)
+    */
+    string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const;
+
 public:
     FieldDescriptor::Label modifier;
     string simpleName;
     string fieldName;
+    string fieldType;
     string initValue;
-
-    void generateCode(io::Printer *) const;
+    void generateCode(io::Printer * printer, bool isBuilder = false) const;
+    void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
     FieldGenerator(FieldDescriptor const * descriptor);
 
 };

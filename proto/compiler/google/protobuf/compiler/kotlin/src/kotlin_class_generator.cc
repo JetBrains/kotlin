@@ -13,53 +13,62 @@ namespace compiler {
 namespace kotlin {
 
 void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
-    // print class header
-    map<string, string> vars;
-    vars["modifier"] = modifier.getName();
-    vars["name"] = (isBuilder? "Builder" : "") + simpleName;
-    printer->Print(vars,
-                   "$modifier$ $name$ private constructor () {"
-                           "\n"
-    );
+    generateHeader(printer, isBuilder);
     printer->Indent();
 
-    // generate code for nested classes declarations
-    for (ClassGenerator *gen: classesDeclarations) {
-        gen->generateCode(printer, isBuilder);
-        printer->Print("\n\n"); // separate each definition from next code block with empty line
-    }
-
-    // generate code for nested enums declarations
-    for (EnumGenerator *gen: enumsDeclaraions) {
-        gen->generateCode(printer);
-        printer->Print("\n\n"); // separate each definitions from next code block with empty line
-    }
-
-    // generate code for fields
+    /**
+    * Field generator should know if it is generating code for builder.
+    * or for fair class to choose between 'val' and 'var'.
+    */
     for (FieldGenerator *gen: properties) {
-        gen->generateCode(printer);
+        gen->generateCode(printer, isBuilder);
         printer->Print("\n");
     }
 
-    // generate constructor for builders
-    if (isBuilder) {
-        printer->Print("\n");
-        generateConstructor(printer);
+    printer->Print("\n");
+    generateInitSection(printer);
+
+    // enum declarations and nested classes declarations only for fair classes
+    if (!isBuilder) {
+        for (EnumGenerator *gen: enumsDeclaraions) {
+            gen->generateCode(printer);
+            printer->Print("\n");
+        }
+
+        for (ClassGenerator *gen: classesDeclarations) {
+            gen->generateCode(printer);
+            printer->Print("\n");
+        }
     }
 
-    // generate builder for fair classes
+    // write serialization methods only for fair classes, read methods only for Builders)
+    printer->Print("\n");
+    generateSerializers(printer, /* isRead = */ isBuilder);
+    printer->Print("\n");
+    generateSerializersNoTag(printer, /* isRead = */ isBuilder);
+
+    // builder and mergeFrom only for fair classes
     if (!isBuilder) {
         printer->Print("\n");
         generateBuilder(printer);
+
+        printer->Print("\n");
+        generateMergeFrom(printer);
+    }
+
+    // build() is only for builders
+    if (isBuilder) {
+        printer->Print("\n");
+        generateBuildMethod(printer);
     }
 
     printer->Outdent();
-    printer->Print("}");
+    printer->Print("}\n");
 }
 
-ClassGenerator::ClassGenerator(Descriptor const *descriptor) {
+ClassGenerator::ClassGenerator(Descriptor const *descriptor)
+    : descriptor(descriptor) {
     simpleName = descriptor->name();    // TODO: think about more careful class naming
-    modifier   = ClassModifier(ClassModifier::CLASS);
 
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i) {
@@ -96,52 +105,124 @@ ClassGenerator::~ClassGenerator() {
     }
 }
 
-void ClassGenerator::generateBuilder(io::Printer *) const {
-
+void ClassGenerator::generateBuilder(io::Printer * printer) const {
+    //XXX: just reuse generateCode with flag isBuilder set
+    generateCode(printer, /* isBuilder = */ true);
 }
 
-void ClassGenerator::generateConstructor(io::Printer *printer, bool isBuilder) const {
-    // generate header
-    printer->Print("private constructor(\n");
+void ClassGenerator::generateMergeFrom(io::Printer * printer) const {
+    //TODO: Looks pretty dirty. Should reconsider process of generating readFrom, mergeFrom and writeTo.
+    map <string, string> vars;
+    printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
+    printer->Indent();
 
-    // place each argument of constructor in separate line for a prettier code
-    // we indent twice to make arguments indentation larger than indentation of inner block
-    printer->Indent();
-    printer->Indent();
     for (int i = 0; i < properties.size(); ++i) {
-        // generate argument definition
-        map<string, string> vars;
-        vars["name"] = properties[i] ->simpleName;
-        vars["field"] = properties[i]->fieldName;
-        printer->Print(vars,
-                       "$name$: $field$");
-
-        // if it's last property, then print closing bracket for argument list, otherwise put comma
-        if (i + 1 == properties.size()) {
-            printer->Print(") : this()\n");
-            printer->Outdent();
-            printer->Outdent();
-            printer->Print("{");
-            printer->Indent();
-        }
-        else {
-            printer->Print(",");
-        }
-
-        printer->Print("\n");
+        properties[i]->generateSerializationCode(printer, /* isRead = */ true);
     }
 
-    // print body of constructor - just assign arguments to corresponding fields
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+void ClassGenerator::generateSerializers(io::Printer * printer, bool isRead) const {
+    map <string, string> vars;
+    vars["funName"]= isRead ? "readFrom"            : "writeTo";
+    vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
+    vars["arg"]    = isRead ? "input"               : "output";
+    vars["maybeSeparator"] = isRead ? "" : ", ";
+
+    // generate function header
+    printer->Print(vars,
+                   "fun $funName$ ($arg$: $stream$) {"
+                           "\n");
+    printer->Indent();
+
+    //TODO: write message tag and size
+    printer->Print(vars, "$funName$NoTag($arg$)\n");
+
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+void ClassGenerator::generateSerializersNoTag(io::Printer *printer, bool isRead) const {
+    map <string, string> vars;
+    vars["funName"]= isRead ? "readFromNoTag"       : "writeToNoTag";
+    vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
+    vars["arg"]    = isRead ? "input"               : "output";
+
+    // generate function header
+    printer->Print(vars,
+                   "fun $funName$ ($arg$: $stream$) {"
+                   "\n");
+    printer->Indent();
+
+    // generate code for serialization/deserialization of fields
+    for (int i = 0; i < properties.size(); ++i) {
+        properties[i]->generateSerializationCode(printer, isRead);
+    }
+
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+
+
+void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const {
+    // build list of arguments like 'field1: Type1, field2: Type2, ... '
+    string argumentList = "";
+    for (int i = 0; i < properties.size(); ++i) {
+        argumentList += properties[i]->simpleName + ": " + properties[i]->fieldName;
+        if (i + 1 != properties.size()) {
+            argumentList += ", ";
+        }
+    }
+
+    map<string, string> vars;
+    vars["name"] = (isBuilder? "Builder" : "") + simpleName;
+    vars["argumentList"] = argumentList;
+    vars["maybePrivate"] = isBuilder? "" : " private";
+    printer->Print(vars,
+                   "class $name$$maybePrivate$ constructor ($argumentList$) {"
+                           "\n"
+    );
+}
+
+void ClassGenerator::generateBuildMethod(io::Printer * printer) const {
+    map <string, string> vars;
+    vars["returnType"] = simpleName;
+    printer->Print(vars,
+                    "fun build(): $returnType$ {\n");
+    printer->Indent();
+
+    // pass all fields to constructor of enclosing class
+    printer->Print(vars,
+                    "return $returnType$(");
+    for (int i = 0; i < properties.size(); ++i) {
+        printer->Print(properties[i]->simpleName.c_str());
+        if (i + 1 != properties.size()) {
+            printer->Print(", ");
+        }
+    }
+    printer->Print(")\n");
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+void ClassGenerator::generateInitSection(io::Printer * printer) const {
+    printer->Print("init {\n");
+    printer->Indent();
+
     for (int i = 0; i < properties.size(); ++i) {
         map <string, string> vars;
         vars["name"] = properties[i]->simpleName;
         printer->Print(vars,
-                        "this.$name$ = $name$"
-                        "\n"
+                       "this.$name$ = $name$"
+                               "\n"
         );
     }
+
     printer->Outdent();
-    printer->Print("}");
+    printer->Print("}\n");
 }
 
 
