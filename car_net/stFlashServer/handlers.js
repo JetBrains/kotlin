@@ -3,7 +3,7 @@
  */
 const fs = require("fs");
 const main = require("./main.js");
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
 
 function loadBin(httpContent, response) {
 
@@ -52,7 +52,6 @@ function other(httpContent, response) {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end();
 }
-
 
 exports.loadBin = loadBin;
 exports.other = other;
