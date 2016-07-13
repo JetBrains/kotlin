@@ -74,7 +74,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel?, finishLabel: LLVMLabel?, scopeDepth: Int) {
         codeBuilder.markWithLabel(startLabel)
-        expressionWalker(expr, scopeDepth = scopeDepth)
+        expressionWalker(expr, scopeDepth)
         codeBuilder.addUnconditionJump(finishLabel ?: return)
     }
 
@@ -94,12 +94,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth)
     }
 
-    private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMNode? {
+    private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr)
             is KtReferenceExpression -> evaluateReferenceExpression(expr)
+            is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, true)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
@@ -107,12 +108,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
     }
 
-    private fun evaluateReferenceExpression(expr: KtReferenceExpression): LLVMNode? {
+    private fun evaluateReferenceExpression(expr: KtReferenceExpression): LLVMSingleValue? {
         val variableName = expr.firstChild.text
         return variableManager.getLLVMvalue(variableName)
     }
 
-    private fun evaluateCallExpression(expr: KtCallExpression): LLVMNode? {
+    private fun evaluateCallExpression(expr: KtCallExpression): LLVMSingleValue? {
         val function = expr.firstChild.firstChild.text
 
         if (state.functions.containsKey(function)) {
@@ -126,7 +127,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return null
     }
 
-    private fun evaluteConstructorCallExpression(expr: KtCallExpression): LLVMNode? {
+    private fun evaluteConstructorCallExpression(expr: KtCallExpression): LLVMSingleValue? {
         val function = expr.firstChild.firstChild
         val descriptor = state.classes[function.text] ?: return null
         val names = parseArgList(expr
@@ -146,7 +147,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         })
     }
 
-    private fun evaluteFunctionCallExpression(expr: KtCallExpression): LLVMNode? {
+    private fun evaluteFunctionCallExpression(expr: KtCallExpression): LLVMSingleValue? {
         val function = expr.firstChild.firstChild
 
         val descriptor = state.functions[function.text] ?: return null
@@ -177,8 +178,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {
-        val left = evaluateExpression(expr.firstChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
-        val right = evaluateExpression(expr.lastChild, scopeDepth) as LLVMSingleValue? ?: throw UnsupportedOperationException("Wrong binary exception")
+        val left = evaluateExpression(expr.firstChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
+        val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
         return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
     }
@@ -202,12 +203,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element, scopeDepth)
             KtTokens.VAL_KEYWORD -> evaluateValExpression(element, scopeDepth)
             KtTokens.VAR_KEYWORD -> evaluateValExpression(element, scopeDepth)
-            KtTokens.IF_KEYWORD -> evaluateIfExpression(element, scopeDepth)
+            KtTokens.IF_KEYWORD -> evaluateIfOperator(element, scopeDepth, false)
             else -> null
         }
     }
 
-    private fun evaluateIfExpression(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
+    private fun evaluateIfOperator(element: LeafPsiElement, scopeDepth: Int, containReturn: Boolean): LLVMVariable? {
         var getBrackets = element.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         val condition = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         getBrackets = condition.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
@@ -216,10 +217,34 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val elseExpression = elseKeyword.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
 
-        return executeCondition(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
+        return when (containReturn) {
+            false -> executeIfBlock(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
+            true -> executeIfExpression(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
+        }
     }
 
-    private fun executeCondition(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
+    private fun executeIfExpression(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
+        val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
+        val variable = codeBuilder.getNewVariable(LLVMIntType(), true)
+        codeBuilder.allocVar(variable)
+        val thenLabel = codeBuilder.getNewLabel()
+        val elseLabel = codeBuilder.getNewLabel()
+        val endLabel = codeBuilder.getNewLabel()
+
+        codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
+        codeBuilder.markWithLabel(thenLabel)
+        val thenResultExpression = evaluateExpression(thenExpression, scopeDepth + 1)
+        codeBuilder.storeVariable(variable, thenResultExpression ?: return null)
+        codeBuilder.addUnconditionJump(endLabel)
+        codeBuilder.markWithLabel(elseLabel)
+        val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1)
+        codeBuilder.storeVariable(variable, elseResultExpression ?: return null)
+        codeBuilder.addUnconditionJump(endLabel)
+        codeBuilder.markWithLabel(endLabel)
+        return variable
+    }
+
+    private fun executeIfBlock(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
         val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
         val thenLabel = codeBuilder.getNewLabel()
         val elseLabel = codeBuilder.getNewLabel()
@@ -248,7 +273,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 variableManager.addVariable(identifier.text, assignExpression, scopeDepth)
             }
             is LLVMConstant -> {
-                val newVar = variableManager.getVariable(identifier!!.text, type = LLVMIntType(), pointer = true)
+                val newVar = variableManager.getVariable(identifier!!.text, LLVMIntType(), pointer = true)
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
             }
