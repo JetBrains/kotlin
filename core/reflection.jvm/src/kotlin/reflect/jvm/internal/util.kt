@@ -18,10 +18,15 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
+import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
+import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.IllegalCallableAccessException
@@ -38,10 +43,34 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
             (source.javaElement as ReflectJavaClass).element
         }
         else -> {
-            // This is a built-in class
-            null
+            // If this is neither a Kotlin class nor a Java class, it is either a built-in or some fake class descriptor like the one
+            // that's created for java.io.Serializable in JvmBuiltInsSettings
+            val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(this)) ?: classId
+            val packageName = classId.packageFqName.asString()
+            val className = classId.relativeClassName.asString()
+            // All pseudo-classes like kotlin.String.Companion must be accessible from the current class loader
+            loadClass(javaClass.safeClassLoader, packageName, className)
         }
     }
+}
+
+internal fun loadClass(classLoader: ClassLoader, packageName: String, className: String): Class<*>? {
+    if (packageName == "kotlin") {
+        // See mapBuiltInType() in typeSignatureMapping.kt
+        when (className) {
+            "Array" -> return Array<Any>::class.java
+            "BooleanArray" -> return BooleanArray::class.java
+            "ByteArray" -> return ByteArray::class.java
+            "CharArray" -> return CharArray::class.java
+            "DoubleArray" -> return DoubleArray::class.java
+            "FloatArray" -> return FloatArray::class.java
+            "IntArray" -> return IntArray::class.java
+            "LongArray" -> return LongArray::class.java
+            "ShortArray" -> return ShortArray::class.java
+        }
+    }
+
+    return classLoader.tryLoadClass("$packageName.${className.replace('.', '$')}")
 }
 
 // TODO: wrap other exceptions
