@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMType
@@ -22,12 +23,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     val variableManager = state.variableManager
 
     init {
-        val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)
-        args = descriptor?.valueParameters?.map {
-            LLVMVariable(it.name.toString(), LLVMMapStandardType(it.type.toString()))
+        val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
+        args = descriptor.valueParameters.map {
+            LLVMMapStandardType(it.name.toString(), it.type)
         }
 
-        returnType = LLVMMapStandardType(descriptor?.returnType.toString())
+        returnType = LLVMMapStandardType("", descriptor.returnType!!).type
     }
 
     fun generate() {
@@ -121,23 +122,20 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val function = expr.firstChild.firstChild.text
 
         if (state.functions.containsKey(function)) {
-            return evaluteFunctionCallExpression(expr)
+            return evaluateFunctionCallExpression(expr)
         }
 
         if (state.classes.containsKey(function)) {
-            return evaluteConstructorCallExpression(expr)
+            return evaluateConstructorCallExpression(expr)
         }
 
         return null
     }
 
-    private fun evaluteConstructorCallExpression(expr: KtCallExpression): LLVMSingleValue? {
+    private fun evaluateConstructorCallExpression(expr: KtCallExpression): LLVMSingleValue? {
         val function = expr.firstChild.firstChild
         val descriptor = state.classes[function.text] ?: return null
-        val names = parseArgList(expr
-                .firstChild
-                .getNextSiblingIgnoringWhitespaceAndComments()
-                ?.firstChild).mapIndexed { i: Int, s: String ->
+        val names = parseArgList(expr).mapIndexed { i: Int, s: String ->
             LLVMVariable(s, descriptor.fields[i].type, pointer = descriptor.fields[i].pointer)
         }.toList()
 
@@ -151,34 +149,32 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         })
     }
 
-    private fun evaluteFunctionCallExpression(expr: KtCallExpression): LLVMSingleValue? {
+    private fun evaluateFunctionCallExpression(expr: KtCallExpression): LLVMSingleValue? {
         val function = expr.firstChild.firstChild
 
         val descriptor = state.functions[function.text] ?: return null
-        val names = parseArgList(expr
-                .firstChild
-                .getNextSiblingIgnoringWhitespaceAndComments()
-                ?.firstChild)
+        val names = parseArgList(expr)
 
         return LLVMCall(descriptor.returnType, "@${descriptor.name}", descriptor.args?.mapIndexed {
             i: Int, variable: LLVMVariable ->
-            LLVMVariable(names[i], variable.type)
+            LLVMVariable(names[i], variable.type, pointer = variable.pointer)
         } ?: listOf())
     }
 
-    private fun parseArgList(argumentList: PsiElement?): List<String> {
-        val args = ArrayList<String>()
+    private fun parseArgList(expr: KtCallExpression): List<String> {
+        val args = expr.getValueArgumentsInParentheses()
+        val result = ArrayList<String>()
 
-        var currentArg = argumentList?.getNextSiblingIgnoringWhitespaceAndComments()
+        for (arg in args) {
+            var text = (arg as KtValueArgument).text
+            if (text.startsWith("::")) {
+                text = "@${text.substring(2)}"
+            }
 
-        while (currentArg?.text != ")" && currentArg != null) {
-            args.add(currentArg.text)
-
-            currentArg = currentArg
-                    .getNextSiblingIgnoringWhitespaceAndComments()
-                    ?.getNextSiblingIgnoringWhitespaceAndComments()
+            result.add(text)
         }
-        return args
+
+        return result
     }
 
     private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {
