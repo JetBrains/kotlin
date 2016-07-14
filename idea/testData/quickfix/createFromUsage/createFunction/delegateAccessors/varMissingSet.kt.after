@@ -1,4 +1,4 @@
-// "Create member function 'setValue'" "true"
+// "Create member function 'F.setValue'" "true"
 import kotlin.reflect.KProperty
 
 class F {

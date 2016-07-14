@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'J.foo'" "true"
 // ERROR: Unresolved reference: foo
 
 fun test() {

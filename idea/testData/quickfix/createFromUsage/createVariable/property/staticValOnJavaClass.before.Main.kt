@@ -1,4 +1,4 @@
-// "Create member property 'foo'" "true"
+// "Create member property 'J.foo'" "true"
 // ERROR: Unresolved reference: foo
 
 fun test() {

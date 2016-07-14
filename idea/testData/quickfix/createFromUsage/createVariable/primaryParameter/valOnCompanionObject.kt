@@ -1,5 +1,5 @@
 // "Create member property 'foo' as constructor parameter" "false"
-// ACTION: Create member property 'foo'
+// ACTION: Create member property 'A.Companion.foo'
 // ACTION: Create extension property 'A.Companion.foo'
 // ACTION: Rename reference
 // ERROR: Unresolved reference: foo

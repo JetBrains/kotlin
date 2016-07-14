@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'T.foo'" "true"
 
 interface T
 

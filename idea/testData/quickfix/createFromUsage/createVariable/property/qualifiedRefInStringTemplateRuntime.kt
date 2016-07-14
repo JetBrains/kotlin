@@ -1,4 +1,4 @@
-// "Create member property 'foo'" "true"
+// "Create member property 'A.foo'" "true"
 // ERROR: Property must be initialized or be abstract
 
 class A

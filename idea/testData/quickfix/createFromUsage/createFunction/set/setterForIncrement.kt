@@ -1,4 +1,4 @@
-// "Create member function 'set'" "true"
+// "Create member function 'A.set'" "true"
 class A {
     operator fun get(s: String): Int = 1
 }

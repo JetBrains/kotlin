@@ -1,4 +1,4 @@
-// "Create member function 'get'" "true"
+// "Create member function 'Foo.get'" "true"
 
 import java.util.ArrayList
 

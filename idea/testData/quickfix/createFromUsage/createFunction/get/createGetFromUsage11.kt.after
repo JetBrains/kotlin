@@ -1,4 +1,4 @@
-// "Create member function 'get'" "true"
+// "Create member function 'Foo.get'" "true"
 
 class Foo<T> {
     operator fun get(s: String, w: T): T {

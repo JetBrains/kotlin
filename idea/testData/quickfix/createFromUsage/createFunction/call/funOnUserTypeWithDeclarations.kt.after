@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'F.foo'" "true"
 class F {
     fun bar() {
 

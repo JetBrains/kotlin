@@ -1,4 +1,4 @@
-// "Create member function 'plus'" "true"
+// "Create member function 'A.plus'" "true"
 
 class A<T>(val n: T) {
     infix operator fun plus(t: T): A<T> {

@@ -1,4 +1,4 @@
-// "Create member function 'unaryMinus'" "true"
+// "Create member function 'A.unaryMinus'" "true"
 
 class A<T>(val n: T) {
     operator fun minus(n: Int): A<T> = throw Exception()

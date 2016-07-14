@@ -3,7 +3,7 @@
 // ERROR: Unresolved reference: foo()["str"]
 // ERROR: No get method providing array access
 // ACTION: Create extension function 'Some.get'
-// ACTION: Create member function 'get'
+// ACTION: Create member function 'Some.get'
 // ACTION: Replace overloaded operator with function call
 
 

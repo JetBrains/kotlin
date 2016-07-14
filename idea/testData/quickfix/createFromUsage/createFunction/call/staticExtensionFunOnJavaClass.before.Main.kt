@@ -1,5 +1,5 @@
-// "Create extension function 'foo'" "false"
-// ACTION: Create member function 'foo'
+// "Create extension function 'J.foo'" "false"
+// ACTION: Create member function 'J.foo'
 // ACTION: Rename reference
 // ERROR: Unresolved reference: foo
 

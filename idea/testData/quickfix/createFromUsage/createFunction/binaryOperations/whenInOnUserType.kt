@@ -1,4 +1,4 @@
-// "Create member function 'contains'" "true"
+// "Create member function 'A.contains'" "true"
 
 class A<T>(val n: T)
 
