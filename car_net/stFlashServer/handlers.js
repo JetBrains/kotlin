@@ -7,6 +7,7 @@ const exec = require('child_process').exec;
 
 function loadBin(httpContent, response) {
 
+    console.log(httpContent.length);
     var uploadClass = main.protoConstructor.Upload;
     var uploadObject = uploadClass.decode(httpContent);
     fs.writeFile(main.binFilePath, uploadObject.data.buffer, "binary", function (error) {
