@@ -38,6 +38,8 @@ message Person {
   }
 
   repeated PhoneNumber phones = 4;
+
+  bytes someBytes = 5;
 }
 
 // Our address book file is just one of these.

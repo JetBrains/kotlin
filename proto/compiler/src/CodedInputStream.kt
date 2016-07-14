@@ -11,7 +11,7 @@ import java.nio.ByteOrder
  *
  */
 
-// TODO: decide, if we want to optimize for performance (then we have to deal with spaghetti-code)
+// TODO: refactor correctness checks into readTag
 class CodedInputStream(input: java.io.InputStream) {
 
     val bufferedInput: java.io.BufferedInputStream
@@ -20,7 +20,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readInt32(expectedFieldNumber: Int): Int {
-        val tag = readTag()
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
         checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
@@ -31,10 +31,7 @@ class CodedInputStream(input: java.io.InputStream) {
     // simply stored in the sign bit - similar to Java's protobuf implementation. Hence, all
     // methods reading unsigned ints simply redirect call to corresponding signed-reading method
     fun readUInt32(expectedFieldNumber: Int): Int {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readUInt32NoTag()
     }
 
@@ -43,19 +40,13 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readInt64(expectedFieldNumber: Int): Long {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readInt64NoTag()
     }
 
     // See note on unsigned integers implementations above
     fun readUInt64(expectedFieldNumber: Int): Long {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readUInt64NoTag()
     }
 
@@ -64,10 +55,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readBool(expectedFieldNumber: Int): Boolean {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, actualWireType, WireType.VARINT)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readBoolNoTag()
     }
 
@@ -83,10 +71,7 @@ class CodedInputStream(input: java.io.InputStream) {
 
     // Reading enums is like reading one int32 number. Caller is responsible for converting this ordinal to enum-object
     fun readEnum(expectedFieldNumber: Int): Int {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readEnumNoTag()
     }
 
@@ -95,10 +80,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readSInt32(expectedFieldNumber: Int): Int {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readSInt32NoTag()
     }
 
@@ -107,18 +89,12 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readSInt64(expectedFieldNumber: Int): Long {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.VARINT, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.VARINT)
         return readZigZag64NoTag()
     }
 
     fun readFixed32(expectedFieldNumber: Int): Int {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
         return readFixed32NoInt()
     }
 
@@ -127,10 +103,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readSFixed32(expectedFieldNumber: Int): Int {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
         return readSFixed32NoTag()
     }
 
@@ -139,10 +112,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readFixed64(expectedFieldNumber: Int): Long {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
         return readFixed64NoTag()
     }
 
@@ -151,10 +121,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readSFixed64(expectedFieldNumber: Int): Long {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
         return readSFixed64NoTag()
     }
 
@@ -163,10 +130,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readDouble(expectedFieldNumber: Int): Double {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_64, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
         return readDoubleNoTag()
     }
 
@@ -175,10 +139,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readFloat(expectedFieldNumber: Int): Float {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.FIX_32, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
         return readFloatNoTag()
     }
 
@@ -187,10 +148,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     fun readString(expectedFieldNumber: Int): String {
-        val tag = readTag()
-        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
-        val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.LENGTH_DELIMITED, actualWireType)
+        val tag = readTag(expectedFieldNumber, WireType.LENGTH_DELIMITED)
         return readStringNoTag()
     }
 
@@ -199,6 +157,17 @@ class CodedInputStream(input: java.io.InputStream) {
         val value = String(readRawBytes(length))
         return value
     }
+
+    fun readBytes(expectedFieldNumber: Int): ByteArray {
+        val tag = readTag(expectedFieldNumber, WireType.LENGTH_DELIMITED)
+        return readBytesNoTag()
+    }
+
+    fun readBytesNoTag(): ByteArray {
+        val length = readInt32NoTag()
+        return readRawBytes(length)
+    }
+
     /** ============ Utility methods ==================
      *  They are left non-private for cases when one wants to implement her/his own protocol format.
      *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
@@ -254,7 +223,7 @@ class CodedInputStream(input: java.io.InputStream) {
     }
 
     // reads tag. Note that it returns 0 for the end of message!
-    fun readTag(): Int {
+    fun readTag(expectedFieldNumber: Int, expectedWireType: WireType): Int {
         if (isAtEnd()) {
             return 0        // we can safely return 0 as sign of end of message, because 0-tags are illegal
         }
@@ -262,6 +231,10 @@ class CodedInputStream(input: java.io.InputStream) {
         if (tag == 0) {     // if we somehow had read 0-tag, then message is corrupted
             throw InvalidProtocolBufferException("Invalid tag 0")
         }
+
+        val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
+        val actualWireType = WireFormat.getTagWireType(tag)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.LENGTH_DELIMITED, actualWireType)
         return tag
     }
 

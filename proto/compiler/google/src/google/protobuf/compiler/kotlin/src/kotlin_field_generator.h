@@ -30,7 +30,8 @@ private:
     *          CodedInputStream.readSFixed32(fieldNumber: Int)
     */
     string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const;
-
+    void generateSetter(io::Printer * printer, string builderName) const;
+    void generateRepeatedMethods(io::Printer * printer, bool isBuilder, string builderName) const;
 public:
     FieldDescriptor::Label modifier;
     string simpleName;
@@ -45,15 +46,14 @@ public:
     string fullType;
 
     string initValue;
-    void generateCode(io::Printer * printer, bool isBuilder = false) const;
+    void generateCode(io::Printer * printer, bool isBuilder, string className) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
-    void generateSetter(io::Printer * printer, string builderName) const;
     FieldGenerator(FieldDescriptor const * descriptor);
 
 };
 
 } // namespace kotlin
-} // namspace compiler
+} // namespace compiler
 } // namespace protobuf
 } // namespace google
 

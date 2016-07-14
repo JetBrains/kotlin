@@ -22,7 +22,7 @@ In folder /src/ you can find sources for ProtoKot-runtime, that will be used by 
 ## Using generated code
 
 Example:
-
+    
     // Messages work only with CodedStream classes, provided by ProtoKot-runtime library.
     // One can create CodedStream passing any instance of corresponding Stream from Java's library.
     val s = ByteArrayOutputStream()

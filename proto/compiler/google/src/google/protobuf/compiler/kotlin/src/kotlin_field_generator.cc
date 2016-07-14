@@ -6,6 +6,7 @@
 #include <vector>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/descriptor.h>
+#include "kotlin_name_resolver.h"
 #include <iostream>
 
 namespace google {
@@ -28,12 +29,19 @@ string FieldGenerator::protobufToKotlinField() const {
             postamble = "?";
             break;
         case FieldDescriptor::LABEL_REPEATED:
+        #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
+            preamble = "MutableList <";
+            postamble = "> ";
+            break;
+        #else
             preamble  = "Array <";
             postamble = "> ";
             break;
+        #endif
     }
     return preamble + protobufToKotlinType() + postamble;
 }
+
 /**
  * Simply maps protobuf field type to corresponding Kotlin.
  */
@@ -43,7 +51,7 @@ string FieldGenerator::protobufToKotlinType() const {
         case FieldDescriptor::TYPE_BOOL:
             return "Boolean";
         case FieldDescriptor::TYPE_BYTES:
-            return "";  // TODO: support bytes type
+            return "ByteArray";
         case FieldDescriptor::TYPE_DOUBLE:
             return "Double";
         case FieldDescriptor::TYPE_ENUM:
@@ -56,8 +64,6 @@ string FieldGenerator::protobufToKotlinType() const {
             return "Long";
         case FieldDescriptor::TYPE_FLOAT:
             return "Float";
-        case FieldDescriptor::TYPE_GROUP:
-            return "";     // @deprecated //TODO: make proper error handling there
         case FieldDescriptor::TYPE_INT32:
             return "Int";
         case FieldDescriptor::TYPE_INT64:
@@ -82,25 +88,73 @@ string FieldGenerator::protobufToKotlinType() const {
 }
 
 string FieldGenerator::getInitValue() const {
-    if (descriptor->is_optional()) {
-        return "null";
-    }
     if (descriptor->is_repeated())
+    #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
+        return "mutableListOf()";
+    #else
         return "arrayOf()";
-    return fullType + "()";
+    #endif
+
+    FieldDescriptor::Type type = descriptor->type();
+    switch(type) {
+        case FieldDescriptor::TYPE_BOOL:
+            return "false";
+        case FieldDescriptor::TYPE_BYTES:
+            return "ByteArray(0)";
+        case FieldDescriptor::TYPE_DOUBLE:
+            return "0.0";
+        case FieldDescriptor::TYPE_ENUM: {
+            string enumType = descriptor->enum_type()->name();
+            return enumType + ".fromIntTo" + enumType + "(0)";   // produce enum from 0, as demanded by Google
+        }
+        case FieldDescriptor::TYPE_FIXED32:
+            return "0";
+        case FieldDescriptor::TYPE_FIXED64:
+            return "0L";
+        case FieldDescriptor::TYPE_FLOAT:
+            return "0f";
+        case FieldDescriptor::TYPE_INT32:
+            return "0";
+        case FieldDescriptor::TYPE_INT64:
+            return "0L";
+        case FieldDescriptor::TYPE_MESSAGE:
+            return string(descriptor->message_type()->name()) + "()";
+        case FieldDescriptor::TYPE_SFIXED32:
+            return "0";
+        case FieldDescriptor::TYPE_SFIXED64:
+            return "0L";
+        case FieldDescriptor::TYPE_SINT32:
+            return "0";
+        case FieldDescriptor::TYPE_SINT64:
+            return "0L";
+        case FieldDescriptor::TYPE_STRING:
+            return "\"\"";
+        case FieldDescriptor::TYPE_UINT32:
+            return "0";            // see notes for TYPE_FIXED32
+        case FieldDescriptor::TYPE_UINT64:
+            return "0L";           // see notes for TYPE_FIXED64
+    }
 }
 
-void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
+void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder, string className) const {
     map<string, string> vars;
     vars["name"] = simpleName;
     vars["field"] = protobufToKotlinField();
     printer->Print(vars, "var $name$ : $field$\n");
 
-    // make setter private for fair classes
-    if (!isBuilder) {
-        printer->Indent();
-        printer->Print("private set\n");
-        printer->Outdent();
+    // make setter private
+    printer->Indent();
+    printer->Print("private set\n");
+    printer->Outdent();
+
+    // generate setter for builder
+    if (isBuilder) {
+        generateSetter(printer, /* builderName = */ "Builder" + className);
+    }
+
+    // generate additional methods for repeated fields
+    if (modifier == FieldDescriptor::LABEL_REPEATED) {
+        generateRepeatedMethods(printer, isBuilder, /* builderName = */ "Builder" + className);
     }
 }
 
@@ -137,7 +191,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             //TODO: dirty stub here! Normally, reading from input should be delegated to Parsers, with proper error handling and etc.
             //Currently tag is ignored, and work of the library relies heavily on the field order guarantees.
             //Thus, backward-compability and extensions are not supported.
-            printer->Print(vars, "val tag = input.readTag()\n");
+            printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
             printer->Print(vars, "val listSize = input.readInt32NoTag()\n");
             printer->Print(vars, "for (i in 1..listSize) {\n");
             printer->Indent();
@@ -146,8 +200,12 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             printer->Print("}\n");
         }
         else {
+            // tag
+            printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+
             // length
-            printer->Print(vars, "$arg$.writeInt32NoTag($fieldName$.size)\n");
+            printer->Print(vars, "output.writeInt32NoTag($fieldName$.size)\n");
+            printer->Print(vars, "output.writeInt32NoTag($fieldName$.size)\n");
 
             // all elements
             printer->Print(vars, "for (item in $fieldName$) {\n");
@@ -201,11 +259,16 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
         vars["fieldName"] = noTag ? "item" : simpleName;
         vars["maybeNoTag"] = noTag ? "NoTag" : "";
+        vars["fieldNumber"] = std::to_string(descriptor->number());
         if (isRead) {
-            printer->Print(vars, "$fieldName$.readFrom$maybeNoTag$(input)\n");
+            printer->Print(vars,
+                           "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n"
+                           "$fieldName$.readFrom$maybeNoTag$(input)\n");
         }
         else {
-            printer->Print(vars, "$fieldName$.writeTo$maybeNoTag$(output)\n");
+            printer->Print(vars,
+                           "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n"
+                           "$fieldName$.writeTo$maybeNoTag$(output)\n");
         }
         return;
     }
@@ -217,9 +280,6 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     else {
         printer->Print(vars, "output.write$type$ ($fieldNumber$, $fieldName$)\n");
     }
-
-
-    // TODO: support tricky types like enums/messages/repeated fields/etc
 }
 
 string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const {
@@ -242,12 +302,10 @@ string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type 
             return "Bool";
         case FieldDescriptor::TYPE_STRING:
             return "String";
-        case FieldDescriptor::TYPE_GROUP:
-            return "";   // deprecated  // TODO: think about proper error handling here
         case FieldDescriptor::TYPE_MESSAGE:
-            return "Message";   // TODO: support messages
+            return "Message";
         case FieldDescriptor::TYPE_BYTES:
-            return "";  // TODO: support bytes
+            return "Bytes";
         case FieldDescriptor::TYPE_UINT32:
             return "UInt32";
         case FieldDescriptor::TYPE_ENUM:
@@ -265,25 +323,67 @@ string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type 
 
 void FieldGenerator::generateSetter(io::Printer *printer, string builderName) const {
     map <string, string> vars;
-    // TODO: refactor work with names into separate class
-    string camelCaseName = simpleName;
-    camelCaseName[0] = char(std::toupper(camelCaseName[0]));
-    vars["camelCaseName"] = camelCaseName;
-    vars["name"] = simpleName;
+    vars["camelCaseName"] = name_resolving::makeFirstLetterUpper(simpleName);
+    vars["fieldName"] = simpleName;
     vars["builderName"] = builderName;
     vars["type"] = fullType;
     printer->Print(vars,
                     "fun set$camelCaseName$(value: $type$): $builderName$ {\n");
     printer->Indent();
     printer->Print(vars,
-                    "$name$ = value\n"
+                    "$fieldName$ = value\n"
                     "return this\n");
     printer->Outdent();
     printer->Print("}\n");
 }
 
+void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuilder, string builderName) const {
+    map <string, string> vars;
+    vars["elementType"] = underlyingType;
+    vars["arg"] = "value";
+    vars["fieldName"] = simpleName;
+    vars["builderName"] = builderName;
+
+    // generate indexed setter for builders
+    if (isBuilder) {
+        printer->Print(vars, "fun set$elementType$(index: Int, $arg$: $elementType$): $builderName$ {\n");
+        printer->Indent();
+        printer->Print(vars, "$fieldName$[index] = $arg$\n");
+        printer->Print(vars, "return this\n");
+        printer->Outdent();
+        printer->Print("}\n");
+    }
+
+    #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
+    if (isBuilder) {
+        // generate single-add for builders
+        printer->Print(vars, "fun add$elementType$($arg$: $elementType$): $builderName$ {\n");
+        printer->Indent();
+        printer->Print(vars, "$fieldName$.add($arg$)\n"
+                             "return this\n");
+        printer->Outdent();
+        printer->Print(vars, "}\n");
+
+        // generate addAll for builders
+        printer->Print(vars, "fun addAll$elementType$($arg$: Iterable<$elementType$>): $builderName$ {\n");
+        printer->Indent();
+        printer->Print(vars, "for (item in $arg$) {\n");
+        printer->Indent();
+        printer->Print(vars, "$fieldName$.add(item)\n");
+
+        printer->Outdent();     // for-loop
+        printer->Print("}\n");
+
+        printer->Print("return this\n");
+
+        printer->Outdent();     // function body
+        printer->Print("}\n");
+    }
+    #endif
+}
+
 
 } // namespace kotlin
-} // namspace compiler
+} // namespace compiler
 } // namespace protobuf
 } // namespace google

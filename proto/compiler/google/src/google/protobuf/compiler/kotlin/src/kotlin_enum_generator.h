@@ -36,7 +36,7 @@ private:
 };
 
 } // namespace kotlin
-} // namspace compiler
+} // namespace compiler
 } // namespace protobuf
 } // namespace google
 

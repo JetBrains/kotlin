@@ -114,6 +114,6 @@ EnumGenerator::EnumGenerator(EnumDescriptor const *descriptor) {
 }
 
 } // namespace kotlin
-} // namspace compiler
+} // namespace compiler
 } // namespace protobuf
 } // namespace google

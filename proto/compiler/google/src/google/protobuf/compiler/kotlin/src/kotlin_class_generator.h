@@ -47,7 +47,6 @@ private:
     void generateBuilder (io::Printer * printer) const;
     void generateBuildMethod (io::Printer * printer) const;
     void generateInitSection (io::Printer * printer) const;
-    void generateSetters (io::Printer * printer) const;
     /**
      * Flag isBuilder used for reducing code repeating, as code for class itself
      * and for its inner builder are structurally very alike and can be generated
@@ -67,7 +66,7 @@ private:
 };
 
 } // namespace kotlin
-} // namspace compiler
+} // namespace compiler
 } // namespace protobuf
 } // namespace google
 #endif //SRC_KOTLIN_CLASS_GENERATOR_H

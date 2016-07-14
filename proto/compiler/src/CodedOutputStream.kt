@@ -151,6 +151,22 @@ class CodedOutputStream(val output: java.io.OutputStream) {
         output.write(value.toByteArray())
     }
 
+    fun writeBytes(fieldNumber: Int, value: ByteArray?) {
+        value ?: return
+        writeTag(fieldNumber, WireType.LENGTH_DELIMITED)
+        writeBytesNoTag(value)
+    }
+
+    fun writeBytesNoTag(value: ByteArray) {
+        writeInt32NoTag(value.size)
+        output.write(value)
+    }
+
+    /** ============ Utility methods ==================
+     *  They are left non-private for cases when one wants to implement her/his own protocol format.
+     *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
+     */
+
     fun writeLittleEndian(value: Int?) {
         value ?: return
         val bb = ByteBuffer.allocate(4)

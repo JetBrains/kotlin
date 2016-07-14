@@ -10,6 +10,7 @@
 #endif
 #include "kotlin_file_generator.h"
 #include <iostream>
+#include "kotlin_name_resolver.h"
 
 namespace google {
 namespace protobuf {
@@ -26,14 +27,7 @@ void FileGenerator::generateCode(io::Printer *printer, std::vector<ClassGenerato
 bool FileGenerator::Generate(const FileDescriptor *file, const string &parameter, GeneratorContext *context,
                              string *error) const {
     std::vector<ClassGenerator *> classes;
-
-    //TODO: maybe wrap work with class names and stuff in separate class (like in Java implementation)
-    // Get output file name
-    string const proto_file_name = file->name();
-    size_t file_extension_index = proto_file_name.find(".proto");
-    string const file_name = proto_file_name.substr(0, file_extension_index) + ".kt";
-
-
+    string const file_name = name_resolving::getKotlinOutputByProtoName(file->name());
     google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> output(context->Open(file_name));
     io::Printer printer(output.get(), '$', /* annotation_collector = */ NULL);
 

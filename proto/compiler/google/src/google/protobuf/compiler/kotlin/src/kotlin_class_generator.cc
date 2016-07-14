@@ -22,7 +22,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     * Also note that fields should be declared before init section.
     */
     for (FieldGenerator *gen: properties) {
-        gen->generateCode(printer, isBuilder);
+        gen->generateCode(printer, isBuilder, simpleName);
         printer->Print("\n");
     }
 
@@ -61,9 +61,6 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     if (isBuilder) {
         printer->Print("\n");
         generateBuildMethod(printer);
-
-        printer->Print("\n");
-        generateSetters(printer);
     }
 
     printer->Outdent();
@@ -72,7 +69,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
 
 ClassGenerator::ClassGenerator(Descriptor const *descriptor)
     : descriptor(descriptor) {
-    simpleName = descriptor->name();    // TODO: think about more careful class naming
+    simpleName = descriptor->name();
 
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i) {
@@ -143,7 +140,6 @@ void ClassGenerator::generateSerializers(io::Printer * printer, bool isRead) con
                            "\n");
     printer->Indent();
 
-    //TODO: write message tag and size
     printer->Print(vars, "$maybeReturn$$funName$NoTag($arg$)\n");
 
     printer->Outdent();
@@ -233,14 +229,6 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
     printer->Outdent();
     printer->Print("}\n");
 }
-
-void ClassGenerator::generateSetters(io::Printer *printer) const {
-    for (int i = 0; i < properties.size(); ++i) {
-        properties[i]->generateSetter(printer, "Builder" + simpleName);
-        printer->Print("\n");
-    }
-}
-
 
 const string ClassModifier::getName() const {
     string result = "";
