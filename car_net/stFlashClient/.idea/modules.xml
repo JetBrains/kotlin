@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/stFlashClient.iml" filepath="$PROJECT_DIR$/stFlashClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/stFlashClient.iml" filepath="$PROJECT_DIR$/.idea/modules/stFlashClient.iml" />
     </modules>
   </component>
 </project>
