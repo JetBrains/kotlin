@@ -34,11 +34,20 @@ private:
 public:
     FieldDescriptor::Label modifier;
     string simpleName;
-    string fieldName;
-    string fieldType;
+    string underlyingType;  // unwrapped type.
+
+    /**
+     * Full type of field.
+     * fullType = Array<underlyingType> for REPEATED fields
+     * fullType = underlyingType?       for OPTIONAL fields
+     * fullType = underlyingType        for all other cases
+     */
+    string fullType;
+
     string initValue;
     void generateCode(io::Printer * printer, bool isBuilder = false) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
+    void generateSetter(io::Printer * printer, string builderName) const;
     FieldGenerator(FieldDescriptor const * descriptor);
 
 };

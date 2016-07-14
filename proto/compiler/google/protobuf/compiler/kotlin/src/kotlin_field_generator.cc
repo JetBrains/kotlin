@@ -86,8 +86,8 @@ string FieldGenerator::getInitValue() const {
         return "null";
     }
     if (descriptor->is_repeated())
-        return "listOf()";
-    return fieldName + "()";
+        return "arrayOf()";
+    return fullType + "()";
 }
 
 void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
@@ -108,8 +108,8 @@ FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor)
         : descriptor(descriptor)
         , modifier(descriptor->label())
         , simpleName(descriptor->name())
-        , fieldName(protobufToKotlinField())
-        , fieldType(protobufToKotlinType())
+        , underlyingType(protobufToKotlinType())
+        , fullType(protobufToKotlinField())
         , initValue(getInitValue())
 { }
 
@@ -135,8 +135,8 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
         // tag
         if (isRead) {
             //TODO: dirty stub here! Normally, reading from input should be delegated to Parsers, with proper error handling and etc.
-            //Currently tag is ignored, and fields order is critical for serialization/deserialization. Therefore,
-            //backward-compability and extensions are not supported.
+            //Currently tag is ignored, and work of the library relies heavily on the field order guarantees.
+            //Thus, backward-compability and extensions are not supported.
             printer->Print(vars, "val tag = input.readTag()\n");
             printer->Print(vars, "val listSize = input.readInt32NoTag()\n");
             printer->Print(vars, "for (i in 1..listSize) {\n");
@@ -156,8 +156,9 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             /* hack: copy current FieldGenerator and change label to OPTIONAL. This will allow
                to re-use this function for generating serialization code for elements of array.
                More importantly, this will care about nested types too.
-               However, this hack isn't necessary and could be safely removed as soon as target
-               code will support inheritance and interfaces
+               Efficiently, it inlines serialization code for all underlying types.
+               This hack isn't necessary from the architectural point of view and could be safely5
+               removed as soon as target code will support inheritance and interfaces.
                (then writing CodedOutputStream.writeMessage will be possible).
              */
             FieldGenerator singleFieldGen = FieldGenerator(descriptor);
@@ -183,7 +184,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
       Example: output.writeEnum(42, enumField.ord)
      */
     if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
-        vars["converter"] = fieldType + ".fromIntTo" + fieldType;
+        vars["converter"] = underlyingType + ".fromIntTo" + underlyingType;
         if (isRead) {
             printer->Print(vars, "$fieldName$ = $converter$(input.read$type$($fieldNumber$))\n");
         }
@@ -221,7 +222,6 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     // TODO: support tricky types like enums/messages/repeated fields/etc
 }
 
-// TODO: think about refactoring this method to FieldGenerator, as it is related to field, not to Class in general
 string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const {
     switch (type) {
         case FieldDescriptor::TYPE_DOUBLE:
@@ -262,6 +262,27 @@ string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type 
             return "SInt64";
     }
 }
+
+void FieldGenerator::generateSetter(io::Printer *printer, string builderName) const {
+    map <string, string> vars;
+    // TODO: refactor work with names into separate class
+    string camelCaseName = simpleName;
+    camelCaseName[0] = char(std::toupper(camelCaseName[0]));
+    vars["camelCaseName"] = camelCaseName;
+    vars["name"] = simpleName;
+    vars["builderName"] = builderName;
+    vars["type"] = fullType;
+    printer->Print(vars,
+                    "fun set$camelCaseName$(value: $type$): $builderName$ {\n");
+    printer->Indent();
+    printer->Print(vars,
+                    "$name$ = value\n"
+                    "return this\n");
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+
 } // namespace kotlin
 } // namspace compiler
 } // namespace protobuf

@@ -1,4 +1,4 @@
-class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.String?, phones: Array <PhoneNumber> ) {
+class Person private constructor (name: kotlin.String? = null, id: Int? = null, email: kotlin.String? = null, phones: Array <PhoneNumber>  = arrayOf()) {
   var name : kotlin.String?
     private set
 
@@ -34,7 +34,7 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
       }
     }
   }
-  class PhoneNumber private constructor (number: kotlin.String?, type: PhoneType?) {
+  class PhoneNumber private constructor (number: kotlin.String? = null, type: PhoneType? = null) {
     var number : kotlin.String?
       private set
 
@@ -56,7 +56,7 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
       output.writeEnum (2, type?.ord)
     }
 
-    class BuilderPhoneNumber constructor (number: kotlin.String?, type: PhoneType?) {
+    class BuilderPhoneNumber constructor (number: kotlin.String? = null, type: PhoneType? = null) {
       var number : kotlin.String?
 
       var type : PhoneType?
@@ -79,6 +79,17 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
       fun build(): PhoneNumber {
         return PhoneNumber(number, type)
       }
+
+      fun setNumber(value: kotlin.String?): BuilderPhoneNumber {
+        number = value
+        return this
+      }
+
+      fun setType(value: PhoneType?): BuilderPhoneNumber {
+        type = value
+        return this
+      }
+
     }
 
     fun mergeFrom (input: CodedInputStream) {
@@ -104,7 +115,7 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
     }
   }
 
-  class BuilderPerson constructor (name: kotlin.String?, id: Int?, email: kotlin.String?, phones: Array <PhoneNumber> ) {
+  class BuilderPerson constructor (name: kotlin.String? = null, id: Int? = null, email: kotlin.String? = null, phones: Array <PhoneNumber>  = arrayOf()) {
     var name : kotlin.String?
 
     var id : Int?
@@ -141,6 +152,27 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
     fun build(): Person {
       return Person(name, id, email, phones)
     }
+
+    fun setName(value: kotlin.String?): BuilderPerson {
+      name = value
+      return this
+    }
+
+    fun setId(value: Int?): BuilderPerson {
+      id = value
+      return this
+    }
+
+    fun setEmail(value: kotlin.String?): BuilderPerson {
+      email = value
+      return this
+    }
+
+    fun setPhones(value: Array <PhoneNumber> ): BuilderPerson {
+      phones = value
+      return this
+    }
+
   }
 
   fun mergeFrom (input: CodedInputStream) {
@@ -158,7 +190,7 @@ class Person private constructor (name: kotlin.String?, id: Int?, email: kotlin.
 }
 
 
-class AddressBook private constructor (people: Array <Person> ) {
+class AddressBook private constructor (people: Array <Person>  = arrayOf()) {
   var people : Array <Person> 
     private set
 
@@ -180,7 +212,7 @@ class AddressBook private constructor (people: Array <Person> ) {
     }
   }
 
-  class BuilderAddressBook constructor (people: Array <Person> ) {
+  class BuilderAddressBook constructor (people: Array <Person>  = arrayOf()) {
     var people : Array <Person> 
 
 
@@ -205,6 +237,12 @@ class AddressBook private constructor (people: Array <Person> ) {
     fun build(): AddressBook {
       return AddressBook(people)
     }
+
+    fun setPeople(value: Array <Person> ): BuilderAddressBook {
+      people = value
+      return this
+    }
+
   }
 
   fun mergeFrom (input: CodedInputStream) {

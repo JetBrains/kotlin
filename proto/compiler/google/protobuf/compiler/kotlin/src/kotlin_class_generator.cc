@@ -19,6 +19,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     /**
     * Field generator should know if it is generating code for builder.
     * or for fair class to choose between 'val' and 'var'.
+    * Also note that fields should be declared before init section.
     */
     for (FieldGenerator *gen: properties) {
         gen->generateCode(printer, isBuilder);
@@ -47,7 +48,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     printer->Print("\n");
     generateSerializersNoTag(printer, /* isRead = */ isBuilder);
 
-    // builder and mergeFrom only for fair classes
+    // builder, mergeFrom and only for fair classes
     if (!isBuilder) {
         printer->Print("\n");
         generateBuilder(printer);
@@ -56,10 +57,13 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
         generateMergeFrom(printer);
     }
 
-    // build() is only for builders
+    // build() and setters are only for builders
     if (isBuilder) {
         printer->Print("\n");
         generateBuildMethod(printer);
+
+        printer->Print("\n");
+        generateSetters(printer);
     }
 
     printer->Outdent();
@@ -127,18 +131,20 @@ void ClassGenerator::generateMergeFrom(io::Printer * printer) const {
 void ClassGenerator::generateSerializers(io::Printer * printer, bool isRead) const {
     map <string, string> vars;
     vars["funName"]= isRead ? "readFrom"            : "writeTo";
+    vars["returnType"] = isRead ? "Builder" + simpleName : "Unit";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
     vars["maybeSeparator"] = isRead ? "" : ", ";
+    vars["maybeReturn"] = isRead ? "return " : "";
 
     // generate function header
     printer->Print(vars,
-                   "fun $funName$ ($arg$: $stream$) {"
+                   "fun $funName$ ($arg$: $stream$): $returnType$ {"
                            "\n");
     printer->Indent();
 
     //TODO: write message tag and size
-    printer->Print(vars, "$funName$NoTag($arg$)\n");
+    printer->Print(vars, "$maybeReturn$$funName$NoTag($arg$)\n");
 
     printer->Outdent();
     printer->Print("}\n");
@@ -149,10 +155,12 @@ void ClassGenerator::generateSerializersNoTag(io::Printer *printer, bool isRead)
     vars["funName"]= isRead ? "readFromNoTag"       : "writeToNoTag";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
+    vars["returnType"] = isRead ? "Builder" + simpleName : "Unit";
+    vars["maybeReturn"] = isRead ? "return this\n" : "";
 
     // generate function header
     printer->Print(vars,
-                   "fun $funName$ ($arg$: $stream$) {"
+                   "fun $funName$ ($arg$: $stream$): $returnType$ {"
                    "\n");
     printer->Indent();
 
@@ -161,6 +169,7 @@ void ClassGenerator::generateSerializersNoTag(io::Printer *printer, bool isRead)
         properties[i]->generateSerializationCode(printer, isRead);
     }
 
+    printer->Print(vars, "$maybeReturn$");
     printer->Outdent();
     printer->Print("}\n");
 }
@@ -171,7 +180,7 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + ": " + properties[i]->fieldName;
+        argumentList += properties[i]->simpleName + ": " + properties[i]->fullType + " = " + properties[i]->initValue;
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }
@@ -223,6 +232,13 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
 
     printer->Outdent();
     printer->Print("}\n");
+}
+
+void ClassGenerator::generateSetters(io::Printer *printer) const {
+    for (int i = 0; i < properties.size(); ++i) {
+        properties[i]->generateSetter(printer, "Builder" + simpleName);
+        printer->Print("\n");
+    }
 }
 
 
