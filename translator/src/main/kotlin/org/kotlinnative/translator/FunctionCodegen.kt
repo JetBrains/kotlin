@@ -85,7 +85,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         var actualReturnType: LLVMType = returnType.type
         val actualArgs = ArrayList<LLVMVariable>()
 
-        if (returnType.pointer) {
+        if (returnType.pointer > 0) {
             actualReturnType = LLVMVoidType()
             actualArgs.add(returnType)
         }
@@ -99,11 +99,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     private fun generateLoadArguments() {
         args.forEach {
             if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).isReturn) {
-                val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMLocalScope(), pointer = false)
+                val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMLocalScope(), pointer = 0)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
                 variableManager.addVariable(it.label, allocVar, 2)
             } else {
-                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMLocalScope(), pointer = true), 2)
+                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMLocalScope(), pointer = 0), 2)
             }
         }
     }
@@ -153,7 +153,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val receiveValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)
         val type = (receiveValue as TypedCompileTimeConstant).type
         val value = receiveValue.getValue(type) ?: return null
-        val variable = variableManager.receiveVariable(".str", LLVMStringType(value.toString().length), LLVMGlobalScope(), pointer = false)
+        val variable = variableManager.receiveVariable(".str", LLVMStringType(value.toString().length), LLVMGlobalScope(), pointer = 0)
 
         codeBuilder.addStringConstant(variable, value.toString())
         return variable
@@ -173,7 +173,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val clazz = state.classes[(receiver.type as LLVMReferenceType).type]!!
         val field = clazz.fieldsIndex[selectorName]!!
 
-        val result = codeBuilder.getNewVariable(field.type, pointer = true)
+        val result = codeBuilder.getNewVariable(field.type, pointer = 1)
         codeBuilder.loadClassField(result, receiver, field.offset)
         return result
     }
@@ -183,7 +183,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val arrayIndex = evaluateConstantExpression(expr.indexExpressions.first() as KtConstantExpression)
         val arrayReceivedVariable = codeBuilder.loadAndGetVariable(arrayNameVariable)
         val arrayElementType = (arrayNameVariable.type as LLVMArray).basicType()
-        val indexVariable = codeBuilder.getNewVariable(arrayElementType, pointer = true)
+        val indexVariable = codeBuilder.getNewVariable(arrayElementType, pointer = 1)
         codeBuilder.loadVariableOffset(indexVariable, arrayReceivedVariable, arrayIndex);
         return indexVariable
     }
@@ -219,7 +219,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         val result = codeBuilder.getNewVariable(returnType.type)
         codeBuilder.allocVar(result)
-        result.pointer = true
+        result.pointer = 1
 
         val args = ArrayList<LLVMSingleValue>()
         args.add(result)
@@ -241,7 +241,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val names = parseArgList(expr, scopeDepth).mapIndexed(fun(i: Int, llvmSingleValue: LLVMSingleValue): LLVMSingleValue {
             var result = llvmSingleValue
 
-            if (result.pointer && !descriptor.args[i].pointer) {
+            if (result.pointer > 0 && descriptor.args[i].pointer == 0) {
                 result = codeBuilder.getNewVariable(descriptor.args[i].type)
                 codeBuilder.loadVariable(result, llvmSingleValue as LLVMVariable)
             }
@@ -261,7 +261,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             is LLVMReferenceType -> {
                 val result = codeBuilder.getNewVariable(returnType)
                 codeBuilder.allocVar(result)
-                result.pointer = true
+                result.pointer = 1
 
                 val args = ArrayList<LLVMSingleValue>()
                 args.add(result)
@@ -285,7 +285,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
                 val resultPtr = codeBuilder.getNewVariable(returnType)
                 codeBuilder.allocVar(resultPtr)
-                resultPtr.pointer = true
+                resultPtr.pointer = 1
                 codeBuilder.storeVariable(resultPtr, result)
                 return resultPtr
             }
@@ -323,7 +323,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             KtNodeTypes.CHARACTER_CONSTANT -> LLVMCharType()
             else -> throw IllegalArgumentException("Unknown type")
         }
-        return LLVMConstant(node.firstChildNode.text, type, pointer = false)
+        return LLVMConstant(node.firstChildNode.text, type, pointer = 0)
     }
 
     private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMSingleValue? {
@@ -388,7 +388,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun executeIfExpression(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
         val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
-        val variable = codeBuilder.getNewVariable(LLVMIntType(), true)
+        val variable = codeBuilder.getNewVariable(LLVMIntType(), pointer = 1)
         codeBuilder.allocVar(variable)
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
@@ -436,13 +436,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         when (assignExpression) {
             is LLVMVariable -> {
-                val allocVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type, LLVMLocalScope(), pointer = true)
+                val allocVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type, LLVMLocalScope(), pointer = 1)
                 codeBuilder.allocVar(allocVar)
                 variableManager.addVariable(identifier.text, allocVar, scopeDepth)
                 copyVariable(assignExpression, allocVar)
             }
             is LLVMConstant -> {
-                val newVar = variableManager.receiveVariable(identifier!!.text, LLVMIntType(), LLVMLocalScope(), pointer = true)
+                val newVar = variableManager.receiveVariable(identifier!!.text, LLVMIntType(), LLVMLocalScope(), pointer = 1)
 
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)

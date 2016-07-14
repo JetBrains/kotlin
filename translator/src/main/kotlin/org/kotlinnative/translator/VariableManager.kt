@@ -29,7 +29,7 @@ class VariableManager {
         globalVariableCollection.put(name, variable)
     }
 
-    fun receiveVariable(name: String, type: LLVMType, scope: LLVMScope, pointer: Boolean): LLVMVariable {
+    fun receiveVariable(name: String, type: LLVMType, scope: LLVMScope, pointer: Int): LLVMVariable {
         val ourVersion = variableVersion.getOrDefault(name, 0) + 1
         variableVersion.put(name, ourVersion)
 
