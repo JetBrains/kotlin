@@ -2364,6 +2364,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("objectSuperConstructorCall.kt")
+            public void testObjectSuperConstructorCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classLiteral/bound/objectSuperConstructorCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("primitives.kt")
             public void testPrimitives() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classLiteral/bound/primitives.kt");
