@@ -21,6 +21,10 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import javax.lang.model.element.Modifier
 
+private val HAS_DEFAULT by lazy {
+    Modifier::class.java.declaredFields.any { it.name == "DEFAULT" }
+}
+
 private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
     fun MutableSet<Modifier>.check(modifier: String, javaModifier: Modifier) {
         if (hasModifierProperty(modifier)) this += javaModifier
@@ -38,7 +42,10 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
         check(STRICTFP, Modifier.STRICTFP)
         check(TRANSIENT, Modifier.TRANSIENT)
         check(VOLATILE, Modifier.VOLATILE)
-        check(DEFAULT, Modifier.DEFAULT)
+        
+        if (HAS_DEFAULT) {
+            check(DEFAULT, Modifier.DEFAULT)
+        }
     }
 }
 
