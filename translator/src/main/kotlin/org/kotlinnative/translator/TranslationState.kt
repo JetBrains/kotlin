@@ -23,8 +23,9 @@ import java.util.*
 class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val arm: Boolean) {
 
     var functions = HashMap<String, FunctionCodegen>()
-    var classes = HashMap<String, ClassCodegen>()
     val variableManager = VariableManager()
+    var classes = HashMap<String, ClassCodegen>()
+    var properties = HashMap<String, PropertyCodegen>()
 }
 
 fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = false): TranslationState {

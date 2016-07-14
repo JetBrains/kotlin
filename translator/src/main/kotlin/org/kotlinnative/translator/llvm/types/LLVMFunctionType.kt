@@ -5,6 +5,8 @@ import org.kotlinnative.translator.llvm.LLVMMapStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
 
 class LLVMFunctionType(type: KotlinType) : LLVMType() {
+
+    override val defaultValue = throw UnsupportedOperationException()
     override val align: Int = 4
     override val size: Byte = 4
 

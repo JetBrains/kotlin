@@ -152,6 +152,10 @@ class LLVMBuilder(val arm: Boolean) {
         llvmCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
+    fun declareGlovalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {
+        llvmCode.appendln("$variable = global ${variable.type} $defaultValue, align ${variable.type.align}")
+    }
+
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(!source.pointer)
         val target = getNewVariable(source.type, source.pointer, source.kotlinName)

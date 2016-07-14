@@ -4,6 +4,7 @@ import java.util.*
 
 class LLVMReferenceType(val type: String, val prefix: String = "") : LLVMType() {
 
+    override val defaultValue = throw UnsupportedOperationException()
     override val align = 4
     override val size: Byte = 4
     override fun toString() = "%$prefix.$type"

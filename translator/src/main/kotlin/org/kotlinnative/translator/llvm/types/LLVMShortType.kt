@@ -24,5 +24,7 @@ class LLVMShortType() : LLVMType() {
 
     override val size: Byte = 2
     override val align = 2
+    override val defaultValue = "0"
+
     override fun toString(): String = "i16"
 }

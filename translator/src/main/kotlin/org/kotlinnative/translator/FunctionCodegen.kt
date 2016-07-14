@@ -311,13 +311,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         when (assignExpression) {
             is LLVMVariable -> {
-                val allocVar = variableManager.getVariable(identifier!!.text, LLVMIntType(), pointer = true)
+                val allocVar = variableManager.receiveVariable(identifier!!.text, LLVMIntType(), pointer = true)
                 codeBuilder.allocVar(allocVar)
                 variableManager.addVariable(identifier.text, allocVar, scopeDepth)
                 codeBuilder.copyVariableValue(assignExpression, allocVar)
             }
             is LLVMConstant -> {
-                val newVar = variableManager.getVariable(identifier!!.text, LLVMIntType(), pointer = true)
+                val newVar = variableManager.receiveVariable(identifier!!.text, LLVMIntType(), pointer = true)
 
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
