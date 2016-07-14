@@ -1,0 +1,24 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    compile project(':lib-a')
+    kapt "com.squareup.dagger:dagger-compiler:$dagger_version"
+}
+
+kapt {
+    generateStubs = true
+}

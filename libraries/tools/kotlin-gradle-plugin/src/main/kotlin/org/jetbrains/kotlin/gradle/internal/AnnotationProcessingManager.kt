@@ -111,12 +111,8 @@ private fun Project.createKotlinAfterJavaTask(
         this
     }
 
-    getAllTasks(false)
-            .flatMap { it.value }
-            .filter { javaTask in it.taskDependencies.getDependencies(it) }
-            .forEach { it.dependsOn(kotlinAfterJavaTask) }
-
     kotlinAfterJavaTask.dependsOn(javaTask)
+    javaTask.finalizedByIfNotFailed(kotlinAfterJavaTask)
 
     kotlinAfterJavaTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-${kotlinTask.name}")
     if (kotlinOptions != null) {

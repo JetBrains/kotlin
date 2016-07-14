@@ -161,4 +161,14 @@ fun getSomething() = 10
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testAndroidKaptChangingDependencies() {
+        val project = Project("AndroidKaptChangingDependencies", gradleVersion)
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
+        }
+    }
 }

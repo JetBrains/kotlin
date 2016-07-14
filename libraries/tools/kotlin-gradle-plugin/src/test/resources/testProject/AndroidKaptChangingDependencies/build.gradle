@@ -1,0 +1,22 @@
+buildscript {
+    ext.kotlin_version = '1.1-SNAPSHOT'
+    ext.support_lib_version = '23.1.1'
+    ext.dagger_version = '1.2.5'
+
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$androidToolsVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+        jcenter()
+    }
+}
