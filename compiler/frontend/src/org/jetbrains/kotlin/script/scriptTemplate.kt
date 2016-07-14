@@ -30,10 +30,6 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.lang.reflect.InvocationHandler
-import java.lang.reflect.Method
-import java.lang.reflect.Proxy
-import java.util.concurrent.Future
 import kotlin.reflect.*
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = "*.\\.kts"
@@ -125,17 +121,15 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     private val definitionData by lazy {
         val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
         val obsoleteResolverAnn = template.annotations.firstIsInstanceOrNull<ScriptDependencyResolver>()
-        val (resolverClass, resolverObject) =
-                when {
-                    resolver != null -> resolver.javaClass.kotlin to resolver
-                    defAnn != null -> defAnn.resolver to defAnn.resolver.primaryConstructor?.call()
-                    obsoleteResolverAnn != null -> ObsoleteResolverProxy::class to ObsoleteResolverProxy(obsoleteResolverAnn)
-                    else -> BasicScriptDependenciesResolver::class to BasicScriptDependenciesResolver()
-                }
         val filePattern = defAnn?.scriptFilePattern ?:
                           template.annotations.firstIsInstanceOrNull<ScriptFilePattern>()?.pattern ?:
                           DEFAULT_SCRIPT_FILE_PATTERN
-        ScriptTemplateDefinitionData(resolverClass, resolverObject, filePattern)
+        when {
+            resolver != null -> ScriptTemplateDefinitionData(resolver.javaClass.kotlin, resolver, filePattern)
+            defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver, defAnn.resolver.primaryConstructor?.call(), filePattern)
+            obsoleteResolverAnn != null -> ScriptTemplateDefinitionData(ObsoleteResolverProxy::class, ObsoleteResolverProxy(obsoleteResolverAnn), filePattern)
+            else -> ScriptTemplateDefinitionData(BasicScriptDependenciesResolver::class, BasicScriptDependenciesResolver(), filePattern)
+        }
     }
 
     override val name = template.simpleName!!
@@ -156,29 +150,15 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
-        val fileAnnotations = getAnnotationEntries(file, project)
-                .map { KtAnnotationWrapper(it) }
-                .mapNotNull { wrappedAnn ->
+        val classLoader = (template as Any).javaClass.classLoader
+        val annotationWrappers = getAnnotationEntries(file, project)
+                .mapNotNull { psiAnn ->
                     // TODO: consider advanced matching using semantic similar to actual resolving
-                    definitionData.acceptedAnnotations.find {
-                        wrappedAnn.name == it.simpleName || wrappedAnn.name == it.qualifiedName
-                    }?.let { it to wrappedAnn }
+                    definitionData.acceptedAnnotations.find { ann ->
+                        psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
+                    }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
                 }
-        val annotations = fileAnnotations.map { annClassToWrapper ->
-            try {
-                val handler = AnnProxyInvocationHandler(annClassToWrapper.first, annClassToWrapper.second.valueArguments)
-                val proxy = Proxy.newProxyInstance((template as Any).javaClass.classLoader, arrayOf(annClassToWrapper.first.java), handler) as Annotation
-                annClassToWrapper.first to proxy
-            }
-            catch (ex: Exception) {
-                annClassToWrapper.first to InvalidScriptResolverAnnotation(annClassToWrapper.second.name, annClassToWrapper.second.valueArguments, ex)
-            }
-        }
-        val supportedAnnotations = annotations.mapNotNull { annClassToWrapper ->
-            val annFQN = annClassToWrapper.first.qualifiedName
-            if (definitionData.acceptedAnnotations.any { it.qualifiedName == annFQN }) annClassToWrapper.second else null
-        }
-        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, supportedAnnotations), environment, previousDependencies)
+        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, annotationWrappers.map { it.getProxy(classLoader) }), environment, previousDependencies)
         return fileDeps
     }
 
@@ -206,20 +186,6 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     class BasicScriptContents<out TF>(val myFile: TF, override val annotations: Iterable<Annotation>) : ScriptContents {
         override val file: File? get() = getFile(myFile)
         override val text: CharSequence? get() = getFileContents(myFile)
-    }
-}
-
-class InvalidScriptResolverAnnotation(val name: String, val params: Iterable<Any?>, val error: Exception? = null) : Annotation
-
-class AnnProxyInvocationHandler<out K: KClass<out Any>>(val targetAnnClass: K, val annParams: List<Pair<String?, Any?>>) : InvocationHandler {
-    override fun invoke(proxy: Any?, method: Method?, params: Array<out Any>?): Any? {
-        if (method == null) return null
-        targetAnnClass.memberProperties.forEachIndexed { i, prop ->
-            if (prop.name == method.name) {
-                return if (i >= annParams.size) null else annParams[i].second
-            }
-        }
-        return null
     }
 }
 
