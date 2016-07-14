@@ -1,4 +1,4 @@
-// "Create member function 'compareTo'" "true"
+// "Create member function 'A.compareTo'" "true"
 
 class A<T>(val n: T)
 

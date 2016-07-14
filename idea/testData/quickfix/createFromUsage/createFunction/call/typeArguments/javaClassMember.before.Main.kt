@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'B.foo'" "true"
 // ERROR: Unresolved reference: foo
 
 class A<T> internal constructor(val b: B<T>) {

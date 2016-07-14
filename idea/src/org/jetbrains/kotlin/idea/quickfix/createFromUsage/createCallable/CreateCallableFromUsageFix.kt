@@ -95,18 +95,23 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 if (it.name.isNotEmpty()) {
                     append(" '")
 
-                    if (isExtension) {
-                        val callableBuilder =
-                                CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
-                                .createBuilder()
-                        val receiverType = callableBuilder
-                                .computeTypeCandidates(callableInfos.first().receiverTypeInfo)
-                                .firstOrNull()
-                                ?.theType
-                        if (receiverType != null) {
+                    val callableBuilder =
+                            CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
+                                    .createBuilder()
+                    val receiverType = callableBuilder
+                            .computeTypeCandidates(callableInfos.first().receiverTypeInfo)
+                            .firstOrNull()
+                            ?.theType
+                    if (receiverType != null) {
+                        if (isExtension) {
                             val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
                             val isFunctionType = receiverType.constructor.declarationDescriptor is FunctionClassDescriptor
                             append(if (isFunctionType) "($receiverTypeText)" else receiverTypeText).append('.')
+                        }
+                        else {
+                            receiverType.constructor.declarationDescriptor?.let {
+                                append(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderClassifierName(it)).append('.')
+                            }
                         }
                     }
 

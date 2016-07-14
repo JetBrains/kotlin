@@ -1,6 +1,6 @@
 // "Create local variable '-'" "false"
 // ACTION: Create extension function 'A.minus'
-// ACTION: Create member function 'minus'
+// ACTION: Create member function 'A.minus'
 // ACTION: Replace overloaded operator with function call
 // ERROR: Unresolved reference: -
 class A

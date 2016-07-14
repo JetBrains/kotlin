@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'B.foo'" "true"
 
 class B<T>(val t: T) {
 

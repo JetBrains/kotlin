@@ -1,4 +1,4 @@
-// "Create member function 'component3'" "true"
+// "Create member function 'Foo.component3'" "true"
 class Foo<T> {
     operator fun component1(): Int { return 0 }
     operator fun component2(): Int { return 0 }

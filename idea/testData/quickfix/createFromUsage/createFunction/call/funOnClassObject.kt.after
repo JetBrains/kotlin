@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'A.Companion.foo'" "true"
 
 class A<T>(val n: T) {
     companion object {

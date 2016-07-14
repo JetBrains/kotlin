@@ -1,4 +1,4 @@
-// "Create member function 'foo'" "true"
+// "Create member function 'C.foo'" "true"
 class Settings
 
 fun isModified(settings: Settings, c: C) = c.foo(settings)
