@@ -10,9 +10,9 @@ const fs = require("fs");
 
 commander
     .version('1.0.0')
-    .option('-p, --protopath [path]', 'path to dir with proto files. need here carkot.proto and route.proto. default ./proto/')
-    .option('-b, --binfile [path]', 'path to save bin file with name f.bin. default ./')
-    .option('-t, --transportfile [path]', 'path to trasport file for connect to mcu default ./mcu')
+    .option('-p, --proto [path]', 'path to dir with proto files. need here carkot.proto and route.proto. default ./proto/')
+    .option('-f, --flash [path]', 'path to save bin file with name f.bin. default ./')
+    .option('-s, --serial [path]', 'path to file that represents MCU serial port default ./serial')
     .parse(process.argv);
 
 //add slash to end of paths if need
@@ -21,9 +21,9 @@ if (commander.protopath) {
         commander.protopath = commander.protopath + "/";
     }
 }
-if (commander.binfile) {
-    if (commander.binfile.substr(commander.binfile.length - 1) != "/") {
-        commander.binfile = commander.binfile + "/";
+if (commander.flash) {
+    if (commander.flash.substr(commander.flash.length - 1) != "/") {
+        commander.flash = commander.flash + "/";
     }
 }
 
@@ -34,8 +34,8 @@ var executeShell = "./st-flash";
 exports.protoConstructorCarkot = builderCarkot.build("carkot");
 exports.protoConstructorControl = builderControl.build("carkot");
 exports.commandPrefix = executeShell + " write";
-exports.binFilePath = (commander.binfile ? commander.binfile : "./") + "f.bin";
-exports.transportFilePath = (commander.transportfile ? commander.transportfile : "./mcu");
+exports.binFilePath = (commander.flash ? commander.flash : "./") + "st-flash";
+exports.transportFilePath = (commander.serial ? commander.serial : "./serial");
 
 var handlers = require("./handlers.js");
 var handle = {};
@@ -44,10 +44,11 @@ handle["/loadBin"] = handlers.loadBin;
 handle["/control"] = handlers.control;
 handle["/other"] = handlers.other;
 
-fs.access(executeShell, fs.F_OK, function (error) {
+/*fs.access(executeShell, fs.F_OK, function (error) {
     if (!error) {
         server.start(router.route, handle);
     } else {
         console.log("file " + executeShell + " not found. Copy this file to server root dir");
     }
-});
+});*/
+server.start(router.route, handle);

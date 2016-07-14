@@ -58,33 +58,33 @@ function control(httpContent, response) {
     switch (directionObject.command) {
         case directionClass.Command.stop :
         {
-            resultByte = 0;
+            resultByte = "0";
             break;
         }
         case directionClass.Command.forward :
         {
-            resultByte = 1;
+            resultByte = "1";
             break;
         }
 
         case directionClass.Command.backward :
         {
-            resultByte = 2;
+            resultByte = "2";
             break;
         }
         case directionClass.Command.right :
         {
-            resultByte = 4;
+            resultByte = "3";
             break;
         }
         case directionClass.Command.left :
         {
-            resultByte = 3;
+            resultByte = "4";
             break;
         }
     }
     console.log("byte for car: " + resultByte);
-    fs.writeFile(main.transportFilePath, resultByte, "binary", function (error) {
+    fs.appendFile(main.transportFilePath, resultByte, "binary", function (error) {
         if (error) {
             console.log(error);
         }
