@@ -47,6 +47,8 @@ fun main(args: Array<String>) {
 
     client.Client.sendRequest(request, host, port)
     println(client.ClientHandler.requestResult.code)
+    println(client.ClientHandler.requestResult.stdErr)
+    println(client.ClientHandler.requestResult.stdOut)
 }
 
 fun setOptions(jsap:JSAP) {
