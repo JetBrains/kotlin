@@ -146,6 +146,10 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertNotContains(regex: Regex) {
+        assertNull(regex.find(output), "Output should not contain '$regex'")
+    }
+
     fun CompiledProject.fileInWorkingDir(path: String) = File(File(workingDir, project.projectName), path)
 
     fun CompiledProject.assertReportExists(pathToReport: String = ""): CompiledProject {

@@ -512,15 +512,8 @@ private fun createSyncOutputTask(
     kotlinAfterJavaTask?.javaOutputDir = javaDir
 
     // copying should be executed after a latter task
-    if (kotlinAfterJavaTask != null) {
-        // finalizer tasks get executed even if finalizing task has failed;
-        // we want to avoid copying classes if kotlin compilation has failed
-        syncTask.onlyIf { kotlinAfterJavaTask.state.failure == null }
-        kotlinAfterJavaTask.finalizedBy(syncTask)
-    }
-    else {
-        javaTask.finalizedBy(syncTask)
-    }
+    val previousTask = kotlinAfterJavaTask ?: javaTask
+    previousTask.finalizedByIfNotFailed(syncTask)
 
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
 }
