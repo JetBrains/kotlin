@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
-import kotlin.properties.Delegates
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
@@ -125,9 +124,9 @@ class CallableBuilderConfiguration(
         val enableSubstitutions: Boolean = true
 )
 
-interface CallablePlacement {
-    class WithReceiver(val receiverTypeCandidate: TypeCandidate): CallablePlacement
-    class NoReceiver(val containingElement: PsiElement): CallablePlacement
+sealed class CallablePlacement {
+    class WithReceiver(val receiverTypeCandidate: TypeCandidate): CallablePlacement()
+    class NoReceiver(val containingElement: PsiElement): CallablePlacement()
 }
 
 class CallableBuilder(val config: CallableBuilderConfiguration) {
@@ -243,7 +242,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
-                else -> throw IllegalArgumentException("Unexpected placement: $placement")
+                else -> throw IllegalArgumentException("Placement wan't initialized")
             }
             val receiverType = receiverClassDescriptor?.defaultType
 

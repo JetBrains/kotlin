@@ -102,7 +102,6 @@ abstract class TypeInfo(val variance: Variance) {
                 val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                 if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
             }
-            else -> throw IllegalArgumentException("Unexpected placement: $placement")
         }
         return when (containingElement) {
             is KtClassOrObject -> (containingElement.resolveToDescriptor() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
