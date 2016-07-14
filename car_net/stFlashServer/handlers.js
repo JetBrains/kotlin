@@ -8,7 +8,7 @@ const exec = require('child_process').exec;
 function loadBin(httpContent, response) {
 
     console.log(httpContent.length);
-    var uploadClass = main.protoConstructor.Upload;
+    var uploadClass = main.protoConstructorCarkot.Upload;
     var uploadObject = uploadClass.decode(httpContent);
     fs.writeFile(main.binFilePath, uploadObject.data.buffer, "binary", function (error) {
         var uploadResultClass = main.protoConstructor.UploadResult;
@@ -54,5 +54,45 @@ function other(httpContent, response) {
     response.end();
 }
 
+//контроль машинкой, как с пульта управления
+function control(httpContent, response) {
+    var directionClass = main.protoConstructorControl.Direction;
+    var directionObject = directionClass.decode(httpContent);
+    var resultByte;
+    switch (directionObject.command) {
+        case directionClass.Command.stop :
+        {
+            resultByte = 0;
+            break;
+        }
+        case directionClass.Command.forward :
+        {
+            resultByte = 1;
+            break;
+        }
+
+        case directionClass.Command.backward :
+        {
+            resultByte = 2;
+            break;
+        }
+        case directionClass.Command.right :
+        {
+            resultByte = 4;
+            break;
+        }
+        case directionClass.Command.left :
+        {
+            resultByte = 3;
+            break;
+        }
+
+    }
+    console.log("byte for car: " + resultByte);
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.end();
+}
+
 exports.loadBin = loadBin;
 exports.other = other;
+exports.control = control;
