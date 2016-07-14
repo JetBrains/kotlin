@@ -1,3 +1,4 @@
+import client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import proto.car.RouteP
@@ -6,16 +7,13 @@ import proto.car.RouteP.Direction.Command
 /**
  * Created by user on 7/14/16.
  */
-class CarControl constructor(host: String, port: Int) {
+class CarControl constructor(client: Client) {
 
-    val host: String;
-    val port: Int
+    val client: Client
 
     init {
-        this.host = host;
-        this.port = port;
+        this.client = client
     }
-
 
     fun executeCommand(direction: Char) {
 
@@ -38,12 +36,12 @@ class CarControl constructor(host: String, port: Int) {
             }
         }
         val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/control", Unpooled.copiedBuffer(directionBuilder.build().toByteArray()));
-        request.headers().set(HttpHeaderNames.HOST, host)
+        request.headers().set(HttpHeaderNames.HOST, client.host)
         request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
         request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
         request.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8")
 
-        client.Client.sendRequest(request, host, port)
+        client.sendRequest(request)
     }
 }
 

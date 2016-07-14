@@ -9,12 +9,20 @@ import java.net.ConnectException
 /**
  * Created by user on 7/8/16.
  */
-object Client {
+class Client constructor(host: String, port: Int) {
 
-    fun sendRequest(request: HttpRequest, host: String, port: Int): Int {
-        val group = NioEventLoopGroup()
+    val host: String
+    val port: Int
+
+    init {
+        this.host = host
+        this.port = port
+    }
+
+    fun sendRequest(request: HttpRequest): Int {
+        val group = NioEventLoopGroup(1)
         try {
-            val bootstrap: Bootstrap = Bootstrap()
+            val bootstrap = Bootstrap()
             bootstrap.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
             val channelFuture = bootstrap.connect(host, port).sync()
             val channel = channelFuture.channel()
@@ -24,7 +32,7 @@ object Client {
             println("interrupted before request done")
             return 2
         } catch (e: ConnectException) {
-            println("connection error to $host:$port")
+            println("connection error")
             return 1
         } finally {
             group.shutdownGracefully()

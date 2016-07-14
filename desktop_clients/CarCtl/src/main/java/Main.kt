@@ -1,3 +1,4 @@
+import client.Client
 import com.martiansoftware.jsap.FlaggedOption
 import com.martiansoftware.jsap.JSAP
 import java.util.*
@@ -21,7 +22,8 @@ fun main(args: Array<String>) {
     val port = config.getInt("port")
     val direction = config.getChar("direction")
 
-    val carControl = CarControl(host, port)
+    val client = Client(host, port)
+    val carControl = CarControl(client)
     if (direction.equals('t', true)) {
         initTextInterface(carControl)
     } else if (correctDirectionValues.contains(direction)) {
