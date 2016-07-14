@@ -1,5 +1,6 @@
 package org.kotlinnative.translator
 
+import org.kotlinnative.translator.llvm.LLVMLocalScope
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.types.LLVMType
 import java.util.*
@@ -32,7 +33,7 @@ class VariableManager {
         val ourVersion = variableVersion.getOrDefault(name, 0) + 1
         variableVersion.put(name, ourVersion)
 
-        return LLVMVariable("%managed.$name.$ourVersion", type, name, pointer)
+        return LLVMVariable("managed.$name.$ourVersion", type, name, LLVMLocalScope(), pointer)
     }
 
 }

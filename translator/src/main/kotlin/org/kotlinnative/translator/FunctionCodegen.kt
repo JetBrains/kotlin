@@ -66,7 +66,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun generateLoadArguments() {
         args?.forEach {
-            val loadVariable = LLVMVariable("%${it.label}", it.type, it.label, false)
+            val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMLocalScope(), false)
             val allocVar = codeBuilder.loadArgument(loadVariable)
             variableManager.addVariable(it.label, allocVar, 2)
         }
@@ -323,14 +323,14 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 variableManager.addVariable(identifier.text, newVar, scopeDepth)
             }
             is LLVMConstructorCall -> {
-                val result = variableManager.getVariable(identifier!!.text, assignExpression.type, pointer = false)
+                val result = variableManager.receiveVariable(identifier!!.text, assignExpression.type, pointer = false)
                 codeBuilder.allocVar(result)
                 result.pointer = true
                 codeBuilder.addLLVMCode(assignExpression.call(result).toString())
                 variableManager.addVariable(identifier.text, result, scopeDepth)
             }
             else -> {
-                codeBuilder.addAssignment(LLVMVariable("%${identifier!!.text}", LLVMIntType(), identifier.text), assignExpression)
+                codeBuilder.addAssignment(LLVMVariable(identifier!!.text, LLVMIntType(), identifier.text, LLVMLocalScope()), assignExpression)
             }
         }
         return null
