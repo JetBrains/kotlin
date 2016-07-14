@@ -16,10 +16,8 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
 
     val annotation: Boolean
     val native: Boolean
-    val fields = ArrayList<LLVMClassVariable>()
+    val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
-    val name = "%class.${clazz.name}"
-    val constructorName = "@${clazz.name}"
     val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class")
     val size: Int
 
@@ -100,7 +98,7 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
             val argument = codeBuilder.getNewVariable(it.type)
             codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMLocalScope(), pointer = 1))
             val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
-            codeBuilder.loadClassField(classField, LLVMVariable("instance.addr", type, scope = LLVMLocalScope(), pointer = 1), it.offset)
+            codeBuilder.loadClassField(classField, LLVMVariable("instance.addr", type, scope = LLVMLocalScope(), pointer = 1), (it as LLVMClassVariable).offset)
             codeBuilder.storeVariable(classField, argument)
         }
     }

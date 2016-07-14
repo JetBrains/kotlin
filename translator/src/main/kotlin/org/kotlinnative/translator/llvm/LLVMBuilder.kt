@@ -167,7 +167,7 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
-    fun declareGlovalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {
+    fun declareGlobalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {
         llvmLocalCode.appendln("$variable = global ${variable.type} $defaultValue, align ${variable.type.align}")
     }
 
@@ -183,7 +183,7 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln("br ${condition.getType()} $condition, label $thenLabel, label $elseLabel")
     }
 
-    fun addUnconditionJump(label: LLVMLabel) {
+    fun addUnconditionalJump(label: LLVMLabel) {
         llvmLocalCode.appendln("br label $label")
     }
 

@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
@@ -97,7 +96,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
     }
 
     private fun generateLoadArguments() {
-        args.forEach {
+        args.forEach(fun(it: LLVMVariable) {
+            if (it.type is LLVMFunctionType) {
+                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMLocalScope(), pointer = 1), 2)
+                return
+            }
+
             if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).isReturn) {
                 val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMLocalScope(), pointer = 0)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
@@ -105,13 +109,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             } else {
                 variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMLocalScope(), pointer = 0), 2)
             }
-        }
+        })
     }
 
     private fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel? = null, finishLabel: LLVMLabel? = null, scopeDepth: Int = 0) {
         codeBuilder.markWithLabel(startLabel)
         expressionWalker(expr, scopeDepth)
-        codeBuilder.addUnconditionJump(finishLabel ?: return)
+        codeBuilder.addUnconditionalJump(finishLabel ?: return)
     }
 
     private fun expressionWalker(expr: PsiElement?, scopeDepth: Int) {
@@ -184,7 +188,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val arrayReceivedVariable = codeBuilder.loadAndGetVariable(arrayNameVariable)
         val arrayElementType = (arrayNameVariable.type as LLVMArray).basicType()
         val indexVariable = codeBuilder.getNewVariable(arrayElementType, pointer = 1)
-        codeBuilder.loadVariableOffset(indexVariable, arrayReceivedVariable, arrayIndex);
+        codeBuilder.loadVariableOffset(indexVariable, arrayReceivedVariable, arrayIndex)
         return indexVariable
     }
 
@@ -195,68 +199,44 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val function = expr.firstChild.firstChild.text
+        val names = parseArgList(expr, scopeDepth)
 
         if (state.functions.containsKey(function)) {
-            return evaluateFunctionCallExpression(expr, scopeDepth)
+            val descriptor = state.functions[function] ?: return null
+            return evaluateFunctionCallExpression(LLVMVariable(function, descriptor.returnType.type, scope = LLVMGlobalScope()), names, descriptor.args)
         }
 
         if (state.classes.containsKey(function)) {
-            return evaluateConstructorCallExpression(expr, scopeDepth)
+            val descriptor = state.classes[function] ?: return null
+            return evaluateConstructorCallExpression(function, names, descriptor.fields, descriptor.type)
+        }
+
+        val localFunction = variableManager.getLLVMvalue(function)
+        if (localFunction != null) {
+            val type = localFunction.type as LLVMFunctionType
+            return evaluateFunctionCallExpression(LLVMVariable(function, type.returnType.type, scope = LLVMLocalScope()), names, type.arguments)
         }
 
         return null
     }
 
-    private fun evaluateConstructorCallExpression(expr: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
-        val function = expr.firstChild.firstChild
-        val descriptor = state.classes[function.text] ?: return null
-        val names = parseArgList(expr, scopeDepth).mapIndexed { i: Int, v: LLVMSingleValue ->
-            when (v) {
-                is LLVMVariable -> LLVMVariable(v.toString(), descriptor.fields[i].type, pointer = descriptor.fields[i].pointer)
-                else -> v
-            }
-        }.toList()
+    private fun evaluateFunctionCallExpression(function: LLVMVariable, names: List<LLVMSingleValue>, args: List<LLVMVariable>): LLVMSingleValue? {
 
-        val result = codeBuilder.getNewVariable(returnType.type)
-        codeBuilder.allocVar(result)
-        result.pointer = 1
+        val names = names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
+            var result = value
 
-        val args = ArrayList<LLVMSingleValue>()
-        args.add(result)
-        args.addAll(names)
-
-        codeBuilder.addLLVMCode(LLVMCall(
-                LLVMVoidType(),
-                descriptor.constructorName,
-                args
-        ).toString())
-
-        return result
-    }
-
-    private fun evaluateFunctionCallExpression(expr: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
-        val function = expr.firstChild.firstChild
-
-        val descriptor = state.functions[function.text] ?: return null
-        val names = parseArgList(expr, scopeDepth).mapIndexed(fun(i: Int, llvmSingleValue: LLVMSingleValue): LLVMSingleValue {
-            var result = llvmSingleValue
-
-            if (result.pointer > 0 && descriptor.args[i].pointer == 0) {
-                result = codeBuilder.getNewVariable(descriptor.args[i].type)
-                codeBuilder.loadVariable(result, llvmSingleValue as LLVMVariable)
+            if (result.pointer > 0 && args[i].pointer == 0) {
+                result = codeBuilder.getNewVariable(args[i].type)
+                codeBuilder.loadVariable(result, value as LLVMVariable)
             }
 
             return result
         }).toList()
 
-        val returnType = descriptor.returnType.type
+        val returnType = function.type
         when (returnType) {
             is LLVMVoidType -> {
-                codeBuilder.addLLVMCode(LLVMCall(
-                        LLVMVoidType(),
-                        "@${descriptor.name}",
-                        names
-                ).toString())
+                codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), names).toString())
             }
             is LLVMReferenceType -> {
                 val result = codeBuilder.getNewVariable(returnType)
@@ -267,21 +247,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                 args.add(result)
                 args.addAll(names)
 
-                codeBuilder.addLLVMCode(LLVMCall(
-                        LLVMVoidType(),
-                        "@${descriptor.name}",
-                        args
-                ).toString())
+                codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), args).toString())
 
                 return result
             }
             else -> {
                 val result = codeBuilder.getNewVariable(returnType)
-                codeBuilder.addAssignment(result, LLVMCall(
-                        returnType,
-                        "@${descriptor.name}",
-                        names
-                ))
+                codeBuilder.addAssignment(result, LLVMCall(returnType, function.toString(), names))
 
                 val resultPtr = codeBuilder.getNewVariable(returnType)
                 codeBuilder.allocVar(resultPtr)
@@ -292,6 +264,24 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
 
         return null
+    }
+
+    private fun evaluateConstructorCallExpression(name: String, names: ArrayList<LLVMSingleValue>, fields: ArrayList<LLVMVariable>, retType: LLVMType): LLVMSingleValue? {
+        val result = codeBuilder.getNewVariable(retType)
+        codeBuilder.allocVar(result)
+        result.pointer = 1
+
+        val args = ArrayList<LLVMSingleValue>()
+        args.add(result)
+        args.addAll(names)
+
+        codeBuilder.addLLVMCode(LLVMCall(
+                LLVMVoidType(),
+                name,
+                args
+        ).toString())
+
+        return result
     }
 
     private fun parseArgList(expr: KtCallExpression, scopeDepth: Int): ArrayList<LLVMSingleValue> {
@@ -360,7 +350,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         val bodyLabel = codeBuilder.getNewLabel(prefix = "while")
         val exitLabel = codeBuilder.getNewLabel(prefix = "while")
 
-        codeBuilder.addUnconditionJump(conditionLabel)
+        codeBuilder.addUnconditionalJump(conditionLabel)
         codeBuilder.markWithLabel(conditionLabel)
         val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)
 
@@ -398,11 +388,11 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         codeBuilder.markWithLabel(thenLabel)
         val thenResultExpression = evaluateExpression(thenExpression, scopeDepth + 1)
         codeBuilder.storeVariable(variable, thenResultExpression ?: return null)
-        codeBuilder.addUnconditionJump(endLabel)
+        codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(elseLabel)
         val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1)
         codeBuilder.storeVariable(variable, elseResultExpression ?: return null)
-        codeBuilder.addUnconditionJump(endLabel)
+        codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(endLabel)
         return variable
     }

@@ -1,6 +1,5 @@
 package org.kotlinnative.translator.llvm
 
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
