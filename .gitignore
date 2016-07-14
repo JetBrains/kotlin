@@ -2,6 +2,7 @@
 .idea/shelf
 dependencies
 dist
+linked
 out
 tmp
 workspace.xml
