@@ -73,14 +73,21 @@ class AnnotationProcessingExtension(
         // Round 1
         val round1Environment = KotlinRoundEnvironment(analysisContext)
         for (processor in processors) {
-            val supportedAnnotationNames = processor.supportedAnnotationTypes.filter { it in analysisContext.annotationsMap }
-            if (supportedAnnotationNames.isEmpty()) continue
+            val supportedAnnotationNames = processor.supportedAnnotationTypes
+            val supportsAnyAnnotation = supportedAnnotationNames.contains("*")
+            
+            val applicableAnnotationNames = when (supportsAnyAnnotation) {
+                true -> analysisContext.annotationsMap.keys
+                false -> processor.supportedAnnotationTypes.filter { it in analysisContext.annotationsMap } 
+            }
+            
+            if (applicableAnnotationNames.isEmpty()) continue
 
-            val supportedAnnotations = supportedAnnotationNames
+            val applicableAnnotations = applicableAnnotationNames
                     .map { javaPsiFacade.findClass(it, projectScope)?.let { JeTypeElement(it) } }
                     .filterNotNullTo(hashSetOf())
 
-            processor.process(supportedAnnotations, round1Environment)
+            processor.process(applicableAnnotations, round1Environment)
         }
 
         // Round 2
