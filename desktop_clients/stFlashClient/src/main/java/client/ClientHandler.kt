@@ -14,6 +14,8 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
 
     object requestResult {
         var code: Int = -1
+        var stdOut: String = ""
+        var stdErr: String = ""
     }
 
     constructor()
@@ -22,17 +24,24 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
 
-        var resultCode = 0
+        val resultCode:Int
+        val resultStdOut:String
+        val resultStdErr:String
         try {
             val uploadResult: Carkot.UploadResult = Carkot.UploadResult.parseFrom(contentBytes)
             resultCode = uploadResult.resultCode
+            resultStdOut = uploadResult.stdOut
+            resultStdErr = uploadResult.stdErr
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
-
+            resultStdErr = ""
+            resultStdOut = ""
             resultCode = 2
         }
         synchronized(requestResult, {
             requestResult.code = resultCode
+            requestResult.stdErr = resultStdErr
+            requestResult.stdOut = resultStdOut
         })
         ctx.close()
     }

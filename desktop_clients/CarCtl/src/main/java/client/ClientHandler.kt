@@ -2,6 +2,7 @@ package client
 
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
+import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.handler.codec.http.HttpContent
 
 /**
@@ -19,15 +20,11 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
 
-        var resultCode: Int = 0
-//        try {
-//            val uploadResult: Carkot.UploadResult = Carkot.UploadResult.parseFrom(contentBytes)
-//            resultCode = uploadResult.resultCode
-//        } catch (e: InvalidProtocolBufferException) {
-//            e.printStackTrace()
-//
-//            resultCode = 2
-//        }
+        if (contentBytes.size == 0) {
+            ctx.close()
+            return
+        }
+        val resultCode: Int = contentBytes[0].toInt()
         synchronized(requestResult, {
             requestResult.code = resultCode
         })
@@ -35,7 +32,7 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: Any?) {
-        if (msg is HttpContent) {
+        if (msg is DefaultHttpContent) {
             val contentsBytes = msg.content();
             contentBytes = ByteArray(contentsBytes.capacity())
             contentsBytes.readBytes(contentBytes)
