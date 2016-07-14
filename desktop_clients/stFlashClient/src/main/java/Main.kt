@@ -12,17 +12,8 @@ import java.io.IOException
  */
 
 fun main(args: Array<String>) {
-    val jsap: JSAP = JSAP();
-    val opthost = FlaggedOption("host").setStringParser(JSAP.STRING_PARSER).setRequired(true).setShortFlag('h').setLongFlag("host")
-    val optPort = FlaggedOption("port").setStringParser(JSAP.INTEGER_PARSER).setDefault("8888").setRequired(false).setShortFlag('p').setLongFlag("port")
-    val optBinPath = FlaggedOption("binFile").setStringParser(JSAP.STRING_PARSER).setRequired(true).setShortFlag('f').setLongFlag("binFile")
-    val optmcuSystem = FlaggedOption("mcuSystem").setStringParser(JSAP.STRING_PARSER).setRequired(false).setDefault("0x08000000").setShortFlag('s')
-    val optHelp = FlaggedOption("help").setStringParser(JSAP.BOOLEAN_PARSER).setRequired(false).setDefault("false").setLongFlag("help")
-    jsap.registerParameter(opthost)
-    jsap.registerParameter(optPort)
-    jsap.registerParameter(optBinPath)
-    jsap.registerParameter(optmcuSystem)
-    jsap.registerParameter(optHelp)
+    val jsap: JSAP = JSAP()
+    setOptions(jsap)
 
     val config = jsap.parse(args)
     if (!config.success() || config.getBoolean("help")) {
@@ -56,4 +47,17 @@ fun main(args: Array<String>) {
 
     client.Client.sendRequest(request, host, port)
     println(client.ClientHandler.requestResult.code)
+}
+
+fun setOptions(jsap:JSAP) {
+    val opthost = FlaggedOption("host").setStringParser(JSAP.STRING_PARSER).setRequired(true).setShortFlag('h').setLongFlag("host")
+    val optPort = FlaggedOption("port").setStringParser(JSAP.INTEGER_PARSER).setDefault("8888").setRequired(false).setShortFlag('p').setLongFlag("port")
+    val optBinPath = FlaggedOption("binFile").setStringParser(JSAP.STRING_PARSER).setRequired(true).setShortFlag('f').setLongFlag("binFile")
+    val optmcuSystem = FlaggedOption("mcuSystem").setStringParser(JSAP.STRING_PARSER).setRequired(false).setDefault("0x08000000").setShortFlag('s')
+    val optHelp = FlaggedOption("help").setStringParser(JSAP.BOOLEAN_PARSER).setRequired(false).setDefault("false").setLongFlag("help")
+    jsap.registerParameter(opthost)
+    jsap.registerParameter(optPort)
+    jsap.registerParameter(optBinPath)
+    jsap.registerParameter(optmcuSystem)
+    jsap.registerParameter(optHelp)
 }
