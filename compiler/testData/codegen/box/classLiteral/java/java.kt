@@ -1,4 +1,4 @@
-// WITH_REFLECT
+// WITH_RUNTIME
 
 import kotlin.reflect.KClass
 

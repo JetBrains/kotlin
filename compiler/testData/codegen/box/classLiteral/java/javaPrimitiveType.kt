@@ -1,4 +1,4 @@
-// WITH_REFLECT
+// WITH_RUNTIME
 
 import kotlin.reflect.KClass
 
@@ -53,8 +53,8 @@ fun box(): String {
     checkNull(Nothing::class.javaPrimitiveType)
     checkNull(Nothing::class)
 
-    checkNull(java.lang.Void::class.javaPrimitiveType)
-    checkNull(java.lang.Void::class)
+    checkNull(Void::class.javaPrimitiveType)
+    checkNull(Void::class)
 
     return "OK"
 }
