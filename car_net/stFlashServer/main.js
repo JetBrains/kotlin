@@ -44,7 +44,7 @@ handle["/loadBin"] = handlers.loadBin;
 handle["/control"] = handlers.control;
 handle["/other"] = handlers.other;
 
-fs.access(exports.commandPrefix, fs.F_OK, function (error) {
+fs.access(executeShell, fs.F_OK, function (error) {
     if (!error) {
         server.start(router.route, handle);
     } else {
