@@ -18,18 +18,23 @@ package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.annotation.AnnotationProcessingExtension
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
 object AnnotationProcessingConfigurationKeys {
     val GENERATED_OUTPUT_DIR: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("generated files output directory")
+
+    val CLASS_FILES_OUTPUT_DIR: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("class files output directory")
     
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
@@ -40,7 +45,10 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
         val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt2"
         
         val GENERATED_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("generated", "<path>", "Output path for generated files", required = false)
+                CliOption("generated", "<path>", "Output path for the generated files", required = false)
+
+        val CLASS_FILES_OUTPUT_DIR_OPTION: CliOption =
+                CliOption("classes", "<path>", "Output path for the class files", required = false)
 
         val ANNOTATION_PROCESSOR_CLASSPATH_OPTION: CliOption =
                 CliOption("apclasspath", "<classpath>", "Annotation processor classpath", 
@@ -60,6 +68,7 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
                 configuration.put(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH, paths)
             }
             GENERATED_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR, value)
+            CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -73,7 +82,13 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         val generatedOutputDirFile = File(generatedOutputDir)
         generatedOutputDirFile.mkdirs()
         
-        val annotationProcessingExtension = AnnotationProcessingExtension(generatedOutputDirFile, classpath)
+        val javaRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS]
+                ?.filterIsInstance<JavaSourceRoot>()?.map { it.file } ?: emptyList()
+        
+        val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
+                               ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
+        
+        val annotationProcessingExtension = AnnotationProcessingExtension(generatedOutputDirFile, classesOutputDir, classpath, javaRoots)
         AnalysisCompletedHandlerExtension.registerExtension(project, annotationProcessingExtension)
     }
 }
