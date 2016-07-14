@@ -17,9 +17,30 @@
 package org.jetbrains.kotlin.annotation.processing.impl
 
 import java.io.File
+import javax.tools.FileObject
 import javax.tools.JavaFileObject
 
-class KotlinJavaFileObject(val file: File) : JavaFileObject {
+class KotlinJavaFileObject(file: File) : KotlinAbstractFileObject(file), JavaFileObject {
+    //TODO
+    override fun isNameCompatible(simpleName: String, kind: JavaFileObject.Kind) = true
+
+    override fun getKind() = when (file.extension) {
+        "class" -> JavaFileObject.Kind.CLASS
+        "java" -> JavaFileObject.Kind.SOURCE
+        "html" -> JavaFileObject.Kind.HTML
+        else -> JavaFileObject.Kind.OTHER
+    }
+
+    //TODO
+    override fun getAccessLevel() = null
+
+    //TODO
+    override fun getNestingKind() = null
+}
+
+class KotlinFileObject(file: File) : KotlinAbstractFileObject(file)
+
+abstract class KotlinAbstractFileObject(val file: File) : FileObject {
     override fun openOutputStream() = file.outputStream()
 
     override fun getName() = file.name
@@ -39,20 +60,4 @@ class KotlinJavaFileObject(val file: File) : JavaFileObject {
     override fun openReader(ignoreEncodingErrors: Boolean) = file.reader()
 
     override fun delete() = file.delete()
-    
-    //TODO
-    override fun isNameCompatible(simpleName: String, kind: JavaFileObject.Kind) = true
-
-    override fun getKind() = when (file.extension) {
-        "class" -> JavaFileObject.Kind.CLASS
-        "java" -> JavaFileObject.Kind.SOURCE
-        "html" -> JavaFileObject.Kind.HTML
-        else -> JavaFileObject.Kind.OTHER
-    }
-
-    //TODO
-    override fun getAccessLevel() = null
-    
-    //TODO
-    override fun getNestingKind() = null
 }

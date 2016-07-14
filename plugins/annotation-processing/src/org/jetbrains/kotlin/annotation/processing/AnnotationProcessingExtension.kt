@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -35,8 +36,10 @@ import java.util.*
 import javax.annotation.processing.Processor
 
 class AnnotationProcessingExtension(
-        val generatedOutputDir: File,
-        val annotationProcessingClasspath: List<String>
+        val generatedSourcesOutputDir: File,
+        val classesOutputDir: File,
+        val annotationProcessingClasspath: List<String>,
+        val javaSourceRoots: List<File>
 ) : AnalysisCompletedHandlerExtension {
     private var annotationProcessingComplete = false
 
@@ -56,19 +59,31 @@ class AnnotationProcessingExtension(
         val analysisContext = AnalysisContext(hashMapOf())
         analysisContext.analyzeFiles(files)
         
+        val psiManager = PsiManager.getInstance(project)
+        for (javaSourceRoot in javaSourceRoots) {
+            javaSourceRoot.walk().filter { it.isFile && it.extension == "java" }.forEach {
+                val vFile = StandardFileSystems.local().findFileByPath(it.absolutePath)
+                if (vFile != null) {
+                    val javaFile = psiManager.findFile(vFile) as? PsiJavaFile
+                    if (javaFile != null) {
+                        analysisContext.analyzeFile(javaFile)
+                    }
+                }
+            }
+        }
+        
         val options = emptyMap<String, String>()
         
         val javaPsiFacade = JavaPsiFacade.getInstance(project)
         val projectScope = GlobalSearchScope.projectScope(project)
         
-        val filer = KotlinFiler(generatedOutputDir)
+        val filer = KotlinFiler(generatedSourcesOutputDir, classesOutputDir)
         val messages = KotlinMessager()
         val types = KotlinTypes(javaPsiFacade, PsiManager.getInstance(project), projectScope)
         val elements = KotlinElements(javaPsiFacade, projectScope)
         
         val processingEnvironment = KotlinProcessingEnvironment(elements, types, messages, options, filer)
         processors.forEach { it.init(processingEnvironment) }
-        
         
         // Round 1
         val round1Environment = KotlinRoundEnvironment(analysisContext)
@@ -97,7 +112,7 @@ class AnnotationProcessingExtension(
         }
 
         annotationProcessingComplete = true
-        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedOutputDir))
+        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedSourcesOutputDir))
     }
     
     private fun loadAnnotationProcessors(classpath: List<String>): List<Processor> {
@@ -126,6 +141,10 @@ private fun AnalysisContext.analyzeFile(file: KtFile) {
         val clazz = declaration.toLightClass() ?: continue
         analyzeDeclaration(clazz)
     }
+}
+
+private fun AnalysisContext.analyzeFile(file: PsiJavaFile) {
+    file.classes.forEach { analyzeDeclaration(it) }
 }
 
 private fun AnalysisContext.analyzeDeclaration(declaration: PsiElement) {
