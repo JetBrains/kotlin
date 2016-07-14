@@ -2,10 +2,11 @@
  * Created by user on 7/11/16.
  */
 
-var server = require("./server.js");
-var router = require("./router.js");
-var commander = require("commander");
+const server = require("./server.js");
+const router = require("./router.js");
+const commander = require("commander");
 const protoBuf = require("protobufjs");
+const fs = require("fs");
 
 commander
     .version('1.0.0')
@@ -29,9 +30,10 @@ if (commander.binfile) {
 const builderCarkot = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "carkot.proto" : "./proto/carkot.proto");//todo!!1 путь до каталога, прото файлы - в нём
 const builderControl = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "route.proto" : "./proto/route.proto");
 
+var executeShell = "./st-flash";
 exports.protoConstructorCarkot = builderCarkot.build("carkot");
 exports.protoConstructorControl = builderControl.build("carkot");
-exports.commandPrefix = "./st-flash write";
+exports.commandPrefix = executeShell + " write";
 exports.binFilePath = (commander.binfile ? commander.binfile : "./") + "f.bin";
 exports.transportFilePath = (commander.transportfile ? commander.transportfile : "./mcu");
 
@@ -42,4 +44,10 @@ handle["/loadBin"] = handlers.loadBin;
 handle["/control"] = handlers.control;
 handle["/other"] = handlers.other;
 
-server.start(router.route, handle);
+fs.access(exports.commandPrefix, fs.F_OK, function (error) {
+    if (!error) {
+        server.start(router.route, handle);
+    } else {
+        console.log("file " + executeShell + " not found. Copy this file to server root dir");
+    }
+});
