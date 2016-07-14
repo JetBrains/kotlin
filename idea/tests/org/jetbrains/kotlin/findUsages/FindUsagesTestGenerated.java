@@ -1446,6 +1446,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("OverriddenMethodSyntheticAccessor.0.java")
+            public void testOverriddenMethodSyntheticAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/OverriddenMethodSyntheticAccessor.0.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("SyntheticProperties.0.java")
             public void testSyntheticProperties() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");
