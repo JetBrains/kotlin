@@ -1,3 +1,4 @@
-.idea/workspace.xml
-.idea/uiDesigner.xml
+.idea
+.gradle
+build
 out
