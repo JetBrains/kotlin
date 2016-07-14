@@ -190,11 +190,10 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln(code)
     }
 
-    fun bitcast(dst: LLVMVariable, llvmType: LLVMType): LLVMVariable {
+    fun bitcast(src: LLVMVariable, llvmType: LLVMType): LLVMVariable {
         val empty = getNewVariable(llvmType, true)
-        val code = "$empty = bitcast ${dst.getType()} $dst to $llvmType*"
+        val code = "$empty = bitcast ${src.getType()} $src to $llvmType*"
         llvmLocalCode.appendln(code)
-
         return empty
     }
 

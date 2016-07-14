@@ -67,6 +67,7 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
         val argFields = ArrayList<LLVMVariable>()
         val refType = type.makeClone() as LLVMReferenceType
         refType.addParam("sret")
+        refType.isReturn = true
 
         val thisField = LLVMVariable("instance", refType, clazz.name, pointer = true)
 
