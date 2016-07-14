@@ -27,6 +27,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -34,10 +35,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
 import java.util.*
@@ -56,7 +54,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         if (DumbService.getInstance(first.project).isDumb || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
 
         val functions = HashSet<KtNamedFunction>()
-        val properties = HashSet<KtProperty>()
+        val properties = HashSet<KtNamedDeclaration>()
 
         for (element in elements) {
             ProgressManager.checkCanceled()
@@ -72,6 +70,12 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                 is KtProperty -> {
                     properties.add(element)
                     collectSuperDeclarationMarkers(element, result)
+                }
+                is KtParameter -> {
+                    if (element.hasValOrVar()) {
+                        properties.add(element)
+                        collectSuperDeclarationMarkers(element, result)
+                    }
                 }
             }
         }
@@ -103,7 +107,7 @@ private val OVERRIDDEN_FUNCTION = MarkerType(
         })
 
 private val OVERRIDDEN_PROPERTY = MarkerType(
-        { it?.let { getOverriddenPropertyTooltip(it.parent as KtProperty) } },
+        { it?.let { getOverriddenPropertyTooltip(it.parent as KtNamedDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
                 element?.let { navigateToPropertyOverriddenDeclarations(e, it.parent as KtProperty) }
@@ -115,7 +119,7 @@ private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, ov
 }
 
 private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
-    assert(declaration is KtNamedFunction || declaration is KtProperty)
+    assert(declaration is KtNamedFunction || declaration is KtProperty || declaration is KtParameter)
 
     if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
@@ -160,11 +164,13 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
     ))
 }
 
-private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = HashMap<PsiMethod, KtProperty>()
+private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDeclaration>,
+                                               result: MutableCollection<LineMarkerInfo<*>>) {
+    val mappingToJava = HashMap<PsiMethod, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
-            val accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property)
+            val accessorsPsiMethods = property.getAccessorLightMethods()
+
             for (psiMethod in accessorsPsiMethods) {
                 mappingToJava.put(psiMethod, property)
             }
@@ -176,7 +182,7 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty
     for (property in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
 
-        val anchor = property.nameIdentifier ?: property
+        val anchor = (property as? PsiNameIdentifierOwner)?.nameIdentifier ?: property
 
         result.add(LineMarkerInfo(
                 anchor,
@@ -187,6 +193,14 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty
                 OVERRIDDEN_PROPERTY.navigationHandler,
                 GutterIconRenderer.Alignment.RIGHT
         ))
+    }
+}
+
+fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {
+    return when (this) {
+        is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this)
+        is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this)
+        else -> throw IllegalStateException("Unexpected property type: ${this}")
     }
 }
 

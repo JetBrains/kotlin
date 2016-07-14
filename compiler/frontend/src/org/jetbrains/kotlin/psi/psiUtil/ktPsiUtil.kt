@@ -180,8 +180,11 @@ fun KtDeclaration.isOverridable(): Boolean {
     val parent = parent
     if (!(parent is KtClassBody || parent is KtParameterList)) return false
 
-    val klass = parent.parent as? KtClass ?: return false
-    if (!klass.isInheritable() && !klass.isEnum()) return false
+    val klass = if (parent.parent is KtPrimaryConstructor)
+        parent.parent.parent as? KtClass
+    else
+        parent.parent as? KtClass
+    if (klass == null || (!klass.isInheritable() && !klass.isEnum())) return false
 
     if (hasModifier(KtTokens.FINAL_KEYWORD) || hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
 
