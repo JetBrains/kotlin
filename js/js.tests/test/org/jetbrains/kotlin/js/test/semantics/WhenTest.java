@@ -141,4 +141,12 @@ public final class WhenTest extends AbstractExpressionTest {
     public void testWhenEqualsPattern() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWhenWithIfConditionAndOnlyElse() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhenConditionWithReturn() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

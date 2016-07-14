@@ -197,4 +197,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testToGeneratorInStdlib() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testThrowThrow() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
