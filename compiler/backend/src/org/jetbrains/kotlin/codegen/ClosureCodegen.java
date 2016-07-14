@@ -59,7 +59,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
@@ -390,8 +389,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof ClassDescriptor) {
             // TODO: getDefaultType() here is wrong and won't work for arrays
-            StackValue value = generateClassLiteralReference(state.getTypeMapper(), ((ClassDescriptor) container).getDefaultType());
-            value.put(K_CLASS_TYPE, iv);
+            putJavaLangClassInstance(iv, state.getTypeMapper().mapType(((ClassDescriptor) container).getDefaultType()));
+            wrapJavaClassIntoKClass(iv);
         }
         else if (container instanceof PackageFragmentDescriptor) {
             iv.aconst(state.getTypeMapper().mapOwner(descriptor));

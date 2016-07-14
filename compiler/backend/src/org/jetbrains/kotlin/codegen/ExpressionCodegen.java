@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -3209,13 +3210,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitClassLiteralExpression(@NotNull KtClassLiteralExpression expression, StackValue data) {
-        KotlinType type = bindingContext.getType(expression);
-        assert type != null;
-
-        assert state.getReflectionTypes().getKClass().getTypeConstructor().equals(type.getConstructor())
-                : "::class expression should be type checked to a KClass: " + type;
-
-        return generateClassLiteralReference(typeMapper, CollectionsKt.single(type.getArguments()).getType(), this);
+        KtExpression receiverExpression = expression.getReceiverExpression();
+        assert receiverExpression != null : "Class literal expression should have a left-hand side";
+        DoubleColonLHS lhs = bindingContext.get(DOUBLE_COLON_LHS, receiverExpression);
+        assert lhs != null : "Class literal expression should have LHS resolved";
+        return generateClassLiteralReference(lhs, receiverExpression, /* wrapIntoKClass = */ true);
     }
 
     @Override
@@ -3282,28 +3281,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public static StackValue generateClassLiteralReference(@NotNull KotlinTypeMapper typeMapper, @NotNull KotlinType type) {
-        return generateClassLiteralReference(typeMapper, type, null);
-    }
-
-    @NotNull
-    private static StackValue generateClassLiteralReference(@NotNull final KotlinTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
-        return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
+    public StackValue generateClassLiteralReference(
+            @NotNull final DoubleColonLHS lhs,
+            @Nullable final KtExpression receiverExpression,
+            final boolean wrapIntoKClass
+    ) {
+        return StackValue.operation(wrapIntoKClass ? K_CLASS_TYPE : JAVA_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                Type classAsmType = typeMapper.mapType(type);
-                ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-                if (descriptor instanceof TypeParameterDescriptor) {
-                    TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-                    assert typeParameterDescriptor.isReified() :
-                            "Non-reified type parameter under ::class should be rejected by type checker: " + typeParameterDescriptor;
-                    assert codegen != null :
-                            "Reference to member of reified type should be rejected by type checker " + typeParameterDescriptor;
-                    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
+                KotlinType type = lhs.getType();
+                if (lhs instanceof DoubleColonLHS.Expression) {
+                    JavaClassProperty.INSTANCE.generateImpl(v, gen(receiverExpression));
+                }
+                else if (lhs instanceof DoubleColonLHS.Type) {
+                    if (TypeUtils.isTypeParameter(type)) {
+                        assert TypeUtils.isReifiedTypeParameter(type) :
+                                "Non-reified type parameter under ::class should be rejected by type checker: " + type;
+                        putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
+                    }
+
+                    putJavaLangClassInstance(v, typeMapper.mapType(type));
                 }
 
-                putJavaLangClassInstance(v, classAsmType);
-                wrapJavaClassIntoKClass(v);
+                if (wrapIntoKClass) {
+                    wrapJavaClassIntoKClass(v);
+                }
 
                 return Unit.INSTANCE;
             }
