@@ -12,14 +12,3 @@ message Route {
         double angle_delta = 3; 
     }
 }
-
-message Direction {
-    enum Command {
-        stop = 0;
-        forward = 1;
-        backward = 2;
-        left = 3;
-        right = 4;
-    }
-    Command command = 1;
-}
