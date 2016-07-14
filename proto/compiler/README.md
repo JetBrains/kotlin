@@ -13,7 +13,7 @@ This will build current version of .proto compiler, placed as *protoc* executabl
 
     $ ./protoc kotlin_out==$(DST_DIR) $(PATH_TO_PROTO)
 
-where $(DST_DIR) stand for path to place, where generated files should be stored, and $(PATH_TO_PROTO) stand for path to .proto-file.
+where $(DST_DIR) stands for path to place, where generated files should be stored, and $(PATH_TO_PROTO) stands for path to .proto-file.
 
 ## Linking with Kotlin-runtime
 
@@ -22,6 +22,7 @@ In folder /src/ you can find sources for ProtoKot-runtime, that will be used by 
 ## Using generated code
 
 Example:
+
     // Messages work only with CodedStream classes, provided by ProtoKot-runtime library.
     // One can create CodedStream passing any instance of corresponding Stream from Java's library.
     val s = ByteArrayOutputStream()
