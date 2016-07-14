@@ -11,7 +11,7 @@ function loadBin(httpContent, response) {
     var uploadClass = main.protoConstructorCarkot.Upload;
     var uploadObject = uploadClass.decode(httpContent);
     fs.writeFile(main.binFilePath, uploadObject.data.buffer, "binary", function (error) {
-        var uploadResultClass = main.protoConstructor.UploadResult;
+        var uploadResultClass = main.protoConstructorCarkot.UploadResult;
         var code = 0;
         var stdErr = "";
         if (error) {

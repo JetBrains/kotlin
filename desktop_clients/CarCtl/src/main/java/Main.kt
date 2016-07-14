@@ -1,7 +1,6 @@
 import client.Client
 import com.martiansoftware.jsap.FlaggedOption
 import com.martiansoftware.jsap.JSAP
-import java.util.*
 
 /**
  * Created by user on 7/14/16.
@@ -17,7 +16,6 @@ fun main(args: Array<String>) {
         println(jsap.getHelp())
         return
     }
-
     val host = config.getString("host")
     val port = config.getInt("port")
     val direction = config.getChar("direction")
@@ -37,9 +35,12 @@ fun main(args: Array<String>) {
 fun initTextInterface(carControl: CarControl) {
     val helpMessage = "type f, b, l, r, s for command forward, backward, left, right, stop. to exit type q or quit ";
     println(helpMessage)
-    val scanner = Scanner(System.`in`)
-    while (scanner.hasNext()) {
-        val nextLine = scanner.nextLine()
+
+    while (true) {
+        val nextLine = readLine()
+        if (nextLine == null) {
+            return
+        }
         if (nextLine.equals("q", true) || nextLine.equals("quit", true)) {
             return
         } else if (nextLine.length != 1) {
