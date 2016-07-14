@@ -11,6 +11,7 @@ commander
     .version('1.0.0')
     .option('-p, --protopath [path]', 'path to dir with proto files. need here carkot.proto and route.proto. default ./proto/')
     .option('-b, --binfile [path]', 'path to save bin file with name f.bin. default ./')
+    .option('-t, --transportfile [path]', 'path to trasport file for connect to mcu default ./mcu')
     .parse(process.argv);
 
 //add slash to end of paths if need
@@ -32,6 +33,7 @@ exports.protoConstructorCarkot = builderCarkot.build("carkot");
 exports.protoConstructorControl = builderControl.build("carkot");
 exports.commandPrefix = "./st-flash write";
 exports.binFilePath = (commander.binfile ? commander.binfile : "./") + "f.bin";
+exports.transportFilePath = (commander.transportfile ? commander.transportfile : "./mcu");
 
 var handlers = require("./handlers.js");
 var handle = {};

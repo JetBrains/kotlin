@@ -6,8 +6,6 @@ const main = require("./main.js");
 const exec = require('child_process').exec;
 
 function loadBin(httpContent, response) {
-
-    console.log(httpContent.length);
     var uploadClass = main.protoConstructorCarkot.Upload;
     var uploadObject = uploadClass.decode(httpContent);
     fs.writeFile(main.binFilePath, uploadObject.data.buffer, "binary", function (error) {
@@ -21,8 +19,6 @@ function loadBin(httpContent, response) {
             code = 0;
             var shCommand = main.commandPrefix + " " + main.binFilePath + " " + uploadObject.base;
             exec(shCommand, function (error, stdout, stderr) {
-                // TODO get program result code and error textual representation and send
-                // back in the response
                 if (error) {
                     code = 1;
                     console.error(error);
@@ -31,7 +27,7 @@ function loadBin(httpContent, response) {
                 var resultObject = new uploadResultClass({
                     "stdOut": stdout.toString(),
                     "resultCode": code,
-                    "stdErr": stderr.toString()
+                    "stdErr": (stderr.toString() + "\n error:" + error)
                 });
                 var byteBuffer = resultObject.encode();
                 var byteArray = [];
@@ -86,11 +82,17 @@ function control(httpContent, response) {
             resultByte = 3;
             break;
         }
-
     }
     console.log("byte for car: " + resultByte);
-    response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end();
+    fs.writeFile(main.transportFilePath, resultByte, "binary", function (error) {
+        if (error) {
+            console.log(error);
+        }
+        //todo ещё нужно считывать ответ от контроллера и анализировать его (0 или 1) и отправлять
+        response.writeHead(200, {"Content-Type": "text/plain"});
+        response.write(new Buffer([0]));
+        response.end();
+    });
 }
 
 exports.loadBin = loadBin;
