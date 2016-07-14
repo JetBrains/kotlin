@@ -32,6 +32,8 @@ interface ScriptTemplateProvider {
 
     val templateClassName: String
 
+    val resolver: ScriptDependenciesResolverEx? get() = null
+
     val dependenciesClasspath: Iterable<String>
 
     val environment: Map<String, Any?>?
@@ -56,7 +58,7 @@ fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvid
             val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
             val cl = loader.loadClass(provider.templateClassName)
             idToVersion.put(provider.id, provider.version)
-            KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.environment)
+            KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.resolver, provider.environment)
         }
         catch (ex: Exception) {
             errorsHandler(provider, ex)

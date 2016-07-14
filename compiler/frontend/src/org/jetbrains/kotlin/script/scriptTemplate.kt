@@ -36,10 +36,12 @@ import java.lang.reflect.Proxy
 import java.util.concurrent.Future
 import kotlin.reflect.*
 
+const val DEFAULT_SCRIPT_FILE_PATTERN = "*.\\.kts"
+
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolverEx> = BasicScriptDependenciesResolver::class,
-                                          val scriptFilePattern: String = "*.\\.kts")
+                                          val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
 
 @Deprecated("Use ScriptTemplateDefinition")
 @Target(AnnotationTarget.CLASS)
@@ -80,7 +82,10 @@ class BasicScriptDependenciesResolver : ScriptDependenciesResolverEx
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KClass<out Annotation>)
 
-data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val environment: Map<String, Any?>?) : KotlinScriptDefinition {
+data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
+                                              val resolver: ScriptDependenciesResolverEx? = null,
+                                              val environment: Map<String, Any?>? = null
+) : KotlinScriptDefinition {
 
     // TODO: remove this and simplify definitionAnnotation as soon as deprecated annotations will be removed
     internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out ScriptDependenciesResolverEx>,
@@ -119,12 +124,18 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
 
     private val definitionData by lazy {
         val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
-        if (defAnn == null) {
-            val resolverAnn = template.annotations.firstIsInstanceOrNull<ScriptDependencyResolver>()
-            val filePatternAnn = template.annotations.firstIsInstanceOrNull<ScriptFilePattern>()
-            ScriptTemplateDefinitionData(ObsoleteResolverProxy::class, ObsoleteResolverProxy(resolverAnn), filePatternAnn?.pattern)
-        }
-        else ScriptTemplateDefinitionData(defAnn.resolver, defAnn.resolver.primaryConstructor?.call(), defAnn.scriptFilePattern)
+        val obsoleteResolverAnn = template.annotations.firstIsInstanceOrNull<ScriptDependencyResolver>()
+        val (resolverClass, resolverObject) =
+                when {
+                    resolver != null -> resolver.javaClass.kotlin to resolver
+                    defAnn != null -> defAnn.resolver to defAnn.resolver.primaryConstructor?.call()
+                    obsoleteResolverAnn != null -> ObsoleteResolverProxy::class to ObsoleteResolverProxy(obsoleteResolverAnn)
+                    else -> BasicScriptDependenciesResolver::class to BasicScriptDependenciesResolver()
+                }
+        val filePattern = defAnn?.scriptFilePattern ?:
+                          template.annotations.firstIsInstanceOrNull<ScriptFilePattern>()?.pattern ?:
+                          DEFAULT_SCRIPT_FILE_PATTERN
+        ScriptTemplateDefinitionData(resolverClass, resolverObject, filePattern)
     }
 
     override val name = template.simpleName!!

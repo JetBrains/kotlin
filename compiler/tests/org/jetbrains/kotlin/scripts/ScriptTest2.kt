@@ -75,7 +75,7 @@ class ScriptTest2 {
             environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, environment), runIsolated, suppressOutput)
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, null, environment), runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
