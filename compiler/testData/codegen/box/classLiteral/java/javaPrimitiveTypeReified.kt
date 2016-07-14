@@ -1,6 +1,4 @@
-// WITH_REFLECT
-
-import kotlin.reflect.KClass
+// WITH_RUNTIME
 
 inline fun <reified T : Any> check(expected: String) {
     val clazz = T::class.javaPrimitiveType!!
@@ -27,7 +25,7 @@ fun box(): String {
     check<Double>("double")
 
     checkNull<String>()
-    checkNull<java.lang.Void>()
+    checkNull<Void>()
 
     return "OK"
 }

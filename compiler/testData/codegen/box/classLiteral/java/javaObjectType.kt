@@ -1,4 +1,4 @@
-// WITH_REFLECT
+// WITH_RUNTIME
 
 import kotlin.reflect.KClass
 
@@ -43,8 +43,8 @@ fun box(): String {
     check(Nothing::class.javaObjectType, "java.lang.Void")
     check(Nothing::class, "java.lang.Void")
 
-    check(java.lang.Void::class.javaObjectType, "java.lang.Void")
-    check(java.lang.Void::class, "java.lang.Void")
+    check(Void::class.javaObjectType, "java.lang.Void")
+    check(Void::class, "java.lang.Void")
 
     return "OK"
 }
