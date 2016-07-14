@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -26,6 +27,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.SmartList
@@ -35,8 +37,12 @@ import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.io.File
 import java.lang.reflect.Method
 import java.util.*
 
@@ -296,21 +302,78 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
+    val externalDependencies by lazy {
+        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)?.makeComparable()
+    }
+
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
 
     override fun contentScope() = GlobalSearchScope.fileScope(project, scriptFile)
 
-    // TODO: only dependencies of this particular script
-    override fun dependencies() = listOf(this, ScriptDependenciesModuleInfo(project))
+    override fun dependencies(): List<IdeaModuleInfo> {
+        return listOf(
+                this,
+                ScriptDependenciesModuleInfo(project, externalDependencies)
+        ) + sdkDependencies(externalDependencies, project)
+    }
 }
 
-data class ScriptDependenciesModuleInfo(val project: Project): IdeaModuleInfo {
-    override fun dependencies() = listOf(this)
+private fun sdkDependencies(scriptDependencies: KotlinScriptExternalDependencies?, project: Project): List<SdkInfo>
+        = findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) }.singletonOrEmptyList()
+
+fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): Sdk? {
+    val jdkTable = ProjectJdkTable.getInstance()
+    val allJdks = jdkTable.allJdks
+    // workaround for mismatched gradle wrapper and plugin version
+    val javaHome = try { dependencies?.javaHome } catch (e: Throwable) { null }
+
+    return allJdks.find { javaHome != null && it.homePath == javaHome } ?:
+           ProjectRootManager.getInstance(project).projectSdk ?:
+           allJdks.firstOrNull()
+}
+
+private inline fun <T> tryGet(body: () -> T): T? {
+    return try {
+        body()
+    }
+    catch (e: Throwable) {
+        null
+    }
+}
+
+data class ComparableScriptDependencies(
+        override val javaHome: String?,
+        override val classpath: Iterable<File>,
+        override val imports: Iterable<String>,
+        override val sources: Iterable<File>,
+        override val scripts: Iterable<File>
+): KotlinScriptExternalDependencies
+
+fun KotlinScriptExternalDependencies.makeComparable() = ComparableScriptDependencies(
+        tryGet { javaHome }, classpath, imports, sources, tryGet { scripts } ?: listOf()
+)
+
+class ScriptDependenciesModuleInfo(val project: Project, val dependencies: ComparableScriptDependencies?): IdeaModuleInfo {
+    override fun dependencies() = listOf(this) + sdkDependencies(dependencies, project)
 
     override val name = Name.special("<Script dependencies>")
 
-    // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
-    override fun contentScope() = KotlinSourceFilterScope.libraryClassFiles(KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope(), project)
+    override fun contentScope(): GlobalSearchScope {
+        if (dependencies == null) {
+            // we do not know which scripts these dependencies are
+            return KotlinSourceFilterScope.libraryClassFiles(
+                    KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope(), project
+            )
+        }
+        val classpath = KotlinScriptConfigurationManager.toVfsRoots(dependencies.classpath)
+        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
+        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
+    }
+
+    // NOTE: intentionally not taking dependencies into account
+    // otherwise there is no way to implement getModuleInfo
+    override fun hashCode() = project.hashCode()
+    override fun equals(other: Any?): Boolean = other is ScriptDependenciesModuleInfo && this.project == other.project
 
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY

@@ -129,7 +129,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     }
 
     if (KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope().contains(virtualFile)) {
-        return ScriptDependenciesModuleInfo(project)
+        return ScriptDependenciesModuleInfo(project, null)
     }
 
     return NotUnderContentRootModuleInfo

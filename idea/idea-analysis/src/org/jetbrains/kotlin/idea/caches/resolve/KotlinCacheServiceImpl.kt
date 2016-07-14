@@ -27,7 +27,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
-import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
@@ -66,26 +67,46 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 }
             }
 
-    // TODO: soft reference?
-    // TODO: cache by script definition?
-    private val facadeForScriptDependencies by lazy {
-        val globalContext = GlobalContext()
-        ProjectResolutionFacade(
+
+    private val facadesForScriptDependencies: SLRUCache<ComparableScriptDependencies, ProjectResolutionFacade> =
+            object : SLRUCache<ComparableScriptDependencies, ProjectResolutionFacade>(2, 3) {
+                override fun createValue(key: ComparableScriptDependencies?): ProjectResolutionFacade {
+                    return createFacadeForScriptDependencies(ScriptDependenciesModuleInfo(project, key))
+                }
+            }
+
+    private fun getFacadeForScriptDependencies(dependencies: ComparableScriptDependencies?) = synchronized(facadesForScriptDependencies) {
+        facadesForScriptDependencies.get(dependencies)
+    }
+
+    private fun createFacadeForScriptDependencies(
+            dependenciesModuleInfo: ScriptDependenciesModuleInfo,
+            syntheticFiles: Collection<KtFile> = listOf()
+    ): ProjectResolutionFacade {
+        val sdk = findJdk(dependenciesModuleInfo.dependencies, project)
+        val platform = JvmPlatform // TODO: Js scripts?
+        val sdkFacade = GlobalFacade(platform, sdk).facadeForSdk
+        val globalContext = sdkFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
+        return ProjectResolutionFacade(
                 "facadeForScriptDependencies",
                 project, globalContext,
                 globalResolveSessionProvider(
                         "dependencies of scripts",
-                        JvmPlatform, // TODO: Js scripts?
-                        null, // TODO: provide sdk via dependencies
-                        allModules = listOf(ScriptDependenciesModuleInfo(project)),
+                        platform,
+                        sdk,
+                        reuseDataFrom = sdkFacade,
+                        allModules = dependenciesModuleInfo.dependencies(),
+                        //TODO: provide correct trackers
                         dependencies = listOf(
-                                LibraryModificationTracker.getInstance(project), //TODO: provide correct trackers
+                                LibraryModificationTracker.getInstance(project),
                                 ProjectRootModificationTracker.getInstance(project)
                         ),
-                        moduleFilter = { true }
+                        moduleFilter = { it == dependenciesModuleInfo },
+                        syntheticFiles = syntheticFiles
                 )
         )
     }
+
 
     private inner class GlobalFacade(platform: TargetPlatform, sdk: Sdk?) {
         private val sdkContext = GlobalContext()
@@ -96,6 +117,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                         "sdk $sdk",
                         platform,
                         sdk,
+                        allModules = sdk?.let { SdkInfo(project, it) }.singletonOrEmptyList(),
                         moduleFilter = { it is SdkInfo },
                         dependencies = listOf(
                                 LibraryModificationTracker.getInstance(project),
@@ -192,15 +214,19 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 )
             }
 
-            syntheticFileModule is ScriptModuleInfo || syntheticFileModule is ScriptDependenciesModuleInfo -> {
+            syntheticFileModule is ScriptDependenciesModuleInfo -> {
+                createFacadeForScriptDependencies(syntheticFileModule, files)
+            }
+            syntheticFileModule is ScriptModuleInfo -> {
+                val facadeForScriptDependencies = getFacadeForScriptDependencies(syntheticFileModule.externalDependencies)
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
                         "facadeForSynthetic in ScriptModuleInfo",
                         project, globalContext,
                         makeGlobalResolveSessionProvider(
                                 reuseDataFrom = facadeForScriptDependencies,
-                                moduleFilter = { it == syntheticFileModule },
-                                allModules = syntheticFileModule.dependencies()
+                                allModules = syntheticFileModule.dependencies(),
+                                moduleFilter = { it == syntheticFileModule }
                         )
                 )
             }
