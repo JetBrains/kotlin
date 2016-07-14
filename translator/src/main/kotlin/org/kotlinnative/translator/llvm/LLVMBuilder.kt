@@ -131,6 +131,11 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln(code)
     }
 
+    fun loadVariableOffset(target: LLVMVariable, source: LLVMVariable, index: LLVMConstant) {
+        val code = "$target = getelementptr inbounds ${target.type}, ${source.type} $source, ${index.type} ${index.value}"
+        llvmLocalCode.appendln(code)
+    }
+
     fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
         val tmp = getNewVariable(source.type, source.pointer)
         llvmLocalCode.appendln("$tmp = load ${tmp.type}, ${source.getType()} $source, align ${tmp.type.align}")

@@ -10,12 +10,13 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
         "${if (declare) "declare" else "define"} $returnType @$name(${
         argTypes?.mapIndexed { i: Int, s: LLVMVariable ->
             "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).isReturn) "byval" else ""} %${s.label}"
-        }?.joinToString() }) ${ if (arm) "#0" else ""}"
+        }?.joinToString()}) ${if (arm) "#0" else ""}"
 
 fun LLVMMapStandardType(name: String, type: KotlinType): LLVMVariable = when {
     type.isFunctionType -> LLVMVariable(name, LLVMFunctionType(type), type.toString(), pointer = true)
     type.toString() == "Int" -> LLVMVariable(name, LLVMIntType(), type.toString())
     type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), type.toString())
+    type.toString() == "Char" -> LLVMVariable(name, LLVMCharType(), type.toString())
     type.isUnit() -> LLVMVariable("", LLVMVoidType())
     else -> LLVMVariable(name, LLVMReferenceType("$type"), name, pointer = true)
 }
