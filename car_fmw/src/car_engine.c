@@ -71,8 +71,8 @@ void engine_turn_right(void)
     GPIO_SetBits(CAR_ENGINE_GPIO_PORT, CAR_ENGINE_RWHEEL_BKWD_PIN);
 }
 #else
-#define engine_forward(...);
-#define engine_backward(...);
-#define engine_turn_right(...);
-#define engine_turn_left(...);
+void engine_forward(void) {}
+void engine_backward(void) {}
+void engine_turn_right(void) {}
+void engine_turn_left(void) {}
 #endif // CAR_ENGINE_ENABLE
