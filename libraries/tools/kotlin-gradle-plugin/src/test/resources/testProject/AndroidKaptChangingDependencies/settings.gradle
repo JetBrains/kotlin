@@ -1,1 +1,1 @@
-include ':app', ':lib-a', ':lib-b'
+include ':app', ':lib-a', ':aaa'
