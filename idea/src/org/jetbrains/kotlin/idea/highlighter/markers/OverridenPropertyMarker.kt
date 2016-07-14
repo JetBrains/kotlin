@@ -16,33 +16,33 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.psi.search.PsiElementProcessor
-import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.idea.KotlinBundle
-import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import com.intellij.psi.PsiMethod
-import com.intellij.util.AdapterProcessor
-import com.intellij.util.CommonProcessors
-import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
-import com.intellij.psi.PsiElement
-import java.awt.event.MouseEvent
-import com.intellij.openapi.project.DumbService
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.codeInsight.daemon.impl.MarkerType
+import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.ide.util.PsiClassListCellRenderer
-import javax.swing.JComponent
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.util.AdapterProcessor
+import com.intellij.util.CommonProcessors
 import com.intellij.util.Function
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import java.awt.event.MouseEvent
+import javax.swing.JComponent
 
-fun getOverriddenPropertyTooltip(property: KtProperty): String? {
+fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
     val overriddenInClassesProcessor = PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5)
 
     val consumer = AdapterProcessor<PsiMethod, PsiClass>(
@@ -50,7 +50,7 @@ fun getOverriddenPropertyTooltip(property: KtProperty): String? {
             Function { method: PsiMethod? -> method?.containingClass }
     )
 
-    for (method in LightClassUtil.getLightClassPropertyMethods(property)) {
+    for (method in property.getAccessorLightMethods()) {
         if (!overriddenInClassesProcessor.isOverflow) {
             OverridingMethodsSearch.search(method, true).forEach(consumer)
         }

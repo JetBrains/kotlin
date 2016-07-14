@@ -27,17 +27,17 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KtFunctionPsiElementCellRenderer
+import org.jetbrains.kotlin.idea.search.usagesSearch.propertyDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import java.awt.event.MouseEvent
-import java.util.ArrayList
+import java.util.*
 
 object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
     override fun `fun`(ktDeclaration: KtDeclaration?): String? {
@@ -112,7 +112,10 @@ data class ResolveWithParentsResult(
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
 fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
-    val descriptor = element.resolveToDescriptorIfAny()
+    val descriptor = if (element is KtParameter)
+        element.propertyDescriptor
+    else
+        element.resolveToDescriptorIfAny()
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 

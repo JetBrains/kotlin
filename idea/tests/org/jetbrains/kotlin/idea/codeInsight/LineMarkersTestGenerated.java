@@ -163,6 +163,18 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PrimaryConstructorOpen.kt")
+        public void testPrimaryConstructorOpen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/PrimaryConstructorOpen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PrimaryConstructorOverride.kt")
+        public void testPrimaryConstructorOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/PrimaryConstructorOverride.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyOverride.kt")
         public void testPropertyOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/PropertyOverride.kt");
