@@ -23,7 +23,6 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
-import com.intellij.util.Processor
 import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
@@ -272,9 +271,10 @@ class KotlinIndicesHelper(
         val idFilter = IdFilter.getProjectIdFilter(resolutionFacade.project, false)
         val shortNamesCache = PsiShortNamesCache.getInstance(project)
 
-        val methodNamesProcessor = Processor<String> { name ->
+        val allMethodNames = hashSetOf<String>()
+        shortNamesCache.processAllMethodNames({ name -> if (nameFilter(name)) allMethodNames.add(name); true }, scope, idFilter)
+        for (name in allMethodNames) {
             ProgressManager.checkCanceled()
-            if (!nameFilter(name)) return@Processor true
 
             for (method in shortNamesCache.getMethodsByName(name, scope)) {
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
@@ -292,13 +292,12 @@ class KotlinIndicesHelper(
                             ?.let { processor(it) }
                 }
             }
-            true
         }
-        shortNamesCache.processAllMethodNames(methodNamesProcessor, scope, idFilter)
 
-        val fieldNamesProcessor = Processor<String> { name ->
+        val allFieldNames = hashSetOf<String>()
+        shortNamesCache.processAllFieldNames({ name -> if (nameFilter(name)) allFieldNames.add(name); true }, scope, idFilter)
+        for (name in allFieldNames) {
             ProgressManager.checkCanceled()
-            if (!nameFilter(name)) return@Processor true
 
             for (field in shortNamesCache.getFieldsByName(name, scope)) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
@@ -308,9 +307,7 @@ class KotlinIndicesHelper(
                     processor(descriptor)
                 }
             }
-            true
         }
-        shortNamesCache.processAllFieldNames(fieldNamesProcessor, scope, idFilter)
     }
 
     private fun isExcludedFromAutoImport(descriptor: DeclarationDescriptor): Boolean {
