@@ -1014,6 +1014,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinPropertySameNameAsMethodUsages.0.kt")
+            public void testKotlinPropertySameNameAsMethodUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertySameNameAsMethodUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinPropertyUsages.0.kt")
             public void testKotlinPropertyUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyUsages.0.kt");

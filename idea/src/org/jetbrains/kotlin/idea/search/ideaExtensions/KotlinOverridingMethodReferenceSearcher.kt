@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -50,7 +51,8 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                     .restrictToKotlinSources()
             if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return@runReadActionInSmartMode
 
-            for (name in getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))) {
+            val nameCandidates = getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))
+            for (name in nameCandidates) {
                 p.optimizer.searchWord(
                         name.asString(),
                         searchScope,
@@ -92,6 +94,9 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                 if (refElement is KtProperty || refElement is KtParameter) {
                     if (isWrongAccessorReference()) return true
                     lightMethods = lightMethods.filter { JvmAbi.isGetterName(it.name) == isGetter }
+                }
+                if (refElement is KtNamedFunction) {
+                    lightMethods = lightMethods.filter { it.name == method.name }
                 }
 
                 return lightMethods.all { super.processInexactReference(ref, it, method, consumer) }
