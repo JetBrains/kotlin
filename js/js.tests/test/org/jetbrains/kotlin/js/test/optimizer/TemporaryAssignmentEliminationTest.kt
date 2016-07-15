@@ -34,4 +34,8 @@ class TemporaryAssignmentEliminationTest : BasicOptimizerTest("temporary-assignm
     @Test fun tryCatch() = box()
 
     @Test fun ifWithoutElse() = box()
+
+    @Test fun forInitVariables() = box()
+
+    @Test fun forInitExpressionPreventsOptimization() = box()
 }

@@ -128,8 +128,6 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                 x.condition?.let { accept(it) }
                 x.body?.let { accept(it) }
                 x.incrementExpression?.let { accept(it) }
-
-                super.visitFor(x)
             }
         }.accept(root)
 
