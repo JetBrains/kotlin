@@ -1,17 +1,17 @@
-class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email: kotlin.String? = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray? = ByteArray(0)) {
-  var name : kotlin.String?
+class Person private constructor (name: kotlin.String = "", id: Int = 0, email: kotlin.String = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
+  var name : kotlin.String
     private set
 
-  var id : Int?
+  var id : Int
     private set
 
-  var email : kotlin.String?
+  var email : kotlin.String
     private set
 
   var phones : MutableList <PhoneNumber> 
     private set
 
-  var someBytes : ByteArray?
+  var someBytes : ByteArray
     private set
 
 
@@ -38,11 +38,11 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
       }
     }
   }
-  class PhoneNumber private constructor (number: kotlin.String? = "", type: PhoneType? = PhoneType.fromIntToPhoneType(0)) {
-    var number : kotlin.String?
+  class PhoneNumber private constructor (number: kotlin.String = "", type: PhoneType = PhoneType.fromIntToPhoneType(0)) {
+    var number : kotlin.String
       private set
 
-    var type : PhoneType?
+    var type : PhoneType
       private set
 
 
@@ -57,20 +57,20 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
 
     fun writeToNoTag (output: CodedOutputStream): Unit {
       output.writeString (1, number)
-      output.writeEnum (2, type?.ord)
+      output.writeEnum (2, type.ord)
     }
 
-    class BuilderPhoneNumber constructor (number: kotlin.String? = "", type: PhoneType? = PhoneType.fromIntToPhoneType(0)) {
-      var number : kotlin.String?
+    class BuilderPhoneNumber constructor (number: kotlin.String = "", type: PhoneType = PhoneType.fromIntToPhoneType(0)) {
+      var number : kotlin.String
         private set
-      fun setNumber(value: kotlin.String?): BuilderPhoneNumber {
+      fun setNumber(value: kotlin.String): BuilderPhoneNumber {
         number = value
         return this
       }
 
-      var type : PhoneType?
+      var type : PhoneType
         private set
-      fun setType(value: PhoneType?): BuilderPhoneNumber {
+      fun setType(value: PhoneType): BuilderPhoneNumber {
         type = value
         return this
       }
@@ -142,24 +142,24 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
     output.writeBytes (5, someBytes)
   }
 
-  class BuilderPerson constructor (name: kotlin.String? = "", id: Int? = 0, email: kotlin.String? = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray? = ByteArray(0)) {
-    var name : kotlin.String?
+  class BuilderPerson constructor (name: kotlin.String = "", id: Int = 0, email: kotlin.String = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
+    var name : kotlin.String
       private set
-    fun setName(value: kotlin.String?): BuilderPerson {
+    fun setName(value: kotlin.String): BuilderPerson {
       name = value
       return this
     }
 
-    var id : Int?
+    var id : Int
       private set
-    fun setId(value: Int?): BuilderPerson {
+    fun setId(value: Int): BuilderPerson {
       id = value
       return this
     }
 
-    var email : kotlin.String?
+    var email : kotlin.String
       private set
-    fun setEmail(value: kotlin.String?): BuilderPerson {
+    fun setEmail(value: kotlin.String): BuilderPerson {
       email = value
       return this
     }
@@ -185,9 +185,9 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
       return this
     }
 
-    var someBytes : ByteArray?
+    var someBytes : ByteArray
       private set
-    fun setSomeBytes(value: ByteArray?): BuilderPerson {
+    fun setSomeBytes(value: ByteArray): BuilderPerson {
       someBytes = value
       return this
     }
@@ -257,7 +257,7 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
     id = other.id
     email = other.email
     phones.addAll(other.phones)
-    someBytes?.plus(other.someBytes ?: ByteArray(0))
+    someBytes.plus(other.someBytes)
   }
 
   fun mergeFrom (input: CodedInputStream) {

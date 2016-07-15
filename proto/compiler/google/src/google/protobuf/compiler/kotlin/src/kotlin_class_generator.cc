@@ -137,7 +137,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
         // Bytes type is handled separately
         else if (properties[i]->protoType == FieldDescriptor::TYPE_BYTES) {
             vars["initValue"] = properties[i]->getInitValue();
-            printer->Print(vars, "$fieldName$?.plus(other.$fieldName$ ?: $initValue$)\n");
+            printer->Print(vars, "$fieldName$.plus(other.$fieldName$)\n");
         }
 
         // for all other cases just take other's field

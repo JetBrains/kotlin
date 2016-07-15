@@ -159,7 +159,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             printer->Print(vars, "$fieldName$ = $converter$(input.read$type$($maybeFieldNumber$))\n");
         }
         else {
-            printer->Print(vars, "output.write$type$ ($maybeFieldNumber$$maybeComma$$fieldName$?.ord)\n");
+            printer->Print(vars, "output.write$type$ ($maybeFieldNumber$$maybeComma$$fieldName$.ord)\n");
         }
         return;
     }

@@ -81,7 +81,6 @@ string protobufToKotlinField(FieldDescriptor const * descriptor) {
         case FieldDescriptor::LABEL_REQUIRED:
             break;
         case FieldDescriptor::LABEL_OPTIONAL:
-            postamble = "?";
             break;
         case FieldDescriptor::LABEL_REPEATED:
 #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
