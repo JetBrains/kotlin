@@ -6,6 +6,7 @@
 #include <iostream>
 #include "kotlin_enum_generator.h"
 #include "kotlin_field_generator.h"
+#include <algorithm>
 
 namespace google {
 namespace protobuf {
@@ -95,7 +96,15 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor)
         enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor));
     }
 
-
+    /**
+     * Sort properties in ascending order on their tag numbers. This order
+     * affects order of serialization and deserialization, thus fields will be
+     * serialized in order of their tags, as demanded by Google
+     */
+    std::sort(properties.begin(), properties.end(),
+              [](FieldGenerator const * first, FieldGenerator const * second) {
+                  return first->fieldNumber < second->fieldNumber;
+              });
 }
 
 ClassGenerator::~ClassGenerator() {
