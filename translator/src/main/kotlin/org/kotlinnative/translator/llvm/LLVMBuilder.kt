@@ -97,6 +97,10 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln("ret void")
     }
 
+    fun addAnyReturn(type: LLVMType, value: String = type.defaultValue){
+        llvmLocalCode.appendln("ret $type $value")
+    }
+
     fun addStringConstant(variable: LLVMVariable, value: String) {
         val type = variable.type as LLVMStringType
         llvmGlobalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"$value\\00\", align 1")
