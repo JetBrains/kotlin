@@ -66,7 +66,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
 
         CaretModel caretModel = getEditor().getCaretModel();
         int offset = caretModel.getOffset();
-        String actualTextWithCaret = new StringBuilder(getFile().getText()).insert(offset, EditorTestUtil.CARET_TAG).toString();
+        String actualTextWithCaret = new StringBuilder(getEditor().getDocument().getText()).insert(offset, EditorTestUtil.CARET_TAG).toString();
 
         KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), actualTextWithCaret);
     }
