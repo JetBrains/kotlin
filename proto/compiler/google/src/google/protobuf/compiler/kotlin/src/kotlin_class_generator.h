@@ -16,6 +16,8 @@ namespace protobuf {
 namespace compiler {
 namespace kotlin {
 
+class FieldGenerator;   // declared in "kotlin_file_generator.h"
+
 // wrapper for enum CLASS/INTERFACE with convenience method of getting name
 class ClassModifier {
 public:
@@ -36,7 +38,7 @@ public:
     vector <FieldGenerator *>   properties;
     vector <ClassGenerator *>   classesDeclarations;
     vector <EnumGenerator  *>   enumsDeclaraions;
-
+    string                      builderName;
     ClassGenerator          (Descriptor const * descriptor);
     ~ClassGenerator         ();
 
@@ -62,7 +64,8 @@ private:
      */
     void generateSerializersNoTag(io::Printer *printer, bool isRead = false) const;
     void generateSerializers(io::Printer * printer, bool isRead = false) const;
-    void generateMergeFrom(io::Printer * printer) const;
+    void generateMergeMethods(io::Printer *printer) const;
+    void generateParseMethods(io::Printer * printer) const;
 };
 
 } // namespace kotlin

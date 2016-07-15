@@ -94,12 +94,33 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
       fun build(): PhoneNumber {
         return PhoneNumber(number, type)
       }
+
+      fun parseFieldFrom(input: CodedInputStream): Boolean {
+        if (input.isAtEnd()) { return false }
+        val tag = input.readInt32NoTag()
+        if (tag == 0) { return false } 
+        val fieldNumber = WireFormat.getTagFieldNumber(tag)
+        val wireType = WireFormat.getTagWireType(tag)
+        when(fieldNumber) {
+          1 -> number = input.readStringNoTag()
+          2 -> type = PhoneType.fromIntToPhoneType(input.readEnumNoTag())
+        }
+        return true}
+      fun parseFrom(input: CodedInputStream): BuilderPhoneNumber {
+        while(parseFieldFrom(input)) {}
+        return this
+      }
+    }
+
+
+    fun mergeWith (other: PhoneNumber) {
+      number = other.number
+      type = other.type
     }
 
     fun mergeFrom (input: CodedInputStream) {
-      number = input.readString(1)
-      type = PhoneType.fromIntToPhoneType(input.readEnum(2))
-    }
+      val builder = BuilderPhoneNumber()
+      mergeWith(builder.parseFrom(input).build())}
   }
 
 
@@ -114,9 +135,7 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
     if (phones.size > 0) {
       output.writeTag(4, WireType.LENGTH_DELIMITED)
       output.writeInt32NoTag(phones.size)
-      output.writeInt32NoTag(phones.size)
       for (item in phones) {
-        output.writeTag(4, WireType.LENGTH_DELIMITED)
         item.writeToNoTag(output)
       }
     }
@@ -190,12 +209,12 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
       name = input.readString(1)
       id = input.readInt32(2)
       email = input.readString(3)
-      if (phones.size > 0) {
-        val tag = input.readTag(4, WireType.LENGTH_DELIMITED)
-        val listSize = input.readInt32NoTag()
-        for (i in 1..listSize) {
-          phones[i - 1].mergeFrom(input)
-        }
+      val tag = input.readTag(4, WireType.LENGTH_DELIMITED)
+      val listSize = input.readInt32NoTag()
+      for (i in 1..listSize) {
+        val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
+        tmp.readFromNoTag(input)
+        phones.add(tmp.build())
       }
       someBytes = input.readBytes(5)
       return this
@@ -204,21 +223,46 @@ class Person private constructor (name: kotlin.String? = "", id: Int? = 0, email
     fun build(): Person {
       return Person(name, id, email, phones, someBytes)
     }
+
+    fun parseFieldFrom(input: CodedInputStream): Boolean {
+      if (input.isAtEnd()) { return false }
+      val tag = input.readInt32NoTag()
+      if (tag == 0) { return false } 
+      val fieldNumber = WireFormat.getTagFieldNumber(tag)
+      val wireType = WireFormat.getTagWireType(tag)
+      when(fieldNumber) {
+        1 -> name = input.readStringNoTag()
+        2 -> id = input.readInt32NoTag()
+        3 -> email = input.readStringNoTag()
+        4 -> {
+          val listSize = input.readInt32NoTag()
+          for (i in 1..listSize) {
+            val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
+            tmp.readFromNoTag(input)
+            phones.add(tmp.build())
+          }
+        }
+        5 -> someBytes = input.readBytesNoTag()
+      }
+      return true}
+    fun parseFrom(input: CodedInputStream): BuilderPerson {
+      while(parseFieldFrom(input)) {}
+      return this
+    }
+  }
+
+
+  fun mergeWith (other: Person) {
+    name = other.name
+    id = other.id
+    email = other.email
+    phones.addAll(other.phones)
+    someBytes?.plus(other.someBytes ?: ByteArray(0))
   }
 
   fun mergeFrom (input: CodedInputStream) {
-    name = input.readString(1)
-    id = input.readInt32(2)
-    email = input.readString(3)
-    if (phones.size > 0) {
-      val tag = input.readTag(4, WireType.LENGTH_DELIMITED)
-      val listSize = input.readInt32NoTag()
-      for (i in 1..listSize) {
-        phones[i - 1].mergeFrom(input)
-      }
-    }
-    someBytes = input.readBytes(5)
-  }
+    val builder = BuilderPerson()
+    mergeWith(builder.parseFrom(input).build())}
 }
 
 
@@ -239,9 +283,7 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     if (people.size > 0) {
       output.writeTag(1, WireType.LENGTH_DELIMITED)
       output.writeInt32NoTag(people.size)
-      output.writeInt32NoTag(people.size)
       for (item in people) {
-        output.writeTag(1, WireType.LENGTH_DELIMITED)
         item.writeToNoTag(output)
       }
     }
@@ -279,12 +321,12 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     }
 
     fun readFromNoTag (input: CodedInputStream): BuilderAddressBook {
-      if (people.size > 0) {
-        val tag = input.readTag(1, WireType.LENGTH_DELIMITED)
-        val listSize = input.readInt32NoTag()
-        for (i in 1..listSize) {
-          people[i - 1].mergeFrom(input)
-        }
+      val tag = input.readTag(1, WireType.LENGTH_DELIMITED)
+      val listSize = input.readInt32NoTag()
+      for (i in 1..listSize) {
+        val tmp: Person.BuilderPerson = Person.BuilderPerson()
+        tmp.readFromNoTag(input)
+        people.add(tmp.build())
       }
       return this
 }
@@ -292,17 +334,38 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     fun build(): AddressBook {
       return AddressBook(people)
     }
+
+    fun parseFieldFrom(input: CodedInputStream): Boolean {
+      if (input.isAtEnd()) { return false }
+      val tag = input.readInt32NoTag()
+      if (tag == 0) { return false } 
+      val fieldNumber = WireFormat.getTagFieldNumber(tag)
+      val wireType = WireFormat.getTagWireType(tag)
+      when(fieldNumber) {
+        1 -> {
+          val listSize = input.readInt32NoTag()
+          for (i in 1..listSize) {
+            val tmp: Person.BuilderPerson = Person.BuilderPerson()
+            tmp.readFromNoTag(input)
+            people.add(tmp.build())
+          }
+        }
+      }
+      return true}
+    fun parseFrom(input: CodedInputStream): BuilderAddressBook {
+      while(parseFieldFrom(input)) {}
+      return this
+    }
+  }
+
+
+  fun mergeWith (other: AddressBook) {
+    people.addAll(other.people)
   }
 
   fun mergeFrom (input: CodedInputStream) {
-    if (people.size > 0) {
-      val tag = input.readTag(1, WireType.LENGTH_DELIMITED)
-      val listSize = input.readInt32NoTag()
-      for (i in 1..listSize) {
-        people[i - 1].mergeFrom(input)
-      }
-    }
-  }
+    val builder = BuilderAddressBook()
+    mergeWith(builder.parseFrom(input).build())}
 }
 
 

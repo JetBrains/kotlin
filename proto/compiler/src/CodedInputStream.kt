@@ -234,7 +234,7 @@ class CodedInputStream(input: java.io.InputStream) {
 
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
         val actualWireType = WireFormat.getTagWireType(tag)
-        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, WireType.LENGTH_DELIMITED, actualWireType)
+        checkFieldCorrectness(expectedFieldNumber, actualFieldNumber, expectedWireType, actualWireType)
         return tag
     }
 

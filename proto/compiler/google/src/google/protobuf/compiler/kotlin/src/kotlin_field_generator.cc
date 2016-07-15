@@ -45,6 +45,7 @@ string FieldGenerator::protobufToKotlinField() const {
 /**
  * Simply maps protobuf field type to corresponding Kotlin.
  */
+// TODO: refactor in separate static namespace
 string FieldGenerator::protobufToKotlinType() const {
     FieldDescriptor::Type type = descriptor->type();
     switch(type) {
@@ -87,14 +88,8 @@ string FieldGenerator::protobufToKotlinType() const {
     }
 }
 
-string FieldGenerator::getInitValue() const {
-    if (descriptor->is_repeated())
-    #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
-        return "mutableListOf()";
-    #else
-        return "arrayOf()";
-    #endif
-
+// TODO: refactor in separate static
+string FieldGenerator::protobufTypeToInitValue(FieldDescriptor const * descriptor) const {
     FieldDescriptor::Type type = descriptor->type();
     switch(type) {
         case FieldDescriptor::TYPE_BOOL:
@@ -135,8 +130,18 @@ string FieldGenerator::getInitValue() const {
             return "0L";           // see notes for TYPE_FIXED64
     }
 }
+string FieldGenerator::getInitValue() const {
+    if (descriptor->is_repeated())
+    #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
+        return "mutableListOf()";
+    #else
+        return "arrayOf()";
+    #endif
 
-void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder, string className) const {
+    return protobufTypeToInitValue(descriptor);
+}
+
+void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     map<string, string> vars;
     vars["name"] = simpleName;
     vars["field"] = protobufToKotlinField();
@@ -149,30 +154,35 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder, string c
 
     // generate setter for builder
     if (isBuilder) {
-        generateSetter(printer, /* builderName = */ "Builder" + className);
+        generateSetter(printer);
     }
 
     // generate additional methods for repeated fields
     if (modifier == FieldDescriptor::LABEL_REPEATED) {
-        generateRepeatedMethods(printer, isBuilder, /* builderName = */ "Builder" + className);
+        generateRepeatedMethods(printer, isBuilder);
     }
 }
 
-FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor)
+FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass)
         : descriptor(descriptor)
         , modifier(descriptor->label())
+        , enclosingClass(enclosingClass)
         , simpleName(descriptor->name())
         , underlyingType(protobufToKotlinType())
         , fullType(protobufToKotlinField())
-        , initValue(getInitValue())
+        , protoType(descriptor->type())
+        , fieldNumber(descriptor->number())
 { }
 
+// TODO: long, complicated and messy method. Refactor it ASAP
 void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag) const {
     map <string, string> vars;
-    vars["type"] = protobufTypeToKotlinFunctionSuffix(descriptor->type());
-    vars["fieldNumber"] = std::to_string(descriptor->number());
+    vars["type"] = protobufTypeToKotlinFunctionSuffix(descriptor->type()) + (noTag ? "NoTag" : "");
+    vars["fieldNumber"] = std::to_string(fieldNumber);
+    vars["maybeFieldNumber"] = noTag ? "" : std::to_string(fieldNumber);
     vars["fieldName"] = simpleName;
     vars["arg"] = isRead ? "input" : "output";
+    vars["maybeComma"] = ", ";
 
     /**
      * First of all, try to generate syntax for repeated fields because it's separate case.
@@ -180,56 +190,74 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
      * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
      * - Write tag explicitly
      * - Write length as int32 (note that tag shouldn't be added)
-     * - Write all repeated elements via recursive call
+     * - Write all repeated elements via recursive call (again, without tags)
      */
     if (modifier == FieldDescriptor::LABEL_REPEATED) {
-        printer->Print(vars, "if ($fieldName$.size > 0) {\n");
-        printer->Indent();
-
         // tag
         if (isRead) {
-            //TODO: dirty stub here! Normally, reading from input should be delegated to Parsers, with proper error handling and etc.
-            //Currently tag is ignored, and work of the library relies heavily on the field order guarantees.
-            //Thus, backward-compability and extensions are not supported.
-            printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+            if (!noTag) {
+                printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+            }
             printer->Print(vars, "val listSize = input.readInt32NoTag()\n");
             printer->Print(vars, "for (i in 1..listSize) {\n");
             printer->Indent();
-            printer->Print(vars, "$fieldName$[i - 1].mergeFrom(input)\n");
+
+            /* hack: copy current FieldGenerator and change label to OPTIONAL. Also change name to
+               name of iterator in for-loop.
+               This will allow to re-use this function for generating serialization code for elements of array.
+               More importantly, this will care about nested types too.
+               Efficiently, it inlines serialization code for all underlying types.
+               This hack isn't necessary from the architectural point of view and could be safely
+               removed as soon as target code will support inheritance and interfaces.
+               (then writing CodedOutputStream.writeMessage will be possible).
+             */
+            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass);
+
+            /* Another dirty hack here: create tmp variable of a given type and read it from input stream
+               then add that tmp var into list.
+               This is made because simple recursive call will generate code, that tries to array[i].mergeFrom()
+               but this is incorrect, because array has old size, while 'i' iterates over new size, and of course
+               they are not necessary the same.
+            */
+            // TODO: stub here, resolve name properly!
+            vars["fieldType"] = underlyingType + ".Builder" + underlyingType;
+            vars["initValue"] = getUnderlyingTypeInitValue();
+            printer->Print(vars, "val tmp: $fieldType$ = $fieldType$()\n");
+            singleFieldGen.simpleName = "tmp";
+            singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
+            singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true);
+
+            printer->Print(vars, "$fieldName$.add(tmp.build())\n");
+
             printer->Outdent();
             printer->Print("}\n");
         }
         else {
+            printer->Print(vars, "if ($fieldName$.size > 0) {\n");
+            printer->Indent();
+
             // tag
             printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
 
             // length
-            printer->Print(vars, "output.writeInt32NoTag($fieldName$.size)\n");
             printer->Print(vars, "output.writeInt32NoTag($fieldName$.size)\n");
 
             // all elements
             printer->Print(vars, "for (item in $fieldName$) {\n");
             printer->Indent();
 
-            /* hack: copy current FieldGenerator and change label to OPTIONAL. This will allow
-               to re-use this function for generating serialization code for elements of array.
-               More importantly, this will care about nested types too.
-               Efficiently, it inlines serialization code for all underlying types.
-               This hack isn't necessary from the architectural point of view and could be safely5
-               removed as soon as target code will support inheritance and interfaces.
-               (then writing CodedOutputStream.writeMessage will be possible).
-             */
-            FieldGenerator singleFieldGen = FieldGenerator(descriptor);
+            // hack: see above
+            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass);
+            singleFieldGen.simpleName = "item";
             singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
             singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true);
 
             printer->Outdent(); // for-loop
             printer->Print("}\n");
+
+            printer->Outdent(); // if-clause
+            printer->Print("}\n");
         }
-
-        printer->Outdent(); // if-clause
-        printer->Print("}\n");
-
         return;
     }
 
@@ -244,10 +272,10 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
         vars["converter"] = underlyingType + ".fromIntTo" + underlyingType;
         if (isRead) {
-            printer->Print(vars, "$fieldName$ = $converter$(input.read$type$($fieldNumber$))\n");
+            printer->Print(vars, "$fieldName$ = $converter$(input.read$type$($maybeFieldNumber$))\n");
         }
         else {
-            printer->Print(vars, "output.write$type$ ($fieldNumber$, $fieldName$?.ord)\n");
+            printer->Print(vars, "output.write$type$ ($maybeFieldNumber$$maybeComma$$fieldName$?.ord)\n");
         }
         return;
     }
@@ -257,17 +285,13 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
       that message
      */
     if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
-        vars["fieldName"] = noTag ? "item" : simpleName;
-        vars["maybeNoTag"] = noTag ? "NoTag" : "";
-        vars["fieldNumber"] = std::to_string(descriptor->number());
+        vars["maybeNoTag"] = "NoTag";
         if (isRead) {
             printer->Print(vars,
-                           "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n"
                            "$fieldName$.readFrom$maybeNoTag$(input)\n");
         }
         else {
             printer->Print(vars,
-                           "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n"
                            "$fieldName$.writeTo$maybeNoTag$(output)\n");
         }
         return;
@@ -275,13 +299,14 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
 
     /* Finally, serialize trivial cases    */
     if (isRead) {
-        printer->Print(vars, "$fieldName$ = input.read$type$($fieldNumber$)\n");
+        printer->Print(vars, "$fieldName$ = input.read$type$($maybeFieldNumber$)\n");
     }
     else {
-        printer->Print(vars, "output.write$type$ ($fieldNumber$, $fieldName$)\n");
+        printer->Print(vars, "output.write$type$ ($maybeFieldNumber$$maybeComma$$fieldName$)\n");
     }
 }
 
+// TODO: refactor in separate static class
 string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const {
     switch (type) {
         case FieldDescriptor::TYPE_DOUBLE:
@@ -321,11 +346,11 @@ string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type 
     }
 }
 
-void FieldGenerator::generateSetter(io::Printer *printer, string builderName) const {
+void FieldGenerator::generateSetter(io::Printer *printer) const {
     map <string, string> vars;
     vars["camelCaseName"] = name_resolving::makeFirstLetterUpper(simpleName);
     vars["fieldName"] = simpleName;
-    vars["builderName"] = builderName;
+    vars["builderName"] = enclosingClass->builderName;
     vars["type"] = fullType;
     printer->Print(vars,
                     "fun set$camelCaseName$(value: $type$): $builderName$ {\n");
@@ -337,12 +362,12 @@ void FieldGenerator::generateSetter(io::Printer *printer, string builderName) co
     printer->Print("}\n");
 }
 
-void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuilder, string builderName) const {
+void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuilder) const {
     map <string, string> vars;
     vars["elementType"] = underlyingType;
     vars["arg"] = "value";
     vars["fieldName"] = simpleName;
-    vars["builderName"] = builderName;
+    vars["builderName"] = enclosingClass->builderName;
 
     // generate indexed setter for builders
     if (isBuilder) {
@@ -382,6 +407,13 @@ void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuild
     #endif
 }
 
+string FieldGenerator::getKotlinFunctionSuffix() const {
+    return protobufTypeToKotlinFunctionSuffix(descriptor->type());
+}
+
+string FieldGenerator::getUnderlyingTypeInitValue() const {
+    return protobufTypeToInitValue(descriptor);
+}
 
 } // namespace kotlin
 } // namespace compiler

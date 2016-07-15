@@ -8,19 +8,22 @@
 #include <vector>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/descriptor.h>
+#include "kotlin_class_generator.h"
 
 namespace google {
 namespace protobuf {
 namespace compiler {
 namespace kotlin {
 
+class ClassGenerator;       // declared in kotlin_class_generator.h
+
 class FieldGenerator {
 private:
     FieldDescriptor const * descriptor;
     string protobufToKotlinField() const;
     string protobufToKotlinType () const;
-    string getInitValue() const;
 
+    // TODO: refactor from field generator to some static utility namespace
     /**
     * Converts one of protobuf wire types to corresponding Kotlin type with proper
     * naming, so it could be used as suffix after read/write, resulting in function
@@ -30,10 +33,13 @@ private:
     *          CodedInputStream.readSFixed32(fieldNumber: Int)
     */
     string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const;
-    void generateSetter(io::Printer * printer, string builderName) const;
-    void generateRepeatedMethods(io::Printer * printer, bool isBuilder, string builderName) const;
+    string protobufTypeToInitValue(FieldDescriptor const * descriptor) const;
+
+    void generateSetter(io::Printer * printer) const;
+    void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;
 public:
     FieldDescriptor::Label modifier;
+    ClassGenerator const * enclosingClass;    // class, in which that field is defined
     string simpleName;
     string underlyingType;  // unwrapped type.
 
@@ -44,11 +50,15 @@ public:
      * fullType = underlyingType        for all other cases
      */
     string fullType;
+    string getInitValue() const;
+    string getUnderlyingTypeInitValue() const;
+    FieldDescriptor::Type  protoType;
+    int fieldNumber;
 
-    string initValue;
-    void generateCode(io::Printer * printer, bool isBuilder, string className) const;
+    void generateCode(io::Printer * printer, bool isBuilder) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
-    FieldGenerator(FieldDescriptor const * descriptor);
+    FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass);
+    string getKotlinFunctionSuffix() const;
 
 };
 

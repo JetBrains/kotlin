@@ -16,14 +16,20 @@ fun testMessageSerialization() {
             .setEmail("wtf@dasda.com")  // all setters return this builder, so you could chain modifiers in LINQ-style
             .setId(42)
             .setName("John Doe")
-            .setPhones(arrayOf(         // repeated fields stored as Array<>, so use arrayOf() for creating repeated fields
+            .addPhoneNumber(         // repeated fields stored as Array<>, so use arrayOf() for creating repeated fields
                     Person.PhoneNumber.BuilderPhoneNumber()
                             .setNumber("342143-23423-42")
                             .setType(Person.PhoneType.HOME)
                             .build()
-            ))
+            )
+            .addPhoneNumber(
+                    Person.PhoneNumber.BuilderPhoneNumber()
+                            .setNumber("8-800-555-35-35")
+                            .setType(Person.PhoneType.WORK)
+                            .build()
+            )
             .build()    // don't forget to call build() to produce message
-    msg.writeTo(outs)
+    msg.writeToNoTag(outs)
 
     // Now let's use output stream as input to read our message from it!
     var ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))

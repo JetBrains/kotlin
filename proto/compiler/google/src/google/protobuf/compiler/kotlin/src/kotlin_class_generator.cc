@@ -12,6 +12,8 @@ namespace protobuf {
 namespace compiler {
 namespace kotlin {
 
+class FieldGenerator;   // declared in "kotlin_file_generator.h"
+
 void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     generateHeader(printer, isBuilder);
     printer->Indent();
@@ -22,7 +24,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     * Also note that fields should be declared before init section.
     */
     for (FieldGenerator *gen: properties) {
-        gen->generateCode(printer, isBuilder, simpleName);
+        gen->generateCode(printer, isBuilder);
         printer->Print("\n");
     }
 
@@ -54,13 +56,16 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
         generateBuilder(printer);
 
         printer->Print("\n");
-        generateMergeFrom(printer);
+        generateMergeMethods(printer);
     }
 
     // build() and setters are only for builders
     if (isBuilder) {
         printer->Print("\n");
         generateBuildMethod(printer);
+
+        printer->Print("\n");
+        generateParseMethods(printer);
     }
 
     printer->Outdent();
@@ -70,11 +75,12 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
 ClassGenerator::ClassGenerator(Descriptor const *descriptor)
     : descriptor(descriptor) {
     simpleName = descriptor->name();
+    builderName = "Builder" + simpleName;
 
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i) {
         FieldDescriptor const * fieldDescriptor = descriptor->field(i);
-        properties.push_back(new FieldGenerator(fieldDescriptor));
+        properties.push_back(new FieldGenerator(fieldDescriptor, /* enclosingClass = */ this));
     }
 
     int nested_types_count = descriptor->nested_type_count();
@@ -111,24 +117,58 @@ void ClassGenerator::generateBuilder(io::Printer * printer) const {
     generateCode(printer, /* isBuilder = */ true);
 }
 
-void ClassGenerator::generateMergeFrom(io::Printer * printer) const {
-    //TODO: Looks pretty dirty. Should reconsider process of generating readFrom, mergeFrom and writeTo.
+void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     map <string, string> vars;
-    printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
+
+    // mergeWith(other: Message)
+    printer->Print("\n");
+    vars["className"] = simpleName;
+    printer->Print(vars, "fun mergeWith (other: $className$) {\n");
     printer->Indent();
 
     for (int i = 0; i < properties.size(); ++i) {
-        properties[i]->generateSerializationCode(printer, /* isRead = */ true);
+        vars["fieldName"] = properties[i]->simpleName;
+
+        // concatenate repeated fields
+        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED) {
+            printer->Print(vars, "$fieldName$.addAll(other.$fieldName$)\n");
+        }
+
+        // Bytes type is handled separately
+        else if (properties[i]->protoType == FieldDescriptor::TYPE_BYTES) {
+            vars["initValue"] = properties[i]->getInitValue();
+            printer->Print(vars, "$fieldName$?.plus(other.$fieldName$ ?: $initValue$)\n");
+        }
+
+        // for all other cases just take other's field
+        else {
+            printer->Print(vars, "$fieldName$ = other.$fieldName$\n");
+        }
     }
+
+    printer->Outdent();
+    printer->Print("}\n");
+
+
+    // mergeFrom(input: CodedInputStream)
+    printer->Print("\n");
+    printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
+    printer->Indent();
+
+    vars["builderName"] = builderName;
+    printer->Print(vars, "val builder = $builderName$()\n");
+    printer->Print("mergeWith(builder.parseFrom(input).build())");
 
     printer->Outdent();
     printer->Print("}\n");
 }
 
 void ClassGenerator::generateSerializers(io::Printer * printer, bool isRead) const {
+    // readFrom(input: CodedInputStream) OR
+    // writeTo(output: CodedOutputStream)
     map <string, string> vars;
     vars["funName"]= isRead ? "readFrom"            : "writeTo";
-    vars["returnType"] = isRead ? "Builder" + simpleName : "Unit";
+    vars["returnType"] = isRead ? builderName : "Unit";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
     vars["maybeSeparator"] = isRead ? "" : ", ";
@@ -151,7 +191,7 @@ void ClassGenerator::generateSerializersNoTag(io::Printer *printer, bool isRead)
     vars["funName"]= isRead ? "readFromNoTag"       : "writeToNoTag";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
-    vars["returnType"] = isRead ? "Builder" + simpleName : "Unit";
+    vars["returnType"] = isRead ? builderName : "Unit";
     vars["maybeReturn"] = isRead ? "return this\n" : "";
 
     // generate function header
@@ -176,14 +216,14 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + ": " + properties[i]->fullType + " = " + properties[i]->initValue;
+        argumentList += properties[i]->simpleName + ": " + properties[i]->fullType + " = " + properties[i]->getInitValue();
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }
     }
 
     map<string, string> vars;
-    vars["name"] = (isBuilder? "Builder" : "") + simpleName;
+    vars["name"] = isBuilder? builderName : simpleName;
     vars["argumentList"] = argumentList;
     vars["maybePrivate"] = isBuilder? "" : " private";
     printer->Print(vars,
@@ -229,6 +269,69 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
     printer->Outdent();
     printer->Print("}\n");
 }
+
+void ClassGenerator::generateParseMethods(io::Printer *printer) const {
+    // parseFieldFrom(input: CodedInputStream): Boolean
+    map <string, string> vars;
+    vars["builderName"] = builderName;
+
+    printer->Print("fun parseFieldFrom(input: CodedInputStream): Boolean {\n");
+    printer->Indent();
+
+    // messages are not required to end with 0-tag, therefore parsing method should check for EOF
+    printer->Print("if (input.isAtEnd()) { return false }\n");
+
+    // read tag and check if some field will follow (0-tag inidcates end of message)
+    printer->Print("val tag = input.readInt32NoTag()\n");
+    printer->Print("if (tag == 0) { return false } \n");
+
+    // parse tag into field number and wire type
+    printer->Print("val fieldNumber = WireFormat.getTagFieldNumber(tag)\n");
+    printer->Print("val wireType = WireFormat.getTagWireType(tag)\n");
+
+    // 'when' to map fieldNumber into fieldName
+    printer->Print("when(fieldNumber) {\n");
+    printer->Indent();
+
+    for (int i = 0; i < properties.size(); ++i) {
+        vars["fieldNumber"] = std::to_string(properties[i]->fieldNumber);
+        vars["kotlinFunSuffix"] = properties[i]->getKotlinFunctionSuffix();
+        printer->Print(vars, "$fieldNumber$ -> ");
+
+        // code for serialization arrays and messages consists of more than one line and needs enclosing brackets
+        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED
+                || properties[i]->protoType == FieldDescriptor::TYPE_MESSAGE) {
+            printer->Print("{\n");
+            printer->Indent();
+        }
+
+        properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true);
+
+        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED
+            || properties[i]->protoType == FieldDescriptor::TYPE_MESSAGE) {
+            printer->Outdent();
+            printer->Print("}\n");
+        }
+    }
+
+    printer->Outdent();
+    printer->Print("}\n");  // when-clause
+
+    printer->Print("return true");
+    printer->Outdent();
+    printer->Print("}\n");  // parseFieldFrom body
+
+    // parseFrom(input: CodedInputStream)
+    printer->Print(vars,
+                   "fun parseFrom(input: CodedInputStream): $builderName$ {\n");
+    printer->Indent();
+    printer->Print("while(parseFieldFrom(input)) {}\n");
+    printer->Print("return this\n");
+
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
 
 const string ClassModifier::getName() const {
     string result = "";
