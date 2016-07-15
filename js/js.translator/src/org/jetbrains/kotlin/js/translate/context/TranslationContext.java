@@ -247,6 +247,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsExpression cacheExpressionIfNeeded(@NotNull JsExpression expression) {
+        return TranslationUtils.isCacheNeeded(expression) ? defineTemporary(expression) : expression;
+    }
+
+    @NotNull
     public TemporaryConstVariable getOrDeclareTemporaryConstVariable(@NotNull JsExpression expression) {
         TemporaryConstVariable tempVar = expressionToTempConstVariableCache.get(expression);
 
