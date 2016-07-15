@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.java.model
 import com.intellij.psi.*
 import org.jetbrains.kotlin.java.model.elements.*
 
-object JeConverter {
-    fun convert(psi: PsiElement?): JeElement? = when (psi) {
-        null -> null
-        is PsiPackage -> JePackageElement(psi)
-        is PsiClass -> JeTypeElement(psi)
-        is PsiVariable -> JeVariableElement(psi)
-        is PsiMethod -> JeMethodExecutableElement(psi)
-        is PsiClassInitializer -> JeClassInitializerExecutableElement(psi)
-        else -> null
-    }
+// to extension function?
+fun PsiElement?.toJeElement(): JeElement? = when (this) {
+    null -> null
+    is PsiPackage -> JePackageElement(this)
+    is PsiClass -> JeTypeElement(this)
+    is PsiVariable -> JeVariableElement(this)
+    is PsiMethod -> JeMethodExecutableElement(this)
+    is PsiClassInitializer -> JeClassInitializerExecutableElement(this)
+    else -> null
 }

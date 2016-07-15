@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.types
 
+import com.intellij.psi.PsiCapturedWildcardType
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiWildcardType
 import javax.lang.model.type.TypeKind
@@ -32,17 +33,30 @@ class JeWildcardType(override val psiType: PsiWildcardType) : JePsiType(), JeTyp
     override val psiManager: PsiManager
         get() = psiType.manager
 
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        return psiType == (other as? JeWildcardType)?.psiType
+    }
+
+    override fun hashCode() = psiType.hashCode()
+}
+
+class JeCapturedWildcardType(
+        override val psiType: PsiCapturedWildcardType, 
+        override val psiManager: PsiManager
+) : JePsiType(), JeTypeWithManager, WildcardType {
+    override fun getKind() = TypeKind.WILDCARD
+    override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitWildcard(this, p)
+
+    override fun getSuperBound() = psiType.lowerBound.toJeType(psiManager)
+    override fun getExtendsBound() = psiType.upperBound.toJeType(psiManager)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        if (!super.equals(other)) return false
-
-        return psiType == (other as JeWildcardType).psiType
+        return psiType == (other as? JeWildcardType)?.psiType
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
-    }
+    override fun hashCode() = psiType.hashCode()
 }

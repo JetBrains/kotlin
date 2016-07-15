@@ -27,19 +27,13 @@ class JeArrayType(override val psiType: PsiArrayType, override val psiManager: P
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitArray(this, p)
     override fun getComponentType() = psiType.componentType.toJeType(psiManager)
     
-    override fun equals(other: Any?): Boolean {
+    override fun toString() = psiType.getCanonicalText(false)
+    
+    override fun equals(other: Any?): Boolean{
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        if (!super.equals(other)) return false
-
-        return psiType == (other as JeArrayType).psiType
+        return psiType == (other as? JeArrayType)?.psiType
     }
 
-    override fun hashCode(): Int{
-        var result = super.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
-    }
-
-    override fun toString() = psiType.getCanonicalText(false)
+    override fun hashCode() = psiType.hashCode()
 }

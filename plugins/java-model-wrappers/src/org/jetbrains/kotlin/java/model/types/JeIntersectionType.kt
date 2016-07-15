@@ -28,5 +28,14 @@ class JeIntersectionType(
 ) : JePsiType(), JeTypeWithManager, IntersectionType {
     override fun getKind() = TypeKind.INTERSECTION
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitIntersection(this, p)
+
     override fun getBounds() = psiType.superTypes.map { it.toJeType(psiManager) }
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        return psiType == (other as? JeIntersectionType)?.psiType
+    }
+
+    override fun hashCode() = psiType.hashCode()
 }

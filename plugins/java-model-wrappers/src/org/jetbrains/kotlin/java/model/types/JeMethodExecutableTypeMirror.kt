@@ -36,7 +36,7 @@ class JeMethodExecutableTypeMirror(
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitExecutable(this, p)
 
-    override fun getReturnType() = (returnType ?: psi.returnType)?.let { it.toJeType(psi.manager) } ?: CustomJeNoneType(TypeKind.VOID)
+    override fun getReturnType() = (returnType ?: psi.returnType)?.let { it.toJeType(psi.manager) } ?: JeVoidType
 
     override fun getReceiverType() = psi.getReceiverTypeMirror()
 

@@ -121,51 +121,59 @@ class AnnotationProcessingExtension(
     } 
 }
 
-internal class AnalysisContext(val annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>)
-
-private fun AnalysisContext.analyzeFiles(files: Collection<KtFile>) {
-    for (file in files) {
-        analyzeFile(file)
-    }
-}
-
-private fun AnalysisContext.analyzeFile(file: KtFile) {
-    val lightClass = file.findFacadeClass()
+internal class AnalysisContext(annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>) {
+    private val mutableAnnotationsMap = annotationsMap
     
-    if (lightClass != null) {
-        analyzeDeclaration(lightClass)
-    }
+    val annotationsMap: Map<String, List<PsiModifierListOwner>>
+        get() = mutableAnnotationsMap
     
-    for (declaration in file.declarations) {
-        if (declaration !is KtClassOrObject) continue
-        val clazz = declaration.toLightClass() ?: continue
-        analyzeDeclaration(clazz)
-    }
-}
-
-private fun AnalysisContext.analyzeFile(file: PsiJavaFile) {
-    file.classes.forEach { analyzeDeclaration(it) }
-}
-
-private fun AnalysisContext.analyzeDeclaration(declaration: PsiElement) {
-    if (declaration !is PsiModifierListOwner) return
-    
-    val annotations = declaration.modifierList?.annotations
-    if (annotations != null) {
-        for (annotation in annotations) {
-            val fqName = annotation.qualifiedName ?: continue
-            annotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
+    fun analyzeFiles(files: Collection<KtFile>) {
+        for (file in files) {
+            analyzeFile(file)
         }
     }
-    
-    if (declaration is PsiClass) {
-        declaration.methods.forEach { analyzeDeclaration(it) }
-        declaration.fields.forEach { analyzeDeclaration(it) }
-        declaration.innerClasses.forEach { analyzeDeclaration(it) }
+
+    fun analyzeFile(file: KtFile) {
+        val lightClass = file.findFacadeClass()
+
+        if (lightClass != null) {
+            analyzeDeclaration(lightClass)
+        }
+
+        for (declaration in file.declarations) {
+            if (declaration !is KtClassOrObject) continue
+            val clazz = declaration.toLightClass() ?: continue
+            analyzeDeclaration(clazz)
+        }
     }
-    
-    when (declaration) {
-        is KtClassOrObject -> declaration.declarations.forEach { analyzeDeclaration(it) }
-        
+
+    fun analyzeFile(file: PsiJavaFile) {
+        file.classes.forEach { analyzeDeclaration(it) }
+    }
+
+    fun analyzeDeclaration(declaration: PsiElement) {
+        if (declaration !is PsiModifierListOwner) return
+
+        //TODO support inherited annotations
+
+        val annotations = declaration.modifierList?.annotations
+        if (annotations != null) {
+            for (annotation in annotations) {
+                val fqName = annotation.qualifiedName ?: continue
+                mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
+            }
+        }
+
+        if (declaration is PsiClass) {
+            declaration.methods.forEach { analyzeDeclaration(it) }
+            declaration.fields.forEach { analyzeDeclaration(it) }
+            declaration.innerClasses.forEach { analyzeDeclaration(it) }
+        }
+
+        if (declaration is PsiMethod) {
+            for (parameter in declaration.parameterList.parameters) {
+                analyzeDeclaration(parameter)
+            }
+        }
     }
 }

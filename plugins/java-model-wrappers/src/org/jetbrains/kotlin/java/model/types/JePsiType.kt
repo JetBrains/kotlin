@@ -20,22 +20,4 @@ import com.intellij.psi.PsiType
 
 abstract class JePsiType : JeTypeMirror {
     abstract val psiType: PsiType
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-
-        other as JePsiType
-
-        if (kind != other.kind) return false
-        if (psiType != other.psiType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int{
-        var result = kind.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
-    }
 }

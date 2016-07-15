@@ -40,17 +40,11 @@ class JePrimitiveType(override val psiType: PsiPrimitiveType) : JePsiType(), Pri
 
     override fun toString() = psiType.canonicalText
 
-    override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean{
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        if (!super.equals(other)) return false
-
-        return psiType === (other as JePrimitiveType).psiType
+        return psiType == (other as? JePrimitiveType)?.psiType
     }
 
-    override fun hashCode(): Int{
-        var result = super.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
-    }
+    override fun hashCode() = psiType.hashCode()
 }

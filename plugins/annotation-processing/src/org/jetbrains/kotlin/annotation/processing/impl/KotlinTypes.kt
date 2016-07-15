@@ -139,8 +139,12 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     }
 
     override fun isSameType(t1: TypeMirror, t2: TypeMirror) = t1 == t2
-
-    override fun getNoType(kind: TypeKind) = CustomJeNoneType(kind)
+    
+    override fun getNoType(kind: TypeKind) = when (kind) {
+        TypeKind.VOID -> JeVoidType
+        TypeKind.NONE -> JeNoneType
+        else -> illegalArg("Must be kind of VOID or NONE, got ${kind.name}")
+    }
 
     override fun getDeclaredType(typeElem: TypeElement, vararg typeArgMirrors: TypeMirror): DeclaredType {
         val psiClass = (typeElem as JeTypeElement).psi
@@ -165,7 +169,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
 
         val psiType = createDeclaredType(psiClass, typeArgs) ?: 
                       throw IllegalStateException("Can't create declared type ($psiClass, $typeArgs)")
-        return JeDeclaredType(psiType, psiClass, typeArgumentMirrors = typeArgMirrors.toList())
+        return JeDeclaredType(psiType, psiClass)
     }
 
     override fun getDeclaredType(
@@ -197,7 +201,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
 
         val psiType = createDeclaredType(psiClass, typeArgs) ?:
                       throw IllegalStateException("Can't create declared type ($psiClass, $typeArgs)")
-        return JeDeclaredType(psiType, psiClass, containing, typeArgMirrors.toList())
+        return JeDeclaredType(psiType, psiClass, containing)
     }
 
     override fun asMemberOf(containing: DeclaredType, element: Element): TypeMirror {
@@ -258,9 +262,9 @@ private fun illegalArg(text: String? = null): Nothing {
 }
 
 private fun assertKindNot(typeMirror: TypeMirror, vararg kinds: TypeKind): Unit {
-    if (typeMirror.kind in kinds) illegalArg("type must not be kind of " + typeMirror.kind.name + ", got ${typeMirror.kind}")
+    if (typeMirror.kind in kinds) illegalArg("type must not be kind of " + kinds.joinToString { it.name } + ", got ${typeMirror.kind.name}")
 }
 
 private fun assertJeType(type: TypeMirror) {
-    illegalArg("Must be a subclass of JePsiType, got ${type.javaClass.canonicalName}")
+    illegalArg("Must be a subclass of JePsiType, got ${type.javaClass.name}")
 }

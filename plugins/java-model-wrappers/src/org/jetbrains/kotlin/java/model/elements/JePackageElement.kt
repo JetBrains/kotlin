@@ -35,14 +35,15 @@ class JePackageElement(override val psi: PsiPackage) : JeElement(), PackageEleme
 
     override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>, p: P) = v.visitPackage(this, p)
 
-    override fun isUnnamed() = false
+    override fun isUnnamed() = psi.name.isNullOrEmpty()
 
     override fun getQualifiedName() = JeName(psi.qualifiedName)
 
     override fun getEnclosedElements() = psi.classes.map { JeTypeElement(it) }
 
     override fun asType() = JePackageTypeMirror
-    override fun equals(other: Any?): Boolean{
+    
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 

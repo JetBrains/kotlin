@@ -28,7 +28,11 @@ import javax.lang.model.element.VariableElement
 class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableElement, JeModifierListOwner, JeAnnotationOwner {
     override fun getSimpleName() = JeName(psi.name)
 
-    override fun getEnclosingElement(): JeTypeElement? {
+    override fun getEnclosingElement(): JeElement? {
+        if (psi is PsiParameter) {
+            (psi.declarationScope as? PsiMethod)?.let { return JeMethodExecutableElement(it) }
+        }
+        
         val containingClass = (psi as? PsiMember)?.containingClass ?: PsiTreeUtil.getParentOfType(psi, PsiClass::class.java) 
         return containingClass?.let { JeTypeElement(it) }
     }
@@ -50,6 +54,7 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
     override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>, p: P) = v.visitVariable(this, p)
 
     override fun getEnclosedElements() = emptyList<Element>()
+    
     override val annotationOwner: PsiAnnotationOwner?
         get() = psi.modifierList
 
@@ -62,5 +67,5 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
 
     override fun hashCode() = psi.hashCode()
 
-    override fun toString() = psi.name ?: "<unnamed>"
+    override fun toString() = psi.name ?: "<unnamed variable>"
 }

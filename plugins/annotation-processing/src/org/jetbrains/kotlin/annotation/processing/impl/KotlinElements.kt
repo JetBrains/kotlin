@@ -69,7 +69,8 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     }
 
     override fun getBinaryName(type: TypeElement) = JeName((type as JeTypeElement).psi.qualifiedName)
-
+    
+    //TODO
     override fun getDocComment(e: Element?) = ""
 
     override fun isDeprecated(e: Element?): Boolean {
@@ -104,7 +105,7 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     }
 
     override fun getAllAnnotationMirrors(e: Element): List<AnnotationMirror> {
-        val annotations = (e as? JeElement)?.annotationMirrors?.toMutableList() ?: return emptyList()
+        val annotations = (e as? JeElement)?.annotationMirrors?.toMutableList() ?: mutableListOf()
         
         if (e is JeTypeElement) {
             var parent = e.psi.superClass

@@ -22,6 +22,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.*
+import org.jetbrains.kotlin.java.model.internal.isStatic
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.java.model.types.JeNoneType
 import org.jetbrains.kotlin.java.model.types.toJeType
@@ -83,11 +84,11 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), Exec
 }
 
 fun PsiMethod.getReceiverTypeMirror(): TypeMirror {
-    if (hasModifierProperty(PsiModifier.STATIC)) return JeNoneType
+    if (isStatic) return JeNoneType
 
     if (isConstructor) {
         val containingClass = containingClass
-        if (containingClass != null && !containingClass.hasModifierProperty(PsiModifier.STATIC)) {
+        if (containingClass != null && !containingClass.isStatic) {
             containingClass.containingClass?.let {
                 return PsiTypesUtil.getClassType(it).toJeType(manager)
             }
