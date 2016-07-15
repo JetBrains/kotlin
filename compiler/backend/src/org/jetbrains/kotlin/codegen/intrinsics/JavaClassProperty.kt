@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class JavaClassProperty : IntrinsicPropertyGetter() {
+object JavaClassProperty : IntrinsicPropertyGetter() {
     override fun generate(
             resolvedCall: ResolvedCall<*>?,
             codegen: ExpressionCodegen,

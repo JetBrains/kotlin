@@ -1538,7 +1538,7 @@ public abstract class StackValue {
 
                 if (descriptor instanceof PropertyDescriptor &&
                     // hackaround: boxing changes behaviour of T.javaClass intrinsic
-                    !(state.getIntrinsics().getIntrinsic((PropertyDescriptor) descriptor) instanceof JavaClassProperty)
+                    state.getIntrinsics().getIntrinsic((PropertyDescriptor) descriptor) != JavaClassProperty.INSTANCE
                 ) {
                     ReceiverParameterDescriptor receiverCandidate = descriptor.getExtensionReceiverParameter();
                     assert receiverCandidate != null;
