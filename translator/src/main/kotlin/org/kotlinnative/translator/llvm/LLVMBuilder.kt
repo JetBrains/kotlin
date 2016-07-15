@@ -134,9 +134,12 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
-        val tmp = getNewVariable(source.type, source.pointer)
-        llvmLocalCode.appendln("$tmp = load ${source.getType()} $source, align ${tmp.type.align}")
-        llvmLocalCode.appendln("store ${target.type} $tmp, ${target.getType()} $target, align ${tmp.type.align}")
+        var from = source
+        if (source.pointer > 0) {
+            from = getNewVariable(source.type, source.pointer)
+            llvmLocalCode.appendln("$from = load ${source.getType()} $source, align ${from.type.align}")
+        }
+        llvmLocalCode.appendln("store ${target.type} $from, ${target.getType()} $target, align ${from.type.align}")
     }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
