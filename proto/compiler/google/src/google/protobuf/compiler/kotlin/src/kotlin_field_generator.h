@@ -20,20 +20,8 @@ class ClassGenerator;       // declared in kotlin_class_generator.h
 class FieldGenerator {
 private:
     FieldDescriptor const * descriptor;
-    string protobufToKotlinField() const;
-    string protobufToKotlinType () const;
 
     // TODO: refactor from field generator to some static utility namespace
-    /**
-    * Converts one of protobuf wire types to corresponding Kotlin type with proper
-    * naming, so it could be used as suffix after read/write, resulting in function
-    * in CodedInputStream/CodedOutputStream.
-    * Example: protobufToKotlinFunctionSuffix(TYPE_SFIXED32) returns "SFixed32", and
-    *          in Kotlin runtime exists method
-    *          CodedInputStream.readSFixed32(fieldNumber: Int)
-    */
-    string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const;
-    string protobufTypeToInitValue(FieldDescriptor const * descriptor) const;
 
     void generateSetter(io::Printer * printer) const;
     void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;

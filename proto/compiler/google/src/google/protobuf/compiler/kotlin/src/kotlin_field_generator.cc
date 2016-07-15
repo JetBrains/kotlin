@@ -14,122 +14,6 @@ namespace protobuf {
 namespace compiler {
 namespace kotlin {
 
-/**
- * Gets equivalent Kotlin-type for a given field descriptor.
- * This method takes protobuf field type into account, adding 'List<>'
- * for repeated fields, and '?' for optional.
- */
-string FieldGenerator::protobufToKotlinField() const {
-    string  preamble = "",
-            postamble = "";
-    switch (modifier) {
-        case FieldDescriptor::LABEL_REQUIRED:
-            break;
-        case FieldDescriptor::LABEL_OPTIONAL:
-            postamble = "?";
-            break;
-        case FieldDescriptor::LABEL_REPEATED:
-        #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
-            preamble = "MutableList <";
-            postamble = "> ";
-            break;
-        #else
-            preamble  = "Array <";
-            postamble = "> ";
-            break;
-        #endif
-    }
-    return preamble + protobufToKotlinType() + postamble;
-}
-
-/**
- * Simply maps protobuf field type to corresponding Kotlin.
- */
-// TODO: refactor in separate static namespace
-string FieldGenerator::protobufToKotlinType() const {
-    FieldDescriptor::Type type = descriptor->type();
-    switch(type) {
-        case FieldDescriptor::TYPE_BOOL:
-            return "Boolean";
-        case FieldDescriptor::TYPE_BYTES:
-            return "ByteArray";
-        case FieldDescriptor::TYPE_DOUBLE:
-            return "Double";
-        case FieldDescriptor::TYPE_ENUM:
-            return string(descriptor->enum_type()->name());
-        case FieldDescriptor::TYPE_FIXED32:
-            // we map uint32 into Int, storing top bit in sign bit
-            return "Int";
-        case FieldDescriptor::TYPE_FIXED64:
-            // we map uint64 into Long, storing top bit in sign bit
-            return "Long";
-        case FieldDescriptor::TYPE_FLOAT:
-            return "Float";
-        case FieldDescriptor::TYPE_INT32:
-            return "Int";
-        case FieldDescriptor::TYPE_INT64:
-            return "Long";
-        case FieldDescriptor::TYPE_MESSAGE:
-            return string(descriptor->message_type()->name());
-        case FieldDescriptor::TYPE_SFIXED32:
-            return "Int";
-        case FieldDescriptor::TYPE_SFIXED64:
-            return "Long";
-        case FieldDescriptor::TYPE_SINT32:
-            return "Int";
-        case FieldDescriptor::TYPE_SINT64:
-            return "Long";
-        case FieldDescriptor::TYPE_STRING:
-            return "kotlin.String";
-        case FieldDescriptor::TYPE_UINT32:
-            return "Int";            // see notes for TYPE_FIXED32
-        case FieldDescriptor::TYPE_UINT64:
-            return "Long";           // see notes for TYPE_FIXED64
-    }
-}
-
-// TODO: refactor in separate static
-string FieldGenerator::protobufTypeToInitValue(FieldDescriptor const * descriptor) const {
-    FieldDescriptor::Type type = descriptor->type();
-    switch(type) {
-        case FieldDescriptor::TYPE_BOOL:
-            return "false";
-        case FieldDescriptor::TYPE_BYTES:
-            return "ByteArray(0)";
-        case FieldDescriptor::TYPE_DOUBLE:
-            return "0.0";
-        case FieldDescriptor::TYPE_ENUM: {
-            string enumType = descriptor->enum_type()->name();
-            return enumType + ".fromIntTo" + enumType + "(0)";   // produce enum from 0, as demanded by Google
-        }
-        case FieldDescriptor::TYPE_FIXED32:
-            return "0";
-        case FieldDescriptor::TYPE_FIXED64:
-            return "0L";
-        case FieldDescriptor::TYPE_FLOAT:
-            return "0f";
-        case FieldDescriptor::TYPE_INT32:
-            return "0";
-        case FieldDescriptor::TYPE_INT64:
-            return "0L";
-        case FieldDescriptor::TYPE_MESSAGE:
-            return string(descriptor->message_type()->name()) + "()";
-        case FieldDescriptor::TYPE_SFIXED32:
-            return "0";
-        case FieldDescriptor::TYPE_SFIXED64:
-            return "0L";
-        case FieldDescriptor::TYPE_SINT32:
-            return "0";
-        case FieldDescriptor::TYPE_SINT64:
-            return "0L";
-        case FieldDescriptor::TYPE_STRING:
-            return "\"\"";
-        case FieldDescriptor::TYPE_UINT32:
-            return "0";            // see notes for TYPE_FIXED32
-        case FieldDescriptor::TYPE_UINT64:
-            return "0L";           // see notes for TYPE_FIXED64
-    }
-}
 string FieldGenerator::getInitValue() const {
     if (descriptor->is_repeated())
     #ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
@@ -138,13 +22,13 @@ string FieldGenerator::getInitValue() const {
         return "arrayOf()";
     #endif
 
-    return protobufTypeToInitValue(descriptor);
+    return name_resolving::protobufTypeToInitValue(descriptor);
 }
 
 void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     map<string, string> vars;
     vars["name"] = simpleName;
-    vars["field"] = protobufToKotlinField();
+    vars["field"] = name_resolving::protobufToKotlinField(descriptor);
     printer->Print(vars, "var $name$ : $field$\n");
 
     // make setter private
@@ -168,8 +52,8 @@ FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerato
         , modifier(descriptor->label())
         , enclosingClass(enclosingClass)
         , simpleName(descriptor->name())
-        , underlyingType(protobufToKotlinType())
-        , fullType(protobufToKotlinField())
+        , underlyingType(name_resolving::protobufToKotlinType(descriptor))
+        , fullType(name_resolving::protobufToKotlinField(descriptor))
         , protoType(descriptor->type())
         , fieldNumber(descriptor->number())
 { }
@@ -177,7 +61,7 @@ FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerato
 // TODO: long, complicated and messy method. Refactor it ASAP
 void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag) const {
     map <string, string> vars;
-    vars["type"] = protobufTypeToKotlinFunctionSuffix(descriptor->type()) + (noTag ? "NoTag" : "");
+    vars["type"] = name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type()) + (noTag ? "NoTag" : "");
     vars["fieldNumber"] = std::to_string(fieldNumber);
     vars["maybeFieldNumber"] = noTag ? "" : std::to_string(fieldNumber);
     vars["fieldName"] = simpleName;
@@ -306,45 +190,6 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     }
 }
 
-// TODO: refactor in separate static class
-string FieldGenerator::protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type) const {
-    switch (type) {
-        case FieldDescriptor::TYPE_DOUBLE:
-            return "Double";
-        case FieldDescriptor::TYPE_FLOAT:
-            return "Float";
-        case FieldDescriptor::TYPE_INT64:
-            return "Int64";
-        case FieldDescriptor::TYPE_UINT64:
-            return "UInt64";
-        case FieldDescriptor::TYPE_INT32:
-            return "Int32";
-        case FieldDescriptor::TYPE_FIXED64:
-            return "Fixed64";
-        case FieldDescriptor::TYPE_FIXED32:
-            return "Fixed32";
-        case FieldDescriptor::TYPE_BOOL:
-            return "Bool";
-        case FieldDescriptor::TYPE_STRING:
-            return "String";
-        case FieldDescriptor::TYPE_MESSAGE:
-            return "Message";
-        case FieldDescriptor::TYPE_BYTES:
-            return "Bytes";
-        case FieldDescriptor::TYPE_UINT32:
-            return "UInt32";
-        case FieldDescriptor::TYPE_ENUM:
-            return "Enum";
-        case FieldDescriptor::TYPE_SFIXED32:
-            return "SFixed32";
-        case FieldDescriptor::TYPE_SFIXED64:
-            return "SFixed64";
-        case FieldDescriptor::TYPE_SINT32:
-            return "SInt32";
-        case FieldDescriptor::TYPE_SINT64:
-            return "SInt64";
-    }
-}
 
 void FieldGenerator::generateSetter(io::Printer *printer) const {
     map <string, string> vars;
@@ -408,11 +253,11 @@ void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuild
 }
 
 string FieldGenerator::getKotlinFunctionSuffix() const {
-    return protobufTypeToKotlinFunctionSuffix(descriptor->type());
+    return name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type());
 }
 
 string FieldGenerator::getUnderlyingTypeInitValue() const {
-    return protobufTypeToInitValue(descriptor);
+    return name_resolving::protobufTypeToInitValue(descriptor);
 }
 
 } // namespace kotlin
