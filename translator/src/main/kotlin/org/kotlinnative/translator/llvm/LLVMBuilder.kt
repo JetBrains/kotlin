@@ -28,10 +28,10 @@ class LLVMBuilder(val arm: Boolean) {
 
     fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null): LLVMVariable {
         variableCount++
-        return LLVMVariable("var$variableCount", type, kotlinName, LLVMLocalScope(), pointer)
+        return LLVMVariable("var$variableCount", type, kotlinName, LLVMRegisterScope(), pointer)
     }
 
-    fun getNewLabel(scope: LLVMScope = LLVMLocalScope(), prefix: String): LLVMLabel {
+    fun getNewLabel(scope: LLVMScope = LLVMRegisterScope(), prefix: String): LLVMLabel {
         labelCount++
         return LLVMLabel("label.$prefix.$labelCount", scope)
     }
@@ -93,11 +93,7 @@ class LLVMBuilder(val arm: Boolean) {
         llvmLocalCode.appendln("ret ${llvmVariable.type} $llvmVariable")
     }
 
-    fun addVoidReturn() {
-        llvmLocalCode.appendln("ret void")
-    }
-
-    fun addAnyReturn(type: LLVMType, value: String = type.defaultValue){
+    fun addAnyReturn(type: LLVMType, value: String = type.defaultValue) {
         llvmLocalCode.appendln("ret $type $value")
     }
 
@@ -144,7 +140,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
-        val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMLocalScope(), pointer = 1)
+        val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = 1)
         addVariableByRef(allocVar, llvmVariable, store)
         return allocVar
     }

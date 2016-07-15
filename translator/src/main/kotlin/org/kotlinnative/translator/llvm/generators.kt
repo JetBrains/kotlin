@@ -12,7 +12,7 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
             "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).isReturn) "byval" else ""} %${s.label}"
         }?.joinToString()}) ${if (arm) "#0" else ""}"
 
-fun LLVMMapStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMLocalScope()): LLVMVariable = when {
+fun LLVMMapStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope()): LLVMVariable = when {
     type.isFunctionTypeOrSubtype -> LLVMVariable(name, LLVMFunctionType(type), type.toString(), scope, pointer = 1)
     type.toString() == "Int" -> LLVMVariable(name, LLVMIntType(), type.toString(), scope)
     type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), type.toString(), scope)

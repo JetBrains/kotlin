@@ -78,17 +78,17 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
         generateLoadArguments(thisField)
         generateAssignments()
         generateReturn()
-        codeBuilder.addVoidReturn()
+        codeBuilder.addAnyReturn(LLVMVoidType())
         codeBuilder.addEndExpression()
     }
 
     private fun generateLoadArguments(thisField: LLVMVariable) {
 
-        val thisVariable = LLVMVariable(thisField.label, thisField.type, thisField.label, LLVMLocalScope(), pointer = 1)
+        val thisVariable = LLVMVariable(thisField.label, thisField.type, thisField.label, LLVMRegisterScope(), pointer = 1)
         codeBuilder.loadArgument(thisVariable, false)
 
         fields.forEach {
-            val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMLocalScope())
+            val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope())
             codeBuilder.loadArgument(loadVariable)
         }
     }
@@ -96,16 +96,16 @@ class ClassCodegen(val state: TranslationState, val clazz: KtClass, val codeBuil
     private fun generateAssignments() {
         fields.forEach {
             val argument = codeBuilder.getNewVariable(it.type)
-            codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMLocalScope(), pointer = 1))
+            codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = 1))
             val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
-            codeBuilder.loadClassField(classField, LLVMVariable("instance.addr", type, scope = LLVMLocalScope(), pointer = 1), (it as LLVMClassVariable).offset)
+            codeBuilder.loadClassField(classField, LLVMVariable("instance.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
             codeBuilder.storeVariable(classField, argument)
         }
     }
 
     private fun generateReturn() {
-        val dst = LLVMVariable("instance", type, scope = LLVMLocalScope(), pointer = 1)
-        val src = LLVMVariable("instance.addr", type, scope = LLVMLocalScope(), pointer = 1)
+        val dst = LLVMVariable("instance", type, scope = LLVMRegisterScope(), pointer = 1)
+        val src = LLVMVariable("instance.addr", type, scope = LLVMRegisterScope(), pointer = 1)
 
         val castedDst = codeBuilder.bitcast(dst, LLVMCharType())
         val castedSrc = codeBuilder.bitcast(src, LLVMCharType())

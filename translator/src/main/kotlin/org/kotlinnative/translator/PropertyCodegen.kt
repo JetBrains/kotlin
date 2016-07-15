@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.kotlinnative.translator.llvm.LLVMBuilder
-import org.kotlinnative.translator.llvm.LLVMGlobalScope
+import org.kotlinnative.translator.llvm.LLVMVariableScope
 import org.kotlinnative.translator.llvm.LLVMMapStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
 
@@ -19,7 +19,7 @@ class PropertyCodegen(val state: TranslationState, val property: KtProperty, val
         val value = varInfo.value
         if (kotlinType.nameIfStandardType != null) {
             val variableType = LLVMMapStandardType(property.name ?: return, kotlinType).type
-            val variable = LLVMVariable(property.name.toString(), variableType, property.name.toString(), LLVMGlobalScope(), pointer = 1)
+            val variable = LLVMVariable(property.name.toString(), variableType, property.name.toString(), LLVMVariableScope(), pointer = 1)
             variableManager.addGlobalVariable(property.name.toString(), variable)
             codeBuilder.declareGlobalVariable(variable, variableType.parseArg(value.toString()))
         }
