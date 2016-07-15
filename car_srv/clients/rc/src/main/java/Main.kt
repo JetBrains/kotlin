@@ -6,7 +6,7 @@ import com.martiansoftware.jsap.JSAP
  * Created by user on 7/14/16.
  */
 
-val correctDirectionValues: Array<Char> = arrayOf('f', 'b', 'l', 'r', 's');
+val correctDirectionValues: Array<Char> = arrayOf('w', 's', 'a', 'd', 'h');
 
 fun main(args: Array<String>) {
     val jsap: JSAP = JSAP()
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
 }
 
 fun initTextInterface(carControl: CarControl) {
-    val helpMessage = "type f, b, l, r, s for command forward, backward, left, right, stop. to exit type q or quit ";
+    val helpMessage = "type w, s, a, d, h for command forward, backward, left, right, stop. to exit type q or quit ";
     println(helpMessage)
 
     while (true) {
@@ -63,7 +63,7 @@ fun setOptions(jsap: JSAP) {
     val optPort = FlaggedOption("port").setStringParser(JSAP.INTEGER_PARSER).setDefault("8888").setRequired(false).setShortFlag('p').setLongFlag("port")
     val optHelp = FlaggedOption("help").setStringParser(JSAP.BOOLEAN_PARSER).setRequired(false).setDefault("false").setLongFlag("help")
     val optDirection = FlaggedOption("direction").setStringParser(JSAP.CHARACTER_PARSER).setRequired(false).setDefault("t").setShortFlag('d')
-    optDirection.setHelp("move direction: available values - one symbol:\n\"f (forward),b (backward),l (left),r (right),s (stop)\". example: -d f\nwithout argument used default \"t\" - running text interface")
+    optDirection.setHelp("move direction: available values - one symbol:\n\"w (forward),s (backward),a (left),f (right),h (stop)\". example: -d w\nwithout argument used default \"t\" - running text interface")
     jsap.registerParameter(opthost)
     jsap.registerParameter(optPort)
     jsap.registerParameter(optHelp)

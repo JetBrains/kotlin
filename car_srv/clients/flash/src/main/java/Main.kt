@@ -26,11 +26,12 @@ fun main(args: Array<String>) {
         return
     }
     val fileConfig = readFileConfig()
-    //if argument get in console, then its primary, else from config, else default
+
     val host = getActualValue("host", clArgsConfig, fileConfig)
     val port = getActualValue("port", clArgsConfig, fileConfig, "8888").toInt()
     val mcuSystem = getActualValue("mcuSystem", clArgsConfig, fileConfig, "0x08000000")
     val flashFilePath = getActualValue("flash", clArgsConfig, fileConfig)
+
     val actualValues = mapOf<String, String>(Pair("host", host), Pair("port", port.toString()), Pair("mcuSystem", mcuSystem), Pair("flash", flashFilePath))
     saveFileConfig(actualValues)
     var fileBytes: ByteArray = ByteArray(0);

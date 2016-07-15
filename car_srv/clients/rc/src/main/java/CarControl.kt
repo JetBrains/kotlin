@@ -19,19 +19,19 @@ class CarControl constructor(client: Client) {
 
         val directionBuilder = RouteP.Direction.newBuilder()
         when (direction) {
-            'f' -> {
+            'w' -> {
                 directionBuilder.setCommand(Command.forward)
             }
-            'b' -> {
+            's' -> {
                 directionBuilder.setCommand(Command.backward)
             }
-            'r' -> {
+            'd' -> {
                 directionBuilder.setCommand(Command.right)
             }
-            'l' -> {
+            'a' -> {
                 directionBuilder.setCommand(Command.left)
             }
-            's' -> {
+            'h' -> {
                 directionBuilder.setCommand(Command.stop)
             }
         }
