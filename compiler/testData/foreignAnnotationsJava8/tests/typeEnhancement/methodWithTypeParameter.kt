@@ -15,7 +15,8 @@ class Outer {
     class B extends A {
         // OK, non-platform types
         @Override
-        <T1, T2> @NonNull T2 foo(@Nullable T1 x) { return null; }
+        @NonNull
+        <T1, T2> T2 foo(@Nullable T1 x) { return null; }
 
         // Parameter type is fully non-flexible (OK)
         // Return type is `X<R!>?`.
@@ -23,7 +24,8 @@ class Outer {
         // so type enhancing happens only for outermost type.
         // TODO: We should properly compare equality with specific local equality axioms (as when calculating overriden descriptors)
         @Override
-        <R> @Nullable X<@Nullable R> bar(@NonNull Y<@NonNull R> x) { return null; }
+        @Nullable
+        <R> X<@Nullable R> bar(@NonNull Y<@NonNull R> x) { return null; }
     }
 
     class C extends B {
@@ -46,6 +48,7 @@ class Outer {
 
 
         @Override
-        <F> @NonNull X<@NonNull F> bar(@Nullable Y<@Nullable F> x) { return null; }
+        @NonNull
+        <F> X<@NonNull F> bar(@Nullable Y<@Nullable F> x) { return null; }
     }
 }
