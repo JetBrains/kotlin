@@ -133,20 +133,19 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             -1
         }
 
-
-        if (lineNumber >= 0) {
-            val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, lineNumber)
-            if (lambdaOrFunIfInside != null) {
-                return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
-            }
-            val property = getParameterIfInConstructor(location, psiFile, lineNumber)
-            if (property != null) {
-                return SourcePosition.createFromElement(property)
-            }
-            return SourcePosition.createFromLine(psiFile, lineNumber)
+        if (lineNumber < 0) {
+            throw NoDataException.INSTANCE
         }
 
-        throw NoDataException.INSTANCE
+        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, lineNumber)
+        if (lambdaOrFunIfInside != null) {
+            return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
+        }
+        val property = getParameterIfInConstructor(location, psiFile, lineNumber)
+        if (property != null) {
+            return SourcePosition.createFromElement(property)
+        }
+        return SourcePosition.createFromLine(psiFile, lineNumber)
     }
 
     private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
@@ -281,16 +280,14 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (DumbService.getInstance(myDebugProcess.project).isDumb) {
             return emptyList()
         }
-        else {
-            val baseElement = getElementToCalculateClassName(element) ?: return emptyList()
-            return getOrComputeClassNames(baseElement) {
-                element ->
-                val file = element.readAction { it.containingFile as KtFile }
-                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-                val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
 
-                getInternalClassNameForElement(element, typeMapper, file, isInLibrary, withInlines)
-            }
+        val baseElement = getElementToCalculateClassName(element) ?: return emptyList()
+        return getOrComputeClassNames(baseElement) { element ->
+            val file = element.readAction { it.containingFile as KtFile }
+            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+            val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
+
+            getInternalClassNameForElement(element, typeMapper, file, isInLibrary, withInlines)
         }
     }
 
