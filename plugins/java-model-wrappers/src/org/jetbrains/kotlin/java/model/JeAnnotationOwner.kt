@@ -30,23 +30,40 @@ interface JeAnnotationOwner : Element {
     override fun getAnnotationMirrors() = annotationOwner?.annotations?.map { JeAnnotationMirror(it) } ?: emptyList()
     
     override fun <A : Annotation> getAnnotation(annotationClass: Class<A>): A? {
-        if (!annotationClass.isAnnotation) {
-            throw IllegalArgumentException("Not an annotation class: " + annotationClass)
-        }
-        
-        val annotationFqName = annotationClass.canonicalName
-
-        val annotation = annotationOwner?.annotations
-                                 ?.firstOrNull { it.qualifiedName == annotationFqName } ?: return null
-        val annotationDeclaration = annotation.nameReferenceElement?.resolve() as? PsiClass ?: return null
-        
-        @Suppress("UNCHECKED_CAST")
-        return KotlinAnnotationProxyMaker(annotation, annotationDeclaration, annotationClass).generate() as? A
+        return getAnnotationsByType(annotationClass, onlyFirst = true).firstOrNull()
     }
     
     @Suppress("UNCHECKED_CAST")
-    override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
-        return RArray.newInstance(annotationType, 0) as Array<A>
+    override fun <A : Annotation> getAnnotationsByType(annotationClass: Class<A>): Array<A> {
+        val annotations = getAnnotationsByType(annotationClass, onlyFirst = false)
+        
+        return (RArray.newInstance(annotationClass, annotations.size) as Array<A>).apply {
+            annotations.forEachIndexed { i, annotation -> RArray.set(this, i, annotation) }
+        }
+    }
+    
+    private fun <A : Annotation> getAnnotationsByType(annotationClass: Class<A>, onlyFirst: Boolean): List<A> {
+        if (!annotationClass.isAnnotation) {
+            throw IllegalArgumentException("Not an annotation class: " + annotationClass)
+        }
+
+        val annotationFqName = annotationClass.canonicalName
+        
+        val allAnnotations = annotationOwner?.annotations?.filter { it.qualifiedName == annotationFqName } ?: return emptyList()
+        if (allAnnotations.isEmpty()) return emptyList()
+        
+        val annotations = if (onlyFirst) listOf(allAnnotations.first()) else allAnnotations
+        
+        val annotationDeclarations = annotations.map { it to it.nameReferenceElement?.resolve() as? PsiClass }.filter { it.second != null }
+
+        @Suppress("UNCHECKED_CAST")
+        val annotationProxies = annotationDeclarations.map {
+            val (annotation, annotationDeclaration) = it
+            KotlinAnnotationProxyMaker(annotation, annotationDeclaration!!, annotationClass).generate() as? A
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return annotationProxies as List<A>
     }
 }
 

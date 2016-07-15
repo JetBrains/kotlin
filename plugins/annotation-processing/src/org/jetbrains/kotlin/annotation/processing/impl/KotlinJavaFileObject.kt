@@ -49,9 +49,7 @@ abstract class KotlinAbstractFileObject(val file: File) : FileObject {
 
     override fun openInputStream() = file.inputStream()
 
-    override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence? {
-        TODO()
-    }
+    override fun getCharContent(ignoreEncodingErrors: Boolean) = file.readText()
 
     override fun getLastModified() = file.lastModified()
 

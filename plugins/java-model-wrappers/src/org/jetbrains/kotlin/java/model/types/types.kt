@@ -25,7 +25,8 @@ import java.lang.reflect.Array as RArray
 private val PSI_PRIMITIVES_MAP = listOf(
         PsiType.BYTE, PsiType.CHAR, PsiType.DOUBLE,
         PsiType.FLOAT, PsiType.INT, PsiType.LONG,
-        PsiType.SHORT, PsiType.BOOLEAN).associate { it to JePrimitiveType(it) }
+        PsiType.SHORT, PsiType.BOOLEAN
+).associate { it to JePrimitiveType(it) }
 
 private val TYPE_KIND_TO_PSI_PRIMITIVE_MAP = mapOf(
         TypeKind.BYTE to PsiType.BYTE,
@@ -47,6 +48,7 @@ fun PsiType.toJeType(manager: PsiManager): TypeMirror = when (this) {
     is PsiPrimitiveType -> PSI_PRIMITIVES_MAP[this] ?: JeErrorType
     is PsiArrayType -> JeArrayType(this, manager)
     is PsiWildcardType -> JeWildcardType(this)
+    is PsiCapturedWildcardType -> JeCapturedWildcardType(this, manager)
     is PsiClassType -> {
         val resolvedClass = this.resolve()
         when (resolvedClass) {

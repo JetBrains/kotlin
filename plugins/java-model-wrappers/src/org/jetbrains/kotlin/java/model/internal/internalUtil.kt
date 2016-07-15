@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.internal
 
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifier.*
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
@@ -48,5 +49,11 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
         }
     }
 }
+
+internal val PsiModifierListOwner.isStatic: Boolean
+    get() = hasModifierProperty(PsiModifier.STATIC)
+
+internal val PsiModifierListOwner.isFinal: Boolean
+    get() = hasModifierProperty(PsiModifier.FINAL)
 
 fun PsiModifierListOwner.getJavaModifiers() = modifierList?.getJavaModifiers() ?: emptySet()

@@ -21,6 +21,7 @@ import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.Element
 import javax.tools.Diagnostic
+import javax.tools.Diagnostic.Kind
 
 class KotlinMessager : Messager {
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence) = printMessage(kind, msg, null)
@@ -32,6 +33,10 @@ class KotlinMessager : Messager {
     }
 
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence, e: Element?, a: AnnotationMirror?, v: AnnotationValue?) {
-        println(msg)
+        val output = when (kind) {
+            Kind.ERROR, Kind.WARNING, Kind.MANDATORY_WARNING -> System.err
+            else -> System.out
+        }
+        output.println(msg)
     }
 }

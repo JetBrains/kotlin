@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.java.model.types
 
-import org.jetbrains.kotlin.java.model.JeConverter
 import org.jetbrains.kotlin.java.model.elements.JeTypeParameterElement
 import com.intellij.psi.*
+import org.jetbrains.kotlin.java.model.toJeElement
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
@@ -29,6 +29,7 @@ class JeTypeVariableType(
         val parameter: PsiTypeParameter
 ) : JePsiType(), JeTypeWithManager, TypeVariable {
     override fun getKind() = TypeKind.TYPEVAR
+    
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitTypeVariable(this, p)
 
     override val psiManager: PsiManager
@@ -48,5 +49,13 @@ class JeTypeVariableType(
         }
     }
 
-    override fun asElement() = JeTypeParameterElement(parameter, JeConverter.convert(parameter.owner))
+    override fun asElement() = JeTypeParameterElement(parameter, parameter.owner.toJeElement())
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        return psiType == (other as? JeTypeVariableType)?.psiType
+    }
+
+    override fun hashCode() = psiType.hashCode()
 }

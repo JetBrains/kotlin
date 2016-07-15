@@ -30,24 +30,30 @@ import javax.lang.model.type.MirroredTypesException
 import javax.lang.model.type.TypeMirror
 
 class KotlinAnnotationProxyMaker(val annotation: PsiAnnotation, val annotationClass: PsiClass, val annotationType: Class<out Annotation>) {
-    fun generate(): Any {
+    fun generate(): Annotation {
         return AnnotationParser.annotationForMap(annotationType, getAllValuesForParser(getAllPsiValues()))
     }
     
-    private fun getAllPsiValues(): List<Triple<PsiAnnotationMethod, PsiAnnotationMemberValue, Method>> {
-        val values = mutableListOf<Triple<PsiAnnotationMethod, PsiAnnotationMemberValue, Method>>()
+    private data class AnnotationParameterData(
+            val method: PsiAnnotationMethod, 
+            val value: PsiAnnotationMemberValue, 
+            val jMethod: Method)
+    
+    private fun getAllPsiValues(): List<AnnotationParameterData> {
+        val values = mutableListOf<AnnotationParameterData>()
         for (method in annotationClass.methods) {
-            val jMethod = try { annotationType.getMethod(method.name) } catch (e : NoSuchMethodException) { continue }
             if (method !is PsiAnnotationMethod) continue
             if (method.returnType == null) continue
             
+            val jMethod = try { annotationType.getMethod(method.name) } catch (e : NoSuchMethodException) { continue }
+            
             val value = annotation.findAttributeValue(method.name) ?: method.defaultValue ?: continue
-            values += Triple(method, value, jMethod)
+            values += AnnotationParameterData(method, value, jMethod)
         }
         return values
     }
     
-    private fun getAllValuesForParser(values: List<Triple<PsiAnnotationMethod, PsiAnnotationMemberValue, Method>>): Map<String, Any?> {
+    private fun getAllValuesForParser(values: List<AnnotationParameterData>): Map<String, Any?> {
         val parserValues = mutableMapOf<String, Any?>()
         val evaluator = JavaPsiFacade.getInstance(annotation.project).constantEvaluationHelper
         for ((method, value, jMethod) in values) {
@@ -70,7 +76,7 @@ private fun getConstantValue(
         returnType == PsiType.NULL || returnType == PsiType.VOID -> unexpectedType("void")
         jReturnType == String::class.java -> return calculateConstantValue(psiValue, evaluator)
         jReturnType == Class::class.java -> {
-            val type = (psiValue as PsiClassObjectAccessExpression).operand.type.toJeType(manager)
+            val type = getObjectType(psiValue).toJeType(manager)
             return MirroredTypeExceptionProxy(type)
         }
         jReturnType.isArray -> {
@@ -83,7 +89,7 @@ private fun getConstantValue(
             }
             
             if (jComponentType == Class::class.java) {
-                val typeMirrors = arrayValues.map { (it as PsiClassObjectAccessExpression).operand.type.toJeType(manager) }
+                val typeMirrors = arrayValues.map { getObjectType(it).toJeType(manager) }
                 return MirroredTypesExceptionProxy(Collections.unmodifiableList(typeMirrors))
             } else {
                 val arr = Array.newInstance(jComponentType, arrayValues.size)
@@ -103,7 +109,24 @@ private fun getConstantValue(
     }
 }
 
-private fun castPrimitiveValue(type: PsiType, value: Any?): Any? = when (type) {
+private fun getObjectType(value: PsiAnnotationMemberValue): PsiType {
+    when (value) {
+        is PsiClassObjectAccessExpression -> return value.operand.type
+        is PsiReference -> {
+            val resolvedElement = value.resolve()
+            if (resolvedElement is PsiField && resolvedElement.isStatic && resolvedElement.isFinal) {
+                val initializer = resolvedElement.initializer
+                if (initializer != null) {
+                    return getObjectType(initializer)
+                }
+            }
+        }
+    }
+    
+    throw IllegalArgumentException("Illegal value type: ${value.javaClass}")
+}
+
+private fun castPrimitiveValue(type: PsiType, value: Any?): Any = when (type) {
     PsiType.BYTE -> byteValue(value)
     PsiType.SHORT -> shortValue(value)
     PsiType.INT -> intValue(value)

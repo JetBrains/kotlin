@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.annotation.processing.impl
 
 import org.jetbrains.kotlin.annotation.AnalysisContext
-import org.jetbrains.kotlin.java.model.JeConverter
+import org.jetbrains.kotlin.java.model.toJeElement
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
@@ -35,7 +35,7 @@ internal class KotlinRoundEnvironment(
         val declarations = context.annotationsMap[fqName] ?: return emptySet()
         return hashSetOf<Element>().apply {
             for (declaration in declarations) {
-                JeConverter.convert(declaration)?.let { add(it) }
+                declaration.toJeElement()?.let { add(it) }
             }
         }
     }

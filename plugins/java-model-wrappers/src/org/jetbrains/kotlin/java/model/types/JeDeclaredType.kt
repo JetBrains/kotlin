@@ -17,45 +17,61 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.pom.java.LanguageLevel
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightClassReferenceExpression
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.java.model.internal.isStatic
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVisitor
 
 fun createDeclaredType(psiClass: PsiClass, typeArgs: List<PsiType>): PsiClassReferenceType? {
-    val params = typeArgs.toTypedArray()
-    val text = (psiClass.name ?: return null) + typeArgs.joinToString(prefix = "<", postfix = ">")
+    val args = typeArgs.toTypedArray()
+    val text = (psiClass.name ?: return null) + typeArgs.joinToString(prefix = "<", postfix = ">") { it.canonicalText }
     return PsiClassReferenceType(object : LightClassReferenceExpression(psiClass.manager, text, psiClass) {
-        override fun getTypeParameters() = params
+        override fun getTypeParameters() = args
     }, LanguageLevel.JDK_1_8)
 }
 
 class JeDeclaredType(
-        override val psiType: PsiClassType, 
+        override val psiType: PsiClassType,
         val psiClass: PsiClass,
-        val enclosingDeclaredType: DeclaredType? = null,
-        val typeArgumentMirrors: List<TypeMirror>? = null
+        val enclosingDeclaredType: DeclaredType? = null
 ) : JePsiType(), JeTypeWithManager, DeclaredType {
     override fun getKind() = TypeKind.DECLARED
+    
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitDeclared(this, p)
 
     override val psiManager: PsiManager
         get() = psiClass.manager
 
-    override fun getTypeArguments() = typeArgumentMirrors ?: psiType.parameters.map { it.toJeType(psiManager) }
+    override fun getTypeArguments(): List<TypeMirror> {
+        if (psiType.isRaw) return emptyList()
+        
+        return when (psiType) {
+            is PsiClassReferenceType -> {
+                val substitutor = psiType.resolveGenerics().substitutor
+                if (substitutor.isValid) {
+                    substitutor.substitutionMap.map { it.value.toJeType(psiManager) }
+                }
+                else {
+                    emptyList()
+                }
+            }
+            else -> emptyList()
+        }
+    }
 
     override fun asElement() = JeTypeElement(psiClass)
 
     override fun getEnclosingType(): TypeMirror {
+        if (!psiClass.isStatic) return JeNoneType
+        
         if (enclosingDeclaredType != null) return enclosingDeclaredType
+        
         val psiClass = psiClass.containingClass ?: return JeNoneType
         return PsiTypesUtil.getClassType(psiClass).toJeType(psiManager)
     }
@@ -63,16 +79,10 @@ class JeDeclaredType(
     override fun equals(other: Any?): Boolean{
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        if (!super.equals(other)) return false
-
-        return psiType == (other as JeDeclaredType).psiType
+        return psiType == (other as? JeDeclaredType)?.psiType
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + psiType.hashCode()
-        return result
-    }
-
-    override fun toString(): String = psiType.getCanonicalText(false)
+    override fun hashCode() = psiType.hashCode()
+    
+    override fun toString() = psiType.getCanonicalText(false)
 }
