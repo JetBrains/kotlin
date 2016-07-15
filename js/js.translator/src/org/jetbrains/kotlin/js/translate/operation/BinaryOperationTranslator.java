@@ -134,12 +134,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JsExpression result;
         JsIf ifStatement;
         if (BindingContextUtilsKt.isUsedAsExpression(expression, context().bindingContext())) {
-            if (TranslationUtils.isCacheNeeded(leftExpression)) {
-                result = context().defineTemporary(leftExpression);
-            }
-            else {
-                result = leftExpression;
-            }
+            result = context().cacheExpressionIfNeeded(leftExpression);
             JsExpression testExpression = TranslationUtils.isNullCheck(result);
             rightBlock.getStatements().add(JsAstUtils.assignment(result, rightExpression).makeStmt());
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
@@ -169,9 +164,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             return intrinsic.apply(expression, leftExpression, rightExpression, context());
         }
 
-        if (TranslationUtils.isCacheNeeded(leftExpression)) {
-            leftExpression = context().defineTemporary(leftExpression);
-        }
+        leftExpression = context().cacheExpressionIfNeeded(leftExpression);
         context().addStatementsToCurrentBlockFrom(rightBlock);
 
         return intrinsic.apply(expression, leftExpression, rightExpression, context());

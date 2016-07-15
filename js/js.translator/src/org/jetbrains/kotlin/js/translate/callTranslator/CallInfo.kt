@@ -83,13 +83,7 @@ fun TranslationContext.getCallInfo(
     val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.extensionOrDispatchReceiver, this, argsBlock)
     val explicitReceiversCorrected =
         if (!argsBlock.isEmpty && explicitReceivers.extensionOrDispatchReceiver != null) {
-            val receiverOrThisRef =
-                if (TranslationUtils.isCacheNeeded(explicitReceivers.extensionOrDispatchReceiver)) {
-                    defineTemporary(explicitReceivers.extensionOrDispatchReceiver)
-                }
-                else {
-                    explicitReceivers.extensionOrDispatchReceiver
-                }
+            val receiverOrThisRef = cacheExpressionIfNeeded(explicitReceivers.extensionOrDispatchReceiver)
             var receiverRef = explicitReceivers.extensionReceiver
             if (receiverRef != null) {
                 receiverRef = defineTemporary(explicitReceivers.extensionReceiver!!)

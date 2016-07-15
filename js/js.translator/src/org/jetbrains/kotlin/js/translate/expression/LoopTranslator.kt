@@ -140,13 +140,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val leftExpression = TranslationUtils.translateLeftExpression(context, loopRange, startBlock)
         val endBlock = JsBlock()
         val rightExpression = TranslationUtils.translateRightExpression(context, loopRange, endBlock)
-        val rangeStart =
-            if (TranslationUtils.isCacheNeeded(leftExpression)) {
-                context.defineTemporary(leftExpression)
-            }
-            else {
-                leftExpression
-            }
+        val rangeStart = context.cacheExpressionIfNeeded(leftExpression)
         context.addStatementsToCurrentBlockFrom(startBlock)
         context.addStatementsToCurrentBlockFrom(endBlock)
         val rangeEnd = context.defineTemporary(rightExpression)
