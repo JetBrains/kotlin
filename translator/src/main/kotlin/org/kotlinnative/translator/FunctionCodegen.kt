@@ -144,7 +144,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, true)
             is KtDotQualifiedExpression -> evaluateDotExpression(expr)
-            is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr, scopeDepth + 1)
+            is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
@@ -152,8 +152,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
     }
 
-
-    fun evaluateStringTemplateExpression(expr: KtStringTemplateExpression, scope: Int): LLVMSingleValue? {
+    fun evaluateStringTemplateExpression(expr: KtStringTemplateExpression): LLVMSingleValue? {
         val receiveValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)
         val type = (receiveValue as TypedCompileTimeConstant).type
         val value = receiveValue.getValue(type) ?: return null
@@ -208,7 +207,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
         if (state.classes.containsKey(function)) {
             val descriptor = state.classes[function] ?: return null
-            return evaluateConstructorCallExpression(function, names, descriptor.fields, descriptor.type)
+            return evaluateConstructorCallExpression(function, names, descriptor.type)
         }
 
         val localFunction = variableManager.getLLVMvalue(function)
@@ -266,7 +265,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         return null
     }
 
-    private fun evaluateConstructorCallExpression(name: String, names: ArrayList<LLVMSingleValue>, fields: ArrayList<LLVMVariable>, retType: LLVMType): LLVMSingleValue? {
+    private fun evaluateConstructorCallExpression(name: String, names: ArrayList<LLVMSingleValue>, retType: LLVMType): LLVMSingleValue? {
         val result = codeBuilder.getNewVariable(retType)
         codeBuilder.allocVar(result)
         result.pointer = 1

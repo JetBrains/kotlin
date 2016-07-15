@@ -135,7 +135,7 @@ class LLVMBuilder(val arm: Boolean) {
 
     fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
         val tmp = getNewVariable(source.type, source.pointer)
-        llvmLocalCode.appendln("$tmp = load ${tmp.type}, ${source.getType()} $source, align ${tmp.type.align}")
+        llvmLocalCode.appendln("$tmp = load ${source.getType()} $source, align ${tmp.type.align}")
         llvmLocalCode.appendln("store ${target.type} $tmp, ${target.getType()} $target, align ${tmp.type.align}")
     }
 
@@ -146,7 +146,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun loadVariable(target: LLVMVariable, source: LLVMVariable) {
-        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type.align}"
+        val code = "$target = load ${source.getType()} $source, align ${target.type.align}"
         llvmLocalCode.appendln(code)
     }
 
@@ -163,7 +163,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun addConstant(allocVariable: LLVMVariable, constantValue: LLVMConstant) {
-        llvmLocalCode.appendln("$allocVariable   = alloca ${allocVariable.type}, align ${allocVariable.type.align}")
+        llvmLocalCode.appendln("$allocVariable = alloca ${allocVariable.type}, align ${allocVariable.type.align}")
         llvmLocalCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
@@ -174,7 +174,7 @@ class LLVMBuilder(val arm: Boolean) {
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(source.pointer > 0)
         val target = getNewVariable(source.type, source.pointer, source.kotlinName)
-        val code = "$target = load ${target.type}, ${source.getType()} $source, align ${target.type.align}"
+        val code = "$target = load ${source.getType()} $source, align ${target.type.align}"
         llvmLocalCode.appendln(code)
         return target
     }

@@ -6,10 +6,17 @@ OS_ARCH=linux-arm
 LIB_CMSIS_DIR=$(LIB_DIR)/cmsis
 LIB_STDPERIPH_DIR=$(LIB_DIR)/stdperiph
 LIB_STM32F4D_DIR=$(LIB_DIR)/stm32f4d
+LIB_USB_DEV_DIR=$(LIB_DIR)/usb_device
+LIB_USB_OTG_DIR=$(LIB_DIR)/usb_otg
+LIB_USB_VCP_DIR=$(LIB_DIR)/usb_vcp
 
 LIB_CMSIS_OBJ=$(BIN_DIR)/libcmsis.o
 LIB_STDPERIPH_OBJ=$(BIN_DIR)/libstdperiph.o
 LIB_STM32F4D_OBJ=$(BIN_DIR)/libstm32f4d.o
+LIB_USB_DEV_OBJ=$(BIN_DIR)/libusbdevice.o
+LIB_USB_OTG_OBJ=$(BIN_DIR)/libusbotg.o
+LIB_USB_VCP_OBJ=$(BIN_DIR)/libusbvcp.o
+
 CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
 CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
@@ -20,14 +27,21 @@ LIB_KOTLIN=$(BIN_DIR)/kotlib.o
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-as
 LD=arm-none-eabi-ld
-LL=llc
+LL=llc-3.6
 OBJ_COPY=arm-none-eabi-objcopy
 GDB=arm-none-eabi-gdb
+
+USB_CONF_DIR=$(LIB_DIR)/usb_conf
 
 INCLUDES=-I$(LIB_CMSIS_DIR) \
 		 -I$(LIB_STDPERIPH_DIR) \
 		 -I$(LIB_STM32F4D_DIR) \
+		 -I$(LIB_USB_DEV_DIR) \
+		 -I$(LIB_USB_OTG_DIR) \
+		 -I$(LIB_USB_VCP_DIR) \
+		 -I$(USB_CONF_DIR) \
 		 -I$(SRC_DIR)
+
 DEFINES=-DUSE_STM32_DISCOVERY=1 -DUSE_STDPERIPH_DRIVER=1 -DSTM32F4XX=1 -DHSE_VALUE=8000000
 CFLAGS=-g -nostdlib -ffreestanding -O0 \
        -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \
@@ -49,7 +63,9 @@ $(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 	$(OBJ_COPY) -O binary $< $@
 
 $(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
-		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) $(LIB_KOTLIN)
+		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) \
+		$(LIB_USB_DEV_OBJ) $(LIB_USB_OTG_OBJ) \
+		$(LIB_USB_VCP_OBJ) $(LIB_KOTLIN)
 	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
 
 CAR_OBJ_PREFIX=car_
@@ -61,14 +77,15 @@ $(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
 		$(call dirhs,$(SRC_DIR))
 	$(CC_ALL_DEPS)
 
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+
 $(LIB_KOTLIN): $(BIN_DIR)/kotlin_main.s
 	$(AS_ALL_DEPS)
 
 $(BIN_DIR)/kotlin_main.s: $(SRC_DIR)/kotlin_main.ll
 	$(LL_ALL_DEPS)
-
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
 
 
 flash: $(CAR_FMW_BIN)
