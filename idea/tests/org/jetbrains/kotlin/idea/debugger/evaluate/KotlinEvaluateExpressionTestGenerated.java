@@ -711,6 +711,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("lIdentifier.kt")
+            public void testLIdentifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lIdentifier.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("lSeveralLabels.kt")
             public void testLSeveralLabels() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lSeveralLabels.kt");

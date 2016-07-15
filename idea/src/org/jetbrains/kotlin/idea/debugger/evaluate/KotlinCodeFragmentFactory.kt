@@ -43,14 +43,13 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.j2kText
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.j2k.AfterConversionPass
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
@@ -245,10 +244,12 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
             val sb = StringBuilder()
             val labeledObjects = HashMap<String, Value>()
+            val psiNameHelper = PsiNameHelper.getInstance(project)
+
             val entrySet: Set<Map.Entry<*, ValueMarkup>> = markupMap.entries
             for ((value, markup) in entrySet) {
                 val labelName = markup.text
-                if (!Name.isValidIdentifier(labelName)) continue
+                if (!psiNameHelper.isIdentifier(labelName)) continue
 
                 val objectRef = value as? Value ?: continue
 
