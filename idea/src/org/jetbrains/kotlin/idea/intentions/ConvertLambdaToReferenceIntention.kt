@@ -33,7 +33,12 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpression>(ConvertLambdaToReferenceIntention())
+class ConvertLambdaToReferenceInspection(
+        val intention: ConvertLambdaToReferenceIntention = ConvertLambdaToReferenceIntention()
+) : IntentionBasedInspection<KtLambdaExpression>(
+        intention,
+        { intention.shouldSuggestToConvert(it) }
+)
 
 class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
         KtLambdaExpression::class.java, "Convert lambda to reference"
@@ -141,6 +146,12 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         }
     }
 
+    internal fun shouldSuggestToConvert(element: KtLambdaExpression): Boolean {
+        val body = element.bodyExpression ?: return false
+        val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return false) ?: return false
+        return referenceName.length < element.text.length
+    }
+
     private fun KtCallExpression.getCallReferencedName() = (calleeExpression as? KtNameReferenceExpression)?.getReferencedName()
 
     private fun buildReferenceText(expression: KtExpression): String? {
@@ -166,7 +177,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val body = element.bodyExpression ?: return
         val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return) ?: return
-        val factory = KtPsiFactory(editor?.project)
+        val factory = KtPsiFactory(element)
         val lambdaArgument = element.parent as? KtLambdaArgument
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
