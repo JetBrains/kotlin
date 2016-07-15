@@ -25,8 +25,8 @@ import com.intellij.debugger.engine.PositionManagerEx
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -468,14 +468,21 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
 
             var isSuccess = true
-            ApplicationManager.getApplication().invokeAndWait(
-                    {
-                       isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                task,
-                                "Compute class names for function $functionName",
-                                true,
-                                myDebugProcess.project)
-                    }, ModalityState.NON_MODAL)
+            val applicationEx = ApplicationManagerEx.getApplicationEx()
+            if (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread) {
+                applicationEx.invokeAndWait(
+                        {
+                            isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                                    task,
+                                    "Compute class names for function $functionName",
+                                    true,
+                                    myDebugProcess.project)
+                        }, ModalityState.NON_MODAL)
+            }
+            else {
+                // Pooled thread with read lock. Can't invoke task under UI progress, so call it directly.
+                task.run()
+            }
 
             if (!isSuccess) {
                 XDebugSessionImpl.NOTIFICATION_GROUP.createNotification(

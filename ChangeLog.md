@@ -109,6 +109,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ###### Issues fixed
 
 - [`KT-13059`](https://youtrack.jetbrains.com/issue/KT-13059) Fix error stepping on *Step Over* action in the end of while block
+- [`KT-13037`](https://youtrack.jetbrains.com/issue/KT-13037) Fix possible deadlock in debugger in 2016.1 and exception in 2016.2
 
 ## 1.0.3
 
