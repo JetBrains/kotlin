@@ -22,8 +22,6 @@ import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -214,7 +212,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
 
-    var elementAt = tmpFile.findContextElement()
+    val elementAt = tmpFile.findContextElement()
 
     var parent = elementAt?.parent
     if (shouldStop(elementAt, parent)) {
