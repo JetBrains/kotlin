@@ -335,6 +335,10 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
     }
 
+    private fun evaluateTypeReferenceAssignment(type: KtUserType, expr: KtConstantExpression) {
+
+    }
+
     private fun evaluateLeafPsiElement(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
         return when (element.elementType) {
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element, scopeDepth)

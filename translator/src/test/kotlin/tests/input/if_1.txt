@@ -1,2 +1,2 @@
-if_test_1(11)
-if_test_1(0)
+if_test_1(11) == 10
+if_test_1(0) == 0
