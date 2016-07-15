@@ -44,11 +44,16 @@ handle["/loadBin"] = handlers.loadBin;
 handle["/control"] = handlers.control;
 handle["/other"] = handlers.other;
 
-/*fs.access(executeShell, fs.F_OK, function (error) {
-    if (!error) {
-        server.start(router.route, handle);
-    } else {
-        console.log("file " + executeShell + " not found. Copy this file to server root dir");
-    }
-});*/
-server.start(router.route, handle);
+if (typeof fs.access == "function") {
+    fs.access(executeShell, fs.F_OK, function (error) {
+        if (!error) {
+            server.start(router.route, handle);
+        } else {
+            console.log("file " + executeShell + " not found. Copy this file to server root dir");
+        }
+    });
+} else {
+    console.log("warning: you have old version of node.js. Check existence of the file st-flash on root of server dir yourself");
+    server.start(router.route, handle);
+}
+// server.start(router.route, handle);
