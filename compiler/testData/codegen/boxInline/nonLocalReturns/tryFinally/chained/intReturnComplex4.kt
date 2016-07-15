@@ -59,7 +59,7 @@ fun test0(h: Holder, throwException: Boolean): Int {
             {
                 h.value += "OK_NONLOCAL"
                 if (throwException) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 return 1
             },

@@ -2,7 +2,7 @@
 
 package test
 
-public class Exception1(message: String) : java.lang.RuntimeException(message)
+public class Exception1(message: String) : RuntimeException(message)
 
 public inline fun doCall(block: ()-> String, exception: (e: Exception)-> Unit, finallyBlock: ()-> String, res: String = "Fail") : String {
     try {
@@ -37,7 +37,7 @@ fun test01(h: Holder): String {
             {
                 try {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                 } catch(e: RuntimeException) {
                     h.value += ", OK_CATCHED"
                 }

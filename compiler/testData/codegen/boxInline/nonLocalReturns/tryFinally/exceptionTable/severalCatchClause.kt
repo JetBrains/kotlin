@@ -2,9 +2,9 @@
 
 package test
 
-public class Exception1(message: String) : java.lang.RuntimeException(message)
+public class Exception1(message: String) : RuntimeException(message)
 
-public class Exception2(message: String) : java.lang.RuntimeException(message)
+public class Exception2(message: String) : RuntimeException(message)
 
 public inline fun doCall(block: ()-> String, exception: (e: Exception)-> Unit, exception2: (e: Exception)-> Unit, finallyBlock: ()-> String, res: String = "Fail") : String {
     try {
@@ -27,7 +27,7 @@ public inline fun <R> doCall2(block: ()-> R, exception: (e: Exception)-> Unit, f
     } finally {
         finallyBlock()
     }
-    throw java.lang.RuntimeException("fail")
+    throw RuntimeException("fail")
 }
 
 // FILE: 2.kt
@@ -55,7 +55,7 @@ fun test0(h: Holder): String {
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 })
 
@@ -137,7 +137,7 @@ fun test1(h: Holder): String {
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 }, "Fail")
     }
@@ -201,7 +201,7 @@ fun test3(h: Holder): String {
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 }, "Fail")
     }
@@ -257,7 +257,7 @@ fun test5(h: Holder): String {
             },
             {
                 h.value += ", OK_EXCEPTION"
-                throw java.lang.RuntimeException("FAIL_EX")
+                throw RuntimeException("FAIL_EX")
                 "OK_EXCEPTION"
             },
             {

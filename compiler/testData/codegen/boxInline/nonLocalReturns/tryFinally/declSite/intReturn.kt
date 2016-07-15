@@ -37,7 +37,7 @@ fun test0(h: Holder): Int {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 return 1
             },
@@ -94,7 +94,7 @@ fun test3(h: Holder): String {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 return "OK_NONLOCAL"
             },
@@ -115,7 +115,7 @@ fun test4(h: Holder): String {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 h.value += "fail"
                 return "OK_NONLOCAL"

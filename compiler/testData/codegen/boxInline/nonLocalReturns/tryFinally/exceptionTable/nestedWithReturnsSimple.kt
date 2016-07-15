@@ -2,9 +2,9 @@
 
 package test
 
-public class Exception1(message: String) : java.lang.RuntimeException(message)
+public class Exception1(message: String) : RuntimeException(message)
 
-public class Exception2(message: String) : java.lang.RuntimeException(message)
+public class Exception2(message: String) : RuntimeException(message)
 
 public inline fun doCall(block: ()-> String, finallyBlock: ()-> String,
                          finallyBlock2: ()-> String, res: String = "Fail") : String {

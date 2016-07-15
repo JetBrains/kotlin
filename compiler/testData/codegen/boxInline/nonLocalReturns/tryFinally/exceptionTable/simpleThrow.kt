@@ -43,7 +43,7 @@ fun test1(h: Holder): String {
     val localResult = doCall (
             {
                 h.value += "OK_LOCAL"
-                throw java.lang.RuntimeException()
+                throw RuntimeException()
                 "OK_LOCAL"
             },
             {
@@ -81,7 +81,7 @@ fun test3(h: Holder): String {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 return "OK_NONLOCAL"
             },
@@ -102,7 +102,7 @@ fun test4(h: Holder): String {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 h.value += "fail"
                 return "OK_NONLOCAL"
@@ -124,7 +124,7 @@ fun test5(h: Holder): String {
             {
                 h.value += "OK_NONLOCAL"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 h.value += "fail"
                 return "OK_NONLOCAL"
@@ -132,7 +132,7 @@ fun test5(h: Holder): String {
             {
                 h.value += ", OK_EXCEPTION"
                 if (true) {
-                    throw java.lang.RuntimeException()
+                    throw RuntimeException()
                 }
                 h.value += "fail"
 
@@ -153,7 +153,7 @@ fun test6(h: Holder): String {
                 {
                     h.value += "OK_NONLOCAL"
                     if (true) {
-                        throw java.lang.RuntimeException()
+                        throw RuntimeException()
                     }
                     h.value += "fail"
                     return "OK_NONLOCAL"
@@ -161,7 +161,7 @@ fun test6(h: Holder): String {
                 {
                     h.value += ", OK_EXCEPTION"
                     if (true) {
-                        throw java.lang.RuntimeException()
+                        throw RuntimeException()
                     }
                     h.value += "fail"
 

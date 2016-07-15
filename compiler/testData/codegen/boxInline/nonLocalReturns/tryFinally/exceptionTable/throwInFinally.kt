@@ -20,7 +20,7 @@ public inline fun <R> doCall2(block: ()-> R, exception: (e: Exception)-> Unit, f
     } finally {
         finallyBlock()
     }
-    throw java.lang.RuntimeException("fail")
+    throw RuntimeException("fail")
 }
 
 // FILE: 2.kt
@@ -44,7 +44,7 @@ fun test0(h: Holder): String {
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 })
 
@@ -65,7 +65,7 @@ fun test1(h: Holder): String {
         val localResult = doCall (
                 {
                     h.value += "OK_LOCAL"
-                    throw java.lang.RuntimeException("FAIL")
+                    throw RuntimeException("FAIL")
                     "OK_LOCAL"
                 },
                 {
@@ -74,7 +74,7 @@ fun test1(h: Holder): String {
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 })
     } catch (e: RuntimeException) {
@@ -93,7 +93,7 @@ fun test2(h: Holder): String {
     val localResult = doCall (
             {
                 h.value += "OK_LOCAL"
-                throw java.lang.RuntimeException()
+                throw RuntimeException()
                 "OK_LOCAL"
             },
             {
@@ -113,17 +113,17 @@ fun test3(h: Holder): String {
         val localResult = doCall (
                 {
                     h.value += "OK_LOCAL"
-                    throw java.lang.RuntimeException("FAIL")
+                    throw RuntimeException("FAIL")
                     "OK_LOCAL"
                 },
                 {
                     h.value += ", OK_EXCEPTION"
-                    throw java.lang.RuntimeException("FAIL_EX")
+                    throw RuntimeException("FAIL_EX")
                     "OK_EXCEPTION"
                 },
                 {
                     h.value += ", OK_FINALLY"
-                    throw java.lang.RuntimeException("FINALLY")
+                    throw RuntimeException("FINALLY")
                     "OK_FINALLY"
                 })
     } catch (e: RuntimeException) {
@@ -142,12 +142,12 @@ fun test4(h: Holder): String {
         val localResult = doCall2 (
                 {
                     h.value += "OK_LOCAL"
-                    throw java.lang.RuntimeException("FAIL")
+                    throw RuntimeException("FAIL")
                     "OK_LOCAL"
                 },
                 {
                     h.value += ", OK_EXCEPTION"
-                    throw java.lang.RuntimeException("EXCEPTION")
+                    throw RuntimeException("EXCEPTION")
                     "OK_EXCEPTION"
                 },
                 {
