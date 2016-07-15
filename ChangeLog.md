@@ -3,6 +3,13 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1-M02 (EAP-2)
+
+### IDE
+
+###### New features
+- [`KT-12903`](https://youtrack.jetbrains.com/issue/KT-12903) Implement "Inline type alias" refactoring
+
 ## 1.1-M01 (EAP-1)
 
 ### Language features

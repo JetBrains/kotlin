@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
 import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+import com.intellij.lang.refactoring.InlineActionHandler
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -50,10 +52,9 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         val afterFileExists = afterFile.exists()
 
         val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
-        val handler = KotlinInlineValHandler()
-
+        val handler = Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
         val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
-        if (handler.canInlineElement(targetElement)) {
+        if (handler != null) {
             try {
                 runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
 

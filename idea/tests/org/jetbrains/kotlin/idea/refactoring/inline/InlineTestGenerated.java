@@ -35,6 +35,51 @@ public class InlineTestGenerated extends AbstractInlineTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(\\w+)\\.kt$"), true);
     }
 
+    @TestMetadata("idea/testData/refactoring/inline/inlineTypeAlias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineTypeAlias extends AbstractInlineTest {
+        public void testAllFilesPresentInInlineTypeAlias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineTypeAlias"), Pattern.compile("^(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("extensionFunctionTypeToFunctionType.kt")
+        public void testExtensionFunctionTypeToFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/extensionFunctionTypeToFunctionType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionTypeToFunctionType.kt")
+        public void testFunctionTypeToFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/functionTypeToFunctionType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionTypeToNullableType.kt")
+        public void testFunctionTypeToNullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/functionTypeToNullableType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("keepImports.kt")
+        public void testKeepImports() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/keepImports.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceImports.kt")
+        public void testReplaceImports() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/replaceImports.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleAlias.kt")
+        public void testSimpleAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineTypeAlias/simpleAlias.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
