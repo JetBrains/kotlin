@@ -125,7 +125,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
         val fileText = file.text
         val dummyDeclarationText = "fun dummy(){}"
-        val newFileText = fileText.substring(0, startOffset) + "\n" + dummyDeclarationText + "\n" + fileText.substring(endOffset)
+        val newFileText = fileText.substring(0, startOffset) + " " + dummyDeclarationText + "\n" + fileText.substring(endOffset)
 
         val newFile = parseAsFile(newFileText, KotlinFileType.INSTANCE, file.project)
         val declaration = PsiTreeUtil.findElementOfClassAtRange(newFile, startOffset + 1, startOffset + 1 + dummyDeclarationText.length, KtFunction::class.java) ?: return null
