@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
@@ -124,6 +125,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
             is KtProperty -> evaluateLeafPsiElement(expr.firstChild as LeafPsiElement, scopeDepth)
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
+            is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
             null -> {
                 variableManager.pullUpwardsLevel(scopeDepth)
@@ -133,6 +135,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
 
         expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth)
+    }
+
+    private fun evaluateDoWhileExpression(element: PsiElement, scopeDepth: Int) {
+        val bodyExpression = element.getNextSiblingIgnoringWhitespaceAndComments() ?: return
+        val condition = bodyExpression.siblings(withItself = false).filter { it is KtContainerNode }.firstOrNull() ?: return
+
+        executeWhileBlock(condition.firstChild as KtBinaryExpression, bodyExpression.firstChild, scopeDepth, checkConditionBeforeExecute = false)
     }
 
     private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
@@ -356,15 +365,15 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         getBrackets = condition.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         val bodyExpression = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
 
-        return executeWhileBlock(condition.firstChild as KtBinaryExpression, bodyExpression.firstChild, scopeDepth)
+        return executeWhileBlock(condition.firstChild as KtBinaryExpression, bodyExpression.firstChild, scopeDepth, checkConditionBeforeExecute = true)
     }
 
-    private fun executeWhileBlock(condition: KtBinaryExpression, bodyExpression: PsiElement, scopeDepth: Int): LLVMVariable? {
+    private fun executeWhileBlock(condition: KtBinaryExpression, bodyExpression: PsiElement, scopeDepth: Int, checkConditionBeforeExecute: Boolean): LLVMVariable? {
         val conditionLabel = codeBuilder.getNewLabel(prefix = "while")
         val bodyLabel = codeBuilder.getNewLabel(prefix = "while")
         val exitLabel = codeBuilder.getNewLabel(prefix = "while")
 
-        codeBuilder.addUnconditionalJump(conditionLabel)
+        codeBuilder.addUnconditionalJump(if (checkConditionBeforeExecute) conditionLabel else bodyLabel)
         codeBuilder.markWithLabel(conditionLabel)
         val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)
 
