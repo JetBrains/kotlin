@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.TestLoggerFactory
@@ -271,6 +273,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
+        Disposer.register(myTestRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 
         val moduleNames = configureModules()
         initialMake()
