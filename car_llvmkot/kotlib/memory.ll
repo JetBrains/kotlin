@@ -27,23 +27,25 @@ define i8* @malloc_static(i32 %size) #0 {
 
 ; <label>:7                                       ; preds = %0
   store i8* null, i8** %1
-  br label %15
+  br label %17
 
 ; <label>:8                                       ; preds = %0
   %9 = load i32* @static_area_ptr, align 4
-  store i32 %9, i32* %result, align 4
-  %10 = load i32* %2, align 4
-  %11 = load i32* @static_area_ptr, align 4
-  %12 = add nsw i32 %11, %10
-  store i32 %12, i32* @static_area_ptr, align 4
-  %13 = load i32* %result, align 4
-  %14 = inttoptr i32 %13 to i8*
-  store i8* %14, i8** %1
-  br label %15
+  %10 = getelementptr inbounds i8* getelementptr inbounds ([1000 x i8]* @static_area, i32 0, i32 0), i32 %9
+  %11 = ptrtoint i8* %10 to i32
+  store i32 %11, i32* %result, align 4
+  %12 = load i32* %2, align 4
+  %13 = load i32* @static_area_ptr, align 4
+  %14 = add nsw i32 %13, %12
+  store i32 %14, i32* @static_area_ptr, align 4
+  %15 = load i32* %result, align 4
+  %16 = inttoptr i32 %15 to i8*
+  store i8* %16, i8** %1
+  br label %17
 
-; <label>:15                                      ; preds = %8, %7
-  %16 = load i8** %1
-  ret i8* %16
+; <label>:17                                      ; preds = %8, %7
+  %18 = load i8** %1
+  ret i8* %18
 }
 
 ; Function Attrs: nounwind
@@ -60,24 +62,32 @@ define i8* @malloc_dynamic(i32 %size) #0 {
 
 ; <label>:7                                       ; preds = %0
   store i8* null, i8** %1
-  br label %15
+  br label %17
 
 ; <label>:8                                       ; preds = %0
   %9 = load i32* @dynamic_area_ptr, align 4
-  store i32 %9, i32* %result, align 4
-  %10 = load i32* %2, align 4
-  %11 = load i32* @dynamic_area_ptr, align 4
-  %12 = add nsw i32 %11, %10
-  store i32 %12, i32* @dynamic_area_ptr, align 4
-  %13 = load i32* %result, align 4
-  %14 = inttoptr i32 %13 to i8*
-  store i8* %14, i8** %1
-  br label %15
+  %10 = getelementptr inbounds i8* getelementptr inbounds ([1000 x i8]* @dynamic_area, i32 0, i32 0), i32 %9
+  %11 = ptrtoint i8* %10 to i32
+  store i32 %11, i32* %result, align 4
+  %12 = load i32* %2, align 4
+  %13 = load i32* @dynamic_area_ptr, align 4
+  %14 = add nsw i32 %13, %12
+  store i32 %14, i32* @dynamic_area_ptr, align 4
+  %15 = load i32* %result, align 4
+  %16 = inttoptr i32 %15 to i8*
+  store i8* %16, i8** %1
+  br label %17
 
-; <label>:15                                      ; preds = %8, %7
-  %16 = load i8** %1
-  ret i8* %16
+; <label>:17                                      ; preds = %8, %7
+  %18 = load i8** %1
+  ret i8* %18
 }
 
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
+!llvm.module.flags = !{!0, !1}
+!llvm.ident = !{!2}
+
+!0 = !{i32 1, !"wchar_size", i32 4}
+!1 = !{i32 1, !"min_enum_size", i32 4}
+!2 = !{!"Ubuntu clang version 3.6.2-3ubuntu2 (tags/RELEASE_362/final) (based on LLVM 3.6.2)"}
