@@ -217,10 +217,11 @@ abstract class ImplementAbstractMemberIntentionBase :
 
         classesToProcess.singleOrNull()?.let { return implementInClass(element, it.singletonList()) }
 
-        if (ApplicationManager.getApplication().isUnitTestMode) return implementInClass(element, classesToProcess)
-
         val renderer = ClassRenderer()
-        val list = JBList(classesToProcess.sortedWith(renderer.comparator)).apply {
+        val sortedClasses = classesToProcess.sortedWith(renderer.comparator)
+        if (ApplicationManager.getApplication().isUnitTestMode) return implementInClass(element, sortedClasses)
+
+        val list = JBList(sortedClasses).apply {
             selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
             cellRenderer = renderer
         }
