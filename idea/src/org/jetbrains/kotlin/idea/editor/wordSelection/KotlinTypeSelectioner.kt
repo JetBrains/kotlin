@@ -20,6 +20,7 @@ import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -33,14 +34,7 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
     override fun select(e: PsiElement?, editorText: CharSequence?, cursorOffset: Int, editor: Editor): List<TextRange>? {
         e ?: return null
         editorText ?: return null
-        val position = getColonPosition(e, editorText)
-        if (position < 0) return null
-        return listOf(TextRange(position, e.endOffset))
-    }
-
-    private fun getColonPosition(e: PsiElement, editorText: CharSequence): Int {
-        val colonIndex = editorText.filterIndexed { i, c -> i < e.startOffset }.indexOfLast { it == ':' }
-        val textFromColonAndElement = editorText.substring(colonIndex, e.startOffset)
-        return if (Regex(":\\s*").matches(textFromColonAndElement)) colonIndex else -1
+        val colonPosition = CharArrayUtil.shiftBackward(editorText, e.startOffset - 1, ":") - 1
+        return listOf(TextRange(colonPosition, e.endOffset))
     }
 }
