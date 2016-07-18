@@ -19,10 +19,8 @@ package kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
-import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KClassifierImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
-import kotlin.reflect.jvm.internal.KTypeParameterImpl
 
 /**
  * Creates a [KType] instance with the given classifier, type arguments, nullability and annotations.
@@ -76,3 +74,20 @@ private fun createKotlinType(
         }
     }, nullable)
 }
+
+/**
+ * Creates an instance of [KType] with the given classifier, substituting all its type parameters with star projections.
+ * The resulting type is not marked as nullable and does not have any annotations.
+ *
+ * @see [KClassifier.createType]
+ */
+val KClassifier.starProjectedType: KType
+    get() {
+        val descriptor = (this as? KClassifierImpl)?.descriptor
+                         ?: return createType()
+
+        val typeParameters = descriptor.typeConstructor.parameters
+        if (typeParameters.isEmpty()) return createType() // TODO: optimize, get defaultType from ClassDescriptor
+
+        return createType(typeParameters.map { KTypeProjection.Star })
+    }
