@@ -194,9 +194,12 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
             val methodName = clazz.clazz.name.toString() + '.' + selectorName.substringBefore('(')
             val method = clazz.methods[methodName]!!
             val returnType = clazz.methods[methodName]!!.returnType.type
+            val methodArgs = mutableListOf<LLVMSingleValue>(receiver)
 
             val names = parseArgList(expr.lastChild as KtCallExpression, scopeDepth)
-            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMRegisterScope()), names, method.args)
+            methodArgs.addAll(names)
+
+            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), methodArgs, method.args)
 
 
         }
