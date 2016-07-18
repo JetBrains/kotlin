@@ -321,7 +321,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
         val left = evaluateExpression(expr.firstChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
-        return codeBuilder.addPrimitiveBinaryOperation(operator, left, right)
+        return codeBuilder.addPrimitiveBinaryOperation(operator, expr.operationReference, left, right)
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {

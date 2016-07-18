@@ -6,6 +6,24 @@ import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 class LLVMIntType() : LLVMType() {
 
+    override fun operatorOr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "or i32 $firstOp, $secondOp")
+
+    override fun operatorAnd(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "and i32 $firstOp, $secondOp")
+
+    override fun operatorXor(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "xor i32 $firstOp, $secondOp")
+
+    override fun operatorShl(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "shl i32 $firstOp, $secondOp")
+
+    override fun operatorShr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "ashr i32 $firstOp, $secondOp")
+
+    override fun operatorUshr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "lshr i32 $firstOp, $secondOp")
+
     //TODO switch by types: int + double = int
     override fun operatorMinus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "sub nsw i32 $firstOp, $secondOp")

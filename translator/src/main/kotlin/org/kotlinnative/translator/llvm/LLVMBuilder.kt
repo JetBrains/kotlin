@@ -2,6 +2,7 @@ package org.kotlinnative.translator.llvm
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.kotlinnative.translator.llvm.types.LLVMCharType
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMStringType
@@ -60,7 +61,19 @@ class LLVMBuilder(val arm: Boolean) {
         else -> throw UnsupportedOperationException()
     }
 
-    fun addPrimitiveBinaryOperation(operation: IElementType, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
+    fun addPrimitiveReferenceOperation(referenceName: KtSimpleNameExpression, firstNativeOp: LLVMSingleValue, secondNativeOp: LLVMSingleValue): LLVMExpression {
+        return when (referenceName.getReferencedName()) {
+            "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
+            "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
+            "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
+            "lhr" -> firstNativeOp.type!!.operatorShl(firstNativeOp, secondNativeOp)
+            "shr" -> firstNativeOp.type!!.operatorShr(firstNativeOp, secondNativeOp)
+            "ushr" -> firstNativeOp.type!!.operatorUshr(firstNativeOp, secondNativeOp)
+            else -> throw UnsupportedOperationException("Unknown binary operator")
+        }
+    }
+
+    fun addPrimitiveBinaryOperation(operation: IElementType, referenceName: KtSimpleNameExpression, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
         val firstNativeOp = receiveNativeValue(firstOp)
         val secondNativeOp = receiveNativeValue(secondOp)
         val llvmExpression = when (operation) {
@@ -78,7 +91,7 @@ class LLVMBuilder(val arm: Boolean) {
                 storeVariable(result, secondNativeOp)
                 return result
             }
-            else -> throw UnsupportedOperationException("Unknown binary operator")
+            else -> addPrimitiveReferenceOperation(referenceName, firstNativeOp, secondNativeOp);
         }
         val resultOp = getNewVariable(llvmExpression.variableType)
         addAssignment(resultOp, llvmExpression)
