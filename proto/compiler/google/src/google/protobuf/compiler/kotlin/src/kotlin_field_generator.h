@@ -45,6 +45,7 @@ public:
 
     void generateCode(io::Printer * printer, bool isBuilder) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
+    void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false) const;
     FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass);
     string getKotlinFunctionSuffix() const;
 

@@ -10,7 +10,6 @@
 #include "kotlin_file_generator.h"
 #include <iostream>
 
-//#define KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
 int main(int argc, const char* const * argv) {
   google::protobuf::compiler::CommandLineInterface cli;
 

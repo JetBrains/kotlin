@@ -83,19 +83,14 @@ string protobufToKotlinField(FieldDescriptor const * descriptor) {
         case FieldDescriptor::LABEL_OPTIONAL:
             break;
         case FieldDescriptor::LABEL_REPEATED:
-#ifndef KOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
             preamble = "MutableList <";
             postamble = "> ";
             break;
-#else
-        preamble  = "Array <";
-            postamble = "> ";
-            break;
-#endif
     }
     return preamble + protobufToKotlinType(descriptor) + postamble;
 }
 
+// TODO: think about nested arrays
 string protobufTypeToInitValue(FieldDescriptor const * descriptor) {
     FieldDescriptor::Type type = descriptor->type();
     switch(type) {

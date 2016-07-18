@@ -1,5 +1,8 @@
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import WireFormat.VARINT_INFO_BITS_COUNT
+import WireFormat.VARINT_INFO_BITS_MASK
+import WireFormat.VARINT_UTIL_BIT_MASK
 
 /**
  * Created by Dmitry Savvinov on 7/6/16.
@@ -13,7 +16,6 @@ import java.nio.ByteOrder
 
 // TODO: refactor correctness checks into readTag
 class CodedInputStream(input: java.io.InputStream) {
-
     val bufferedInput: java.io.BufferedInputStream
     init {
         bufferedInput = java.io.BufferedInputStream(input)  // TODO: Java's realization uses hand-written buffers. Why?
@@ -299,11 +301,5 @@ class CodedInputStream(input: java.io.InputStream) {
         bufferedInput.reset()
         return byte == -1
     }
-
-    // couple of constants for magic numbers
-    val VARINT_INFO_BITS_COUNT: Int = 7
-    val VARINT_INFO_BITS_MASK: Int = 0b01111111    // mask for separating lowest 7 bits, where actual information stored
-    val VARINT_UTIL_BIT_MASK: Int = 0b10000000     // mask for separating highest bit, that indicates next byte presence
-
 }
 

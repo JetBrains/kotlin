@@ -27,3 +27,8 @@ clean:
 generate:
 	./protoc --kotlin_out=./ ./test/addressbook.proto 
 .PHONY: clean all generate
+
+low: dummy
+
+dummy: CXXFLAGS += -DKOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
+dummy: all

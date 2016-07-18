@@ -52,10 +52,6 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     }
 
     fun writeTo (output: CodedOutputStream): Unit {
-      writeToNoTag(output)
-    }
-
-    fun writeToNoTag (output: CodedOutputStream): Unit {
       output.writeString (1, number)
       output.writeEnum (2, type.ord)
     }
@@ -82,10 +78,6 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
       }
 
       fun readFrom (input: CodedInputStream): BuilderPhoneNumber {
-        return readFromNoTag(input)
-      }
-
-      fun readFromNoTag (input: CodedInputStream): BuilderPhoneNumber {
         number = input.readString(1)
         type = PhoneType.fromIntToPhoneType(input.readEnum(2))
         return this
@@ -110,6 +102,12 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
         while(parseFieldFrom(input)) {}
         return this
       }
+      fun getSize(): Int {
+        var size = 0
+        size += WireFormat.getStringSize(1, number)
+        size += WireFormat.getEnumSize(2, type.ord)
+        return size
+      }
     }
 
 
@@ -121,22 +119,34 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     fun mergeFrom (input: CodedInputStream) {
       val builder = BuilderPhoneNumber()
       mergeWith(builder.parseFrom(input).build())}
+    fun getSize(): Int {
+      var size = 0
+      size += WireFormat.getStringSize(1, number)
+      size += WireFormat.getEnumSize(2, type.ord)
+      return size
+    }
   }
 
 
   fun writeTo (output: CodedOutputStream): Unit {
-    writeToNoTag(output)
-  }
-
-  fun writeToNoTag (output: CodedOutputStream): Unit {
     output.writeString (1, name)
     output.writeInt32 (2, id)
     output.writeString (3, email)
     if (phones.size > 0) {
       output.writeTag(4, WireType.LENGTH_DELIMITED)
-      output.writeInt32NoTag(phones.size)
+      var arrayByteSize = 0
+      run {
+        var arraySize = 0
+        for (item in phones) {
+          arraySize += item.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+        }
+        arrayByteSize += arraySize
+      }
+      output.writeInt32NoTag(arrayByteSize)
       for (item in phones) {
-        item.writeToNoTag(output)
+        output.writeTag(4, WireType.LENGTH_DELIMITED)
+        output.writeInt32NoTag(item.getSize())
+        item.writeTo(output)
       }
     }
     output.writeBytes (5, someBytes)
@@ -202,18 +212,19 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     }
 
     fun readFrom (input: CodedInputStream): BuilderPerson {
-      return readFromNoTag(input)
-    }
-
-    fun readFromNoTag (input: CodedInputStream): BuilderPerson {
       name = input.readString(1)
       id = input.readInt32(2)
       email = input.readString(3)
       val tag = input.readTag(4, WireType.LENGTH_DELIMITED)
-      val listSize = input.readInt32NoTag()
-      for (i in 1..listSize) {
+      val expectedSize = input.readInt32NoTag()
+      var readSize = 0
+      while(readSize != expectedSize) {
         val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
-        tmp.readFromNoTag(input)
+        input.readTag(4, WireType.LENGTH_DELIMITED)
+        val expectedSize = input.readInt32NoTag()
+        tmp.readFrom(input)
+        if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
+        readSize += tmp.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
         phones.add(tmp.build())
       }
       someBytes = input.readBytes(5)
@@ -235,10 +246,15 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
         2 -> id = input.readInt32NoTag()
         3 -> email = input.readStringNoTag()
         4 -> {
-          val listSize = input.readInt32NoTag()
-          for (i in 1..listSize) {
+          val expectedSize = input.readInt32NoTag()
+          var readSize = 0
+          while(readSize != expectedSize) {
             val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
-            tmp.readFromNoTag(input)
+            input.readTag(4, WireType.LENGTH_DELIMITED)
+            val expectedSize = input.readInt32NoTag()
+            tmp.readFrom(input)
+            if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
+            readSize += tmp.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
             phones.add(tmp.build())
           }
         }
@@ -248,6 +264,21 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     fun parseFrom(input: CodedInputStream): BuilderPerson {
       while(parseFieldFrom(input)) {}
       return this
+    }
+    fun getSize(): Int {
+      var size = 0
+      size += WireFormat.getStringSize(1, name)
+      size += WireFormat.getInt32Size(2, id)
+      size += WireFormat.getStringSize(3, email)
+      run {
+        var arraySize = 0
+        for (item in phones) {
+          arraySize += item.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+        }
+        size += arraySize + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(arraySize)
+      }
+      size += WireFormat.getBytesSize(5, someBytes)
+      return size
     }
   }
 
@@ -263,6 +294,21 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
   fun mergeFrom (input: CodedInputStream) {
     val builder = BuilderPerson()
     mergeWith(builder.parseFrom(input).build())}
+  fun getSize(): Int {
+    var size = 0
+    size += WireFormat.getStringSize(1, name)
+    size += WireFormat.getInt32Size(2, id)
+    size += WireFormat.getStringSize(3, email)
+    run {
+      var arraySize = 0
+      for (item in phones) {
+        arraySize += item.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+      }
+      size += arraySize + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(arraySize)
+    }
+    size += WireFormat.getBytesSize(5, someBytes)
+    return size
+  }
 }
 
 
@@ -276,15 +322,21 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
   }
 
   fun writeTo (output: CodedOutputStream): Unit {
-    writeToNoTag(output)
-  }
-
-  fun writeToNoTag (output: CodedOutputStream): Unit {
     if (people.size > 0) {
       output.writeTag(1, WireType.LENGTH_DELIMITED)
-      output.writeInt32NoTag(people.size)
+      var arrayByteSize = 0
+      run {
+        var arraySize = 0
+        for (item in people) {
+          arraySize += item.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+        }
+        arrayByteSize += arraySize
+      }
+      output.writeInt32NoTag(arrayByteSize)
       for (item in people) {
-        item.writeToNoTag(output)
+        output.writeTag(1, WireType.LENGTH_DELIMITED)
+        output.writeInt32NoTag(item.getSize())
+        item.writeTo(output)
       }
     }
   }
@@ -317,15 +369,16 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     }
 
     fun readFrom (input: CodedInputStream): BuilderAddressBook {
-      return readFromNoTag(input)
-    }
-
-    fun readFromNoTag (input: CodedInputStream): BuilderAddressBook {
       val tag = input.readTag(1, WireType.LENGTH_DELIMITED)
-      val listSize = input.readInt32NoTag()
-      for (i in 1..listSize) {
+      val expectedSize = input.readInt32NoTag()
+      var readSize = 0
+      while(readSize != expectedSize) {
         val tmp: Person.BuilderPerson = Person.BuilderPerson()
-        tmp.readFromNoTag(input)
+        input.readTag(1, WireType.LENGTH_DELIMITED)
+        val expectedSize = input.readInt32NoTag()
+        tmp.readFrom(input)
+        if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
+        readSize += tmp.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
         people.add(tmp.build())
       }
       return this
@@ -343,10 +396,15 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
       val wireType = WireFormat.getTagWireType(tag)
       when(fieldNumber) {
         1 -> {
-          val listSize = input.readInt32NoTag()
-          for (i in 1..listSize) {
+          val expectedSize = input.readInt32NoTag()
+          var readSize = 0
+          while(readSize != expectedSize) {
             val tmp: Person.BuilderPerson = Person.BuilderPerson()
-            tmp.readFromNoTag(input)
+            input.readTag(1, WireType.LENGTH_DELIMITED)
+            val expectedSize = input.readInt32NoTag()
+            tmp.readFrom(input)
+            if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
+            readSize += tmp.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
             people.add(tmp.build())
           }
         }
@@ -355,6 +413,17 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     fun parseFrom(input: CodedInputStream): BuilderAddressBook {
       while(parseFieldFrom(input)) {}
       return this
+    }
+    fun getSize(): Int {
+      var size = 0
+      run {
+        var arraySize = 0
+        for (item in people) {
+          arraySize += item.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+        }
+        size += arraySize + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(arraySize)
+      }
+      return size
     }
   }
 
@@ -366,6 +435,17 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
   fun mergeFrom (input: CodedInputStream) {
     val builder = BuilderAddressBook()
     mergeWith(builder.parseFrom(input).build())}
+  fun getSize(): Int {
+    var size = 0
+    run {
+      var arraySize = 0
+      for (item in people) {
+        arraySize += item.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(item.getSize())
+      }
+      size += arraySize + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(arraySize)
+    }
+    return size
+  }
 }
 
 

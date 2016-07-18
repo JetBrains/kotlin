@@ -48,8 +48,6 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     // write serialization methods only for fair classes, read methods only for Builders)
     printer->Print("\n");
     generateSerializers(printer, /* isRead = */ isBuilder);
-    printer->Print("\n");
-    generateSerializersNoTag(printer, /* isRead = */ isBuilder);
 
     // builder, mergeFrom and only for fair classes
     if (!isBuilder) {
@@ -68,6 +66,9 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
         printer->Print("\n");
         generateParseMethods(printer);
     }
+
+    // getSize()
+    generateGetSizeMethod(printer);
 
     printer->Outdent();
     printer->Print("}\n");
@@ -172,32 +173,10 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Print("}\n");
 }
 
-void ClassGenerator::generateSerializers(io::Printer * printer, bool isRead) const {
-    // readFrom(input: CodedInputStream) OR
-    // writeTo(output: CodedOutputStream)
+
+void ClassGenerator::generateSerializers(io::Printer *printer, bool isRead) const {
     map <string, string> vars;
-    vars["funName"]= isRead ? "readFrom"            : "writeTo";
-    vars["returnType"] = isRead ? builderName : "Unit";
-    vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
-    vars["arg"]    = isRead ? "input"               : "output";
-    vars["maybeSeparator"] = isRead ? "" : ", ";
-    vars["maybeReturn"] = isRead ? "return " : "";
-
-    // generate function header
-    printer->Print(vars,
-                   "fun $funName$ ($arg$: $stream$): $returnType$ {"
-                           "\n");
-    printer->Indent();
-
-    printer->Print(vars, "$maybeReturn$$funName$NoTag($arg$)\n");
-
-    printer->Outdent();
-    printer->Print("}\n");
-}
-
-void ClassGenerator::generateSerializersNoTag(io::Printer *printer, bool isRead) const {
-    map <string, string> vars;
-    vars["funName"]= isRead ? "readFromNoTag"       : "writeToNoTag";
+    vars["funName"]= isRead ? "readFrom"       : "writeTo";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
     vars["returnType"] = isRead ? builderName : "Unit";
@@ -340,6 +319,30 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Outdent();
     printer->Print("}\n");
 }
+
+void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
+    printer->Print("fun getSize(): Int {\n");
+    printer->Indent();
+
+    printer->Print("var size = 0\n");
+    for (int i = 0; i < properties.size(); ++i) {
+        properties[i]->generateSizeEstimationCode(printer, "size");
+    }
+
+    printer->Print("return size\n");
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+
+
+//int ClassGenerator::getSizeWithoutHeader() {
+//    int size = 0;
+//    for (int i = 0; i < properties.size(); ++i) {
+//        size += properties[i].getSizeWithHeader();
+//    }
+//    return 0;
+//}
 
 
 const string ClassModifier::getName() const {

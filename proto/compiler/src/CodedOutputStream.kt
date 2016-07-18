@@ -1,5 +1,8 @@
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import WireFormat.VARINT_INFO_BITS_COUNT
+import WireFormat.VARINT_INFO_BITS_MASK
+import WireFormat.VARINT_UTIL_BIT_MASK
 
 /**
  * Created by user on 7/6/16.
@@ -75,7 +78,7 @@ class CodedOutputStream(val output: java.io.OutputStream) {
     }
 
     fun writeSInt64NoTag(value: Long) {
-        writeInt64NoTag((value shl 1) xor (value shr 31))
+        writeInt64NoTag((value shl 1) xor (value shr 63))
     }
 
     fun writeFixed32(fieldNumber: Int, value: Int?) {
@@ -148,7 +151,7 @@ class CodedOutputStream(val output: java.io.OutputStream) {
 
     fun writeStringNoTag(value: String) {
         writeInt32NoTag(value.length)
-        output.write(value.toByteArray())
+        output.write(value.toByteArray(Charsets.UTF_8))
     }
 
     fun writeBytes(fieldNumber: Int, value: ByteArray?) {
@@ -209,7 +212,7 @@ class CodedOutputStream(val output: java.io.OutputStream) {
         var resSize = 0
         do {
             // encode current 7 bits
-            var curByte = (curValue and VARINT_INFO_BITS_MASK)
+            var curByte = (curValue and WireFormat.VARINT_INFO_BITS_MASK)
 
             // discard encoded bits. Note that unsigned shift is needed for cases with negative numbers
             curValue = curValue ushr VARINT_INFO_BITS_COUNT
@@ -251,8 +254,5 @@ class CodedOutputStream(val output: java.io.OutputStream) {
         output.write(res, 0, resSize)
     }
 
-    // couple of constants for magic numbers
-    val VARINT_INFO_BITS_COUNT: Int = 7
-    val VARINT_INFO_BITS_MASK: Int = 0b01111111    // mask for separating lowest 7 bits, where actual information stored
-    val VARINT_UTIL_BIT_MASK: Int = 0b10000000     // mask for separating highest bit, that indicates next byte presence
+
 }

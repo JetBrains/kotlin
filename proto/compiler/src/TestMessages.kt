@@ -29,7 +29,7 @@ fun testMessageSerialization() {
                             .build()
             )
             .build()    // don't forget to call build() to produce message
-    msg.writeToNoTag(outs)
+    msg.writeTo(outs)
 
     // Now let's use output stream as input to read our message from it!
     var ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
