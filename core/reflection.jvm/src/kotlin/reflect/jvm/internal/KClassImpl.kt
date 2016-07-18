@@ -32,7 +32,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 
-internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KAnnotatedElementImpl {
+internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
+        KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KAnnotatedElementImpl {
     private val descriptor_ = ReflectProperties.lazySoft {
         val classId = classId
 
@@ -43,7 +44,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         descriptor ?: reportUnresolvedClass()
     }
 
-    val descriptor: ClassDescriptor
+    override val descriptor: ClassDescriptor
         get() = descriptor_()
 
     override val annotated: Annotated get() = descriptor
