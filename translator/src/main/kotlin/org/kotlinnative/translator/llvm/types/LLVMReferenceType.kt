@@ -2,11 +2,10 @@ package org.kotlinnative.translator.llvm.types
 
 import java.util.*
 
-class LLVMReferenceType(val type: String, var prefix: String = "", var isReturn: Boolean = false) : LLVMType() {
+class LLVMReferenceType(val type: String, var prefix: String = "", override val align: Int = 4, var byRef: Boolean = false, val uncopyable: Boolean = false) : LLVMType() {
 
     override val defaultValue: String = ""
 
-    override val align = 4
     override val size: Byte = 4
     override fun toString() = "%$prefix${if (prefix.length > 0) "." else ""}$type"
 

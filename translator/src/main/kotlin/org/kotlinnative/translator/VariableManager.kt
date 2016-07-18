@@ -5,10 +5,9 @@ import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.types.LLVMType
 import java.util.*
 
-class VariableManager {
+class VariableManager(val globalVariableCollection: HashMap<String, LLVMVariable>) {
 
     private var fileVariableCollectionTree = HashMap<String, Stack<Pair<LLVMVariable, Int>>>()
-    private var globalVariableCollection = HashMap<String, LLVMVariable>()
     private var variableVersion = HashMap<String, Int>()
 
     fun getLLVMvalue(variableName: String): LLVMVariable? {

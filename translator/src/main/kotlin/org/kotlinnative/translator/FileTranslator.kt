@@ -20,15 +20,15 @@ class FileTranslator(val state: TranslationState, val file: KtFile) {
         for (declaration in file.declarations) {
             when (declaration) {
                 is KtNamedFunction -> {
-                    val function = FunctionCodegen(state, declaration, codeBuilder)
+                    val function = FunctionCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
                     state.functions.put(function.name, function)
                 }
                 is KtClass -> {
-                    val codegen = ClassCodegen(state, declaration, codeBuilder)
+                    val codegen = ClassCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
                     state.classes.put(declaration.name!!, codegen)
                 }
                 is KtProperty -> {
-                    val property = PropertyCodegen(state, declaration, codeBuilder)
+                    val property = PropertyCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
                     state.properties.put(declaration.name!!, property)
                 }
             }

@@ -16,12 +16,11 @@ import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 
-class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
+class FunctionCodegen(val state: TranslationState, val variableManager : VariableManager, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
 
     var name = function.fqName.toString()
     var returnType: LLVMVariable
     var args = ArrayList<LLVMVariable>()
-    val variableManager = state.variableManager
     val topLevel = 2
     var wasReturnOnTopLevel = false
 
@@ -39,7 +38,7 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
                     retType.prefix = "class"
                 }
 
-                retType.isReturn = true
+                retType.byRef = true
             }
         }
         if (retType is LLVMReferenceType && state.classes.containsKey(retType.type)) {
@@ -47,8 +46,8 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         }
     }
 
-    fun generate() {
-        if (generateDeclaration()) {
+    fun generate(this_type: LLVMVariable? = null) {
+        if (generateDeclaration(this_type)) {
             return
         }
 
@@ -62,9 +61,12 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
         codeBuilder.addEndExpression()
     }
 
-    private fun generateDeclaration(): Boolean {
+    private fun generateDeclaration(this_type: LLVMVariable? = null): Boolean {
         var external = false
 
+        if (this_type != null) {
+            args.add(this_type)
+        }
         args.forEach {
             val type = it.type
             if (type is LLVMReferenceType && state.classes.containsKey(type.type)) {
@@ -98,13 +100,13 @@ class FunctionCodegen(val state: TranslationState, val function: KtNamedFunction
 
     private fun generateLoadArguments() {
         args.forEach(fun(it: LLVMVariable) {
-            if (it.type is LLVMFunctionType) {
+            if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && (it.type as LLVMReferenceType).uncopyable)) {
                 variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 1), topLevel)
                 return
             }
 
-            if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).isReturn) {
-                val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMRegisterScope(), pointer = 0)
+            if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).byRef) {
+                val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMRegisterScope(), pointer = it.pointer)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
                 variableManager.addVariable(it.label, allocVar, topLevel)
             } else {

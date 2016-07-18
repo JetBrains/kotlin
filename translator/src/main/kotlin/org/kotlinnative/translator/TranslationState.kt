@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
 import org.kotlinnative.translator.exceptions.TranslationException
+import org.kotlinnative.translator.llvm.LLVMVariable
 import java.util.*
 
 class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val arm: Boolean) {
 
     var functions = HashMap<String, FunctionCodegen>()
-    val variableManager = VariableManager()
+    val globalVariableCollection = HashMap<String, LLVMVariable>()
     var classes = HashMap<String, ClassCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
 }

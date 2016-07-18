@@ -3,6 +3,7 @@ package org.kotlinnative.translator.debug
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.CompositeElement
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -41,12 +42,17 @@ fun printFunction(function: KtNamedFunction) {
     debugPrintNode(function.node)
 }
 
+fun printClass(function: KtClass) {
+    debugPrintNode(function.node)
+}
+
 fun printFile(file: KtFile) {
 
     for (declaration in file.declarations) {
 
         when (declaration) {
             is KtNamedFunction -> printFunction(declaration)
+            is KtClass -> printClass(declaration)
             else -> println(declaration.toString())
         }
     }

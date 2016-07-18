@@ -143,7 +143,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
-        val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = 1)
+        val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = llvmVariable.pointer + 1)
         addVariableByRef(allocVar, llvmVariable, store)
         return allocVar
     }
@@ -158,7 +158,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, store: Boolean) {
-        llvmLocalCode.appendln("$targetVariable = alloca ${sourceVariable.type}, align ${sourceVariable.type.align}")
+        llvmLocalCode.appendln("$targetVariable = alloca ${sourceVariable.type}${"*".repeat(sourceVariable.pointer)}, align ${sourceVariable.type.align}")
 
         if (store) {
             llvmLocalCode.appendln("store ${sourceVariable.getType()} $sourceVariable, ${targetVariable.getType()} $targetVariable, align ${targetVariable.type.align}")

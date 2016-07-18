@@ -9,7 +9,7 @@ import org.kotlinnative.translator.llvm.types.*
 fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnType: LLVMType, declare: Boolean = false, arm: Boolean = false) =
         "${if (declare) "declare" else "define"} $returnType @$name(${
         argTypes?.mapIndexed { i: Int, s: LLVMVariable ->
-            "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).isReturn) "byval" else ""} %${s.label}"
+            "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).byRef) "byval" else ""} %${s.label}"
         }?.joinToString()}) ${if (arm) "#0" else ""}"
 
 fun LLVMMapStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope()): LLVMVariable = when {
