@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class KotlinFunctionReturnTypeSelectioner : ExtendWordSelectionHandlerBase() {
+class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun canSelect(e: PsiElement?): Boolean {
         return e is KtTypeReference
