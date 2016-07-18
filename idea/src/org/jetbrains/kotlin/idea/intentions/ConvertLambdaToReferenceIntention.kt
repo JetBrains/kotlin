@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -43,28 +42,27 @@ class ConvertLambdaToReferenceInspection(
 class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
         KtLambdaExpression::class.java, "Convert lambda to reference"
 ) {
+    private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
+        val outerCallExpression = parent as? KtCallExpression ?: return null
+        val context = outerCallExpression.analyze()
+        val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return null
+        return context[REFERENCE_TARGET, outerCallee] as? FunctionDescriptor
+    }
+
     override fun isApplicableTo(element: KtLambdaExpression): Boolean {
         val body = element.bodyExpression ?: return false
         val statement = body.statements.singleOrNull() ?: return false
         val lambdaParent = element.parent
-        val context: BindingContext
         var lambdaMustReturnUnit = false
         if (lambdaParent is KtLambdaArgument) {
-            val outerCallExpression = lambdaParent.parent as? KtCallExpression ?: return false
-            context = outerCallExpression.analyze()
-            val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return false
-            val outerCalleeDescriptor = context[REFERENCE_TARGET, outerCallee] as? FunctionDescriptor ?: return false
-            // No function parameter predecessors with default value
-            if (outerCalleeDescriptor.valueParameters.any { it.hasDefaultValue() }) return false
+            val outerCalleeDescriptor = lambdaParent.outerCalleeDescriptor() ?: return false
             val lambdaParameterType = outerCalleeDescriptor.valueParameters.lastOrNull()?.type
             if (lambdaParameterType != null && lambdaParameterType.isFunctionType) {
                 // Special Unit case (non-Unit returning lambda is accepted here, but non-Unit returning reference is not)
                 lambdaMustReturnUnit = getReturnTypeFromFunctionType(lambdaParameterType).isUnit()
             }
         }
-        else {
-            context = statement.analyze()
-        }
+        val context = statement.analyze()
 
         fun isConvertableCallInLambda(
                 callableExpression: KtExpression,
@@ -187,12 +185,28 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         else {
             // Otherwise, replace the whole argument list for lambda argument-using call
             val outerCallExpression = lambdaArgument.parent as? KtCallExpression ?: return
+            val outerCalleeDescriptor = lambdaArgument.outerCalleeDescriptor() ?: return
+            // Parameters with default value
+            val valueParameters = outerCalleeDescriptor.valueParameters
             val arguments = outerCallExpression.valueArguments.filter { it !is KtLambdaArgument }
+            val useNamedArguments = valueParameters.any { it.hasDefaultValue() } || arguments.any { it.getArgumentName() != null }
+
+            if (useNamedArguments && arguments.size > valueParameters.size) return
             val newArgumentList = factory.buildValueArgumentList {
                 appendFixedText("(")
-                for (argument in arguments) {
+                arguments.forEachIndexed { i, argument ->
+                    if (useNamedArguments) {
+                        val argumentName = argument.getArgumentName()?.asName
+                        val name = argumentName ?: valueParameters[i].name
+                        appendName(name)
+                        appendFixedText(" = ")
+                    }
                     appendExpression(argument.getArgumentExpression())
                     appendFixedText(", ")
+                }
+                if (useNamedArguments) {
+                    appendName(valueParameters.last().name)
+                    appendFixedText(" = ")
                 }
                 appendFixedText(referenceName)
                 appendFixedText(")")

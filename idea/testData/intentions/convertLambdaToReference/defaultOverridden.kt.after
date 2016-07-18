@@ -6,4 +6,4 @@ class TransformerImpl : Transformer
 
 fun bar(x: Int) = x * x
 
-val y = TransformerImpl().transform { <caret>bar(it) }
+val y = TransformerImpl().transform(f = ::bar)
