@@ -52,6 +52,7 @@ import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
+import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -71,9 +72,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.kotlinSourceRoots
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -108,7 +107,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
     private val sourceFiles = ArrayList<KtFile>()
-    private val javaRoots = ArrayList<JavaRoot>()
+    private val rootsIndex: JvmDependenciesIndex
 
     val configuration: CompilerConfiguration = configuration.copy().apply { setReadOnly(true) }
 
@@ -123,10 +122,6 @@ class KotlinCoreEnvironment private constructor(
 
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
-
-        val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
-        val index = JvmDependenciesIndex(javaRoots)
-        (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
         sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
             message ->
@@ -158,7 +153,20 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmLazyCliVirtualFileFinderFactory({ fillClasspath(configuration); index } ))
+        val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
+        val initialIndex = JvmDependenciesIndexImpl(initialRoots)
+        updateClasspathFromRootsIndex(initialIndex)
+
+        // replacing index with updatable one only for REPL mode, so we can add roots to classpath then compiling
+        // subsequent lines in REPL
+        rootsIndex = if (!configuration.getBoolean(CommonConfigurationKeys.REPL_MODE)) initialIndex
+                     else JvmDependenciesDynamicCompoundIndex().apply {
+                         addIndex(initialIndex)
+                     }
+        (ServiceManager.getService(project, CoreJavaFileManager::class.java)
+            as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
+
+        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(rootsIndex))
 
         ExternalDeclarationsProvider.registerExtensionPoint(project)
         ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -189,32 +197,48 @@ class KotlinCoreEnvironment private constructor(
                 StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
 
-    private fun fillClasspath(configuration: CompilerConfiguration) {
-        for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
-            val javaRoot = root as? JvmContentRoot ?: continue
-            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
+    private fun Iterable<ContentRoot>.classpathRoots(): List<JavaRoot> =
+        filterIsInstance(JvmContentRoot::class.java).mapNotNull {
+            javaRoot -> contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
 
-            projectEnvironment.addSourcesToClasspath(virtualFile)
-
-            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
-                if (isValidJavaFqName(it)) {
-                    FqName(it)
+                val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+                    if (isValidJavaFqName(it)) {
+                        FqName(it)
+                    }
+                    else {
+                        report(WARNING, "Invalid package prefix name is ignored: $it")
+                        null
+                    }
                 }
-                else {
-                    report(WARNING, "Invalid package prefix name is ignored: $it")
-                    null
+
+                val rootType = when (javaRoot) {
+                    is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+                    is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+                    else -> throw IllegalStateException()
                 }
-            }
 
-            val rootType = when (javaRoot) {
-                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                else -> throw IllegalStateException()
+                JavaRoot(virtualFile, rootType, prefixPackageFqName)
             }
+        }
 
-            javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
+    private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
+        index.indexedRoots.forEach {
+            projectEnvironment.addSourcesToClasspath(it.file)
         }
     }
+
+    @Suppress("unused") // used externally
+    fun tryUpdateClasspath(files: Iterable<File>): List<File>? =
+        if (rootsIndex !is JvmDependenciesDynamicCompoundIndex) {
+            report(WARNING, "Unable to update classpath after initialization, it is only allowed in REPL")
+            null
+        }
+        else {
+            rootsIndex.addNewIndexForRoots(files.map { JvmClasspathRoot(it) }.classpathRoots())?.let {
+                updateClasspathFromRootsIndex(it)
+                it.indexedRoots.mapNotNull { File(it.file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
+            } ?: emptyList()
+        }
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         when (root) {
@@ -240,7 +264,7 @@ class KotlinCoreEnvironment private constructor(
 
     private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? {
         val path = root.file
-        val jarFile = applicationEnvironment.jarFileSystem.findFileByPath("${path}!/")
+        val jarFile = applicationEnvironment.jarFileSystem.findFileByPath("${path}${URLUtil.JAR_SEPARATOR}")
         if (jarFile == null) {
             report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
             return null

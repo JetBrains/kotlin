@@ -196,7 +196,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!
-        coreJavaFileManager.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
+        coreJavaFileManager.initIndex(JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
 
         return coreJavaFileManager
     }

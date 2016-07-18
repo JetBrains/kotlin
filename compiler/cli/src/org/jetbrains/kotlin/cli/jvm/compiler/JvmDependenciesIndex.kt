@@ -21,6 +21,9 @@ import com.intellij.util.containers.IntArrayList
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 data class JavaRoot(val file: VirtualFile, val type: JavaRoot.RootType, val prefixFqName: FqName? = null) {
     enum class RootType {
@@ -34,10 +37,31 @@ data class JavaRoot(val file: VirtualFile, val type: JavaRoot.RootType, val pref
     }
 }
 
+interface JvmDependenciesIndex {
+
+    val indexedRoots: Sequence<JavaRoot>
+
+    fun <T : Any> findClass(
+            classId: ClassId,
+            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
+    ): T?
+
+    fun traverseDirectoriesInPackage(
+            packageFqName: FqName,
+            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
+    )
+
+    fun collectKnownClassNamesInPackage(
+            packageFqName: FqName
+    ): Set<String>
+}
+
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
-class JvmDependenciesIndex(_roots: List<JavaRoot>) {
+class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
 
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
@@ -74,11 +98,12 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     // helps improve several scenarios, LazyJavaResolverContext.findClassInJava being the most important
     private var lastClassSearch: Pair<FindClassRequest, SearchResult>? = null
 
+    override val indexedRoots by lazy { roots.asSequence() }
 
     // findClassGivenDirectory MUST check whether the class with this classId exists in given package
-    fun <T : Any> findClass(
+    override fun <T : Any> findClass(
             classId: ClassId,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
             findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
     ): T? {
         return search(FindClassRequest(classId, acceptedRootTypes)) { dir, rootType ->
@@ -87,9 +112,9 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         }
     }
 
-    fun traverseDirectoriesInPackage(
+    override fun traverseDirectoriesInPackage(
             packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
             continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     ) {
         search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
@@ -97,7 +122,7 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         }
     }
 
-    fun collectKnownClassNamesInPackage(
+    override fun collectKnownClassNamesInPackage(
             packageFqName: FqName
     ): Set<String> {
         var result = hashSetOf<String>()
@@ -282,6 +307,55 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         class Found(val packageDirectory: VirtualFile, val root: JavaRoot) : SearchResult
 
         object NotFound : SearchResult
+    }
+}
+
+class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
+
+    private val indices = arrayListOf<JvmDependenciesIndex>()
+    private val lock = ReentrantReadWriteLock()
+
+    fun addIndex(index: JvmDependenciesIndex) {
+        lock.write {
+            indices.add(index)
+        }
+    }
+
+    fun addNewIndexForRoots(roots: Iterable<JavaRoot>): JvmDependenciesIndex? =
+            lock.read {
+                val alreadyIndexed = indexedRoots.toHashSet()
+                val newRoots = roots.filter { !alreadyIndexed.contains(it) }
+                if (newRoots.isEmpty()) null
+                else {
+                    val index = JvmDependenciesIndexImpl(newRoots)
+                    addIndex(index)
+                    index
+                }
+            }
+
+    override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
+
+    override fun <T : Any> findClass(
+            classId: ClassId,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
+            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
+    ): T? =
+            lock.read {
+                indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
+            }
+
+    override fun traverseDirectoriesInPackage(
+            packageFqName: FqName,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
+            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
+    ) {
+        lock.read {
+            indices.forEach { it.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
+        }
+    }
+
+    override fun collectKnownClassNamesInPackage(packageFqName: FqName): Set<String> = lock.read {
+        indices.fold(hashSetOf(), { s, index -> s.addAll(index.collectKnownClassNamesInPackage(packageFqName)); s })
     }
 }
 

@@ -20,9 +20,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 
-class JvmLazyCliVirtualFileFinderFactory(private val makeIndex: () -> JvmDependenciesIndex) : JvmVirtualFileFinderFactory {
-
-    private val index by lazy { makeIndex() }
-
+class JvmCliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : JvmVirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder = JvmCliVirtualFileFinder(index)
 }
