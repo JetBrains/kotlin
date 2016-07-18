@@ -1,7 +1,7 @@
 .idea/workspace.xml
 .idea/uiDesigner.xml
 .idea/jsLibraryMappings.xml
-.idea/libraries/stFlashServer_node_modules.xml
+.idea/libraries/
 protobufjs
 node_modules
 out
