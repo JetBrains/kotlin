@@ -5,6 +5,7 @@ LDFLAGS = -lprotoc -lprotobuf
 EXE = protoc
 SRCDIR = src
 BINDIR = bin
+TESTDIR = test
 
 OBJECTS = $(patsubst $(SRCDIR)/%.cc,$(BINDIR)/%.o,$(wildcard $(SRCDIR)/*.cc))
 
@@ -25,10 +26,6 @@ clean:
 	rm -rf $(BINDIR) $(EXE)
 
 generate:
-	./protoc --kotlin_out=./ ./test/addressbook.proto 
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/nested-msg.proto
 .PHONY: clean all generate
-
-low: dummy
-
-dummy: CXXFLAGS += -DKOTLIN_GENERATED_CODE_LANGUAGE_LEVEL_LOW
-dummy: all

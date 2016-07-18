@@ -7,11 +7,28 @@
 
 #include <string>
 #include <google/protobuf/descriptor.h>
+#include <map>
+#include "kotlin_field_generator.h"
 
 namespace google {
 namespace protobuf {
 namespace compiler {
 namespace kotlin {
+
+class FieldGenerator;   // declared in kotlin_field_generator.h
+class ClassGenerator;   // declared in kotlin_class_generator.h
+
+class NameResolver {
+public:
+    NameResolver();
+
+    void addClass (string simpleName, string parentName);
+    string getClassName (string simpleName);
+    string getBuilderName (string classSimpleName);
+private:
+    std::map <string, string> names;
+    std::map <string, string> builders;
+};
 namespace name_resolving {
 
 std::string makeFirstLetterUpper(std::string s);
@@ -20,7 +37,7 @@ std::string getFileNameWithoutExtension(std::string fullName);
 
 std::string getKotlinOutputByProtoName(std::string protoName);
 
-std::string protobufTypeToInitValue(FieldDescriptor const * descriptor);
+std::string protobufTypeToInitValue(FieldGenerator const * fieldGenerator);
 
 std::string protobufToKotlinField(FieldDescriptor const * descriptor);
 

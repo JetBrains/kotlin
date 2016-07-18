@@ -6,6 +6,7 @@
 #include <iostream>
 #include "kotlin_enum_generator.h"
 #include "kotlin_field_generator.h"
+#include "kotlin_name_resolver.h"
 #include <algorithm>
 
 namespace google {
@@ -14,6 +15,7 @@ namespace compiler {
 namespace kotlin {
 
 class FieldGenerator;   // declared in "kotlin_file_generator.h"
+class NameResolver;     // declared in "kotlin_name_resolver.h"
 
 void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     generateHeader(printer, isBuilder);
@@ -74,26 +76,29 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     printer->Print("}\n");
 }
 
-ClassGenerator::ClassGenerator(Descriptor const *descriptor)
-    : descriptor(descriptor) {
+ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * nameResolver)
+    : descriptor(descriptor)
+    , nameResolver(nameResolver)
+{
     simpleName = descriptor->name();
-    builderName = "Builder" + simpleName;
 
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i) {
         FieldDescriptor const * fieldDescriptor = descriptor->field(i);
-        properties.push_back(new FieldGenerator(fieldDescriptor, /* enclosingClass = */ this));
+        properties.push_back(new FieldGenerator(fieldDescriptor, /* enclosingClass = */ this, nameResolver));
     }
 
     int nested_types_count = descriptor->nested_type_count();
     for (int i = 0; i < nested_types_count; ++i) {
         Descriptor const * nestedClassDescriptor = descriptor->nested_type(i);
-        classesDeclarations.push_back(new ClassGenerator(nestedClassDescriptor));
+        nameResolver->addClass(nestedClassDescriptor->name(), nameResolver->getClassName(simpleName));
+        classesDeclarations.push_back(new ClassGenerator(nestedClassDescriptor, nameResolver));
     }
 
     int enums_declarations_count = descriptor->enum_type_count();
     for (int i = 0; i < enums_declarations_count; ++i) {
         EnumDescriptor const * nestedEnumDescriptor = descriptor->enum_type(i);
+        nameResolver->addClass(nestedEnumDescriptor->name(), nameResolver->getClassName(simpleName));
         enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor));
     }
 
@@ -165,7 +170,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
     printer->Indent();
 
-    vars["builderName"] = builderName;
+    vars["builderName"] = nameResolver->getBuilderName(simpleName);
     printer->Print(vars, "val builder = $builderName$()\n");
     printer->Print("mergeWith(builder.parseFrom(input).build())");
 
@@ -179,7 +184,7 @@ void ClassGenerator::generateSerializers(io::Printer *printer, bool isRead) cons
     vars["funName"]= isRead ? "readFrom"       : "writeTo";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
-    vars["returnType"] = isRead ? builderName : "Unit";
+    vars["returnType"] = isRead ? nameResolver->getBuilderName(simpleName) : "Unit";
     vars["maybeReturn"] = isRead ? "return this\n" : "";
 
     // generate function header
@@ -211,7 +216,7 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
     }
 
     map<string, string> vars;
-    vars["name"] = isBuilder? builderName : simpleName;
+    vars["name"] = isBuilder? "Builder" + simpleName : simpleName;
     vars["argumentList"] = argumentList;
     vars["maybePrivate"] = isBuilder? "" : " private";
     printer->Print(vars,
@@ -261,7 +266,7 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
 void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     // parseFieldFrom(input: CodedInputStream): Boolean
     map <string, string> vars;
-    vars["builderName"] = builderName;
+    vars["builderName"] = nameResolver->getBuilderName(simpleName);
 
     printer->Print("fun parseFieldFrom(input: CodedInputStream): Boolean {\n");
     printer->Indent();

@@ -15,12 +15,7 @@ namespace compiler {
 namespace kotlin {
 
 string FieldGenerator::getInitValue() const {
-    if (descriptor->is_repeated())
-        return "mutableListOf()";
-    else if (protoType == FieldDescriptor::TYPE_MESSAGE) {
-        return enclosingClass->builderName + "().build()";
-    }
-    return name_resolving::protobufTypeToInitValue(descriptor);
+    return name_resolving::protobufTypeToInitValue(this);
 }
 
 void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
@@ -45,7 +40,7 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     }
 }
 
-FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass)
+FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass, NameResolver * nameResolver)
         : descriptor(descriptor)
         , modifier(descriptor->label())
         , enclosingClass(enclosingClass)
@@ -54,6 +49,7 @@ FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerato
         , fullType(name_resolving::protobufToKotlinField(descriptor))
         , protoType(descriptor->type())
         , fieldNumber(descriptor->number())
+        , nameResolver(nameResolver)
 { }
 
 // TODO: long, complicated and messy method. Refactor it ASAP
@@ -94,7 +90,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                removed as soon as target code will support inheritance and interfaces.
                (then writing CodedOutputStream.writeMessage will be possible).
              */
-            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass);
+            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
 
             /* Another dirty hack here: create tmp variable of a given type and read it from input stream
                then add that tmp var into list.
@@ -140,7 +136,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             printer->Indent();
 
             // hack: see above
-            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass);
+            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
             singleFieldGen.simpleName = "item";
             singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
 
@@ -200,7 +196,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
 
             // read message itself without tag
             printer->Print(vars,
-                           "$fieldName$.readFrom(input)\n");
+                           "$fieldName$.mergeFrom(input)\n");
 
             // check that actual size equal to expected size
             printer->Print(vars, "if (expectedSize != $fieldName$.getSize()) { "
@@ -237,7 +233,7 @@ void FieldGenerator::generateSetter(io::Printer *printer) const {
     map <string, string> vars;
     vars["camelCaseName"] = name_resolving::makeFirstLetterUpper(simpleName);
     vars["fieldName"] = simpleName;
-    vars["builderName"] = enclosingClass->builderName;
+    vars["builderName"] = nameResolver->getBuilderName(enclosingClass->simpleName);
     vars["type"] = fullType;
     printer->Print(vars,
                     "fun set$camelCaseName$(value: $type$): $builderName$ {\n");
@@ -254,7 +250,7 @@ void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuild
     vars["elementType"] = underlyingType;
     vars["arg"] = "value";
     vars["fieldName"] = simpleName;
-    vars["builderName"] = enclosingClass->builderName;
+    vars["builderName"] = nameResolver->getBuilderName(underlyingType); // TODO: call to non-existent field in map.
 
     // generate indexed setter for builders
     if (isBuilder) {
@@ -300,7 +296,7 @@ string FieldGenerator::getUnderlyingTypeInitValue() const {
     if (protoType == FieldDescriptor::TYPE_MESSAGE) {
         return "Builder" + underlyingType + "().build()";
     }
-    return name_resolving::protobufTypeToInitValue(descriptor);
+    return name_resolving::protobufTypeToInitValue(this);
 }
 
 void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag) const {
@@ -325,7 +321,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         printer->Indent();
 
         // hack: reuse generateSizeEstimationCode in the same manner as in generateSerializationCode
-        FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass);
+        FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
         singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
         singleFieldGen.simpleName = "item";
         singleFieldGen.generateSizeEstimationCode(printer, "arraySize");

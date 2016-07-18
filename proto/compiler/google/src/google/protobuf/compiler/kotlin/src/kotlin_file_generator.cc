@@ -30,20 +30,26 @@ bool FileGenerator::Generate(const FileDescriptor *file, const string &parameter
     string const file_name = name_resolving::getKotlinOutputByProtoName(file->name());
     google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> output(context->Open(file_name));
     io::Printer printer(output.get(), '$', /* annotation_collector = */ NULL);
+    NameResolver * nameResolver = new NameResolver();
 
     // Create Generators for all top-level messages
     int topLevelMessagesCount = file->message_type_count();
     for (int i = 0; i < topLevelMessagesCount; ++i) {
         Descriptor const * descriptor = file->message_type(i);
-        ClassGenerator * cgen = new ClassGenerator(descriptor);
+        // TODO: think about order of initialization and cross-branches calls. If we don't allow such things, everythign is ok atm
+        nameResolver->addClass(descriptor->name(), "");
+        ClassGenerator * cgen = new ClassGenerator(descriptor, nameResolver);
         classes.push_back(cgen);
     }
 
     // Generate code and clean up
     generateCode(&printer, classes);
+
     for (int i = 0; i < classes.size(); ++i) {
         delete classes[i];
     }
+    delete nameResolver;
+
     return true;
 }
 

@@ -9,6 +9,7 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/descriptor.h>
 #include "kotlin_class_generator.h"
+#include "kotlin_name_resolver.h"
 
 namespace google {
 namespace protobuf {
@@ -16,11 +17,11 @@ namespace compiler {
 namespace kotlin {
 
 class ClassGenerator;       // declared in kotlin_class_generator.h
+class NameResolver;         // declared in kotlin_name_resolver.h
 
 class FieldGenerator {
 private:
     FieldDescriptor const * descriptor;
-
     // TODO: refactor from field generator to some static utility namespace
 
     void generateSetter(io::Printer * printer) const;
@@ -38,15 +39,18 @@ public:
      * fullType = underlyingType        for all other cases
      */
     string fullType;
+    string builderName;
+    string fullName;
     string getInitValue() const;
     string getUnderlyingTypeInitValue() const;
     FieldDescriptor::Type  protoType;
     int fieldNumber;
+    NameResolver * nameResolver;
 
     void generateCode(io::Printer * printer, bool isBuilder) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
     void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false) const;
-    FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass);
+    FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass, NameResolver * nameResolver);
     string getKotlinFunctionSuffix() const;
 
 };

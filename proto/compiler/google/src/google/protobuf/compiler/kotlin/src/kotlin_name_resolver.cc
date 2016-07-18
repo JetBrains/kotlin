@@ -3,6 +3,7 @@
 //
 
 #include "kotlin_name_resolver.h"
+#include "kotlin_field_generator.h"
 #include <google/protobuf/descriptor.h>
 
 #include <string>
@@ -27,7 +28,8 @@ string getFileNameWithoutExtension(string fullName) {
 }
 
 string getKotlinOutputByProtoName(string protoName) {
-    string justName = getFileNameWithoutExtension(protoName);
+    string fileWithoutPath = protoName.substr(protoName.find_last_of("/") + 1, protoName.length());
+    string justName = getFileNameWithoutExtension(fileWithoutPath);
     return justName + ".kt";
 }
 
@@ -91,8 +93,12 @@ string protobufToKotlinField(FieldDescriptor const * descriptor) {
 }
 
 // TODO: think about nested arrays
-string protobufTypeToInitValue(FieldDescriptor const * descriptor) {
-    FieldDescriptor::Type type = descriptor->type();
+string protobufTypeToInitValue(FieldGenerator const * fieldGen) {
+    if (fieldGen->modifier == FieldDescriptor::LABEL_REPEATED) {
+       return "mutableListOf()";
+    }
+
+    FieldDescriptor::Type type = fieldGen->protoType;
     switch(type) {
         case FieldDescriptor::TYPE_BOOL:
             return "false";
@@ -101,8 +107,7 @@ string protobufTypeToInitValue(FieldDescriptor const * descriptor) {
         case FieldDescriptor::TYPE_DOUBLE:
             return "0.0";
         case FieldDescriptor::TYPE_ENUM: {
-            string enumType = descriptor->enum_type()->name();
-            return enumType + ".fromIntTo" + enumType + "(0)";   // produce enum from 0, as demanded by Google
+            return fieldGen->nameResolver->getClassName(fieldGen->fullType) + ".fromIntTo" + fieldGen->fullType + "(0)";   // produce enum from 0, as demanded by Google
         }
         case FieldDescriptor::TYPE_FIXED32:
             return "0";
@@ -115,7 +120,7 @@ string protobufTypeToInitValue(FieldDescriptor const * descriptor) {
         case FieldDescriptor::TYPE_INT64:
             return "0L";
         case FieldDescriptor::TYPE_MESSAGE:
-            return string(descriptor->message_type()->name()) + "()";
+            return fieldGen->nameResolver->getBuilderName(fieldGen->fullType) + "().build()";
         case FieldDescriptor::TYPE_SFIXED32:
             return "0";
         case FieldDescriptor::TYPE_SFIXED64:
@@ -171,8 +176,36 @@ string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type)  {
             return "SInt64";
     }
 }
+
 } // namespace name_resolving
+
+NameResolver::NameResolver() {
+    names = map<string, string>();
+    builders = map<string, string>();
+}
+
+void NameResolver::addClass(string simpleName, string parentName) {
+    if (parentName == "") {
+        names[simpleName] = simpleName;
+        builders[simpleName] = simpleName + ".Builder" + simpleName;
+    }
+    else
+    {
+        names[simpleName] = parentName + "." + simpleName;
+        builders[simpleName] = parentName + "." + simpleName + ".Builder" + simpleName;
+    }
+}
+
+string NameResolver::getClassName(string simpleName) {
+    return names[simpleName];
+}
+
+string NameResolver::getBuilderName(string classSimpleName) {
+    return builders[classSimpleName];
+}
+
 } // namespace kotlin
 } // namespace compiler
 } // namespace protobuf
 } // namespace google
+

@@ -10,6 +10,7 @@
 #include <google/protobuf/descriptor.h>
 #include "kotlin_field_generator.h"
 #include "kotlin_enum_generator.h"
+#include "kotlin_name_resolver.h"
 
 namespace google {
 namespace protobuf {
@@ -17,6 +18,7 @@ namespace compiler {
 namespace kotlin {
 
 class FieldGenerator;   // declared in "kotlin_file_generator.h"
+class NameResolver;     // declared in "kotlin_name_resolver.h"
 
 // wrapper for enum CLASS/INTERFACE with convenience method of getting name
 class ClassModifier {
@@ -35,17 +37,18 @@ public:
 class ClassGenerator {
 public:
     string                      simpleName;
+    string                      fullName;
     vector <FieldGenerator *>   properties;
     vector <ClassGenerator *>   classesDeclarations;
     vector <EnumGenerator  *>   enumsDeclaraions;
-    string                      builderName;
-    ClassGenerator          (Descriptor const * descriptor);
+    ClassGenerator          (Descriptor const * descriptor, NameResolver * nameResolver);
     ~ClassGenerator         ();
 
 
     void generateCode (io::Printer * printer, bool isBuilder = false) const;
 private:
     Descriptor const * descriptor;
+    NameResolver * nameResolver;
     void generateBuilder (io::Printer * printer) const;
     void generateBuildMethod (io::Printer * printer) const;
     void generateInitSection (io::Printer * printer) const;
