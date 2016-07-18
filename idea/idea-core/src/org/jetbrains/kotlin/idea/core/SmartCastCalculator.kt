@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,10 +27,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -85,24 +81,31 @@ class SmartCastCalculator(
         val dataFlowValueToEntity: (DataFlowValue) -> Any?
         if (receiver != null) {
             val receiverType = bindingContext.getType(receiver) ?: return emptyMap()
-            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).id
+            val receiverIdentifierInfo = DataFlowValueFactory.createDataFlowValue(
+                    receiver, receiverType, bindingContext, containingDeclarationOrModule
+            ).identifierInfo
             dataFlowValueToEntity = { value ->
-                val id = value.id
-                if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+                val identifierInfo = value.identifierInfo
+                if (identifierInfo is IdentifierInfo.Qualified && identifierInfo.receiverInfo == receiverIdentifierInfo) {
+                    (identifierInfo.selectorInfo as? IdentifierInfo.Variable)?.variable
+                }
+                else null
             }
         }
         else {
             dataFlowValueToEntity = fun (value: DataFlowValue): Any? {
-                val id = value.id
-                when(id) {
-                    is VariableDescriptor, is ImplicitReceiver -> return id
+                val identifierInfo = value.identifierInfo
+                when(identifierInfo) {
+                    is IdentifierInfo.Variable -> return identifierInfo.variable
+                    is IdentifierInfo.Receiver -> return identifierInfo.value as? ImplicitReceiver
 
-                    is Pair<*, *> -> {
-                        val first = id.first
-                        val second = id.second
-                        if (first !is ImplicitReceiver || second !is VariableDescriptor) return null
-                        if (resolutionScope?.findNearestReceiverForVariable(second)?.value != first) return null
-                        return second
+                    is IdentifierInfo.Qualified -> {
+                        val receiverInfo = identifierInfo.receiverInfo
+                        val selectorInfo = identifierInfo.selectorInfo
+                        if (receiverInfo !is IdentifierInfo.Receiver || selectorInfo !is IdentifierInfo.Variable) return null
+                        val receiverValue = receiverInfo.value as? ImplicitReceiver ?: return null
+                        if (resolutionScope?.findNearestReceiverForVariable(selectorInfo.variable)?.value != receiverValue) return null
+                        return selectorInfo.variable
                     }
 
                     else -> return null

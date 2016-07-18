@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 import java.util.*
 
 /**
@@ -34,9 +35,10 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
         val valueSetToClear = LinkedHashSet<DataFlowValue>()
         for (value in nullabilityMap.keys) {
             // Only predictable variables are under interest here
-            val id = value.id
-            if (value.kind == DataFlowValue.Kind.PREDICTABLE_VARIABLE && id is LocalVariableDescriptor) {
-                if (hasWriters(id)) {
+            val identifierInfo = value.identifierInfo
+            if (value.kind == DataFlowValue.Kind.PREDICTABLE_VARIABLE && identifierInfo is IdentifierInfo.Variable) {
+                val variableDescriptor = identifierInfo.variable
+                if (variableDescriptor is LocalVariableDescriptor && hasWriters(variableDescriptor)) {
                     valueSetToClear.add(value)
                 }
             }

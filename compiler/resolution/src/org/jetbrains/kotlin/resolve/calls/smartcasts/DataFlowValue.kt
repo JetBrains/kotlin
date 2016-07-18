@@ -19,12 +19,20 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+
+private val KotlinType.immanentNullability: Nullability
+    get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
 
 /**
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
-class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
+class DataFlowValue(val identifierInfo: IdentifierInfo,
+                    val type: KotlinType,
+                    val immanentNullability: Nullability = type.immanentNullability) {
+
+    val kind: Kind get() = identifierInfo.kind
 
     enum class Kind(private val str: String, val description: String = str) {
         // Local value, or parameter, or private / internal member value without open / custom getter,
@@ -69,32 +77,26 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
         if (this === other) return true
         if (other !is DataFlowValue) return false
 
-        if (kind.isStable() != other.kind.isStable()) return false
-        if (id != other.id) return false
+        if (identifierInfo != other.identifierInfo) return false
         if (type != other.type) return false
 
         return true
     }
 
-    override fun toString(): String {
-        return kind.toString() + " " + id?.toString() + " " + immanentNullability
-    }
+    override fun toString() = "$kind $identifierInfo $immanentNullability"
 
     override fun hashCode(): Int {
-        var result = if (kind.isStable()) 1 else 0
+        var result = identifierInfo.hashCode()
         result = 31 * result + type.hashCode()
-        result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
 
     companion object {
 
         @JvmStatic
-        fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(
-                Object(), builtIns.nullableNothingType, Kind.OTHER, Nullability.NULL
-        )
+        fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(IdentifierInfo.NULL, builtIns.nullableNothingType, Nullability.NULL)
 
         @JvmField
-        val ERROR = DataFlowValue(Object(), ErrorUtils.createErrorType("Error type for data flow"), Kind.OTHER, Nullability.IMPOSSIBLE)
+        val ERROR = DataFlowValue(IdentifierInfo.ERROR, ErrorUtils.createErrorType("Error type for data flow"), Nullability.IMPOSSIBLE)
     }
 }

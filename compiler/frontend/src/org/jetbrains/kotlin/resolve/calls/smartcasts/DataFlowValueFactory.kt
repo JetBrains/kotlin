@@ -16,31 +16,32 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableNothing
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.before
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
-
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableNothing
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
 /**
  * This class is intended to create data flow values for different kind of expressions.
@@ -88,9 +89,8 @@ object DataFlowValueFactory {
             //
             // But there are some problem with types built on type parameters, e.g.
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
-            return DataFlowValue(expression,
+            return DataFlowValue(ExpressionIdentifierInfo(expression, false),
                                  type,
-                                 OTHER,
                                  Nullability.NOT_NULL)
         }
 
@@ -99,17 +99,11 @@ object DataFlowValueFactory {
         }
 
         val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
-        return DataFlowValue(if (result === NO_IDENTIFIER_INFO) expression else result.id,
-                             type,
-                             result.kind,
-                             type.immanentNullability)
+        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression, false) else result, type)
     }
 
     @JvmStatic
-    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue): DataFlowValue {
-        val type = receiver.type
-        return DataFlowValue(receiver, type, STABLE_VALUE, type.immanentNullability)
-    }
+    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue) = DataFlowValue(IdentifierInfo.Receiver(receiver), receiver.type)
 
     @JvmStatic
     fun createDataFlowValue(
@@ -137,52 +131,38 @@ object DataFlowValueFactory {
             variableDescriptor: VariableDescriptor,
             bindingContext: BindingContext,
             usageContainingModule: ModuleDescriptor?
-    ): DataFlowValue {
-        val type = variableDescriptor.type
-        return DataFlowValue(variableDescriptor, type,
-                             variableKind(variableDescriptor, usageContainingModule,
-                                          bindingContext, property),
-                             type.immanentNullability)
-    }
+    ) = DataFlowValue(IdentifierInfo.Variable(variableDescriptor,
+                                              variableKind(variableDescriptor, usageContainingModule, bindingContext, property)),
+                      variableDescriptor.type)
 
     private fun createDataFlowValueForComplexExpression(
             expression: KtExpression,
             type: KotlinType
-    ) = DataFlowValue(expression, type, Kind.STABLE_COMPLEX_EXPRESSION, type.immanentNullability)
+    ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type)
 
-    private val KotlinType.immanentNullability: Nullability
-        get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
+    private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo) : IdentifierInfo {
+        override val kind: DataFlowValue.Kind get() = argumentInfo.kind
 
-    private open class IdentifierInfo internal constructor(val id: Any?, val kind: Kind, val isPackage: Boolean)
-
-    private val NO_IDENTIFIER_INFO = object : IdentifierInfo(null, OTHER, false) {
-        override fun toString() = "NO_IDENTIFIER_INFO"
+        override fun toString() = "$argumentInfo (postfix)"
     }
 
-    private fun createInfo(id: Any, kind: Kind) = IdentifierInfo(id, kind, false)
+    class ExpressionIdentifierInfo(val expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
 
-    private fun createStableInfo(id: Any) = createInfo(id, STABLE_VALUE)
+        override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
+        
+        override fun equals(other: Any?) = other is ExpressionIdentifierInfo && expression == other.expression
 
-    private fun createPackageOrClassInfo(id: Any) = IdentifierInfo(id, STABLE_VALUE, true)
+        override fun hashCode() = expression.hashCode()
 
-    private fun combineInfo(receiverInfo: IdentifierInfo?, selectorInfo: IdentifierInfo) =
-            if (selectorInfo.id == null || receiverInfo === NO_IDENTIFIER_INFO) {
-                NO_IDENTIFIER_INFO
-            }
-            else if (receiverInfo == null || receiverInfo.isPackage) {
-                selectorInfo
-            }
-            else {
-                createInfo(Pair.create<Any, Any>(receiverInfo.id, selectorInfo.id),
-                           if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER)
-            }
+        override fun toString() = expression.text ?: "(empty expression)"
+    }
 
-    private fun createPostfixInfo(expression: KtPostfixExpression, argumentInfo: IdentifierInfo) =
-            if (argumentInfo === NO_IDENTIFIER_INFO) {
-                NO_IDENTIFIER_INFO
+    private fun postfix(argumentInfo: IdentifierInfo) =
+            if (argumentInfo == IdentifierInfo.NO) {
+                IdentifierInfo.NO
             }
             else {
-                createInfo(Pair.create<KtPostfixExpression, Any>(expression, argumentInfo.id), argumentInfo.kind)
+                PostfixIdentifierInfo(argumentInfo)
             }
 
     private fun getIdForStableIdentifier(
@@ -203,7 +183,7 @@ object DataFlowValueFactory {
                 val receiverId = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule)
                 val selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule)
 
-                combineInfo(receiverId, selectorId)
+                IdentifierInfo.qualified(receiverId, selectorId, expression.operationSign === KtTokens.SAFE_ACCESS)
             }
             is KtSimpleNameExpression ->
                 getIdForSimpleNameExpression(expression, bindingContext, containingDeclarationOrModule)
@@ -214,14 +194,13 @@ object DataFlowValueFactory {
             is KtPostfixExpression -> {
                 val operationType = expression.operationReference.getReferencedNameElementType()
                 if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS) {
-                    createPostfixInfo(expression,
-                                      getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
+                    postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
                 }
                 else {
-                    NO_IDENTIFIER_INFO
+                    IdentifierInfo.NO
                 }
             }
-            else -> NO_IDENTIFIER_INFO
+            else -> IdentifierInfo.NO
         }
     }
 
@@ -242,12 +221,14 @@ object DataFlowValueFactory {
                 val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(containingDeclarationOrModule)
                 val receiverInfo = resolvedCall?.let { getIdForImplicitReceiver(it.dispatchReceiver, simpleNameExpression) }
 
-                combineInfo(receiverInfo, createInfo(declarationDescriptor,
-                                                     variableKind(declarationDescriptor, usageModuleDescriptor,
-                                                                  bindingContext, simpleNameExpression)))
+                IdentifierInfo.qualified(receiverInfo,
+                                         IdentifierInfo.Variable(declarationDescriptor,
+                                                                 variableKind(declarationDescriptor, usageModuleDescriptor,
+                                                                            bindingContext, simpleNameExpression)),
+                                         resolvedCall?.call?.isSafeCall() ?: false)
             }
-            is PackageViewDescriptor, is ClassDescriptor -> createPackageOrClassInfo(declarationDescriptor)
-            else -> NO_IDENTIFIER_INFO
+            is PackageViewDescriptor, is ClassDescriptor -> IdentifierInfo.PackageOrClass(declarationDescriptor)
+            else -> IdentifierInfo.NO
         }
     }
 
@@ -263,10 +244,10 @@ object DataFlowValueFactory {
         is CallableDescriptor -> {
             val receiverParameter = descriptorOfThisReceiver.extensionReceiverParameter
                                     ?: error("'This' refers to the callable member without a receiver parameter: $descriptorOfThisReceiver")
-            createStableInfo(receiverParameter.value)
+            IdentifierInfo.Receiver(receiverParameter.value)
         }
-        is ClassDescriptor -> createStableInfo(descriptorOfThisReceiver.thisAsReceiverParameter.value)
-        else -> NO_IDENTIFIER_INFO
+        is ClassDescriptor -> IdentifierInfo.Receiver(descriptorOfThisReceiver.thisAsReceiverParameter.value)
+        else -> IdentifierInfo.NO
     }
 
     private fun getVariableContainingDeclaration(variableDescriptor: VariableDescriptor): DeclarationDescriptor {
