@@ -45,7 +45,7 @@ class W implements T<Integer> {
 
     @Override
     public void setFoo(Integer integer) {
-        
+
     }
 }
 
