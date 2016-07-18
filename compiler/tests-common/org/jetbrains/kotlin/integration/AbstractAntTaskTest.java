@@ -28,6 +28,7 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
         runJava(
                 testDataDir,
                 "build.log",
+                "-Xmx128m",
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + KotlinIntegrationTestBase.getCompilerLib(),
                 "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
