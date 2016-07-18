@@ -34,6 +34,7 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         if (!annotation) {
             for (field in parameterList) {
                 val item = resolveType(field)
+                item.offset = offset
 
                 fields.add(item)
                 fieldsIndex[item.label] = item
@@ -52,7 +53,7 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         }
 
         generateStruct()
-        generateDefaultConstructor()
+        generatePrimaryConstructor()
 
         for (declaration in clazz.declarations) {
             when (declaration) {
@@ -75,7 +76,7 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         codeBuilder.createClass(name, fields)
     }
 
-    private fun generateDefaultConstructor() {
+    private fun generatePrimaryConstructor() {
         val argFields = ArrayList<LLVMVariable>()
         val refType = type.makeClone() as LLVMReferenceType
         refType.addParam("sret")
@@ -103,18 +104,30 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         codeBuilder.loadArgument(thisVariable, false)
 
         fields.forEach {
-            val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope())
-            codeBuilder.loadArgument(loadVariable)
+            if (it.type !is LLVMReferenceType) {
+                val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope())
+                codeBuilder.loadArgument(loadVariable)
+            }
         }
     }
 
     private fun generateAssignments() {
         fields.forEach {
-            val argument = codeBuilder.getNewVariable(it.type)
-            codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = 1))
-            val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
-            codeBuilder.loadClassField(classField, LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
-            codeBuilder.storeVariable(classField, argument)
+            when (it.type) {
+                is LLVMReferenceType -> {
+                    val classField = codeBuilder.getNewVariable(it.type, pointer = it.pointer + 1)
+                    codeBuilder.loadClassField(classField, LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
+                    codeBuilder.storeVariable(classField, it)
+                }
+                else -> {
+                    val argument = codeBuilder.getNewVariable(it.type, it.pointer)
+                    codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = it.pointer + 1))
+                    val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
+                    codeBuilder.loadClassField(classField, LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
+                    codeBuilder.storeVariable(classField, argument)
+                }
+            }
+
         }
     }
 
@@ -135,7 +148,9 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         val result = LLVMMapStandardType(field.name!!, ktType, LLVMRegisterScope())
 
         if (result.type is LLVMReferenceType) {
-            (result.type as LLVMReferenceType).prefix = "class"
+            val type = result.type as LLVMReferenceType
+            type.prefix = "class"
+            type.byRef = true
         }
 
         if (annotations.contains("Plain")) {

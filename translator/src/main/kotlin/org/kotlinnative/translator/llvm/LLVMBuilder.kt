@@ -117,7 +117,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun loadClassField(target: LLVMVariable, source: LLVMVariable, offset: Int) {
-        val code = "$target = getelementptr inbounds ${source.type}* $source, i32 0, i32 $offset"
+        val code = "$target = getelementptr inbounds ${source.getType()} $source, i32 0, i32 $offset"
         localCode.appendln(code)
     }
 
@@ -131,7 +131,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun storeVariable(target: LLVMVariable, source: LLVMSingleValue) {
-        val code = "store ${source.type} $source, ${target.getType()} $target, align ${source.type?.align!!}"
+        val code = "store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}"
         localCode.appendln(code)
     }
 
