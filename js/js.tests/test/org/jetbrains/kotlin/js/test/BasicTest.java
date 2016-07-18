@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
+import org.jetbrains.kotlin.js.test.utils.JsVerificationKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
@@ -249,6 +250,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             String text = file.getText();
             DirectiveTestUtils.processDirectives(program, text);
         }
+        JsVerificationKt.verifyAst(program);
     }
 
     protected void runRhinoTests(
