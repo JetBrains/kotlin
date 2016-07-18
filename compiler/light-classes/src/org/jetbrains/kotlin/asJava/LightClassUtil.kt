@@ -62,7 +62,7 @@ object LightClassUtil {
         val outerPsiClass = getWrappingClass(companionObject)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
-                if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.kotlinOrigin === companionObject) {
+                if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.kotlinOrigin === companionObject.originalElement) {
                     return fieldOfParent
                 }
             }
