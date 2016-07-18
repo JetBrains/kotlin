@@ -19,7 +19,7 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
     val native: Boolean
     val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
-    val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class", align = 8, byRef = true, uncopyable = true)
+    val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
     val size: Int
     var methods = HashMap<String, FunctionCodegen>()
 
@@ -67,7 +67,6 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         val classVal = LLVMVariable("classvariable.this", type, pointer = 1)
         variableManager.addVariable("this", classVal, 0);
         for (function in methods.values) {
-
             function.generate(classVal)
         }
     }

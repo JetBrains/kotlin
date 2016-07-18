@@ -16,7 +16,7 @@ import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 
-class FunctionCodegen(val state: TranslationState, val variableManager : VariableManager, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
+class FunctionCodegen(val state: TranslationState, val variableManager: VariableManager, val function: KtNamedFunction, val codeBuilder: LLVMBuilder) {
 
     var name = function.fqName.toString()
     var returnType: LLVMVariable
@@ -100,7 +100,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager : Variabl
 
     private fun generateLoadArguments() {
         args.forEach(fun(it: LLVMVariable) {
-            if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && (it.type as LLVMReferenceType).uncopyable)) {
+            if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && (it.type as LLVMReferenceType).byRef)) {
                 variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 1), topLevel)
                 return
             }
@@ -154,7 +154,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager : Variabl
             is KtCallableReferenceExpression -> evaluateCallableReferenceExpression(expr)
             is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, true)
-            is KtDotQualifiedExpression -> evaluateDotExpression(expr)
+            is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
@@ -178,18 +178,28 @@ class FunctionCodegen(val state: TranslationState, val variableManager : Variabl
         return LLVMMapStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
     }
 
-    private fun evaluateDotExpression(expr: KtDotQualifiedExpression): LLVMSingleValue? {
+    private fun evaluateDotExpression(expr: KtDotQualifiedExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverName = expr.receiverExpression.text
         val selectorName = expr.selectorExpression!!.text
 
         val receiver = variableManager.getLLVMvalue(receiverName)!!
 
         val clazz = state.classes[(receiver.type as LLVMReferenceType).type]!!
-        val field = clazz.fieldsIndex[selectorName]!!
+        val field = clazz.fieldsIndex[selectorName]
+        if (field != null) {
+            val result = codeBuilder.getNewVariable(field.type, pointer = 1)
+            codeBuilder.loadClassField(result, receiver, field.offset)
+            return result
+        } else {
+            val methodName = clazz.clazz.name.toString() + '.' + selectorName.substringBefore('(')
+            val method = clazz.methods[methodName]!!
+            val returnType = clazz.methods[methodName]!!.returnType.type
 
-        val result = codeBuilder.getNewVariable(field.type, pointer = 1)
-        codeBuilder.loadClassField(result, receiver, field.offset)
-        return result
+            val names = parseArgList(expr.lastChild as KtCallExpression, scopeDepth)
+            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMRegisterScope()), names, method.args)
+
+
+        }
     }
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {

@@ -2,7 +2,7 @@ package org.kotlinnative.translator.llvm.types
 
 import java.util.*
 
-class LLVMReferenceType(val type: String, var prefix: String = "", override val align: Int = 4, var byRef: Boolean = false, val uncopyable: Boolean = false) : LLVMType() {
+class LLVMReferenceType(val type: String, var prefix: String = "", override val align: Int = 4, var byRef: Boolean = false) : LLVMType() {
 
     override val defaultValue: String = ""
 
