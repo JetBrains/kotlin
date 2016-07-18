@@ -73,6 +73,8 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptParameter
 import java.awt.Color
 import java.awt.Font
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 private val KOTLIN_SHELL_EXECUTE_ACTION_ID = "KotlinShellExecute"
@@ -87,12 +89,14 @@ class KotlinConsoleRunner(
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
 
     private val replState = ReplState()
+    private val consoleTerminated = CountDownLatch(1)
 
     override fun finishConsole() {
         KotlinConsoleKeeper.getInstance(project).removeConsole(consoleView.virtualFile)
         KotlinScriptDefinitionProvider.getInstance(project).removeScriptDefinition(consoleScriptDefinition)
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
+            consoleTerminated.countDown()
             // Ignore super with myConsoleView.setEditable(false)
             return
         }
@@ -256,6 +260,7 @@ class KotlinConsoleRunner(
 
     @TestOnly fun dispose() {
         processHandler.destroyProcess()
+        consoleTerminated.await(1, TimeUnit.SECONDS)
         Disposer.dispose(disposableDescriptor)
     }
 
