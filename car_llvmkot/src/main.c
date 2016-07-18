@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "memory.h"
+
 #include "car_leds.h"
 #include "car_engine.h"
 #include "time.h"

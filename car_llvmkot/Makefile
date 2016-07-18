@@ -1,5 +1,6 @@
 BIN_DIR=$(PWD)/bin
 SRC_DIR=$(PWD)/src
+SRC_KOT=$(PWD)/kotlib
 LIB_DIR=$(SRC_DIR)/lib
 OS_ARCH=linux-arm
 
@@ -22,14 +23,16 @@ CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
 ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
 
-LIB_KOTLIN=$(BIN_DIR)/kotlib.o
+LIB_KOT=$(BIN_DIR)/kotlib.o
 
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-as
 LD=arm-none-eabi-ld
-LL=llc-3.6
 OBJ_COPY=arm-none-eabi-objcopy
 GDB=arm-none-eabi-gdb
+
+LL=llc-3.6
+LLINK=llvm-link-3.6
 
 USB_CONF_DIR=$(LIB_DIR)/usb_conf
 
@@ -47,15 +50,18 @@ CFLAGS=-g -nostdlib -ffreestanding -O0 \
        -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \
        $(DEFINES)
 LLFLAGS=-march=thumb -mtriple=arm-none-eabi -mcpu=cortex-m3
+LLINK_FLAGS=-S
 ASMFLAGS=-g -mthumb
 
 LD_ALL_DEPS=$(LD) -r $(filter %.o,$^) -o $@
 CC_ALL_DEPS=$(CC) $(CFLAGS) -c $(INCLUDES) $(filter %.c,$^) -o $@
 AS_ALL_DEPS=$(AS) $(ASMFLAGS) $(filter %.s,$^) -o $@
 LL_ALL_DEPS=$(LL) $(LLFLAGS) $(filter %.ll, $^) -o $@
+LLINK_ALL_DEPS=$(LLINK) $(LLINK_FLAGS) $(filter %.ll,$^) > $@
 
 dirhs=$(wildcard $(1)/*.h)
 dircs=$(wildcard $(1)/*.c)
+dirls=$(wildcard $(1)/*.ll)
 dircs_to_prefxd_objs=\
 	$(patsubst $(1)/%.c,$(BIN_DIR)/$(2)%.o,$(call dircs,$1))
 
@@ -65,10 +71,11 @@ $(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 $(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
 		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) \
 		$(LIB_USB_DEV_OBJ) $(LIB_USB_OTG_OBJ) \
-		$(LIB_USB_VCP_OBJ) $(LIB_KOTLIN)
+		$(LIB_USB_VCP_OBJ) $(LIB_KOT)
 	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
 
 CAR_OBJ_PREFIX=car_
+
 $(CAR_FMW_OBJ): \
 		$(call dircs_to_prefxd_objs,$(SRC_DIR),$(CAR_OBJ_PREFIX))
 	$(LD_ALL_DEPS)
@@ -81,12 +88,14 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 
-$(LIB_KOTLIN): $(BIN_DIR)/kotlin_main.s
+$(LIB_KOT): $(BIN_DIR)/kotlib.s
 	$(AS_ALL_DEPS)
 
-$(BIN_DIR)/kotlin_main.s: $(SRC_DIR)/kotlin_main.ll
+$(BIN_DIR)/kotlib.s: $(BIN_DIR)/kotlib.ll
 	$(LL_ALL_DEPS)
 
+$(BIN_DIR)/kotlib.ll: $(call dirls,$(SRC_KOT))
+	$(LLINK_ALL_DEPS)
 
 flash: $(CAR_FMW_BIN)
 	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000
