@@ -22,7 +22,7 @@ class LLVMBuilder(val arm: Boolean) {
     private fun initBuilder() {
         val declares = arrayOf(
                 "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @malloc_static(i32)")
+                "declare i8* @${if (arm) "malloc_static" else "malloc"}(i32)")
 
         declares.forEach { globalCode.appendln(it) }
 
@@ -168,7 +168,7 @@ class LLVMBuilder(val arm: Boolean) {
         val allocedVar = getNewVariable(LLVMCharType(), pointer = 1)
 
         val size = if (target.pointer > 0) POINTER_SIZE else target.type.size
-        val alloc = "$allocedVar = call i8* @malloc_static(i32 $size)"
+        val alloc = "$allocedVar = call i8* @${if (arm) "malloc_static" else "malloc"}(i32 $size)"
         localCode.appendln(alloc)
 
         val cast = "$target = bitcast ${allocedVar.getType()} $allocedVar to ${target.getType()}"
