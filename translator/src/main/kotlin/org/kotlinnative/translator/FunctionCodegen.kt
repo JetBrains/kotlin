@@ -458,7 +458,15 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
         when (assignExpression) {
             is LLVMVariable -> {
-                variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth)
+                if (assignExpression.pointer == 0) {
+                    val allocVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type, LLVMRegisterScope(), pointer = 0)
+                    codeBuilder.allocStackVar(allocVar)
+                    allocVar.pointer++
+                    variableManager.addVariable(identifier.text, allocVar, scopeDepth)
+                    copyVariable(assignExpression, allocVar)
+                } else {
+                    variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth)
+                }
             }
             is LLVMConstant -> {
                 val newVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type!!, LLVMRegisterScope(), pointer = 1)
