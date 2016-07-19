@@ -380,7 +380,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                     return null
                 }
 
-                val newVar = variableManager.receiveVariable(identifier, assignExpression.type!!, LLVMRegisterScope(), pointer = 1)
+                val newVar = variableManager.receiveVariable(identifier, LLVMMapStandardType(identifier, variable.type).type, LLVMRegisterScope(), pointer = 1)
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier, newVar, scopeDepth)
             }
