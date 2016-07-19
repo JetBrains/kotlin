@@ -180,10 +180,11 @@ object DataFlowValueFactory {
             is KtQualifiedExpression -> {
                 val receiverExpression = expression.receiverExpression
                 val selectorExpression = expression.selectorExpression
-                val receiverId = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule)
-                val selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule)
+                val receiverInfo = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule)
+                val selectorInfo = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule)
 
-                IdentifierInfo.qualified(receiverId, selectorId, expression.operationSign === KtTokens.SAFE_ACCESS)
+                IdentifierInfo.qualified(receiverInfo, bindingContext.getType(receiverExpression),
+                                         selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS)
             }
             is KtSimpleNameExpression ->
                 getIdForSimpleNameExpression(expression, bindingContext, containingDeclarationOrModule)
@@ -219,13 +220,25 @@ object DataFlowValueFactory {
                 // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
                 // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for
                 val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(containingDeclarationOrModule)
-                val receiverInfo = resolvedCall?.let { getIdForImplicitReceiver(it.dispatchReceiver, simpleNameExpression) }
+                val selectorInfo = IdentifierInfo.Variable(declarationDescriptor,
+                                                           variableKind(declarationDescriptor, usageModuleDescriptor,
+                                                                        bindingContext, simpleNameExpression))
 
-                IdentifierInfo.qualified(receiverInfo,
-                                         IdentifierInfo.Variable(declarationDescriptor,
-                                                                 variableKind(declarationDescriptor, usageModuleDescriptor,
-                                                                            bindingContext, simpleNameExpression)),
-                                         resolvedCall?.call?.isSafeCall() ?: false)
+                val implicitReceiver = resolvedCall?.dispatchReceiver
+                if (implicitReceiver == null) {
+                    selectorInfo
+                }
+                else {
+                    val receiverInfo = getIdForImplicitReceiver(implicitReceiver, simpleNameExpression)
+
+                    if (receiverInfo == null) {
+                        selectorInfo
+                    }
+                    else {
+                        IdentifierInfo.qualified(receiverInfo, implicitReceiver.type,
+                                                 selectorInfo, resolvedCall?.call?.isSafeCall() ?: false)
+                    }
+                }
             }
             is PackageViewDescriptor, is ClassDescriptor -> IdentifierInfo.PackageOrClass(declarationDescriptor)
             else -> IdentifierInfo.NO

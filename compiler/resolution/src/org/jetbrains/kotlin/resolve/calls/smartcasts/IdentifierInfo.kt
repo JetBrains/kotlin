@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.STABLE_V
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IdentifierInfo {
 
@@ -72,7 +73,8 @@ interface IdentifierInfo {
     }
 
     class Qualified(
-            val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean
+            val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo,
+            val safe: Boolean, val receiverType: KotlinType?
     ) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
 
@@ -89,16 +91,13 @@ interface IdentifierInfo {
 
     companion object {
 
-        fun qualified(receiverInfo: IdentifierInfo?, selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
-            return if (selectorInfo == NO || receiverInfo === NO) {
-                NO
-            }
-            else if (receiverInfo == null || receiverInfo is PackageOrClass) {
-                selectorInfo
-            }
-            else {
-                Qualified(receiverInfo, selectorInfo, safe)
-            }
+        fun qualified(
+                receiverInfo: IdentifierInfo, receiverType: KotlinType?,
+                selectorInfo: IdentifierInfo, safe: Boolean
+        ) = when (receiverInfo) {
+            NO -> NO
+            is PackageOrClass -> selectorInfo
+            else -> Qualified(receiverInfo, selectorInfo, safe, receiverType)
         }
     }
 }

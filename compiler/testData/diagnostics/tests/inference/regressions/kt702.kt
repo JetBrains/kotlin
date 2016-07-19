@@ -9,7 +9,7 @@ public class Throwables() {
         public fun <X : Throwable?> propagateIfInstanceOf(throwable : Throwable?, declaredType : Class<X?>?) : Unit {
             if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
-                throw declaredType?.cast(throwable)!!
+                throw declaredType<!UNNECESSARY_SAFE_CALL!>?.<!>cast(throwable)!!
             }
         }
         public fun propagateIfPossible(throwable : Throwable?) : Unit {
