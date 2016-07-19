@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: infix modifier is inapplicable on this function: must have a single value parameter
+// ERROR: 'infix' modifier is inapplicable on this function: must have a single value parameter
 interface Foo {
     infix fun foo(a: Int, b: Int)
 }
