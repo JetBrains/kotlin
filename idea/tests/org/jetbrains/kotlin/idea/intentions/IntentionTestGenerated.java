@@ -8184,6 +8184,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("onSetterParameter.kt")
+        public void testOnSetterParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onSetterParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onType.kt")
         public void testOnType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onType.kt");
