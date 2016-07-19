@@ -1,7 +1,6 @@
 fun a() : Int {}
 
 // TODO: Refactor
-<selection>fun b() : <caret>Short {
+fun b() <selection>: <caret>Short</selection> {
     f()
 }
-</selection>

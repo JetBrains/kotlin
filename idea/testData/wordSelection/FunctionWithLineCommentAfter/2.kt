@@ -1,4 +1,4 @@
-<selection>fun a() : <caret>Int {}</selection> // fun a
+fun a() <selection>: <caret>Int</selection> {} // fun a
 
 fun b() : Short {
     f()
