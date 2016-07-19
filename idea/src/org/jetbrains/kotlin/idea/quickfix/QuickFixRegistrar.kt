@@ -87,9 +87,9 @@ class QuickFixRegistrar : QuickFixContributor {
 
         NON_MEMBER_FUNCTION_NO_BODY.registerFactory(AddFunctionBodyFix)
 
-        NOTHING_TO_OVERRIDE.registerFactory( RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
-                                        ChangeMemberFunctionSignatureFix,
-                                        AddFunctionToSupertypeFix)
+        NOTHING_TO_OVERRIDE.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
+                                            ChangeMemberFunctionSignatureFix,
+                                            AddFunctionToSupertypeFix)
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveUselessCastFix)
@@ -128,7 +128,9 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
         NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
+        UNRESOLVED_REFERENCE.registerFactory(AutoStaticImportFix)
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
+
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
@@ -337,8 +339,8 @@ class QuickFixRegistrar : QuickFixContributor {
         DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE.registerFactory(CreatePropertyDelegateAccessorsActionFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(CreateClassFromTypeReferenceActionFactory,
-                                        CreateClassFromReferenceExpressionActionFactory,
-                                        CreateClassFromCallWithConstructorCalleeActionFactory,
+                                             CreateClassFromReferenceExpressionActionFactory,
+                                             CreateClassFromCallWithConstructorCalleeActionFactory,
                                              PlatformUnresolvedProvider)
 
         PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
@@ -347,12 +349,12 @@ class QuickFixRegistrar : QuickFixContributor {
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory)
 
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
-                                               MissingConstructorKeywordFix.createWholeProjectFixFactory())
+                                                    MissingConstructorKeywordFix.createWholeProjectFixFactory())
 
         ANONYMOUS_FUNCTION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix)
 
         UNRESOLVED_REFERENCE.registerFactory(ReplaceObsoleteLabelSyntaxFix,
-                                        ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
+                                             ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
 
         DEPRECATION.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix)
         DEPRECATION_ERROR.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix)
