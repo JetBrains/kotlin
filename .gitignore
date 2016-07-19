@@ -10,6 +10,7 @@ workspace.xml
 
 .gradle
 build
+translator/idea_run.sh
 
 # Ignore Gradle GUI config
 gradle-app.setting
