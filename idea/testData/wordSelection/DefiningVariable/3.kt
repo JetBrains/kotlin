@@ -1,0 +1,1 @@
+val foo<selection>: <caret>Int?</selection> = 1
