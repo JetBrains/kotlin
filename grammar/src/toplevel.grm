@@ -31,6 +31,10 @@ packageHeader
   : modifiers "package" SimpleName{"."} SEMI?
   ;
 
+/**
+See [Packages](packages.html)
+*/
+
 import
   : "import" SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
   ;
@@ -40,24 +44,12 @@ See [Imports](packages.html#imports)
 */
 
 toplevelObject
-  : package
   : class
   : object
   : function
   : property
 //  : typeAlias
   ;
-
-package
-  : "package" SimpleName{"."} "{"
-       import*
-       toplevelObject*
-    "}"
-  ;
-
-/**
-See [Packages](packages.html)
-*/
 
 /*
 typeAlias
