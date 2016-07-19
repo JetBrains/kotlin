@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 object CastDiagnosticsUtil {
 
@@ -46,8 +47,11 @@ object CastDiagnosticsUtil {
             if (KotlinBuiltIns.isArray(lhsType)) {
                 val lhsArgument = lhsType.arguments.firstOrNull()
                 val rhsArgument = rhsType.arguments.firstOrNull()
-                if (lhsArgument != null && rhsArgument != null && lhsArgument.type.constructor == rhsArgument.type.constructor) {
-                    return true
+                if (lhsArgument != null && rhsArgument != null) {
+                    if (lhsArgument.type.constructor == rhsArgument.type.constructor) return true
+                    if (KotlinTypeChecker.DEFAULT.isSubtypeOf(TypeUtils.makeNotNullable(lhsArgument.type), rhsArgument.type)) {
+                        return true
+                    }
                 }
             }
         }
