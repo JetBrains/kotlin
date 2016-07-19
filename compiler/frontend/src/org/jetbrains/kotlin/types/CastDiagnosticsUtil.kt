@@ -43,6 +43,13 @@ object CastDiagnosticsUtil {
         if (lhsType.constructor == rhsType.constructor) {
             if (lhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
             if (rhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
+            if (KotlinBuiltIns.isArray(lhsType)) {
+                val lhsArgument = lhsType.arguments.firstOrNull()
+                val rhsArgument = rhsType.arguments.firstOrNull()
+                if (lhsArgument != null && rhsArgument != null && lhsArgument.type.constructor == rhsArgument.type.constructor) {
+                    return true
+                }
+            }
         }
 
         if (isFinal(lhsType) || isFinal(rhsType)) return false
