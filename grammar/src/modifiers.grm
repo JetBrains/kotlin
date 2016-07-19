@@ -15,6 +15,10 @@ modifierKeyword
   : accessModifier
   : varianceAnnotation
   : memberModifier
+  : parameterModifier
+  : typeParameterModifier
+  : functionModifier
+  : propertyModifier
   : annotations
   ;
 
@@ -24,6 +28,8 @@ classModifier
   : "enum"
   : "open"
   : "annotation"
+  : "sealed"
+  : "data"
   ;
 
 memberModifier
@@ -31,6 +37,7 @@ memberModifier
   : "open"
   : "final"
   : "abstract"
+  : "lateinit"
   ;
 
 accessModifier
@@ -43,4 +50,26 @@ accessModifier
 varianceAnnotation
   : "in"
   : "out"
+  ;
+
+parameterModifier
+  : "noinline"
+  : "crossinline"
+  : "vararg"
+  ;
+
+typeParameterModifier
+  : "reified"
+  ;
+
+functionModifier
+  : "tailrec"
+  : "operator"
+  : "infix"
+  : "inline"
+  : "external"
+  ;
+
+propertyModifier
+  : "const"
   ;
