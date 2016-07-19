@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.util.text.CharArrayUtil
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -34,7 +34,17 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
     override fun select(e: PsiElement?, editorText: CharSequence?, cursorOffset: Int, editor: Editor): List<TextRange>? {
         e ?: return null
         editorText ?: return null
-        val colonPosition = CharArrayUtil.shiftBackward(editorText, e.startOffset - 1, ":") - 1
+        val colonPosition = getColonPosition(e)
+        if (colonPosition < 0) return null
         return listOf(TextRange(colonPosition, e.endOffset))
+    }
+
+    private fun getColonPosition(e: PsiElement): Int {
+        var parent = e.parent
+        while (parent != null) {
+            if (parent is KtCallableDeclaration) return parent.colon?.startOffset ?: -1
+            parent = parent.parent
+        }
+        return -1
     }
 }
