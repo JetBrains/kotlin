@@ -15,7 +15,7 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
         BlockCodegen(state, variableManager, codeBuilder) {
 
     var name = function.fqName.toString()
-    var args = ArrayList<LLVMVariable>()
+    var args = LinkedList<LLVMVariable>()
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
@@ -58,7 +58,7 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
         var external = false
 
         if (this_type != null) {
-            args.add(this_type)
+            args.addFirst(this_type)
         }
         args.forEach {
             val type = it.type
