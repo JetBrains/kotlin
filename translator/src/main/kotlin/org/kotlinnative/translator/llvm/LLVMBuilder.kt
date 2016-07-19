@@ -91,7 +91,7 @@ class LLVMBuilder(val arm: Boolean) {
                 storeVariable(result, secondNativeOp)
                 return result
             }
-            else -> addPrimitiveReferenceOperation(referenceName, firstNativeOp, secondNativeOp);
+            else -> addPrimitiveReferenceOperation(referenceName, firstNativeOp, secondNativeOp)
         }
         val resultOp = getNewVariable(llvmExpression.variableType)
         addAssignment(resultOp, llvmExpression)

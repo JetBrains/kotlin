@@ -1,0 +1,2 @@
+change(0) == 1
+change(1) == 2
