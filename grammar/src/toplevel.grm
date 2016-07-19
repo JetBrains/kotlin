@@ -24,7 +24,7 @@ fileAnnotations
   ;
 
 fileAnnotation
-  : "@" "file" ":" ("[" annotationEntry+ "]" | annotationEntry)
+  : "@" "file" ":" ("[" annotation+ "]" | annotation)
   ;
 
 packageHeader
@@ -40,19 +40,11 @@ See [Imports](packages.html#imports)
 */
 
 toplevelObject
-  : package
   : class
   : object
   : function
   : property
 //  : typeAlias
-  ;
-
-package
-  : "package" SimpleName{"."} "{"
-       import*
-       toplevelObject*
-    "}"
   ;
 
 /**
