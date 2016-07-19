@@ -7,10 +7,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.kotlinnative.translator.exceptions.TranslationException
 import org.kotlinnative.translator.llvm.*
-import org.kotlinnative.translator.llvm.types.LLVMCharType
-import org.kotlinnative.translator.llvm.types.LLVMReferenceType
-import org.kotlinnative.translator.llvm.types.LLVMType
-import org.kotlinnative.translator.llvm.types.LLVMVoidType
+import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 class ClassCodegen(val state: TranslationState, val variableManager: VariableManager, val clazz: KtClass, val codeBuilder: LLVMBuilder) {
@@ -39,6 +36,16 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
                 fields.add(item)
                 fieldsIndex[item.label] = item
 
+                currentSize += type.size
+                offset++
+            }
+        }
+        when (descriptor.kind) {
+            ClassKind.ENUM_CLASS -> {
+                val item = LLVMClassVariable("enum_item", LLVMEnumItemType())
+                item.offset = offset
+                fields.add(item)
+                fieldsIndex["enum_item"] = item
                 currentSize += type.size
                 offset++
             }
@@ -77,6 +84,9 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
     }
 
     private fun generatePrimaryConstructor() {
+        val classData = state.bindingContext.get(BindingContext.CLASS, clazz)
+        val classKind = classData?.kind
+        //if (classKind == ClassKind.ENUM_CLASS)
         val argFields = ArrayList<LLVMVariable>()
         val refType = type.makeClone() as LLVMReferenceType
         refType.addParam("sret")
