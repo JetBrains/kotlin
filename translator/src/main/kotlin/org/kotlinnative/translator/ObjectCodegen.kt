@@ -12,12 +12,13 @@ import org.kotlinnative.translator.llvm.types.LLVMType
 class ObjectCodegen(override val state: TranslationState, override val variableManager: VariableManager, val objectDeclaration: KtObjectDeclaration, override val codeBuilder: LLVMBuilder) :
         StructCodegen(state, variableManager, objectDeclaration, state.bindingContext.get(BindingContext.CLASS, objectDeclaration) ?: throw TranslationException(),
                 codeBuilder) {
-    override val size: Int = 0
+    override var size: Int = 0
     override val structName: String
     override val type: LLVMType = LLVMReferenceType(objectDeclaration.name.toString(), "class", byRef = true)
 
     init {
         structName = objectDeclaration.name!!
+        generateInnerFields(objectDeclaration.declarations)
     }
 
     fun generate() {

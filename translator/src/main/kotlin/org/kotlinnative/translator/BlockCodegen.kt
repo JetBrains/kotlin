@@ -138,7 +138,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         if (state.classes.containsKey(function)) {
             val descriptor = state.classes[function] ?: return null
-            val args = loadArgsIfRequired(names, descriptor.fields)
+            val args = loadArgsIfRequired(names, descriptor.constructorFields)
             return evaluateConstructorCallExpression(LLVMVariable(function, descriptor.type, scope = LLVMVariableScope()), args)
         }
 
