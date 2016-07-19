@@ -9010,4 +9010,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/wrongLongSuffix")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WrongLongSuffix extends AbstractQuickFixTest {
+        public void testAllFilesPresentInWrongLongSuffix() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrongLongSuffix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrongLongSuffix/simple.kt");
+            doTest(fileName);
+        }
+    }
 }
