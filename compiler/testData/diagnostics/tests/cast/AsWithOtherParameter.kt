@@ -23,5 +23,12 @@ fun checkArrays2(): Array<Wrapper<String>> {
     return <!UNCHECKED_CAST!>someArray as Array<Wrapper<String>><!>
 }
 
+fun checkArrays3() {
+    val someArray = arrayOfNulls<String>(1)
+    <!UNCHECKED_CAST!>someArray as Array<Any><!>
+    val intArray = arrayOfNulls<Int>(1)
+    <!UNCHECKED_CAST!>intArray as Array<Any><!>
+}
+
 fun println(s: String) = s
 
