@@ -1,6 +1,8 @@
 package org.kotlinnative.translator
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -12,7 +14,9 @@ import org.kotlinnative.translator.llvm.types.LLVMType
 import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
-abstract class StructCodegen(open val state: TranslationState, open val variableManager: VariableManager, open val classDescriptor: ClassDescriptor, open val codeBuilder: LLVMBuilder) {
+abstract class StructCodegen(open val state: TranslationState, open val variableManager: VariableManager, open val classOrObject: KtClassOrObject,
+                             val classDescriptor: ClassDescriptor,
+                             open val codeBuilder: LLVMBuilder) {
 
     val plain: Boolean = false // TODO
     val fields = ArrayList<LLVMVariable>()
@@ -22,8 +26,8 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
     var methods = HashMap<String, FunctionCodegen>()
     abstract val structName: String
 
-
     fun generate(declarationList: List<KtDeclaration>) {
+
         generateStruct()
         generatePrimaryConstructor()
 
@@ -65,6 +69,7 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
         codeBuilder.addStartExpression()
         generateLoadArguments(classVal)
         generateAssignments()
+        genClassInitializers()
         generateReturn()
         codeBuilder.addAnyReturn(LLVMVoidType())
         codeBuilder.addEndExpression()
@@ -143,5 +148,17 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
         }
 
         return result
+    }
+
+    protected fun genClassInitializers() {
+        for (init in classOrObject.getAnonymousInitializers()) {
+            val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {
+                fun generate(expr: PsiElement?) {
+                    evaluateCodeBlock(expr, scopeDepth = topLevel)
+                }
+            }
+            blockCodegen.generate(init.body)
+        }
+
     }
 }

@@ -1,0 +1,1 @@
+class_init_section(523) == 12868
