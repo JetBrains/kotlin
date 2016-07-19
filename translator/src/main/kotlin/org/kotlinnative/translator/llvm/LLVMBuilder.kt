@@ -122,6 +122,11 @@ class LLVMBuilder(val arm: Boolean) {
         globalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"$value\\00\", align 1")
     }
 
+    fun addGlobalIntialize(target: LLVMVariable, classType: LLVMType) {
+        val code = "$target = internal global $classType zeroinitializer, align ${classType.align}"
+        globalCode.appendln(code)
+    }
+
     fun storeString(target: LLVMVariable, source: LLVMVariable, offset: Int) {
         val stringType = source.type as LLVMStringType
         val code = "store ${target.type} getelementptr inbounds (${stringType.fullType()}, " +

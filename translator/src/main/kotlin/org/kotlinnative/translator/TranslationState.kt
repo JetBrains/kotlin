@@ -26,6 +26,7 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var functions = HashMap<String, FunctionCodegen>()
     val globalVariableCollection = HashMap<String, LLVMVariable>()
     var classes = HashMap<String, ClassCodegen>()
+    var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
 }
 

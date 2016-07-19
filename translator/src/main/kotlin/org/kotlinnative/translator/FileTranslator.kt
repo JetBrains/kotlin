@@ -1,9 +1,6 @@
 package org.kotlinnative.translator
 
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.kotlinnative.translator.llvm.LLVMBuilder
 
 class FileTranslator(val state: TranslationState, val file: KtFile) {
@@ -31,11 +28,19 @@ class FileTranslator(val state: TranslationState, val file: KtFile) {
                     val property = PropertyCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
                     state.properties.put(declaration.name!!, property)
                 }
+                is KtObjectDeclaration -> {
+                    val property = ObjectCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
+                    state.objects.put(declaration.name!!, property)
+                }
             }
         }
 
         for (property in state.properties.values) {
             property.generate()
+        }
+
+        for (objectDeclaration in state.objects.values) {
+            objectDeclaration.generate()
         }
 
         for (clazz in state.classes.values) {
@@ -45,8 +50,6 @@ class FileTranslator(val state: TranslationState, val file: KtFile) {
         for (function in state.functions.values) {
             function.generate()
         }
-
     }
-
 }
 

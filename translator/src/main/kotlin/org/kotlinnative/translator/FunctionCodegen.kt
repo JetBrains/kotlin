@@ -184,14 +184,14 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
         val receiver = variableManager.getLLVMvalue(receiverName)!!
 
-        val clazz = state.classes[(receiver.type as LLVMReferenceType).type]!!
+        val clazz = state.classes[(receiver.type as LLVMReferenceType).type] ?: state.objects[(receiver.type as LLVMReferenceType).type]!!
         val field = clazz.fieldsIndex[selectorName]
         if (field != null) {
             val result = codeBuilder.getNewVariable(field.type, pointer = 1)
             codeBuilder.loadClassField(result, receiver, field.offset)
             return result
         } else {
-            val methodName = clazz.clazz.name.toString() + '.' + selectorName.substringBefore('(')
+            val methodName = clazz.structName + '.' + selectorName.substringBefore('(')
             val method = clazz.methods[methodName]!!
             val returnType = clazz.methods[methodName]!!.returnType.type
             val methodArgs = mutableListOf<LLVMSingleValue>(receiver)

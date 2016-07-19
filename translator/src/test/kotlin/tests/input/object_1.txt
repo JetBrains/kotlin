@@ -1,0 +1,1 @@
+Singleton.create(5) == 40
