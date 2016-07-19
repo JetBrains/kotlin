@@ -1274,6 +1274,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                 }
             }
+
+            @Override
+            public void visitSuperExpression(@NotNull KtSuperExpression expression) {
+                KotlinType thisTypeForSuperCall = bindingContext.get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression);
+                assert thisTypeForSuperCall != null : "This type for superCall ''" + expression.getText() + "'' should be not null!";
+                ClassifierDescriptor descriptor = thisTypeForSuperCall.getConstructor().getDeclarationDescriptor();
+                assert descriptor instanceof ClassDescriptor :
+                        "'This' reference target for ''" + expression.getText() + "''should be class descriptor, but was " + descriptor;
+                if (descriptor instanceof ClassDescriptor) {
+                    lookupInContext(descriptor);
+                }
+            }
         };
 
         for (KtDeclaration declaration : myClass.getDeclarations()) {
