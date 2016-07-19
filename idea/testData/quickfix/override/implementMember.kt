@@ -1,4 +1,5 @@
 // "Implement members" "true"
+// WITH_RUNTIME
 interface I {
     fun foo()
 }

@@ -1,4 +1,5 @@
 // "Let 'B' implement interface 'A'" "true"
+// WITH_RUNTIME
 package let.implement
 
 fun bar() {
@@ -14,6 +15,6 @@ interface A {
 }
 class B : A {
     override fun gav() {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

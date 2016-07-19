@@ -225,18 +225,22 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
             ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
-        else if (beforeFileName.endsWith("Runtime.kt") ||
-                 InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME")) {
+        else if (isRuntimeNeeded(beforeFileName)) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
+    }
+
+    private static boolean isRuntimeNeeded(@NotNull String beforeFileName) throws IOException {
+        return beforeFileName.endsWith("Runtime.kt") ||
+               beforeFileName.toLowerCase().contains("createfromusage") ||
+               InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME");
     }
 
     private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
             ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
         }
-        else if (beforeFileName.endsWith("Runtime.kt") ||
-                 InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME")) {
+        else if (isRuntimeNeeded(beforeFileName)) {
             ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getProjectJDK());
         }
     }

@@ -1,10 +1,11 @@
 // "Implement members" "true"
+// WITH_RUNTIME
 interface I {
     fun foo()
 }
 
 class A : I {
     override fun foo() {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

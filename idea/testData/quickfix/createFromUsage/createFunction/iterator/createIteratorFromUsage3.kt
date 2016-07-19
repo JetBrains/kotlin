@@ -4,7 +4,7 @@ class FooIterator<T> {
 }
 class Foo<T> {
     operator fun iterator(): FooIterator<String> {
-        throw UnsupportedOperationException("not implemented")
+        TODO("not implemented")
     }
 }
 operator fun Any.component1(): Int {

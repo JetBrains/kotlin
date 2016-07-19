@@ -6,5 +6,5 @@ fun test() {
 }
 
 infix fun Int.`!u00A0`(i: Int): Int {
-    throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

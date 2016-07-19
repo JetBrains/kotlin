@@ -1,4 +1,3 @@
-// ERROR: Unresolved reference: println
 open class A() {
     open fun foo(value : Int) : Unit = println(value)
     open val bar : Int = 0

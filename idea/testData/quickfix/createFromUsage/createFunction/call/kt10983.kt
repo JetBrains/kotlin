@@ -1,10 +1,8 @@
 // "Create function" "false"
 // ERROR: A 'return' expression required in a function with a block body ('{...}')
-// ERROR: Cannot infer a type for this parameter. Please specify it explicitly.
-// ERROR: Cannot infer a type for this parameter. Please specify it explicitly.
 // ERROR: Expression 'return groupsByLength.values.firstOrNull { group -> {group.size == maximumSizeOfGroup} }' cannot be a selector (occur after a dot)
-// ERROR: Unresolved reference: groupBy
-// ERROR: Unresolved reference: it
+// ERROR: Type inference failed: inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T?<br>cannot be applied to<br>receiver: Collection<List<String>>  arguments: ((List<String>) -> () -> Boolean)<br>
+// ERROR: Type mismatch: inferred type is (List<String>) -> () -> Boolean but (List<String>) -> Boolean was expected
 // ERROR: Unresolved reference: maximumSizeOfGroup
 
 fun doSomethingStrangeWithCollection(collection: Collection<String>): Collection<String>? {

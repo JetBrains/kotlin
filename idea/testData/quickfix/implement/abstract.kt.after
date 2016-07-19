@@ -1,4 +1,5 @@
 // "Implement abstract class" "true"
+// WITH_RUNTIME
 // SHOULD_BE_AVAILABLE_AFTER_EXECUTION
 
 private abstract class Base {
@@ -14,6 +15,6 @@ private class BaseImpl : Base() {
         }
 
     override fun toInt(arg: String): Int {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
