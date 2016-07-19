@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
@@ -57,11 +58,17 @@ public class CodeInsightUtils {
                 break;
             case TYPE_ELEMENT: elementClass = KtTypeElement.class;
                 break;
+            case TYPE_CONSTRUCTOR: elementClass = KtSimpleNameExpression.class;
+                break;
             default: throw new IllegalArgumentException(elementKind.name());
         }
         PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, elementClass);
 
         if (elementKind == ElementKind.TYPE_ELEMENT) return element;
+
+        if (elementKind == ElementKind.TYPE_CONSTRUCTOR) {
+            return element != null && KtPsiUtilKt.isTypeConstructorReference(element) ? element : null;
+        }
 
         if (element instanceof KtScriptInitializer) {
             element = ((KtScriptInitializer) element).getBody();
@@ -106,7 +113,8 @@ public class CodeInsightUtils {
 
     public enum ElementKind {
         EXPRESSION,
-        TYPE_ELEMENT
+        TYPE_ELEMENT,
+        TYPE_CONSTRUCTOR
     }
 
     @NotNull
@@ -145,7 +153,8 @@ public class CodeInsightUtils {
 
         for (PsiElement element : array) {
             boolean correctType = kind == ElementKind.EXPRESSION && element instanceof KtExpression
-                                  || kind == ElementKind.TYPE_ELEMENT && element instanceof KtTypeElement;
+                                  || kind == ElementKind.TYPE_ELEMENT && element instanceof KtTypeElement
+                                  || kind == ElementKind.TYPE_CONSTRUCTOR && KtPsiUtilKt.isTypeConstructorReference(element);
             if (!(correctType
                   || element.getNode().getElementType() == KtTokens.SEMICOLON
                   || element instanceof PsiWhiteSpace

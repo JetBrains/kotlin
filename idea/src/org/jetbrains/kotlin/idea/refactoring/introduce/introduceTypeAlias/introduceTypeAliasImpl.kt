@@ -58,42 +58,48 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     val dummyVar = psiFactory.createProperty("val a: Int").apply {
         typeReference!!.replace(originalType.parent as? KtTypeReference ?: psiFactory.createType(originalType))
     }
-    val newReferences = dummyVar.typeReference!!.collectDescendantsOfType<KtTypeReference> { it.resolveInfo != null }
+    val newTypeReference = dummyVar.typeReference!!
+    val newReferences = newTypeReference.collectDescendantsOfType<KtTypeReference> { it.resolveInfo != null }
     val newContext = dummyVar.analyzeInContext(targetScope, contextExpression)
     val project = originalType.project
 
     val unifier = KotlinPsiUnifier.DEFAULT
-    val groupedBrokenReferences = LinkedMultiMap<TypeReferenceInfo, TypeReferenceInfo>()
+    val groupedReferencesToExtract = LinkedMultiMap<TypeReferenceInfo, TypeReferenceInfo>()
+
+    val forcedCandidates = if (extractTypeConstructor) newTypeReference.typeElement!!.typeArgumentsAsTypes else emptyList()
+
     for (newReference in newReferences) {
         val resolveInfo = newReference.resolveInfo!!
 
-        val originalDescriptor = resolveInfo.type.constructor.declarationDescriptor
-        val newDescriptor = newContext[BindingContext.TYPE, newReference]?.constructor?.declarationDescriptor
-        if (compareDescriptors(project, originalDescriptor, newDescriptor)) continue
+        if (newReference !in forcedCandidates) {
+            val originalDescriptor = resolveInfo.type.constructor.declarationDescriptor
+            val newDescriptor = newContext[BindingContext.TYPE, newReference]?.constructor?.declarationDescriptor
+            if (compareDescriptors(project, originalDescriptor, newDescriptor)) continue
+        }
 
-        val equivalenceRepresentative = groupedBrokenReferences
+        val equivalenceRepresentative = groupedReferencesToExtract
                 .keySet()
                 .firstOrNull { unifier.unify(it.reference, resolveInfo.reference).matched }
         if (equivalenceRepresentative != null) {
-            groupedBrokenReferences.putValue(equivalenceRepresentative, resolveInfo)
+            groupedReferencesToExtract.putValue(equivalenceRepresentative, resolveInfo)
         }
         else {
-            groupedBrokenReferences.putValue(resolveInfo, resolveInfo)
+            groupedReferencesToExtract.putValue(resolveInfo, resolveInfo)
         }
 
-        val brokenReferenceInfoIterator = groupedBrokenReferences.values().iterator()
-        while (brokenReferenceInfoIterator.hasNext()) {
-            val brokenReferenceInfo = brokenReferenceInfoIterator.next()
-            if (resolveInfo.reference.isAncestor(brokenReferenceInfo.reference, true)) {
-                brokenReferenceInfoIterator.remove()
+        val referencesToExtractIterator = groupedReferencesToExtract.values().iterator()
+        while (referencesToExtractIterator.hasNext()) {
+            val referenceToExtract = referencesToExtractIterator.next()
+            if (resolveInfo.reference.isAncestor(referenceToExtract.reference, true)) {
+                referencesToExtractIterator.remove()
             }
         }
     }
 
     val typeParameterNameValidator = CollectingNameValidator()
-    val brokenReferences = groupedBrokenReferences.keySet().filter { groupedBrokenReferences[it].isNotEmpty() }
+    val brokenReferences = groupedReferencesToExtract.keySet().filter { groupedReferencesToExtract[it].isNotEmpty() }
     val typeParameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(brokenReferences.size, typeParameterNameValidator)
-    val typeParameters = (typeParameterNames zip brokenReferences).map { TypeParameter(it.first, groupedBrokenReferences[it.second]) }
+    val typeParameters = (typeParameterNames zip brokenReferences).map { TypeParameter(it.first, groupedReferencesToExtract[it.second]) }
 
     if (typeParameters.any { it.typeReferenceInfos.any { it.reference.typeElement == originalType } }) {
         return IntroduceTypeAliasAnalysisResult.Error("Type alias cannot refer to types which aren't accessible in the scope where it's defined")

@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
@@ -34,8 +35,11 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetS
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeElement
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isTypeConstructorReference
 
 object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
     @JvmField
@@ -47,7 +51,7 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
                 editor,
                 file,
                 "Select target code block",
-                listOf(TYPE_ELEMENT),
+                listOf(TYPE_ELEMENT, TYPE_CONSTRUCTOR),
                 { elements, parent -> parent.getExtractionContainers(strict = true, includeAll = true) },
                 continuation
         )
@@ -69,9 +73,19 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
             targetSibling: PsiElement,
             descriptorSubstitutor: ((IntroduceTypeAliasDescriptor) -> IntroduceTypeAliasDescriptor)? = null
     ) {
-        val typeElement = elements.singleOrNull() as? KtTypeElement
-                       ?: return showErrorHint(project, editor, "No type to refactor", REFACTORING_NAME)
-        val introduceData = IntroduceTypeAliasData(typeElement, targetSibling)
+        val elementToExtract = elements.singleOrNull()
+
+        val errorMessage = when (elementToExtract) {
+            is KtSimpleNameExpression -> if (!isTypeConstructorReference(elementToExtract)) "Type reference is expected" else null
+            !is KtTypeElement -> "No type to refactor"
+            else -> null
+        }
+        if (errorMessage != null) return showErrorHint(project, editor, errorMessage, REFACTORING_NAME)
+
+        val introduceData = when (elementToExtract) {
+            is KtTypeElement -> IntroduceTypeAliasData(elementToExtract, targetSibling)
+            else -> IntroduceTypeAliasData(elementToExtract!!.getStrictParentOfType<KtTypeElement>()!!, targetSibling, true)
+        }
         val analysisResult = introduceData.analyze()
         when (analysisResult) {
             is IntroduceTypeAliasAnalysisResult.Error -> {

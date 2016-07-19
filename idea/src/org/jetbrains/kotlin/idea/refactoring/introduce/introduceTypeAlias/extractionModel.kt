@@ -34,7 +34,8 @@ internal var KtTypeReference.resolveInfo : TypeReferenceInfo? by CopyableUserDat
 
 class IntroduceTypeAliasData(
         val originalType: KtTypeElement,
-        val targetSibling: PsiElement
+        val targetSibling: PsiElement,
+        val extractTypeConstructor: Boolean = false
 ) : Disposable {
     val resolutionFacade = originalType.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(originalType, BodyResolveMode.PARTIAL)

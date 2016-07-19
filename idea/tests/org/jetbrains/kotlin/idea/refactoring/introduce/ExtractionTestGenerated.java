@@ -4084,6 +4084,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
 
+        @TestMetadata("typeConstructor.kt")
+        public void testTypeConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/typeConstructor.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
         @TestMetadata("typesExtractedWithFunctionalType.kt")
         public void testTypesExtractedWithFunctionalType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/typesExtractedWithFunctionalType.kt");
