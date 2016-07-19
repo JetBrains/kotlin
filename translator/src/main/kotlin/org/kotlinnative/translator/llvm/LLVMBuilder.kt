@@ -3,10 +3,7 @@ package org.kotlinnative.translator.llvm
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.kotlinnative.translator.llvm.types.LLVMCharType
-import org.kotlinnative.translator.llvm.types.LLVMIntType
-import org.kotlinnative.translator.llvm.types.LLVMStringType
-import org.kotlinnative.translator.llvm.types.LLVMType
+import org.kotlinnative.translator.llvm.types.*
 
 class LLVMBuilder(val arm: Boolean) {
     private val POINTER_SIZE = 4
@@ -87,6 +84,19 @@ class LLVMBuilder(val arm: Boolean) {
             KtTokens.EQEQ -> firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
             KtTokens.EXCLEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
             KtTokens.EQ -> {
+                if (secondOp.type is LLVMNullType) {
+                    val result = getNewVariable(firstOp.type!!, firstOp.pointer)
+                    allocStackVar(result)
+                    result.pointer++
+
+                    storeNull(result)
+                    return result
+                }
+
+                if (firstOp.pointer > 0 && secondOp.pointer > 0) {
+                    return secondOp as LLVMVariable
+                }
+
                 val result = firstOp as LLVMVariable
                 storeVariable(result, secondNativeOp)
                 return result

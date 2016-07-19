@@ -21,7 +21,6 @@ class ClassCodegen(override val state: TranslationState, override val variableMa
     override val structName: String
     override val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
 
-
     init {
         structName = clazz.name.toString()
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()

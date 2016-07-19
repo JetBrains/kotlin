@@ -1,0 +1,2 @@
+nullable_test(1) == 2
+nullable_test_2(1) == 1
