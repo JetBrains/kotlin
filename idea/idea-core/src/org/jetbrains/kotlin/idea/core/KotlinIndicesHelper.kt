@@ -19,19 +19,18 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -154,7 +153,7 @@ class KotlinIndicesHelper(
                 .filter {
                     ProgressManager.checkCanceled()
                     KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
-                        && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
+                    && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
@@ -205,6 +204,32 @@ class KotlinIndicesHelper(
                 .filter(descriptorFilter)
                 .toSet()
     }
+
+
+    fun getJvmStatics(name: String): Collection<DeclarationDescriptor> {
+        return sequenceOf(PsiShortNamesCache.getInstance(project).getFieldsByName(name, scope),
+                          PsiShortNamesCache.getInstance(project).getMethodsByName(name, scope))
+                .flatMap { it.asSequence() }
+                .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) }
+                .filter(descriptorFilter)
+                .toSet()
+    }
+
+    fun getKotlinStatics(name: String): Collection<DeclarationDescriptor> {
+        return sequenceOf(KotlinFunctionShortNameIndex.getInstance().get(name, project, scope),
+                          KotlinPropertyShortNameIndex.getInstance().get(name, project, scope)).
+                flatMap { it.asSequence() }
+                .mapNotNull {
+                    when (it) {
+                        is KtNamedFunction -> it.descriptor
+                        is KtProperty -> it.descriptor
+                        else -> null
+                    }
+                }
+                .filter(descriptorFilter)
+                .toSet()
+    }
+
 
     fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
