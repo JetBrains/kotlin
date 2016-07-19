@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
+import java.util.Collections;
+
 public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {
 
     public void doTestExpressionSelection(@NotNull String path) throws Exception {
@@ -32,13 +34,18 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil.selectElement(getEditor(), (KtFile) getFile(), CodeInsightUtils.ElementKind.EXPRESSION, new KotlinRefactoringUtil.SelectElementCallback() {
-                @Override
-                public void run(@Nullable PsiElement element) {
-                    assertNotNull("Selected expression mustn't be null", element);
-                    assertEquals(expectedExpression, element.getText());
-                }
-            });
+            KotlinRefactoringUtil.selectElement(
+                    getEditor(),
+                    (KtFile) getFile(),
+                    Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
+                    new KotlinRefactoringUtil.SelectElementCallback() {
+                        @Override
+                        public void run(@Nullable PsiElement element) {
+                            assertNotNull("Selected expression mustn't be null", element);
+                            assertEquals(expectedExpression, element.getText());
+                        }
+                    }
+            );
         }
         catch (KotlinRefactoringUtil.IntroduceRefactoringException e) {
             assertEquals(expectedExpression, "");
