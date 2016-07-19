@@ -136,7 +136,55 @@ object KindWeigher : LookupElementWeigher("kotlin.kind") {
 }
 
 object CallableWeigher : LookupElementWeigher("kotlin.callableWeight") {
-    override fun weigh(element: LookupElement) = element.getUserData(CALLABLE_WEIGHT_KEY)
+    private enum class Weight1 {
+        local,
+        memberOrExtension,
+        globalOrStatic,
+        typeParameterExtension,
+        receiverCastRequired
+    }
+
+    private enum class Weight2 {
+        thisClassMember,
+        baseClassMember,
+        thisTypeExtension,
+        baseTypeExtension,
+        other
+    }
+
+    private class CompoundWeight(val weight1: Weight1, val receiverIndex: Int, val weight2: Weight2) : Comparable<CompoundWeight> {
+        override fun compareTo(other: CompoundWeight): Int {
+            if (weight1 != other.weight1) return weight1.compareTo(other.weight1)
+            if (receiverIndex != other.receiverIndex) return receiverIndex.compareTo(other.receiverIndex)
+            return weight2.compareTo(other.weight2)
+        }
+    }
+
+    override fun weigh(element: LookupElement): Comparable<*>? {
+        val weight = element.getUserData(CALLABLE_WEIGHT_KEY) ?: return null
+        val w1 = when (weight.enum) {
+            CallableWeightEnum.local -> Weight1.local
+
+            CallableWeightEnum.thisClassMember,
+            CallableWeightEnum.baseClassMember,
+            CallableWeightEnum.thisTypeExtension,
+            CallableWeightEnum.baseTypeExtension -> Weight1.memberOrExtension
+
+            CallableWeightEnum.globalOrStatic -> Weight1.globalOrStatic
+
+            CallableWeightEnum.typeParameterExtension -> Weight1.typeParameterExtension
+
+            CallableWeightEnum.receiverCastRequired -> Weight1.receiverCastRequired
+        }
+        val w2 = when (weight.enum) {
+            CallableWeightEnum.thisClassMember -> Weight2.thisClassMember
+            CallableWeightEnum.baseClassMember -> Weight2.baseClassMember
+            CallableWeightEnum.thisTypeExtension -> Weight2.thisTypeExtension
+            CallableWeightEnum.baseTypeExtension -> Weight2.baseTypeExtension
+            else -> Weight2.other
+        }
+        return CompoundWeight(w1, weight.receiverIndex ?: Int.MAX_VALUE, w2)
+    }
 }
 
 object VariableOrFunctionWeigher : LookupElementWeigher("kotlin.variableOrFunction"){

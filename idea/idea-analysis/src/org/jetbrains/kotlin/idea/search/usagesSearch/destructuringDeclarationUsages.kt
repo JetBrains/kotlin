@@ -353,21 +353,10 @@ private class Processor(
 
                     is KtCallableReferenceExpression -> {
                         when (element) {
-                            parent.receiverExpression -> { // usage in receiver of callable reference (before "::") - ignore it
-                                return true
-                            }
-
                             parent.callableReference -> { // usage after "::" in callable reference - should be reference to constructor of our data class
                                 processSuspiciousExpression(element)
                                 return true
                             }
-                        }
-                    }
-
-                    is KtClassLiteralExpression -> {
-                        if (element == parent.receiverExpression) { // ClassName::class
-                            processSuspiciousExpression(element)
-                            return true
                         }
                     }
                 }
