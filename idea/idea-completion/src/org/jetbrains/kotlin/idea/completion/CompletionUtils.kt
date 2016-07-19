@@ -124,7 +124,7 @@ fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     tails.forEach { appendTailText(it.text, it.isGrayed) }
 }
 
-enum class CallableWeight {
+enum class CallableWeightEnum {
     local, // local non-extension
     thisClassMember,
     baseClassMember,
@@ -133,6 +133,14 @@ enum class CallableWeight {
     globalOrStatic, // global non-extension
     typeParameterExtension,
     receiverCastRequired
+}
+
+class CallableWeight(val enum: CallableWeightEnum, val receiverIndex: Int?) {
+    companion object {
+        val local = CallableWeight(CallableWeightEnum.local, null)
+        val globalOrStatic = CallableWeight(CallableWeightEnum.globalOrStatic, null)
+        val receiverCastRequired = CallableWeight(CallableWeightEnum.receiverCastRequired, null)
+    }
 }
 
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
