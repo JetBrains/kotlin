@@ -6,7 +6,7 @@ class LLVMReferenceType(val type: String, var prefix: String = "", override val 
 
     override val defaultValue: String = ""
 
-    override val size: Byte = 4
+    override var size: Int = 4
     override fun toString() = "%$prefix${if (prefix.length > 0) "." else ""}$type"
 
     private val params = ArrayList<String>()

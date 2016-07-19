@@ -23,7 +23,7 @@ class LLVMByteType() : LLVMType() {
             LLVMExpression(LLVMBooleanType(), "icmp ne i8 $firstOp, $secondOp")
 
     override val align = 1
-    override val size: Byte = 1
+    override var size: Int = 1
     override fun toString(): String = "i8"
     override val defaultValue = "0"
 }

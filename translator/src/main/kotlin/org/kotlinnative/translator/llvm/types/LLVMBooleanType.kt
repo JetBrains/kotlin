@@ -43,7 +43,7 @@ class LLVMBooleanType() : LLVMType() {
     }
 
     override val align = 4
-    override val size: Byte = 1
+    override var size: Int = 1
     override val defaultValue = "0"
 
     override fun toString() = "i1"

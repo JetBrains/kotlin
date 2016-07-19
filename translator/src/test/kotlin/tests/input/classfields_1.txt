@@ -1,2 +1,2 @@
-test_simple_field() == 0
+test_simple_field() == 1
 test_field_assignment(10) == 10

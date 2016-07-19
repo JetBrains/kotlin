@@ -87,8 +87,8 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
         codeBuilder.addStartExpression()
         generateLoadArguments(classVal)
         generateAssignments()
-        genClassInitializers()
         generateReturn()
+        genClassInitializers()
         codeBuilder.addAnyReturn(LLVMVoidType())
         codeBuilder.addEndExpression()
     }

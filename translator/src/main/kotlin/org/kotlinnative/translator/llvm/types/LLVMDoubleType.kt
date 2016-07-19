@@ -19,7 +19,7 @@ class LLVMDoubleType() : LLVMType() {
             LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, $secondOp")
 
     override val align = 8
-    override val size: Byte = 8
+    override var size: Int = 8
     override fun toString() = "double"
     override val defaultValue = "0.0"
 }

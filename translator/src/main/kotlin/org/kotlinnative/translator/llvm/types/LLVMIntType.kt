@@ -56,7 +56,7 @@ class LLVMIntType() : LLVMType() {
             LLVMExpression(LLVMBooleanType(), "icmp ne i32 $firstOp, $secondOp")
 
     override val align = 4
-    override val size: Byte = 4
+    override var size: Int = 4
     override val defaultValue = "0"
 
     override fun toString() = "i32"

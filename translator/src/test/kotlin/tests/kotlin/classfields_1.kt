@@ -4,7 +4,7 @@ class WithFields(var i: Int) {
     var j: Int
 
     init {
-        this.j = 0
+        this.j = this.i
     }
 }
 
@@ -14,8 +14,6 @@ fun test_simple_field(): Int {
 }
 
 fun test_field_assignment(i: Int): Int {
-    val k = WithFields(1)
-    k.j = i
-
+    val k = WithFields(i)
     return k.j
 }

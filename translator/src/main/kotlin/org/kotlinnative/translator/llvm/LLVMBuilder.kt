@@ -93,7 +93,7 @@ class LLVMBuilder(val arm: Boolean) {
                     return result
                 }
 
-                if (firstOp.pointer > 0 && secondOp.pointer > 0) {
+                if (firstOp.pointer > 1 && secondOp.pointer > 0) {
                     return secondOp as LLVMVariable
                 }
 
@@ -204,7 +204,7 @@ class LLVMBuilder(val arm: Boolean) {
         val alloc = "$allocedVar = call i8* @${if (arm) "malloc_static" else "malloc"}(i32 $size)"
         localCode.appendln(alloc)
 
-        val cast = "$target = bitcast ${allocedVar.getType()} $allocedVar to ${target.getType()}"
+        val cast = "$target = bitcast ${allocedVar.getType()} $allocedVar to ${target.getType()}*"
         localCode.appendln(cast)
     }
 

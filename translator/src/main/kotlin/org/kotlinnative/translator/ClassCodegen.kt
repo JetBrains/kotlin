@@ -29,6 +29,7 @@ class ClassCodegen(override val state: TranslationState, override val variableMa
         annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
         indexFields(descriptor, parameterList)
         generateInnerFields(clazz.declarations)
+        type.size = size
     }
 
     private fun indexFields(descriptor: ClassDescriptor, parameters: MutableList<KtParameter>) {

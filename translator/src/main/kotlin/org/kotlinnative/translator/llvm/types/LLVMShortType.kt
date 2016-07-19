@@ -22,7 +22,7 @@ class LLVMShortType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i16 $firstOp, $secondOp")
 
-    override val size: Byte = 2
+    override var size: Int = 2
     override val align = 2
     override val defaultValue = "0"
 

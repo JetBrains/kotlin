@@ -8,7 +8,7 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
 
     override val defaultValue = ""
     override val align: Int = 4
-    override val size: Byte = 4
+    override var size: Int = 4
 
     val arguments: List<LLVMVariable>
     val returnType: LLVMVariable
