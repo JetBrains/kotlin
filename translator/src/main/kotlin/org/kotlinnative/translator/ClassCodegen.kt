@@ -1,5 +1,6 @@
 package org.kotlinnative.translator
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -13,7 +14,6 @@ import java.util.*
 class ClassCodegen(val state: TranslationState, val variableManager: VariableManager, val clazz: KtClass, val codeBuilder: LLVMBuilder) {
 
     val annotation: Boolean
-    val plain: Boolean = false // TODO
     val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
     val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
@@ -24,22 +24,29 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
 
+        annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
+        size = indexFields(descriptor, parameterList)
+    }
+
+    private fun indexFields(descriptor: ClassDescriptor, parameters: MutableList<KtParameter>): Int {
+        if (annotation) {
+            return 0
+        }
+
         var offset = 0
         var currentSize = 0
-        annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
 
-        if (!annotation) {
-            for (field in parameterList) {
-                val item = resolveType(field)
-                item.offset = offset
+        for (field in parameters) {
+            val item = resolveType(field)
+            item.offset = offset
 
-                fields.add(item)
-                fieldsIndex[item.label] = item
+            fields.add(item)
+            fieldsIndex[item.label] = item
 
-                currentSize += type.size
-                offset++
-            }
+            currentSize += type.size
+            offset++
         }
+
         when (descriptor.kind) {
             ClassKind.ENUM_CLASS -> {
                 val item = LLVMClassVariable("enum_item", LLVMEnumItemType())
@@ -51,7 +58,7 @@ class ClassCodegen(val state: TranslationState, val variableManager: VariableMan
             }
         }
 
-        size = currentSize
+        return currentSize
     }
 
     fun generate() {
