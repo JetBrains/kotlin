@@ -311,7 +311,8 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
         for (arg in args) {
             val currentExpression = evaluateExpression(arg.getArgumentExpression(), scopeDepth) as LLVMSingleValue
-            result.add(currentExpression)
+            val nativeExpression = codeBuilder.receiveNativeValue(currentExpression)
+            result.add(nativeExpression)
         }
 
         return result

@@ -207,7 +207,7 @@ class LLVMBuilder(val arm: Boolean) {
 
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(source.pointer > 0)
-        val target = getNewVariable(source.type, source.pointer, source.kotlinName)
+        val target = getNewVariable(source.type, source.pointer - 1, source.kotlinName)
         val code = "$target = load ${source.getType()} $source, align ${target.type.align}"
         localCode.appendln(code)
         return target
