@@ -1,0 +1,6 @@
+typealias NullableStringToBooleanList = List<(String?) -> Boolean>
+
+// SIBLING:
+fun foo(list: NullableStringToBooleanList) {
+
+}

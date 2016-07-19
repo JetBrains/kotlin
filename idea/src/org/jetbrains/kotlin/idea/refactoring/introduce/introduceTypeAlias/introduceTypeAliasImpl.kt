@@ -105,7 +105,13 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
         return IntroduceTypeAliasAnalysisResult.Error("Type alias cannot refer to types which aren't accessible in the scope where it's defined")
     }
 
-    return IntroduceTypeAliasAnalysisResult.Success(IntroduceTypeAliasDescriptor(this, "", null, typeParameters))
+    val descriptor = IntroduceTypeAliasDescriptor(this, "Dummy", null, typeParameters)
+
+    val initialName = KotlinNameSuggester.suggestTypeAliasNameByPsi(descriptor.generateTypeAlias(true).getTypeReference()!!.typeElement!!) {
+        targetScope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
+    }
+
+    return IntroduceTypeAliasAnalysisResult.Success(descriptor.copy(name = initialName))
 }
 
 fun IntroduceTypeAliasData.getApplicableVisibilities(): List<KtModifierKeywordToken>{

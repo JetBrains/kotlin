@@ -4078,6 +4078,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
 
+        @TestMetadata("suggestedName.kt")
+        public void testSuggestedName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/suggestedName.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
         @TestMetadata("topLevelTypeAlias.kt")
         public void testTopLevelTypeAlias() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/topLevelTypeAlias.kt");

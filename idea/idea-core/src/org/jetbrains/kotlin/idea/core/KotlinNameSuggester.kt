@@ -114,6 +114,27 @@ object KotlinNameSuggester {
         return result
     }
 
+    fun suggestTypeAliasNameByPsi(typeElement: KtTypeElement, validator: (String) -> Boolean): String {
+        fun KtTypeElement.render(): String {
+            return when (this) {
+                is KtNullableType -> "Nullable${innerType?.render() ?: ""}"
+                is KtFunctionType -> {
+                    val arguments = listOf(receiverTypeReference).filterNotNull() + parameters.mapNotNull { it.typeReference }
+                    val argText = arguments.joinToString(separator = "") { it.typeElement?.render() ?: "" }
+                    val returnText = returnTypeReference?.typeElement?.render() ?: "Unit"
+                    "${argText}To$returnText"
+                }
+                is KtUserType -> {
+                    val argText = typeArguments.joinToString(separator = "") { it.typeReference?.typeElement?.render() ?: "" }
+                    "$argText${referenceExpression?.text ?: ""}"
+                }
+                else -> text.capitalize()
+            }
+        }
+
+        return suggestNameByName(typeElement.render(), validator)
+    }
+
     /**
      * Validates name, and slightly improves it by adding number to name in case of conflicts
      * @param name to check it in scope
