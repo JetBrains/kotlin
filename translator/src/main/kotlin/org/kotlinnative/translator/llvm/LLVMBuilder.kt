@@ -148,8 +148,13 @@ class LLVMBuilder(val arm: Boolean) {
         localCode.appendln(getNewVariable(LLVMIntType()).toString() + " = add i1 0, 0     ; nop instruction")
     }
 
-    fun storeVariable(target: LLVMVariable, source: LLVMSingleValue) {
+    fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
         val code = "store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}"
+        localCode.appendln(code)
+    }
+
+    fun storeNull(result: LLVMVariable) {
+        val code = "store ${result.getType().dropLast(1)} null, ${result.getType()} $result, align $POINTER_SIZE"
         localCode.appendln(code)
     }
 
@@ -165,10 +170,6 @@ class LLVMBuilder(val arm: Boolean) {
             localCode.appendln("$from = load ${source.getType()} $source, align ${from.type.align}")
         }
         localCode.appendln("store ${target.type} $from, ${target.getType()} $target, align ${from.type.align}")
-    }
-
-    fun copyVariableRef(to: LLVMVariable, from: LLVMVariable) {
-        var i = 1
     }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
