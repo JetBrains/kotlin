@@ -1,7 +1,8 @@
 declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)
-declare i8* @malloc(i32)
+declare i8* @malloc_static(i32)
+attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }
 %class.ComplexRef = type { i32, %class.Simple* }
-define void @ComplexRef(%class.ComplexRef*  %classvariable.this, i32  %i, %class.Simple*  %s) 
+define void @ComplexRef(%class.ComplexRef*  %classvariable.this, i32  %i, %class.Simple*  %s) #0
 {
 %classvariable.this.addr = alloca %class.ComplexRef, align 4
 %i.addr = alloca i32, align 4
@@ -17,7 +18,7 @@ call void @llvm.memcpy.p0i8.p0i8.i64(i8* %var4, i8* %var5, i64 8, i32 4, i1 fals
 ret void 
 }
 %class.Simple = type { i32 }
-define void @Simple(%class.Simple*  %classvariable.this, i32  %i) 
+define void @Simple(%class.Simple*  %classvariable.this, i32  %i) #0
 {
 %classvariable.this.addr = alloca %class.Simple, align 4
 %i.addr = alloca i32, align 4
@@ -30,20 +31,30 @@ store i32 %var6, i32* %var7, align 4
 call void @llvm.memcpy.p0i8.p0i8.i64(i8* %var8, i8* %var9, i64 4, i32 4, i1 false)
 ret void 
 }
-define void @main() 
+define void @myFunction(%class.ComplexRef*  %ref) #0
 {
-%var11 = call i8* @malloc(i32 4)
-%var10 = bitcast i8* %var11 to %class.Simple*
-call void @Simple(%class.Simple* %var10, i32 5)
-%managed.s.1 = alloca %class.Simple, align 4
-%var12 = load %class.Simple* %var10, align 4
-store %class.Simple %var12, %class.Simple* %managed.s.1, align 4
-%var14 = call i8* @malloc(i32 4)
-%var13 = bitcast i8* %var14 to %class.ComplexRef*
-call void @ComplexRef(%class.ComplexRef* %var13, i32 1, %class.Simple* %managed.s.1)
-%managed.i.1 = alloca %class.ComplexRef, align 4
-%var15 = load %class.ComplexRef* %var13, align 4
-store %class.ComplexRef %var15, %class.ComplexRef* %managed.i.1, align 4
+%var10 = getelementptr inbounds %class.ComplexRef* %ref, i32 0, i32 0
+%var11 = load i32* %var10, align 4
+store i32 1, i32* %var10, align 4
+ret void 
+}
+define i32 @const(i32  %i) #0
+{
+%i.addr = alloca i32, align 4
+store i32 %i, i32* %i.addr, align 4
+%var12 = load i32* %i.addr, align 4
+ret i32 %var12
+}
+define void @kotlin_main() #0
+{
+%var13 = add nsw i32 3, 4
+%var14 = call i32 @const(i32 %var13)
+%var15 = alloca i32, align 4
+store i32 %var14, i32* %var15, align 4
+%var16 = load i32* %var15, align 4
+%var17 = call i32 @const(i32 %var16)
+%var18 = alloca i32, align 4
+store i32 %var17, i32* %var18, align 4
 ret void 
 }
 

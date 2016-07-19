@@ -162,6 +162,10 @@ class LLVMBuilder(val arm: Boolean) {
         localCode.appendln("store ${target.type} $from, ${target.getType()} $target, align ${from.type.align}")
     }
 
+    fun copyVariableRef(to: LLVMVariable, from: LLVMVariable) {
+        var i = 1
+    }
+
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
         val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = llvmVariable.pointer + 1)
         addVariableByRef(allocVar, llvmVariable, store)
@@ -174,7 +178,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun allocStackVar(target: LLVMVariable) {
-        localCode.appendln("$target = alloca ${target.type}, align ${target.type.align}")
+        localCode.appendln("$target = alloca ${target.getType()}, align ${target.type.align}")
     }
 
     fun allocStaticVar(target: LLVMVariable) {
@@ -239,4 +243,5 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     override fun toString() = globalCode.toString() + localCode.toString()
+
 }

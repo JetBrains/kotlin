@@ -311,8 +311,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
         for (arg in args) {
             val currentExpression = evaluateExpression(arg.getArgumentExpression(), scopeDepth) as LLVMSingleValue
-            val nativeExpression = codeBuilder.receiveNativeValue(currentExpression)
-            result.add(nativeExpression)
+            result.add(currentExpression)
         }
 
         return result
@@ -448,6 +447,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
     private fun copyVariable(from: LLVMVariable, to: LLVMVariable) = when (from.type) {
         is LLVMStringType -> codeBuilder.storeString(to, from, 0)
+        is LLVMReferenceType -> codeBuilder.copyVariableRef(to, from)
         else -> codeBuilder.copyVariableValue(to, from)
     }
 
@@ -459,10 +459,7 @@ class FunctionCodegen(val state: TranslationState, val variableManager: Variable
 
         when (assignExpression) {
             is LLVMVariable -> {
-                val allocVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type, LLVMRegisterScope(), pointer = 1)
-                codeBuilder.allocStackVar(allocVar)
-                variableManager.addVariable(identifier.text, allocVar, scopeDepth)
-                copyVariable(assignExpression, allocVar)
+                variableManager.addVariable(identifier!!.text, assignExpression, scopeDepth)
             }
             is LLVMConstant -> {
                 val newVar = variableManager.receiveVariable(identifier!!.text, assignExpression.type!!, LLVMRegisterScope(), pointer = 1)
