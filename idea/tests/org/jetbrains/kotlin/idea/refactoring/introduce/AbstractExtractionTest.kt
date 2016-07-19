@@ -114,7 +114,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             with (handler) {
                 val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
-                    KotlinRefactoringUtil.selectElement(fixture.getEditor(), file, true, CodeInsightUtils.ElementKind.EXPRESSION) { element ->
+                    KotlinRefactoringUtil.selectElement(fixture.getEditor(), file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
                         invoke(fixture.getProject(), fixture.getEditor(), element as KtExpression, target)
                     }
                 }

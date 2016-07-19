@@ -45,7 +45,7 @@ fun selectElementsWithTargetSibling(
         editor: Editor,
         file: KtFile,
         title: String,
-        elementKind: CodeInsightUtils.ElementKind,
+        elementKinds: Collection<CodeInsightUtils.ElementKind>,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
@@ -68,7 +68,7 @@ fun selectElementsWithTargetSibling(
         continuation(elements, outermostParent)
     }
 
-    selectElementsWithTargetParent(operationName, editor, file, title, elementKind, getContainers, ::onSelectionComplete)
+    selectElementsWithTargetParent(operationName, editor, file, title, elementKinds, getContainers, ::onSelectionComplete)
 }
 
 fun selectElementsWithTargetParent(
@@ -76,7 +76,7 @@ fun selectElementsWithTargetParent(
         editor: Editor,
         file: KtFile,
         title: String,
-        elementKind: CodeInsightUtils.ElementKind,
+        elementKinds: Collection<CodeInsightUtils.ElementKind>,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
@@ -109,27 +109,26 @@ fun selectElementsWithTargetParent(
         val startOffset = editor.selectionModel.selectionStart
         val endOffset = editor.selectionModel.selectionEnd
 
-        val elements = CodeInsightUtils.findElements(file, startOffset, endOffset, elementKind)
+        val elements = elementKinds.flatMap { CodeInsightUtils.findElements(file, startOffset, endOffset, it).toList() }
         if (elements.isEmpty()) {
-            val messageKey = when (elementKind) {
-                CodeInsightUtils.ElementKind.EXPRESSION -> "cannot.refactor.no.expression"
-                CodeInsightUtils.ElementKind.TYPE_ELEMENT -> "cannot.refactor.no.type"
+            return when (elementKinds.singleOrNull()) {
+                CodeInsightUtils.ElementKind.EXPRESSION -> showErrorHintByKey("cannot.refactor.no.expression")
+                CodeInsightUtils.ElementKind.TYPE_ELEMENT -> showErrorHintByKey("cannot.refactor.no.type")
+                else -> showErrorHint(file.project, editor, "Refactoring can't be performed on the selected code element", title)
             }
-            showErrorHintByKey(messageKey)
-            return
         }
 
-        selectTargetContainer(elements.toList())
+        selectTargetContainer(elements)
     }
 
     fun selectSingleElement() {
-        KotlinRefactoringUtil.selectElement(editor, file, false, elementKind) { expr ->
+        KotlinRefactoringUtil.selectElement(editor, file, false, elementKinds) { expr ->
             if (expr != null) {
                 selectTargetContainer(listOf(expr))
             }
             else {
                 if (!editor.selectionModel.hasSelection()) {
-                    if (elementKind == CodeInsightUtils.ElementKind.EXPRESSION) {
+                    if (elementKinds.singleOrNull() == CodeInsightUtils.ElementKind.EXPRESSION) {
                         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
                         elementAtCaret?.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
                             return@selectElement selectTargetContainer(listOf(it))

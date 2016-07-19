@@ -191,7 +191,7 @@ fun selectNewParameterContext(
             editor = editor,
             file = file,
             title = "Introduce parameter to declaration",
-            elementKind = CodeInsightUtils.ElementKind.EXPRESSION,
+            elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
             getContainers = { elements, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))

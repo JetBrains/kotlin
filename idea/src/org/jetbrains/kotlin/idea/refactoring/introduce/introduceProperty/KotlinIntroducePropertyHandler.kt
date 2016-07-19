@@ -72,7 +72,7 @@ class KotlinIntroducePropertyHandler(
                 editor,
                 file,
                 "Select target code block",
-                CodeInsightUtils.ElementKind.EXPRESSION,
+                listOf(CodeInsightUtils.ElementKind.EXPRESSION),
                 { elements, parent ->
                     parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript) }
                 },

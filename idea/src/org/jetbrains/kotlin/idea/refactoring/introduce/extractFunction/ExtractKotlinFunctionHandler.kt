@@ -68,7 +68,7 @@ class ExtractKotlinFunctionHandler(
                 editor,
                 file,
                 "Select target code block",
-                CodeInsightUtils.ElementKind.EXPRESSION,
+                listOf(CodeInsightUtils.ElementKind.EXPRESSION),
                 { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
                 continuation
         )

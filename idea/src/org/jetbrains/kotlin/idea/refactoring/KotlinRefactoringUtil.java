@@ -34,6 +34,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KtLightMethod;
@@ -333,16 +335,16 @@ public class KotlinRefactoringUtil {
     public static void selectElement(
             @NotNull Editor editor,
             @NotNull KtFile file,
-            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull Collection<CodeInsightUtils.ElementKind> elementKinds,
             @NotNull SelectElementCallback callback
     ) throws IntroduceRefactoringException {
-        selectElement(editor, file, true, elementKind, callback);
+        selectElement(editor, file, true, elementKinds, callback);
     }
 
     public static void selectElement(@NotNull Editor editor,
             @NotNull KtFile file,
             boolean failOnEmptySuggestion,
-            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull Collection<CodeInsightUtils.ElementKind> elementKinds,
             @NotNull SelectElementCallback callback
     ) throws IntroduceRefactoringException {
         if (editor.getSelectionModel().hasSelection()) {
@@ -351,11 +353,20 @@ public class KotlinRefactoringUtil {
             String text = file.getText();
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
-            callback.run(findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, elementKind));
+
+            for (CodeInsightUtils.ElementKind elementKind : elementKinds) {
+                PsiElement element = findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, elementKind);
+                if (element != null) {
+                    callback.run(element);
+                    return;
+                }
+            }
+
+            callback.run(null);
         }
         else {
             int offset = editor.getCaretModel().getOffset();
-            smartSelectElement(editor, file, offset, failOnEmptySuggestion, elementKind, callback);
+            smartSelectElement(editor, file, offset, failOnEmptySuggestion, elementKinds, callback);
         }
     }
 
@@ -442,13 +453,21 @@ public class KotlinRefactoringUtil {
 
     private static void smartSelectElement(
             @NotNull Editor editor,
-            @NotNull PsiFile file,
-            int offset,
+            @NotNull final PsiFile file,
+            final int offset,
             boolean failOnEmptySuggestion,
-            @NotNull CodeInsightUtils.ElementKind elementKind,
+            @NotNull Collection<CodeInsightUtils.ElementKind> elementKinds,
             @NotNull final SelectElementCallback callback
     ) throws IntroduceRefactoringException {
-        List<KtElement> elements = getSmartSelectSuggestions(file, offset, elementKind);
+        List<KtElement> elements = CollectionsKt.flatMap(
+                elementKinds,
+                new Function1<CodeInsightUtils.ElementKind, Iterable<? extends KtElement>>() {
+                    @Override
+                    public Iterable<? extends KtElement> invoke(CodeInsightUtils.ElementKind kind) {
+                        return getSmartSelectSuggestions(file, offset, kind);
+                    }
+                }
+        );
         if (elements.size() == 0) {
             if (failOnEmptySuggestion) throw new IntroduceRefactoringException(
                     KotlinRefactoringBundle.message("cannot.refactor.not.expression"));
@@ -542,7 +561,7 @@ public class KotlinRefactoringUtil {
         return element;
     }
 
-    public static class IntroduceRefactoringException extends Exception {
+    public static class IntroduceRefactoringException extends RuntimeException {
         private final String myMessage;
 
         public IntroduceRefactoringException(String message) {

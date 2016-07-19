@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
@@ -47,7 +47,7 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
                 editor,
                 file,
                 "Select target code block",
-                CodeInsightUtils.ElementKind.TYPE_ELEMENT,
+                listOf(TYPE_ELEMENT),
                 { elements, parent -> parent.getExtractionContainers(strict = true, includeAll = true) },
                 continuation
         )

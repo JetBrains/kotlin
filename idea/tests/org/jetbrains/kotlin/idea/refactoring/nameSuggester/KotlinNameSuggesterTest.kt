@@ -90,7 +90,7 @@ class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
             }
-            KotlinRefactoringUtil.selectElement(myFixture.editor, file, CodeInsightUtils.ElementKind.EXPRESSION, object : KotlinRefactoringUtil.SelectElementCallback {
+            KotlinRefactoringUtil.selectElement(myFixture.editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION), object : KotlinRefactoringUtil.SelectElementCallback {
                 override fun run(element: PsiElement?) {
                     val names = KotlinNameSuggester
                             .suggestNamesByExpressionAndType(element as KtExpression,
