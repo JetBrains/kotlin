@@ -107,7 +107,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             // TODO: stub here, resolve name properly!
             vars["builderType"] = getUnderlyingTypeGenerator().getFullType();
             vars["initValue"] = getUnderlyingTypeGenerator().getInitValue();
-            printer->Print(vars, "val tmp: $builderType$ = $initValue$\n");
+            printer->Print(vars, "var tmp: $builderType$ = $initValue$\n");
             singleFieldGen.simpleName = "tmp";
             singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
