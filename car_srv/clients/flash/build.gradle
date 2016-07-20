@@ -21,12 +21,26 @@ repositories {
     mavenCentral()
 }
 
+task compileProto(type: Exec) {
+    executable "./compileProto.sh"
+}
+task buildProtoLib(type: Copy) {
+    //just copy lib src to project
+    def pathToProtoKotSrc = "../../../proto/compiler/src/"
+    from pathToProtoKotSrc + "CodedInputStream.kt", pathToProtoKotSrc + "CodedOutputStream.kt",
+            pathToProtoKotSrc + "WireFormat.kt", pathToProtoKotSrc + "WireType.kt",
+            pathToProtoKotSrc + "InvalidProtocolBufferException.kt"
+    into "src/main/java"
+}
+
 task getDeps(type: Copy) {
     from sourceSets.main.compileClasspath
     into 'build/libs'
 }
 
 build.dependsOn getDeps
+compileKotlin.dependsOn compileProto
+compileProto.dependsOn buildProtoLib
 
 jar {
     manifest {
@@ -40,7 +54,7 @@ jar {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile group: "com.martiansoftware",name:"jsap",version:"2.1"
+    compile group: "com.martiansoftware", name: "jsap", version: "2.1"
     compile "com.google.protobuf:protobuf-java:3.0.0-beta-3"
     compile "io.netty:netty-all:4.1.2.Final"
 

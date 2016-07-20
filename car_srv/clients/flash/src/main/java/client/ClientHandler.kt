@@ -4,8 +4,6 @@ import com.google.protobuf.InvalidProtocolBufferException
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.HttpContent
-import proto.Carkot
-import java.util.*
 
 /**
  * Created by user on 7/8/16.
@@ -28,10 +26,10 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
         val resultStdOut:String
         val resultStdErr:String
         try {
-            val uploadResult: Carkot.UploadResult = Carkot.UploadResult.parseFrom(contentBytes)
-            resultCode = uploadResult.resultCode
-            resultStdOut = uploadResult.stdOut
-            resultStdErr = uploadResult.stdErr
+//            val uploadResult: Carkot.UploadResult = Carkot.UploadResult.parseFrom(contentBytes)
+//            resultCode = uploadResult.resultCode
+//            resultStdOut = uploadResult.stdOut
+//            resultStdErr = uploadResult.stdErr
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
             resultStdErr = ""
@@ -39,9 +37,9 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
             resultCode = 2
         }
         synchronized(requestResult, {
-            requestResult.code = resultCode
-            requestResult.stdErr = resultStdErr
-            requestResult.stdOut = resultStdOut
+//            requestResult.code = resultCode
+//            requestResult.stdErr = resultStdErr
+//            requestResult.stdOut = resultStdOut
         })
         ctx.close()
     }

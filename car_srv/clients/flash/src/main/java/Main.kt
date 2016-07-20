@@ -4,7 +4,6 @@ import com.martiansoftware.jsap.JSAP
 import com.martiansoftware.jsap.JSAPResult
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
-import proto.Carkot
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -46,17 +45,17 @@ fun main(args: Array<String>) {
         return;
     }
 
-    val bytesBinTest = Carkot.Upload.newBuilder().setData(ByteString.copyFrom(fileBytes)).setBase(mcuSystem).build().toByteArray()
-    val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/loadBin", Unpooled.copiedBuffer(bytesBinTest));
-    request.headers().set(HttpHeaderNames.HOST, host)
-    request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
-    request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-    request.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8")
-
-    client.Client.sendRequest(request, host, port)
-    println(client.ClientHandler.requestResult.code)
-    println(client.ClientHandler.requestResult.stdErr)
-    println(client.ClientHandler.requestResult.stdOut)
+//    val bytesBinTest = Carkot.Upload.newBuilder().setData(ByteString.copyFrom(fileBytes)).setBase(mcuSystem).build().toByteArray()
+//    val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/loadBin", Unpooled.copiedBuffer(bytesBinTest));
+//    request.headers().set(HttpHeaderNames.HOST, host)
+//    request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
+//    request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
+//    request.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8")
+//
+//    client.Client.sendRequest(request, host, port)
+//    println(client.ClientHandler.requestResult.code)
+//    println(client.ClientHandler.requestResult.stdErr)
+//    println(client.ClientHandler.requestResult.stdOut)
 }
 
 fun saveFileConfig(actualValues: Map<String, String>) {
@@ -102,7 +101,6 @@ fun readFileConfig(): Map<String, String> {
                     result.put(keyValuePair[0], keyValuePair[1])
                 }
             }
-
         }
     } catch (e: IOException) {
 
