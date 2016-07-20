@@ -222,14 +222,6 @@ public class OverrideResolver {
                     throw new AssertionError("Unexpected Filtering object: " + filtering);
                 }
             }
-            for (D otherD : candidates) {
-                CallableDescriptor other = transform.fun(otherD);
-                if (me.getOriginal() == other.getOriginal()
-                    && OverridingUtil.DEFAULT.isOverridableBy(other, me, null).getResult() == OVERRIDABLE
-                    && OverridingUtil.DEFAULT.isOverridableBy(me, other, null).getResult() == OVERRIDABLE) {
-                    continue outerLoop;
-                }
-            }
             candidates.add(meD);
         }
 
@@ -238,7 +230,9 @@ public class OverrideResolver {
         return candidates;
     }
 
-    // check whether f overrides g
+    /**
+     * @return whether f overrides g
+     */
     public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
         // This first check cover the case of duplicate classes in different modules:
         // when B is defined in modules m1 and m2, and C (indirectly) inherits from both versions,
