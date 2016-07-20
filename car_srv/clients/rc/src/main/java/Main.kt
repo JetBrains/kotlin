@@ -14,7 +14,7 @@ val correctDirectionMap = mapOf<Char, Command>(
         Pair('s', Command.backward),
         Pair('a', Command.left),
         Pair('d', Command.right),
-        Pair('w', Command.stop))
+        Pair('h', Command.stop))
 
 fun main(args: Array<String>) {
     val jsap: JSAP = JSAP()
