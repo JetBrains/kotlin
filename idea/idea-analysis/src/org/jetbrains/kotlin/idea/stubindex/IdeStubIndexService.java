@@ -25,22 +25,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.TypeIndexUtilKt;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +131,9 @@ public class IdeStubIndexService extends StubIndexService {
 
         if (modifierListStub.hasModifier(KtTokens.ENUM_KEYWORD)) {
             sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), Enum.class.getSimpleName());
+        }
+        if (modifierListStub.hasModifier(KtTokens.ANNOTATION_KEYWORD)) {
+            sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), Annotation.class.getSimpleName());
         }
     }
 
