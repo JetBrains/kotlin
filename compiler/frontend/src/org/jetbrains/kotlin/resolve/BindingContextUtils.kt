@@ -96,3 +96,6 @@ fun KtExpression.getReferenceTargets(context: BindingContext): Collection<Declar
     val targetDescriptor = if (this is KtReferenceExpression) context[BindingContext.REFERENCE_TARGET, this] else null
     return targetDescriptor?.let { listOf(it) } ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
 }
+
+fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =
+        context[BindingContext.ABBREVIATED_TYPE, this] ?: context[BindingContext.TYPE, this]

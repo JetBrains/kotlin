@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.cfg.pseudocode.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -44,6 +45,10 @@ import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
     return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || arguments.any { inner in it.type }
+}
+
+internal operator fun KotlinType.contains(descriptor: ClassifierDescriptor): Boolean {
+    return constructor.declarationDescriptor == descriptor || arguments.any { descriptor in it.type }
 }
 
 private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {

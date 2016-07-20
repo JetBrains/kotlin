@@ -1,0 +1,7 @@
+// "Create type alias 'A'" "true"
+// ERROR: Unresolved reference: Dummy
+package p
+
+fun foo(): A = throw Throwable("")
+
+typealias A = Dummy

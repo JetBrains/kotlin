@@ -106,9 +106,12 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createTypeAlias(name: String, typeParameters: List<String>, typeElement: KtTypeElement): KtTypeAlias {
+        return createTypeAlias(name, typeParameters, "X").apply { getTypeReference()!!.replace(createType(typeElement)) }
+    }
+
+    fun createTypeAlias(name: String, typeParameters: List<String>, body: String): KtTypeAlias {
         val typeParametersText = if (typeParameters.isNotEmpty()) typeParameters.joinToString(prefix = "<", postfix = ">") else ""
-        return createDeclaration<KtTypeAlias>("typealias $name$typeParametersText = X")
-                .apply { getTypeReference()!!.replace(createType(typeElement)) }
+        return createDeclaration<KtTypeAlias>("typealias $name$typeParametersText = $body")
     }
 
     fun createStar(): PsiElement {

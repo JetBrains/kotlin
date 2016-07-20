@@ -3,6 +3,7 @@
 // ACTION: Create class 'X'
 // ACTION: Create enum 'X'
 // ACTION: Create interface 'X'
+// ACTION: Create type alias 'X'
 // ERROR: Unresolved reference: X
 // ERROR: Unresolved reference: X
 class A {
