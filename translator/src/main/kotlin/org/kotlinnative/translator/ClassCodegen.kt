@@ -23,10 +23,11 @@ class ClassCodegen(override val state: TranslationState,
 
     override var size: Int = 0
     override val structName: String
-    override val type: LLVMReferenceType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
+    override val type: LLVMReferenceType
 
     init {
-        structName = clazz.name!!
+        structName = (if (parentCodegen != null) parentCodegen.structName + "." else "") + clazz.name!!
+        type = LLVMReferenceType(structName, "class", byRef = true)
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
 
@@ -76,6 +77,20 @@ class ClassCodegen(override val state: TranslationState,
 
         generate(clazz.declarations)
         nestedClasses.forEach { x, classCodegen -> classCodegen.generate() }
+
+        val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
+        val companionObjectDescriptor = descriptor.companionObjectDescriptor
+        if (companionObjectDescriptor != null) {
+            val companionObject = clazz.getCompanionObjects().first()
+            val property = ObjectCodegen(state, variableManager, companionObject, codeBuilder, this)
+            val companionObjectName = structName + "." + companionObject.name
+            property.generate()
+
+            for (method in property.methods) {
+                val methodName = method.key.removePrefix(companionObjectName + ".")
+                companionMethods.put(structName + "." + methodName, method.value)
+            }
+        }
     }
 
 }

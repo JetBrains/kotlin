@@ -11,8 +11,11 @@ import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
 
-class FunctionCodegen(override val state: TranslationState, override val variableManager: VariableManager, val function: KtNamedFunction,
-                      override val codeBuilder: LLVMBuilder) :
+class FunctionCodegen(override val state: TranslationState,
+                      override val variableManager: VariableManager,
+                      val function: KtNamedFunction,
+                      override val codeBuilder: LLVMBuilder,
+                      val parentCodegen: StructCodegen? = null) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
     var name = function.fqName.toString()
