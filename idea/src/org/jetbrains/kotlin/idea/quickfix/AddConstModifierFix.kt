@@ -28,10 +28,13 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -47,26 +50,35 @@ class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, K
     }
 
     companion object {
+        private val jvmStaticAnnotationFqName = FqName("kotlin.jvm.JvmStatic")
+
         fun addConstModifier(property: KtProperty) {
             replaceReferencesToGetterByReferenceToField(property)
             property.addModifier(KtTokens.CONST_KEYWORD)
+            property.findAnnotation(jvmStaticAnnotationFqName)?.delete()
         }
     }
 }
 
-class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Add 'const' modifier") {
+class AddConstModifierInspection() : IntentionBasedInspection<KtProperty>(AddConstModifierIntention())
+
+class AddConstModifierIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Add 'const' modifier") {
     override fun applyTo(element: KtProperty, editor: Editor?) {
         AddConstModifierFix.addConstModifier(element)
     }
 
-    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        return isApplicableTo(element)
+    override fun applicabilityRange(element: KtProperty) = if (isApplicableTo(element)) {
+        element.textRange
+    }
+    else {
+        null
     }
 
     companion object {
         fun isApplicableTo(element: KtProperty): Boolean {
             if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
-                    || element.getter?.hasBody() == true || element.receiverTypeReference != null) {
+                || element.getter?.hasBody() == true || element.receiverTypeReference != null
+                || element.hasModifier(KtTokens.CONST_KEYWORD) || element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                 return false
             }
             val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false
