@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KtFunctionPsiElementCellRenderer
+import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.search.usagesSearch.propertyDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import java.awt.event.MouseEvent
 import java.util.*
 
@@ -119,6 +119,5 @@ fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsRes
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 
-    val overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(descriptor)
-    return ResolveWithParentsResult(descriptor, overriddenMembers)
+    return ResolveWithParentsResult(descriptor, descriptor.getDirectlyOverriddenDeclarations())
 }

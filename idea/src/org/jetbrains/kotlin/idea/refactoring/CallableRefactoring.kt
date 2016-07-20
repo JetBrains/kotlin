@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
+import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -40,7 +42,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import java.util.*
@@ -60,10 +61,10 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
     private fun getClosestModifiableDescriptors(): Collection<CallableDescriptor> {
         return when (kind) {
             DECLARATION -> {
-                Collections.singleton(callableDescriptor)
+                setOf(callableDescriptor)
             }
             DELEGATION, FAKE_OVERRIDE -> {
-                OverrideResolver.getDirectlyOverriddenDeclarations(callableDescriptor as CallableMemberDescriptor)
+                (callableDescriptor as CallableMemberDescriptor).getDirectlyOverriddenDeclarations()
             }
             else -> {
                 throw IllegalStateException("Unexpected callable kind: $kind")
@@ -141,8 +142,8 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
         assert(!closestModifiableDescriptors.isEmpty()) { "Should contain original declaration or some of its super declarations" }
         val deepestSuperDeclarations =
-                (callableDescriptor as? CallableMemberDescriptor)?.let { OverrideResolver.getDeepestSuperDeclarations(it) }
-                ?: Collections.singletonList(callableDescriptor)
+                (callableDescriptor as? CallableMemberDescriptor)?.let(CallableMemberDescriptor::getDeepestSuperDeclarations)
+                ?: listOf(callableDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode) {
             performRefactoring(deepestSuperDeclarations)
             return true

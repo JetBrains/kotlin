@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.utils.SmartList
 
 class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
@@ -75,7 +75,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
 
         val function = element.ownerFunction ?: return
         val originalDescriptor = function.resolveToDescriptor() as FunctionDescriptor
-        val affectedCallables = getAffectedCallables(element.project, OverrideResolver.getDeepestSuperDeclarations(originalDescriptor))
+        val affectedCallables = getAffectedCallables(element.project, originalDescriptor.getDeepestSuperDeclarations())
         for (callable in affectedCallables) {
             if (!callable.canRefactor()) continue
             val parameter: PsiNamedElement? = when (callable) {

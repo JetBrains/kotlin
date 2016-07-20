@@ -32,7 +32,6 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
@@ -50,7 +49,8 @@ import org.jetbrains.kotlin.utils.HashSetUtil;
 import java.util.*;
 
 import static kotlin.collections.CollectionsKt.sortedBy;
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
+import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
+import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers;
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
@@ -135,7 +135,7 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
+    public static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
         //noinspection unchecked
         return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDDEN);
     }
@@ -1215,38 +1215,5 @@ public class OverrideResolver {
                 return;
             }
         }
-    }
-
-    @NotNull
-    public static <D extends CallableMemberDescriptor> Collection<D> getDirectlyOverriddenDeclarations(@NotNull D descriptor) {
-        Set<D> result = new LinkedHashSet<D>();
-        //noinspection unchecked
-        for (D overriddenDescriptor : (Collection<D>) descriptor.getOverriddenDescriptors()) {
-            CallableMemberDescriptor.Kind kind = overriddenDescriptor.getKind();
-            if (kind == DECLARATION) {
-                result.add(overriddenDescriptor);
-            }
-            else if (kind == FAKE_OVERRIDE || kind == DELEGATION) {
-                result.addAll(getDirectlyOverriddenDeclarations(overriddenDescriptor));
-            }
-            else if (kind == SYNTHESIZED) {
-                //do nothing
-            }
-            else {
-                throw new AssertionError("Unexpected callable kind " + kind);
-            }
-        }
-        return filterOutOverridden(result);
-    }
-
-    @NotNull
-    @ReadOnly
-    public static <D extends CallableMemberDescriptor> Set<D> getDeepestSuperDeclarations(@NotNull D functionDescriptor) {
-        Set<D> overriddenDeclarations = DescriptorUtils.getAllOverriddenDeclarations(functionDescriptor);
-        if (overriddenDeclarations.isEmpty()) {
-            return Collections.singleton(functionDescriptor);
-        }
-
-        return filterOutOverriding(overriddenDeclarations);
     }
 }

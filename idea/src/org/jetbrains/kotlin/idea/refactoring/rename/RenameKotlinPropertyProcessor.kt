@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -426,7 +426,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             if (descriptor != null) {
                 assert(descriptor is PropertyDescriptor) { "Property descriptor is expected" }
 
-                val supers = OverrideResolver.getDeepestSuperDeclarations(descriptor as PropertyDescriptor)
+                val supers = (descriptor as PropertyDescriptor).getDeepestSuperDeclarations()
 
                 // Take one of supers for now - API doesn't support substitute to several elements (IDEA-48796)
                 val deepest = supers.first()
