@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
@@ -133,33 +132,27 @@ public class ResolutionResultsHandler {
             @NotNull Set<MutableResolvedCall<D>> failedCandidates,
             @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
-        if (failedCandidates.size() != 1) {
-            // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
-            // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
-            // Used to be: weak errors. Generalized for future extensions
-            for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
-                Set<MutableResolvedCall<D>> thisLevel = Sets.newLinkedHashSet();
-                for (MutableResolvedCall<D> candidate : failedCandidates) {
-                    if (severityLevel.contains(candidate.getStatus())) {
-                        thisLevel.add(candidate);
-                    }
-                }
-                if (!thisLevel.isEmpty()) {
-                    if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
-                        return recordFailedInfo(tracing, trace, thisLevel);
-                    }
-                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, false, checkArgumentsMode);
-                    return recordFailedInfo(tracing, trace, results.getResultingCalls());
-                }
-            }
-
-            assert false : "Should not be reachable, cause every status must belong to some level";
-
-            Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
-            return recordFailedInfo(tracing, trace, noOverrides);
+        if (failedCandidates.size() == 1) {
+            return recordFailedInfo(tracing, trace, failedCandidates);
         }
 
-        return recordFailedInfo(tracing, trace, failedCandidates);
+        for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
+            Set<MutableResolvedCall<D>> thisLevel = Sets.newLinkedHashSet();
+            for (MutableResolvedCall<D> candidate : failedCandidates) {
+                if (severityLevel.contains(candidate.getStatus())) {
+                    thisLevel.add(candidate);
+                }
+            }
+            if (!thisLevel.isEmpty()) {
+                if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
+                    return recordFailedInfo(tracing, trace, thisLevel);
+                }
+                OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, false, checkArgumentsMode);
+                return recordFailedInfo(tracing, trace, results.getResultingCalls());
+            }
+        }
+
+        throw new AssertionError("Should not be reachable, cause every status must belong to some level: " + failedCandidates);
     }
 
     @NotNull
@@ -186,7 +179,7 @@ public class ResolutionResultsHandler {
     }
 
     @NotNull
-    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,
             boolean isDebuggerContext,
@@ -220,6 +213,4 @@ public class ResolutionResultsHandler {
 
         return OverloadResolutionResultsImpl.ambiguity(noOverrides);
     }
-
-
 }
