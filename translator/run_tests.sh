@@ -30,6 +30,8 @@ for i in $( ls "$DIRECTORY/input"); do
 	clang-3.6 -S -emit-llvm $DIRECTORY/linked/main.c -o $DIRECTORY/linked/main.ll -Wno-implicit-function-declaration
 	rm -f $DIRECTORY/linked/main.c
 
+	cp /home/user/Kotlin/carkot/translator/src/main/resources/kotllib/* $DIRECTORY/linked/
+
 	if [ -f "$DIRECTORY/c/$TEST.c" ]
 	then
 	    clang-3.6 -S -emit-llvm "$DIRECTORY/c/$TEST.c" -o $DIRECTORY/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
