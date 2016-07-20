@@ -26,6 +26,11 @@ private:
 
     void generateSetter(io::Printer * printer) const;
     void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;
+
+    void generateSerializationForRepeated   (io::Printer * printer, bool isRead, bool noTag) const;
+    void generateSerializationForEnums      (io::Printer * printer, bool isRead, bool noTag) const;
+    void generateSerializationForMessages   (io::Printer * printer, bool isRead, bool noTag) const;
+    void generateSerializationForPrimitives (io::Printer * printer, bool isRead, bool noTag) const;
 public:
     ClassGenerator const * enclosingClass;    // class, in which that field is defined
     NameResolver * nameResolver;

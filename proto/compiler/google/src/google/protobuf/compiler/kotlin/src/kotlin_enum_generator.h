@@ -7,6 +7,9 @@
 
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/descriptor.h>
+#include "kotlin_name_resolver.h"
+
+class NameResolver;     // declared in "kotlin_name_resolver.h"
 
 namespace google {
 namespace protobuf {
@@ -24,15 +27,19 @@ public:
 
 class EnumGenerator {
 public:
-    EnumGenerator(EnumDescriptor const * descriptor);
+    EnumGenerator(EnumDescriptor const * descriptor, NameResolver * nameResolver);
     ~EnumGenerator();
     string simpleName;
     vector <EnumValueGenerator *> enumValues;
 
+    /* Return full-qualified name of enum */
+    string getFullType() const;
+
     void generateCode(io::Printer *) const;
 
 private:
-    void gemerateEnumConverters(io::Printer *printer) const;
+    void generateEnumConverter(io::Printer *printer) const;
+    NameResolver * nameResolver;
 };
 
 } // namespace kotlin

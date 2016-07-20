@@ -19,6 +19,7 @@ namespace kotlin {
 
 class FieldGenerator;   // declared in "kotlin_file_generator.h"
 class NameResolver;     // declared in "kotlin_name_resolver.h"
+class EnumGenerator;    // declared in "kotlin_enum_generator.h"
 
 class ClassGenerator {
 public:
@@ -41,6 +42,7 @@ private:
     void generateBuilder (io::Printer * printer) const;
     void generateBuildMethod (io::Printer * printer) const;
     void generateInitSection (io::Printer * printer) const;
+
     /**
      * Flag isBuilder used for reducing code repeating, as code for class itself
      * and for its inner builder are structurally very alike and can be generated
@@ -48,12 +50,6 @@ private:
      */
     void generateHeader(io::Printer * printer, bool isBuilder = false) const;
 
-    /**
-     * IsRead flag indicates that readFrom method should be generated, otherwise
-     * writeTo method is generated. Motivation is similar to the isBuilder flag:
-     * both methods are structurally the same with some trivial substitutions
-     * (read -> write and etc.)
-     */
     void generateWriteToMethod(io::Printer *printer) const;
     void generateMergeMethods(io::Printer *printer) const;
     void generateParseMethods(io::Printer * printer) const;

@@ -54,13 +54,14 @@ void EnumGenerator::generateCode(io::Printer * printer) const {
     }
 
     printer->Print("\n");
-    gemerateEnumConverters(printer);
+    generateEnumConverter(printer);
 
     printer->Outdent();
     printer->Print("}");
 }
 
-void EnumGenerator::gemerateEnumConverters(io::Printer *printer) const {
+void EnumGenerator::generateEnumConverter(io::Printer *printer) const {
+    // note that full-qualification is not necessary as this code resides in enum namespace
     map <string, string> vars;
     vars["dollar"] = "$";
     vars["type"] = simpleName;
@@ -105,13 +106,20 @@ EnumGenerator::~EnumGenerator() {
     }
 }
 
-EnumGenerator::EnumGenerator(EnumDescriptor const *descriptor) {
-    simpleName = descriptor->name();
+EnumGenerator::EnumGenerator(EnumDescriptor const *descriptor, NameResolver * nameResolver)
+    : simpleName(descriptor->name())
+    , nameResolver(nameResolver)
+{
     int values_count = descriptor->value_count();
     for (int i = 0; i < values_count; ++i) {
         enumValues.push_back(new EnumValueGenerator(descriptor->value(i)));
     }
 }
+
+string EnumGenerator::getFullType() const {
+    return nameResolver->getClassName(simpleName);
+}
+
 
 } // namespace kotlin
 } // namespace compiler

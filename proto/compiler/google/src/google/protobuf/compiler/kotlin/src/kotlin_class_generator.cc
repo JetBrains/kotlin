@@ -97,7 +97,7 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
     for (int i = 0; i < enums_declarations_count; ++i) {
         EnumDescriptor const * nestedEnumDescriptor = descriptor->enum_type(i);
         nameResolver->addClass(nestedEnumDescriptor->name(), getFullType());
-        enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor));
+        enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor, nameResolver));
     }
 
     /**
@@ -275,7 +275,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     // messages are not required to end with 0-tag, therefore parsing method should check for EOF
     printer->Print("if (input.isAtEnd()) { return false }\n");
 
-    // read tag and check if some field will follow (0-tag inidcates end of message)
+    // read tag and check if some field will follow (0-tag indicates end of message)
     printer->Print("val tag = input.readInt32NoTag()\n");
     printer->Print("if (tag == 0) { return false } \n");
 
@@ -307,6 +307,8 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
             printer->Print("}\n");
         }
     }
+
+    // TODO: add parsing of unknown fields
 
     printer->Outdent();
     printer->Print("}\n");  // when-clause
