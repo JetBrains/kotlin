@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,21 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.stubs.*;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.TypeIndexUtilKt;
 
@@ -118,6 +123,26 @@ public class IdeStubIndexService extends StubIndexService {
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), superName);
         }
+
+        if (!(stub instanceof KotlinClassStub)) {
+            return;
+        }
+
+        KotlinModifierListStub modifierListStub = getModifierListStub(stub);
+        if (modifierListStub == null) return;
+
+        if (modifierListStub.hasModifier(KtTokens.ENUM_KEYWORD)) {
+            sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), Enum.class.getSimpleName());
+        }
+    }
+
+    @Nullable
+    private static KotlinModifierListStub getModifierListStub(@NotNull KotlinClassOrObjectStub<? extends KtClassOrObject> stub) {
+        StubElement<?> childStub = stub.findChildStubByType(KtStubElementTypes.MODIFIER_LIST);
+        if (!(childStub instanceof KotlinModifierListStub)) {
+            return null;
+        }
+        return (KotlinModifierListStub) childStub;
     }
 
     @Override
