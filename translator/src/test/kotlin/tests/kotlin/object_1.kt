@@ -4,7 +4,6 @@ object Singleton {
     }
 }
 
-fun signleton_test(i: Int): Int {
+fun singleton_test(i: Int): Int {
     return Singleton.create(i)
 }
-

@@ -1,1 +1,1 @@
-singletone_test(5) == 40
+singleton_test(5) == 40
