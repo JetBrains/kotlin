@@ -31,6 +31,7 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
             is LLVMReferenceType -> {
                 if (state.classes.containsKey(retType.type)) {
                     retType.prefix = "class"
+                    returnType!!.pointer = 2
                 }
 
                 retType.byRef = true

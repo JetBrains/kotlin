@@ -423,10 +423,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         when (returnType!!.type) {
             is LLVMReferenceType -> {
-                val src = codeBuilder.bitcast(retVar as LLVMVariable, LLVMVariable("", LLVMCharType(), pointer = 1))
-                val dst = codeBuilder.bitcast(returnType!!, LLVMVariable("", LLVMCharType(), pointer = 1))
-                val size = state.classes[(retVar.type as LLVMReferenceType).type]!!.size
-                codeBuilder.memcpy(dst, src, size)
+                codeBuilder.storeVariable(returnType!!, retVar)
                 codeBuilder.addAnyReturn(LLVMVoidType())
             }
             else -> {
