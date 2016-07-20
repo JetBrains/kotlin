@@ -1,0 +1,11 @@
+// "Create type alias 'X'" "true"
+// ERROR: Unresolved reference: Dummy
+package p
+
+open class A<T, U : List<T>>
+
+typealias X<T> = Dummy
+
+fun foo(a: A<List<String>, X<Int>>) {
+
+}

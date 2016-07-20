@@ -47,7 +47,7 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
 }
 
 abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> : KotlinIntentionActionsFactory() {
-    protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
+    abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
     protected abstract fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
@@ -55,7 +55,7 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> 
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory>
 
-    protected abstract fun extractFixData(element: E, diagnostic: Diagnostic): D?
+    abstract fun extractFixData(element: E, diagnostic: Diagnostic): D?
 
     override final fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val diagnosticMessage = DefaultErrorMessages.render(diagnostic)
