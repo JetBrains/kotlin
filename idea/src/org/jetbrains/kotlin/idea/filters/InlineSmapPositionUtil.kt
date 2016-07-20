@@ -40,29 +40,35 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import java.io.File
 
-fun readClassFile(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): ByteArray? {
+fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
+    val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false
+    return lineNumber > linesInFile
+}
+
+fun readClassFile(jvmName: JvmClassName, file: VirtualFile, project: Project, sourceCondition: (VirtualFile) -> Boolean = { true }): ByteArray? {
     val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
-    if (ProjectRootsUtil.isLibrarySourceFile(project, file)) {
-        val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
+    when {
+        ProjectRootsUtil.isLibrarySourceFile(project, file) -> {
+            val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
-        val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
-        val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
-        return classFile.contentsToByteArray()
+            val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
+            val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
+            return classFile.contentsToByteArray()
+        }
+
+        ProjectRootsUtil.isProjectSourceFile(project, file) && sourceCondition(file) -> {
+            val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
+            val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
+
+            val className = fqNameWithInners.asString().replace('.', '$')
+            val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
+
+            return classByByDirectory.readBytes()
+        }
+
+        else -> return null
     }
-
-    if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
-
-    val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return null
-    if (lineNumber <= linesInFile) return null
-
-    val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
-    val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
-
-    val className = fqNameWithInners.asString().replace('.', '$')
-    val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
-
-    return classByByDirectory.readBytes()
 }
 
 private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
@@ -82,9 +88,9 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
 fun parseStrata(strata: String?, line: Int, project: Project, isKotlin2: Boolean, searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
     if (strata == null) return null
 
-    val mappings = SMAPParser.parse(strata)
+    val smap = SMAPParser.parse(strata)
 
-    val mappingInfo = mappings.fileMappings.firstOrNull {
+    val mappingInfo = smap.fileMappings.firstOrNull {
         it.getIntervalIfContains(line) != null
     } ?: return null
 
