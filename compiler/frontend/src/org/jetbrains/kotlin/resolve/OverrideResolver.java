@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.LinkedMultiMap;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.containers.hash.EqualityPolicy;
 import kotlin.Unit;
@@ -37,7 +34,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
@@ -66,27 +62,6 @@ public class OverrideResolver {
         checkVisibility(c);
         checkOverrides(c);
         checkParameterOverridesForAllClasses(c);
-    }
-
-    public static void generateOverridesInAClass(
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull Collection<CallableMemberDescriptor> membersFromCurrent,
-            @NotNull OverridingStrategy strategy
-    ) {
-        List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
-        MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(membersFromCurrent);
-        MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
-
-        Set<Name> memberNames = new LinkedHashSet<Name>();
-        memberNames.addAll(membersFromSupertypesByName.keySet());
-        memberNames.addAll(membersFromCurrentByName.keySet());
-
-        for (Name memberName : memberNames) {
-            Collection<CallableMemberDescriptor> fromSupertypes = membersFromSupertypesByName.get(memberName);
-            Collection<CallableMemberDescriptor> fromCurrent = membersFromCurrentByName.get(memberName);
-
-            OverridingUtil.generateOverridesInFunctionGroup(memberName, fromSupertypes, fromCurrent, classDescriptor, strategy);
-        }
     }
 
     public static void resolveUnknownVisibilities(
@@ -218,32 +193,6 @@ public class OverrideResolver {
         return false;
     }
 
-    private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {
-        MultiMap<Name, T> r = new LinkedMultiMap<Name, T>();
-        for (T property : properties) {
-            r.putValue(property.getName(), property);
-        }
-        return r;
-    }
-
-
-    private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
-        Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
-        for (KotlinType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            r.addAll(getCallableMembersFromType(supertype));
-        }
-        return new ArrayList<CallableMemberDescriptor>(r);
-    }
-
-    private static List<CallableMemberDescriptor> getCallableMembersFromType(KotlinType type) {
-        List<CallableMemberDescriptor> r = Lists.newArrayList();
-        for (DeclarationDescriptor decl : DescriptorUtils.getAllDescriptors(type.getMemberScope())) {
-            if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
-                r.add((CallableMemberDescriptor) decl);
-            }
-        }
-        return r;
-    }
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {

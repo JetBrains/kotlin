@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.isFromBuiltins
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
-import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.OverridingStrategy
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
@@ -206,7 +208,7 @@ class CollectionStubMethodGenerator(
     ): List<FunctionDescriptor> {
         val result = ArrayList<FunctionDescriptor>()
 
-        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : NonReportingOverrideStrategy() {
+        generateOverridesInAClass(klass, object : NonReportingOverrideStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
                 val foundOverriddenFromDirectSuperClass = fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass) ?: return
@@ -259,6 +261,20 @@ class CollectionStubMethodGenerator(
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
             types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
+        }
+    }
+
+    private fun generateOverridesInAClass(classDescriptor: ClassDescriptor, strategy: OverridingStrategy) {
+        @Suppress("UNCHECKED_CAST")
+        val membersFromSupertypesByName =
+                classDescriptor.typeConstructor.supertypes.flatMapTo(linkedSetOf()) { type ->
+                    DescriptorUtils.getAllDescriptors(type.memberScope).filter {
+                        it is PropertyDescriptor || it is SimpleFunctionDescriptor
+                    } as List<CallableMemberDescriptor>
+                }.groupBy { it.name }
+
+        for ((name, fromSupertypes) in membersFromSupertypesByName) {
+            OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, emptyList(), classDescriptor, strategy)
         }
     }
 
