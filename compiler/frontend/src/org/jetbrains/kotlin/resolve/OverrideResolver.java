@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.kotlin.utils.HashSetUtil;
 
 import java.util.*;
@@ -130,7 +130,7 @@ public class OverrideResolver {
     @NotNull
     @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        return filterOverrides(candidateSet, Function.ID);
+        return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
     }
 
     // In a multi-module project different "copies" of the same class may be present in different libraries,
@@ -142,12 +142,12 @@ public class OverrideResolver {
     @NotNull
     private static <D> Set<D> noDuplicates(
             @NotNull Set<D> candidateSet,
-            @NotNull final Function<? super D, ? extends CallableDescriptor> transform
+            @NotNull final Function1<? super D, ? extends CallableDescriptor> transform
     ) {
         List<D> fromSourcesGoesFirst = sortedBy(candidateSet, new Function1<D, Integer>() {
             @Override
             public Integer invoke(D d) {
-                return DescriptorToSourceUtils.descriptorToDeclaration(transform.fun(d)) != null ? 0 : 1;
+                return DescriptorToSourceUtils.descriptorToDeclaration(transform.invoke(d)) != null ? 0 : 1;
             }
         });
 
@@ -156,13 +156,13 @@ public class OverrideResolver {
                 new EqualityPolicy<D>() {
                     @Override
                     public int getHashCode(D d) {
-                        return DescriptorUtils.getFqName(transform.fun(d).getContainingDeclaration()).hashCode();
+                        return DescriptorUtils.getFqName(transform.invoke(d).getContainingDeclaration()).hashCode();
                     }
 
                     @Override
                     public boolean isEqual(D d1, D d2) {
-                        CallableDescriptor f = transform.fun(d1).getOriginal();
-                        CallableDescriptor g = transform.fun(d2).getOriginal();
+                        CallableDescriptor f = transform.invoke(d1).getOriginal();
+                        CallableDescriptor g = transform.invoke(d2).getOriginal();
 
                         boolean ignoreReturnType = (DescriptorToSourceUtils.descriptorToDeclaration(f) == null) !=
                                                    (DescriptorToSourceUtils.descriptorToDeclaration(g) == null);
@@ -175,7 +175,7 @@ public class OverrideResolver {
     @NotNull
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform
+            @NotNull Function1<? super D, ? extends CallableDescriptor> transform
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
 
@@ -187,9 +187,9 @@ public class OverrideResolver {
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
         for (D meD : noDuplicates) {
-            CallableDescriptor me = transform.fun(meD);
+            CallableDescriptor me = transform.invoke(meD);
             for (D otherD : noDuplicates) {
-                CallableDescriptor other = transform.fun(otherD);
+                CallableDescriptor other = transform.invoke(otherD);
                 if (me != other && overrides(other, me)) {
                     continue outerLoop;
                 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.results;
 
 import com.google.common.collect.Sets;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -32,10 +33,17 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
 public class ResolutionResultsHandler {
+    private static final Function1<MutableResolvedCall<?>, CallableDescriptor> MAP_RESOLVED_CALL_TO_RESULTING_DESCRIPTOR =
+            new Function1<MutableResolvedCall<?>, CallableDescriptor>() {
+                @Override
+                public CallableDescriptor invoke(MutableResolvedCall<?> resolvedCall) {
+                    return resolvedCall.getResultingDescriptor();
+                }
+            };
+
     private final OverloadingConflictResolver overloadingConflictResolver;
 
     public ResolutionResultsHandler(@NotNull OverloadingConflictResolver overloadingConflictResolver) {
@@ -193,7 +201,7 @@ public class ResolutionResultsHandler {
             candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates);
         }
 
-        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOverrides(candidates, MAP_TO_RESULT);
+        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOverrides(candidates, MAP_RESOLVED_CALL_TO_RESULTING_DESCRIPTOR);
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
