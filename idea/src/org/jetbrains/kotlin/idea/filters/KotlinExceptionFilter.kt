@@ -78,7 +78,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     }
 
     private fun getHyperlinkInfoIfInline(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): InlineFunctionHyperLinkInfo? {
-        val bytes = readClassFile(jvmName, file, lineNumber, project) ?: return null
+        val bytes = readClassFile(jvmName, file, project, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
         return readDebugInfoForInlineFun(bytes, lineNumber, project)
     }
 
