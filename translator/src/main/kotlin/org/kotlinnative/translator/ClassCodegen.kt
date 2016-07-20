@@ -10,25 +10,33 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMClassVariable
 import org.kotlinnative.translator.llvm.types.LLVMEnumItemType
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
-import org.kotlinnative.translator.llvm.types.LLVMType
 
-class ClassCodegen(override val state: TranslationState, override val variableManager: VariableManager, val clazz: KtClass, override val codeBuilder: LLVMBuilder) :
-        StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder) {
+class ClassCodegen(override val state: TranslationState,
+                   override val variableManager: VariableManager,
+                   val clazz: KtClass,
+                   override val codeBuilder: LLVMBuilder,
+                   prefix: String = "") :
+
+        StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder, prefix) {
 
     val annotation: Boolean
 
     override var size: Int = 0
     override val structName: String
-    override val type: LLVMType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
+    override val type: LLVMReferenceType = LLVMReferenceType(clazz.name.toString(), "class", byRef = true)
 
     init {
-        structName = clazz.name.toString()
+        structName = clazz.name!!
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
 
         annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
         indexFields(descriptor, parameterList)
         generateInnerFields(clazz.declarations)
+
+        if (prefix.length > 0) {
+            type.prefix = "${type.prefix}_$prefix"
+        }
         type.size = size
     }
 
@@ -64,6 +72,7 @@ class ClassCodegen(override val state: TranslationState, override val variableMa
         }
 
         generate(clazz.declarations)
+        nestedClasses.forEach { x, classCodegen -> classCodegen.generate() }
     }
 
 }

@@ -14,7 +14,7 @@ class ObjectCodegen(override val state: TranslationState, override val variableM
                 codeBuilder) {
     override var size: Int = 0
     override val structName: String
-    override val type: LLVMType = LLVMReferenceType(objectDeclaration.name.toString(), "class", byRef = true)
+    override val type: LLVMReferenceType = LLVMReferenceType(objectDeclaration.name.toString(), "class", byRef = true)
 
     init {
         structName = objectDeclaration.name!!

@@ -39,8 +39,8 @@ class FileTranslator(val state: TranslationState, val file: KtFile) {
             property.generate()
         }
 
-        for (objectDeclaration in state.objects.values) {
-            objectDeclaration.generate()
+        for (objectCodegen in state.objects.values) {
+            objectCodegen.generate()
         }
 
         for (clazz in state.classes.values) {

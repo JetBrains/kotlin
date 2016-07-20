@@ -12,19 +12,26 @@ import org.kotlinnative.translator.llvm.types.LLVMType
 import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
-abstract class StructCodegen(open val state: TranslationState, open val variableManager: VariableManager, open val classOrObject: KtClassOrObject,
+abstract class StructCodegen(open val state: TranslationState,
+                             open val variableManager: VariableManager,
+                             open val classOrObject: KtClassOrObject,
                              val classDescriptor: ClassDescriptor,
-                             open val codeBuilder: LLVMBuilder) {
+                             open val codeBuilder: LLVMBuilder,
+                             val prefix: String = "") {
 
     val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
+    val nestedClasses = HashMap<String, ClassCodegen>()
 
     val constructorFields = ArrayList<LLVMVariable>()
 
-    abstract val type: LLVMType
+    abstract val type: LLVMReferenceType
     abstract var size: Int
     var methods = HashMap<String, FunctionCodegen>()
     abstract val structName: String
+    val fullName: String
+            get() = "${if (prefix.length > 0) "${prefix}_" else ""}$structName"
+
 
     fun generate(declarations: List<KtDeclaration>) {
         generateStruct()
@@ -60,14 +67,19 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
                     fieldsIndex[field.label] = field
                     size += field.type.size
                 }
+                is KtClass -> {
+                    nestedClasses.put(declaration.name!!,
+                            ClassCodegen(state,
+                                    VariableManager(state.globalVariableCollection),
+                                    declaration, codeBuilder,
+                                    fullName))
+                }
             }
         }
     }
 
     private fun generateStruct() {
-        val name = classDescriptor.name.identifier
-
-        codeBuilder.createClass(name, fields)
+        codeBuilder.createClass(fullName, fields)
     }
 
     private fun generatePrimaryConstructor() {
@@ -82,7 +94,7 @@ abstract class StructCodegen(open val state: TranslationState, open val variable
         argFields.add(classVal)
         argFields.addAll(constructorFields)
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(classDescriptor.name.identifier, argFields, LLVMVoidType(), arm = state.arm))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName, argFields, LLVMVoidType(), arm = state.arm))
 
         codeBuilder.addStartExpression()
         generateLoadArguments(classVal)
