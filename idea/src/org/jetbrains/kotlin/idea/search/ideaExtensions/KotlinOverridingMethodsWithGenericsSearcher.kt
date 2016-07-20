@@ -28,18 +28,17 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
 
 class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, OverridingMethodsSearch.SearchParameters> {
     override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: Processor<PsiMethod>): Boolean {
         val method = p.method
         if (method !is KtLightMethod) return true
 
-        val declaration = method.kotlinOrigin as? KtCallableDeclaration
-        if (declaration == null) return true
+        val declaration = method.kotlinOrigin as? KtCallableDeclaration ?: return true
 
         val callDescriptor = runReadAction { declaration.resolveToDescriptor() }
         if (callDescriptor !is CallableDescriptor) return true
@@ -70,7 +69,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
             val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.kotlinOrigin?.resolveToDescriptor() ?: continue
             if (candidateDescriptor !is CallableMemberDescriptor) continue
 
-            val overriddenDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations(candidateDescriptor)
+            val overriddenDescriptors = candidateDescriptor.getDirectlyOverriddenDeclarations()
             for (candidateSuper in overriddenDescriptors) {
                 val candidateDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(candidateSuper)
                 if (candidateDeclaration == callableDeclaration) {

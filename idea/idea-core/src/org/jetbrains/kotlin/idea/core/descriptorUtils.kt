@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -27,11 +28,14 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import java.util.*
 
 fun DeclarationDescriptorWithVisibility.isVisible(from: DeclarationDescriptor): Boolean {
     return isVisible(from, null)
@@ -123,4 +127,29 @@ fun Visibility.toKeywordToken(): KtModifierKeywordToken {
             error("Unexpected visibility '$normalized'")
         }
     }
+}
+
+fun <D : CallableMemberDescriptor> D.getDirectlyOverriddenDeclarations(): Collection<D> {
+    val result = LinkedHashSet<D>()
+    for (overriddenDescriptor in overriddenDescriptors) {
+        @Suppress("UNCHECKED_CAST")
+        when (overriddenDescriptor.kind) {
+            DECLARATION -> result.add(overriddenDescriptor as D)
+            FAKE_OVERRIDE, DELEGATION -> result.addAll((overriddenDescriptor as D).getDirectlyOverriddenDeclarations())
+            SYNTHESIZED -> {
+                //do nothing
+            }
+            else -> throw AssertionError("Unexpected callable kind ${overriddenDescriptor.kind}: $overriddenDescriptor")
+        }
+    }
+    return OverrideResolver.filterOutOverridden(result)
+}
+
+fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(): Set<D> {
+    val overriddenDeclarations = DescriptorUtils.getAllOverriddenDeclarations(this)
+    if (overriddenDeclarations.isEmpty()) {
+        return setOf(this)
+    }
+
+    return OverrideResolver.filterOutOverriding(overriddenDeclarations)
 }

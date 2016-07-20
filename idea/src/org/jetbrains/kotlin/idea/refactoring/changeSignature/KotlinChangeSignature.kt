@@ -28,7 +28,6 @@ import com.intellij.psi.PsiType
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.refactoring.util.CanonicalTypes
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.VisibilityUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
@@ -36,16 +35,14 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.createJavaMethod
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangePropertySignatureDialog
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog
+import org.jetbrains.kotlin.idea.refactoring.createJavaMethod
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.resolve.OverrideResolver
 
 interface KotlinChangeSignatureConfiguration {
     fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor = originalDescriptor
@@ -224,9 +221,9 @@ class KotlinChangeSignature(project: Project,
         defaultValueContext: PsiElement
 ): KotlinChangeInfo? {
     val jetChangeSignature = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, null)
-    val declarations = if (callableDescriptor is CallableMemberDescriptor) {
-        OverrideResolver.getDeepestSuperDeclarations(callableDescriptor)
-    } else listOf(callableDescriptor)
+    val declarations =
+            if (callableDescriptor is CallableMemberDescriptor) callableDescriptor.getDeepestSuperDeclarations()
+            else listOf(callableDescriptor)
 
     val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
 

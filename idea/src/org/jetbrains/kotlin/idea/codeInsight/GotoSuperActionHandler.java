@@ -36,9 +36,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -119,10 +119,11 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             superDescriptors = superclasses;
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
-            superDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+            superDescriptors = DescriptorUtilsKt.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         }
-        else
+        else {
             return null;
+        }
 
         return ContainerUtil.mapNotNull(superDescriptors, new Function<DeclarationDescriptor, PsiElement>() {
             @Override
