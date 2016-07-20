@@ -37,11 +37,9 @@ std::string getFileNameWithoutExtension(std::string fullName);
 
 std::string getKotlinOutputByProtoName(std::string protoName);
 
-std::string protobufTypeToInitValue(FieldGenerator const * fieldGenerator);
+std::string protobufTypeToInitValue(FieldDescriptor::Type type);
 
-std::string protobufToKotlinField(FieldDescriptor const * descriptor);
-
-std::string protobufToKotlinType(FieldDescriptor const * descriptor);
+std::string protobufToKotlinType(FieldDescriptor::Type type);
 
 /**
 * Converts one of protobuf wire types to corresponding Kotlin type with proper

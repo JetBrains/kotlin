@@ -27,32 +27,58 @@ private:
     void generateSetter(io::Printer * printer) const;
     void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;
 public:
-    FieldDescriptor::Label modifier;
     ClassGenerator const * enclosingClass;    // class, in which that field is defined
-    string simpleName;
-    string underlyingType;  // unwrapped type.
-
-    /**
-     * Full type of field.
-     * fullType = Array<underlyingType> for REPEATED fields
-     * fullType = underlyingType?       for OPTIONAL fields
-     * fullType = underlyingType        for all other cases
-     */
-    string fullType;
-    string builderName;
-    string fullName;
-    string getInitValue() const;
-    string getUnderlyingTypeInitValue() const;
-    FieldDescriptor::Type  protoType;
-    int fieldNumber;
     NameResolver * nameResolver;
+    string simpleName;
 
+    FieldDescriptor::Label protoLabel;  //  TODO: hack here - this field is used for some dark magic that allows us to drop generics from the generated code
+
+    FieldDescriptor::Label getProtoLabel() const;
+    FieldDescriptor::Type  getProtoType() const;
+
+    /* Return declared tag number */
+    int getFieldNumber() const;
+
+    /* Returns instance of FieldGenerator, that generated underlying type for repeated fields.
+     * For non-repeated fields, returns `this` */
+    FieldGenerator getUnderlyingTypeGenerator() const;
+
+    /* For repeated fields, returns simple name of single element.
+     * For all other cases, returns simple name of field, which is the same as getType()
+     */
+
+    /* For repeated fields, return simple name of single element, wrapped into corresponding Kotlin array type
+     *      Example: Array<NestedMessage>
+     * For other types, return simple name (without full-qualification for non-primitive types) of field's type
+     */
+    string getSimpleType() const;
+
+    string getBuilderSimpleType() const;
+
+    /* Returns full=qualified name of builder if field type is user-defined message */
+    string getBuilderFullType() const;
+
+    /* Returns the same as getType(), but with full-qualification for non-primitive types if necessary.
+     *      Example: Array<EnclosingMessage.NestedMessage>
+     */
+    string getFullType() const;
+
+    /* Returns initial value of this field's type.
+     * Note that full qualification for non-primitive types will always used here.
+     */
+    string getInitValue() const;
+
+    /* Return string, that is suitable as suffix for corresponding IO methods in ProtoKot runtime.
+     *      Example: int64-field -> Int64 (readInt64() and writeInt64() methods exist in ProtoKot runtime)
+     */
+    string getKotlinFunctionSuffix() const;
+
+    /* Return function name in enum namespace that converts from enum to Int */
+    string getEnumFromIntConverter() const;
     void generateCode(io::Printer * printer, bool isBuilder) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
     void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false) const;
     FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass, NameResolver * nameResolver);
-    string getKotlinFunctionSuffix() const;
-
 };
 
 } // namespace kotlin

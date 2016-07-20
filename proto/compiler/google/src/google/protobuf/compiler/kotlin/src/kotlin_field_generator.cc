@@ -7,6 +7,7 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/descriptor.h>
 #include "kotlin_name_resolver.h"
+#include "UnreachableStateException.h"
 #include <iostream>
 
 namespace google {
@@ -15,13 +16,22 @@ namespace compiler {
 namespace kotlin {
 
 string FieldGenerator::getInitValue() const {
-    return name_resolving::protobufTypeToInitValue(this);
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        return "mutableListOf()";
+    }
+    if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
+        return getBuilderFullType() + "().build()";
+    }
+    if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
+        return getEnumFromIntConverter() + "(0)";
+    }
+    return name_resolving::protobufTypeToInitValue(getProtoType());
 }
 
 void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     map<string, string> vars;
     vars["name"] = simpleName;
-    vars["field"] = name_resolving::protobufToKotlinField(descriptor);
+    vars["field"] = getFullType();
     printer->Print(vars, "var $name$ : $field$\n");
 
     // make setter private
@@ -35,29 +45,25 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     }
 
     // generate additional methods for repeated fields
-    if (modifier == FieldDescriptor::LABEL_REPEATED) {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
         generateRepeatedMethods(printer, isBuilder);
     }
 }
 
 FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass, NameResolver * nameResolver)
         : descriptor(descriptor)
-        , modifier(descriptor->label())
         , enclosingClass(enclosingClass)
-        , simpleName(descriptor->name())
-        , underlyingType(name_resolving::protobufToKotlinType(descriptor))
-        , fullType(name_resolving::protobufToKotlinField(descriptor))
-        , protoType(descriptor->type())
-        , fieldNumber(descriptor->number())
         , nameResolver(nameResolver)
+        , simpleName(descriptor->name())
+        , protoLabel(descriptor->label())
 { }
 
 // TODO: long, complicated and messy method. Refactor it ASAP
 void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag) const {
     map <string, string> vars;
-    vars["type"] = name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type()) + (noTag ? "NoTag" : "");
-    vars["fieldNumber"] = std::to_string(fieldNumber);
-    vars["maybeFieldNumber"] = noTag ? "" : std::to_string(fieldNumber);
+    vars["type"] = getKotlinFunctionSuffix() + (noTag ? "NoTag" : "");
+    vars["fieldNumber"] = std::to_string(getFieldNumber());
+    vars["maybeFieldNumber"] = noTag ? "" : std::to_string(getFieldNumber());
     vars["fieldName"] = simpleName;
     vars["arg"] = isRead ? "input" : "output";
     vars["maybeComma"] = ", ";
@@ -70,7 +76,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
      * - Write length as int32 (note that tag shouldn't be added)
      * - Write all repeated elements via recursive call (again, without tags)
      */
-    if (modifier == FieldDescriptor::LABEL_REPEATED) {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
         // tag
         if (isRead) {
             if (!noTag) {
@@ -90,7 +96,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                removed as soon as target code will support inheritance and interfaces.
                (then writing CodedOutputStream.writeMessage will be possible).
              */
-            FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
+            FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
 
             /* Another dirty hack here: create tmp variable of a given type and read it from input stream
                then add that tmp var into list.
@@ -99,11 +105,11 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                to ArrayOutOfIndex errors.
             */
             // TODO: stub here, resolve name properly!
-            vars["fieldType"] = underlyingType + ".Builder" + underlyingType;
-            vars["initValue"] = underlyingType + ".Builder" + underlyingType + "()";
-            printer->Print(vars, "val tmp: $fieldType$ = $initValue$\n");
+            vars["builderType"] = getUnderlyingTypeGenerator().getFullType();
+            vars["initValue"] = getUnderlyingTypeGenerator().getInitValue();
+            printer->Print(vars, "val tmp: $builderType$ = $initValue$\n");
             singleFieldGen.simpleName = "tmp";
-            singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
+            singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
             // Note that primitive types are packed by default in proto3, i.e. they are should be written without tag
             bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
@@ -112,9 +118,9 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                     descriptor->type() != FieldDescriptor::TYPE_ENUM;
 
             singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive);
-            singleFieldGen.generateSizeEstimationCode(printer, "readSize"); // add size of current element to total size
+            singleFieldGen.generateSizeEstimationCode(printer, /* varName = */ "readSize"); // add size of current element to total size
 
-            printer->Print(vars, "$fieldName$.add(tmp.build())\n");
+            printer->Print(vars, "$fieldName$.add(tmp)\n");
 
             printer->Outdent();
             printer->Print("}\n");
@@ -138,7 +144,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             // hack: see above
             FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
             singleFieldGen.simpleName = "item";
-            singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
+            singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
             // TODO: maybe refactor this in name_resolving or separate method at least
             // Note that primitive types are packed by default in proto3, i.e. they are should be written without tag
@@ -167,7 +173,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
       Example: output.writeEnum(42, enumField.ord)
      */
     if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
-        vars["converter"] = underlyingType + ".fromIntTo" + underlyingType;
+        vars["converter"] = getEnumFromIntConverter();
         if (isRead) {
             printer->Print(vars, "$fieldName$ = $converter$(input.read$type$($maybeFieldNumber$))\n");
         }
@@ -185,7 +191,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
      */
     if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
         if (isRead) {
-            vars["fieldNumber"] = std::to_string(fieldNumber);
+            vars["fieldNumber"] = std::to_string(getFieldNumber());
             vars["dollar"] = "$";
 
             // read tag
@@ -205,7 +211,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                                  "\") }\n");
         }
         else {
-            vars["fieldNumber"] = std::to_string(fieldNumber);
+            vars["fieldNumber"] = std::to_string(getFieldNumber());
             // write tag
             printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
 
@@ -233,8 +239,8 @@ void FieldGenerator::generateSetter(io::Printer *printer) const {
     map <string, string> vars;
     vars["camelCaseName"] = name_resolving::makeFirstLetterUpper(simpleName);
     vars["fieldName"] = simpleName;
-    vars["builderName"] = nameResolver->getBuilderName(enclosingClass->simpleName);
-    vars["type"] = fullType;
+    vars["builderName"] = enclosingClass->getBuilderFullType();
+    vars["type"] = getFullType();
     printer->Print(vars,
                     "fun set$camelCaseName$(value: $type$): $builderName$ {\n");
     printer->Indent();
@@ -247,10 +253,10 @@ void FieldGenerator::generateSetter(io::Printer *printer) const {
 
 void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuilder) const {
     map <string, string> vars;
-    vars["elementType"] = underlyingType;
+    vars["elementType"] = getUnderlyingTypeGenerator().getSimpleType();
     vars["arg"] = "value";
     vars["fieldName"] = simpleName;
-    vars["builderName"] = nameResolver->getBuilderName(underlyingType); // TODO: call to non-existent field in map.
+    vars["builderName"] = enclosingClass->getBuilderFullType(); // TODO: call to non-existent field in map.
 
     // generate indexed setter for builders
     if (isBuilder) {
@@ -292,21 +298,14 @@ string FieldGenerator::getKotlinFunctionSuffix() const {
     return name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type());
 }
 
-string FieldGenerator::getUnderlyingTypeInitValue() const {
-    if (protoType == FieldDescriptor::TYPE_MESSAGE) {
-        return "Builder" + underlyingType + "().build()";
-    }
-    return name_resolving::protobufTypeToInitValue(this);
-}
-
 void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag) const {
     map<string, string> vars;
     vars["varName"] = varName;
     vars["fieldName"] = simpleName;
-    vars["fieldNumber"] = std::to_string(fieldNumber);
+    vars["fieldNumber"] = std::to_string(getFieldNumber());
 
     // First of all, generate code for repeated fields
-    if (modifier == FieldDescriptor::LABEL_REPEATED) {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
         // We will need total byte size of array, because that size is itself a part of the message and
         // adds to total message size.
         // For the sake of hygiene, temporary variables are created in anonymous scope
@@ -322,7 +321,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
 
         // hack: reuse generateSizeEstimationCode in the same manner as in generateSerializationCode
         FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
-        singleFieldGen.modifier = FieldDescriptor::LABEL_OPTIONAL;
+        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
         singleFieldGen.simpleName = "item";
         singleFieldGen.generateSizeEstimationCode(printer, "arraySize");
 
@@ -348,7 +347,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
 
     // Then, call getSize recursively for nested messages
     // TODO: currently suboptimal repeatative calls getSize() are being made. We can optimize it later via caching calls to getSize()
-    if (protoType == FieldDescriptor::TYPE_MESSAGE) {
+    if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
         // don't forget about tag and length annotation
         printer->Print(vars, "$varName$ += $fieldName$.getSize()"
                              " + "
@@ -360,17 +359,81 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
     }
 
     // Next, process enums as they should be casted to ints manually
-    if (protoType == FieldDescriptor::TYPE_ENUM) {
-        vars["enumName"] = fullType;
+    if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
         printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
         return;
     }
 
     // Finally, get size of all primitive types trivially via call to WireFormat in runtime
-    vars["kotlinSuffix"] = name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type());
+    vars["kotlinSuffix"] = getKotlinFunctionSuffix();
     printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size($fieldNumber$, $fieldName$)\n");
     return;
 }
+
+FieldDescriptor::Label FieldGenerator::getProtoLabel() const {
+    return protoLabel;
+}
+
+FieldDescriptor::Type FieldGenerator::getProtoType() const {
+    return descriptor->type();
+}
+
+int FieldGenerator::getFieldNumber() const {
+    return descriptor->number();
+}
+
+
+string FieldGenerator::getSimpleType() const {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        return "MutableList <" + getUnderlyingTypeGenerator().getSimpleType() + ">";
+    }
+    if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
+        return descriptor->message_type()->name();
+    }
+    if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
+        return descriptor->enum_type()->name();
+    }
+    return name_resolving::protobufToKotlinType(descriptor->type());
+}
+
+string FieldGenerator::getFullType() const {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        return "MutableList <" + getUnderlyingTypeGenerator().getFullType() + ">";
+    }
+    if (getProtoType() == FieldDescriptor::TYPE_MESSAGE ||
+            getProtoType() == FieldDescriptor::TYPE_ENUM) {
+        return nameResolver->getClassName(getSimpleType());
+    }
+    return name_resolving::protobufToKotlinType(getProtoType());
+}
+
+string FieldGenerator::getBuilderFullType() const {
+    if (getProtoType() != FieldDescriptor::TYPE_MESSAGE) {
+        throw UnreachableStateException("Error: trying to get builder name for non-message field " + simpleName);
+    }
+    return nameResolver->getBuilderName(getSimpleType());
+}
+
+string FieldGenerator::getBuilderSimpleType() const {
+    if (getProtoType() != FieldDescriptor::TYPE_MESSAGE) {
+        throw UnreachableStateException("Error: trying to get builder name for non-message field " + simpleName);
+    }
+    return "Builder" + getSimpleType();
+}
+
+string FieldGenerator::getEnumFromIntConverter() const {
+    return getFullType() + ".fromIntTo" + getSimpleType();
+}
+
+FieldGenerator FieldGenerator::getUnderlyingTypeGenerator() const {
+    if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
+        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
+        return singleFieldGen;
+    }
+    return *this;
+}
+
 
 } // namespace kotlin
 } // namespace compiler

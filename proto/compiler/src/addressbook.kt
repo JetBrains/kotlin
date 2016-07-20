@@ -1,14 +1,14 @@
-class Person private constructor (name: kotlin.String = "", id: Int = 0, email: kotlin.String = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
-  var name : kotlin.String
+class Person private constructor (name: String = "", id: Int = 0, email: String = "", phones: MutableList <Person.PhoneNumber> = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
+  var name : String
     private set
 
   var id : Int
     private set
 
-  var email : kotlin.String
+  var email : String
     private set
 
-  var phones : MutableList <PhoneNumber> 
+  var phones : MutableList <Person.PhoneNumber>
     private set
 
   var someBytes : ByteArray
@@ -38,11 +38,11 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
       }
     }
   }
-  class PhoneNumber private constructor (number: kotlin.String = "", type: PhoneType = Person.PhoneType.fromIntToPhoneType(0)) {
-    var number : kotlin.String
+  class PhoneNumber private constructor (number: String = "", type: Person.PhoneType = Person.PhoneType.fromIntToPhoneType(0)) {
+    var number : String
       private set
 
-    var type : PhoneType
+    var type : Person.PhoneType
       private set
 
 
@@ -56,17 +56,17 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
       output.writeEnum (2, type.ord)
     }
 
-    class BuilderPhoneNumber constructor (number: kotlin.String = "", type: PhoneType = Person.PhoneType.fromIntToPhoneType(0)) {
-      var number : kotlin.String
+    class BuilderPhoneNumber constructor (number: String = "", type: Person.PhoneType = Person.PhoneType.fromIntToPhoneType(0)) {
+      var number : String
         private set
-      fun setNumber(value: kotlin.String): Person.PhoneNumber.BuilderPhoneNumber {
+      fun setNumber(value: String): Person.PhoneNumber.BuilderPhoneNumber {
         number = value
         return this
       }
 
-      var type : PhoneType
+      var type : Person.PhoneType
         private set
-      fun setType(value: PhoneType): Person.PhoneNumber.BuilderPhoneNumber {
+      fun setType(value: Person.PhoneType): Person.PhoneNumber.BuilderPhoneNumber {
         type = value
         return this
       }
@@ -79,12 +79,12 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
 
       fun readFrom (input: CodedInputStream): Person.PhoneNumber.BuilderPhoneNumber {
         number = input.readString(1)
-        type = PhoneType.fromIntToPhoneType(input.readEnum(2))
+        type = Person.PhoneType.fromIntToPhoneType(input.readEnum(2))
         return this
 }
 
-      fun build(): PhoneNumber {
-        return PhoneNumber(number, type)
+      fun build(): Person.PhoneNumber {
+        return Person.PhoneNumber(number, type)
       }
 
       fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -95,7 +95,7 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
         val wireType = WireFormat.getTagWireType(tag)
         when(fieldNumber) {
           1 -> number = input.readStringNoTag()
-          2 -> type = PhoneType.fromIntToPhoneType(input.readEnumNoTag())
+          2 -> type = Person.PhoneType.fromIntToPhoneType(input.readEnumNoTag())
         }
         return true}
       fun parseFrom(input: CodedInputStream): Person.PhoneNumber.BuilderPhoneNumber {
@@ -111,7 +111,7 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     }
 
 
-    fun mergeWith (other: PhoneNumber) {
+    fun mergeWith (other: Person.PhoneNumber) {
       number = other.number
       type = other.type
     }
@@ -152,10 +152,10 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
     output.writeBytes (5, someBytes)
   }
 
-  class BuilderPerson constructor (name: kotlin.String = "", id: Int = 0, email: kotlin.String = "", phones: MutableList <PhoneNumber>  = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
-    var name : kotlin.String
+  class BuilderPerson constructor (name: String = "", id: Int = 0, email: String = "", phones: MutableList <Person.PhoneNumber> = mutableListOf(), someBytes: ByteArray = ByteArray(0)) {
+    var name : String
       private set
-    fun setName(value: kotlin.String): Person.BuilderPerson {
+    fun setName(value: String): Person.BuilderPerson {
       name = value
       return this
     }
@@ -167,28 +167,28 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
       return this
     }
 
-    var email : kotlin.String
+    var email : String
       private set
-    fun setEmail(value: kotlin.String): Person.BuilderPerson {
+    fun setEmail(value: String): Person.BuilderPerson {
       email = value
       return this
     }
 
-    var phones : MutableList <PhoneNumber> 
+    var phones : MutableList <Person.PhoneNumber>
       private set
-    fun setPhones(value: MutableList <PhoneNumber> ): Person.BuilderPerson {
+    fun setPhones(value: MutableList <Person.PhoneNumber>): Person.BuilderPerson {
       phones = value
       return this
     }
-    fun setPhoneNumber(index: Int, value: PhoneNumber): Person.PhoneNumber.BuilderPhoneNumber {
+    fun setPhoneNumber(index: Int, value: PhoneNumber): Person.BuilderPerson {
       phones[index] = value
       return this
     }
-    fun addPhoneNumber(value: PhoneNumber): Person.PhoneNumber.BuilderPhoneNumber {
+    fun addPhoneNumber(value: PhoneNumber): Person.BuilderPerson {
       phones.add(value)
       return this
     }
-    fun addAllPhoneNumber(value: Iterable<PhoneNumber>): Person.PhoneNumber.BuilderPhoneNumber {
+    fun addAllPhoneNumber(value: Iterable<PhoneNumber>): Person.BuilderPerson {
       for (item in value) {
         phones.add(item)
       }
@@ -219,13 +219,13 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
       val expectedSize = input.readInt32NoTag()
       var readSize = 0
       while(readSize != expectedSize) {
-        val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
+        val tmp: Person.PhoneNumber = Person.PhoneNumber.BuilderPhoneNumber().build()
         input.readTag(4, WireType.LENGTH_DELIMITED)
         val expectedSize = input.readInt32NoTag()
         tmp.mergeFrom(input)
         if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
         readSize += tmp.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
-        phones.add(tmp.build())
+        phones.add(tmp)
       }
       someBytes = input.readBytes(5)
       return this
@@ -249,13 +249,13 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
           val expectedSize = input.readInt32NoTag()
           var readSize = 0
           while(readSize != expectedSize) {
-            val tmp: PhoneNumber.BuilderPhoneNumber = PhoneNumber.BuilderPhoneNumber()
+            val tmp: Person.PhoneNumber = Person.PhoneNumber.BuilderPhoneNumber().build()
             input.readTag(4, WireType.LENGTH_DELIMITED)
             val expectedSize = input.readInt32NoTag()
             tmp.mergeFrom(input)
             if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
             readSize += tmp.getSize() + WireFormat.getTagSize(4, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
-            phones.add(tmp.build())
+            phones.add(tmp)
           }
         }
         5 -> someBytes = input.readBytesNoTag()
@@ -312,8 +312,8 @@ class Person private constructor (name: kotlin.String = "", id: Int = 0, email: 
 }
 
 
-class AddressBook private constructor (people: MutableList <Person>  = mutableListOf()) {
-  var people : MutableList <Person> 
+class AddressBook private constructor (people: MutableList <Person> = mutableListOf()) {
+  var people : MutableList <Person>
     private set
 
 
@@ -341,22 +341,22 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
     }
   }
 
-  class BuilderAddressBook constructor (people: MutableList <Person>  = mutableListOf()) {
-    var people : MutableList <Person> 
+  class BuilderAddressBook constructor (people: MutableList <Person> = mutableListOf()) {
+    var people : MutableList <Person>
       private set
-    fun setPeople(value: MutableList <Person> ): AddressBook.BuilderAddressBook {
+    fun setPeople(value: MutableList <Person>): AddressBook.BuilderAddressBook {
       people = value
       return this
     }
-    fun setPerson(index: Int, value: Person): Person.BuilderPerson {
+    fun setPerson(index: Int, value: Person): AddressBook.BuilderAddressBook {
       people[index] = value
       return this
     }
-    fun addPerson(value: Person): Person.BuilderPerson {
+    fun addPerson(value: Person): AddressBook.BuilderAddressBook {
       people.add(value)
       return this
     }
-    fun addAllPerson(value: Iterable<Person>): Person.BuilderPerson {
+    fun addAllPerson(value: Iterable<Person>): AddressBook.BuilderAddressBook {
       for (item in value) {
         people.add(item)
       }
@@ -373,13 +373,13 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
       val expectedSize = input.readInt32NoTag()
       var readSize = 0
       while(readSize != expectedSize) {
-        val tmp: Person.BuilderPerson = Person.BuilderPerson()
+        val tmp: Person = Person.BuilderPerson().build()
         input.readTag(1, WireType.LENGTH_DELIMITED)
         val expectedSize = input.readInt32NoTag()
         tmp.mergeFrom(input)
         if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
         readSize += tmp.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
-        people.add(tmp.build())
+        people.add(tmp)
       }
       return this
 }
@@ -399,13 +399,13 @@ class AddressBook private constructor (people: MutableList <Person>  = mutableLi
           val expectedSize = input.readInt32NoTag()
           var readSize = 0
           while(readSize != expectedSize) {
-            val tmp: Person.BuilderPerson = Person.BuilderPerson()
+            val tmp: Person = Person.BuilderPerson().build()
             input.readTag(1, WireType.LENGTH_DELIMITED)
             val expectedSize = input.readInt32NoTag()
             tmp.mergeFrom(input)
             if (expectedSize != tmp.getSize()) { throw InvalidProtocolBufferException ("Expected size ${expectedSize} got ${tmp.getSize()}") }
             readSize += tmp.getSize() + WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED) + WireFormat.getVarint32Size(tmp.getSize())
-            people.add(tmp.build())
+            people.add(tmp)
           }
         }
       }

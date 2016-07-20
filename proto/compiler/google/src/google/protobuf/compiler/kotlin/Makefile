@@ -23,9 +23,14 @@ $(BINDIR):
 	mkdir -p $(BINDIR)
 
 clean:
-	rm -rf $(BINDIR) $(EXE)
+	rm -rf $(BINDIR)
 
 generate:
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/nested-msg.proto
-.PHONY: clean all generate
+
+debug:
+	gdb --args ./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 
+	gdb --args ./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/nested-msg.proto	
+
+.PHONY: clean all generate debug

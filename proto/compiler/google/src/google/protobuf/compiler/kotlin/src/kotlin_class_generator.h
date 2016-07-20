@@ -20,24 +20,13 @@ namespace kotlin {
 class FieldGenerator;   // declared in "kotlin_file_generator.h"
 class NameResolver;     // declared in "kotlin_name_resolver.h"
 
-// wrapper for enum CLASS/INTERFACE with convenience method of getting name
-class ClassModifier {
-public:
-    enum Type {
-        CLASS,
-        INTERFACE
-    };
-    ClassModifier();
-    ClassModifier(Type type);
-    Type type;
-
-    string const getName() const;
-};
-
 class ClassGenerator {
 public:
-    string                      simpleName;
-    string                      fullName;
+    string getSimpleType() const;
+    string getFullType() const;
+    string getBuidlerSimpleType() const;
+    string getBuilderFullType() const;
+
     vector <FieldGenerator *>   properties;
     vector <ClassGenerator *>   classesDeclarations;
     vector <EnumGenerator  *>   enumsDeclaraions;

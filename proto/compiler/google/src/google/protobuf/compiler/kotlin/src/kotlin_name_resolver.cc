@@ -5,7 +5,7 @@
 #include "kotlin_name_resolver.h"
 #include "kotlin_field_generator.h"
 #include <google/protobuf/descriptor.h>
-
+#include "UnreachableStateException.h"
 #include <string>
 
 namespace google {
@@ -33,8 +33,7 @@ string getKotlinOutputByProtoName(string protoName) {
     return justName + ".kt";
 }
 
-string protobufToKotlinType(FieldDescriptor const * descriptor) {
-    FieldDescriptor::Type type = descriptor->type();
+string protobufToKotlinType(FieldDescriptor::Type type) {
     switch(type) {
         case FieldDescriptor::TYPE_BOOL:
             return "Boolean";
@@ -43,7 +42,8 @@ string protobufToKotlinType(FieldDescriptor const * descriptor) {
         case FieldDescriptor::TYPE_DOUBLE:
             return "Double";
         case FieldDescriptor::TYPE_ENUM:
-            return string(descriptor->enum_type()->name());
+            throw UnreachableStateException
+                    ("Error: mapping protobuf enum types to kotlin types should be resolved by field generator, not by protobufToKotlinType function");
         case FieldDescriptor::TYPE_FIXED32:
             // we map uint32 into Int, storing top bit in sign bit
             return "Int";
@@ -57,7 +57,8 @@ string protobufToKotlinType(FieldDescriptor const * descriptor) {
         case FieldDescriptor::TYPE_INT64:
             return "Long";
         case FieldDescriptor::TYPE_MESSAGE:
-            return string(descriptor->message_type()->name());
+            throw UnreachableStateException
+                    ("Error: mapping protobuf message types to kotlin types should be resolved by field generator, not by protobufToKotlinType function");
         case FieldDescriptor::TYPE_SFIXED32:
             return "Int";
         case FieldDescriptor::TYPE_SFIXED64:
@@ -67,7 +68,7 @@ string protobufToKotlinType(FieldDescriptor const * descriptor) {
         case FieldDescriptor::TYPE_SINT64:
             return "Long";
         case FieldDescriptor::TYPE_STRING:
-            return "kotlin.String";
+            return "String";
         case FieldDescriptor::TYPE_UINT32:
             return "Int";            // see notes for TYPE_FIXED32
         case FieldDescriptor::TYPE_UINT64:
@@ -75,30 +76,9 @@ string protobufToKotlinType(FieldDescriptor const * descriptor) {
     }
 }
 
-string protobufToKotlinField(FieldDescriptor const * descriptor) {
-    FieldDescriptor::Label modifier = descriptor->label();
-    string  preamble = "",
-            postamble = "";
-    switch (modifier) {
-        case FieldDescriptor::LABEL_REQUIRED:
-            break;
-        case FieldDescriptor::LABEL_OPTIONAL:
-            break;
-        case FieldDescriptor::LABEL_REPEATED:
-            preamble = "MutableList <";
-            postamble = "> ";
-            break;
-    }
-    return preamble + protobufToKotlinType(descriptor) + postamble;
-}
 
 // TODO: think about nested arrays
-string protobufTypeToInitValue(FieldGenerator const * fieldGen) {
-    if (fieldGen->modifier == FieldDescriptor::LABEL_REPEATED) {
-       return "mutableListOf()";
-    }
-
-    FieldDescriptor::Type type = fieldGen->protoType;
+string protobufTypeToInitValue(FieldDescriptor::Type type) {
     switch(type) {
         case FieldDescriptor::TYPE_BOOL:
             return "false";
@@ -106,9 +86,8 @@ string protobufTypeToInitValue(FieldGenerator const * fieldGen) {
             return "ByteArray(0)";
         case FieldDescriptor::TYPE_DOUBLE:
             return "0.0";
-        case FieldDescriptor::TYPE_ENUM: {
-            return fieldGen->nameResolver->getClassName(fieldGen->fullType) + ".fromIntTo" + fieldGen->fullType + "(0)";   // produce enum from 0, as demanded by Google
-        }
+        case FieldDescriptor::TYPE_ENUM:
+            throw UnreachableStateException("Error: getting init values of enums should be handled by FieldGenerator, not by protobufToInitValue");
         case FieldDescriptor::TYPE_FIXED32:
             return "0";
         case FieldDescriptor::TYPE_FIXED64:
@@ -120,7 +99,7 @@ string protobufTypeToInitValue(FieldGenerator const * fieldGen) {
         case FieldDescriptor::TYPE_INT64:
             return "0L";
         case FieldDescriptor::TYPE_MESSAGE:
-            return fieldGen->nameResolver->getBuilderName(fieldGen->fullType) + "().build()";
+            throw UnreachableStateException("Error: getting init values of enums should be handled by FieldGenerator, not by protobufToInitValue");
         case FieldDescriptor::TYPE_SFIXED32:
             return "0";
         case FieldDescriptor::TYPE_SFIXED64:

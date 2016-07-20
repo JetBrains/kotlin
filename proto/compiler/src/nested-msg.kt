@@ -1,29 +1,29 @@
-class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2().build()) {
-  var field1 : Level2
+class Level1 private constructor (field1: Level1.Level2 = Level1.Level2.BuilderLevel2().build()) {
+  var field1 : Level1.Level2
     private set
 
 
   init {
     this.field1 = field1
   }
-  class Level2 private constructor (field2: Level3 = Level1.Level2.Level3.BuilderLevel3().build()) {
-    var field2 : Level3
+  class Level2 private constructor (field2: Level1.Level2.Level3 = Level1.Level2.Level3.BuilderLevel3().build()) {
+    var field2 : Level1.Level2.Level3
       private set
 
 
     init {
       this.field2 = field2
     }
-    class Level3 private constructor (field3: Level4 = Level1.Level2.Level3.Level4.BuilderLevel4().build()) {
-      var field3 : Level4
+    class Level3 private constructor (field3: Level1.Level2.Level3.Level4 = Level1.Level2.Level3.Level4.BuilderLevel4().build()) {
+      var field3 : Level1.Level2.Level3.Level4
         private set
 
 
       init {
         this.field3 = field3
       }
-      class Level4 private constructor (field4: kotlin.String = "") {
-        var field4 : kotlin.String
+      class Level4 private constructor (field4: String = "") {
+        var field4 : String
           private set
 
 
@@ -35,10 +35,10 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
           output.writeString (4, field4)
         }
 
-        class BuilderLevel4 constructor (field4: kotlin.String = "") {
-          var field4 : kotlin.String
+        class BuilderLevel4 constructor (field4: String = "") {
+          var field4 : String
             private set
-          fun setField4(value: kotlin.String): Level1.Level2.Level3.Level4.BuilderLevel4 {
+          fun setField4(value: String): Level1.Level2.Level3.Level4.BuilderLevel4 {
             field4 = value
             return this
           }
@@ -53,8 +53,8 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
             return this
 }
 
-          fun build(): Level4 {
-            return Level4(field4)
+          fun build(): Level1.Level2.Level3.Level4 {
+            return Level1.Level2.Level3.Level4(field4)
           }
 
           fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -79,7 +79,7 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
         }
 
 
-        fun mergeWith (other: Level4) {
+        fun mergeWith (other: Level1.Level2.Level3.Level4) {
           field4 = other.field4
         }
 
@@ -100,10 +100,10 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
         field3.writeTo(output)
       }
 
-      class BuilderLevel3 constructor (field3: Level4 = Level1.Level2.Level3.Level4.BuilderLevel4().build()) {
-        var field3 : Level4
+      class BuilderLevel3 constructor (field3: Level1.Level2.Level3.Level4 = Level1.Level2.Level3.Level4.BuilderLevel4().build()) {
+        var field3 : Level1.Level2.Level3.Level4
           private set
-        fun setField3(value: Level4): Level1.Level2.Level3.BuilderLevel3 {
+        fun setField3(value: Level1.Level2.Level3.Level4): Level1.Level2.Level3.BuilderLevel3 {
           field3 = value
           return this
         }
@@ -121,8 +121,8 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
           return this
 }
 
-        fun build(): Level3 {
-          return Level3(field3)
+        fun build(): Level1.Level2.Level3 {
+          return Level1.Level2.Level3(field3)
         }
 
         fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -152,7 +152,7 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
       }
 
 
-      fun mergeWith (other: Level3) {
+      fun mergeWith (other: Level1.Level2.Level3) {
         field3 = other.field3
       }
 
@@ -173,10 +173,10 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
       field2.writeTo(output)
     }
 
-    class BuilderLevel2 constructor (field2: Level3 = Level1.Level2.Level3.BuilderLevel3().build()) {
-      var field2 : Level3
+    class BuilderLevel2 constructor (field2: Level1.Level2.Level3 = Level1.Level2.Level3.BuilderLevel3().build()) {
+      var field2 : Level1.Level2.Level3
         private set
-      fun setField2(value: Level3): Level1.Level2.BuilderLevel2 {
+      fun setField2(value: Level1.Level2.Level3): Level1.Level2.BuilderLevel2 {
         field2 = value
         return this
       }
@@ -194,8 +194,8 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
         return this
 }
 
-      fun build(): Level2 {
-        return Level2(field2)
+      fun build(): Level1.Level2 {
+        return Level1.Level2(field2)
       }
 
       fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -225,7 +225,7 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
     }
 
 
-    fun mergeWith (other: Level2) {
+    fun mergeWith (other: Level1.Level2) {
       field2 = other.field2
     }
 
@@ -246,10 +246,10 @@ class Level1 private constructor (field1: Level2 = Level1.Level2.BuilderLevel2()
     field1.writeTo(output)
   }
 
-  class BuilderLevel1 constructor (field1: Level2 = Level1.Level2.BuilderLevel2().build()) {
-    var field1 : Level2
+  class BuilderLevel1 constructor (field1: Level1.Level2 = Level1.Level2.BuilderLevel2().build()) {
+    var field1 : Level1.Level2
       private set
-    fun setField1(value: Level2): Level1.BuilderLevel1 {
+    fun setField1(value: Level1.Level2): Level1.BuilderLevel1 {
       field1 = value
       return this
     }

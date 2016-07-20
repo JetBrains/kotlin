@@ -80,8 +80,6 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
     : descriptor(descriptor)
     , nameResolver(nameResolver)
 {
-    simpleName = descriptor->name();
-
     int field_count = descriptor->field_count();
     for (int i = 0; i < field_count; ++i) {
         FieldDescriptor const * fieldDescriptor = descriptor->field(i);
@@ -91,14 +89,14 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
     int nested_types_count = descriptor->nested_type_count();
     for (int i = 0; i < nested_types_count; ++i) {
         Descriptor const * nestedClassDescriptor = descriptor->nested_type(i);
-        nameResolver->addClass(nestedClassDescriptor->name(), nameResolver->getClassName(simpleName));
+        nameResolver->addClass(nestedClassDescriptor->name(), getFullType());
         classesDeclarations.push_back(new ClassGenerator(nestedClassDescriptor, nameResolver));
     }
 
     int enums_declarations_count = descriptor->enum_type_count();
     for (int i = 0; i < enums_declarations_count; ++i) {
         EnumDescriptor const * nestedEnumDescriptor = descriptor->enum_type(i);
-        nameResolver->addClass(nestedEnumDescriptor->name(), nameResolver->getClassName(simpleName));
+        nameResolver->addClass(nestedEnumDescriptor->name(), getFullType());
         enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor));
     }
 
@@ -109,7 +107,7 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
      */
     std::sort(properties.begin(), properties.end(),
               [](FieldGenerator const * first, FieldGenerator const * second) {
-                  return first->fieldNumber < second->fieldNumber;
+                  return first->getFieldNumber() < second->getFieldNumber();
               });
 }
 
@@ -137,7 +135,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
 
     // mergeWith(other: Message)
     printer->Print("\n");
-    vars["className"] = simpleName;
+    vars["className"] = getFullType();
     printer->Print(vars, "fun mergeWith (other: $className$) {\n");
     printer->Indent();
 
@@ -145,12 +143,12 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
         vars["fieldName"] = properties[i]->simpleName;
 
         // concatenate repeated fields
-        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED) {
+        if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
             printer->Print(vars, "$fieldName$.addAll(other.$fieldName$)\n");
         }
 
         // Bytes type is handled separately
-        else if (properties[i]->protoType == FieldDescriptor::TYPE_BYTES) {
+        else if (properties[i]->getProtoType() == FieldDescriptor::TYPE_BYTES) {
             vars["initValue"] = properties[i]->getInitValue();
             printer->Print(vars, "$fieldName$.plus(other.$fieldName$)\n");
         }
@@ -170,7 +168,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
     printer->Indent();
 
-    vars["builderName"] = nameResolver->getBuilderName(simpleName);
+    vars["builderName"] = getBuilderFullType();
     printer->Print(vars, "val builder = $builderName$()\n");
     printer->Print("mergeWith(builder.parseFrom(input).build())");
 
@@ -184,7 +182,7 @@ void ClassGenerator::generateSerializers(io::Printer *printer, bool isRead) cons
     vars["funName"]= isRead ? "readFrom"       : "writeTo";
     vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
     vars["arg"]    = isRead ? "input"               : "output";
-    vars["returnType"] = isRead ? nameResolver->getBuilderName(simpleName) : "Unit";
+    vars["returnType"] = isRead ? getBuilderFullType() : "Unit";
     vars["maybeReturn"] = isRead ? "return this\n" : "";
 
     // generate function header
@@ -209,14 +207,14 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + ": " + properties[i]->fullType + " = " + properties[i]->getInitValue();
+        argumentList += properties[i]->simpleName + ": " + properties[i]->getFullType() + " = " + properties[i]->getInitValue();
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }
     }
 
     map<string, string> vars;
-    vars["name"] = isBuilder? "Builder" + simpleName : simpleName;
+    vars["name"] = isBuilder? getBuidlerSimpleType() : getSimpleType();
     vars["argumentList"] = argumentList;
     vars["maybePrivate"] = isBuilder? "" : " private";
     printer->Print(vars,
@@ -227,7 +225,7 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
 
 void ClassGenerator::generateBuildMethod(io::Printer * printer) const {
     map <string, string> vars;
-    vars["returnType"] = simpleName;
+    vars["returnType"] = getFullType();
     printer->Print(vars,
                     "fun build(): $returnType$ {\n");
     printer->Indent();
@@ -266,7 +264,7 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
 void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     // parseFieldFrom(input: CodedInputStream): Boolean
     map <string, string> vars;
-    vars["builderName"] = nameResolver->getBuilderName(simpleName);
+    vars["builderName"] = getBuilderFullType();
 
     printer->Print("fun parseFieldFrom(input: CodedInputStream): Boolean {\n");
     printer->Indent();
@@ -287,21 +285,21 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Indent();
 
     for (int i = 0; i < properties.size(); ++i) {
-        vars["fieldNumber"] = std::to_string(properties[i]->fieldNumber);
+        vars["fieldNumber"] = std::to_string(properties[i]->getFieldNumber());
         vars["kotlinFunSuffix"] = properties[i]->getKotlinFunctionSuffix();
         printer->Print(vars, "$fieldNumber$ -> ");
 
         // code for serialization arrays and messages consists of more than one line and needs enclosing brackets
-        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED
-                || properties[i]->protoType == FieldDescriptor::TYPE_MESSAGE) {
+        if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED
+                || properties[i]->getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
             printer->Print("{\n");
             printer->Indent();
         }
 
         properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true);
 
-        if (properties[i]->modifier == FieldDescriptor::LABEL_REPEATED
-            || properties[i]->protoType == FieldDescriptor::TYPE_MESSAGE) {
+        if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED
+            || properties[i]->getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
             printer->Outdent();
             printer->Print("}\n");
         }
@@ -339,36 +337,20 @@ void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
     printer->Print("}\n");
 }
 
-
-
-//int ClassGenerator::getSizeWithoutHeader() {
-//    int size = 0;
-//    for (int i = 0; i < properties.size(); ++i) {
-//        size += properties[i].getSizeWithHeader();
-//    }
-//    return 0;
-//}
-
-
-const string ClassModifier::getName() const {
-    string result = "";
-    switch (type) {
-        case CLASS:
-            result = "class";
-            break;
-        case INTERFACE:
-            result = "interface";
-            break;
-    }
-    return result;
+string ClassGenerator::getSimpleType() const {
+    return descriptor->name();
 }
 
-ClassModifier::ClassModifier(ClassModifier::Type type)
-    : type(type)
-{ }
+string ClassGenerator::getFullType() const {
+    return nameResolver->getClassName(getSimpleType());
+}
 
-ClassModifier::ClassModifier() {
-    type = CLASS;
+string ClassGenerator::getBuilderFullType() const {
+    return nameResolver->getBuilderName(getSimpleType());
+}
+
+string ClassGenerator::getBuidlerSimpleType() const {
+    return "Builder" + getSimpleType();
 }
 
 
