@@ -163,6 +163,18 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Print("}\n");
 
 
+    // mergeFromWithSize(input: CodedInputStream, expectedSize: Int)
+    printer->Print("\n");
+    printer->Print(vars, "fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {\n");
+    printer->Indent();
+
+    vars["builderName"] = getBuilderFullType();
+    printer->Print(vars, "val builder = $builderName$()\n");
+    printer->Print("mergeWith(builder.parseFromWithSize(input, expectedSize).build())");
+
+    printer->Outdent();
+    printer->Print("}\n");
+
     // mergeFrom(input: CodedInputStream)
     printer->Print("\n");
     printer->Print(vars, "fun mergeFrom (input: CodedInputStream) {\n");
@@ -312,14 +324,37 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Outdent();
     printer->Print("}\n");  // parseFieldFrom body
 
+    // parseFromWithSize(input: CodedInputStream, expectedSize: Int)
+    printer->Print(vars,
+                   "fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): $builderName$ {\n");
+    printer->Indent();
+    printer->Print("while(parseFieldFrom(input)) {\n");
+    printer->Indent();
+    printer->Print("if (getSize() == expectedSize) { break }\n");
+    vars["dollar"] = "$";
+    printer->Print(vars,
+            "if (getSize() > expectedSize) { "
+            "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSize()}\") "
+             "}\n");
+    printer->Outdent(); // while-loop;
+    printer->Print("}\n");
+
+    printer->Print("return this\n");
+
+    printer->Outdent(); // function body
+    printer->Print("}\n");
+
+
     // parseFrom(input: CodedInputStream)
     printer->Print(vars,
                    "fun parseFrom(input: CodedInputStream): $builderName$ {\n");
     printer->Indent();
-    printer->Print("while(parseFieldFrom(input)) {}\n");
+    printer->Print("while(parseFieldFrom(input)) {");
+    printer->Print("}\n");
+
     printer->Print("return this\n");
 
-    printer->Outdent();
+    printer->Outdent(); // function body
     printer->Print("}\n");
 }
 

@@ -26,8 +26,14 @@ clean:
 	rm -rf $(BINDIR)
 
 generate:
-	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 
-	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/nested-msg.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/addressbook.proto 
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/nested-msg.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/connect.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/error.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/location.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/nested-msg.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/routeDone.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/route.proto
 
 debug:
 	gdb --args ./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 

@@ -202,7 +202,7 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
 
             // read message itself without tag
             printer->Print(vars,
-                           "$fieldName$.mergeFrom(input)\n");
+                           "$fieldName$.mergeFromWithSize(input, expectedSize)\n");
 
             // check that actual size equal to expected size
             printer->Print(vars, "if (expectedSize != $fieldName$.getSize()) { "
