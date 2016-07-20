@@ -89,19 +89,20 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateDotExpression(expr: KtDotQualifiedExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverName = expr.receiverExpression.text
-        val selectorName = expr.selectorExpression!!.text!!
+        val selectorExpr = expr.selectorExpression!!
 
         val receiver = variableManager.getLLVMvalue(receiverName)
         if (receiver != null) {
-            return evaluateMemberMethodOrField(receiver, selectorName, scopeDepth, expr.lastChild)
+            return evaluateMemberMethodOrField(receiver, selectorExpr.text, scopeDepth, expr.lastChild)
         }
 
-        val clazz = state.classes.get(receiverName) ?: return null
-        return evaluateClassScopedDotExpression(clazz, selectorName, scopeDepth)
+        val clazz = state.classes[receiverName] ?: return null
+        return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth)
     }
 
-    private fun  evaluateClassScopedDotExpression(clazz: ClassCodegen, selectorName: String, scopeDepth: Int): LLVMSingleValue? {
-        return null
+    private fun evaluateClassScopedDotExpression(clazz: ClassCodegen, selector: KtExpression, scopeDepth: Int): LLVMSingleValue? = when (selector) {
+        is KtCallExpression -> evaluateCallExpression(selector, scopeDepth, clazz)
+        else -> throw UnsupportedOperationException()
     }
 
     private fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement): LLVMSingleValue? {
@@ -111,19 +112,18 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             val result = codeBuilder.getNewVariable(field.type, pointer = 1)
             codeBuilder.loadClassField(result, receiver, field.offset)
             return result
-        } else {
-            val methodName = clazz.structName + '.' + selectorName.substringBefore('(')
-            val method = clazz.methods[methodName]!!
-            val returnType = clazz.methods[methodName]!!.returnType!!.type
-
-            val names = parseArgList(call as KtCallExpression, scopeDepth)
-            val loadedArgs = loadArgsIfRequired(names, method.args)
-            val callArgs = mutableListOf<LLVMSingleValue>(receiver)
-            callArgs.addAll(loadedArgs)
-
-
-            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
         }
+
+        val methodName = clazz.structName + '.' + selectorName.substringBefore('(')
+        val method = clazz.methods[methodName]!!
+        val returnType = clazz.methods[methodName]!!.returnType!!.type
+
+        val names = parseArgList(call as KtCallExpression, scopeDepth)
+        val loadedArgs = loadArgsIfRequired(names, method.args)
+        val callArgs = mutableListOf<LLVMSingleValue>(receiver)
+        callArgs.addAll(loadedArgs)
+
+        return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
     }
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
@@ -141,7 +141,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         else -> variableManager.getLLVMvalue(expr.firstChild.text)
     }
 
-    private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
+    private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
         val function = expr.firstChild.firstChild.text
         val names = parseArgList(expr, scopeDepth)
 
@@ -164,6 +164,10 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             return evaluateFunctionCallExpression(LLVMVariable(function, type.returnType.type, scope = LLVMRegisterScope()), args)
         }
 
+        val nestedConstructor = classScope?.nestedClasses?.get(expr.calleeExpression!!.text)
+        if (nestedConstructor != null) {
+        }
+
         return null
     }
 
@@ -183,9 +187,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                 args.addAll(names)
 
                 codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), args).toString())
-                var result = codeBuilder.loadAndGetVariable(returnVar)
-
-                return result
+                return codeBuilder.loadAndGetVariable(returnVar)
             }
             else -> {
                 val result = codeBuilder.getNewVariable(returnType)

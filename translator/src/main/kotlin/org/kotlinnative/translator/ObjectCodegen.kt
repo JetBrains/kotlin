@@ -7,7 +7,6 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.LLVMVariableScope
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
-import org.kotlinnative.translator.llvm.types.LLVMType
 
 class ObjectCodegen(override val state: TranslationState, override val variableManager: VariableManager, val objectDeclaration: KtObjectDeclaration, override val codeBuilder: LLVMBuilder) :
         StructCodegen(state, variableManager, objectDeclaration, state.bindingContext.get(BindingContext.CLASS, objectDeclaration) ?: throw TranslationException(),

@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val analyzedFiles = ArrayList<String>();
+    val analyzedFiles = ArrayList<String>()
 
 //    val kotlib = ClassLoader.getSystemClassLoader().getResources("kotlib/kotlin")
 //    for (resourse in kotlib) {
