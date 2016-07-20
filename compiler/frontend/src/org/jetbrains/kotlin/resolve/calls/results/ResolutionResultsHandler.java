@@ -193,7 +193,7 @@ public class ResolutionResultsHandler {
             candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates);
         }
 
-        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
+        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOverrides(candidates, MAP_TO_RESULT);
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
