@@ -1,15 +1,15 @@
 syntax = "proto3";
 package carkot;
-import "error.proto";
 
 option java_package = "proto.car";
-option java_outer_classname = "LocationP";
+option java_outer_classname = "Location";
 
-message Location {
-    oneof response {
-        Error error = 2;
-        LocationResponse locationResponse = 1;
-    }
+message LocationResponse {
+
+    LocationResponse locationResponse = 1;
+    int32 code = 2;
+    string errorMsg = 3;
+
     message LocationResponse {
         double x = 1;
         double y = 2;
