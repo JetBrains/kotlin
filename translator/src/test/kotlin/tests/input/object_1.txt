@@ -1,1 +1,1 @@
-Singleton.create(5) == 40
+singletone_test(5) == 40
