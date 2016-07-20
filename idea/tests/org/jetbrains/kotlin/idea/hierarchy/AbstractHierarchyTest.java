@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ Test accept more than one file, file extension should be .java or .kt
  */
 public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase {
 
-    private String folderName;
+    protected String folderName;
 
     protected void doTypeClassHierarchyTest(@NotNull String folderName) throws Exception {
         this.folderName = folderName;
@@ -180,7 +180,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
         return context;
     }
 
-    private String[] getFilesToConfigure() {
+    protected String[] getFilesToConfigure() {
         final List<String> files = new ArrayList<String>(2);
         FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
             @Override
