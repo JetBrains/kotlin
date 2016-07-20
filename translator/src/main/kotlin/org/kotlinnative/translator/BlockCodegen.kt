@@ -106,7 +106,11 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement): LLVMSingleValue? {
-        val clazz = state.classes[(receiver.type as LLVMReferenceType).type] ?: state.objects[(receiver.type as LLVMReferenceType).type]!!
+
+        val type = receiver.type as LLVMReferenceType
+
+        val clazz = resolveClassOrObjectLocation(type)
+
         val field = clazz.fieldsIndex[selectorName]
         if (field != null) {
             val result = codeBuilder.getNewVariable(field.type, pointer = 1)
@@ -124,6 +128,21 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         callArgs.addAll(loadedArgs)
 
         return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
+    }
+
+    private fun resolveClassOrObjectLocation(type: LLVMReferenceType): StructCodegen {
+        if (type.location.size == 0) {
+            return state.classes[type.type] ?: state.objects[type.type]!!
+
+        }
+
+        var codegen = state.classes[type.location[0]]!!
+        var i = 1
+        while (i < type.location.size) {
+            codegen = codegen.nestedClasses[type.location[i]]!!
+        }
+
+        return codegen.nestedClasses[type.type]!!
     }
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
@@ -166,6 +185,8 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         val nestedConstructor = classScope?.nestedClasses?.get(expr.calleeExpression!!.text)
         if (nestedConstructor != null) {
+            val args = loadArgsIfRequired(names, nestedConstructor.constructorFields)
+            return evaluateConstructorCallExpression(LLVMVariable(nestedConstructor.fullName, nestedConstructor.type, scope = LLVMVariableScope()), args)
         }
 
         return null
