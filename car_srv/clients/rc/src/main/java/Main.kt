@@ -28,6 +28,13 @@ fun main(args: Array<String>) {
     val port = config.getInt("port")
     val direction = config.getChar("direction")
 
+    val ipRegex = Regex("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$")
+    if (!ipRegex.matches(host)) {
+        println("incorrect server address.")
+        return
+    }
+
+
     val client = Client(host, port)
     val carControl = CarControl(client)
     if (direction.equals('t', true)) {
@@ -79,6 +86,7 @@ fun printRequestResult() {
 
 fun setOptions(jsap: JSAP) {
     val opthost = FlaggedOption("host").setStringParser(JSAP.STRING_PARSER).setRequired(true).setShortFlag('h').setLongFlag("host")
+    opthost.setHelp("write here only ip address. domain name (e.g. vk.com is incorrect)")
     val optPort = FlaggedOption("port").setStringParser(JSAP.INTEGER_PARSER).setDefault("8888").setRequired(false).setShortFlag('p').setLongFlag("port")
     val optHelp = FlaggedOption("help").setStringParser(JSAP.BOOLEAN_PARSER).setRequired(false).setDefault("false").setLongFlag("help")
     val optDirection = FlaggedOption("direction").setStringParser(JSAP.CHARACTER_PARSER).setRequired(false).setDefault("t").setShortFlag('d')
