@@ -61,7 +61,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
 
     override fun isSoft(): Boolean = false

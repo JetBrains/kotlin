@@ -256,7 +256,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
 
             val extractionOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// OPTIONS: ").let {
                 if (it.isNotEmpty()) {
-                    @Suppress("CAST_NEVER_SUCCEEDS")
+                    @Suppress("UNCHECKED_CAST")
                     val args = it.map { it.toBoolean() }.toTypedArray() as Array<Any?>
                     ExtractionOptions::class.java.constructors.first { it.parameterTypes.size == args.size }.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
