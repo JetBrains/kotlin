@@ -35,6 +35,12 @@ public class HierarchyWithLibTestGenerated extends AbstractHierarchyWithLibTest 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/withLib"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("annotation")
+    public void testAnnotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/withLib/annotation/");
+        doTest(fileName);
+    }
+
     @TestMetadata("enum")
     public void testEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/withLib/enum/");
