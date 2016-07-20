@@ -123,31 +123,15 @@ public class OverrideResolver {
         };
     }
 
-    private enum Filtering {
-        RETAIN_OVERRIDING,
-        RETAIN_OVERRIDDEN
-    }
-
+    /**
+     * Given a set of descriptors, returns a set containing all the given descriptors except those which _are overridden_ by at least
+     * one other descriptor from the original set.
+     */
     @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        //noinspection unchecked
-        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDING);
+        return filterOverrides(candidateSet, Function.ID);
     }
-
-    @NotNull
-    public static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
-        //noinspection unchecked
-        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDDEN);
-    }
-
-    @NotNull
-    public static <D> Set<D> filterOutOverridden(
-            @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform
-    ) {
-        return filterOverrides(candidateSet, transform, Filtering.RETAIN_OVERRIDING);
-    }
-
 
     // In a multi-module project different "copies" of the same class may be present in different libraries,
     // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
@@ -189,10 +173,9 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static <D> Set<D> filterOverrides(
+    public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform,
-            @NotNull Filtering filtering
+            @NotNull Function<? super D, ? extends CallableDescriptor> transform
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
 
@@ -207,19 +190,8 @@ public class OverrideResolver {
             CallableDescriptor me = transform.fun(meD);
             for (D otherD : noDuplicates) {
                 CallableDescriptor other = transform.fun(otherD);
-                if (me == other) continue;
-                if (filtering == Filtering.RETAIN_OVERRIDING) {
-                    if (overrides(other, me)) {
-                        continue outerLoop;
-                    }
-                }
-                else if (filtering == Filtering.RETAIN_OVERRIDDEN) {
-                    if (overrides(me, other)) {
-                        continue outerLoop;
-                    }
-                }
-                else {
-                    throw new AssertionError("Unexpected Filtering object: " + filtering);
+                if (me != other && overrides(other, me)) {
+                    continue outerLoop;
                 }
             }
             candidates.add(meD);
@@ -751,9 +723,8 @@ public class OverrideResolver {
     }
 
     /**
-     * @return overridden real descriptors (not fake overrides). Note that all usages of this method should be followed by calling
-     * {@link #filterOutOverridden(Set)} or {@link #filterOutOverriding(Set)}, because some of the declarations
-     * can override the other
+     * @return overridden real descriptors (not fake overrides). Note that most usages of this method should be followed by calling
+     * {@link #filterOutOverridden(Set)}, because some of the declarations can override the other.
      * TODO: merge this method with filterOutOverridden
      */
     @NotNull
