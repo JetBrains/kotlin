@@ -77,6 +77,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
                 ): Component {
                     val rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
                     rendererComponent.isEnabled = this@AbstractParameterTablePanel.isEnabled
+                    (rendererComponent as JCheckBox).addActionListener { updateSignature() }
                     return rendererComponent
                 }
             }
@@ -112,6 +113,8 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
                     }
                     tableModel.fireTableRowsUpdated(rows[0], rows[rows.size - 1])
                     TableUtil.selectRows(table, rows)
+
+                    updateSignature()
                 }
             }
         })
