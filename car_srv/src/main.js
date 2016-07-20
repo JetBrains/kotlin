@@ -7,6 +7,7 @@ const router = require("./router.js");
 const commander = require("commander");
 const protoBuf = require("protobufjs");
 const fs = require("fs");
+const udev = require("udev");
 
 commander
     .version('1.0.0')
@@ -43,6 +44,22 @@ handle["/"] = handlers.other;
 handle["/loadBin"] = handlers.loadBin;
 handle["/control"] = handlers.control;
 handle["/other"] = handlers.other;
+
+//add handlers to events from udev monitor (add device and remove device)
+const monitor = udev.monitor();
+monitor.on('add', function (device) {
+    if (device.ID_VENDOR_ID == "0483" && device.ID_MODEL_ID == "5740" && device.SUBSYSTEM == "tty") {
+        //mc connected
+        console.log("connected");
+        console.log("file=" + device.DEVNAME)
+    }
+});
+monitor.on('remove', function (device) {
+    if (device.ID_VENDOR_ID == "0483" && device.ID_MODEL_ID == "5740" && device.SUBSYSTEM == "tty") {
+        //mc disconnected
+        console.log("disconnected")
+    }
+});
 
 if (typeof fs.access == "function") {
     fs.access(executeShell, fs.F_OK, function (error) {
