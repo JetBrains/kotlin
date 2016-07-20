@@ -1,13 +1,10 @@
-import com.google.protobuf.ByteString
+import client.Client
 import com.martiansoftware.jsap.FlaggedOption
 import com.martiansoftware.jsap.JSAP
 import com.martiansoftware.jsap.JSAPResult
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.PrintWriter
+import java.io.*
 import java.util.*
 
 /**
@@ -32,7 +29,10 @@ fun main(args: Array<String>) {
     val flashFilePath = getActualValue("flash", clArgsConfig, fileConfig)
 
     val actualValues = mapOf<String, String>(Pair("host", host), Pair("port", port.toString()), Pair("mcuSystem", mcuSystem), Pair("flash", flashFilePath))
-    saveFileConfig(actualValues)
+
+    if (!isCorrectArguments(actualValues)) {
+        return
+    }
     var fileBytes: ByteArray = ByteArray(0);
     try {
         FileInputStream(flashFilePath).use { fis ->
@@ -41,21 +41,53 @@ fun main(args: Array<String>) {
         }
     } catch (e: IOException) {
         e.printStackTrace()
-        println("error in read file $flashFilePath")
+        println("error reading file $flashFilePath")
         return;
     }
 
-    val bytesBinTest = Carkot.Upload.newBuilder().setData(ByteString.copyFrom(fileBytes)).setBase(mcuSystem).build().toByteArray()
-    val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/loadBin", Unpooled.copiedBuffer(bytesBinTest));
+    saveFileConfig(actualValues)
+
+    val uploadObject = Upload.BuilderUpload().setData(fileBytes).setBase(mcuSystem).build()
+    val uploadBytesStream = ByteArrayOutputStream()
+    uploadObject.writeTo(CodedOutputStream(uploadBytesStream))
+    val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/loadBin", Unpooled.copiedBuffer(uploadBytesStream.toByteArray()));
     request.headers().set(HttpHeaderNames.HOST, host)
     request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
     request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
     request.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8")
 
-    client.Client.sendRequest(request, host, port)
-    println(client.ClientHandler.requestResult.code)
-    println(client.ClientHandler.requestResult.stdErr)
-    println(client.ClientHandler.requestResult.stdOut)
+    val clientInstanse = Client(host, port)
+    clientInstanse.sendRequest(request)
+    val requestResult = client.ClientHandler.requestResult
+    var printString: String = ""
+    synchronized(requestResult, {
+        printString = "result code: ${requestResult.code}\n" +
+                "result error message: ${requestResult.stdErr}\n" +
+                "result out message: ${requestResult.stdOut}"
+    })
+    println(printString)
+}
+
+fun isCorrectArguments(actualValues: Map<String, String>): Boolean {
+    //host and flash file its required.
+    val host = actualValues.getOrElse("host", { "" })
+    val flashFilePath = actualValues.getOrElse("flash", { "" })
+
+    if (host.equals("") || flashFilePath.equals("")) {
+        println("incorrect args (host/flash file must be initialized)")
+        return false;
+    }
+    val file = File(flashFilePath)
+    if (!file.exists()) {
+        println("file ${file.absoluteFile} not exist")
+        return false
+    }
+    val ipRegex = Regex("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$")//bad regex. skip ip with first zero (10.05.1.1) and with numbers more 255 (300.300.300.300). this ips is correct for this regex
+    if (!ipRegex.matches(host)) {
+        println("incorrect server address.")
+        return false
+    }
+    return true
 }
 
 fun saveFileConfig(actualValues: Map<String, String>) {
@@ -65,7 +97,6 @@ fun saveFileConfig(actualValues: Map<String, String>) {
     if (!file.exists()) {
         try {
             file.createNewFile()
-
         } catch (e: IOException) {
             println("error creating config file. parameters don't saved")
             e.printStackTrace()
@@ -110,6 +141,7 @@ fun readFileConfig(): Map<String, String> {
 
 fun setOptions(jsap: JSAP) {
     val opthost = FlaggedOption("host").setStringParser(JSAP.STRING_PARSER).setRequired(false).setShortFlag('h').setLongFlag("host")
+    opthost.setHelp("write here only ip address. domain name (e.g. vk.com is incorrect)")
     val optPort = FlaggedOption("port").setStringParser(JSAP.INTEGER_PARSER).setRequired(false).setShortFlag('p').setLongFlag("port")
     val optBinPath = FlaggedOption("flash").setStringParser(JSAP.STRING_PARSER).setRequired(false).setShortFlag('f').setLongFlag("flash")
     val optmcuSystem = FlaggedOption("mcuSystem").setStringParser(JSAP.STRING_PARSER).setRequired(false).setShortFlag('s')

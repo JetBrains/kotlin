@@ -1,11 +1,9 @@
 package client
 
 import io.netty.bootstrap.Bootstrap
-import io.netty.channel.ChannelFutureListener
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
-import io.netty.util.AttributeKey
 import java.net.ConnectException
 
 /**
@@ -32,10 +30,10 @@ class Client constructor(host: String, port: Int) {
             channel.closeFuture().sync()
         } catch (e: InterruptedException) {
             ClientHandler.requestResult.code = 2
-//            ClientHandler.requestResult.errorString = "command execution interrupted"
+            ClientHandler.requestResult.stdErr = "command execution interrupted"
         } catch (e: ConnectException) {
             ClientHandler.requestResult.code = 1
-//            ClientHandler.requestResult.errorString = "don't can connect to server ($host:$port)"
+            ClientHandler.requestResult.stdErr = "don't can connect to server ($host:$port)"
         } finally {
             group.shutdownGracefully()
         }

@@ -1,11 +1,12 @@
 package client
 
+import CodedInputStream
+import UploadResult
 import com.google.protobuf.InvalidProtocolBufferException
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.HttpContent
 import java.io.ByteArrayInputStream
-import CodedInputStream
 
 /**
  * Created by user on 7/8/16.
@@ -39,9 +40,9 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
             resultStdOut = uploadResult.stdOut
             resultStdErr = uploadResult.stdErr
         } catch (e: InvalidProtocolBufferException) {
-            resultStdErr = "error in "
+            resultStdErr = "protobuf parsing error. bytes from server is not message. stack trace:\n ${e.message}"
             resultStdOut = ""
-            resultCode = 2
+            resultCode = 1
         }
         synchronized(requestResult, {
             requestResult.code = resultCode
