@@ -174,14 +174,16 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                 codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), names).toString())
             }
             is LLVMReferenceType -> {
-                val result = codeBuilder.getNewVariable(returnType, pointer = 1)
-                codeBuilder.allocStaticVar(result)
+                val returnVar = codeBuilder.getNewVariable(returnType, pointer = 1)
+                codeBuilder.allocStaticVar(returnVar)
+                returnVar.pointer++
 
                 val args = ArrayList<LLVMSingleValue>()
-                args.add(result)
+                args.add(returnVar)
                 args.addAll(names)
 
                 codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), args).toString())
+                var result = codeBuilder.loadAndGetVariable(returnVar)
 
                 return result
             }
