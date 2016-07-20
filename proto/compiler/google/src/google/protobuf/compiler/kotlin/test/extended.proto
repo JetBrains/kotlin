@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message ExtendedMessage {
+	string stringField = 1;
+	int32 int32Field = 2;
+	double doubleField = 3;
+	bytes bytesField = 4;
+}
