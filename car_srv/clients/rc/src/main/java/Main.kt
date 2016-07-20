@@ -1,4 +1,6 @@
+import DirectionRequest.Command
 import client.Client
+import client.ClientHandler
 import com.martiansoftware.jsap.FlaggedOption
 import com.martiansoftware.jsap.JSAP
 
@@ -6,7 +8,13 @@ import com.martiansoftware.jsap.JSAP
  * Created by user on 7/14/16.
  */
 
-val correctDirectionValues: Array<Char> = arrayOf('w', 's', 'a', 'd', 'h');
+//available direction symbols and command for symbol
+val correctDirectionMap = mapOf<Char, Command>(
+        Pair('w', Command.forward),
+        Pair('s', Command.backward),
+        Pair('a', Command.left),
+        Pair('d', Command.right),
+        Pair('w', Command.stop))
 
 fun main(args: Array<String>) {
     val jsap: JSAP = JSAP()
@@ -24,8 +32,9 @@ fun main(args: Array<String>) {
     val carControl = CarControl(client)
     if (direction.equals('t', true)) {
         initTextInterface(carControl)
-    } else if (correctDirectionValues.contains(direction)) {
-        carControl.executeCommand(direction)
+    } else if (correctDirectionMap.containsKey(direction)) {
+        carControl.executeCommand(correctDirectionMap.get(direction)!!)
+        printRequestResult()
     } else {
         println("incorrect direction.")
         println(jsap.getHelp())
@@ -48,14 +57,24 @@ fun initTextInterface(carControl: CarControl) {
             println(helpMessage)
         } else {
             val directionChar = nextLine.get(0)
-            if (!correctDirectionValues.contains(directionChar)) {
+            if (!correctDirectionMap.containsKey(directionChar)) {
                 println("incorrect argument \"$nextLine\"")
                 println(helpMessage)
             } else {
-                carControl.executeCommand(directionChar)
+                carControl.executeCommand(correctDirectionMap.get(directionChar)!!)
+                printRequestResult()
             }
         }
     }
+}
+
+fun printRequestResult() {
+    synchronized(ClientHandler.requestResult, {
+        if (ClientHandler.requestResult.code != 0) {
+            println("result code: ${ClientHandler.requestResult.code}\nerror message ${ClientHandler.requestResult.errorString}")
+        }
+    })
+
 }
 
 fun setOptions(jsap: JSAP) {

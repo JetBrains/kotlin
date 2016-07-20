@@ -17,13 +17,26 @@ apply plugin: 'kotlin'
 
 sourceCompatibility = 1.5
 
+task compileProto(type: Exec) {
+    executable "./compileProto.sh"
+}
+task buildProtoLib(type: Copy) {
+    //just copy lib src to project
+    def pathToProtoKotSrc = "../../../proto/compiler/src/"
+    from pathToProtoKotSrc + "CodedInputStream.kt", pathToProtoKotSrc + "CodedOutputStream.kt",
+            pathToProtoKotSrc + "WireFormat.kt", pathToProtoKotSrc + "WireType.kt",
+            pathToProtoKotSrc + "InvalidProtocolBufferException.kt"
+    into "src/main/java"
+}
+
 task getDeps(type: Copy) {
     from sourceSets.main.compileClasspath
     into 'build/libs'
 }
 
 build.dependsOn getDeps
-
+compileKotlin.dependsOn compileProto
+compileProto.dependsOn buildProtoLib
 repositories {
     mavenCentral()
 }
@@ -42,7 +55,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "io.netty:netty-all:4.1.2.Final"
     compile "com.google.protobuf:protobuf-java:3.0.0-beta-3"
-    compile group: "com.martiansoftware",name:"jsap",version:"2.1"
+    compile group: "com.martiansoftware", name: "jsap", version: "2.1"
 
 
     testCompile group: 'junit', name: 'junit', version: '4.11'

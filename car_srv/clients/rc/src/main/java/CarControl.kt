@@ -1,8 +1,7 @@
 import client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
-import proto.car.RouteP
-import proto.car.RouteP.Direction.Command
+import java.io.ByteArrayOutputStream
 
 /**
  * Created by user on 7/14/16.
@@ -15,27 +14,14 @@ class CarControl constructor(client: Client) {
         this.client = client
     }
 
-    fun executeCommand(direction: Char) {
+    fun executeCommand(command: DirectionRequest.Command) {
 
-        val directionBuilder = RouteP.Direction.newBuilder()
-        when (direction) {
-            'w' -> {
-                directionBuilder.setCommand(Command.forward)
-            }
-            's' -> {
-                directionBuilder.setCommand(Command.backward)
-            }
-            'd' -> {
-                directionBuilder.setCommand(Command.right)
-            }
-            'a' -> {
-                directionBuilder.setCommand(Command.left)
-            }
-            'h' -> {
-                directionBuilder.setCommand(Command.stop)
-            }
-        }
-        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/control", Unpooled.copiedBuffer(directionBuilder.build().toByteArray()));
+        val directionBuilder = DirectionRequest.BuilderDirectionRequest()
+        directionBuilder.setCommand(command)
+        val byteArrayStream = ByteArrayOutputStream()
+
+        directionBuilder.build().writeTo(CodedOutputStream(byteArrayStream))
+        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/control", Unpooled.copiedBuffer(byteArrayStream.toByteArray()));
         request.headers().set(HttpHeaderNames.HOST, client.host)
         request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
         request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())

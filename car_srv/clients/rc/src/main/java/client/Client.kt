@@ -19,7 +19,7 @@ class Client constructor(host: String, port: Int) {
         this.port = port
     }
 
-    fun sendRequest(request: HttpRequest): Int {
+    fun sendRequest(request: HttpRequest) {
         val group = NioEventLoopGroup(1)
         try {
             val bootstrap = Bootstrap()
@@ -29,15 +29,14 @@ class Client constructor(host: String, port: Int) {
             channel.writeAndFlush(request)
             channel.closeFuture().sync()
         } catch (e: InterruptedException) {
-            println("interrupted before request done")
-            return 2
+            ClientHandler.requestResult.code = 2
+            ClientHandler.requestResult.errorString = "command execution interrupted"
         } catch (e: ConnectException) {
-            println("connection error")
-            return 1
+            ClientHandler.requestResult.code = 1
+            ClientHandler.requestResult.errorString = "don't can connect to server ($host:$port)"
         } finally {
             group.shutdownGracefully()
         }
-        return ClientHandler.requestResult.code
     }
 
 }
