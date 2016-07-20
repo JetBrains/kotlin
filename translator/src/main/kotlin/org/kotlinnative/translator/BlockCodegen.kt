@@ -106,19 +106,19 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement): LLVMSingleValue? {
-
         val type = receiver.type as LLVMReferenceType
-
         val clazz = resolveClassOrObjectLocation(type)
-
         val field = clazz.fieldsIndex[selectorName]
+
         if (field != null) {
             val result = codeBuilder.getNewVariable(field.type, pointer = 1)
             codeBuilder.loadClassField(result, receiver, field.offset)
             return result
         }
 
-        val methodName = clazz.structName + '.' + selectorName.substringBefore('(')
+        val typePath = type.location.joinToString(".")
+        val methodName = "${if (typePath.length > 0) "$typePath." else "" }${clazz.structName}.${selectorName.substringBefore('(')}"
+
         val method = clazz.methods[methodName]!!
         val returnType = clazz.methods[methodName]!!.returnType!!.type
 
@@ -133,7 +133,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun resolveClassOrObjectLocation(type: LLVMReferenceType): StructCodegen {
         if (type.location.size == 0) {
             return state.classes[type.type] ?: state.objects[type.type]!!
-
         }
 
         var codegen = state.classes[type.location[0]]!!
