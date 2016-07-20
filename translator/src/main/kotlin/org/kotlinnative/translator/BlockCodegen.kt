@@ -231,7 +231,13 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
 
-        return codeBuilder.addPrimitiveBinaryOperation(operator, expr.operationReference, left, right)
+        val result = codeBuilder.addPrimitiveBinaryOperation(operator, expr.operationReference, left, right)
+
+        if (left.type is LLVMReferenceType && left.pointer > 0 && right.pointer > 0) {
+            variableManager.addVariable((left as LLVMVariable).kotlinName!!, result, scopeDepth)
+        }
+
+        return result
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
@@ -359,9 +365,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                     val allocVar = variableManager.receiveVariable(identifier, assignExpression.type, LLVMRegisterScope(), pointer = 0)
                     codeBuilder.allocStackVar(allocVar)
                     allocVar.pointer++
+                    allocVar.kotlinName = identifier
+
                     variableManager.addVariable(identifier, allocVar, scopeDepth)
                     copyVariable(assignExpression, allocVar)
                 } else {
+                    assignExpression.kotlinName = identifier
                     variableManager.addVariable(identifier, assignExpression, scopeDepth)
                 }
             }

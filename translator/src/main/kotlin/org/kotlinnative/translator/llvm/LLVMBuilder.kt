@@ -93,7 +93,7 @@ class LLVMBuilder(val arm: Boolean) {
                     return result
                 }
 
-                if (firstOp.pointer > 1 && secondOp.pointer > 0) {
+                if (firstOp.type is LLVMReferenceType && firstOp.pointer > 0 && secondOp.pointer > 0) {
                     return secondOp as LLVMVariable
                 }
 
