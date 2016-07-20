@@ -4,6 +4,8 @@ import com.google.protobuf.InvalidProtocolBufferException
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.HttpContent
+import java.io.ByteArrayInputStream
+import CodedInputStream
 
 /**
  * Created by user on 7/8/16.
@@ -22,24 +24,29 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
 
-        val resultCode:Int
-        val resultStdOut:String
-        val resultStdErr:String
+        if (contentBytes.size == 0) {
+            ctx.close()
+            return
+        }
+
+        val resultCode: Int
+        val resultStdOut: String
+        val resultStdErr: String
         try {
-//            val uploadResult: Carkot.UploadResult = Carkot.UploadResult.parseFrom(contentBytes)
-//            resultCode = uploadResult.resultCode
-//            resultStdOut = uploadResult.stdOut
-//            resultStdErr = uploadResult.stdErr
+            val uploadResult = UploadResult.BuilderUploadResult().build()
+            uploadResult.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
+            resultCode = uploadResult.resultCode
+            resultStdOut = uploadResult.stdOut
+            resultStdErr = uploadResult.stdErr
         } catch (e: InvalidProtocolBufferException) {
-            e.printStackTrace()
-            resultStdErr = ""
+            resultStdErr = "error in "
             resultStdOut = ""
             resultCode = 2
         }
         synchronized(requestResult, {
-//            requestResult.code = resultCode
-//            requestResult.stdErr = resultStdErr
-//            requestResult.stdOut = resultStdOut
+            requestResult.code = resultCode
+            requestResult.stdErr = resultStdErr
+            requestResult.stdOut = resultStdOut
         })
         ctx.close()
     }

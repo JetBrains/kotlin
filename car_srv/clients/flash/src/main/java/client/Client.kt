@@ -32,10 +32,10 @@ class Client constructor(host: String, port: Int) {
             channel.closeFuture().sync()
         } catch (e: InterruptedException) {
             ClientHandler.requestResult.code = 2
-            ClientHandler.requestResult.errorString = "command execution interrupted"
+//            ClientHandler.requestResult.errorString = "command execution interrupted"
         } catch (e: ConnectException) {
             ClientHandler.requestResult.code = 1
-            ClientHandler.requestResult.errorString = "don't can connect to server ($host:$port)"
+//            ClientHandler.requestResult.errorString = "don't can connect to server ($host:$port)"
         } finally {
             group.shutdownGracefully()
         }

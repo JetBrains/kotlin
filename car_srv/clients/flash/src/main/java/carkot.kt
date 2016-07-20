@@ -1,11 +1,11 @@
-class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.String = "", method: Method = Upload.Method.BuilderMethod().build()) {
+class Upload private constructor (data: ByteArray = ByteArray(0), base: String = "", method: Upload.Method = Upload.Method.BuilderMethod().build()) {
   var data : ByteArray
     private set
 
-  var base : kotlin.String
+  var base : String
     private set
 
-  var method : Method
+  var method : Upload.Method
     private set
 
 
@@ -14,17 +14,17 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
     this.base = base
     this.method = method
   }
-  class Method private constructor (type: TYPE = Upload.Method.TYPE.fromIntToTYPE(0), port: kotlin.String = "", device: kotlin.String = "", arguments: MutableList <kotlin.String>  = mutableListOf()) {
-    var type : TYPE
+  class Method private constructor (type: Upload.Method.TYPE = Upload.Method.TYPE.fromIntToTYPE(0), port: String = "", device: String = "", arguments: MutableList <String> = mutableListOf()) {
+    var type : Upload.Method.TYPE
       private set
 
-    var port : kotlin.String
+    var port : String
       private set
 
-    var device : kotlin.String
+    var device : String
       private set
 
-    var arguments : MutableList <kotlin.String> 
+    var arguments : MutableList <String>
       private set
 
 
@@ -70,43 +70,43 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
       }
     }
 
-    class BuilderMethod constructor (type: TYPE = Upload.Method.TYPE.fromIntToTYPE(0), port: kotlin.String = "", device: kotlin.String = "", arguments: MutableList <kotlin.String>  = mutableListOf()) {
-      var type : TYPE
+    class BuilderMethod constructor (type: Upload.Method.TYPE = Upload.Method.TYPE.fromIntToTYPE(0), port: String = "", device: String = "", arguments: MutableList <String> = mutableListOf()) {
+      var type : Upload.Method.TYPE
         private set
-      fun setType(value: TYPE): Upload.Method.BuilderMethod {
+      fun setType(value: Upload.Method.TYPE): Upload.Method.BuilderMethod {
         type = value
         return this
       }
 
-      var port : kotlin.String
+      var port : String
         private set
-      fun setPort(value: kotlin.String): Upload.Method.BuilderMethod {
+      fun setPort(value: String): Upload.Method.BuilderMethod {
         port = value
         return this
       }
 
-      var device : kotlin.String
+      var device : String
         private set
-      fun setDevice(value: kotlin.String): Upload.Method.BuilderMethod {
+      fun setDevice(value: String): Upload.Method.BuilderMethod {
         device = value
         return this
       }
 
-      var arguments : MutableList <kotlin.String> 
+      var arguments : MutableList <String>
         private set
-      fun setArguments(value: MutableList <kotlin.String> ): Upload.Method.BuilderMethod {
+      fun setArguments(value: MutableList <String>): Upload.Method.BuilderMethod {
         arguments = value
         return this
       }
-      fun setkotlin.String(index: Int, value: kotlin.String):  {
+      fun setString(index: Int, value: String): Upload.Method.BuilderMethod {
         arguments[index] = value
         return this
       }
-      fun addkotlin.String(value: kotlin.String):  {
+      fun addString(value: String): Upload.Method.BuilderMethod {
         arguments.add(value)
         return this
       }
-      fun addAllkotlin.String(value: Iterable<kotlin.String>):  {
+      fun addAllString(value: Iterable<String>): Upload.Method.BuilderMethod {
         for (item in value) {
           arguments.add(item)
         }
@@ -122,23 +122,23 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
       }
 
       fun readFrom (input: CodedInputStream): Upload.Method.BuilderMethod {
-        type = TYPE.fromIntToTYPE(input.readEnum(1))
+        type = Upload.Method.TYPE.fromIntToTYPE(input.readEnum(1))
         port = input.readString(2)
         device = input.readString(3)
         val tag = input.readTag(4, WireType.LENGTH_DELIMITED)
         val expectedSize = input.readInt32NoTag()
         var readSize = 0
         while(readSize != expectedSize) {
-          val tmp: kotlin.String.Builderkotlin.String = kotlin.String.Builderkotlin.String()
+          var tmp: String = ""
           tmp = input.readString(4)
           readSize += WireFormat.getStringSize(4, tmp)
-          arguments.add(tmp.build())
+          arguments.add(tmp)
         }
         return this
 }
 
-      fun build(): Method {
-        return Method(type, port, device, arguments)
+      fun build(): Upload.Method {
+        return Upload.Method(type, port, device, arguments)
       }
 
       fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -148,17 +148,17 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
         val fieldNumber = WireFormat.getTagFieldNumber(tag)
         val wireType = WireFormat.getTagWireType(tag)
         when(fieldNumber) {
-          1 -> type = TYPE.fromIntToTYPE(input.readEnumNoTag())
+          1 -> type = Upload.Method.TYPE.fromIntToTYPE(input.readEnumNoTag())
           2 -> port = input.readStringNoTag()
           3 -> device = input.readStringNoTag()
           4 -> {
             val expectedSize = input.readInt32NoTag()
             var readSize = 0
             while(readSize != expectedSize) {
-              val tmp: kotlin.String.Builderkotlin.String = kotlin.String.Builderkotlin.String()
+              var tmp: String = ""
               tmp = input.readString(4)
               readSize += WireFormat.getStringSize(4, tmp)
-              arguments.add(tmp.build())
+              arguments.add(tmp)
             }
           }
         }
@@ -184,7 +184,7 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
     }
 
 
-    fun mergeWith (other: Method) {
+    fun mergeWith (other: Upload.Method) {
       type = other.type
       port = other.port
       device = other.device
@@ -219,7 +219,7 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
     method.writeTo(output)
   }
 
-  class BuilderUpload constructor (data: ByteArray = ByteArray(0), base: kotlin.String = "", method: Method = Upload.Method.BuilderMethod().build()) {
+  class BuilderUpload constructor (data: ByteArray = ByteArray(0), base: String = "", method: Upload.Method = Upload.Method.BuilderMethod().build()) {
     var data : ByteArray
       private set
     fun setData(value: ByteArray): Upload.BuilderUpload {
@@ -227,16 +227,16 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
       return this
     }
 
-    var base : kotlin.String
+    var base : String
       private set
-    fun setBase(value: kotlin.String): Upload.BuilderUpload {
+    fun setBase(value: String): Upload.BuilderUpload {
       base = value
       return this
     }
 
-    var method : Method
+    var method : Upload.Method
       private set
-    fun setMethod(value: Method): Upload.BuilderUpload {
+    fun setMethod(value: Upload.Method): Upload.BuilderUpload {
       method = value
       return this
     }
@@ -312,11 +312,11 @@ class Upload private constructor (data: ByteArray = ByteArray(0), base: kotlin.S
 }
 
 
-class UploadResult private constructor (stdOut: kotlin.String = "", stdErr: kotlin.String = "", resultCode: Int = 0) {
-  var stdOut : kotlin.String
+class UploadResult private constructor (stdOut: String = "", stdErr: String = "", resultCode: Int = 0) {
+  var stdOut : String
     private set
 
-  var stdErr : kotlin.String
+  var stdErr : String
     private set
 
   var resultCode : Int
@@ -335,17 +335,17 @@ class UploadResult private constructor (stdOut: kotlin.String = "", stdErr: kotl
     output.writeInt32 (3, resultCode)
   }
 
-  class BuilderUploadResult constructor (stdOut: kotlin.String = "", stdErr: kotlin.String = "", resultCode: Int = 0) {
-    var stdOut : kotlin.String
+  class BuilderUploadResult constructor (stdOut: String = "", stdErr: String = "", resultCode: Int = 0) {
+    var stdOut : String
       private set
-    fun setStdOut(value: kotlin.String): UploadResult.BuilderUploadResult {
+    fun setStdOut(value: String): UploadResult.BuilderUploadResult {
       stdOut = value
       return this
     }
 
-    var stdErr : kotlin.String
+    var stdErr : String
       private set
-    fun setStdErr(value: kotlin.String): UploadResult.BuilderUploadResult {
+    fun setStdErr(value: String): UploadResult.BuilderUploadResult {
       stdErr = value
       return this
     }
@@ -420,8 +420,8 @@ class UploadResult private constructor (stdOut: kotlin.String = "", stdErr: kotl
 }
 
 
-class LogMessage private constructor (source: kotlin.String = "", message: ByteArray = ByteArray(0)) {
-  var source : kotlin.String
+class LogMessage private constructor (source: String = "", message: ByteArray = ByteArray(0)) {
+  var source : String
     private set
 
   var message : ByteArray
@@ -438,10 +438,10 @@ class LogMessage private constructor (source: kotlin.String = "", message: ByteA
     output.writeBytes (2, message)
   }
 
-  class BuilderLogMessage constructor (source: kotlin.String = "", message: ByteArray = ByteArray(0)) {
-    var source : kotlin.String
+  class BuilderLogMessage constructor (source: String = "", message: ByteArray = ByteArray(0)) {
+    var source : String
       private set
-    fun setSource(value: kotlin.String): LogMessage.BuilderLogMessage {
+    fun setSource(value: String): LogMessage.BuilderLogMessage {
       source = value
       return this
     }
