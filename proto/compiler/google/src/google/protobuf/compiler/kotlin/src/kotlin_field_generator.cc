@@ -194,8 +194,15 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
             vars["fieldNumber"] = std::to_string(getFieldNumber());
             vars["dollar"] = "$";
 
+            // We will create some temporary variables
+            // So we place following code into separate block for the sake of hygiene
+            printer->Print("run {\n");
+            printer->Indent();
+
             // read tag
-            printer->Print(vars, "input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+            if (!noTag) {
+                printer->Print(vars, "input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+            }
 
             // read expected size
             printer->Print(vars, "val expectedSize = input.readInt32NoTag()\n");
@@ -209,6 +216,8 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
                                  "throw InvalidProtocolBufferException ("
                                      "\"Expected size $dollar${expectedSize} got $dollar${$fieldName$.getSize()}"
                                  "\") }\n");
+            printer->Outdent();
+            printer->Print("}\n");
         }
         else {
             vars["fieldNumber"] = std::to_string(getFieldNumber());

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message Grandfather {
+	message FatherLeft {
+		message SonLeftLeft {
+			FatherLeft father = 1;
+			Grandfather.FatherRight.SonRightLeft brother = 2;
+		}
+
+		message SonLeftRight {
+			string foo = 3;
+		}
+	}
+
+	message FatherRight {
+		message SonRightLeft {
+			string bar = 4;
+		}
+
+		message SonRightRight {
+			Grandfather.FatherLeft.SonLeftRight brother = 5;
+		}
+	}
+}

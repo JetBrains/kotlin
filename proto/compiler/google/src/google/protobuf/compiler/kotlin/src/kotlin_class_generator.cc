@@ -328,16 +328,22 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Print(vars,
                    "fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): $builderName$ {\n");
     printer->Indent();
-    printer->Print("while(parseFieldFrom(input)) {\n");
+
+    // read while we won't exceed expected amount of bytes
+    printer->Print("while(getSize() < expectedSize) {\n");
     printer->Indent();
-    printer->Print("if (getSize() == expectedSize) { break }\n");
-    vars["dollar"] = "$";
-    printer->Print(vars,
-            "if (getSize() > expectedSize) { "
-            "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSize()}\") "
-             "}\n");
+
+    printer->Print("parseFieldFrom(input)\n");
+
     printer->Outdent(); // while-loop;
     printer->Print("}\n");
+
+    // check if we read more than expected
+    vars["dollar"] = "$";
+    printer->Print(vars,
+                   "if (getSize() > expectedSize) { "
+                           "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSize()}\") "
+                           "}\n");
 
     printer->Print("return this\n");
 

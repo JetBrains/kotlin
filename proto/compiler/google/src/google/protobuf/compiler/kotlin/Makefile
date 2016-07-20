@@ -34,6 +34,7 @@ generate:
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/nested-msg.proto
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/routeDone.proto
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/route.proto
+	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/cross-branch-access.proto
 
 debug:
 	gdb --args ./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/src ./test/addressbook.proto 
