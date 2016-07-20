@@ -54,7 +54,7 @@ private:
      * both methods are structurally the same with some trivial substitutions
      * (read -> write and etc.)
      */
-    void generateSerializers(io::Printer * printer, bool isRead = false) const;
+    void generateWriteToMethod(io::Printer *printer) const;
     void generateMergeMethods(io::Printer *printer) const;
     void generateParseMethods(io::Printer * printer) const;
     void generateGetSizeMethod(io::Printer * printer) const;

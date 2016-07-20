@@ -49,7 +49,7 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
 
     // write serialization methods only for fair classes, read methods only for Builders)
     printer->Print("\n");
-    generateSerializers(printer, /* isRead = */ isBuilder);
+    generateWriteToMethod(printer);
 
     // builder, mergeFrom and only for fair classes
     if (!isBuilder) {
@@ -189,26 +189,17 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
 }
 
 
-void ClassGenerator::generateSerializers(io::Printer *printer, bool isRead) const {
-    map <string, string> vars;
-    vars["funName"]= isRead ? "readFrom"       : "writeTo";
-    vars["stream"] = isRead ? "CodedInputStream"    : "CodedOutputStream";
-    vars["arg"]    = isRead ? "input"               : "output";
-    vars["returnType"] = isRead ? getBuilderFullType() : "Unit";
-    vars["maybeReturn"] = isRead ? "return this\n" : "";
-
+void ClassGenerator::generateWriteToMethod(io::Printer *printer) const {
     // generate function header
-    printer->Print(vars,
-                   "fun $funName$ ($arg$: $stream$): $returnType$ {"
+    printer->Print("fun writeTo (output: CodedOutputStream) {"
                    "\n");
     printer->Indent();
 
     // generate code for serialization/deserialization of fields
     for (int i = 0; i < properties.size(); ++i) {
-        properties[i]->generateSerializationCode(printer, isRead);
+        properties[i]->generateSerializationCode(printer, /* isRead = */ false, /* noTag = */ false);
     }
 
-    printer->Print(vars, "$maybeReturn$");
     printer->Outdent();
     printer->Print("}\n");
 }
@@ -274,7 +265,7 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
 }
 
 void ClassGenerator::generateParseMethods(io::Printer *printer) const {
-    // parseFieldFrom(input: CodedInputStream): Boolean
+    // ====== parseFieldFrom(input: CodedInputStream): Boolean =========
     map <string, string> vars;
     vars["builderName"] = getBuilderFullType();
 
@@ -324,7 +315,8 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Outdent();
     printer->Print("}\n");  // parseFieldFrom body
 
-    // parseFromWithSize(input: CodedInputStream, expectedSize: Int)
+
+    // ====== parseFromWithSize(input: CodedInputStream, expectedSize: Int) =========
     printer->Print(vars,
                    "fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): $builderName$ {\n");
     printer->Indent();
@@ -338,7 +330,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Outdent(); // while-loop;
     printer->Print("}\n");
 
-    // check if we read more than expected
+    // check if we have read more than expected
     vars["dollar"] = "$";
     printer->Print(vars,
                    "if (getSize() > expectedSize) { "
@@ -351,7 +343,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Print("}\n");
 
 
-    // parseFrom(input: CodedInputStream)
+    // ======== parseFrom(input: CodedInputStream) =========
     printer->Print(vars,
                    "fun parseFrom(input: CodedInputStream): $builderName$ {\n");
     printer->Indent();
