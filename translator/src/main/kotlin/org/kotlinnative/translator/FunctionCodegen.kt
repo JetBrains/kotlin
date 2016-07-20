@@ -11,7 +11,8 @@ import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
 
-class FunctionCodegen(override val state: TranslationState, override val variableManager: VariableManager, val function: KtNamedFunction, override val codeBuilder: LLVMBuilder) :
+class FunctionCodegen(override val state: TranslationState, override val variableManager: VariableManager, val function: KtNamedFunction,
+                      override val codeBuilder: LLVMBuilder) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
     var name = function.fqName.toString()
@@ -22,6 +23,7 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
         args.addAll(descriptor.valueParameters.map {
             LLVMMapStandardType(it.name.toString(), it.type)
         })
+
 
         returnType = LLVMMapStandardType("instance", descriptor.returnType!!)
         val retType = returnType!!.type
@@ -57,9 +59,6 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
     private fun generateDeclaration(this_type: LLVMVariable? = null): Boolean {
         var external = false
 
-        if (this_type != null) {
-            args.addFirst(this_type)
-        }
         args.forEach {
             val type = it.type
             if (type is LLVMReferenceType && state.classes.containsKey(type.type)) {
@@ -83,6 +82,10 @@ class FunctionCodegen(override val state: TranslationState, override val variabl
         if (returnType!!.pointer > 0) {
             actualReturnType = LLVMVoidType()
             actualArgs.add(returnType!!)
+        }
+
+        if (this_type != null) {
+            actualArgs.add(this_type)
         }
 
         actualArgs.addAll(args)

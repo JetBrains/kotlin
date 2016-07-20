@@ -36,6 +36,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
+            is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
             null -> {
                 variableManager.pullUpwardsLevel(scopeDepth)
@@ -60,9 +61,9 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtCallableReferenceExpression -> evaluateCallableReferenceExpression(expr)
+            is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, true)
-            is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
@@ -102,12 +103,14 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             val methodName = clazz.structName + '.' + selectorName.substringBefore('(')
             val method = clazz.methods[methodName]!!
             val returnType = clazz.methods[methodName]!!.returnType!!.type
-            val methodArgs = mutableListOf<LLVMSingleValue>(receiver)
 
             val names = parseArgList(expr.lastChild as KtCallExpression, scopeDepth)
-            methodArgs.addAll(names)
+            val loadedArgs = loadArgsIfRequired(names, method.args)
+            val callArgs = mutableListOf<LLVMSingleValue>(receiver)
+            callArgs.addAll(loadedArgs)
 
-            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), loadArgsIfRequired(methodArgs, method.args))
+
+            return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
         }
     }
 
