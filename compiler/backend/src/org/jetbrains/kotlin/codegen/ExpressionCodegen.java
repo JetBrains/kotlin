@@ -405,18 +405,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CodegenContext<?> context,
             @NotNull KtSuperExpression expression
     ) {
-        BindingContext bindingContext = context.getState().getBindingContext();
-        PsiElement labelPsi = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());
-        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, labelPsi);
-        DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
-        // "super<descriptor>@labelTarget"
-        if (labelTarget != null) {
-            return labelTarget;
-        }
-        assert descriptor instanceof ClassDescriptor : "Don't know how to generate super-call to not a class";
-        CodegenContext result = getParentContextSubclassOf((ClassDescriptor) descriptor, context);
-        assert result != null : "Can't find parent context for " + descriptor;
-        return result.getThisDescriptor();
+        KotlinType thisTypeForSuperCall = context.getState().getBindingContext().get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression);
+        assert thisTypeForSuperCall != null : "This type for superCall ''" + expression.getText() + "'' should be not null!";
+        ClassifierDescriptor descriptor = thisTypeForSuperCall.getConstructor().getDeclarationDescriptor();
+        assert descriptor instanceof ClassDescriptor :
+                "'This' reference target for ''" + expression.getText() + "''should be class descriptor, but was " + descriptor;
+        return (ClassDescriptor) descriptor;
     }
 
     @NotNull
