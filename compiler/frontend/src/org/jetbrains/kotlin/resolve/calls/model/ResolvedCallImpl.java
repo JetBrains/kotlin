@@ -47,13 +47,6 @@ import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.UNKNOW
 public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableResolvedCall<D> {
     private static final Logger LOG = Logger.getInstance(ResolvedCallImpl.class);
 
-    public static final Function<MutableResolvedCall<?>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<MutableResolvedCall<?>, CallableDescriptor>() {
-        @Override
-        public CallableDescriptor fun(MutableResolvedCall<?> resolvedCall) {
-            return resolvedCall.getCandidateDescriptor();
-        }
-    };
-
     public static final Function<MutableResolvedCall<?>, CallableDescriptor> MAP_TO_RESULT = new Function<MutableResolvedCall<?>, CallableDescriptor>() {
         @Override
         public CallableDescriptor fun(MutableResolvedCall<?> resolvedCall) {
