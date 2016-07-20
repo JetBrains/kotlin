@@ -27,7 +27,7 @@ if (commander.flash) {
     }
 }
 
-const builderCarkot = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "carkot.proto" : "./proto/carkot.proto");//todo!!1 путь до каталога, прото файлы - в нём
+const builderCarkot = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "carkot.proto" : "./proto/carkot.proto");
 const builderControl = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "route.proto" : "./proto/route.proto");
 
 var executeShell = "./st-flash";
