@@ -183,10 +183,18 @@ internal class ExpressionDecomposer private constructor(
         }
 
         if (operator.isAssignment) {
-            // Must be (someThingWithSideEffect).x = arg2, because arg1 can have side effect
-            assert(arg1 is JsNameRef) { "Valid JavaScript left-hand side must be JsNameRef, got: $this" }
-            val arg1AsRef = arg1 as JsNameRef
-            arg1AsRef.qualifier = arg1AsRef.qualifier?.extractToTemporary()
+            val lhs = arg1
+            when (lhs) {
+                is JsNameRef -> {
+                    lhs.qualifier = lhs.qualifier?.extractToTemporary()
+                }
+                is JsArrayAccess -> {
+                    lhs.array = lhs.array.extractToTemporary()
+                }
+                else -> {
+                    error("Valid JavaScript left-hand side must be either JsNameRef or JsArrayAccess, got: $this")
+                }
+            }
         }
         else {
             arg1 = arg1.extractToTemporary()

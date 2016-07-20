@@ -77,6 +77,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("arrayAccessLhsDecomposed.kt")
+    public void testArrayAccessLhsDecomposed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccessLhsDecomposed.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("arrayLiteral.kt")
     public void testArrayLiteral() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteral.kt");
