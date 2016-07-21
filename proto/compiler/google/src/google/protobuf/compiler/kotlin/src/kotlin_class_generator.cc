@@ -336,7 +336,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     vars["dollar"] = "$";
     printer->Print(vars,
                    "if (getSizeNoTag() > expectedSize) { "
-                           "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSize()}\") "
+                           "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSizeNoTag()}\") "
                            "}\n");
 
     printer->Print("return this\n");
@@ -360,7 +360,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
 
 void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
     // getSize(): Int
-    printer->Print("fun getSize(): Int {\n");
+    printer->Print("fun getSize(fieldNumber: Int): Int {\n");
     printer->Indent();
 
     printer->Print("var size = 0\n");
@@ -368,6 +368,7 @@ void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
         properties[i]->generateSizeEstimationCode(printer, "size", /* noTag = */ false);
     }
 
+    printer->Print("size += WireFormat.getVarint32Size(size) + WireFormat.getTagSize(fieldNumber, WireType.LENGTH_DELIMITED)\n");
     printer->Print("return size\n");
     printer->Outdent();
     printer->Print("}\n");
@@ -379,7 +380,7 @@ void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
 
     printer->Print("var size = 0\n");
     for (int i = 0; i < properties.size(); ++i) {
-        properties[i]->generateSizeEstimationCode(printer, "size", /* noTag = */ true);
+        properties[i]->generateSizeEstimationCode(printer, "size", /* noTag = */ false);
     }
 
     printer->Print("return size\n");

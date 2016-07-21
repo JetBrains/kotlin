@@ -117,9 +117,6 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
        * - Write length as int32 (note that tag shouldn't be added)
        * - Write all repeated elements via recursive call (for primitive types without tags)
        */
-        printer->Print(vars, "if ($fieldName$.size > 0) {\n");
-        printer->Indent();
-
         // tag
         printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
 
@@ -140,9 +137,6 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive);
 
         printer->Outdent(); // for-loop
-        printer->Print("}\n");
-
-        printer->Outdent(); // if-clause
         printer->Print("}\n");
     }
 }
@@ -184,17 +178,15 @@ void FieldGenerator::generateSerializationForRepeated(io::Printer *printer, bool
         printer->Print(vars, "$fieldName$.add(tmp)\n");
     }
     else {
-        /**
-       * Protobuf format:
-       * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
-       * - Write tag explicitly
-       * - Write length as int32 (note that tag shouldn't be added)
-       * - Write all repeated elements via recursive call (for primitive types without tags)
-       */
-        printer->Print(vars, "if ($fieldName$.size > 0) {\n");
-        printer->Indent();
+       /**
+        * Protobuf format:
+        * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
+        * - Write tag explicitly
+        * - Write length as int32 (note that tag shouldn't be added)
+        * - Write all repeated elements via recursive call (for primitive types without tags)
+        */
 
-             // all elements
+        // all elements
         printer->Print(vars, "for (item in $fieldName$) {\n");
         printer->Indent();
 
@@ -207,18 +199,18 @@ void FieldGenerator::generateSerializationForRepeated(io::Printer *printer, bool
 
         printer->Outdent(); // for-loop
         printer->Print("}\n");
-
-        printer->Outdent(); // if-clause
-        printer->Print("}\n");
     }
 }
 
 void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool isRead, bool noTag) const {
+
     map <string, string> vars;
     vars["converter"] = getEnumFromIntConverter();
     vars["fieldName"] = simpleName;
     vars["suffix"] = getKotlinFunctionSuffix();
     vars["fieldNumber"] = std::to_string(getFieldNumber());
+    vars["initValue"] = getInitValue();
+
     if (isRead) {
         if (noTag) {
             printer->Print(vars, "$fieldName$ = $converter$(input.read$suffix$NoTag())\n");
@@ -267,7 +259,7 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
         // check that actual size equal to expected size
         printer->Print(vars, "if (expectedSize != $fieldName$.getSizeNoTag()) { "
                 "throw InvalidProtocolBufferException ("
-                "\"Expected size $dollar${expectedSize} got $dollar${$fieldName$.getSize()}"
+                "\"Expected size $dollar${expectedSize} got $dollar${$fieldName$.getSizeNoTag()}"
                 "\") }\n");
         printer->Outdent();
         printer->Print("}\n");
@@ -277,7 +269,7 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
         printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
 
         // write message length
-        printer->Print(vars, "output.writeInt32NoTag($fieldName$.getSize())\n");
+        printer->Print(vars, "output.writeInt32NoTag($fieldName$.getSizeNoTag())\n");
 
         // write message itself without tag
         printer->Print(vars,
@@ -309,9 +301,20 @@ void FieldGenerator::generateSerializationForPrimitives(io::Printer * printer, b
 }
 
 void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag) const {
+    map <string, string> vars;
+    vars["fieldName"] = simpleName;
+    vars["initValue"] = getInitValue();
+
+
     /* Try to generate syntax for serialization of repeated fields.
      * Note that it should be first check because of Google's FieldDescriptor structure */
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        // we shouldn't write fields with default values when writing
+        if (!isRead) {
+            printer->Print(vars, "if ($fieldName$.size > 0) {\n");
+            printer->Indent();
+        }
+
         bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
                             descriptor->type() != FieldDescriptor::TYPE_MESSAGE &&
                             descriptor->type() != FieldDescriptor::TYPE_STRING &&
@@ -322,27 +325,48 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
         else {
             generateSerializationForRepeated(printer, isRead, noTag);
         }
-        return;
     }
 
     /* Then check is current field is enum. We have to handle it separately too, because
      * we have to pass enums as Int's to CodedStreams as per protobuf-format */
-    if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
+    else if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
+        // we shouldn't write fields with default values when writing
+        if (!isRead) {
+            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+            printer->Indent();
+        }
+
         generateSerializationForEnums(printer, isRead, noTag);
-        return;
     }
 
     /* Then check for nested messages. Here we re-use writeTo method, that should be defined in
      * that message.
      * Note that readFrom/writeTo methods write message as it's top-level message, i.e. without
      * any tags. Therefore, we have to prepend tags and size manually. */
-    if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
+    else if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
+        // we shouldn't write fields with default values when writing
+        if (!isRead) {
+            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+            printer->Indent();
+        }
+
         generateSerializationForMessages(printer, isRead, noTag);
-        return;
+    }
+    /* Finally, serialize trivial cases */
+    else {
+        // we shouldn't write fields with default values when writing
+        if (!isRead) {
+            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+            printer->Indent();
+        }
+
+        generateSerializationForPrimitives(printer, isRead, noTag);
     }
 
-    /* Finally, serialize trivial cases */
-    generateSerializationForPrimitives(printer, isRead, noTag);
+    if (!isRead) {
+        printer->Outdent();
+        printer->Print("}\n");
+    }
 }
 
 
@@ -414,9 +438,13 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
     vars["varName"] = varName;
     vars["fieldName"] = simpleName;
     vars["fieldNumber"] = std::to_string(getFieldNumber());
+    vars["initValue"] = getInitValue();
 
     // First of all, generate code for repeated fields
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
+        printer->Print(vars, "if ($fieldName$.size != 0) {\n");
+        printer->Indent();
+
         // We will need total byte size of array, because that size is itself a part of the message and
         // adds to total message size.
         // For the sake of hygiene, temporary variables are created in anonymous scope
@@ -434,23 +462,19 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
         singleFieldGen.simpleName = "item";
-        singleFieldGen.generateSizeEstimationCode(printer, "arraySize");
+        singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag);
 
         printer->Outdent();     // for-loop
         printer->Print("}\n");
 
-        // now add to total message size size of array, consisting of:
+        // now add size of array to total message size:
         printer->Print(vars,
                        "$varName$ += arraySize"); // actual array size
-        if (!noTag) {
-            printer->Print(vars,
-                       " + "
-                       "WireFormat.getTagSize($fieldNumber$, WireType.LENGTH_DELIMITED)" // tag size
-                       " + "
-                       "WireFormat.getVarint32Size(arraySize)"); // runtime call, that will get size of varint, denoting size of array
-        }
         printer->Print("\n");
         printer->Outdent();     // anonymous scope
+        printer->Print("}\n");
+
+        printer->Outdent();     // if-clause
         printer->Print("}\n");
 
         return;
@@ -459,27 +483,38 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
     // Then, call getSize recursively for nested messages
     // TODO: currently suboptimal repeatative calls getSize() are being made. We can optimize it later via caching calls to getSize()
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-        // don't forget about tag and length annotation
-        printer->Print(vars, "$varName$ += $fieldName$.getSize()"
+        printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+        printer->Indent();
+        vars["maybeNoTag"] = noTag ? "NoTag" : "";
+        vars["maybeFieldNumber"] = noTag ? "" : std::to_string(getFieldNumber());
+        printer->Print(vars, "$varName$ += $fieldName$.getSize$maybeNoTag$($maybeFieldNumber$)"
                              "\n");
-        if (!noTag) {
-            printer->Print(vars, "$varName$ += "
-                    "WireFormat.getTagSize($fieldNumber$, WireType.LENGTH_DELIMITED)"
-                    " + "
-                    "WireFormat.getVarint32Size($fieldName$.getSize())\n");
-        }
+        printer->Outdent();     // if-clause
+        printer->Print("}\n");
         return;
     }
 
     // Next, process enums as they should be casted to ints manually
     if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
+        printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+        printer->Indent();
+
         printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
+
+        printer->Outdent();     // if-clause
+        printer->Print("}\n");
         return;
     }
 
     // Finally, get size of all primitive types trivially via call to WireFormat in runtime
     vars["kotlinSuffix"] = getKotlinFunctionSuffix();
+    printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+    printer->Indent();
+
     printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size($fieldNumber$, $fieldName$)\n");
+
+    printer->Outdent();     // if-clause
+    printer->Print("}\n");
     return;
 }
 
