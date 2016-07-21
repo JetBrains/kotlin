@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 class A {
     open inner class Inner(val result: String)
 

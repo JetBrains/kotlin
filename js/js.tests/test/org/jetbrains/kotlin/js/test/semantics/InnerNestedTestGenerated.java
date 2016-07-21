@@ -172,4 +172,133 @@ public class InnerNestedTestGenerated extends AbstractInnerNestedTest {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/nestedSimple.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuperConstructorCall extends AbstractInnerNestedTest {
+        @TestMetadata("innerExtendsOuter.kt")
+        public void ignoredInnerExtendsOuter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/innerExtendsOuter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localExtendsInner.kt")
+        public void ignoredLocalExtendsInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/localExtendsInner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsInner.kt")
+        public void ignoredObjectExtendsInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsInner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsInnerDefaultArgument.kt")
+        public void ignoredObjectExtendsInnerDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsInnerDefaultArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsInnerOfLocalVarargAndDefault.kt")
+        public void ignoredObjectExtendsInnerOfLocalVarargAndDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsInnerOfLocalVarargAndDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsInnerOfLocalWithCapture.kt")
+        public void ignoredObjectExtendsInnerOfLocalWithCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsInnerOfLocalWithCapture.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInSuperConstructorCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("deepInnerHierarchy.kt")
+        public void testDeepInnerHierarchy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/deepInnerHierarchy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deepLocalHierarchy.kt")
+        public void testDeepLocalHierarchy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/deepLocalHierarchy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerExtendsInnerViaSecondaryConstuctor.kt")
+        public void testInnerExtendsInnerViaSecondaryConstuctor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/innerExtendsInnerViaSecondaryConstuctor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerExtendsInnerWithProperOuterCapture.kt")
+        public void testInnerExtendsInnerWithProperOuterCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/innerExtendsInnerWithProperOuterCapture.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11833_1.kt")
+        public void testKt11833_1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/kt11833_1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11833_2.kt")
+        public void testKt11833_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/kt11833_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localClassOuterDiffersFromInnerOuter.kt")
+        public void testLocalClassOuterDiffersFromInnerOuter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/localClassOuterDiffersFromInnerOuter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localExtendsLocalWithClosure.kt")
+        public void testLocalExtendsLocalWithClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/localExtendsLocalWithClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localWithClosureExtendsLocalWithClosure.kt")
+        public void testLocalWithClosureExtendsLocalWithClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/localWithClosureExtendsLocalWithClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsClassDefaultArgument.kt")
+        public void testObjectExtendsClassDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsClassDefaultArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsClassVararg.kt")
+        public void testObjectExtendsClassVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsClassVararg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsLocalCaptureInSuperCall.kt")
+        public void testObjectExtendsLocalCaptureInSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsLocalCaptureInSuperCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExtendsLocalWithClosure.kt")
+        public void testObjectExtendsLocalWithClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsLocalWithClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectOuterDiffersFromInnerOuter.kt")
+        public void testObjectOuterDiffersFromInnerOuter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall/objectOuterDiffersFromInnerOuter.kt");
+            doTest(fileName);
+        }
+    }
 }
