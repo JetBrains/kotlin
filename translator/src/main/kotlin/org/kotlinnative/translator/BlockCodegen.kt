@@ -167,7 +167,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
         is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
-        is KtNameReferenceExpression -> evaluatenameReferenceExpression(expr, scopeDepth + 1, classScope)
         else -> variableManager.getLLVMvalue(expr.firstChild.text)
     }
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
