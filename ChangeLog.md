@@ -240,6 +240,7 @@ Using 'this' as function argument in constructor of non-final class
 - [`KT-12084`](https://youtrack.jetbrains.com/issue/KT-12084) Introduce Property: Do not skip outer classes if extractable expression is contained in object literal
 - [`KT-13082`](https://youtrack.jetbrains.com/issue/KT-13082) Rename: Fix exception on property rename preview
 - [`KT-13207`](https://youtrack.jetbrains.com/issue/KT-13207) Safe delete: Fix exception when removing any function in 2016.2
+- [`KT-12945`](https://youtrack.jetbrains.com/issue/KT-12945) Rename: Fix function description in super method warning dialog
 
 ##### New features
 
@@ -252,7 +253,7 @@ Using 'this' as function argument in constructor of non-final class
 - [`KT-12651`](https://youtrack.jetbrains.com/issue/KT-12651) Fix exception in evaluate expression when bad identifier is used for marking object
 - [`KT-12896`](https://youtrack.jetbrains.com/issue/KT-12896) Fix "Step In" to inline functions for Android
 - [`KT-7549`](https://youtrack.jetbrains.com/issue/KT-13037) Allow to evaluate kotlin expressions in Java files
- 
+
 ### JS
 
 - [`KT-3008`](https://youtrack.jetbrains.com/issue/KT-3008) Generate require.js compatible modules
