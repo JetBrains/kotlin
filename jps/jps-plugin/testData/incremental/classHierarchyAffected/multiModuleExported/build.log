@@ -26,7 +26,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'A': it is 'private' in file
+Cannot access 'A': it is private in file
 'public' subclass exposes its 'private' supertype A
 
 ================ Step #2 =================

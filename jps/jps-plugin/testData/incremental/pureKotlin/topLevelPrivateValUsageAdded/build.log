@@ -10,7 +10,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'foo': it is 'private' in file
+Cannot access 'foo': it is private in file
 
 ================ Step #2 =================
 
