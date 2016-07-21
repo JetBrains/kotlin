@@ -37,7 +37,7 @@ for i in $( ls "$DIRECTORY/input"); do
 	    clang-3.6 -S -emit-llvm "$DIRECTORY/c/$TEST.c" -o $DIRECTORY/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
 	fi
 
-	./idea_run.sh $DIRECTORY/kotlin/$TEST.kt $DIRECTORY/linked/$TEST.ll
+	java -jar build/libs/ast-kotlin-1.0-SNAPSHOT.jar  $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
 	llvm-link-3.6 $DIRECTORY/linked/* > $DIRECTORY/linked/run.ll
 	lli-3.6 $DIRECTORY/linked/run.ll
 	

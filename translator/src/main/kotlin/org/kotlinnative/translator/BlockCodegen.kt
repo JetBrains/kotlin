@@ -176,7 +176,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
         is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
         else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluatenameReferenceExpression(expr, scopeDepth + 1, classScope)
-                else variableManager.getLLVMvalue(expr.firstChild.text)
+        else variableManager.getLLVMvalue(expr.firstChild.text)
     }
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
@@ -514,12 +514,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val condition = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         getBrackets = condition.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         val thenExpression = getBrackets.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
-        val elseKeyword = thenExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
-        val elseExpression = elseKeyword.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        val elseKeyword = thenExpression.getNextSiblingIgnoringWhitespaceAndComments()
+        val elseExpression = elseKeyword?.getNextSiblingIgnoringWhitespaceAndComments()
 
         return when (ifExpression) {
-            null -> executeIfBlock(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, scopeDepth + 1)
-            else -> executeIfExpression(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression.firstChild, ifExpression, scopeDepth + 1)
+            null -> executeIfBlock(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression?.firstChild, scopeDepth + 1)
+            else -> executeIfExpression(condition.firstChild as KtBinaryExpression, thenExpression.firstChild, elseExpression!!.firstChild, ifExpression, scopeDepth + 1)
         }
     }
 
@@ -552,10 +552,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
         val endLabel = codeBuilder.getNewLabel(prefix = "if")
 
-        codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
+        codeBuilder.addCondition(conditionResult, thenLabel, if (elseExpression != null) elseLabel else endLabel)
 
         evaluateCodeBlock(thenExpression, thenLabel, endLabel, scopeDepth + 1)
-        evaluateCodeBlock(elseExpression, elseLabel, endLabel, scopeDepth + 1)
+        if (elseExpression != null) {
+            evaluateCodeBlock(elseExpression, elseLabel, endLabel, scopeDepth + 1)
+        }
 
         codeBuilder.markWithLabel(endLabel)
 
