@@ -16,12 +16,15 @@ abstract class StructCodegen(open val state: TranslationState,
                              open val classOrObject: KtClassOrObject,
                              val classDescriptor: ClassDescriptor,
                              open val codeBuilder: LLVMBuilder,
-                             open val parentCodegen: StructCodegen? = null) {
+                             val parentCodegen: StructCodegen? = null) {
 
     val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
     val nestedClasses = HashMap<String, ClassCodegen>()
     val companionMethods = HashMap<String, FunctionCodegen>()
+    val companionFields = ArrayList<LLVMVariable>()
+    val companionFieldsIndex = HashMap<String, LLVMClassVariable>()
+    val companionFieldsSource = HashMap<String, ObjectCodegen>()
 
     val constructorFields = ArrayList<LLVMVariable>()
 

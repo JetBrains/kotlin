@@ -12,16 +12,19 @@ class ObjectCodegen(override val state: TranslationState,
                     override val variableManager: VariableManager,
                     val objectDeclaration: KtObjectDeclaration,
                     override val codeBuilder: LLVMBuilder,
-                    override val parentCodegen: StructCodegen? = null) :
+                    parentCodegen: StructCodegen? = null) :
         StructCodegen(state, variableManager, objectDeclaration, state.bindingContext.get(BindingContext.CLASS, objectDeclaration) ?: throw TranslationException(),
                 codeBuilder, parentCodegen = parentCodegen) {
     override var size: Int = 0
-    override val structName: String
+    override val structName: String = objectDeclaration.name!!
     override val type: LLVMReferenceType
 
     init {
-        structName = (if (parentCodegen != null) parentCodegen.structName + "." else "") + objectDeclaration.name!!
         type = LLVMReferenceType(structName, "class", byRef = true)
+        if (parentCodegen != null) {
+            type.location.addAll(parentCodegen.type.location)
+            type.location.add(parentCodegen.structName)
+        }
         generateInnerFields(objectDeclaration.declarations)
     }
 

@@ -15,18 +15,17 @@ class ClassCodegen(override val state: TranslationState,
                    override val variableManager: VariableManager,
                    val clazz: KtClass,
                    override val codeBuilder: LLVMBuilder,
-                   owner: StructCodegen? = null) :
+                   parentCodegen: StructCodegen? = null) :
 
-        StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder, owner) {
+        StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder, parentCodegen) {
 
     val annotation: Boolean
 
     override var size: Int = 0
-    override val structName: String
+    override val structName: String = clazz.name!!
     override val type: LLVMReferenceType
 
     init {
-        structName = (if (parentCodegen != null) parentCodegen.structName + "." else "") + clazz.name!!
         type = LLVMReferenceType(structName, "class", byRef = true)
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
@@ -35,9 +34,9 @@ class ClassCodegen(override val state: TranslationState,
         indexFields(descriptor, parameterList)
         generateInnerFields(clazz.declarations)
 
-        if (owner != null) {
-            type.location.addAll(owner.type.location)
-            type.location.add(owner.structName)
+        if (parentCodegen != null) {
+            type.location.addAll(parentCodegen.type.location)
+            type.location.add(parentCodegen.structName)
         }
 
         type.size = size
@@ -66,7 +65,8 @@ class ClassCodegen(override val state: TranslationState,
                 fieldsIndex["enum_item"] = item
                 size += type.size
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -89,7 +89,10 @@ class ClassCodegen(override val state: TranslationState,
             for (method in property.methods) {
                 val methodName = method.key.removePrefix(companionObjectName + ".")
                 companionMethods.put(structName + "." + methodName, method.value)
+                companionFieldsSource.put(structName + "." + methodName, property)
             }
+            companionFields.addAll(property.fields)
+            companionFieldsIndex.putAll(property.fieldsIndex)
         }
     }
 
