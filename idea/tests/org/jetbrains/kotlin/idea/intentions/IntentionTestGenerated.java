@@ -106,6 +106,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addConstModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("inapplicableToConst.kt")
+        public void testInapplicableToConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/inapplicableToConst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableToOverride.kt")
+        public void testInapplicableToOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/inapplicableToOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeJvmField.kt")
+        public void testRemoveJvmField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/removeJvmField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeJvmStatic.kt")
+        public void testRemoveJvmStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/removeJvmStatic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addConstModifier/simple.kt");
