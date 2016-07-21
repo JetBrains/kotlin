@@ -229,6 +229,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("dexInline.kt")
+        public void testDexInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/dexInline.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("forLoop.kt")
         public void testForLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/forLoop.kt");

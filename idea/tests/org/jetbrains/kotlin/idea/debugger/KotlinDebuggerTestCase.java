@@ -83,6 +83,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     @Override
     protected void setUp() throws Exception {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        if (getTestName(true).startsWith("dex")) {
+            KotlinPositionManagerKt.setEmulateDexDebugInTests(true);
+        }
         super.setUp();
     }
 
@@ -98,6 +101,10 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        if (getTestName(true).startsWith("dex")) {
+            KotlinPositionManagerKt.setEmulateDexDebugInTests(false);
+        }
+
         EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
             @Override
             public void run() throws Throwable {
