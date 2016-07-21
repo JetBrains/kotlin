@@ -1305,6 +1305,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert delegateExpression != null;
                 delegateExpression.accept(visitor);
             }
+            else if (specifier instanceof KtSuperTypeCallEntry) {
+                specifier.accept(visitor);
+            }
         }
 
         ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassNotAny(descriptor);
