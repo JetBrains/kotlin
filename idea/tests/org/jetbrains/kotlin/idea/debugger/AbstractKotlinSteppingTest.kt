@@ -52,7 +52,7 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         val fileText = FileUtil.loadFile(File(path))
 
         configureSettings(fileText)
-
+        createAdditionalBreakpoints(fileText)
         createDebugProcess(path)
 
         val prefix = "// $command: "

@@ -744,13 +744,13 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractKotlinSteppingTest>() {
-            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
-            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
-            model("debugger/tinyApp/src/stepping/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
-            model("debugger/tinyApp/src/stepping/stepOut", testMethod = "doStepOutTest")
-            model("debugger/tinyApp/src/stepping/stepOver", testMethod = "doStepOverTest")
-            model("debugger/tinyApp/src/stepping/filters", testMethod = "doStepIntoTest")
-            model("debugger/tinyApp/src/stepping/custom", testMethod = "doCustomTest")
+            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest", testClassName = "StepInto")
+            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+            model("debugger/tinyApp/src/stepping/stepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
+            model("debugger/tinyApp/src/stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
+            model("debugger/tinyApp/src/stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
+            model("debugger/tinyApp/src/stepping/filters", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest")
+            model("debugger/tinyApp/src/stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
         }
 
         testClass<AbstractKotlinEvaluateExpressionTest>() {

@@ -256,12 +256,24 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
         try {
+            if (myDebugProcess.isDexDebug()) {
+                val inlineLocations = noStrataLocationsOfLineForInlineFunctions(type, position, myDebugProcess.searchScope)
+                if (!inlineLocations.isEmpty()) {
+                    return inlineLocations
+                }
+            }
+
             val line = position.line + 1
+
             val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
                 type.locationsOfLine(KOTLIN_STRATA_NAME, null, line).filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
             else
                 type.locationsOfLine(line)
-            if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
+
+            if (locations == null || locations.isEmpty()) {
+                throw NoDataException.INSTANCE
+            }
+
             return locations
         }
         catch (e: AbsentInformationException) {

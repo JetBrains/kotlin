@@ -34,7 +34,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StepInto extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -121,7 +121,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SmartStepInto extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInSmartStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -214,7 +214,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
 
         public void testAllFilesPresentInStepIntoOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepInto"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepInto"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("continueLabel.kt")
@@ -313,7 +313,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StepOut extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInStepOut() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOut"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOut"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("fwBackingField.kt")
@@ -370,7 +370,19 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StepOver extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInStepOver() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("dexStopInInlineFun.kt")
+        public void testDexStopInInlineFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexStopInInlineFun.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("dexStopInInlineInOtherFile.kt")
+        public void testDexStopInInlineInOtherFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexStopInInlineInOtherFile.kt");
+            doStepOverTest(fileName);
         }
 
         @TestMetadata("ifCapturedVariableKt9118.kt")
@@ -475,7 +487,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Filters extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInFilters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/filters"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/filters"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("checkNotNull.kt")
@@ -556,12 +568,30 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Custom extends AbstractKotlinSteppingTest {
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/custom"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("crossinlineLiteral.kt")
         public void testCrossinlineLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/crossinlineLiteral.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("dexManyFilesWithInlineCalls1.kt")
+        public void testDexManyFilesWithInlineCalls1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexManyFilesWithInlineCalls1.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("dexManyFilesWithInlineCalls2.kt")
+        public void testDexManyFilesWithInlineCalls2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexManyFilesWithInlineCalls2.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("dexSeveralInlineCallsFromOtherFile.kt")
+        public void testDexSeveralInlineCallsFromOtherFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexSeveralInlineCallsFromOtherFile.kt");
             doCustomTest(fileName);
         }
 
