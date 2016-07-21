@@ -431,7 +431,7 @@ public class KotlinRefactoringUtil {
                         KtExpression expression = (KtExpression)element;
                         BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
                         KotlinType expressionType = bindingContext.getType(expression);
-                        if (expressionType != null && KotlinBuiltIns.isUnit(expressionType)) {
+                        if (expressionType == null || KotlinBuiltIns.isUnit(expressionType)) {
                             addElement = false;
                         }
                     }

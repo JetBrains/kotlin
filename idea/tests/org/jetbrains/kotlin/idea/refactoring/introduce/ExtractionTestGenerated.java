@@ -373,6 +373,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("skipPackageReference.kt")
+        public void testSkipPackageReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/skipPackageReference.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("StringInjection.kt")
         public void testStringInjection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/StringInjection.kt");
