@@ -1,1 +1,1 @@
-companion_object_1() == 5
+companion_object_1_test() == 5

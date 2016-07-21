@@ -1,4 +1,4 @@
-class companion_object {
+class companion_object_1 {
     companion object Factory {
         val fieldCompanion: Int = 5790
 
@@ -9,6 +9,6 @@ class companion_object {
 }
 
 
-fun companion_object_1(): Int {
-    return companion_object.create()
+fun companion_object_1_test(): Int {
+    return companion_object_1.create()
 }

@@ -111,8 +111,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val fieldName = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)!!.name.toString()
         val field = classScope!!.companionFieldsIndex[fieldName]
 
+        val companionObject = classScope.companionFieldsSource[fieldName]
+
+        val receiver = variableManager.getLLVMvalue(companionObject!!.fullName)!!
+
         val result = codeBuilder.getNewVariable(field!!.type, pointer = 1)
-        codeBuilder.loadClassField(result, field, field.offset)
+        codeBuilder.loadClassField(result, receiver, field.offset)
         return result
     }
 
@@ -150,6 +154,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         var i = 1
         while (i < type.location.size) {
             codegen = codegen.nestedClasses[type.location[i]]!!
+            i++
         }
 
         return codegen.nestedClasses[type.type]!!
@@ -167,7 +172,8 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
         is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
-        else -> variableManager.getLLVMvalue(expr.firstChild.text)
+        else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluatenameReferenceExpression(expr, scopeDepth + 1, classScope)
+                else variableManager.getLLVMvalue(expr.firstChild.text)
     }
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
         val function = expr.firstChild.firstChild.text
@@ -198,7 +204,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             if (classDescriptor.companionMethods.containsKey(methodShortName)) {
                 val descriptor = classDescriptor.companionMethods[methodShortName] ?: return null
                 val parentDescriptor = descriptor.parentCodegen!!
-                val receiver = variableManager.getLLVMvalue(parentDescriptor.structName)!!
+                val receiver = variableManager.getLLVMvalue(parentDescriptor.fullName)!!
                 val methodFullName = descriptor.name
 
                 val returnType = descriptor.returnType!!.type
