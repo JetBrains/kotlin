@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+import java.util.*
+
+fun foo() {
+    val asList = Arrays.asList(1, 2, 3)
+}
