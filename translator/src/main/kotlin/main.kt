@@ -15,8 +15,8 @@ fun main(args: Array<String>) {
     val analyzedFiles = ArrayList<String>()
 
     val kotlib = ClassLoader.getSystemClassLoader().getResources("kotlib/kotlin")
-    for (resourse in kotlib) {
-        for (app in File(resourse.toURI()).listFiles()) {
+    for (resource in kotlib) {
+        for (app in File(resource.toURI()).listFiles()) {
             analyzedFiles.add(app.absoluteFile.toString())
         }
     }

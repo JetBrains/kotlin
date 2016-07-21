@@ -1,0 +1,4 @@
+when_expression_1(21234) == 20
+when_expression_1(55555) == 50
+when_expression_1(345626) == 100
+when_expression_1(756754) == 100

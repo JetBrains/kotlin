@@ -3,6 +3,7 @@ package org.kotlinnative.translator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -60,6 +61,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
+            is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
             is KtCallableReferenceExpression -> evaluateCallableReferenceExpression(expr)
             is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
@@ -132,7 +134,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         }
 
         val typePath = type.location.joinToString(".")
-        val methodName = "${if (typePath.length > 0) "$typePath." else "" }${clazz.structName}.${selectorName.substringBefore('(')}"
+        val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(')}"
 
         val method = clazz.methods[methodName]!!
         val returnType = clazz.methods[methodName]!!.returnType!!.type
@@ -173,8 +175,9 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
         is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
         else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluatenameReferenceExpression(expr, scopeDepth + 1, classScope)
-                else variableManager.getLLVMvalue(expr.firstChild.text)
+        else variableManager.getLLVMvalue(expr.firstChild.text)
     }
+
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
         val function = expr.firstChild.firstChild.text
         val names = parseArgList(expr, scopeDepth)
@@ -307,7 +310,11 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val operator = expr.operationToken
 
-        val result = codeBuilder.addPrimitiveBinaryOperation(operator, expr.operationReference, left, right)
+        return executeBinaryExpression(operator, expr.operationReference, left, right, scopeDepth)
+    }
+
+    private fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue, scopeDepth: Int): LLVMVariable {
+        val result = codeBuilder.addPrimitiveBinaryOperation(operator, referenceName, left, right)
 
         if (left.type is LLVMReferenceType && left.pointer > 0 && right.pointer > 0) {
             variableManager.addVariable((left as LLVMVariable).kotlinName!!, result, scopeDepth)
@@ -346,6 +353,56 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             KtTokens.WHILE_KEYWORD -> evaluateWhileOperator(element, scopeDepth)
             else -> null
         }
+    }
+
+    private fun evaluateWhenItem(item: KtWhenEntry, target: LLVMSingleValue, resultVariable: LLVMVariable, elseLabel: LLVMLabel, endLabel: LLVMLabel, isElse: Boolean, scopeDepth: Int) {
+        val successConditionsLabel = codeBuilder.getNewLabel(prefix = "when_condition_success")
+        var nextLabel = codeBuilder.getNewLabel(prefix = "when_condition_condition")
+        codeBuilder.addUnconditionalJump(nextLabel)
+        for (condition in item.conditions) {
+            codeBuilder.markWithLabel(nextLabel)
+            nextLabel = codeBuilder.getNewLabel(prefix = "when_condition_condition")
+
+            val currentConditionExpression = evaluateExpression(condition.firstChild, scopeDepth + 1)!!
+            val conditionResult = executeBinaryExpression(KtTokens.EQEQ, null, target, currentConditionExpression, scopeDepth)
+
+            codeBuilder.addCondition(conditionResult, successConditionsLabel, nextLabel)
+        }
+        codeBuilder.markWithLabel(nextLabel)
+        codeBuilder.addComment("last condition item")
+        codeBuilder.addUnconditionalJump(if (isElse) successConditionsLabel else elseLabel)
+        codeBuilder.markWithLabel(successConditionsLabel)
+        val successExpression = evaluateExpression(item.expression, scopeDepth + 1)
+        codeBuilder.storeVariable(resultVariable, successExpression ?: return)
+        codeBuilder.addUnconditionalJump(endLabel)
+        codeBuilder.addComment("end last condition item")
+    }
+
+    private fun evaluateWhenExpression(expr: KtWhenExpression, scopeDepth: Int): LLVMVariable? {
+        codeBuilder.addComment("start when expression")
+        val whenExpression = expr.subjectExpression
+
+        val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
+
+        val resultVariable = codeBuilder.getNewVariable(LLVMIntType(), pointer = 1)
+        codeBuilder.allocStackVarInPointer(resultVariable)
+
+        var nextLabel = codeBuilder.getNewLabel(prefix = "when_start")
+        val endLabel = codeBuilder.getNewLabel(prefix = "when_end")
+        codeBuilder.addUnconditionalJump(nextLabel)
+        for (item in expr.entries) {
+            codeBuilder.addComment("start new when item")
+            codeBuilder.markWithLabel(nextLabel)
+            nextLabel = codeBuilder.getNewLabel(prefix = "when_item")
+            evaluateWhenItem(item, targetExpression, resultVariable, nextLabel, endLabel, item.isElse, scopeDepth + 1)
+            codeBuilder.addComment("end new when item")
+        }
+        codeBuilder.addComment("else branch of when expression")
+        codeBuilder.markWithLabel(nextLabel)
+        codeBuilder.addUnconditionalJump(endLabel)
+        codeBuilder.markWithLabel(endLabel)
+        codeBuilder.addComment("end when expression")
+        return resultVariable
     }
 
     private fun evaluateWhileOperator(element: LeafPsiElement, scopeDepth: Int): LLVMVariable? {
@@ -389,8 +446,8 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun executeIfExpression(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
         val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
-        val variable = codeBuilder.getNewVariable(LLVMIntType(), pointer = 1)
-        codeBuilder.allocStackVar(variable)
+        val resultVariable = codeBuilder.getNewVariable(LLVMIntType(), pointer = 1)
+        codeBuilder.allocStackVar(resultVariable)
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
         val endLabel = codeBuilder.getNewLabel(prefix = "if")
@@ -398,14 +455,14 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
         codeBuilder.markWithLabel(thenLabel)
         val thenResultExpression = evaluateExpression(thenExpression, scopeDepth + 1)
-        codeBuilder.storeVariable(variable, thenResultExpression ?: return null)
+        codeBuilder.storeVariable(resultVariable, thenResultExpression ?: return null)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(elseLabel)
         val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1)
-        codeBuilder.storeVariable(variable, elseResultExpression ?: return null)
+        codeBuilder.storeVariable(resultVariable, elseResultExpression ?: return null)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(endLabel)
-        return variable
+        return resultVariable
     }
 
     private fun executeIfBlock(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {

@@ -70,7 +70,7 @@ class LLVMBuilder(val arm: Boolean) {
         }
     }
 
-    fun addPrimitiveBinaryOperation(operation: IElementType, referenceName: KtSimpleNameExpression, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
+    fun addPrimitiveBinaryOperation(operation: IElementType, referenceName: KtSimpleNameExpression?, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
         val firstNativeOp = receiveNativeValue(firstOp)
         val secondNativeOp = receiveNativeValue(secondOp)
         val llvmExpression = when (operation) {
@@ -105,7 +105,7 @@ class LLVMBuilder(val arm: Boolean) {
                 storeVariable(result, secondNativeOp)
                 return result
             }
-            else -> addPrimitiveReferenceOperation(referenceName, firstNativeOp, secondNativeOp)
+            else -> addPrimitiveReferenceOperation(referenceName!!, firstNativeOp, secondNativeOp)
         }
         val resultOp = getNewVariable(llvmExpression.variableType)
         addAssignment(resultOp, llvmExpression)
@@ -172,6 +172,10 @@ class LLVMBuilder(val arm: Boolean) {
         localCode.appendln(code)
     }
 
+    fun addComment(comment: String) {
+        localCode.appendln("; " + comment)
+    }
+
     fun loadVariableOffset(target: LLVMVariable, source: LLVMVariable, index: LLVMConstant) {
         val code = "$target = getelementptr inbounds ${source.type} $source, ${index.type} ${index.value}"
         localCode.appendln(code)
@@ -199,6 +203,10 @@ class LLVMBuilder(val arm: Boolean) {
 
     fun allocStackVar(target: LLVMVariable) {
         localCode.appendln("$target = alloca ${target.getType()}, align ${target.type.align}")
+    }
+
+    fun allocStackVarInPointer(target: LLVMVariable) {
+        localCode.appendln("$target = alloca ${target.type}, align ${target.type.align}")
     }
 
     fun allocStaticVar(target: LLVMVariable) {
