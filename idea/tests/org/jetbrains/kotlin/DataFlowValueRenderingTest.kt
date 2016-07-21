@@ -19,18 +19,37 @@ package org.jetbrains.kotlin
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.idea.completion.renderDataFlowValue
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 
 abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
+
+    private fun IdentifierInfo.render(): String? = when (this) {
+        is DataFlowValueFactory.ExpressionIdentifierInfo -> expression.text
+        is IdentifierInfo.Receiver -> (value as? ImplicitReceiver)?.declarationDescriptor?.name?.let { "this@$it" }
+        is IdentifierInfo.Variable -> variable.name.asString()
+        is IdentifierInfo.PackageOrClass -> (descriptor as? PackageViewDescriptor)?.let { it.fqName.asString() }
+        is IdentifierInfo.Qualified -> receiverInfo.render() + "." + selectorInfo.render()
+        else -> null
+    }
+
+    private fun DataFlowValue.render() =
+            // If it is not a stable identifier, there's no point in rendering it
+            if (!isPredictable) null
+            else identifierInfo.render()
+
     override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
     }
@@ -49,7 +68,7 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
         val info = expression.analyze().getDataFlowInfo(expression)
 
         val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keys).toSet()
-        val actual = allValues.mapNotNull { renderDataFlowValue(it) }.sorted().joinToString("\n")
+        val actual = allValues.mapNotNull { it.render() }.sorted().joinToString("\n")
 
         KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
     }
