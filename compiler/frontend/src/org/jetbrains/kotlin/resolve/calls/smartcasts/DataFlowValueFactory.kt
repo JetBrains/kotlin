@@ -89,7 +89,7 @@ object DataFlowValueFactory {
             //
             // But there are some problem with types built on type parameters, e.g.
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
-            return DataFlowValue(ExpressionIdentifierInfo(expression, false),
+            return DataFlowValue(ExpressionIdentifierInfo(expression),
                                  type,
                                  Nullability.NOT_NULL)
         }
@@ -99,7 +99,7 @@ object DataFlowValueFactory {
         }
 
         val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
-        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression, false) else result, type)
+        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression) else result, type)
     }
 
     @JvmStatic
@@ -138,7 +138,7 @@ object DataFlowValueFactory {
     private fun createDataFlowValueForComplexExpression(
             expression: KtExpression,
             type: KotlinType
-    ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type)
+    ) = DataFlowValue(ExpressionIdentifierInfo(expression, stableComplex = true), type)
 
     private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = argumentInfo.kind
@@ -146,9 +146,9 @@ object DataFlowValueFactory {
         override fun toString() = "$argumentInfo (postfix)"
     }
 
-    class ExpressionIdentifierInfo(val expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
+    class ExpressionIdentifierInfo(val expression: KtExpression, stableComplex: Boolean = false) : IdentifierInfo {
 
-        override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
+        override val kind = if (stableComplex) STABLE_COMPLEX_EXPRESSION else OTHER
         
         override fun equals(other: Any?) = other is ExpressionIdentifierInfo && expression == other.expression
 

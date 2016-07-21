@@ -85,11 +85,7 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
 
     override fun toString() = "$kind $identifierInfo $immanentNullability"
 
-    override fun hashCode(): Int {
-        var result = identifierInfo.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
+    override fun hashCode() = type.hashCode() + 31 * identifierInfo.hashCode()
 
     companion object {
 

@@ -49,11 +49,7 @@ interface IdentifierInfo {
         override fun equals(other: Any?) =
                 other is Variable && variable == other.variable && kind.isStable() == other.kind.isStable()
 
-        override fun hashCode(): Int {
-            var result = if (kind.isStable()) 1 else 0
-            result = 31 * result + variable.hashCode()
-            return result
-        }
+        override fun hashCode() = variable.hashCode() + 31 * (if (kind.isStable()) 1 else 0)
 
         override fun toString() = variable.toString()
     }
@@ -73,27 +69,27 @@ interface IdentifierInfo {
     }
 
     class Qualified(
-            val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo,
-            val safe: Boolean, val receiverType: KotlinType?
+            val receiverInfo: IdentifierInfo,
+            val selectorInfo: IdentifierInfo,
+            val safe: Boolean,
+            val receiverType: KotlinType?
     ) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
 
         override fun equals(other: Any?) = other is Qualified && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
 
-        override fun hashCode(): Int {
-            var result = receiverInfo.hashCode()
-            result = 31 * result + selectorInfo.hashCode()
-            return result
-        }
+        override fun hashCode() = 31 * receiverInfo.hashCode() + selectorInfo.hashCode()
 
-        override fun toString() = "$receiverInfo(?).$selectorInfo"
+        override fun toString() = "$receiverInfo${if (safe) "?." else "."}$selectorInfo"
     }
 
     companion object {
 
         fun qualified(
-                receiverInfo: IdentifierInfo, receiverType: KotlinType?,
-                selectorInfo: IdentifierInfo, safe: Boolean
+                receiverInfo: IdentifierInfo,
+                receiverType: KotlinType?,
+                selectorInfo: IdentifierInfo,
+                safe: Boolean
         ) = when (receiverInfo) {
             NO -> NO
             is PackageOrClass -> selectorInfo
