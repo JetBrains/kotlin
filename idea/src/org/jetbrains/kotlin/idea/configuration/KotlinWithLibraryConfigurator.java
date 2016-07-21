@@ -139,7 +139,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         configureModuleWithLibraryClasses(module, libraryState, runtimeState, dirToCopyJar, collector);
 
         Library library = getKotlinLibrary(project);
-        assert library != null : "Kotlin library should exists when adding sources root";
+
+        if (library == null) return;
+
         String dirToCopySourcesJar = getPathToCopyFileTo(project, OrderRootType.SOURCES, defaultPath, pathFromDialog);
         FileState sourcesState = getJarState(project, files.getRuntimeSourcesDestination(dirToCopySourcesJar), OrderRootType.SOURCES,
                                              pathFromDialog == null);
