@@ -162,7 +162,7 @@ class LLVMBuilder(val arm: Boolean) {
         localCode.appendln("$target = alloca ${target.getType()}, align ${target.type.align}")
     }
 
-    fun allocStackVarInPointer(target: LLVMVariable) {
+    fun allocStackPointedVarAsValue(target: LLVMVariable) {
         localCode.appendln("$target = alloca ${target.type}, align ${target.type.align}")
     }
 

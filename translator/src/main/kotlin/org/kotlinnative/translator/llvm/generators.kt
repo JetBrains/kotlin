@@ -20,6 +20,6 @@ fun LLVMMapStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMR
     type.toString() == "Char" -> LLVMVariable(name, LLVMCharType(), name, scope)
     type.toString() == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope)
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
-    type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType("${type.toString().dropLast(1)}"), name, scope, pointer = 1)
-    else -> LLVMVariable(name, LLVMReferenceType("$type"), name, scope, pointer = 1)
+    type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1)), name, scope, pointer = 1)
+    else -> LLVMVariable(name, LLVMReferenceType(type.toString()), name, scope, pointer = 1)
 }
