@@ -324,7 +324,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Indent();
 
     // read while we won't exceed expected amount of bytes
-    printer->Print("while(getSize() < expectedSize) {\n");
+    printer->Print("while(getSizeNoTag() < expectedSize) {\n");
     printer->Indent();
 
     printer->Print("parseFieldFrom(input)\n");
@@ -335,7 +335,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     // check if we have read more than expected
     vars["dollar"] = "$";
     printer->Print(vars,
-                   "if (getSize() > expectedSize) { "
+                   "if (getSizeNoTag() > expectedSize) { "
                            "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSize()}\") "
                            "}\n");
 
@@ -359,12 +359,27 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
 }
 
 void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
+    // getSize(): Int
     printer->Print("fun getSize(): Int {\n");
     printer->Indent();
 
     printer->Print("var size = 0\n");
     for (int i = 0; i < properties.size(); ++i) {
-        properties[i]->generateSizeEstimationCode(printer, "size");
+        properties[i]->generateSizeEstimationCode(printer, "size", /* noTag = */ false);
+    }
+
+    printer->Print("return size\n");
+    printer->Outdent();
+    printer->Print("}\n");
+
+
+    // getSizeNoTag(): Int
+    printer->Print("fun getSizeNoTag(): Int {\n");
+    printer->Indent();
+
+    printer->Print("var size = 0\n");
+    for (int i = 0; i < properties.size(); ++i) {
+        properties[i]->generateSizeEstimationCode(printer, "size", /* noTag = */ true);
     }
 
     printer->Print("return size\n");

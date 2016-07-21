@@ -104,11 +104,15 @@ object WireFormat {
     }
 
     fun getStringSize(fieldNumber: Int, value: String): Int {
+        if (value.length == 0)
+            return 0
         val encodedStringSize = value.toByteArray(Charsets.UTF_8).size  //TODO: not sure if it's the best way to do it
         return encodedStringSize + getTagSize(fieldNumber, WireType.LENGTH_DELIMITED) + getVarint32Size(encodedStringSize)
     }
 
     fun getBytesSize(fieldNumber: Int, value: ByteArray): Int {
+        if (value.size == 0)
+            return 0
         return value.size + getTagSize(fieldNumber, WireType.LENGTH_DELIMITED) + getVarint32Size(value.size)
     }
 }
