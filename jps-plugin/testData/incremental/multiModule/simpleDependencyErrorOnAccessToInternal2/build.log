@@ -26,9 +26,9 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'InternalFileAnnotation': it is 'internal' in 'a'
-Cannot access 'InternalFileAnnotation': it is 'internal' in 'a'
-Cannot access 'InternalClassAnnotation': it is 'internal' in 'a'
-Cannot access 'InternalClassAnnotation': it is 'internal' in 'a'
+Cannot access 'InternalFileAnnotation': it is internal in 'a'
+Cannot access 'InternalFileAnnotation': it is internal in 'a'
+Cannot access 'InternalClassAnnotation': it is internal in 'a'
+Cannot access 'InternalClassAnnotation': it is internal in 'a'
 Unresolved reference: InternalA
 Unresolved reference: internalA

@@ -32,13 +32,13 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'A': it is 'private' in file
+Cannot access 'A': it is private in file
 'public' subclass exposes its 'private' supertype A
 'public' function exposes its 'private' return type A
-Cannot access 'A': it is 'private' in file
-Cannot access 'A': it is 'private' in file
+Cannot access 'A': it is private in file
+Cannot access 'A': it is private in file
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
-Cannot access 'x': it is 'invisible (private in a supertype)' in 'B'
+Cannot access 'x': it is invisible (private in a supertype) in 'B'
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
 
 ================ Step #2 =================

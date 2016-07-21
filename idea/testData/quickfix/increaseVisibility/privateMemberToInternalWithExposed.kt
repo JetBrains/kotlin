@@ -1,6 +1,6 @@
 // "Make bar internal" "false"
 // ACTION: Convert property initializer to getter
-// ERROR: Cannot access 'bar': it is 'private' in 'First'
+// ERROR: Cannot access 'bar': it is private in 'First'
 
 private data class Data(val x: Int)
 

@@ -25,11 +25,11 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'FileAnnotation': it is 'internal' in 'a'
-Cannot access 'A': it is 'internal' in 'a'
-Cannot access 'FileAnnotation': it is 'internal' in 'a'
-Cannot access 'ClassAnnotation': it is 'internal' in 'a'
-Cannot access 'ClassAnnotation': it is 'internal' in 'a'
+Cannot access 'FileAnnotation': it is internal in 'a'
+Cannot access 'A': it is internal in 'a'
+Cannot access 'FileAnnotation': it is internal in 'a'
+Cannot access 'ClassAnnotation': it is internal in 'a'
+Cannot access 'ClassAnnotation': it is internal in 'a'
 'public' function exposes its 'internal' parameter type A
-Cannot access 'A': it is 'internal' in 'a'
-Cannot access 'a': it is 'internal' in 'a'
+Cannot access 'A': it is internal in 'a'
+Cannot access 'a': it is internal in 'a'

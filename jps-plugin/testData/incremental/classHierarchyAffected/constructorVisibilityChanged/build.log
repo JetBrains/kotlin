@@ -23,8 +23,8 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access '<init>': it is 'private' in 'A'
-Cannot access '<init>': it is 'private' in 'A'
+Cannot access '<init>': it is private in 'A'
+Cannot access '<init>': it is private in 'A'
 
 ================ Step #2 =================
 

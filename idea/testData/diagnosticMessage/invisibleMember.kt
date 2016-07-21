@@ -11,8 +11,8 @@ class A {
 }
 
 fun foo() {
-    A.B()     // ERROR 1: Cannot access 'B': it is 'private' in 'A'
-    A.C()     // ERROR 2: Cannot access '' : it is 'private' in 'C'
+    A.B()     // ERROR 1: Cannot access 'B': it is private in 'A'
+    A.C()     // ERROR 2: Cannot access '' : it is private in 'C'
 
-    A().bar() // ERROR 3: Cannot access 'bar' : it is 'private' in 'A'
+    A().bar() // ERROR 3: Cannot access 'bar' : it is private in 'A'
 }
