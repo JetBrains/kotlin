@@ -22,16 +22,16 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
+val DEX_BEFORE_PATCH_EXTENSION = "before_dex"
+
 fun patchDexTests(dir: File) {
     dir.listFiles({ file -> file.isDirectory && file.name.startsWith("dex") }).forEach { dir ->
-        dir.listFiles { testOutputFile -> testOutputFile.extension == "class" }.forEach { classFile ->
-            applyDexLikePatch(classFile)
-        }
+        dir.listFiles { testOutputFile -> testOutputFile.extension == "class" }.forEach(::applyDexLikePatch)
     }
 }
 
 private fun applyDexLikePatch(file: File) {
-    file.copyTo(File(file.absolutePath + ".temp"))
+    file.copyTo(File(file.absolutePath + ".$DEX_BEFORE_PATCH_EXTENSION"))
 
     val reader = ClassReader(file.readBytes())
     val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES)

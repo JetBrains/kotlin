@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil.findFilesWithExactPackage
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
@@ -46,11 +47,13 @@ object DebuggerUtils {
             scope: GlobalSearchScope,
             className: JvmClassName,
             fileName: String): KtFile? {
-        return findSourceFileForClass(
-                project,
-                listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
-                className,
-                fileName)
+        return runReadAction {
+            findSourceFileForClass(
+                    project,
+                    listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
+                    className,
+                    fileName)
+        }
     }
 
     fun findSourceFileForClass(

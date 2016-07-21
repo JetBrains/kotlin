@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.CompilerPaths
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -53,6 +54,27 @@ fun inlineLineAndFileByPosition(lineNumber: Int, fqName: FqName, fileName: Strin
     return mapStacktraceLineToSource(smapData, lineNumber, project, SourceLineKind.EXECUTED_LINE, searchScope)
 }
 
+internal fun inlinedLinesNumbers(
+        inlineLineNumber: Int, inlineFileName: String,
+        destinationTypeFqName: FqName, destinationFileName: String,
+        project: Project, sourceSearchScope: GlobalSearchScope): List<Int> {
+    val internalName = destinationTypeFqName.asString().replace('.', '/')
+    val jvmClassName = JvmClassName.byInternalName(internalName)
+
+    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, sourceSearchScope, jvmClassName, destinationFileName) ?:
+               return listOf()
+
+    val virtualFile = file.virtualFile ?: return listOf()
+
+    val bytes = readClassFile(project, jvmClassName, virtualFile) ?: return listOf()
+    val smapData = readDebugInfo(bytes) ?: return listOf()
+
+    val smap = smapData.kotlinStrata ?: return listOf()
+
+    val mappingToInlinedFile = smap.fileMappings.firstOrNull() { it.name == inlineFileName } ?: return listOf()
+    return mappingToInlinedFile.lineMappings.map { it.mapSourceToDest(inlineLineNumber) }
+}
+
 fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
     val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false
     return lineNumber > linesInFile
@@ -79,9 +101,9 @@ fun readClassFile(project: Project,
             val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
 
             val className = fqNameWithInners.asString().replace('.', '$')
-            val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
+            val classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
 
-            return classByByDirectory.readBytes()
+            return classByDirectory.readBytes()
         }
 
         else -> return null
@@ -93,6 +115,13 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
 
     val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
     if (!parentDirectory.exists()) return null
+
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+        val beforeDexFileClassFile = File(parentDirectory, className + ".class.before_dex")
+        if (beforeDexFileClassFile.exists()) {
+            return beforeDexFileClassFile
+        }
+    }
 
     val classFile = File(parentDirectory, className + ".class")
     if (classFile.exists()) {
