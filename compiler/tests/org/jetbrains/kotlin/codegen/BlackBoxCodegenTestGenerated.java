@@ -1950,6 +1950,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt12982_protectedPropertyReference.kt")
+            public void testKt12982_protectedPropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt12982_protectedPropertyReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt6870_privatePropertyReference.kt")
             public void testKt6870_privatePropertyReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt6870_privatePropertyReference.kt");

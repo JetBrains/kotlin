@@ -1,0 +1,39 @@
+package
+
+public open class A {
+    public constructor A()
+    protected final fun a(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B : A {
+    public constructor B()
+    public final val x: kotlin.reflect.KFunction1<C, kotlin.Unit>
+    public final val y: kotlin.reflect.KFunction0<kotlin.Unit>
+    protected final override /*1*/ /*fake_override*/ fun a(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C : B {
+    public constructor C()
+    public final override /*1*/ /*fake_override*/ val x: kotlin.reflect.KFunction1<C, kotlin.Unit>
+    public final override /*1*/ /*fake_override*/ val y: kotlin.reflect.KFunction0<kotlin.Unit>
+    protected final override /*1*/ /*fake_override*/ fun a(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo {
+    public constructor Foo()
+    protected final var x: kotlin.Int
+    public final fun baz(/*0*/ p: kotlin.reflect.KMutableProperty1<Foo, kotlin.Int>): kotlin.reflect.KMutableProperty1<Foo, kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun print(): kotlin.reflect.KMutableProperty1<Foo, kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

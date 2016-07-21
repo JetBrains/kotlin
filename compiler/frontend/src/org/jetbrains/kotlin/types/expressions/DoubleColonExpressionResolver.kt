@@ -527,8 +527,7 @@ class DoubleColonExpressionResolver(
                 is PropertyDescriptor -> {
                     val mutable = descriptor.isVar && run {
                         val setter = descriptor.setter
-                        // TODO: support private-to-this
-                        setter == null || Visibilities.isVisible(null, setter, scopeOwnerDescriptor)
+                        setter == null || Visibilities.isVisible(receiverType?.let(::TransientReceiver), setter, scopeOwnerDescriptor)
                     }
                     reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, mutable)
                 }
