@@ -1,0 +1,2 @@
+elvis_test_1(0) == 0
+elvis_test_1(2) == 1
