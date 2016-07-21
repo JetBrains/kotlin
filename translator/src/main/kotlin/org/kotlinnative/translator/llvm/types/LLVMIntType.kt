@@ -60,4 +60,5 @@ class LLVMIntType() : LLVMType() {
     override val defaultValue = "0"
 
     override fun toString() = "i32"
+    override fun isPrimitive() = true
 }

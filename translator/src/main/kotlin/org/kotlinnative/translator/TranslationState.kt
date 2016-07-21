@@ -30,6 +30,7 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
+    val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 }
 
 fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = false): TranslationState {

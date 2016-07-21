@@ -22,4 +22,5 @@ class LLVMDoubleType() : LLVMType() {
     override var size: Int = 8
     override fun toString() = "double"
     override val defaultValue = "0.0"
+    override fun isPrimitive() = true
 }

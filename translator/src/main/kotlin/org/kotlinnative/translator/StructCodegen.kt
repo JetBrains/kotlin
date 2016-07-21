@@ -33,7 +33,7 @@ abstract class StructCodegen(open val state: TranslationState,
     var methods = HashMap<String, FunctionCodegen>()
     abstract val structName: String
     val fullName: String
-            get() = "${if (type.location.size > 0) "${type.location.joinToString(".")}." else ""}$structName"
+        get() = "${if (type.location.size > 0) "${type.location.joinToString(".")}." else ""}$structName"
 
 
     fun generate(declarations: List<KtDeclaration>) {
@@ -49,7 +49,7 @@ abstract class StructCodegen(open val state: TranslationState,
             }
         }
 
-        val classVal = LLVMVariable("classvariable.this", type, pointer = 1)
+        val classVal = LLVMVariable("classvariable.this", type, pointer = if (type.isPrimitive()) 0 else 1)
         variableManager.addVariable("this", classVal, 0)
 
         for (function in methods.values) {
@@ -156,7 +156,7 @@ abstract class StructCodegen(open val state: TranslationState,
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
 
-        val result = LLVMMapStandardType(field.name!!, ktType, LLVMRegisterScope())
+        val result = LLVMInstanceOfStandardType(field.name!!, ktType, LLVMRegisterScope())
 
         if (result.type is LLVMReferenceType) {
             val type = result.type as LLVMReferenceType

@@ -68,11 +68,16 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, expr)
             is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
             is KtReturnExpression -> evaluateReturnInstruction(expr.firstChild, scopeDepth)
+            is KtThisExpression -> evaluateThisExpression(expr, scopeDepth)
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
             else -> throw UnsupportedOperationException()
         }
+    }
+
+    private fun evaluateThisExpression(expr: KtThisExpression, scopeDepth: Int): LLVMSingleValue? {
+        return variableManager.getLLVMvalue("this")
     }
 
     fun evaluateStringTemplateExpression(expr: KtStringTemplateExpression): LLVMSingleValue? {
@@ -87,11 +92,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateCallableReferenceExpression(expr: KtCallableReferenceExpression): LLVMSingleValue? {
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
-        return LLVMMapStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
+        return LLVMInstanceOfStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
     }
 
     private fun evaluateDotExpression(expr: KtDotQualifiedExpression, scopeDepth: Int): LLVMSingleValue? {
-        val receiverName = expr.receiverExpression.text
+        val receiverExpr = expr.receiverExpression
+        val receiverName = receiverExpr.text
         val selectorExpr = expr.selectorExpression!!
 
         var receiver = variableManager.getLLVMvalue(receiverName)
@@ -99,11 +105,35 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             if (receiver.pointer == 2) {
                 receiver = codeBuilder.loadAndGetVariable(receiver)
             }
-            return evaluateMemberMethodOrField(receiver, selectorExpr.text, scopeDepth, expr.lastChild)
+            when (receiver.type) {
+                is LLVMReferenceType -> return evaluateMemberMethodOrField(receiver, selectorExpr.text, scopeDepth, expr.lastChild)
+                else -> return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+            }
         }
 
-        val clazz = state.classes[receiverName] ?: return null
+        val clazz = state.classes[receiverName] ?: return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+
         return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth)
+    }
+
+    private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
+        val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
+        val standartType = LLVMMapStandardType(receiverType!!.type!!)
+        val function = selector.firstChild.firstChild.text
+        val names = parseArgList(selector, scopeDepth)
+        val extensionCodegen = state.extensionFunctions[standartType.toString()]!![function]!!
+        val receiverExpression = evaluateExpression(receiver, scopeDepth + 1)!!
+
+        val typeThisArgument = when (standartType) {
+            is LLVMReferenceType -> LLVMVariable("type", standartType, pointer = 1)
+            else -> LLVMVariable("type", standartType, pointer = 0)
+        }
+
+        val args = mutableListOf<LLVMSingleValue>(loadArgumentIfRequired(receiverExpression, typeThisArgument))
+
+        args.addAll(loadArgsIfRequired(names, extensionCodegen.args))
+
+        return evaluateFunctionCallExpression(LLVMVariable(extensionCodegen.fullName, extensionCodegen.returnType!!.type, scope = LLVMVariableScope()), args)
     }
 
     private fun evaluateClassScopedDotExpression(clazz: ClassCodegen, selector: KtExpression, scopeDepth: Int): LLVMSingleValue? = when (selector) {
@@ -266,16 +296,21 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return null
     }
 
-    private fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) = names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
+    private fun loadArgumentIfRequired(value: LLVMSingleValue, argument: LLVMVariable): LLVMSingleValue {
         var result = value
 
-        if (result.pointer > 0 && args[i].pointer == 0) {
-            result = codeBuilder.getNewVariable(args[i].type)
+        if (result.pointer > 0 && argument.pointer == 0) {
+            result = codeBuilder.getNewVariable(argument.type)
             codeBuilder.loadVariable(result, value as LLVMVariable)
         }
 
         return result
-    }).toList()
+    }
+
+    private fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
+            names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
+                return loadArgumentIfRequired(value, args[i])
+            }).toList()
 
     private fun evaluateConstructorCallExpression(function: LLVMVariable, names: List<LLVMSingleValue>): LLVMSingleValue? {
         val store = codeBuilder.getNewVariable(function.type)
@@ -457,7 +492,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         codeBuilder.addComment("start when expression")
         val whenExpression = expr.subjectExpression
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
-        val expressionType = LLVMMapStandardType("type", kotlinType, LLVMVariableScope()).type
+        val expressionType = LLVMMapStandardType(kotlinType)
 
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
 
@@ -524,7 +559,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun executeIfExpression(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, ifExpression: KtIfExpression, scopeDepth: Int): LLVMVariable? {
         val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, ifExpression)!!.type!!
-        val expressionType = LLVMMapStandardType("type", kotlinType, LLVMVariableScope()).type
+        val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope()).type
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
         codeBuilder.allocStackPointedVarAsValue(resultVariable)
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
@@ -586,7 +621,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             }
             is LLVMConstant -> {
                 if (assignExpression.type is LLVMNullType) {
-                    val reference = LLVMMapStandardType(identifier, variable.type)
+                    val reference = LLVMInstanceOfStandardType(identifier, variable.type)
                     if (state.classes.containsKey(variable.type.toString().dropLast(1))) {
                         (reference.type as LLVMReferenceType).prefix = "class"
                     }

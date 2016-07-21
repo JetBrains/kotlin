@@ -45,6 +45,7 @@ class LLVMBooleanType() : LLVMType() {
     override val align = 4
     override var size: Int = 1
     override val defaultValue = "0"
+    override fun isPrimitive() = true
 
     override fun toString() = "i1"
 }

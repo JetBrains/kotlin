@@ -27,4 +27,5 @@ class LLVMShortType() : LLVMType() {
     override val defaultValue = "0"
 
     override fun toString(): String = "i16"
+    override fun isPrimitive() = true
 }

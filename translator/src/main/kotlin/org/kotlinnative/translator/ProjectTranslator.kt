@@ -1,8 +1,5 @@
 package org.kotlinnative.translator
 
-import org.jetbrains.kotlin.psi.*
-import org.kotlinnative.translator.llvm.LLVMBuilder
-
 class ProjectTranslator(val state: TranslationState) {
     private var codeBuilder = state.codeBuilder
 
@@ -25,7 +22,11 @@ class ProjectTranslator(val state: TranslationState) {
             clazz.generate()
         }
 
-        for (function in state.functions.values) {
+        for (function in state.functions.values.filter { it.isExtensionDeclaration }) {
+            function.generate()
+        }
+
+        for (function in state.functions.values.filter { !it.isExtensionDeclaration }) {
             function.generate()
         }
     }

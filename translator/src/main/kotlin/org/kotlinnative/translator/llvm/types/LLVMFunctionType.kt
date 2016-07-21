@@ -1,7 +1,7 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.jetbrains.kotlin.types.KotlinType
-import org.kotlinnative.translator.llvm.LLVMMapStandardType
+import org.kotlinnative.translator.llvm.LLVMInstanceOfStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
 
 class LLVMFunctionType(type: KotlinType) : LLVMType() {
@@ -14,7 +14,7 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
     val returnType: LLVMVariable
 
     init {
-        val types = type.arguments.map { LLVMMapStandardType("", it.type) }.toList()
+        val types = type.arguments.map { LLVMInstanceOfStandardType("", it.type) }.toList()
         returnType = types.last()
         arguments = types.dropLast(1)
     }

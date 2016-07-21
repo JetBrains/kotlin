@@ -26,4 +26,5 @@ class LLVMByteType() : LLVMType() {
     override var size: Int = 1
     override fun toString(): String = "i8"
     override val defaultValue = "0"
+    override fun isPrimitive() = true
 }

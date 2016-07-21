@@ -1,6 +1,7 @@
 package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.*
+import org.kotlinnative.translator.debug.printFile
 
 class FileTranslator(val state: TranslationState, val file: KtFile) {
 

@@ -2,6 +2,7 @@ package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMFunctionType
@@ -20,15 +21,18 @@ class FunctionCodegen(override val state: TranslationState,
 
     var name = function.fqName.toString()
     var args = LinkedList<LLVMVariable>()
+    val isExtensionDeclaration = function.isExtensionDeclaration()
+    var functionNamePrefix = ""
+    val fullName: String
+        get() = functionNamePrefix + name
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
         args.addAll(descriptor.valueParameters.map {
-            LLVMMapStandardType(it.name.toString(), it.type)
+            LLVMInstanceOfStandardType(it.name.toString(), it.type)
         })
 
-
-        returnType = LLVMMapStandardType("instance", descriptor.returnType!!)
+        returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
         val retType = returnType!!.type
         when (retType) {
             is LLVMReferenceType -> {
@@ -88,13 +92,28 @@ class FunctionCodegen(override val state: TranslationState,
             actualArgs.add(returnType!!)
         }
 
+        if (isExtensionDeclaration) {
+            val receiverParameter = state.bindingContext.get(BindingContext.FUNCTION, function)!!.extensionReceiverParameter!!
+            val receiverType = receiverParameter.type
+            val translatorType = LLVMMapStandardType(receiverType)
+
+            val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType, HashMap())
+            extensionFunctionsOfThisType.put(name, this)
+            state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
+
+            val classVal = LLVMVariable("classvariable.this", translatorType, pointer = 0)
+            variableManager.addVariable("this", classVal, 0)
+            actualArgs.add(classVal)
+            functionNamePrefix += translatorType.toString() + "."
+        }
+
         if (this_type != null) {
             actualArgs.add(this_type)
         }
 
         actualArgs.addAll(args)
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(function.fqName.toString(), actualArgs, actualReturnType, external, state.arm))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName, actualArgs, actualReturnType, external, state.arm))
         return external
     }
 

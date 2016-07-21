@@ -28,6 +28,7 @@ abstract class LLVMType() : Cloneable {
     abstract val align: Int
     abstract var size: Int
     abstract val defaultValue: String
+    open fun isPrimitive(): Boolean = false
 }
 
 fun parseLLVMType(type: String): LLVMType = when (type) {
