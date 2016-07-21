@@ -12,7 +12,7 @@ fun use() {
 
 fun checkArrays(): Array<Any> {
     val someArray = arrayOfNulls<Any>(5)
-    someArray <!CAST_NEVER_SUCCEEDS!>as<!> Array<Int>
+    <!UNCHECKED_CAST!>someArray as Array<Int><!>
     return <!UNCHECKED_CAST!>someArray as Array<Any><!>
 }
 

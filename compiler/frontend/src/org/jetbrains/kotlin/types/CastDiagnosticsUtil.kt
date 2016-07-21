@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 object CastDiagnosticsUtil {
@@ -37,24 +38,11 @@ object CastDiagnosticsUtil {
             rhsType: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false
+        if (lhsType.isError) return true
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
-        if (lhsType.constructor == rhsType.constructor) {
-            if (lhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
-            if (rhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
-            if (KotlinBuiltIns.isArray(lhsType)) {
-                val lhsArgument = lhsType.arguments.firstOrNull()
-                val rhsArgument = rhsType.arguments.firstOrNull()
-                if (lhsArgument != null && rhsArgument != null) {
-                    if (lhsArgument.type.constructor == rhsArgument.type.constructor) return true
-                    if (KotlinTypeChecker.DEFAULT.isSubtypeOf(TypeUtils.makeNotNullable(lhsArgument.type), rhsArgument.type)) {
-                        return true
-                    }
-                }
-            }
-        }
 
         if (isFinal(lhsType) || isFinal(rhsType)) return false
         if (isTrait(lhsType) || isTrait(rhsType)) return true
@@ -62,47 +50,28 @@ object CastDiagnosticsUtil {
     }
 
     /**
-     * Two types are related, roughly, when one is a subtype or supertype of the other.
-     *
+     * Two types are related, roughly, when one of them is a subtype of the other constructing class
      *
      * Note that some types have platform-specific counterparts, i.e. kotlin.String is mapped to java.lang.String,
      * such types (and all their sub- and supertypes) are related too.
-     *
      *
      * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platform classes to Kotlin classed
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        val aTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(a), platformToKotlinClassMap)
-        val bTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(b), platformToKotlinClassMap)
+        val aClasses = mapToPlatformClasses(a, platformToKotlinClassMap)
+        val bClasses = mapToPlatformClasses(b, platformToKotlinClassMap)
 
-        for (aType in aTypes) {
-            for (bType in bTypes) {
-                if (KotlinTypeChecker.DEFAULT.isSubtypeOf(aType, bType)) return true
-                if (KotlinTypeChecker.DEFAULT.isSubtypeOf(bType, aType)) return true
-            }
-        }
-
-        return false
+        return aClasses.any { DescriptorUtils.isSubtypeOfClass(b, it) } || bClasses.any { DescriptorUtils.isSubtypeOfClass(a, it) }
     }
 
-    private fun mapToPlatformIndependentTypes(
+    private fun mapToPlatformClasses(
             type: KotlinType,
-            platformToKotlinClassMap: PlatformToKotlinClassMap): List<KotlinType> {
-        val descriptor = type.constructor.declarationDescriptor
-        if (descriptor !is ClassDescriptor) return listOf(type)
+            platformToKotlinClassMap: PlatformToKotlinClassMap
+    ): List<ClassDescriptor> {
+        val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return listOf()
 
-        val kotlinClasses = platformToKotlinClassMap.mapPlatformClass(descriptor)
-        if (kotlinClasses.isEmpty()) return listOf(type)
-
-        val result = Lists.newArrayListWithCapacity<KotlinType>(2)
-        result.add(type)
-        for (classDescriptor in kotlinClasses) {
-            val kotlinType = TypeUtils.substituteProjectionsForParameters(classDescriptor, type.arguments)
-            result.add(kotlinType)
-        }
-
-        return result
+        return platformToKotlinClassMap.mapPlatformClass(descriptor) + descriptor
     }
 
     private fun isFinal(type: KotlinType) = !TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)
