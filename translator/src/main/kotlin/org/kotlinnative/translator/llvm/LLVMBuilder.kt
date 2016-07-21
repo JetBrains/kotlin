@@ -70,57 +70,14 @@ class LLVMBuilder(val arm: Boolean) {
         }
     }
 
-    fun addPrimitiveBinaryOperation(operation: IElementType, referenceName: KtSimpleNameExpression?, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
-        val firstNativeOp = receiveNativeValue(firstOp)
-        val secondNativeOp = receiveNativeValue(secondOp)
-        val llvmExpression = when (operation) {
-            KtTokens.PLUS -> firstOp.type!!.operatorPlus(firstNativeOp, secondNativeOp)
-            KtTokens.MINUS -> firstOp.type!!.operatorMinus(firstNativeOp, secondNativeOp)
-            KtTokens.MUL -> firstOp.type!!.operatorTimes(firstNativeOp, secondNativeOp)
-            KtTokens.LT -> firstOp.type!!.operatorLt(firstNativeOp, secondNativeOp)
-            KtTokens.GT -> firstOp.type!!.operatorGt(firstNativeOp, secondNativeOp)
-            KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
-            KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
-            KtTokens.EQEQ ->
-                if (firstOp.type is LLVMReferenceType)
-                    firstOp.type!!.operatorEq(firstOp, secondOp)
-                else
-                    firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
-            KtTokens.EXCLEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
-            KtTokens.EQ -> {
-                if (secondOp.type is LLVMNullType) {
-                    val result = getNewVariable(firstOp.type!!, firstOp.pointer)
-                    allocStackVar(result)
-                    result.pointer++
-
-                    storeNull(result)
-                    return result
-                }
-
-                if (firstOp.type is LLVMReferenceType && firstOp.pointer > 0 && secondOp.pointer > 0) {
-                    return secondOp as LLVMVariable
-                }
-
-                val result = firstOp as LLVMVariable
-                storeVariable(result, secondNativeOp)
-                return result
-            }
-            else -> addPrimitiveReferenceOperation(referenceName!!, firstNativeOp, secondNativeOp)
-        }
-        val resultOp = getNewVariable(llvmExpression.variableType)
-        addAssignment(resultOp, llvmExpression)
-
-        return resultOp
-    }
-
     fun clean() {
         localCode = StringBuilder()
         globalCode = StringBuilder()
         initBuilder()
     }
 
-    fun addAssignment(llvmVariable: LLVMVariable, rhs: LLVMNode) {
-        localCode.appendln("$llvmVariable = $rhs")
+    fun addAssignment(lhs: LLVMVariable, rhs: LLVMNode) {
+        localCode.appendln("$lhs = $rhs")
     }
 
     fun addReturnOperator(llvmVariable: LLVMSingleValue) {
