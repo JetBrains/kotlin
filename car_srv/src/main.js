@@ -1,5 +1,5 @@
 /**
- * Created by user on 7/11/16.
+ * Created by maxim zaitsev on 7/11/16.
  */
 
 const server = require("./server.js");
@@ -9,11 +9,12 @@ const protoBuf = require("protobufjs");
 const fs = require("fs");
 const udev = require("udev");
 
+//parsing command line args
 commander
     .version('1.0.0')
     .option('-p, --proto [path]', 'path to dir with proto files. need here carkot.proto and route.proto. default ./proto/')
-    .option('-f, --flash [path]', 'path to save bin file with name f.bin. default ./')
-    .option('-s, --serial [path]', 'path to file that represents MCU serial port default ./serial')
+    .option('-f, --flash [path]', 'path to save bin file with name flash.bin. default ./')
+    // .option('-s, --serial [path]', 'path to file that represents MCU serial port default ./serial')//dont need more. use path from udev monitor
     .parse(process.argv);
 
 //add slash to end of paths if need
@@ -28,30 +29,38 @@ if (commander.flash) {
     }
 }
 
-const builderCarkot = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "carkot.proto" : "./proto/carkot.proto");
-const builderControl = protoBuf.loadProtoFile(commander.protopath ? commander.protopath + "route.proto" : "./proto/route.proto");
+//classes for protobuf decode/encode
+const builderCarkot = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/") + "carkot.proto");
+const builderControl = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/" + "direction.proto"));
+const builderRoute = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/" + "route.proto"));
 
 var executeShell = "./st-flash";
 exports.protoConstructorCarkot = builderCarkot.build("carkot");
 exports.protoConstructorControl = builderControl.build("carkot");
+exports.protoConstructorRoute = builderRoute.build("carkot");
 exports.commandPrefix = executeShell + " write";
-exports.binFilePath = (commander.flash ? commander.flash : "./") + "st-flash";
-exports.transportFilePath = (commander.serial ? commander.serial : "./serial");
+exports.binFilePath = (commander.flash ? commander.flash : "./") + "flash.bin";
+exports.transportFilePath = "";
 
-var handlers = require("./handlers.js");
+//init this car
+var uid = "";//todo connect to srv
+var car = require("./Car").getCar(uid);
+exports.thisCar = car;
+
+//handlers for client requests
 var handle = {};
-handle["/"] = handlers.other;
-handle["/loadBin"] = handlers.loadBin;
-handle["/control"] = handlers.control;
-handle["/other"] = handlers.other;
-
-//add handlers to events from udev monitor (add device and remove device)
+handle["/loadBin"] = require("./handlers/loadBinHandler").handler;
+handle["/control"] = require("./handlers/controlHandler").handler;
+handle["/route"] = require("./handlers/setRouteHandler").handler;
+exports.transportFilePath = "/dev/ttyACM0";
+//add event handlers from udev monitor (add device and remove device)
 const monitor = udev.monitor();
 monitor.on('add', function (device) {
     if (device.ID_VENDOR_ID == "0483" && device.ID_MODEL_ID == "5740" && device.SUBSYSTEM == "tty") {
         //mc connected
-        console.log("connected");
-        console.log("file=" + device.DEVNAME)
+        console.log("connected. transport file is " + device.DEVNAME);
+        exports.transportFilePath = device.DEVNAME;
+        console.log(device.DEVNAME);
     }
 });
 monitor.on('remove', function (device) {
@@ -61,6 +70,7 @@ monitor.on('remove', function (device) {
     }
 });
 
+//check of exists st-flash util
 if (typeof fs.access == "function") {
     fs.access(executeShell, fs.F_OK, function (error) {
         if (!error) {
@@ -73,4 +83,10 @@ if (typeof fs.access == "function") {
     console.log("warning: you have old version of node.js. Check existence of the file st-flash on root of server dir yourself");
     server.start(router.route, handle);
 }
-// server.start(router.route, handle);
+
+//move car
+var delta = 100;
+setInterval(moveCar, delta);
+function moveCar() {
+    car.move(delta)
+}
