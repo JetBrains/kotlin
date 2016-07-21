@@ -7321,18 +7321,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt11833_1.kt")
-        public void testKt11833_1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt11833_1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt11833_2.kt")
-        public void testKt11833_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt11833_2.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt3132.kt")
         public void testKt3132() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt3132.kt");
@@ -14347,15 +14335,45 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("innerExtendsInnerViaSecondaryConstuctor.kt")
+        public void testInnerExtendsInnerViaSecondaryConstuctor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/innerExtendsInnerViaSecondaryConstuctor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerExtendsInnerWithProperOuterCapture.kt")
+        public void testInnerExtendsInnerWithProperOuterCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/innerExtendsInnerWithProperOuterCapture.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerExtendsOuter.kt")
         public void testInnerExtendsOuter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/innerExtendsOuter.kt");
             doTest(fileName);
         }
 
+        @TestMetadata("kt11833_1.kt")
+        public void testKt11833_1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/kt11833_1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11833_2.kt")
+        public void testKt11833_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/kt11833_2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localClassOuterDiffersFromInnerOuter.kt")
         public void testLocalClassOuterDiffersFromInnerOuter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/localClassOuterDiffersFromInnerOuter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localExtendsInner.kt")
+        public void testLocalExtendsInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/localExtendsInner.kt");
             doTest(fileName);
         }
 
