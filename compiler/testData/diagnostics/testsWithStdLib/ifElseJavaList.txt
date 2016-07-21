@@ -9,5 +9,5 @@ public/*package*/ open class Java {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open operator fun get(/*0*/ o: kotlin.collections.(Mutable)List<kotlin.Int!>!): kotlin.collections.(Mutable)List<kotlin.Int!>!
+    public open fun get(/*0*/ o: kotlin.collections.(Mutable)List<kotlin.Int!>!): kotlin.collections.(Mutable)List<kotlin.Int!>!
 }
