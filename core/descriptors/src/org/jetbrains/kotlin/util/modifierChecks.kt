@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -70,10 +69,11 @@ interface Check {
 sealed class MemberKindCheck(override val description: String) : Check {
     object MemberOrExtension : MemberKindCheck("must be a member or an extension function") {
         override fun check(functionDescriptor: FunctionDescriptor) =
-                functionDescriptor.isExtension || functionDescriptor.containingDeclaration is ClassDescriptor
+                functionDescriptor.dispatchReceiverParameter != null || functionDescriptor.extensionReceiverParameter != null
     }
     object Member : MemberKindCheck("must be a member function") {
-        override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.containingDeclaration is ClassDescriptor
+        override fun check(functionDescriptor: FunctionDescriptor) =
+                functionDescriptor.dispatchReceiverParameter != null
     }
 }
 
@@ -89,13 +89,6 @@ sealed class ValueParameterCountCheck(override val description: String) : Check 
     }
     class Equals(val n: Int) : ValueParameterCountCheck("must have exactly $n value parameters") {
         override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.size == n
-    }
-}
-
-private object HasDispatchOrExtensionReceiverParameter : Check {
-    override val description = "must be a member of an extension function"
-    override fun check(functionDescriptor: FunctionDescriptor): Boolean {
-        return functionDescriptor.dispatchReceiverParameter != null || functionDescriptor.extensionReceiverParameter != null
     }
 }
 
@@ -238,7 +231,7 @@ object OperatorChecks : AbstractModifierChecks() {
 
 object InfixChecks : AbstractModifierChecks() {
     override val checks = listOf(
-            Checks(HasDispatchOrExtensionReceiverParameter, SingleValueParameter, NoDefaultAndVarargsCheck))
+            Checks(MemberKindCheck.MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck))
 }
 
 fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks.check(this).isSuccess

@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
-// ERROR: 'infix' modifier is inapplicable on this function: must be a member of an extension function
+// ERROR: 'infix' modifier is inapplicable on this function: must be a member or an extension function
 
 package demo
 
