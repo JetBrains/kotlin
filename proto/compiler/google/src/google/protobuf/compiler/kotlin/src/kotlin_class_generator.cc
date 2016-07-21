@@ -290,22 +290,26 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     for (int i = 0; i < properties.size(); ++i) {
         vars["fieldNumber"] = std::to_string(properties[i]->getFieldNumber());
         vars["kotlinFunSuffix"] = properties[i]->getKotlinFunctionSuffix();
+        vars["kotlinWireType"] = properties[i]->getWireType();
+        vars["dl"] = "$";
         printer->Print(vars, "$fieldNumber$ -> ");
 
-        // code for serialization arrays and messages consists of more than one line and needs enclosing brackets
-        if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED
-                || properties[i]->getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-            printer->Print("{\n");
-            printer->Indent();
-        }
+        printer->Print("{\n");
+        printer->Indent();
+
+        // check that wire type of that field is equal to expected
+        printer->Print(vars, "if (wireType != $kotlinWireType$) {\n");
+        printer->Indent();
+        printer->Print(vars, "throw InvalidProtocolBufferException(\""
+                               "Error: Field number $fieldNumber$ has wire type $kotlinWireType$"
+                               " but read $dl${wireType.toString()}\")");
+        printer->Outdent();
+        printer->Print("}\n");
 
         properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true);
 
-        if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED
-            || properties[i]->getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-            printer->Outdent();
-            printer->Print("}\n");
-        }
+        printer->Outdent();
+        printer->Print("}\n");
     }
 
     // TODO: add parsing of unknown fields

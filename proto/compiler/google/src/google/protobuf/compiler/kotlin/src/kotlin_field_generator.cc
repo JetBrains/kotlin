@@ -582,6 +582,13 @@ FieldGenerator FieldGenerator::getUnderlyingTypeGenerator() const {
     return *this;
 }
 
+string FieldGenerator::getWireType() const {
+    if (descriptor->label() == FieldDescriptor::LABEL_REPEATED) {
+        return "WireType.LENGTH_DELIMITED";
+    }
+    return name_resolving::protobufTypeToKotlinWireType(descriptor->type());
+}
+
 
 } // namespace kotlin
 } // namespace compiler

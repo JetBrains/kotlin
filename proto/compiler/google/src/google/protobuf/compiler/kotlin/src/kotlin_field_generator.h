@@ -81,6 +81,8 @@ public:
 
     /* Return function name in enum namespace that converts from enum to Int */
     string getEnumFromIntConverter() const;
+
+    string getWireType() const;
     void generateCode(io::Printer * printer, bool isBuilder) const;
     void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
     void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false) const;

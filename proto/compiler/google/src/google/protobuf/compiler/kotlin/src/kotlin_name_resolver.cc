@@ -156,6 +156,44 @@ string protobufTypeToKotlinFunctionSuffix(FieldDescriptor::Type type)  {
     }
 }
 
+string protobufTypeToKotlinWireType(FieldDescriptor::Type type) {
+    switch (type) {
+        case FieldDescriptor::TYPE_DOUBLE:
+            return "WireType.FIX_64";
+        case FieldDescriptor::TYPE_FLOAT:
+            return "WireType.FIX_32";
+        case FieldDescriptor::TYPE_INT64:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_UINT64:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_INT32:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_FIXED64:
+            return "WireType.FIX_64";
+        case FieldDescriptor::TYPE_FIXED32:
+            return "WireType.FIX_32";
+        case FieldDescriptor::TYPE_BOOL:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_STRING:
+            return "WireType.LENGTH_DELIMITED";
+        case FieldDescriptor::TYPE_MESSAGE:
+            return "WireType.LENGTH_DELIMITED";
+        case FieldDescriptor::TYPE_BYTES:
+            return "WireType.LENGTH_DELIMITED";
+        case FieldDescriptor::TYPE_UINT32:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_ENUM:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_SFIXED32:
+            return "WireType.FIX_32";
+        case FieldDescriptor::TYPE_SFIXED64:
+            return "WireType.FIX_64";
+        case FieldDescriptor::TYPE_SINT32:
+            return "WireType.VARINT";
+        case FieldDescriptor::TYPE_SINT64:
+            return "WireType.VARINT";
+    }
+}
 } // namespace name_resolving
 
 NameResolver::NameResolver() {

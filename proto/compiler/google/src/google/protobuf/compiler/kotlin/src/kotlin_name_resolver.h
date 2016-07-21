@@ -41,6 +41,8 @@ std::string protobufTypeToInitValue(FieldDescriptor::Type type);
 
 std::string protobufToKotlinType(FieldDescriptor::Type type);
 
+std::string protobufTypeToKotlinWireType(FieldDescriptor::Type type);
+
 /**
 * Converts one of protobuf wire types to corresponding Kotlin type with proper
 * naming, so it could be used as suffix after read/write, resulting in function
