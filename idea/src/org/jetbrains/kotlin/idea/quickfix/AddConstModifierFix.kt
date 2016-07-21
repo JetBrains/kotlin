@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -47,9 +50,12 @@ class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, K
     }
 
     companion object {
+        private val removeAnnotations = listOf(FqName("kotlin.jvm.JvmStatic"), FqName("kotlin.jvm.JvmField"))
+
         fun addConstModifier(property: KtProperty) {
             replaceReferencesToGetterByReferenceToField(property)
             property.addModifier(KtTokens.CONST_KEYWORD)
+            removeAnnotations.mapNotNull { property.findAnnotation(it) }.forEach(KtAnnotationEntry::delete)
         }
     }
 }
@@ -66,7 +72,8 @@ class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty:
     companion object {
         fun isApplicableTo(element: KtProperty): Boolean {
             if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
-                    || element.getter?.hasBody() == true || element.receiverTypeReference != null) {
+                || element.getter?.hasBody() == true || element.receiverTypeReference != null
+                || element.hasModifier(KtTokens.CONST_KEYWORD) || element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                 return false
             }
             val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false
