@@ -1,2 +1,2 @@
 <!-- invisibleMember1 -->
-Cannot access 'B': it is 'private' in 'A'
+Cannot access 'B': it is private in 'A'

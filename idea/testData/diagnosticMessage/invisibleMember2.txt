@@ -1,2 +1,2 @@
 <!-- invisibleMember2 -->
-Cannot access '<init>': it is 'private' in 'C'
+Cannot access '<init>': it is private in 'C'

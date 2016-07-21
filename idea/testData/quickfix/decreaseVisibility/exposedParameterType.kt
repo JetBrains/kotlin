@@ -4,7 +4,7 @@
 // ACTION: Make 'Nested' public
 // ACTION: Remove parameter 'arg'
 // ERROR: 'internal' function exposes its 'private' parameter type argument Nested
-// ERROR: Cannot access 'Nested': it is 'private' in 'Outer'
+// ERROR: Cannot access 'Nested': it is private in 'Outer'
 
 class Outer {
     private class Nested
