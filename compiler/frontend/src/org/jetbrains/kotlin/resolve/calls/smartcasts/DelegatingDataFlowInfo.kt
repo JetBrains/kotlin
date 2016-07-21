@@ -231,9 +231,13 @@ internal class DelegatingDataFlowInfo private constructor(
         if (value.type == type) return this
         if (getCollectedTypes(value).contains(type)) return this
         if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
-        val newNullabilityInfo = if (type.isMarkedNullable) EMPTY_NULLABILITY_INFO else ImmutableMap.of(value, NOT_NULL)
         val newTypeInfo = newTypeInfo()
         newTypeInfo.put(value, type)
+        val builder = Maps.newHashMap<DataFlowValue, Nullability>()
+        if (!type.isMarkedNullable) {
+            putNullability(builder, value, NOT_NULL)
+        }
+        val newNullabilityInfo = if (type.isMarkedNullable) EMPTY_NULLABILITY_INFO else ImmutableMap.copyOf(builder)
         return create(this, newNullabilityInfo, newTypeInfo)
     }
 

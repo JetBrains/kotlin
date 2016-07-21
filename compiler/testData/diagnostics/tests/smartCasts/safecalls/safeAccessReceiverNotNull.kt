@@ -52,8 +52,7 @@ fun kt4565_1(a: SomeClass?) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.data.hashCode()
     }
     if (a?.data is String) {
-        // To be supported
-        a<!UNSAFE_CALL!>.<!>data.<!UNRESOLVED_REFERENCE!>length<!>
+        <!DEBUG_INFO_SMARTCAST!>a<!>.data.<!UNRESOLVED_REFERENCE!>length<!>
         data.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
