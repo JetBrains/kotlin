@@ -81,7 +81,11 @@ class LLVMBuilder(val arm: Boolean) {
             KtTokens.GT -> firstOp.type!!.operatorGt(firstNativeOp, secondNativeOp)
             KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
             KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
-            KtTokens.EQEQ -> firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
+            KtTokens.EQEQ ->
+                if (firstOp.type is LLVMReferenceType)
+                    firstOp.type!!.operatorEq(firstOp, secondOp)
+                else
+                    firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
             KtTokens.EXCLEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
             KtTokens.EQ -> {
                 if (secondOp.type is LLVMNullType) {

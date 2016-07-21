@@ -1,2 +1,4 @@
 if_test_1(11) == 10
 if_test_1(0) == 0
+if_test_null(0) == 1
+if_test_null_2(0) == 0

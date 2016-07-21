@@ -4,7 +4,8 @@ class Outer() {
     class Nested(var i: Int) {
 
         fun test(): Int {
-            return 1
+            this.i = 5
+            return this.i
         }
     }
 }
