@@ -2087,6 +2087,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("protectedVarFromClass.kt")
+                public void testProtectedVarFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/protectedVarFromClass.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("returnTypeDependentOnGenericProperty.kt")
                 public void testReturnTypeDependentOnGenericProperty() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/returnTypeDependentOnGenericProperty.kt");
