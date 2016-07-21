@@ -129,7 +129,10 @@ public class ChooseModulePanel {
     public List<Module> getModulesToConfigure() {
         if (allModulesRadioButton.isSelected()) return modules;
         if (allModulesWithKtRadioButton.isSelected()) return modulesWithKtFiles;
+
         String selectedItem = (String) singleModuleComboBox.getSelectedItem();
+        if (selectedItem == null) return Collections.emptyList();
+
         return Collections.singletonList(ModuleManager.getInstance(project).findModuleByName(selectedItem));
     }
 }
