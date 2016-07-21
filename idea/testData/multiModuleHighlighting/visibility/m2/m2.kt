@@ -23,12 +23,12 @@ public class B: <error descr="[INVISIBLE_MEMBER] Cannot access '<init>': it is '
     fun accessA(<warning descr="[UNUSED_PARAMETER] Parameter 'a' is never used">a</warning>: A) {}
 
     fun f() {
-        <error descr="[INVISIBLE_MEMBER] Cannot access 'pri': it is 'invisible_fake' in 'B'">pri</error>()
+        <error descr="[INVISIBLE_MEMBER] Cannot access 'pri': it is 'invisible (private in a supertype)' in 'B'">pri</error>()
 
         pro()
 
         pub()
 
-        <error descr="[INVISIBLE_MEMBER] Cannot access 'int': it is 'invisible_fake' in 'B'">int</error>()
+        <error descr="[INVISIBLE_MEMBER] Cannot access 'int': it is 'invisible (private in a supertype)' in 'B'">int</error>()
     }
 }

@@ -75,6 +75,12 @@ object Renderers {
 
     @JvmField val NAME = Renderer<Named> { it.name.asString() }
 
+    @JvmField val VISIBILITY = Renderer<Visibility> {
+        if (it == Visibilities.INVISIBLE_FAKE)
+            "invisible (private in a supertype)"
+        else it.displayName
+    }
+
     @JvmField val DECLARATION_NAME_WITH_KIND = Renderer<DeclarationDescriptor> {
         val declarationKindWithSpace = when (it) {
             is PackageFragmentDescriptor -> "package "
