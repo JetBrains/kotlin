@@ -107,6 +107,18 @@ public class InnerNestedTestGenerated extends AbstractInnerNestedTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kt11833_1.kt")
+    public void testKt11833_1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt11833_1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt11833_2.kt")
+    public void testKt11833_2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt11833_2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt3132.kt")
     public void testKt3132() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/kt3132.kt");
