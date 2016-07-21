@@ -60,14 +60,14 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
-    protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
+    private static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
     private static boolean IS_TINY_APP_COMPILED = false;
 
     private static File CUSTOM_LIBRARY_JAR;
     private static final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
 
     protected static final String KOTLIN_LIBRARY_NAME = "KotlinLibrary";
-    protected static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
+    private static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
 
     @Override
     protected OutputChecker initOutputChecker() {
@@ -137,6 +137,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            DexLikeBytecodePatchKt.patchDexTests(outDir);
 
             IS_TINY_APP_COMPILED = true;
         }
