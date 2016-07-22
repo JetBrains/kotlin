@@ -39,9 +39,9 @@ class LLVMLongType() : LLVMType() {
     override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp slt i64 $firstOp, $secondOp")
 
-    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression {
-        return LLVMExpression(LLVMBooleanType(), "icmp sgt i64 $firstOp, $secondOp")
-    }
+    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp sgt i64 $firstOp, $secondOp")
+
 
     override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp sle i64 $firstOp, $secondOp")

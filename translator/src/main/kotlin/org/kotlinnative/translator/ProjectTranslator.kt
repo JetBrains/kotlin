@@ -40,7 +40,7 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
     }
 
     private fun generateProjectBody() {
-        with (state) {
+        with(state) {
             properties.values.map { it.generate() }
             objects.values.map { it.generate() }
             classes.values.map { it.generate() }

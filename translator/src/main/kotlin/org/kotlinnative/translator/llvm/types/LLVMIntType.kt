@@ -36,12 +36,17 @@ class LLVMIntType() : LLVMType() {
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, $secondOp")
 
+    override fun operatorInc(firstOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, 1")
+
+    override fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "sub nsw i32 $firstOp, 1")
+
     override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp slt i32 $firstOp, $secondOp")
 
-    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression {
-        return LLVMExpression(LLVMBooleanType(), "icmp sgt i32 $firstOp, $secondOp")
-    }
+    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "icmp sgt i32 $firstOp, $secondOp")
 
     override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp sle i32 $firstOp, $secondOp")

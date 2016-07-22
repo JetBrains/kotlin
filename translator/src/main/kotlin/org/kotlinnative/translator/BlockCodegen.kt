@@ -5,6 +5,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
@@ -54,6 +55,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         when (expr) {
             is KtBlockExpression -> expressionWalker(expr.firstChild, scopeDepth + 1)
             is KtProperty -> evaluateValExpression(expr, scopeDepth)
+            is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
@@ -79,6 +81,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
+            is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
@@ -392,6 +395,42 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         return executeBinaryExpression(operator, expr.operationReference, left, right)
     }
+
+    private fun evaluatePostfixExpression(expr: KtPostfixExpression, scopeDepth: Int): LLVMSingleValue? {
+        val operator = expr.operationToken
+
+        val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
+
+        return executePostfixExpression(operator, expr.operationReference, left as LLVMVariable)
+    }
+
+    private fun executePostfixExpression(operator: IElementType?, operationReference: KtSimpleNameExpression, left: LLVMVariable): LLVMSingleValue?
+            = addPrimitivePostfixOperation(operator, operationReference, left)
+
+    private fun addPrimitivePostfixOperation(operator: IElementType?, operationReference: KtSimpleNameExpression, firstOp: LLVMVariable): LLVMSingleValue? {
+        val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
+        when (operator) {
+            KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> {
+                val oldValue = codeBuilder.getNewVariable(firstOp.type, firstOp.pointer)
+                codeBuilder.allocStackPointedVarAsValue(oldValue)
+                codeBuilder.copyVariable(firstOp, oldValue)
+
+                val llvmExpression = when (operator) {
+                    KtTokens.PLUSPLUS -> firstOp.type.operatorInc(firstNativeOp)
+                    KtTokens.MINUSMINUS -> firstOp.type.operatorDec(firstNativeOp)
+                    else -> throw IllegalAccessError()
+                }
+
+                val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType)
+                codeBuilder.addAssignment(resultOp, llvmExpression)
+
+                codeBuilder.storeVariable(firstOp, resultOp)
+                return oldValue
+            }
+            else -> throw UnsupportedOperationException()
+        }
+    }
+
 
     private fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue)
             = addPrimitiveBinaryOperation(operator, referenceName, left, right)
