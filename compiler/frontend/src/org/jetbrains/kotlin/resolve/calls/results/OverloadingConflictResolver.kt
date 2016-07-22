@@ -273,7 +273,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         private val MutableResolvedCall<*>.resultingVariableDescriptor: VariableDescriptor
             get() = (this as VariableAsFunctionResolvedCall).variableCall.resultingDescriptor
 
-        @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
+        @Suppress("UNCHECKED_CAST")
         private fun <C> getCallHashingStrategy() =
                 ResolvedCallHashingStrategy as TObjectHashingStrategy<C>
 
