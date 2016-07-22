@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 public class KotlinTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
-    public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {
+    public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
         if (symbol instanceof KtElement && symbol.getContainingFile() instanceof KtFile) {
             BindingContext bindingContext = ResolutionUtils.analyze((KtElement)symbol);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
