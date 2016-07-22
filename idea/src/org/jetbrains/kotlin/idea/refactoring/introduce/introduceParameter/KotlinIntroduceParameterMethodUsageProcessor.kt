@@ -100,7 +100,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         val refElement = usage.element as? KtReferenceExpression ?: return true
         val callElement = refElement.getParentOfTypeAndBranch<KtCallElement>(true) { calleeExpression } ?: return true
         val delegateUsage = if (callElement is KtConstructorDelegationCall) {
-            @Suppress("CAST_NEVER_SUCCEEDS")
+            @Suppress("UNCHECKED_CAST")
             (KotlinConstructorDelegationCallUsage(callElement, changeInfo) as KotlinUsageInfo<KtCallElement>)
         }
         else {
