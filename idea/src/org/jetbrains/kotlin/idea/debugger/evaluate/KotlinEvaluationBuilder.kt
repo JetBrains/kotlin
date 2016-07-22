@@ -55,12 +55,12 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
@@ -156,10 +156,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 exception(e)
             }
 
+            val text = runReadAction { codeFragment.context?.text ?: "null" }
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${sourcePosition.line}"),
-                                      Attachment("context.info", codeFragment.context?.text ?: "null"))
+                                      Attachment("context.info", text))
+
             LOG.error(LogMessageEx.createEvent(
                                 "Couldn't evaluate expression",
                                 ExceptionUtil.getThrowableText(e),
