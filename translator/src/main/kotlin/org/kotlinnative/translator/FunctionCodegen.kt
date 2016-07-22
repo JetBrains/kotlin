@@ -33,6 +33,13 @@ class FunctionCodegen(override val state: TranslationState,
             LLVMInstanceOfStandardType(it.name.toString(), it.type)
         })
 
+        if (isExtensionDeclaration) {
+            val receiverType = descriptor.extensionReceiverParameter!!.type
+            val translatorType = LLVMMapStandardType(receiverType)
+            functionNamePrefix += translatorType.toString() + "."
+        }
+
+
         returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
         external = isExternal()
         name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
@@ -98,7 +105,6 @@ class FunctionCodegen(override val state: TranslationState,
             val classVal = LLVMVariable("classvariable.this", translatorType, pointer = 0)
             variableManager.addVariable("this", classVal, 0)
             actualArgs.add(classVal)
-            functionNamePrefix += translatorType.toString() + "."
         }
 
         if (this_type != null) {

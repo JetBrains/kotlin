@@ -18,9 +18,9 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
                 is KtNamedFunction -> {
                     val function = FunctionCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
                     if (function.external) {
-                        state.externalFunctions.put(function.name, function)
+                        state.externalFunctions.put(function.fullName, function)
                     } else {
-                        state.functions.put(function.name, function)
+                        state.functions.put(function.fullName, function)
                     }
                 }
                 is KtClass -> {

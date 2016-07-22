@@ -5,3 +5,7 @@ fun testCastToByte(X : Byte): Boolean{
 fun testCastToInt(X : Int): Boolean{
     return 34.toInt() == X
 }
+
+fun testCastToShort(X : Short): Boolean{
+    return 34.toShort() == X
+}
