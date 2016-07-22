@@ -49,11 +49,11 @@ fun Project.initKapt(
 
         kotlinTask.logger.kotlinDebug("kapt: Using class file stubs")
 
-        val stubsDir = File(buildDir, "tmp/kapt/$variantName/classFileStubs")
-        stubsDir.mkdirs()
-        kotlinTask.kaptOptions.classFileStubs = stubsDir
+        val stubsDir = File(buildDir, "tmp/kapt/$variantName/classFileStubs").apply { mkdirs() }
+        kotlinAfterJavaTask.destinationDir = kotlinTask.destinationDir
+        kotlinTask.destinationDir = stubsDir
+        kotlinTask.kaptOptions.generateStubs = true
         javaTask.appendClasspathDynamically(stubsDir)
-        kotlinTask.appendClasspathDynamically(stubsDir)
 
         val javaDestinationDir = project.files(javaTask.destinationDir)
         javaTask.doLast {
@@ -105,10 +105,9 @@ private fun Project.createKotlinAfterJavaTask(
         javaTask: AbstractCompile,
         kotlinTask: KotlinCompile,
         kotlinOptions: Any?,
-        destinationDir = kotlinTask.destinationDir
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile {
-    val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
+    val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
         classpath = kotlinTask.classpath - project.files(javaTask.destinationDir)
         this
     }
