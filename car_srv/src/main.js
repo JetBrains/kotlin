@@ -57,7 +57,7 @@ client.sendData(connectRequest.encode().buffer, "/connect", function (data) {
     var connectionResponse = exports.protoConstructorConnect.ConnectionResponse.decode(data);
     exports.thisCar.uid = connectionResponse.uid
 });
-var car = require("./Car").getCar();
+var car = require("./car.js").getCar();
 exports.thisCar = car;
 
 //handlers for client requests
