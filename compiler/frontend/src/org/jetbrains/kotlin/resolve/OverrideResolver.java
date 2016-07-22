@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SmartHashSet;
-import com.intellij.util.containers.hash.EqualityPolicy;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -40,11 +39,9 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.utils.FunctionsKt;
-import org.jetbrains.kotlin.utils.HashSetUtil;
 
 import java.util.*;
 
-import static kotlin.collections.CollectionsKt.sortedBy;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -108,45 +105,6 @@ public class OverrideResolver {
         return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
     }
 
-    // In a multi-module project different "copies" of the same class may be present in different libraries,
-    // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
-    //
-    // Sometimes we should compare "copies" from sources and from binary files.
-    // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
-    // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
-    @NotNull
-    private static <D> Set<D> noDuplicates(
-            @NotNull Set<D> candidateSet,
-            @NotNull final Function1<? super D, ? extends CallableDescriptor> transform
-    ) {
-        List<D> fromSourcesGoesFirst = sortedBy(candidateSet, new Function1<D, Integer>() {
-            @Override
-            public Integer invoke(D d) {
-                return DescriptorToSourceUtils.descriptorToDeclaration(transform.invoke(d)) != null ? 0 : 1;
-            }
-        });
-
-        return HashSetUtil.linkedHashSet(
-                fromSourcesGoesFirst,
-                new EqualityPolicy<D>() {
-                    @Override
-                    public int getHashCode(D d) {
-                        return DescriptorUtils.getFqName(transform.invoke(d).getContainingDeclaration()).hashCode();
-                    }
-
-                    @Override
-                    public boolean isEqual(D d1, D d2) {
-                        CallableDescriptor f = transform.invoke(d1).getOriginal();
-                        CallableDescriptor g = transform.invoke(d2).getOriginal();
-
-                        boolean ignoreReturnType = (DescriptorToSourceUtils.descriptorToDeclaration(f) == null) !=
-                                                   (DescriptorToSourceUtils.descriptorToDeclaration(g) == null);
-
-                        return DescriptorEquivalenceForOverrides.INSTANCE.areCallableDescriptorsEquivalent(f, g, ignoreReturnType);
-                    }
-                });
-    }
-
     @NotNull
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
@@ -154,33 +112,34 @@ public class OverrideResolver {
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
 
-        // Here we filter out structurally equivalent descriptors before processing overrides, because such descriptors
-        // "override" each other (overrides(f, g) = overrides(g, f) = true) and the code below removes them all from the
-        // candidates, unless we first compute noDuplicates
-        Set<D> noDuplicates = noDuplicates(candidateSet, transform);
-
-        Set<D> candidates = Sets.newLinkedHashSet();
+        Set<D> result = new LinkedHashSet<D>();
         outerLoop:
-        for (D meD : noDuplicates) {
+        for (D meD : candidateSet) {
             CallableDescriptor me = transform.invoke(meD);
-            for (D otherD : noDuplicates) {
+            for (Iterator<D> iterator = result.iterator(); iterator.hasNext(); ) {
+                D otherD = iterator.next();
                 CallableDescriptor other = transform.invoke(otherD);
-                if (me != other && overrides(other, me)) {
+                if (overrides(me, other)) {
+                    iterator.remove();
+                }
+                else if (overrides(other, me)) {
                     continue outerLoop;
                 }
             }
-            candidates.add(meD);
+            result.add(meD);
         }
 
-        assert !candidates.isEmpty() : "All candidates filtered out from " + candidateSet;
+        assert !result.isEmpty() : "All candidates filtered out from " + candidateSet;
 
-        return candidates;
+        return result;
     }
 
     /**
      * @return whether f overrides g
      */
     public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
+        // In a multi-module project different "copies" of the same class may be present in different libraries,
+        // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
         // This first check cover the case of duplicate classes in different modules:
         // when B is defined in modules m1 and m2, and C (indirectly) inherits from both versions,
         // we'll be getting sets of members that do not override each other, but are structurally equivalent.
