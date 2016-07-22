@@ -28,10 +28,6 @@ class AndroidGradleWrapper {
   }
 
   static def srcDir(Object androidSourceSet, Object kotlinDirSet) {
-    /*before 0.11 gradle android plugin there was:
-      androidSourceSet.getAllJava().source(kotlinDirSet)
-      androidSourceSet.getAllSource().source(kotlinDirSet)
-      but those methods were removed so as temporary hack next code was suggested*/
     androidSourceSet.getJava().srcDir(kotlinDirSet)
   }
 
