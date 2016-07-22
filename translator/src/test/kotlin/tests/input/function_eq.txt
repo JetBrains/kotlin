@@ -1,0 +1,3 @@
+inc_Int(1) == 2
+dinc_Int(1) == 3
+sum_Int_Int(1, 1) == 2

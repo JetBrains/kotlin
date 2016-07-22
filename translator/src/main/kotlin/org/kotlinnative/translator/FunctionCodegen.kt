@@ -69,7 +69,7 @@ class FunctionCodegen(override val state: TranslationState,
 
         codeBuilder.addStartExpression()
         generateLoadArguments()
-        evaluateCodeBlock(function.bodyExpression, scopeDepth = topLevel)
+        evaluateCodeBlock(function.bodyExpression, scopeDepth = topLevel, isBlock = function.hasBlockBody())
 
         if (!wasReturnOnTopLevel)
             codeBuilder.addAnyReturn(returnType!!.type)
