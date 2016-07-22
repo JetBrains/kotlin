@@ -361,9 +361,5 @@ private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {
 
 private fun wrapInRunFun(expression: KtExpression): PsiElement? {
     val replacedBody = replaceByRunFunction(expression)
-
-    // Increment modification tracker to clear ResolveCache after changes in function body
-    (PsiManager.getInstance(expression.project).modificationTracker as PsiModificationTrackerImpl).incCounter()
-
     return replacedBody.lambdaArguments.first().getLambdaExpression().bodyExpression?.firstChild
 }

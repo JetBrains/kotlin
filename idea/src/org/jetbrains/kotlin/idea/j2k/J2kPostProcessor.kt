@@ -67,8 +67,6 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
             if (modificationStamp == file.modificationStamp) break
 
-            (PsiModificationTracker.SERVICE.getInstance(file.project) as? PsiModificationTrackerImpl)?.incOutOfCodeBlockModificationCounter()
-
             elementToActions = collectAvailableActions(file, rangeMarker)
         }
 
