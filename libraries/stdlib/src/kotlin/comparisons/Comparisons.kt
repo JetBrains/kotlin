@@ -280,18 +280,18 @@ public inline fun <T: Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(nat
 /**
  * Returns a comparator that compares [Comparable] objects in natural order.
  */
-public fun <T: Comparable<T>> naturalOrder(): Comparator<T> = @Suppress("CAST_NEVER_SUCCEEDS") (NaturalOrderComparator as Comparator<T>)
+public fun <T: Comparable<T>> naturalOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (NaturalOrderComparator as Comparator<T>)
 
 /**
  * Returns a comparator that compares [Comparable] objects in reversed natural order.
  */
-public fun <T: Comparable<T>> reverseOrder(): Comparator<T> = @Suppress("CAST_NEVER_SUCCEEDS") (ReverseOrderComparator as Comparator<T>)
+public fun <T: Comparable<T>> reverseOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (ReverseOrderComparator as Comparator<T>)
 
 /** Returns a comparator that imposes the reverse ordering of this comparator. */
 public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
     is ReversedComparator -> this.comparator
-    NaturalOrderComparator -> @Suppress("CAST_NEVER_SUCCEEDS") (ReverseOrderComparator as Comparator<T>)
-    ReverseOrderComparator -> @Suppress("CAST_NEVER_SUCCEEDS") (NaturalOrderComparator as Comparator<T>)
+    NaturalOrderComparator -> @Suppress("UNCHECKED_CAST") (ReverseOrderComparator as Comparator<T>)
+    ReverseOrderComparator -> @Suppress("UNCHECKED_CAST") (NaturalOrderComparator as Comparator<T>)
     else -> ReversedComparator(this)
 }
 
