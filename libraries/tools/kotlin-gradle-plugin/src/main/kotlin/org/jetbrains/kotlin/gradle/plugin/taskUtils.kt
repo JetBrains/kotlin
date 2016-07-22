@@ -57,27 +57,3 @@ internal fun Task.finalizedByIfNotFailed(finalizer: Task) {
     finalizer.onlyIf { this@finalizedByIfNotFailed.state.failure == null }
     this.finalizedBy(finalizer)
 }
-
-internal var AbstractTask.anyClassesCompiled: Boolean? by TaskPropertyDelegate("anyClassesCompiled")
-internal var AbstractTask.friendTaskName: String? by TaskPropertyDelegate("friendTaskName")
-internal var AbstractTask.javaOutputDir: File? by TaskPropertyDelegate("javaOutputDir")
-
-inline
-internal fun <reified T : Any> TaskPropertyDelegate(propertyName: String) =
-        TaskPropertyDelegate(propertyName, T::class.java)
-
-internal class TaskPropertyDelegate<T : Any>(private val propertyName: String, private val klass: Class<T>) {
-    operator fun getValue(task: Any?, property: KProperty<*>): T? {
-        if (task !is AbstractCompile) throw IllegalStateException("TaskPropertyDelegate could extend only AbstractCompile")
-
-        if ( !task.hasProperty(propertyName)) return null
-
-        return task.property(propertyName)?.let { klass.cast(it) }
-    }
-
-    operator fun setValue(task: Any?, property: KProperty<*>, value: T?) {
-        if (task !is AbstractCompile) throw IllegalStateException("TaskPropertyDelegate could extend only AbstractCompile")
-
-        task.setProperty(propertyName, value)
-    }
-}

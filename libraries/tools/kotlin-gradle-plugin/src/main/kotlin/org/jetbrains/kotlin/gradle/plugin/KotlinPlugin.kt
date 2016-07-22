@@ -161,7 +161,7 @@ class Kotlin2JvmSourceSetProcessor(
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
                 if (javaTask !is JavaCompile) return@afterEvaluate
 
-                var kotlinAfterJavaTask: AbstractCompile? = null
+                var kotlinAfterJavaTask: KotlinCompile? = null
 
                 if (aptConfiguration.dependencies.size > 1) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
@@ -434,7 +434,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
-            var kotlinAfterJavaTask: AbstractCompile? = null
+            var kotlinAfterJavaTask: KotlinCompile? = null
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
@@ -460,20 +460,18 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
     }
 }
 
-private fun configureJavaTask(kotlinTask: AbstractCompile, javaTask: AbstractCompile, kotlinAfterJavaTask: AbstractCompile?, logger: Logger) {
+private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, kotlinAfterJavaTask: KotlinCompile?, logger: Logger) {
     // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
     // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
     // explicitly being out of date whenever any kotlin files are compiled
-    if (kotlinTask.anyClassesCompiled != null) {
-        kotlinTask.anyClassesCompiled = false
+    kotlinTask.anyClassesCompiled = false
 
-        javaTask.outputs.upToDateWhen { task ->
-            val kotlinClassesCompiled = kotlinTask.anyClassesCompiled ?: false
-            if (kotlinClassesCompiled) {
-                logger.info("Marking $task out of date, because kotlin classes are changed")
-            }
-            !kotlinClassesCompiled
+    javaTask.outputs.upToDateWhen { task ->
+        val kotlinClassesCompiled = kotlinTask.anyClassesCompiled
+        if (kotlinClassesCompiled) {
+            logger.info("Marking $task out of date, because kotlin classes are changed")
         }
+        !kotlinClassesCompiled
     }
 
     javaTask.dependsOn(kotlinTask.name)
@@ -485,16 +483,14 @@ private fun configureJavaTask(kotlinTask: AbstractCompile, javaTask: AbstractCom
      * ex. it adds some support libraries jars after execution of prepareComAndroidSupportSupportV42311Library task,
      * so it's only safe to modify javaTask.classpath right before its usage
      */
-    if (kotlinAfterJavaTask == null) {
-        javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
-    }
+    javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
 }
 
 private fun createSyncOutputTask(
         project: Project,
-        kotlinTask: AbstractCompile,
+        kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
-        kotlinAfterJavaTask: AbstractCompile?,
+        kotlinAfterJavaTask: KotlinCompile?,
         variantName: String
 ) {
     // if kotlinAfterJavaTask is not null then kotlinTask compiles stubs, so don't sync them

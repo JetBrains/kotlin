@@ -39,7 +39,7 @@ fun Project.initKapt(
         kotlinOptions: Any?,
         subpluginEnvironment: SubpluginEnvironment,
         tasksProvider: KotlinTasksProvider
-): AbstractCompile? {
+): KotlinCompile? {
     val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: KotlinCompile?
 
@@ -53,7 +53,6 @@ fun Project.initKapt(
         kotlinAfterJavaTask.destinationDir = kotlinTask.destinationDir
         kotlinTask.destinationDir = stubsDir
         kotlinTask.kaptOptions.generateStubs = true
-        javaTask.appendClasspathDynamically(stubsDir)
 
         val javaDestinationDir = project.files(javaTask.destinationDir)
         javaTask.doLast {
