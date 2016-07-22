@@ -634,10 +634,14 @@ internal class DescriptorRendererImpl(
         renderVisibility(constructor.visibility, builder)
         renderMemberKind(constructor, builder)
 
-        builder.append(renderKeyword("constructor"))
+        if (renderConstructorKeyword) {
+            builder.append(renderKeyword("constructor"))
+        }
         if (secondaryConstructorsAsPrimary) {
             val classDescriptor = constructor.containingDeclaration
-            builder.append(" ")
+            if (renderConstructorKeyword) {
+                builder.append(" ")
+            }
             renderName(classDescriptor, builder)
             renderTypeParameters(constructor.typeParameters, builder, false)
         }
