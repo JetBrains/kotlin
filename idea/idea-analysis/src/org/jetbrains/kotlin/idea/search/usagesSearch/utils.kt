@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.OverridingUtil
 
 val KtDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
@@ -227,7 +227,7 @@ fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boole
         when (it) {
             is KtDeclaration -> {
                 val usageDescriptor = toDescriptor(it)
-                usageDescriptor != null && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
+                usageDescriptor != null && OverridingUtil.overrides(usageDescriptor, targetDescriptor)
             }
             is PsiMethod -> {
                 declaration.toLightMethods().any { superMethod -> MethodSignatureUtil.isSuperMethod(superMethod, it) }

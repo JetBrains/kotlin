@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
+import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -62,6 +63,91 @@ public class OverridingUtil {
 
     private OverridingUtil(KotlinTypeChecker.TypeConstructorEquality axioms) {
         equalityAxioms = axioms;
+    }
+
+    /**
+     * Given a set of descriptors, returns a set containing all the given descriptors except those which _are overridden_ by at least
+     * one other descriptor from the original set.
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
+        return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
+    }
+
+    @NotNull
+    public static <D> Set<D> filterOverrides(
+            @NotNull Set<D> candidateSet,
+            @NotNull Function1<? super D, ? extends CallableDescriptor> transform
+    ) {
+        if (candidateSet.size() <= 1) return candidateSet;
+
+        Set<D> result = new LinkedHashSet<D>();
+        outerLoop:
+        for (D meD : candidateSet) {
+            CallableDescriptor me = transform.invoke(meD);
+            for (Iterator<D> iterator = result.iterator(); iterator.hasNext(); ) {
+                D otherD = iterator.next();
+                CallableDescriptor other = transform.invoke(otherD);
+                if (overrides(me, other)) {
+                    iterator.remove();
+                }
+                else if (overrides(other, me)) {
+                    continue outerLoop;
+                }
+            }
+            result.add(meD);
+        }
+
+        assert !result.isEmpty() : "All candidates filtered out from " + candidateSet;
+
+        return result;
+    }
+
+    /**
+     * @return whether f overrides g
+     */
+    public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
+        // In a multi-module project different "copies" of the same class may be present in different libraries,
+        // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
+        // This first check cover the case of duplicate classes in different modules:
+        // when B is defined in modules m1 and m2, and C (indirectly) inherits from both versions,
+        // we'll be getting sets of members that do not override each other, but are structurally equivalent.
+        // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
+        if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal())) return true;
+        CallableDescriptor originalG = g.getOriginal();
+        for (D overriddenFunction : DescriptorUtils.getAllOverriddenDescriptors(f)) {
+            if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(originalG, overriddenFunction.getOriginal())) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return overridden real descriptors (not fake overrides). Note that most usages of this method should be followed by calling
+     * {@link #filterOutOverridden(Set)}, because some of the declarations can override the other.
+     */
+    @NotNull
+    public static Set<CallableMemberDescriptor> getOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
+        Set<CallableMemberDescriptor> result = new LinkedHashSet<CallableMemberDescriptor>();
+        collectOverriddenDeclarations(descriptor, result);
+        return result;
+    }
+
+    private static void collectOverriddenDeclarations(
+            @NotNull CallableMemberDescriptor descriptor,
+            @NotNull Set<CallableMemberDescriptor> result
+    ) {
+        if (descriptor.getKind().isReal()) {
+            result.add(descriptor);
+        }
+        else {
+            if (descriptor.getOverriddenDescriptors().isEmpty()) {
+                throw new IllegalStateException("No overridden descriptors found for (fake override) " + descriptor);
+            }
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                collectOverriddenDeclarations(overridden, result);
+            }
+        }
     }
 
     @NotNull
