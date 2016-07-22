@@ -302,7 +302,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         val projectVersion = loadKotlinVersionFromResource(log)
         val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
 
-        ext.sourceSets.all(Action<AndroidSourceSet> { sourceSet ->
+        ext.sourceSets.all { sourceSet ->
             if (sourceSet is HasConvention) {
                 val sourceSetName = sourceSet.name
                 val kotlinSourceSet = KotlinSourceSetImpl(sourceSetName, project.fileResolver)
@@ -313,17 +313,9 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 aptConfigurations.put(sourceSet.name,
                         project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
 
-                /*TODO: before 0.11 gradle android plugin there was:
-                  sourceSet.getAllJava().source(kotlinDirSet)
-                  sourceSet.getAllSource().source(kotlinDirSet)
-                  AndroidGradleWrapper.getResourceFilter(sourceSet)?.exclude(KSpec({ elem ->
-                    kotlinDirSet.contains(elem.getFile())
-                  }))
-                 but those methods were removed so commented as temporary hack*/
-
                 project.logger.kotlinDebug("Created kotlin sourceDirectorySet at ${kotlinDirSet.srcDirs}")
             }
-        })
+        }
 
         val extensions = (ext as ExtensionAware).extensions
         extensions.add("kotlinOptions", K2JVMCompilerArguments::class.java)
