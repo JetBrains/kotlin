@@ -16,26 +16,12 @@
 
 package org.jetbrains.kotlin.utils;
 
-import com.intellij.util.containers.hash.EqualityPolicy;
 import com.intellij.util.containers.hash.HashSet;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 public class HashSetUtil {
-    @NotNull
-    public static <T> Set<T> linkedHashSet(@NotNull Collection<T> set,  @NotNull EqualityPolicy<T> policy) {
-        // this implementation of LinkedHashMap doesn't admit nulls as values
-        Map<T, String> map = new LinkedHashMap<T, String>(policy);
-        for (T t : set) {
-            map.put(t, "");
-        }
-        return map.keySet();
-    }
-
     @NotNull
     public static <T> Set<T> symmetricDifference(@NotNull Set<T> set1, @NotNull Set<T> set2) {
         Set<T> intersection = new HashSet<T>();
