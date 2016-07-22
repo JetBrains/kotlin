@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
-import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
@@ -319,7 +316,7 @@ open class KotlinIntroduceParameterHandler(
                                             originalRange = originalExpression.toRange(),
                                             callable = targetParent,
                                             callableDescriptor = functionDescriptor,
-                                            newParameterName = suggestedNames.first(),
+                                            newParameterName = suggestedNames.first().quoteIfNeeded(),
                                             newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType),
                                             argumentValue = originalExpression,
                                             withDefaultValue = false,
