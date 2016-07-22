@@ -7,7 +7,9 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.HttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
-import proto.car.LocationP
+import LocationResponse
+import java.io.ByteArrayInputStream
+import CodedInputStream
 
 /**
  * Created by user on 7/8/16.
@@ -25,10 +27,11 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
         when (url) {
             getLocationUrl -> {
                 try {
-                    val response = LocationP.Location.parseFrom(contentBytes);
+                    val response = LocationResponse.BuilderLocationResponse().build()
+                    response.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
 
-                    if (response.responseCase == LocationP.Location.ResponseCase.LOCATIONRESPONSE) {
-                        val data = response.locationResponse
+                    if (response.code == 0) {
+                        val data = response.locationResponseData
                         synchronized(environment, {
                             val car = environment.map.get(carUid)
                             if (car != null) {

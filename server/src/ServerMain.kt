@@ -5,7 +5,8 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.handler.codec.http.*
 import objects.Car
-import proto.car.RouteP
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -86,9 +87,11 @@ fun main(args: Array<String>) {
                                 environment.map.get(id)
                             })
                     if (car != null) {
-                        val wayPoint = RouteP.Route.WayPoint.newBuilder().setDistance(distance).setAngleDelta(angle).build()
-                        val route = RouteP.Route.newBuilder().addWayPoints(wayPoint).build()
-                        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, setRouteUrl, Unpooled.copiedBuffer(route.toByteArray()))
+                        val wayPoint = RouteRequest.WayPoint.BuilderWayPoint().setDistance(distance).setAngle_delta(angle).build()
+                        val route = RouteRequest.BuilderRouteRequest().addWayPoint(wayPoint).build()
+                        val requestBytes = ByteArrayOutputStream()
+                        route.writeTo(CodedOutputStream(requestBytes))
+                        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, setRouteUrl, Unpooled.copiedBuffer(requestBytes.toByteArray()))
                         request.headers().set(HttpHeaderNames.HOST, car.host)
                         request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
                         request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
@@ -100,7 +103,7 @@ fun main(args: Array<String>) {
                     println("incorrect format")
                 }
             } else if (s.equals("refloc", true)) {
-                val cars = synchronized(environment, {environment.map.values})
+                val cars = synchronized(environment, { environment.map.values })
                 for (car in cars) {
                     val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, getLocationUrl, Unpooled.EMPTY_BUFFER)
                     request.headers().set(HttpHeaderNames.HOST, car.host)

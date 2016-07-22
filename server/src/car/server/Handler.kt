@@ -7,13 +7,15 @@ import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.*
-import objects.Car
 import objects.Environment
-import proto.car.ConnectP
-import proto.car.ConnectP.ConnectionRequest
-import proto.car.RouteDoneP.RouteDone
 import routeDoneUrl
-import java.util.*
+import ConnectionRequest
+import ConnectionResponse
+import java.io.ByteArrayInputStream
+import CodedInputStream
+import CodedOutputStream
+import java.io.ByteArrayOutputStream
+import RouteDoneRequest
 
 /**
  * Created by user on 7/6/16.
@@ -27,29 +29,30 @@ class Handler : SimpleChannelInboundHandler<Any>() {
 
         val environment = Environment.instance
         var success = true;
-        var answer: ByteArray = ByteArray(0)
+        val answer: ByteArrayOutputStream = ByteArrayOutputStream()
         when (url) {
             connectUrl -> {
-                var data: ConnectionRequest? = null
+                val data = ConnectionRequest.BuilderConnectionRequest().build();
                 try {
-                    data = ConnectionRequest.parseFrom(contentBytes)
+                    data.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
                 } catch (e: InvalidProtocolBufferException) {
                     success = false;
                 }
-                if (data != null) {
+                if (success) {
                     val uid = environment.connectCar(data.ip, data.port)
-                    answer = ConnectP.ConnectionResponse.newBuilder().setUid(uid).build().toByteArray()
+
+                    ConnectionResponse.BuilderConnectionResponse().setUid(uid).build().writeTo(CodedOutputStream(answer))
                 }
                 //todo return connection error
             }
             routeDoneUrl -> {
-                var data: RouteDone? = null
+                val data = RouteDoneRequest.BuilderRouteDoneRequest().build()
                 try {
-                    data = RouteDone.parseFrom(contentBytes)
+                    data.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
                 } catch (e: InvalidProtocolBufferException) {
                     success = false;
                 }
-                if (data != null) {
+                if (success) {
                     val id = data.uid
                     synchronized(environment.map, {
                         val car = environment.map.get(id)
@@ -66,7 +69,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 success = false
             }
         }
-        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(answer))
+        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(answer.toByteArray()))
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }

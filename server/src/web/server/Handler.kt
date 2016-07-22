@@ -1,22 +1,7 @@
 package web.server
 
-import connectUrl
-import getLocationUrl
-import io.netty.buffer.Unpooled
-import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.handler.codec.http.*
-import io.netty.util.CharsetUtil
-import objects.Environment
-import proto.car.ConnectP.ConnectionRequest
-import proto.car.RouteDoneP
-import proto.car.RouteDoneP.RouteDone
-import routeDoneUrl
-import setRouteUrl
-import java.nio.charset.Charset
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Created by user on 7/6/16.
