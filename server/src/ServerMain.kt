@@ -18,10 +18,10 @@ import kotlin.concurrent.thread
 val carServerPort: Int = 7925
 val webServerPort: Int = 7926
 val handlerThreadsCount: Int = 100
-val getLocationUrl = "getLocation"
-val routeDoneUrl = "routeDone"
-val setRouteUrl = "route"
-val connectUrl = "connect"
+val getLocationUrl = "/getLocation"
+val routeDoneUrl = "/routeDone"
+val setRouteUrl = "/route"
+val connectUrl = "/connect"
 
 fun main(args: Array<String>) {
 
