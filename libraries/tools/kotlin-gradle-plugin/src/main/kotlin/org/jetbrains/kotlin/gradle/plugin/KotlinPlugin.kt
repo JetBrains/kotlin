@@ -372,40 +372,15 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             kotlinTask.description = "Compiles the ${variantDataName} kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
-            fun SourceDirectorySet.addSourceDirectories(additionalSourceFiles: Collection<File>) {
-                for (dir in additionalSourceFiles) {
-                    this.srcDir(dir)
-                    logger.kotlinDebug("Source directory ${dir.absolutePath} was added to kotlin source for $kotlinTaskName")
-                }
-            }
-
             val aptFiles = arrayListOf<File>()
 
-            // getSortedSourceProviders should return only actual java sources, generated sources should be collected earlier
-            val providers = variantData.variantConfiguration.sortedSourceProviders
-            for (provider in providers) {
-                val javaSrcDirs = AndroidGradleWrapper.getJavaSrcDirs(provider as AndroidSourceSet)
-                val kotlinSourceSet = getExtension<KotlinSourceSet>(provider, "kotlin")
-                val kotlinSourceDirectorySet = kotlinSourceSet.getKotlin()
-                kotlinTask.source(kotlinSourceDirectorySet)
-
-                kotlinSourceDirectorySet.addSourceDirectories(javaSrcDirs)
-
+            for (provider in variantData.sourceProviders) {
                 val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                 // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
                 if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
                     aptFiles.addAll(aptConfiguration.resolve())
                 }
-            }
-
-            // getJavaSources should return the Java sources used for compilation
-            // We want to collect only generated files, like R-class output dir
-            // Actual java sources will be collected later
-            val additionalSourceFiles = AndroidGradleWrapper.getGeneratedSourceDirs(variantData)
-            for (file in additionalSourceFiles) {
-                kotlinTask.source(file)
-                logger.kotlinDebug("Source directory with generated files ${file.absolutePath} was added to kotlin source for $kotlinTaskName")
             }
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
@@ -435,10 +410,33 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment, tasksProvider)
             }
 
+            configureSources(kotlinTask, variantData)
+            if (kotlinAfterJavaTask != null) {
+                configureSources(kotlinAfterJavaTask, variantData)
+            }
+
             configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
         }
     }
+
+    private fun configureSources(kotlinTask: KotlinCompile, variantData: BaseVariantData<out BaseVariantOutputData>) {
+        val logger = kotlinTask.project.logger
+
+        for (provider in variantData.sourceProviders) {
+            val kotlinSourceSet = getExtension<KotlinSourceSet>(provider, "kotlin")
+            val kotlinSourceDirectorySet = kotlinSourceSet.getKotlin()
+            kotlinTask.source(kotlinSourceDirectorySet)
+        }
+
+        for (javaSrcDir in AndroidGradleWrapper.getJavaSources(variantData)) {
+            kotlinTask.source(javaSrcDir)
+            logger.kotlinDebug("Source directory $javaSrcDir was added to kotlin source for ${kotlinTask.name}")
+        }
+    }
+
+    private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
+        get() = variantConfiguration.sortedSourceProviders
 
     fun <T> getExtension(obj: Any, extensionName: String): T {
         if (obj is ExtensionAware) {
