@@ -40,7 +40,6 @@ for i in $( ls "$DIRECTORY/input" $1); do
 	java -jar build/libs/ast-kotlin-1.0-SNAPSHOT.jar  $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
 	llvm-link-3.6 $DIRECTORY/linked/* > $DIRECTORY/linked/run.ll
 	lli-3.6 $DIRECTORY/linked/run.ll
-	exit
 done
 
 
