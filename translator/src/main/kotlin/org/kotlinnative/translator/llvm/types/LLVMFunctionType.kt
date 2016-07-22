@@ -19,6 +19,13 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
         arguments = types.dropLast(1)
     }
 
+    override fun mangle() =
+            "F.${arguments.joinToString(separator = "_", transform = { it.type.mangle() })}.EF"
+
+    fun mangleArgs(): String =
+            if (arguments.size > 0) "_${arguments.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""
+
     override fun toString(): String =
             "${returnType.type} (${arguments.map { it.getType() }.joinToString()})"
+
 }

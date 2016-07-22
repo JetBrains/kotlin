@@ -1,2 +1,2 @@
-nested_test_1(1) == 1
-nested_test_2(1) == 5
+nested_test_1_Int(1) == 1
+nested_test_2_Int(1) == 5

@@ -1,1 +1,1 @@
-while_test_1(6) == 10
+while_test_1_Int(6) == 10

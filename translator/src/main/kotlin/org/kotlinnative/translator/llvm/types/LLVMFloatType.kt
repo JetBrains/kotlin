@@ -20,6 +20,8 @@ class LLVMFloatType() : LLVMType() {
 
     override val align = 4
     override var size: Int = 4
+
+    override fun mangle() = "Float"
     override fun toString() = "float"
     override val defaultValue = "0.0"
     override fun isPrimitive() = true

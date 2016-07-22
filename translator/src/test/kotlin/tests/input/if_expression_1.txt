@@ -1,2 +1,2 @@
-if_expression_1(56) == 2323
-if_expression_1(-58) == 678934
+if_expression_1_Int(56) == 2323
+if_expression_1_Int(-58) == 678934

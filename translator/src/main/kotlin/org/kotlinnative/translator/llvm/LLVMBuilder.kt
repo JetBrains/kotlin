@@ -1,7 +1,5 @@
 package org.kotlinnative.translator.llvm
 
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.kotlinnative.translator.llvm.types.*
 

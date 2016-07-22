@@ -59,6 +59,7 @@ class LLVMLongType() : LLVMType() {
     override var size: Int = 8
     override val defaultValue = "0"
 
+    override fun mangle() = "Long"
     override fun toString() = "i64"
     override fun isPrimitive() = true
 }

@@ -1,1 +1,1 @@
-class_methods_1(55) == 60
+class_methods_1_Int(55) == 60

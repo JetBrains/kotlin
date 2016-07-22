@@ -55,6 +55,8 @@ class LLVMIntType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i32 $firstOp, $secondOp")
 
+    override fun mangle() = "Int"
+
     override val align = 4
     override var size: Int = 4
     override val defaultValue = "0"

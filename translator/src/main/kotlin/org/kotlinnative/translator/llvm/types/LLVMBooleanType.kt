@@ -42,6 +42,8 @@ class LLVMBooleanType() : LLVMType() {
         else -> throw IllegalArgumentException("Failed to parse boolean type")
     }
 
+    override fun mangle() = "Boolean"
+
     override val align = 4
     override var size: Int = 1
     override val defaultValue = "0"

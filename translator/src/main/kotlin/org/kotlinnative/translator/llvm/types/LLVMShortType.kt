@@ -26,6 +26,7 @@ class LLVMShortType() : LLVMType() {
     override val align = 2
     override val defaultValue = "0"
 
+    override fun mangle() = "Short"
     override fun toString(): String = "i16"
     override fun isPrimitive() = true
 }

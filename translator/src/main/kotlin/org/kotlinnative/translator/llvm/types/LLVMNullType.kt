@@ -4,4 +4,6 @@ class LLVMNullType() : LLVMType() {
     override val align: Int = 0
     override var size: Int = 0
     override val defaultValue: String = "0"
+
+    override fun mangle() = ""
 }

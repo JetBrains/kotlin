@@ -68,7 +68,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtIfExpression -> evaluateIfOperator(expr.firstChild as LeafPsiElement, scopeDepth + 1, expr)
             is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
             is KtReturnExpression -> evaluateReturnInstruction(expr.firstChild, scopeDepth)
-            is KtThisExpression -> evaluateThisExpression(expr, scopeDepth)
+            is KtThisExpression -> evaluateThisExpression()
             is PsiWhiteSpace -> null
             is PsiElement -> evaluatePsiElement(expr, scopeDepth)
             null -> null
@@ -76,7 +76,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         }
     }
 
-    private fun evaluateThisExpression(expr: KtThisExpression, scopeDepth: Int): LLVMSingleValue? {
+    private fun evaluateThisExpression(): LLVMSingleValue? {
         return variableManager.getLLVMvalue("this")
     }
 
@@ -92,7 +92,8 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateCallableReferenceExpression(expr: KtCallableReferenceExpression): LLVMSingleValue? {
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
-        return LLVMInstanceOfStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
+        val result = LLVMInstanceOfStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
+        return LLVMVariable("${result.label}${(result.type as LLVMFunctionType).mangleArgs()}", result.type, result.kotlinName, result.scope, result.pointer)
     }
 
     private fun evaluateDotExpression(expr: KtDotQualifiedExpression, scopeDepth: Int): LLVMSingleValue? {
@@ -118,18 +119,19 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
-        val standartType = LLVMMapStandardType(receiverType!!.type!!)
+        val standardType = LLVMMapStandardType(receiverType!!.type!!)
         val function = selector.firstChild.firstChild.text
         val names = parseArgList(selector, scopeDepth)
-        val extensionCodegen = state.extensionFunctions[standartType.toString()]!![function]!!
+        val type = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
+        val extensionCodegen = state.extensionFunctions[standardType.toString()]!!["$function$type"]!!
         val receiverExpression = evaluateExpression(receiver, scopeDepth + 1)!!
 
-        val typeThisArgument = when (standartType) {
-            is LLVMReferenceType -> LLVMVariable("type", standartType, pointer = 1)
-            else -> LLVMVariable("type", standartType, pointer = 0)
+        val typeThisArgument = when (standardType) {
+            is LLVMReferenceType -> LLVMVariable("type", standardType, pointer = 1)
+            else -> LLVMVariable("type", standardType, pointer = 0)
         }
 
-        val args = mutableListOf<LLVMSingleValue>(loadArgumentIfRequired(receiverExpression, typeThisArgument))
+        val args = mutableListOf(loadArgumentIfRequired(receiverExpression, typeThisArgument))
 
         args.addAll(loadArgsIfRequired(names, extensionCodegen.args))
 
@@ -143,7 +145,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         else -> throw UnsupportedOperationException()
     }
 
-    private fun evaluateNameReferenceExpression(expr: KtNameReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
+    private fun evaluateNameReferenceExpression(expr: KtNameReferenceExpression, classScope: ClassCodegen? = null): LLVMSingleValue? {
         val fieldName = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)!!.name.toString()
         val field = classScope!!.companionFieldsIndex[fieldName]
 
@@ -167,13 +169,14 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             return result
         }
 
+        val names = parseArgList(call as KtCallExpression, scopeDepth)
         val typePath = type.location.joinToString(".")
-        val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(')}"
+        val types = if (names.size > 0) "_${names.joinToString(separator = "_", transform ={ it.type!!.mangle() })}" else ""
+        val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(')}$types"
 
         val method = clazz.methods[methodName]!!
         val returnType = clazz.methods[methodName]!!.returnType!!.type
 
-        val names = parseArgList(call as KtCallExpression, scopeDepth)
         val loadedArgs = loadArgsIfRequired(names, method.args)
         val callArgs = mutableListOf<LLVMSingleValue>(receiver)
         callArgs.addAll(loadedArgs)
@@ -208,31 +211,35 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
         is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
-        else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluateNameReferenceExpression(expr, scopeDepth + 1, classScope)
+        else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluateNameReferenceExpression(expr, classScope)
                 else variableManager.getLLVMvalue(expr.firstChild.text)
     }
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
-        val function = expr.firstChild.firstChild.text
         val names = parseArgList(expr, scopeDepth)
+        val name = expr.firstChild.firstChild.text
+        val external = state.externalFunctions.containsKey(name)
 
-        if (state.functions.containsKey(function)) {
-            val descriptor = state.functions[function] ?: return null
+        val function = "$name${if (names.size > 0 && !external) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
+
+        if (state.functions.containsKey(function) || state.externalFunctions.containsKey(function)) {
+            val descriptor = state.functions[function] ?: state.externalFunctions[function] ?: return null
             val args = loadArgsIfRequired(names, descriptor.args)
             return evaluateFunctionCallExpression(LLVMVariable(function, descriptor.returnType!!.type, scope = LLVMVariableScope()), args)
         }
 
-        if (state.classes.containsKey(function)) {
-            val descriptor = state.classes[function] ?: return null
+
+        if (state.classes.containsKey(name)) {
+            val descriptor = state.classes[name] ?: return null
             val args = loadArgsIfRequired(names, descriptor.constructorFields)
-            return evaluateConstructorCallExpression(LLVMVariable(function, descriptor.type, scope = LLVMVariableScope()), args)
+            return evaluateConstructorCallExpression(LLVMVariable(name, descriptor.type, scope = LLVMVariableScope()), args)
         }
 
-        val localFunction = variableManager.getLLVMvalue(function)
+        val localFunction = variableManager.getLLVMvalue(name)
         if (localFunction != null) {
             val type = localFunction.type as LLVMFunctionType
             val args = loadArgsIfRequired(names, type.arguments)
-            return evaluateFunctionCallExpression(LLVMVariable(function, type.returnType.type, scope = LLVMRegisterScope()), args)
+            return evaluateFunctionCallExpression(LLVMVariable(name, type.returnType.type, scope = LLVMRegisterScope()), args)
         }
 
         if (state.classes.containsKey(classScope?.structName)) {
@@ -358,10 +365,10 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val left = evaluateExpression(expr.firstChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
 
-        return executeBinaryExpression(operator, expr.operationReference, left, right, scopeDepth)
+        return executeBinaryExpression(operator, expr.operationReference, left, right)
     }
 
-    private fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue, scopeDepth: Int)
+    private fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue)
             = addPrimitiveBinaryOperation(operator, referenceName, left, right)
 
     private fun evaluateElvisOperator(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {
@@ -474,7 +481,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             nextLabel = codeBuilder.getNewLabel(prefix = "when_condition_condition")
 
             val currentConditionExpression = evaluateExpression(condition.firstChild, scopeDepth + 1)!!
-            val conditionResult = executeBinaryExpression(KtTokens.EQEQ, null, target, currentConditionExpression, scopeDepth)
+            val conditionResult = executeBinaryExpression(KtTokens.EQEQ, null, target, currentConditionExpression)
 
             codeBuilder.addCondition(conditionResult, successConditionsLabel, nextLabel)
         }

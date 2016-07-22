@@ -1,1 +1,1 @@
-function_extensions_1(118) == 291
+function_extensions_1_Int(118) == 291

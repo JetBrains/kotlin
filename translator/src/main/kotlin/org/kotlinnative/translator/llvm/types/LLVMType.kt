@@ -25,6 +25,8 @@ abstract class LLVMType() : Cloneable {
 
     fun makeClone() = clone()
 
+    abstract fun mangle(): String
+
     abstract val align: Int
     abstract var size: Int
     abstract val defaultValue: String

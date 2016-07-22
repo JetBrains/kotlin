@@ -1,4 +1,4 @@
-testCastToInt(32) == 0
-testCastToInt(34) == 1
-testCastToByte(32) == 0
-testCastToByte(34) == 1
+testCastToInt_Int(32) == 0
+testCastToInt_Int(34) == 1
+testCastToByte_Byte(32) == 0
+testCastToByte_Byte(34) == 1

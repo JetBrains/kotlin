@@ -22,6 +22,8 @@ class LLVMCharType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i8 $firstOp, $secondOp")
 
+    override fun mangle() = "Char"
+
     override val align = 1
     override var size: Int = 1
     override fun toString(): String = "i8"

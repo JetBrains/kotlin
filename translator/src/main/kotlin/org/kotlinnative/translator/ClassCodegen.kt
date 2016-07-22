@@ -86,9 +86,9 @@ class ClassCodegen(override val state: TranslationState,
             val companionObjectName = structName + "." + companionObject.name
             property.generate()
 
-            for (method in property.methods) {
-                val methodName = method.key.removePrefix(companionObjectName + ".")
-                companionMethods.put(structName + "." + methodName, method.value)
+            for ((key, value) in property.methods) {
+                val methodName = key.removePrefix(companionObjectName + ".")
+                companionMethods.put(structName + "." + methodName, value)
             }
             companionFields.addAll(property.fields)
             for (field in property.fields) {

@@ -19,12 +19,13 @@ class FunctionCodegen(override val state: TranslationState,
                       val parentCodegen: StructCodegen? = null) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
-    var name = function.fqName.toString()
+    var name: String
     var args = LinkedList<LLVMVariable>()
     val isExtensionDeclaration = function.isExtensionDeclaration()
     var functionNamePrefix = ""
     val fullName: String
         get() = functionNamePrefix + name
+    val external: Boolean
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
@@ -33,6 +34,9 @@ class FunctionCodegen(override val state: TranslationState,
         })
 
         returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
+        external = isExternal()
+        name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
+
         val retType = returnType!!.type
         when (retType) {
             is LLVMReferenceType -> {
@@ -50,7 +54,9 @@ class FunctionCodegen(override val state: TranslationState,
     }
 
     fun generate(this_type: LLVMVariable? = null) {
-        if (generateDeclaration(this_type)) {
+        generateDeclaration(this_type)
+
+        if (external) {
             return
         }
 
@@ -64,24 +70,12 @@ class FunctionCodegen(override val state: TranslationState,
         codeBuilder.addEndExpression()
     }
 
-    private fun generateDeclaration(this_type: LLVMVariable? = null): Boolean {
-        var external = false
-
+    private fun generateDeclaration(this_type: LLVMVariable? = null) {
         args.forEach {
             val type = it.type
             if (type is LLVMReferenceType && state.classes.containsKey(type.type)) {
                 type.prefix = "class"
             }
-        }
-
-        var keyword = function.firstChild
-        while (keyword != null) {
-            if (keyword.text == "external") {
-                external = true
-                break
-            }
-
-            keyword = keyword.getNextSiblingIgnoringWhitespaceAndComments()
         }
 
         var actualReturnType: LLVMType = returnType!!.type
@@ -114,7 +108,6 @@ class FunctionCodegen(override val state: TranslationState,
         actualArgs.addAll(args)
 
         codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName, actualArgs, actualReturnType, external, state.arm))
-        return external
     }
 
     private fun generateLoadArguments() {
@@ -132,5 +125,18 @@ class FunctionCodegen(override val state: TranslationState,
                 variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 0), topLevel)
             }
         })
+    }
+
+    private fun isExternal(): Boolean {
+        var keyword = function.firstChild
+        while (keyword != null) {
+            if (keyword.text == "external") {
+                return true
+            }
+
+            keyword = keyword.getNextSiblingIgnoringWhitespaceAndComments()
+        }
+
+        return false
     }
 }

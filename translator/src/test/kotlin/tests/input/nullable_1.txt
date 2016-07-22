@@ -1,2 +1,2 @@
-nullable_test(1) == 1
-nullable_test_2(4) == 5
+nullable_test_Int(1) == 1
+nullable_test_2_Int(4) == 5

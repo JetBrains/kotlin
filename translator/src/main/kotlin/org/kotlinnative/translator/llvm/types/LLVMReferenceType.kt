@@ -17,6 +17,8 @@ class LLVMReferenceType(val type: String, var prefix: String = "", override val 
 
     val location = ArrayList<String>()
 
+    override fun mangle() = "Ref_$type"
+
     fun addParam(param: String) {
         params.add(param)
     }
