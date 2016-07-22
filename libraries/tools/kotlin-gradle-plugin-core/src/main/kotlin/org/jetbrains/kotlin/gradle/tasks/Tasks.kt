@@ -156,7 +156,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
-    private var kaptStubGeneratingMode = false
     val kaptOptions = KaptOptions()
     val pluginOptions = CompilerPluginOptions()
 
@@ -484,9 +483,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
         }
 
-        kaptOptions.classFileStubsDir?.let { kaptClassFileStubsDir ->
-            kaptStubGeneratingMode = true
-            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", kaptClassFileStubsDir.canonicalPath)
+        if (kaptOptions.generateStubs) {
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
         }
 
         if (kaptOptions.supportInheritedAnnotations) {

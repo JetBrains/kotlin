@@ -4,6 +4,6 @@ import java.io.File
 
 class KaptOptions {
     var supportInheritedAnnotations: Boolean = false
-    var classFileStubsDir: File? = null
+    var generateStubs: Boolean = false
     var annotationsFile: File? = null
 }
