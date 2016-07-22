@@ -8,6 +8,7 @@ const commander = require("commander");
 const protoBuf = require("protobufjs");
 const fs = require("fs");
 const udev = require("udev");
+const client = require("./client.js");
 
 //parsing command line args
 commander
@@ -33,18 +34,30 @@ if (commander.flash) {
 const builderCarkot = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/") + "carkot.proto");
 const builderControl = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/" + "direction.proto"));
 const builderRoute = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/" + "route.proto"));
+const builderConnect = protoBuf.loadProtoFile((commander.protopath ? commander.protopath : "./proto/" + "connect.proto"));
 
 var executeShell = "./st-flash";
 exports.protoConstructorCarkot = builderCarkot.build("carkot");
 exports.protoConstructorControl = builderControl.build("carkot");
 exports.protoConstructorRoute = builderRoute.build("carkot");
+exports.protoConstructorConnect = builderConnect.build("carkot");
 exports.commandPrefix = executeShell + " write";
 exports.binFilePath = (commander.flash ? commander.flash : "./") + "flash.bin";
-exports.transportFilePath = "";
+exports.transportFilePath = "/dev/ttyACM0";//todo плохо:)
+exports.serverAddress = "127.0.0.1";
+exports.serverPort = 7925;
 
 //init this car
-var uid = "";//todo connect to srv
-var car = require("./Car").getCar(uid);
+var connectRequest = new exports.protoConstructorConnect.ConnectionRequest({
+    // "ip": "192.168.43.135",//todo its ip of this server in local wifi network. hardcore is bad here:)
+    "ip": "127.0.0.1",//todo for tests on local mashine
+    "port": 8888
+});
+client.sendData(connectRequest.encode().buffer, "/connect", function (data) {
+    var connectionResponse = exports.protoConstructorConnect.ConnectionResponse.decode(data);
+    exports.thisCar.uid = connectionResponse.uid
+});
+var car = require("./Car").getCar();
 exports.thisCar = car;
 
 //handlers for client requests
@@ -52,7 +65,7 @@ var handle = {};
 handle["/loadBin"] = require("./handlers/loadBinHandler").handler;
 handle["/control"] = require("./handlers/controlHandler").handler;
 handle["/route"] = require("./handlers/setRouteHandler").handler;
-exports.transportFilePath = "/dev/ttyACM0";
+
 //add event handlers from udev monitor (add device and remove device)
 const monitor = udev.monitor();
 monitor.on('add', function (device) {

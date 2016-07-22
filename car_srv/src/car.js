@@ -6,8 +6,8 @@ const fs = require("fs");
 const main = require("./main.js");
 const directionClass = main.protoConstructorControl.DirectionRequest;
 
-function Car(uid) {
-    this.uid = uid;
+function Car() {
+    this.uid = "";
     this.x = 0;
     this.y = 0;
     this.angle = 0;
@@ -47,7 +47,7 @@ function resume() {
 
 function move(delta) {
     var deltaSeconds = delta / 1000;
-    // console.log("x=" + this.x + " y=" + this.y + " angle=" + this.angle);
+    console.log("x=" + this.x + " y=" + this.y + " angle=" + this.angle);
     if (this.paused) {
         return;
     }
@@ -107,8 +107,8 @@ function setDirection(directionByte, callBack) {
     fs.appendFile(main.transportFilePath, directionByte, "binary", function (error) {
         var code = 0;
         var errorMsg = "";
-        console.log(error);
         if (error) {
+            console.log(error);
             errorMsg = error;
         }
         if (callBack != null) {

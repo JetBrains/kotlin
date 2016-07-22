@@ -16,6 +16,8 @@ function start(route, handlers) {
         });
 
         request.on("end", function () {
+            console.log(pathname);
+            console.log(httpContent);
             route(handlers, pathname, httpContent, response);
         });
     }
