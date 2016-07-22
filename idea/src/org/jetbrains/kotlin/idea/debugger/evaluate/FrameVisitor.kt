@@ -133,7 +133,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
 
     private fun isFunctionType(type: Type?): Boolean {
         return type?.sort == Type.OBJECT &&
-               type!!.internalName.startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
+               type.internalName.startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
     }
 
     private fun findLocalVariable(name: String, asmType: Type?, checkType: Boolean): Value? {

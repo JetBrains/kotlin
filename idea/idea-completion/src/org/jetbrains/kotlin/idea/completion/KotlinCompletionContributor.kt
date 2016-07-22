@@ -168,7 +168,7 @@ class KotlinCompletionContributor : CompletionContributor() {
         val classOrObject = tokenBefore?.parents?.firstIsInstanceOrNull<KtClassOrObject>() ?: return false
         val name = classOrObject.nameIdentifier ?: return false
         val body = classOrObject.getBody() ?: return false
-        val offset = tokenBefore!!.startOffset
+        val offset = tokenBefore.startOffset
         return name.endOffset <= offset && offset <= body.startOffset
     }
 
@@ -180,7 +180,7 @@ class KotlinCompletionContributor : CompletionContributor() {
 
         val lambda = leaf?.parents?.firstOrNull { it is KtFunctionLiteral } ?: return null
 
-        val lambdaChild = leaf!!.parents.takeWhile { it != lambda }.lastOrNull()
+        val lambdaChild = leaf.parents.takeWhile { it != lambda }.lastOrNull()
 
         return if (lambdaChild is KtParameterList)
             CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED

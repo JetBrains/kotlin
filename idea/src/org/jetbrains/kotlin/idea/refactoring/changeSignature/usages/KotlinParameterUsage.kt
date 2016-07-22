@@ -51,7 +51,7 @@ class KotlinParameterUsage(
 ) : KotlinExplicitReferenceUsage<KtElement>(element) {
     override fun processReplacedElement(element: KtElement) {
         val qualifiedExpression = element.parent as? KtQualifiedExpression
-        val elementToShorten = if (qualifiedExpression?.receiverExpression == element) qualifiedExpression!! else element
+        val elementToShorten = if (qualifiedExpression?.receiverExpression == element) qualifiedExpression else element
         elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
 

@@ -720,7 +720,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<St
     expressions.singleOrNull()?.let { expr ->
         val property = expr.getStrictParentOfType<KtProperty>()
         if (property?.initializer == expr) {
-            property?.name?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
+            property.name?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
         }
     }
 

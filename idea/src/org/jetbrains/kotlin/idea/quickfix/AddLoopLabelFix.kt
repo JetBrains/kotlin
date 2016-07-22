@@ -79,7 +79,7 @@ class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtElement): Ko
             assert(element is KtBreakExpression || element is KtContinueExpression)
             assert((element as? KtLabeledExpression)?.getLabelName() == null)
             val loop = element?.getStrictParentOfType<KtLoopExpression>() ?: return null
-            return AddLoopLabelFix(loop, element!!)
+            return AddLoopLabelFix(loop, element)
         }
     }
 }

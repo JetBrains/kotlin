@@ -27,6 +27,6 @@ fun UElement?.getLocation(): Location? {
     val psiFile = psiElement?.containingFile ?: return null
     val vfile = psiFile.virtualFile
     val file = VfsUtilCore.virtualToIoFile(vfile)
-    val range = psiElement?.textRange ?: return null
+    val range = psiElement.textRange ?: return null
     return Location.create(file, psiFile.text, range.startOffset, range.endOffset)
 }

@@ -235,7 +235,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     override fun visitWhileStatement(statement: PsiWhileStatement) {
         val condition = statement.condition
         val expression = if (condition?.type != null)
-            codeConverter.convertExpression(condition, condition!!.type)
+            codeConverter.convertExpression(condition, condition.type)
         else
             codeConverter.convertExpression(condition)
         result = WhileStatement(expression, codeConverter.convertStatementOrBlock(statement.body), statement.isInSingleLine())

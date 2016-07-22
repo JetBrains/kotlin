@@ -31,7 +31,7 @@ object ScriptNameUtil {
                 .map { if (it.startsWith('.')) it else ".$it" }
                 .firstOrNull { fileName.endsWith(it) }
                 ?.let { fileName.length - it.length }
-                ?: fileName.lastIndexOf('.')?.let { if (it < 0) fileName.length else it }
+                ?: fileName.lastIndexOf('.').let { if (it < 0) fileName.length else it }
                 ?: fileName.length
         return fileName
                 .substring(nameStart, nameEnd)

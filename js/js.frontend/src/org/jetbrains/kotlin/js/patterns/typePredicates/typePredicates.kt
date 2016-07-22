@@ -46,7 +46,7 @@ private class TypePredicateImpl
         for (i in nameParts.lastIndex downTo 0) {
             if (nameParts[i] != descriptor?.name?.asString()) return false
 
-            descriptor = descriptor?.containingDeclaration
+            descriptor = descriptor.containingDeclaration
         }
 
         return true
