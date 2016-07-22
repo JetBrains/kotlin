@@ -37,7 +37,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                     }
 
                     if (result.type is LLVMReferenceType) {
-                        codeBuilder.addAnyReturn(LLVMVoidType())
+                        genReferenceReturn(result)
                     } else {
                         codeBuilder.addReturnOperator(result)
                     }
@@ -121,7 +121,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val receiverName = receiverExpr.text
         val selectorExpr = expr.selectorExpression!!
 
-        var receiver = variableManager.getLLVMvalue(receiverName)
+        var receiver = when (receiverExpr) {
+            is KtCallExpression,
+            is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            else -> variableManager.getLLVMvalue(receiverName)
+        }
+
         if (receiver != null) {
             if (receiver.pointer == 2) {
                 receiver = codeBuilder.loadAndGetVariable(receiver)
@@ -679,14 +684,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val type = retVar?.type ?: LLVMVoidType()
 
         when (type) {
-            is LLVMReferenceType -> {
-                if (retVar!!.pointer == 2) {
-                    retVar = codeBuilder.loadAndGetVariable(retVar as LLVMVariable)
-                }
-
-                codeBuilder.storeVariable(returnType!!, retVar)
-                codeBuilder.addAnyReturn(LLVMVoidType())
-            }
+            is LLVMReferenceType -> genReferenceReturn(retVar!!)
             is LLVMVoidType -> {
                 codeBuilder.addAnyReturn(LLVMVoidType())
             }
@@ -699,5 +697,15 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             wasReturnOnTopLevel = true
         }
         return null
+    }
+
+    private fun genReferenceReturn(retVar: LLVMSingleValue) {
+        var result = retVar
+        if (result.pointer == 2) {
+             result = codeBuilder.loadAndGetVariable(retVar as LLVMVariable)
+        }
+
+        codeBuilder.storeVariable(returnType!!, result)
+        codeBuilder.addAnyReturn(LLVMVoidType())
     }
 }
