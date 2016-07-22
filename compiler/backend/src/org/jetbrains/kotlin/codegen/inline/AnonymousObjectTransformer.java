@@ -222,7 +222,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         MethodInliner inliner = new MethodInliner(
                 sourceNode,
                 parameters,
-                inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
+                inliningContext.subInline(transformationInfo.getNameGenerator()),
                 remapper,
                 isSameModule,
                 "Transformer for " + transformationInfo.getOldClassName(),

@@ -22,6 +22,9 @@ interface TransformationInfo {
     val oldClassName: String
 
     val newClassName: String
+        get() = nameGenerator.generatorClass
+
+    val nameGenerator: NameGenerator
 
     fun shouldRegenerate(sameModule: Boolean): Boolean
 
@@ -32,13 +35,13 @@ interface TransformationInfo {
 
 class WhenMappingTransformationInfo(
         override val oldClassName: String,
-        val nameGenerator: NameGenerator,
+        parentNameGenerator: NameGenerator,
         val alreadyRegenerated: Boolean,
         val fieldNode: FieldInsnNode
 ) : TransformationInfo {
-    override val newClassName by lazy {
-        nameGenerator.genWhenClassNamePrefix() + TRANSFORMED_WHEN_MAPPING_MARKER +
-        oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER)
+
+    override val nameGenerator by lazy {
+        parentNameGenerator.subGenerator(false, oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER))
     }
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean = !alreadyRegenerated && !sameModule
@@ -61,10 +64,11 @@ class AnonymousObjectTransformationInfo internal constructor(
         private val alreadyRegenerated: Boolean,
         val constructorDesc: String?,
         private val isStaticOrigin: Boolean,
-        nameGenerator: NameGenerator
+        parentNameGenerator: NameGenerator
 ) : TransformationInfo {
-    override val newClassName: String by lazy {
-        nameGenerator.genLambdaClassName()
+
+    override val nameGenerator by lazy {
+        parentNameGenerator.subGenerator(true, null)
     }
 
     lateinit var newConstructorDescriptor: String

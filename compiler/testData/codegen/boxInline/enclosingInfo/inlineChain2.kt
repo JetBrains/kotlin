@@ -31,7 +31,7 @@ fun box(): String {
     if (enclosingMethod?.name != "invoke") return "fail 1: ${enclosingMethod?.name}"
 
     enclosingClass = res2.javaClass.enclosingClass
-    if (enclosingClass?.name != "_2Kt\$box$\$inlined\$call\$lambda\$lambda$2") return "fail 2: ${enclosingClass?.name}"
+    if (enclosingClass?.name != "_2Kt\$box$\$inlined\$call$2\$lambda$1") return "fail 2: ${enclosingClass?.name}"
 
     return res2()
 }
