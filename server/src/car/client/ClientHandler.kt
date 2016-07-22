@@ -1,6 +1,5 @@
 package car.client
 
-import com.google.protobuf.InvalidProtocolBufferException
 import getLocationUrl
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -10,6 +9,7 @@ import objects.Environment
 import LocationResponse
 import java.io.ByteArrayInputStream
 import CodedInputStream
+import InvalidProtocolBufferException
 
 /**
  * Created by user on 7/8/16.

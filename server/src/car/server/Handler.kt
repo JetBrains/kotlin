@@ -1,6 +1,5 @@
 package car.server
 
-import com.google.protobuf.InvalidProtocolBufferException
 import connectUrl
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
@@ -16,6 +15,7 @@ import CodedInputStream
 import CodedOutputStream
 import java.io.ByteArrayOutputStream
 import RouteDoneRequest
+import InvalidProtocolBufferException
 
 /**
  * Created by user on 7/6/16.
