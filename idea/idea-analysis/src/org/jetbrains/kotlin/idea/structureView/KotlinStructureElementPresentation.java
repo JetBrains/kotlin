@@ -40,7 +40,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getAllOverriddenDeclarations;
-import static org.jetbrains.kotlin.resolve.OverrideResolver.filterOutOverridden;
+import static org.jetbrains.kotlin.resolve.OverridingUtil.filterOutOverridden;
 
 class KotlinStructureElementPresentation implements ColoredItemPresentation, LocationPresentation {
     private final TextAttributesKey attributesKey;

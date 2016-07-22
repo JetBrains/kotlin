@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -241,7 +241,7 @@ public class ResolutionResultsHandler {
 
         Set<MutableResolvedCall<D>> noEquivalentCalls = filterOutEquivalentCalls(candidates);
         Set<MutableResolvedCall<D>> noOverrides =
-                OverrideResolver.filterOverrides(noEquivalentCalls, MAP_RESOLVED_CALL_TO_RESULTING_DESCRIPTOR);
+                OverridingUtil.filterOverrides(noEquivalentCalls, MAP_RESOLVED_CALL_TO_RESULTING_DESCRIPTOR);
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }

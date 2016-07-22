@@ -20,11 +20,11 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.OverridingUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -249,7 +249,7 @@ public final class PatternBuilder {
                 return matches(functionDescriptor);
             }
 
-            for (CallableMemberDescriptor real : OverrideResolver.getOverriddenDeclarations(functionDescriptor)) {
+            for (CallableMemberDescriptor real : OverridingUtil.getOverriddenDeclarations(functionDescriptor)) {
                 if (matches(real)) {
                     return true;
                 }

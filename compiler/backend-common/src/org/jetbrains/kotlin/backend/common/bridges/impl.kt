@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 
 fun <Signature> generateBridgesForFunctionDescriptor(
@@ -87,8 +87,8 @@ fun findTraitImplementation(descriptor: CallableMemberDescriptor): CallableMembe
  * that should be called when the given fake override is called.
  */
 fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
-    val overridden = OverrideResolver.getOverriddenDeclarations(descriptor)
-    val filtered = OverrideResolver.filterOutOverridden(overridden)
+    val overridden = OverridingUtil.getOverriddenDeclarations(descriptor)
+    val filtered = OverridingUtil.filterOutOverridden(overridden)
 
     val result = filtered.firstOrNull { it.modality != Modality.ABSTRACT } ?: return null
 
@@ -108,6 +108,6 @@ fun firstSuperMethodFromKotlin(
 ): CallableMemberDescriptor? {
     return descriptor.overriddenDescriptors.firstOrNull { overridden ->
         overridden.modality != Modality.ABSTRACT &&
-        (overridden == implementation || OverrideResolver.overrides(overridden, implementation))
+        (overridden == implementation || OverridingUtil.overrides(overridden, implementation))
     }
 }
