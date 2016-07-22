@@ -17,6 +17,6 @@ inline fun test(s: () -> Unit) {
     s()
 }
 
-// 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$1
-// 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$lambda\$1
+// 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$1\s
+// 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$1\$1
 // 4 INNERCLASS
