@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.utils.HashSetUtil
 import java.util.*
 
 data class Difference(
@@ -135,7 +134,7 @@ private abstract class DifferenceCalculator() {
     ): Collection<String> {
         val oldNames = oldList.map { compareObject.oldNameResolver.getString(it) }.toSet()
         val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
-        return HashSetUtil.symmetricDifference(oldNames, newNames)
+        return oldNames.union(newNames) - oldNames.intersect(newNames)
     }
 
     private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
