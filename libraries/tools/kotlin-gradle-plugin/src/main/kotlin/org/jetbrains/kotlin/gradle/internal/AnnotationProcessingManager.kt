@@ -54,6 +54,8 @@ fun Project.initKapt(
         kotlinTask.destinationDir = stubsDir
         kotlinTask.kaptOptions.generateStubs = true
 
+        kotlinAfterJavaTask.source(kaptManager.generatedKotlinSourceDir)
+        kotlinAfterJavaTask.source(kaptManager.aptOutputDir)
         val javaDestinationDir = project.files(javaTask.destinationDir)
         javaTask.doLast {
             kotlinAfterJavaTask.source(kotlinTask.source)
@@ -80,7 +82,6 @@ fun Project.initKapt(
 
     kotlinTask.doFirst {
         kaptManager.generateJavaHackFile()
-        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
     }
 
     var originalJavaCompilerArgs: List<String>? = null
@@ -88,7 +89,7 @@ fun Project.initKapt(
         originalJavaCompilerArgs = (javaTask as JavaCompile).options.compilerArgs
         kaptManager.setupKapt()
         kaptManager.generateJavaHackFile()
-        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
+        kotlinAfterJavaTask?.source(kaptManager.generatedKotlinSourceDir)
     }
 
     javaTask.doLast {
@@ -148,11 +149,12 @@ public class AnnotationProcessingManager(
         return File(wrappersDirectory, "annotations.$taskQualifier.txt")
     }
 
-    fun getGeneratedKotlinSourceDir(): File {
-        val kotlinGeneratedDir = File(aptWorkingDir, "kotlinGenerated")
-        if (!kotlinGeneratedDir.exists()) kotlinGeneratedDir.mkdirs()
-        return kotlinGeneratedDir
-    }
+    val generatedKotlinSourceDir: File
+        get() {
+            val kotlinGeneratedDir = File(aptWorkingDir, "kotlinGenerated")
+            if (!kotlinGeneratedDir.exists()) kotlinGeneratedDir.mkdirs()
+            return kotlinGeneratedDir
+        }
 
     fun setupKapt() {
         if (aptFiles.isEmpty()) return
@@ -207,7 +209,7 @@ public class AnnotationProcessingManager(
     private fun appendAnnotationsArguments() {
         javaTask.modifyCompilerArguments { list ->
             list.add("-Akapt.annotations=" + getAnnotationFile())
-            list.add("-Akapt.kotlin.generated=" + getGeneratedKotlinSourceDir())
+            list.add("-Akapt.kotlin.generated=" + generatedKotlinSourceDir)
         }
     }
 

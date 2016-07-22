@@ -8,6 +8,8 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
 import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.builder.model.SourceProvider
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
@@ -100,14 +102,24 @@ class AndroidGradleWrapper {
     return plugin.getVariantManager()
   }
 
-  static def List<File> getGeneratedSourceDirs(BaseVariantData variantData) {
+  static def List<File> getJavaSources(BaseVariantData variantData) {
     def result = new ArrayList<File>()
 
     def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
     if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
       result.addAll(variantData.getJavaSources().findAll { it instanceof File })
     }
+    else if (getJavaSourcesMethod.returnType.metaClass == List.metaClass) {
+      def fileTrees = variantData.getJavaSources().findAll { it instanceof ConfigurableFileTree }
+      result.addAll(fileTrees.collect { it.getDir() })
+    }
     else {
+      // Old impl copied from android tools source. Delete?
+      List<SourceProvider> providers = variantData.variantConfiguration.getSortedSourceProviders();
+      for (SourceProvider provider : providers) {
+        result.addAll((provider as AndroidSourceSet).getJava().getSourceDirectoryTrees());
+      }
+
       if (variantData.scope.getGenerateRClassTask() != null) {
         result.add(variantData.scope.getRClassSourceOutputDir());
       }
