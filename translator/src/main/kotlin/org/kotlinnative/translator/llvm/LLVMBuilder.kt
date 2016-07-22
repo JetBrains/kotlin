@@ -56,18 +56,6 @@ class LLVMBuilder(val arm: Boolean) {
         else -> throw UnsupportedOperationException()
     }
 
-    fun addPrimitiveReferenceOperation(referenceName: KtSimpleNameExpression, firstNativeOp: LLVMSingleValue, secondNativeOp: LLVMSingleValue): LLVMExpression {
-        return when (referenceName.getReferencedName()) {
-            "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
-            "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
-            "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
-            "lhr" -> firstNativeOp.type!!.operatorShl(firstNativeOp, secondNativeOp)
-            "shr" -> firstNativeOp.type!!.operatorShr(firstNativeOp, secondNativeOp)
-            "ushr" -> firstNativeOp.type!!.operatorUshr(firstNativeOp, secondNativeOp)
-            else -> throw UnsupportedOperationException("Unknown binary operator")
-        }
-    }
-
     fun clean() {
         localCode = StringBuilder()
         globalCode = StringBuilder()
