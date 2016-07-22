@@ -1,1 +1,1 @@
-function foo.bar has 1 usage that is not safe to delete.
+function foo.bar() on String has 1 usage that is not safe to delete.
