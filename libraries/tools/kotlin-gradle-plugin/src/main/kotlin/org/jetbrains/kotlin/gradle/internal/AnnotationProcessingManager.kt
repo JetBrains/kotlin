@@ -23,6 +23,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateAnnotationProcessorWrapper
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateKotlinAptAnnotation
 import java.io.File
@@ -37,20 +38,20 @@ fun Project.initKapt(
         variantName: String,
         kotlinOptions: Any?,
         subpluginEnvironment: SubpluginEnvironment,
-        taskFactory: (suffix: String) -> AbstractCompile
+        tasksProvider: KotlinTasksProvider
 ): AbstractCompile? {
     val kaptExtension = extensions.getByType(KaptExtension::class.java)
-    val kotlinAfterJavaTask: AbstractCompile?
+    val kotlinAfterJavaTask: KotlinCompile?
 
     if (kaptExtension.generateStubs) {
-        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask, kotlinOptions, taskFactory)
+        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask, kotlinOptions, tasksProvider)
         mapKotlinTaskProperties(this, kotlinAfterJavaTask)
 
         kotlinTask.logger.kotlinDebug("kapt: Using class file stubs")
 
         val stubsDir = File(buildDir, "tmp/kapt/$variantName/classFileStubs")
         stubsDir.mkdirs()
-        kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
+        kotlinTask.kaptOptions.classFileStubs = stubsDir
         javaTask.appendClasspathDynamically(stubsDir)
         kotlinTask.appendClasspathDynamically(stubsDir)
 
@@ -76,9 +77,7 @@ fun Project.initKapt(
     javaTask.appendClasspathDynamically(kaptManager.wrappersDirectory)
     javaTask.source(kaptManager.hackAnnotationDir)
 
-    if (kaptExtension.inheritedAnnotations) {
-        kotlinTask.extensions.extraProperties.set("kaptInheritedAnnotations", true)
-    }
+    kotlinTask.kaptOptions.supportInheritedAnnotations = kaptExtension.inheritedAnnotations
 
     kotlinTask.doFirst {
         kaptManager.generateJavaHackFile()
@@ -98,18 +97,18 @@ fun Project.initKapt(
         kaptManager.afterJavaCompile()
     }
 
-    kotlinTask.storeKaptAnnotationsFile(kaptManager)
+    kotlinTask.kaptOptions.annotationsFile = kaptManager.getAnnotationFile()
     return kotlinAfterJavaTask
 }
 
 private fun Project.createKotlinAfterJavaTask(
         javaTask: AbstractCompile,
-        kotlinTask: AbstractCompile,
+        kotlinTask: KotlinCompile,
         kotlinOptions: Any?,
-        taskFactory: (suffix: String) -> AbstractCompile
-): AbstractCompile {
-    val kotlinAfterJavaTask = with (taskFactory(KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
         destinationDir = kotlinTask.destinationDir
+        tasksProvider: KotlinTasksProvider
+): KotlinCompile {
+    val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
         classpath = kotlinTask.classpath - project.files(javaTask.destinationDir)
         this
     }

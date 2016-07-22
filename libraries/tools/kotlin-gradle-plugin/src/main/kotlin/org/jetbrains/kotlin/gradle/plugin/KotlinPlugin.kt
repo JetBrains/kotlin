@@ -172,9 +172,7 @@ class Kotlin2JvmSourceSetProcessor(
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
                     kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, null, subpluginEnvironment) {
-                        createKotlinCompileTask(it)
-                    }
+                            sourceSetName, null, subpluginEnvironment, tasksProvider)
 
                     if (kotlinAfterJavaTask != null) {
                         javaTask.doFirst {
@@ -442,11 +440,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
                         aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
 
-                kotlinTask.storeKaptAnnotationsFile(kaptManager)
-
-                kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment) {
-                    tasksProvider.createKotlinJVMTask(project, kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX)
-                }
+                kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment, tasksProvider)
             }
 
             configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
@@ -560,32 +554,23 @@ class SubpluginEnvironment(
     val subplugins: List<KotlinGradleSubplugin>
 ) {
 
-    fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
-        val realPluginClasspaths = arrayListOf<String>()
-        val pluginArguments = arrayListOf<String>()
-        fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
+    fun addSubpluginArguments(project: Project, kotlinTask: KotlinCompile) {
+        val pluginOptions = kotlinTask.pluginOptions
 
         for (subplugin in subplugins) {
-            if (!subplugin.isApplicable(project, compileTask)) continue
+            if (!subplugin.isApplicable(project, kotlinTask)) continue
 
             with (subplugin) {
                 project.logger.kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
             }
 
-            val subpluginClasspath = subpluginClasspaths[subplugin]
-            if (subpluginClasspath != null) {
-                subpluginClasspath.forEach { realPluginClasspaths.add(it.absolutePath) }
+            val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
+            subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-                for (arg in subplugin.getExtraArguments(project, compileTask)) {
-                    val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
-                    pluginArguments.add(option)
-                }
+            for (arg in subplugin.getExtraArguments(project, kotlinTask)) {
+                pluginOptions.addPluginArgument(subplugin.getPluginName(), arg.key, arg.value)
             }
         }
-
-        val extraProperties = compileTask.extensions.extraProperties
-        extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.toTypedArray())
-        extraProperties.set("compilerPluginArguments", pluginArguments.toTypedArray())
     }
 }
 
@@ -609,10 +594,6 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
 
 internal operator fun FileCollection.plus(other: FileCollection) = this.plus(other)
 internal operator fun FileCollection.minus(other: FileCollection) = this.minus(other)
-
-fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
-    extensions.extraProperties.set("kaptAnnotationsFile", kapt.getAnnotationFile())
-}
 
 private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, File> {
     val aptOutputDir = File(buildDir, "generated/source/kapt")
