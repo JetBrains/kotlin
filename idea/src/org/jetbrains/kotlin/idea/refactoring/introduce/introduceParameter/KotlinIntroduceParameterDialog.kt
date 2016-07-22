@@ -27,6 +27,7 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
@@ -230,7 +231,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createSimpleName(nameField.enteredName).validateElement("Invalid parameter name")
+        psiFactory.createSimpleName(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
         psiFactory.createType(typeField.enteredName).validateElement("Invalid parameter type")
     }
 
@@ -256,7 +257,7 @@ class KotlinIntroduceParameterDialog private constructor(
                             return KtPsiFactory(myProject).createExpression(text)
                         }
 
-                        val chosenName = nameField.enteredName
+                        val chosenName = nameField.enteredName.quoteIfNeeded()
                         var chosenType = typeField.enteredName
                         var newArgumentValue = descriptor.newArgumentValue
                         var newReplacer = descriptor.occurrenceReplacer

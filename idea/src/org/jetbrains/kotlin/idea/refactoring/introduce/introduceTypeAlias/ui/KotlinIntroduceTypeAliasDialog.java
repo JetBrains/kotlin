@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
+import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasImplKt;
@@ -93,7 +94,7 @@ public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
     }
 
     private String getAliasName() {
-        return aliasNameField.getEnteredName();
+        return UtilsKt.quoteIfNeeded(aliasNameField.getEnteredName());
     }
 
     @Nullable
