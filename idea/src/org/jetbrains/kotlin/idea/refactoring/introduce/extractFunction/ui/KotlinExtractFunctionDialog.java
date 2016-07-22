@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
+import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
@@ -91,7 +92,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private String getFunctionName() {
-        return functionNameField.getEnteredName();
+        return UtilsKt.quoteIfNeeded(functionNameField.getEnteredName());
     }
 
     private String getVisibility() {

@@ -270,7 +270,7 @@ private fun makeCall(
         }
     }
 
-    val calleeName = declaration.name
+    val calleeName = declaration.name?.quoteIfNeeded()
     val callText = when (declaration) {
         is KtNamedFunction -> {
             val argumentsText = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")")
