@@ -1,4 +1,4 @@
 Class Test uses class Foo which will be inaccessible after move
-Class Test uses function foo() which will be inaccessible after move
+Class Test uses function foo(Foo) which will be inaccessible after move
 Method bar() uses class Test which will be inaccessible after move
 Variable t uses class Test which will be inaccessible after move

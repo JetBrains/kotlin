@@ -251,10 +251,7 @@ class MoveKotlinDeclarationsProcessor(
             }
         }
 
-        fun render(declaration: PsiElement): String {
-            val text = RefactoringUIUtil.getDescription(declaration, false)
-            return if (declaration is KtFunction) "$text()" else text
-        }
+        fun render(declaration: PsiElement) = RefactoringUIUtil.getDescription(declaration, false)
 
         fun checkVisibilityInUsages(usages: List<UsageInfo>) {
             val declarationToContainers = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()

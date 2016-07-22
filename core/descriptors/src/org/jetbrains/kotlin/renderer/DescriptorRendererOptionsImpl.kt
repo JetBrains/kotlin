@@ -97,4 +97,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
                     + ExcludedTypeAnnotations.internalAnnotationsForResolve)
 
     override var alwaysRenderModifiers by property(false)
+
+    override var renderConstructorKeyword by property(true)
 }

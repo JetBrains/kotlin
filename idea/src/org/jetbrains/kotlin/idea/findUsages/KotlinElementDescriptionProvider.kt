@@ -28,16 +28,24 @@ import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
+    companion object {
+        val REFACTORING_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
+            withoutReturnType = true
+            renderConstructorKeyword = false
+        }
+    }
+
     override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
         val shouldUnwrap = location !is UsageViewShortNameLocation && location !is UsageViewLongNameLocation
         val targetElement = if (shouldUnwrap) element.unwrapped ?: element else element
@@ -57,34 +65,31 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             else -> null
         }
 
-        fun targetDescriptor(): DeclarationDescriptor? {
-            val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
-            if (descriptor is ConstructorDescriptor) {
-                return descriptor.containingDeclaration
-            }
-            return descriptor
-        }
-
         if (targetElement !is PsiNamedElement || targetElement.language != KotlinLanguage.INSTANCE) return null
         return when(location) {
             is UsageViewTypeLocation -> elementKind()
             is UsageViewShortNameLocation, is UsageViewLongNameLocation -> targetElement.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = targetDescriptor() ?: return null
-                val desc =
-                        if (location.includeParent() && targetElement !is KtTypeParameter && targetElement !is KtParameter) {
-                            DescriptorUtils.getFqName(descriptor).asString()
-                        }
-                        else {
-                            descriptor.name.asString()
-                        }
+                val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
+                val renderFqName = location.includeParent() &&
+                                   targetElement !is KtTypeParameter &&
+                                   targetElement !is KtParameter &&
+                                   targetElement !is KtConstructor<*>
+                val desc = when (descriptor) {
+                    is FunctionDescriptor -> {
+                        val baseText = REFACTORING_RENDERER.render(descriptor)
+                        val parentFqName = if (renderFqName) descriptor.containingDeclaration.fqNameSafe else null
+                        if (parentFqName?.isRoot ?: true) baseText else "${parentFqName!!.asString()}.$baseText"
+                    }
+                    else -> if (renderFqName) DescriptorUtils.getFqName(descriptor).asString() else descriptor.name.asString()
+                }
 
                 "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
             }
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = targetDescriptor() ?: return null
+                val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
                 "$kind ${descriptor.name.asString()}"
             }
             else -> null
