@@ -12567,6 +12567,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeParametersEqualsHashCode.kt")
+            public void testTypeParametersEqualsHashCode() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeParametersEqualsHashCode.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeToString.kt")
             public void testTypeToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeToString.kt");
@@ -12951,9 +12957,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("declarationSiteVariance.kt")
+            public void testDeclarationSiteVariance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/typeParameters/declarationSiteVariance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeParametersAndNames.kt")
             public void testTypeParametersAndNames() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/typeParameters/typeParametersAndNames.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("upperBounds.kt")
+            public void testUpperBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/typeParameters/upperBounds.kt");
                 doTest(fileName);
             }
         }
@@ -13005,6 +13023,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("typeArguments.kt")
             public void testTypeArguments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/typeArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("useSiteVariance.kt")
+            public void testUseSiteVariance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/useSiteVariance.kt");
                 doTest(fileName);
             }
         }

@@ -71,22 +71,36 @@ public sealed class KTypeProjection {
     public abstract val type: KType?
 
     /**
+     * The use-site variance specified in the projection, or `null` if this is a star projection.
+     */
+    public abstract val variance: KVariance?
+
+    /**
      * Invariant projection of a type. Invariant projection is just the type itself, without any use-site variance modifiers applied to it.
      * For example, in the type `Set<String>`, `String` is an invariant projection of the type represented by the class `String`.
      */
-    public data class Invariant(override val type: KType) : KTypeProjection()
+    public data class Invariant(override val type: KType) : KTypeProjection() {
+        override val variance: KVariance?
+            get() = KVariance.INVARIANT
+    }
 
     /**
      * Contravariant projection of a type, denoted by the `in` modifier applied to a type.
      * For example, in the type `MutableList<in Number>`, `in Number` is a contravariant projection of the type of class `Number`.
      */
-    public data class In(override val type: KType) : KTypeProjection()
+    public data class In(override val type: KType) : KTypeProjection() {
+        override val variance: KVariance?
+            get() = KVariance.IN
+    }
 
     /**
      * Covariant projection of a type, denoted by the `out` modifier applied to a type.
      * For example, in the type `Array<out Number>`, `out Number` is a covariant projection of the type of class `Number`.
      */
-    public data class Out(override val type: KType) : KTypeProjection()
+    public data class Out(override val type: KType) : KTypeProjection() {
+        override val variance: KVariance?
+            get() = KVariance.OUT
+    }
 
     /**
      * Star projection, denoted by the `*` character.
@@ -96,6 +110,9 @@ public sealed class KTypeProjection {
      */
     public object Star : KTypeProjection() {
         override val type: KType?
+            get() = null
+
+        override val variance: KVariance?
             get() = null
     }
 }

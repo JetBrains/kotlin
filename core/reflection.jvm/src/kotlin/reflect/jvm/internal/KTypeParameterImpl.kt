@@ -17,9 +17,32 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.Variance
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVariance
 
 internal class KTypeParameterImpl(override val descriptor: TypeParameterDescriptor) : KTypeParameter, KClassifierImpl {
     override val name: String
         get() = descriptor.name.asString()
+
+    override val upperBounds: List<KType>
+        get() = descriptor.upperBounds.map { kotlinType ->
+            KTypeImpl(kotlinType) {
+                TODO("Java type is not yet supported for type parameters: $descriptor")
+            }
+        }
+
+    override val variance: KVariance
+        get() = when (descriptor.variance) {
+            Variance.INVARIANT -> KVariance.INVARIANT
+            Variance.IN_VARIANCE -> KVariance.IN
+            Variance.OUT_VARIANCE -> KVariance.OUT
+        }
+
+    override fun equals(other: Any?) =
+            other is KTypeParameterImpl && descriptor == other.descriptor
+
+    override fun hashCode() =
+            descriptor.hashCode()
 }
