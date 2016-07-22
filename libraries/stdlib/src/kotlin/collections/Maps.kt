@@ -25,7 +25,7 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
 }
 
 /** Returns an empty read-only map of specified type. The returned map is serializable (JVM). */
-public fun <K, V> emptyMap(): Map<K, V> = @Suppress("CAST_NEVER_SUCCEEDS") (EmptyMap as Map<K, V>)
+public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap as Map<K, V>)
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
