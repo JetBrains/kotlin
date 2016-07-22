@@ -157,6 +157,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
     private var kaptStubGeneratingMode = false
+    val kaptOptions = KaptOptions()
+    val pluginOptions = CompilerPluginOptions()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -176,14 +178,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug("destinationDir = $destinationDir")
 
         val extraProperties = extensions.extraProperties
-        args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
+        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         logger.kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
-        val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
-
-        val pluginOptions = arrayListOf(*basePluginOptions)
-        handleKaptProperties(extraProperties, pluginOptions)
-
-        args.pluginOptions = pluginOptions.toTypedArray()
+        handleKaptProperties()
+        args.pluginOptions = pluginOptions.arguments.toTypedArray()
         logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         args.noStdlib = true
@@ -476,26 +474,23 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
     }
 
-    private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
-        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
-        if (kaptAnnotationsFile != null) {
+    private fun handleKaptProperties() {
+        kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
             if (incremental) {
                 kaptAnnotationsFileUpdater = AnnotationFileUpdater(kaptAnnotationsFile)
             }
 
             if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
         }
 
-        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
-        if (kaptClassFileStubsDir != null) {
+        kaptOptions.classFileStubsDir?.let { kaptClassFileStubsDir ->
             kaptStubGeneratingMode = true
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", kaptClassFileStubsDir.canonicalPath)
         }
 
-        val supportInheritedAnnotations = extraProperties.getOrNull<Boolean>("kaptInheritedAnnotations")
-        if (supportInheritedAnnotations != null && supportInheritedAnnotations) {
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:inherited=true")
+        if (kaptOptions.supportInheritedAnnotations) {
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
         }
     }
 
