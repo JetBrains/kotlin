@@ -12573,6 +12573,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeParametersToString.kt")
+            public void testTypeParametersToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeParametersToString.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeToString.kt")
             public void testTypeToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/typeToString.kt");

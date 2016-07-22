@@ -45,4 +45,7 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
 
     override fun hashCode() =
             descriptor.hashCode()
+
+    override fun toString() =
+            ReflectionObjectRenderer.renderTypeParameter(descriptor)
 }

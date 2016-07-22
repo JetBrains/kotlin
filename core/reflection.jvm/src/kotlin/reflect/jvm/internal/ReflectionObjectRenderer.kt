@@ -16,12 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KParameter
 
 internal object ReflectionObjectRenderer {
@@ -104,6 +102,18 @@ internal object ReflectionObjectRenderer {
 
             append(" of ")
             append(renderCallable(parameter.callable.descriptor))
+        }
+    }
+
+    fun renderTypeParameter(typeParameter: TypeParameterDescriptor): String {
+        return buildString {
+            when (typeParameter.variance) {
+                Variance.INVARIANT -> {}
+                Variance.IN_VARIANCE -> append("in ")
+                Variance.OUT_VARIANCE -> append("out ")
+            }
+
+            append(typeParameter.name)
         }
     }
 
