@@ -14,11 +14,14 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
 
 fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope()): LLVMVariable = when {
     type.isFunctionTypeOrSubtype -> LLVMVariable(name, LLVMFunctionType(type), name, scope, pointer = 1)
-    type.toString() == "Int" -> LLVMVariable(name, LLVMIntType(), name, scope)
-    type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope)
+    type.toString() == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope)
     type.toString() == "Byte" -> LLVMVariable(name, LLVMByteType(), name, scope)
     type.toString() == "Char" -> LLVMVariable(name, LLVMCharType(), name, scope)
-    type.toString() == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope)
+    type.toString() == "Short" -> LLVMVariable(name, LLVMShortType(), name, scope)
+    type.toString() == "Int" -> LLVMVariable(name, LLVMIntType(), name, scope)
+    type.toString() == "Long" -> LLVMVariable(name, LLVMLongType(), name, scope)
+    type.toString() == "Float" -> LLVMVariable(name, LLVMFloatType(), name, scope)
+    type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope)
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
     type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1)), name, scope, pointer = 1)
     else -> LLVMVariable(name, LLVMReferenceType(type.toString()), name, scope, pointer = 1)

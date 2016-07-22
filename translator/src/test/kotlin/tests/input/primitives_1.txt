@@ -1,0 +1,4 @@
+testCastToInt(32) == 0
+testCastToInt(34) == 1
+testCastToByte(32) == 0
+testCastToByte(34) == 1

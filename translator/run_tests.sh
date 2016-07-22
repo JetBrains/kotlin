@@ -7,7 +7,7 @@ fi
 
 DIRECTORY="src/test/kotlin/tests"
 MAIN="$DIRECTORY/linked/main.c"
-for i in $( ls "$DIRECTORY/input"); do
+for i in $( ls "$DIRECTORY/input" $1); do
 	rm -f $DIRECTORY/linked/*
 	TEST=`basename $i ".txt"`
 	echo test: $TEST
@@ -40,7 +40,7 @@ for i in $( ls "$DIRECTORY/input"); do
 	java -jar build/libs/ast-kotlin-1.0-SNAPSHOT.jar  $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
 	llvm-link-3.6 $DIRECTORY/linked/* > $DIRECTORY/linked/run.ll
 	lli-3.6 $DIRECTORY/linked/run.ll
-	
+	exit
 done
 
 

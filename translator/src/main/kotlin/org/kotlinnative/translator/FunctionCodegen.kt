@@ -97,7 +97,7 @@ class FunctionCodegen(override val state: TranslationState,
             val receiverType = receiverParameter.type
             val translatorType = LLVMMapStandardType(receiverType)
 
-            val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType, HashMap())
+            val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
             extensionFunctionsOfThisType.put(name, this)
             state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
 
