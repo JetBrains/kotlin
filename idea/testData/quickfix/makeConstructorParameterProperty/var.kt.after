@@ -1,6 +1,6 @@
 // "Make primary constructor parameter 'foo' a property" "true"
 
-class A(var foo: String) {
+class A(private var foo: String) {
     fun bar() {
         foo<caret> = ""
     }
