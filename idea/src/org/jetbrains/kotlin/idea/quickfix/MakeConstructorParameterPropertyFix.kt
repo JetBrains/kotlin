@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
@@ -45,6 +46,7 @@ class MakeConstructorParameterPropertyFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.firstChild)
+        element.addModifier(KtTokens.PRIVATE_KEYWORD)
     }
 
     companion object Factory : KotlinIntentionActionsFactory() {
