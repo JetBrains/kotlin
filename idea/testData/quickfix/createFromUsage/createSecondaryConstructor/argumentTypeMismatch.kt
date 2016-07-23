@@ -3,5 +3,5 @@
 class Foo(val n: Int)
 
 fun test() {
-    val foo = Foo("a<caret>bc")
+    val foo = Foo("a<caret>bc${1}")
 }

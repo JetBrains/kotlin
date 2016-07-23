@@ -5,5 +5,5 @@ class Foo(val n: Int) {
 }
 
 fun test() {
-    val foo = Foo("abc")
+    val foo = Foo("abc${1}")
 }
