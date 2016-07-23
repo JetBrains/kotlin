@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
@@ -31,20 +32,8 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
         return e is KtTypeReference
     }
 
-    override fun select(e: PsiElement?, editorText: CharSequence?, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        e ?: return null
-        editorText ?: return null
-        val colonPosition = getColonPosition(e)
-        if (colonPosition < 0) return null
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
+        val colonPosition = e.getStrictParentOfType<KtCallableDeclaration>()?.colon?.startOffset ?: return null
         return listOf(TextRange(colonPosition, e.endOffset))
-    }
-
-    private fun getColonPosition(e: PsiElement): Int {
-        var parent = e.parent
-        while (parent != null) {
-            if (parent is KtCallableDeclaration) return parent.colon?.startOffset ?: -1
-            parent = parent.parent
-        }
-        return -1
     }
 }

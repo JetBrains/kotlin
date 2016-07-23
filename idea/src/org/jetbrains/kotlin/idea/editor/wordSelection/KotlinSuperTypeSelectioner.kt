@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinSuperTypeSelectioner : ExtendWordSelectionHandlerBase() {
@@ -30,20 +31,8 @@ class KotlinSuperTypeSelectioner : ExtendWordSelectionHandlerBase() {
         return e is KtSuperTypeList
     }
 
-    override fun select(e: PsiElement?, editorText: CharSequence?, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        e ?: return null
-        editorText ?: return null
-        val colonPosition = getColonPosition(e)
-        if (colonPosition < 0) return null
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
+        val colonPosition = e.getStrictParentOfType<KtClass>()?.getColon()?.startOffset ?: return null
         return listOf(TextRange(colonPosition, e.endOffset))
-    }
-
-    private fun getColonPosition(e: PsiElement): Int {
-        var parent = e.parent
-        while (parent != null) {
-            if (parent is KtClass) return parent.getColon()?.startOffset ?: -1
-            parent = parent.parent
-        }
-        return -1
     }
 }
