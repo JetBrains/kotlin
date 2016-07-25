@@ -141,8 +141,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    // Should be SourceDirectorySet or File
-    val srcDirsSources = HashSet<Any>()
+    private val sourceRoots = HashSet<File>()
 
     // lazy because name is probably not available when constructor is called
     private val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name) }
@@ -493,55 +492,48 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     private fun getJavaSourceRoots(): Set<File> =
-            getSource()
-            .filter { it.isJavaFile() }
-            .map { findSrcDirRoot(it) }
-            .filterNotNull()
-            .toSet()
+            findRootsForSources(getSource().filter { it.isJavaFile() })
 
-    private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
+    private fun File.isJavaFile() =
+            extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(source: Any?) {
-        srcDirsSources.clear()
-        if (source is SourceDirectorySet) {
-            srcDirsSources.add(source)
-        }
-        else if (source is File) {
-            srcDirsSources.add(source)
-        }
+        sourceRoots.clear()
+        addSourceRoot(source)
         super.setSource(source)
     }
 
     // override source to track source directory sets and files (for generated android folders)
     override fun source(vararg sources: Any?): SourceTask? {
-        for (source in sources) {
-            if (source is SourceDirectorySet) {
-                srcDirsSources.add(source)
-            }
-            else if (source is File) {
-                srcDirsSources.add(source)
-            }
-        }
+        sources.forEach { addSourceRoot(it) }
         return super.source(sources)
     }
 
-    fun findSrcDirRoot(file: File): File? {
-        for (source in srcDirsSources) {
-            if (source is SourceDirectorySet) {
-                for (root in source.srcDirs) {
-                    if (FileUtil.isAncestor(root, file, false)) {
-                        return root
-                    }
-                }
-            }
-            else if (source is File) {
-                if (FileUtil.isAncestor(source, file, false)) {
-                    return source
+    fun findRootsForSources(sources: Iterable<File>): Set<File> {
+        val resultRoots = HashSet<File>()
+        val sourceDirs = sources.mapTo(HashSet()) { it.parentFile }
+
+        for (sourceDir in sourceDirs) {
+            for (sourceRoot in sourceRoots) {
+                if (FileUtil.isAncestor(sourceRoot, sourceDir, /* strict = */false)) {
+                    resultRoots.add(sourceRoot)
                 }
             }
         }
-        return null
+
+        return resultRoots
+    }
+
+    private fun addSourceRoot(source: Any?) {
+        when (source) {
+            is SourceDirectorySet -> {
+                sourceRoots.addAll(source.srcDirs)
+            }
+            is File -> {
+                sourceRoots.add(source)
+            }
+        }
     }
 }
 
