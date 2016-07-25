@@ -1,0 +1,7 @@
+class My {
+    var x: String
+
+    init {
+        x = "My"
+    }
+}
