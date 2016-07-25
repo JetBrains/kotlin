@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.before
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
-import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -119,8 +119,10 @@ object DataFlowValueFactory {
             bindingContext: BindingContext,
             usageContainingModule: ModuleDescriptor?
     ) = DataFlowValue(IdentifierInfo.Variable(variableDescriptor,
-                                              variableKind(variableDescriptor, usageContainingModule, bindingContext, property)),
-                      variableDescriptor.type)
+                                              variableKind(variableDescriptor, usageContainingModule,
+                                                           bindingContext, property),
+                                              bindingContext[BOUND_INITIALIZER_VALUE, variableDescriptor]),
+                                     variableDescriptor.type)
 
     // For only ++ and -- postfix operations
     private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo, val op: KtToken) : IdentifierInfo {
@@ -201,7 +203,8 @@ object DataFlowValueFactory {
                 val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(containingDeclarationOrModule)
                 val selectorInfo = IdentifierInfo.Variable(declarationDescriptor,
                                                            variableKind(declarationDescriptor, usageModuleDescriptor,
-                                                                        bindingContext, simpleNameExpression))
+                                                                        bindingContext, simpleNameExpression),
+                                                           bindingContext[BOUND_INITIALIZER_VALUE, declarationDescriptor])
 
                 val implicitReceiver = resolvedCall?.dispatchReceiver
                 if (implicitReceiver == null) {

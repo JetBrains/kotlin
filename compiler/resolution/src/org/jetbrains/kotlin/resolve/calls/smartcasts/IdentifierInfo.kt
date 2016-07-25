@@ -39,7 +39,11 @@ interface IdentifierInfo {
         override fun toString() = "ERROR"
     }
 
-    class Variable(val variable: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
+    class Variable(
+            val variable: VariableDescriptor,
+            override val kind: DataFlowValue.Kind,
+            val bound: DataFlowValue?
+    ) : IdentifierInfo {
 
         override fun equals(other: Any?) = other is Variable && variable == other.variable
 

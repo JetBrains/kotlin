@@ -93,17 +93,22 @@ class LocalVariableResolver(
             typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType))
             val dataFlowInfo = typeInfo.dataFlowInfo
             val type = typeInfo.type
-            // At this moment we do not take initializer value into account if type is given for a property
-            // We can comment first part of this condition to take them into account, like here: var s: String? = "xyz"
-            // In this case s will be not-nullable until it is changed
-            if (property.typeReference == null && type != null) {
-                val variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
-                        property, propertyDescriptor, context.trace.bindingContext,
-                        DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor))
+            if (type != null) {
                 val initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context)
-                // We cannot say here anything new about initializerDataFlowValue
-                // except it has the same value as variableDataFlowValue
-                typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.assign(variableDataFlowValue, initializerDataFlowValue))
+                if (!propertyDescriptor.isVar) {
+                    context.trace.record(BindingContext.BOUND_INITIALIZER_VALUE, propertyDescriptor, initializerDataFlowValue)
+                }
+                // At this moment we do not take initializer value into account if type is given for a property
+                // We can comment this condition to take them into account, like here: var s: String? = "xyz"
+                // In this case s will be not-nullable until it is changed
+                if (property.typeReference == null) {
+                    val variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
+                            property, propertyDescriptor, context.trace.bindingContext,
+                            DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor))
+                    // We cannot say here anything new about initializerDataFlowValue
+                    // except it has the same value as variableDataFlowValue
+                    typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.assign(variableDataFlowValue, initializerDataFlowValue))
+                }
             }
         }
         else {
