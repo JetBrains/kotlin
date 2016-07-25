@@ -49,7 +49,7 @@ interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     ): C
 }
 
-interface InvokeTowerContext<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>: TowerContext<FunctionDescriptor, F> {
+interface InvokeTowerContext<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> {
 
     fun transformCandidate(variable: V, invoke: F): F
 

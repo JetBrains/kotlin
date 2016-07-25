@@ -151,23 +151,23 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 }
 
 // case 1.(foo())() or (foo())()
-fun <F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> createCallTowerProcessorForExplicitInvoke(
-        invokeContext: InvokeTowerContext<F, V>,
+fun <F : Candidate<FunctionDescriptor>> createCallTowerProcessorForExplicitInvoke(
+        functionContext: TowerContext<FunctionDescriptor, F>,
         expressionForInvoke: ReceiverValue,
         explicitReceiver: ReceiverValue?
 ): ScopeTowerProcessor<F> {
-    val invokeExtensionDescriptor = invokeContext.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
+    val invokeExtensionDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
     if (explicitReceiver != null) {
         if (invokeExtensionDescriptor == null) {
             // case 1.(foo())(), where foo() isn't extension function
             return KnownResultProcessor(emptyList())
         }
         else {
-            return InvokeExtensionScopeTowerProcessor(invokeContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
+            return InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
         }
     }
     else {
-        val usualInvoke = ExplicitReceiverScopeTowerProcessor(invokeContext, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
+        val usualInvoke = ExplicitReceiverScopeTowerProcessor(functionContext, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
 
         if (invokeExtensionDescriptor == null) {
             return usualInvoke
@@ -175,7 +175,7 @@ fun <F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> creat
         else {
             return CompositeScopeTowerProcessor(
                     usualInvoke,
-                    InvokeExtensionScopeTowerProcessor(invokeContext, invokeExtensionDescriptor, explicitReceiver = null)
+                    InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = null)
             )
         }
     }
