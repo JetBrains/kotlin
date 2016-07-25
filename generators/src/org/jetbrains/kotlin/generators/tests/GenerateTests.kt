@@ -771,6 +771,7 @@ fun main(args: Array<String>) {
             model("refactoring/introduceParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceSimpleParameterTest")
             model("refactoring/introduceLambdaParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceLambdaParameterTest")
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
+            model("refactoring/introduceTypeParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceTypeParameterTest")
             model("refactoring/introduceTypeAlias", pattern = kotlinFileOrScript, testMethod = "doIntroduceTypeAliasTest")
         }
 

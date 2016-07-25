@@ -218,6 +218,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ##### New features
 
 - [`KT-12017`](https://youtrack.jetbrains.com/issue/KT-12017) Inline Property: Support "Do not show this dialog" and "Inline this occurrence" options
+- [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
 
 #### Debugger
 

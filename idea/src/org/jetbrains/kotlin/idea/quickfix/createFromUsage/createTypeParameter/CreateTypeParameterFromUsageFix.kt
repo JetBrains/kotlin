@@ -37,15 +37,20 @@ import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.utils.SmartList
 
 class CreateTypeParameterFromUsageFix(
-        originalElement: KtUserType,
+        originalElement: KtTypeElement,
         private val data: CreateTypeParameterData
-) : CreateFromUsageFixBase<KtUserType>(originalElement) {
+) : CreateFromUsageFixBase<KtTypeElement>(originalElement) {
     override fun getText() = "Create type parameter '${data.name}'"
 
     override fun startInWriteAction() = false
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        doInvoke()
+    }
+
+    fun doInvoke(): KtTypeParameter? {
         val declaration = data.declaration
+        val project = declaration.project
         val usages = project.runSynchronouslyWithProgress("Searching ${declaration.name}...", true) {
             runReadAction {
                 ReferencesSearch
@@ -56,9 +61,9 @@ class CreateTypeParameterFromUsageFix(
                         }
                         .toSet()
             }
-        } ?: return
+        } ?: return null
 
-        runWriteAction {
+        return runWriteAction {
             val psiFactory = KtPsiFactory(project)
 
             val elementsToShorten = SmartList<KtElement>()
@@ -70,7 +75,8 @@ class CreateTypeParameterFromUsageFix(
             else null
             val upperBound = upperBoundText?.let { psiFactory.createType(it) }
             val newTypeParameterText = if (upperBound != null) "${data.name} : ${upperBound.text}" else data.name
-            elementsToShorten += declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
+            val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
+            elementsToShorten += newTypeParameter
 
             val callsToExplicateArguments = SmartList<KtCallElement>()
             usages.forEach {
@@ -113,6 +119,8 @@ class CreateTypeParameterFromUsageFix(
             }
 
             ShortenReferences.DEFAULT.process(elementsToShorten)
+
+            newTypeParameter
         }
     }
 }
