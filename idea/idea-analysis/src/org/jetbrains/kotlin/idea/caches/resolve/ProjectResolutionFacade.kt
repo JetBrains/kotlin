@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 internal class ProjectResolutionFacade(
+        val debugString: String,
         val project: Project,
         val globalContext: GlobalContextImpl,
         computeModuleResolverProvider: (GlobalContextImpl, Project) -> CachedValueProvider.Result<ModuleResolverProvider>
@@ -88,6 +89,10 @@ internal class ProjectResolutionFacade(
         //TODO: (module refactoring) several elements are passed here in debugger
             AnalysisResult.success(bindingContext, findModuleDescriptor(elements.first().getModuleInfo()))
     }
+
+    override fun toString(): String {
+        return "$debugString@${Integer.toHexString(hashCode())}"
+    }
 }
 
 internal class ResolutionFacadeImpl(
@@ -134,7 +139,6 @@ internal class ResolutionFacadeImpl(
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
     }
-
 }
 
 fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor? {

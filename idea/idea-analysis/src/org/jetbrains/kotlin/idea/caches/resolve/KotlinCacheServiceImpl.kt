@@ -71,6 +71,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private val facadeForScriptDependencies by lazy {
         val globalContext = GlobalContext()
         ProjectResolutionFacade(
+                "facadeForScriptDependencies",
                 project, globalContext,
                 globalResolveSessionProvider(
                         "dependencies of scripts",
@@ -89,6 +90,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private inner class GlobalFacade(platform: TargetPlatform, sdk: Sdk?) {
         private val sdkContext = GlobalContext()
         val facadeForSdk = ProjectResolutionFacade(
+                "facadeForSdk",
                 project, sdkContext,
                 globalResolveSessionProvider(
                         "sdk $sdk",
@@ -103,6 +105,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val librariesContext = sdkContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForLibraries = ProjectResolutionFacade(
+                "facadeForLibraries",
                 project, librariesContext,
                 globalResolveSessionProvider(
                         "project libraries for platform $platform",
@@ -120,6 +123,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val modulesContext = librariesContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForModules = ProjectResolutionFacade(
+                "facadeForModules",
                 project, modulesContext,
                 globalResolveSessionProvider(
                         "project source roots and libraries for platform $platform",
@@ -180,6 +184,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val modulesFacade = globalFacade(targetPlatform, sdk)
                 val globalContext = modulesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
+                        "facadeForSynthetic in ModuleSourceInfo",
                         project, globalContext,
                         makeGlobalResolveSessionProvider(
                                 reuseDataFrom = modulesFacade,
@@ -190,6 +195,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             syntheticFileModule is ScriptModuleInfo || syntheticFileModule is ScriptDependenciesModuleInfo -> {
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
+                        "facadeForSynthetic in ScriptModuleInfo",
                         project, globalContext,
                         makeGlobalResolveSessionProvider(
                                 reuseDataFrom = facadeForScriptDependencies,
@@ -203,6 +209,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val librariesFacade = librariesFacade(targetPlatform, sdk)
                 val globalContext = librariesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
+                        "facadeForSynthetic in LibrarySourceInfo or NotUnderContentRootModuleInfo",
                         project, globalContext,
                         makeGlobalResolveSessionProvider(
                                 reuseDataFrom = librariesFacade,
@@ -218,6 +225,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
                 val globalContext = GlobalContext()
                 ProjectResolutionFacade(
+                        "facadeForSynthetic for file under both classes and root",
                         project, globalContext,
                         makeGlobalResolveSessionProvider()
                 )
