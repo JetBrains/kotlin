@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -78,10 +80,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                     val pseudocode = pseudocode(declaration, bindingContext) ?: return false
                     val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return false
 
-                    val writeInstructions = pseudocode.instructionsIncludingDeadCode
-                            .filterIsInstance<WriteValueInstruction>()
-                            .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
-                            .toSet()
+                    val writeInstructions = pseudocode.collectWriteInstructions(descriptor)
                     if (writeInstructions.isEmpty()) return false // incorrect code - do not report
 
                     return writeInstructions.none { canReach(it, writeInstructions) }
@@ -93,10 +92,24 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 return pseudocodeCache.getOrPut(declaration) { PseudocodeUtil.generatePseudocode(declaration, bindingContext) }
             }
 
+            private fun Pseudocode.collectWriteInstructions(descriptor: DeclarationDescriptor): Set<WriteValueInstruction> =
+                    with (instructionsIncludingDeadCode) {
+                        filterIsInstance<WriteValueInstruction>()
+                        .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
+                        .toSet() +
+
+                        filterIsInstance<LocalFunctionDeclarationInstruction>()
+                        .map { it.body.collectWriteInstructions(descriptor) }
+                        .flatten()
+                    }
+
             private fun canReach(from: Instruction, targets: Set<Instruction>, visited: HashSet<Instruction> = HashSet<Instruction>()): Boolean {
                 // special algorithm for linear code to avoid too deep recursion
                 var instruction = from
                 while (instruction is InstructionWithNext) {
+                    if (instruction is LocalFunctionDeclarationInstruction) {
+                        if (canReach(instruction.body.enterInstruction, targets, visited)) return true
+                    }
                     val next = instruction.next ?: return false
                     if (next in visited) return false
                     if (next in targets) return true
