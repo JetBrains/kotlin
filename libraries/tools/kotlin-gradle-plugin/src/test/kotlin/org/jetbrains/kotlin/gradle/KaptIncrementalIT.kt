@@ -133,8 +133,14 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
-            val useBKt = project.projectDir.getFileByName("useB.kt")
-            assertCompiledKotlinSources(project.relativize(bKt, useBKt))
+            if (shouldUseStubs) {
+                // java removal is detected
+                assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
+            }
+            else {
+                val useBKt = project.projectDir.getFileByName("useB.kt")
+                assertCompiledKotlinSources(project.relativize(bKt, useBKt))
+            }
             checkGenerated(*(annotatedElements.toSet() - affectedElements).toTypedArray())
             checkNotGenerated(*affectedElements)
         }

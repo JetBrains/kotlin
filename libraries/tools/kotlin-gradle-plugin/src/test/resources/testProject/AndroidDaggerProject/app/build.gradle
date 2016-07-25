@@ -29,6 +29,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        buildConfigField "long", "BUILD_TIME_MILLIS", "${System.currentTimeMillis()}L"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
