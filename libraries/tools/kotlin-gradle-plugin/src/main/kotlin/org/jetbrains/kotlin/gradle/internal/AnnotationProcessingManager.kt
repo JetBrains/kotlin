@@ -56,19 +56,6 @@ fun Project.initKapt(
 
         kotlinAfterJavaTask.source(kaptManager.generatedKotlinSourceDir)
         kotlinAfterJavaTask.source(kaptManager.aptOutputDir)
-        val javaDestinationDir = project.files(javaTask.destinationDir)
-        javaTask.doLast {
-            kotlinAfterJavaTask.source(kotlinTask.source)
-            // we don't want kotlinAfterJavaTask to track modifications in generated class
-            kotlinAfterJavaTask.classpath -= javaDestinationDir
-        }
-        kotlinAfterJavaTask.doFirst {
-            kotlinAfterJavaTask.classpath += javaDestinationDir
-        }
-        kotlinAfterJavaTask.doLast {
-            kotlinAfterJavaTask.classpath -= javaDestinationDir
-        }
-
         subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
     } else {
         kotlinAfterJavaTask = null
@@ -108,7 +95,7 @@ private fun Project.createKotlinAfterJavaTask(
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile {
     val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
-        classpath = kotlinTask.classpath - project.files(javaTask.destinationDir)
+        conventionMapping.map("classpath") { kotlinTask.classpath }
         this
     }
 

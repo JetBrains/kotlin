@@ -5,6 +5,7 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
+import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Plugin
@@ -171,14 +172,7 @@ class Kotlin2JvmSourceSetProcessor(
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
-                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, null, subpluginEnvironment, tasksProvider)
-
-                    if (kotlinAfterJavaTask != null) {
-                        javaTask.doFirst {
-                            kotlinAfterJavaTask!!.classpath = project.files(kotlinTask.classpath, javaTask.destinationDir)
-                        }
-                    }
+                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, null, subpluginEnvironment, tasksProvider)
                 }
 
                 configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
@@ -369,11 +363,10 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
-            kotlinTask.description = "Compiles the ${variantDataName} kotlin."
+            kotlinTask.description = "Compiles the $variantDataName kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
             val aptFiles = arrayListOf<File>()
-
             for (provider in variantData.sourceProviders) {
                 val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                 // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
@@ -384,21 +377,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-
-            // should not be evaluated until right before compileKotlin evaluation since android can change
-            // java classpath during project evaluation (see prepareComAndroidSupportSupportV42311Library)
-            val fullClasspath = lazy {
-                val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-                (javaTask.classpath + androidRT) - project.files(kotlinTask.destinationDir)
-            }
-            kotlinTask.classpath = javaTask.classpath
-            kotlinTask.updateClasspathBeforeTask { fullClasspath.value }
-            kotlinTask.doFirst {
-                for (task in project.getTasksByName(kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX, false)) {
-                    (task as AbstractCompile).classpath = project.files(fullClasspath.value, javaTask.destinationDir)
-                }
-            }
-
+            kotlinTask.conventionMapping.map("classpath") { javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) }
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
             var kotlinAfterJavaTask: KotlinCompile? = null
