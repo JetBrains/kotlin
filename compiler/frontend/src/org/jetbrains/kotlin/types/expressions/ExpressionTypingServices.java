@@ -246,13 +246,6 @@ public class ExpressionTypingServices {
                 result = getTypeOfLastExpressionInBlock(
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
                         blockLevelVisitor);
-                if (result.getType() != null && statementExpression.getParent() instanceof KtBlockExpression) {
-                    DataFlowValue lastExpressionValue = DataFlowValueFactory.createDataFlowValue(
-                            statementExpression, result.getType(), context);
-                    DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
-                            (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
-                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue));
-                }
             }
             else {
                 result = blockLevelVisitor

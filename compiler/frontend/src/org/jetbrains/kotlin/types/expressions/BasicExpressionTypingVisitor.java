@@ -172,14 +172,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        KotlinTypeInfo result = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
-        KotlinType resultType = result.getType();
-        if (resultType != null) {
-            DataFlowValue innerValue = DataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
-            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
-            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue));
-        }
-        return result;
+        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
     }
 
     @Override
@@ -1235,10 +1228,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
-            dataFlowInfo = dataFlowInfo.assign(resultValue, leftValue).disequate(resultValue, nullValue);
+            dataFlowInfo = dataFlowInfo.disequate(resultValue, nullValue);
             if (!jumpInRight) {
-                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
-                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue);
                 dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
         }

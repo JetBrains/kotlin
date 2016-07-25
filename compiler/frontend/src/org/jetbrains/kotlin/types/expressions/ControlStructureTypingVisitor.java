@@ -154,13 +154,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             KotlinType elseType = elseTypeInfo.getType();
             DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
             DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
-            if (resultType != null && thenType != null && elseType != null) {
-                DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
-                DataFlowValue thenValue = DataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
-                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue);
-                DataFlowValue elseValue = DataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
-                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
-            }
 
             loopBreakContinuePossible |= thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
 
