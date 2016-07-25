@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true, "local");
     }
 
     @TestMetadata("AnnotationClass.kt")
@@ -44,6 +44,18 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("DeprecatedEnumEntry.kt")
     public void testDeprecatedEnumEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DeprecatedEnumEntry.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DollarsInName.kt")
+    public void testDollarsInName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DollarsInName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DollarsInNameNoPackage.kt")
+    public void testDollarsInNameNoPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DollarsInNameNoPackage.kt");
         doTest(fileName);
     }
 
