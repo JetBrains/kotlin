@@ -34,10 +34,11 @@ import javax.swing.JComponent
 
 class HasPlatformTypeInspection(
         val intention: SpecifyTypeExplicitlyIntention = SpecifyTypeExplicitlyIntention(),
-        @JvmField var publicAPIOnly: Boolean = true
+        @JvmField var publicAPIOnly: Boolean = true,
+        @JvmField var reportPlatformArguments: Boolean = false
 ) : IntentionBasedInspection<KtCallableDeclaration>(
         intention,
-        { intention.dangerousFlexibleTypeOrNull(it, publicAPIOnly) != null }
+        { intention.dangerousFlexibleTypeOrNull(it, publicAPIOnly, reportPlatformArguments) != null }
 ) {
 
     override val problemHighlightType = ProblemHighlightType.WEAK_WARNING
@@ -45,7 +46,7 @@ class HasPlatformTypeInspection(
     override val problemText = "Declaration has platform type. Make the type explicit to prevent subtle bugs."
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
-        val type = intention.dangerousFlexibleTypeOrNull(element, publicAPIOnly) ?: return null
+        val type = intention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null
 
         if (type.isNullabilityFlexible()) {
             val expression = element.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()
@@ -65,6 +66,7 @@ class HasPlatformTypeInspection(
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
         panel.addCheckbox("Apply only to public or protected members", "publicAPIOnly")
+        panel.addCheckbox("Report for types with platform arguments", "reportPlatformArguments")
         return panel
     }
 }
