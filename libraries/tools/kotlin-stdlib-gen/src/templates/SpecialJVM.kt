@@ -285,7 +285,7 @@ fun specialJVM(): List<GenericFunction> {
             val result = arrayOfNulls<T>(size)
             for (index in indices)
                 result[index] = this[index]
-            @Suppress("CAST_NEVER_SUCCEEDS")
+            @Suppress("UNCHECKED_CAST")
             return result as Array<T>
             """
         }
