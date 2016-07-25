@@ -1,0 +1,5 @@
+package
+
+public fun bar(/*0*/ arg: kotlin.Long?): kotlin.Long
+public fun foo(/*0*/ arg: kotlin.Int?): kotlin.Int
+public operator fun kotlin.Long?.inc(): kotlin.Long?

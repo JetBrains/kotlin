@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.before
@@ -140,10 +141,11 @@ object DataFlowValueFactory {
             type: KotlinType
     ) = DataFlowValue(ExpressionIdentifierInfo(expression, stableComplex = true), type)
 
-    private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo) : IdentifierInfo {
+    // For only ++ and -- postfix operations
+    private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo, val op: KtToken) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = argumentInfo.kind
 
-        override fun toString() = "$argumentInfo (postfix)"
+        override fun toString() = "$argumentInfo($op)"
     }
 
     class ExpressionIdentifierInfo(val expression: KtExpression, stableComplex: Boolean = false) : IdentifierInfo {
@@ -157,12 +159,12 @@ object DataFlowValueFactory {
         override fun toString() = expression.text ?: "(empty expression)"
     }
 
-    private fun postfix(argumentInfo: IdentifierInfo) =
+    private fun postfix(argumentInfo: IdentifierInfo, op: KtToken) =
             if (argumentInfo == IdentifierInfo.NO) {
                 IdentifierInfo.NO
             }
             else {
-                PostfixIdentifierInfo(argumentInfo)
+                PostfixIdentifierInfo(argumentInfo, op)
             }
 
     private fun getIdForStableIdentifier(
@@ -195,7 +197,8 @@ object DataFlowValueFactory {
             is KtPostfixExpression -> {
                 val operationType = expression.operationReference.getReferencedNameElementType()
                 if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS) {
-                    postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
+                    postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule),
+                            operationType)
                 }
                 else {
                     IdentifierInfo.NO

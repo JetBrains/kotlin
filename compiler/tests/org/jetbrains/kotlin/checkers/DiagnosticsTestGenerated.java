@@ -18728,6 +18728,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("plusplusMinusminus.kt")
+                public void testPlusplusMinusminus() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/plusplusMinusminus.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("postfixNotnullClassIncrement.kt")
                 public void testPostfixNotnullClassIncrement() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/postfixNotnullClassIncrement.kt");
