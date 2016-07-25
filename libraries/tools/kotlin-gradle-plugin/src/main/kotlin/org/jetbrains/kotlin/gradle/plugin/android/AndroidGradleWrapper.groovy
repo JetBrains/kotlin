@@ -103,8 +103,15 @@ class AndroidGradleWrapper {
   }
 
   static def List<File> getJavaSources(BaseVariantData variantData) {
-    def result = new ArrayList<File>()
+    def result = new LinkedHashSet<File>()
 
+    // user sources
+    List<SourceProvider> providers = variantData.variantConfiguration.getSortedSourceProviders();
+    for (SourceProvider provider : providers) {
+      result.addAll((provider as AndroidSourceSet).getJava().getSrcDirs());
+    }
+
+    // generated sources
     def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
     if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
       result.addAll(variantData.getJavaSources().findAll { it instanceof File })
@@ -114,12 +121,6 @@ class AndroidGradleWrapper {
       result.addAll(fileTrees.collect { it.getDir() })
     }
     else {
-      // Old impl copied from android tools source. Delete?
-      List<SourceProvider> providers = variantData.variantConfiguration.getSortedSourceProviders();
-      for (SourceProvider provider : providers) {
-        result.addAll((provider as AndroidSourceSet).getJava().getSourceDirectoryTrees());
-      }
-
       if (variantData.scope.getGenerateRClassTask() != null) {
         result.add(variantData.scope.getRClassSourceOutputDir());
       }
@@ -150,6 +151,6 @@ class AndroidGradleWrapper {
       }
     }
 
-    return result
+    return result.toList()
   }
 }
