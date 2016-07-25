@@ -56,8 +56,8 @@ internal class ProjectResolutionFacade(
             {
                 val resolverProvider = moduleResolverProvider
                 val results = object : SLRUCache<KtFile, PerFileAnalysisCache>(2, 3) {
-                    override fun createValue(file: KtFile?): PerFileAnalysisCache {
-                        return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
+                    override fun createValue(file: KtFile): PerFileAnalysisCache {
+                        return PerFileAnalysisCache(file, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
                     }
                 }
 
