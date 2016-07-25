@@ -203,6 +203,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug { "friendTaskName = $friendTaskName" }
         friendTaskName?.let { addFriendPathForTestTask(it) }
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
+
+        fun dumpPaths(files: Iterable<File>): String =
+            "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
+
+        logger.kotlinDebug { "$name source roots: ${dumpPaths(sourceRoots)}" }
+        logger.kotlinDebug { "$name java source roots: ${dumpPaths(getJavaSourceRoots())}" }
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {

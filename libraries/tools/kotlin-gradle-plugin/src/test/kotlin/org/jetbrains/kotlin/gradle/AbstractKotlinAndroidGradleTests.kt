@@ -142,13 +142,34 @@ fun getSomething() = 10
             assertSuccessful()
         }
 
-        val file = project.projectDir.getFileByName("AndroidModule.kt")
-        file.modify { it.replace("fun provideApplicationContext(): Context {",
-                                 "fun provideApplicationContext(): Context? {") }
+        val androidModuleKt = project.projectDir.getFileByName("AndroidModule.kt")
+        androidModuleKt.modify { it.replace("fun provideApplicationContext(): Context {",
+                                            "fun provideApplicationContext(): Context? {") }
+        // rebuilt because DaggerApplicationComponent.java was regenerated
+        val baseApplicationKt = project.projectDir.getFileByName("BaseApplication.kt")
+        // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
+        val useBuildConfigJavaKt = project.projectDir.getFileByName("useBuildConfigJava.kt")
+
+        val stringsXml = project.projectDir.getFileByName("strings.xml")
+        stringsXml.modify { """
+            <resources>
+                <string name="app_name">kotlin</string>
+                <string name="app_name1">kotlin1</string>
+            </resources>
+        """ }
+        // rebuilt because R.java changed
+        val homeActivityKt = project.projectDir.getFileByName("HomeActivity.kt")
+        val useRJavaActivity = project.projectDir.getFileByName("UseRJavaActivity.kt")
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativizeToSubproject("app", file))
+            assertCompiledKotlinSources(project.relativizeToSubproject("app",
+                    androidModuleKt,
+                    baseApplicationKt,
+                    useBuildConfigJavaKt,
+                    homeActivityKt,
+                    useRJavaActivity
+            ))
         }
     }
 

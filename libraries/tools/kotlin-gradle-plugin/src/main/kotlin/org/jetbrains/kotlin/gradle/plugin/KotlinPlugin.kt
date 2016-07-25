@@ -70,7 +70,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         if (kotlinSourceSet == null || kotlinDirSet == null) {
             return
         }
-        addSourcesToKotlinDirSet()
+        addKotlinDirSetToSources()
         commonTaskConfiguration()
         doTargetSpecificProcessing()
     }
@@ -93,10 +93,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         return kotlinDirSet
     }
 
-    open protected fun addSourcesToKotlinDirSet() {
+    private fun addKotlinDirSetToSources() {
         logger.kotlinDebug("Adding Kotlin SourceDirectorySet $kotlinDirSet to source set $sourceSet")
-        sourceSet.getAllJava()?.source(kotlinDirSet)
-        sourceSet.getAllSource()?.source(kotlinDirSet)
+        sourceSet.allJava?.source(kotlinDirSet)
+        sourceSet.allSource?.source(kotlinDirSet)
         sourceSet.resources?.filter?.exclude { kotlinDirSet!!.contains(it.file) }
     }
 
@@ -152,7 +152,7 @@ class Kotlin2JvmSourceSetProcessor(
             if (project != null) {
                 kotlinTask.destinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
-                for (dir in sourceSet.getJava().srcDirs) {
+                for (dir in sourceSet.java.srcDirs) {
                     kotlinDirSet?.srcDir(dir)
                 }
 
@@ -175,6 +175,7 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, null, subpluginEnvironment, tasksProvider)
                 }
 
+                kotlinAfterJavaTask?.let { it.source(kotlinDirSet) }
                 configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
             }
