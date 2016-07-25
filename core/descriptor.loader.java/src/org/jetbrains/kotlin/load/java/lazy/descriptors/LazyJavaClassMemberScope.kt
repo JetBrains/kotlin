@@ -39,17 +39,16 @@ import org.jetbrains.kotlin.load.java.descriptors.copyValueParameters
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
-import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
+import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
@@ -132,7 +131,7 @@ class LazyJavaClassMemberScope(
 
         return candidatesToOverride.any {
             candidate ->
-            doesOverrideBuiltinFunctionWithErasedValueParameters(candidate)
+            hasSameJvmDescriptorButDoesNotOverride(candidate)
         }
     }
 
@@ -355,7 +354,7 @@ class LazyJavaClassMemberScope(
             functions: (Name) -> Collection<SimpleFunctionDescriptor>
     ): SimpleFunctionDescriptor? {
         return functions(overridden.name).firstOrNull {
-            it.doesOverrideBuiltinFunctionWithErasedValueParameters(overridden)
+            it.hasSameJvmDescriptorButDoesNotOverride(overridden)
         }?.let {
             override ->
             override.newCopyBuilder().apply {
@@ -496,24 +495,12 @@ class LazyJavaClassMemberScope(
         )
     }
 
-    private fun SimpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
+    private fun SimpleFunctionDescriptor.hasSameJvmDescriptorButDoesNotOverride(
             builtinWithErasedParameters: FunctionDescriptor
     ): Boolean {
-        if (this.valueParameters.size != builtinWithErasedParameters.valueParameters.size) return false
-        if (!this.typeParameters.isEmpty() || !builtinWithErasedParameters.typeParameters.isEmpty()) return false
-        if (this.extensionReceiverParameter != null || builtinWithErasedParameters.extensionReceiverParameter != null) return false
-
-        return this.valueParameters.indices.all {
-            index ->
-            val currentType = valueParameters[index].type
-            val overriddenCandidate = RawSubstitution.eraseType(
-                    builtinWithErasedParameters.original.valueParameters[index].type)
-            KotlinTypeChecker.DEFAULT.equalTypes(currentType, overriddenCandidate)
-        } && returnType.isSubtypeOf(builtinWithErasedParameters.returnType)
-    }
-
-    private fun KotlinType?.isSubtypeOf(other: KotlinType?): Boolean {
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(this ?: return false, other ?: return false)
+        return computeJvmDescriptor(withReturnType = false) ==
+                       builtinWithErasedParameters.original.computeJvmDescriptor(withReturnType = false)
+               && !doesOverride(builtinWithErasedParameters)
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {

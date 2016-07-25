@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
 
-fun FunctionDescriptor.computeJvmDescriptor()
+fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true)
         = StringBuilder().apply {
             append(if (this@computeJvmDescriptor is ConstructorDescriptor) "<init>" else name.asString())
             append("(")
@@ -40,11 +40,13 @@ fun FunctionDescriptor.computeJvmDescriptor()
 
             append(")")
 
-            if (hasVoidReturnType(this@computeJvmDescriptor)) {
-                append("V")
-            }
-            else {
-                appendErasedType(returnType!!)
+            if (withReturnType) {
+                if (hasVoidReturnType(this@computeJvmDescriptor)) {
+                    append("V")
+                }
+                else {
+                    appendErasedType(returnType!!)
+                }
             }
         }.toString()
 
