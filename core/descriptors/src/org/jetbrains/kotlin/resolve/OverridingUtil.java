@@ -70,7 +70,6 @@ public class OverridingUtil {
      * one other descriptor from the original set.
      */
     @NotNull
-    @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
         return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
     }
@@ -110,11 +109,14 @@ public class OverridingUtil {
     public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
         // In a multi-module project different "copies" of the same class may be present in different libraries,
         // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
+
         // This first check cover the case of duplicate classes in different modules:
         // when B is defined in modules m1 and m2, and C (indirectly) inherits from both versions,
         // we'll be getting sets of members that do not override each other, but are structurally equivalent.
         // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
+        // Note that this is needed for the usage of this function in the IDE code
         if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal())) return true;
+
         CallableDescriptor originalG = g.getOriginal();
         for (D overriddenFunction : DescriptorUtils.getAllOverriddenDescriptors(f)) {
             if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(originalG, overriddenFunction.getOriginal())) return true;
