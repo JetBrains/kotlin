@@ -122,3 +122,15 @@ fun falsePositive(w: Wrapper) {
         <!SMARTCAST_IMPOSSIBLE!>w.unwrap()<!>.length
     }
 }
+
+class Invokable(val x: String) {
+    operator fun invoke() = x
+}
+
+class InvokableProperty(val i: Invokable)
+
+fun checkInvokable(ip: InvokableProperty?) {
+    if (ip?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>i<!>() == "Hello") {
+        <!DEBUG_INFO_SMARTCAST!>ip<!>.hashCode()
+    }
+}

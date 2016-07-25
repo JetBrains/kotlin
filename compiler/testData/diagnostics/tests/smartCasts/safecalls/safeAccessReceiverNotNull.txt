@@ -1,5 +1,6 @@
 package
 
+public fun checkInvokable(/*0*/ ip: InvokableProperty?): kotlin.Unit
 public fun falsePositive(/*0*/ w: Wrapper): kotlin.Unit
 public fun getA(): A?
 public fun handleGet(/*0*/ arg: HttpExchange): HttpExchange
@@ -30,6 +31,23 @@ public final class A {
 public final class HttpExchange {
     public constructor HttpExchange(/*0*/ code: kotlin.String)
     public final val code: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Invokable {
+    public constructor Invokable(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun invoke(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InvokableProperty {
+    public constructor InvokableProperty(/*0*/ i: Invokable)
+    public final val i: Invokable
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
