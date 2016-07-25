@@ -165,7 +165,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         fun makeGlobalResolveSessionProvider(reuseDataFrom: ProjectResolutionFacade? = null,
                                              moduleFilter: (IdeaModuleInfo) -> Boolean = { true },
                                              allModules: Collection<IdeaModuleInfo>? = null
-        ): (GlobalContextImpl, Project) -> CachedValueProvider.Result<ModuleResolverProvider> {
+        ): (GlobalContextImpl, Project) -> ModuleResolverProvider {
             return globalResolveSessionProvider(
                     debugName,
                     targetPlatform,
@@ -316,7 +316,7 @@ private fun globalResolveSessionProvider(
         reuseDataFrom: ProjectResolutionFacade? = null,
         syntheticFiles: Collection<KtFile> = listOf(),
         allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
-): (GlobalContextImpl, Project) -> CachedValueProvider.Result<ModuleResolverProvider> = { globalContext, project ->
+): (GlobalContextImpl, Project) -> ModuleResolverProvider = { globalContext, project ->
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
 
@@ -334,7 +334,8 @@ private fun globalResolveSessionProvider(
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
             syntheticFiles, delegateResolverForProject, moduleFilter,
             allModules,
-            builtIns
+            builtIns,
+            dependencies
     )
 
     if (newBuiltIns is JvmBuiltIns) {
@@ -342,7 +343,6 @@ private fun globalResolveSessionProvider(
         newBuiltIns.setOwnerModuleDescriptor(moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo))
     }
 
-    val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
-    CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
+    moduleResolverProvider
 }
 

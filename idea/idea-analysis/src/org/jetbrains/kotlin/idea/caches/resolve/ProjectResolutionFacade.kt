@@ -32,10 +32,13 @@ internal class ProjectResolutionFacade(
         val debugString: String,
         val project: Project,
         val globalContext: GlobalContextImpl,
-        computeModuleResolverProvider: (GlobalContextImpl, Project) -> CachedValueProvider.Result<ModuleResolverProvider>
+        computeModuleResolverProvider: (GlobalContextImpl, Project) -> ModuleResolverProvider
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
-            { computeModuleResolverProvider(globalContext, project) },
+            {
+                val resolverProvider = computeModuleResolverProvider(globalContext, project)
+                CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
+            },
             /* trackValue = */ false
     )
 
@@ -57,7 +60,9 @@ internal class ProjectResolutionFacade(
                         return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
                     }
                 }
-                CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
+
+                val allDependencies = resolverProvider.cacheDependencies + listOf(PsiModificationTracker.MODIFICATION_COUNT)
+                CachedValueProvider.Result.create(results, allDependencies)
             }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {

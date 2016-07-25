@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.storage.ExceptionTracker
 
 fun createModuleResolverProvider(
         debugName: String,
@@ -45,7 +44,8 @@ fun createModuleResolverProvider(
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         allModules: Collection<IdeaModuleInfo>?,
-        builtIns: KotlinBuiltIns
+        builtIns: KotlinBuiltIns,
+        dependencies: Collection<Any>
 ): ModuleResolverProvider {
 
     val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
@@ -81,7 +81,7 @@ fun createModuleResolverProvider(
     return ModuleResolverProviderImpl(
             resolverForProject,
             builtIns,
-            globalContext
+            dependencies + listOf(globalContext.exceptionTracker)
     )
 }
 
@@ -111,15 +111,12 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
 }
 
 interface ModuleResolverProvider {
-    val exceptionTracker: ExceptionTracker
     val resolverForProject: ResolverForProject<IdeaModuleInfo>
     val builtIns: KotlinBuiltIns
+    val cacheDependencies: Collection<Any>
 }
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo>,
         override val builtIns: KotlinBuiltIns,
-        globalContext: GlobalContextImpl
-) : ModuleResolverProvider {
-    override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
-}
+        override val cacheDependencies: Collection<Any>) : ModuleResolverProvider
