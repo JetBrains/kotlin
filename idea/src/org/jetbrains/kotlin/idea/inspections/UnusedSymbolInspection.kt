@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
@@ -313,6 +312,8 @@ class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
             else QuickFixBundle.message("safe.delete.text", declaration.name)
 
     override fun getFamilyName() = "Safe delete"
+
+    fun startInWriteAction(): Boolean = false
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
