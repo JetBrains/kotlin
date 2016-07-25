@@ -113,15 +113,27 @@ class LazyJavaClassMemberScope(
             }
         }) return false
 
-        if (function.doesOverrideRenamedBuiltins()) {
-            return false
-        }
+        return !function.doesOverrideRenamedBuiltins() && !function.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters()
+    }
 
-        if (function.name.sameAsBuiltinMethodWithErasedValueParameters && hasOverriddenBuiltinFunctionWithErasedValueParameters(function)) {
-            return false
-        }
+    /**
+     * Checks if function is a valid override of JDK analogue of built-in method with erased value parameters (e.g. Map.containsKey(k: K))
+     *
+     * Examples:
+     * - boolean containsKey(Object key) -> true
+     * - boolean containsKey(K key) -> false // Wrong JDK method override, while it's a valid Kotlin built-in override
+     */
+    private fun SimpleFunctionDescriptor.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters(): Boolean {
+        if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
+        val candidatesToOverride =
+                getFunctionsFromSupertypes(name).mapNotNull {
+                    BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
+                }
 
-        return true
+        return candidatesToOverride.any {
+            candidate ->
+            doesOverrideBuiltinFunctionWithErasedValueParameters(candidate)
+        }
     }
 
     private fun searchMethodsByNameWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
@@ -482,20 +494,6 @@ class LazyJavaClassMemberScope(
                 propagated.returnType, propagated.receiverType, propagated.valueParameters, propagated.typeParameters,
                 propagated.hasStableParameterNames(), propagated.errors
         )
-    }
-
-    private fun hasOverriddenBuiltinFunctionWithErasedValueParameters(
-            simpleFunctionDescriptor: SimpleFunctionDescriptor
-    ): Boolean {
-        val candidatesToOverride =
-                getFunctionsFromSupertypes(simpleFunctionDescriptor.name).mapNotNull {
-                    BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
-                }
-
-        return candidatesToOverride.any {
-            candidate ->
-            simpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(candidate)
-        }
     }
 
     private fun SimpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
