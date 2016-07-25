@@ -3590,30 +3590,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.cmp(expression.getOperationToken(), type, leftValue, rightValue);
     }
 
-    private StackValue generateAssignmentExpression(KtBinaryExpression expression) {
-        StackValue stackValue = gen(expression.getLeft());
-        KtExpression right = expression.getRight();
-        assert right != null : expression.getText();
-        stackValue.store(gen(right), v);
-        return StackValue.none();
+    private StackValue generateAssignmentExpression(final KtBinaryExpression expression) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                StackValue stackValue = gen(expression.getLeft());
+                KtExpression right = expression.getRight();
+                assert right != null : expression.getText();
+                stackValue.store(gen(right), v);
+
+                return Unit.INSTANCE;
+            }
+        });
     }
 
-    private StackValue generateAugmentedAssignment(KtBinaryExpression expression) {
-        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
-        FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
-        Callable callable = resolveToCallable(descriptor, false, resolvedCall);
-        KtExpression lhs = expression.getLeft();
-        Type lhsType = expressionType(lhs);
+    private StackValue generateAugmentedAssignment(final KtBinaryExpression expression) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
+                FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
+                Callable callable = resolveToCallable(descriptor, false, resolvedCall);
+                KtExpression lhs = expression.getLeft();
+                Type lhsType = expressionType(lhs);
 
-        boolean keepReturnValue = Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))
-                || !KotlinBuiltIns.isUnit(descriptor.getReturnType());
+                boolean keepReturnValue = Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))
+                                          || !KotlinBuiltIns.isUnit(descriptor.getReturnType());
 
-        callAugAssignMethod(expression, resolvedCall, callable, lhsType, keepReturnValue);
+                putCallAugAssignMethod(expression, resolvedCall, callable, lhsType, keepReturnValue);
 
-        return StackValue.none();
+                return Unit.INSTANCE;
+            }
+        });
     }
 
-    private void callAugAssignMethod(
+    private void putCallAugAssignMethod(
             @NotNull KtBinaryExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Callable callable,
