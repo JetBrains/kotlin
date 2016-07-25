@@ -40,13 +40,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
-import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.frontend.di.InjectionKt;
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
@@ -62,7 +60,6 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -384,11 +381,10 @@ public class SourceNavigationHelper {
     @Nullable
     public static PsiClass getOriginalClass(@NotNull KtClassOrObject classOrObject) {
         // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
-        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider.INSTANCE);
-        if (internalName == null) {
+        FqName fqName = classOrObject.getFqName();
+        if (fqName == null) {
             return null;
         }
-        String fqName = JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars().asString();
 
         KtFile file = classOrObject.getContainingKtFile();
 
@@ -400,7 +396,7 @@ public class SourceNavigationHelper {
         if (vFile == null || !idx.isInLibrarySource(vFile)) return null;
         final Set<OrderEntry> orderEntries = new THashSet<OrderEntry>(idx.getOrderEntriesForFile(vFile));
 
-        return JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
+        return JavaPsiFacade.getInstance(project).findClass(fqName.asString(), new GlobalSearchScope(project) {
             @Override
             public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
                 return 0;
