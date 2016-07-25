@@ -8420,6 +8420,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeUnnecessaryLateinit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveUnnecessaryLateinit extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveUnnecessaryLateinit() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeUnnecessaryLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lateinitWithConstructor.kt")
+        public void testLateinitWithConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithInit.kt")
+        public void testLateinitWithInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleConstructors.kt")
+        public void testLateinitWithMultipleConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithMultipleConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleConstructorsAndDelegation.kt")
+        public void testLateinitWithMultipleConstructorsAndDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithMultipleConstructorsAndDelegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleInit.kt")
+        public void testLateinitWithMultipleInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithMultipleInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithPrimaryConstructorAndConstructor.kt")
+        public void testLateinitWithPrimaryConstructorAndConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/lateinitWithPrimaryConstructorAndConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normalLateinit.kt")
+        public void testNormalLateinit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/normalLateinit.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeUnnecessaryParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
