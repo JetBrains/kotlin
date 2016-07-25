@@ -35,9 +35,7 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
@@ -49,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 import javax.swing.Icon
 
@@ -434,8 +433,19 @@ open class KtLightClassForExplicitDeclaration(
                         classOrObject)
             }
 
+            if (isEnumEntryWithoutBody(classOrObject)) {
+                return null
+            }
+
             val fqName = predictFqName(classOrObject) ?: return null
             return KtLightClassForExplicitDeclaration({ fqName }, classOrObject)
+        }
+
+        private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
+            if (classOrObject !is KtEnumEntry) {
+                return false
+            }
+            return classOrObject.getBody()?.declarations?.isEmpty() ?: true
         }
 
         private fun predictFqName(classOrObject: KtClassOrObject): FqName? {
@@ -444,8 +454,7 @@ open class KtLightClassForExplicitDeclaration(
                 val data = getLightClassDataExactly(classOrObject)
                 return data?.jvmQualifiedName
             }
-            val internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider)
-            return if (internalName == null) null else JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
+            return classOrObject.fqName
         }
 
         fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
