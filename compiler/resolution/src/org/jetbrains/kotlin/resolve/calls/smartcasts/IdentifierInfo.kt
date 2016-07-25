@@ -41,10 +41,9 @@ interface IdentifierInfo {
 
     class Variable(val variable: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
 
-        override fun equals(other: Any?) =
-                other is Variable && variable == other.variable && kind.isStable() == other.kind.isStable()
+        override fun equals(other: Any?) = other is Variable && variable == other.variable
 
-        override fun hashCode() = variable.hashCode() + 31 * (if (kind.isStable()) 1 else 0)
+        override fun hashCode() = variable.hashCode()
 
         override fun toString() = variable.toString()
     }
