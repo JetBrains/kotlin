@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 /**
@@ -119,7 +119,7 @@ abstract class DataClassMethodGenerator(private val declaration: KtClassOrObject
      */
     private fun isTrivial(function: FunctionDescriptor): Boolean {
         return function.kind != CallableMemberDescriptor.Kind.DECLARATION &&
-               OverrideResolver.getOverriddenDeclarations(function).none { overridden ->
+               OverridingUtil.getOverriddenDeclarations(function).none { overridden ->
                    overridden is CallableMemberDescriptor &&
                    overridden.kind == CallableMemberDescriptor.Kind.DECLARATION &&
                    overridden.containingDeclaration != builtIns.any
