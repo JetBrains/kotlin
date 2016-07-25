@@ -57,12 +57,12 @@ fun box(): String {
     if (a.remove("abc", "123")) return "fail 2"
 
     val mm = a as MutableMap<Any?, Any?>
-    if (!a.remove("abc", "cde")) return "fail 3"
-    if (a.remove("abc", "123")) return "fail 4"
-    if (a.remove(1, "cde")) return "fail 5"
-    if (a.remove(null, "cde")) return "fail 6"
-    if (a.remove("abc", null)) return "fail 7"
-    if (a.remove(null, null)) return "fail 7"
+    if (!mm.remove("abc", "cde")) return "fail 3"
+    if (mm.remove("abc", "123")) return "fail 4"
+    if (mm.remove(1, "cde")) return "fail 5"
+    if (mm.remove(null, "cde")) return "fail 6"
+    if (mm.remove("abc", null)) return "fail 7"
+    if (mm.remove(null, null)) return "fail 8"
 
     return "OK"
 }
