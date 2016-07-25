@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.Assert
@@ -34,7 +39,7 @@ import java.io.File
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
         myFixture.configureByFile(testDataPath)
-        testLightClass(project, testDataPath, { LightClassTestCommon.removeEmptyDefaultImpls(it) })
+        testLightClass(project, myFixture.file as KtFile, testDataPath, { LightClassTestCommon.removeEmptyDefaultImpls(it) })
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -59,15 +64,20 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
     private fun libName() = "libFor" + getTestName(false)
 
     fun doTest(testDataPath: String) {
-        testLightClass(project, testDataPath, { it })
+        testLightClass(project, null, testDataPath, { it })
     }
 }
 
-private fun testLightClass(project: Project, testDataPath: String, normalize: (String) -> String) {
+private fun testLightClass(project: Project, ktFile: KtFile?, testDataPath: String, normalize: (String) -> String) {
     LightClassTestCommon.testLightClass(
             File(testDataPath),
-            findLightClass = {
-                val clazz = JavaPsiFacade.getInstance(project).findClass(it, GlobalSearchScope.allScope(project))
+            findLightClass = { fqName ->
+                var clazz: PsiClass? = JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+                if (clazz == null) {
+                    clazz = PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
+                            .find { fqName.endsWith(it.nameAsName!!.asString()) }
+                            ?.let { KtLightClassForSourceDeclaration.create(it) }
+                }
                 if (clazz != null) {
                     PsiElementChecker.checkPsiElementStructure(clazz)
                 }

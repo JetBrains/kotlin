@@ -47,6 +47,18 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DollarsInName.kt")
+    public void testDollarsInName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DollarsInName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DollarsInNameNoPackage.kt")
+    public void testDollarsInNameNoPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DollarsInNameNoPackage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/facades")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -76,6 +88,21 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("SingleJvmClassName.kt")
         public void testSingleJvmClassName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleJvmClassName.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/asJava/lightClasses/local")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Local extends AbstractIdeLightClassTest {
+        public void testAllFilesPresentInLocal() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/local"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("DollarsInNameLocal.kt")
+        public void testDollarsInNameLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/local/DollarsInNameLocal.kt");
             doTest(fileName);
         }
     }
