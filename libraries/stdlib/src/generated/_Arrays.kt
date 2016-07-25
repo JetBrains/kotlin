@@ -13137,7 +13137,7 @@ public fun ByteArray.toTypedArray(): Array<Byte> {
     val result = arrayOfNulls<Byte>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Byte>
 }
 
@@ -13149,7 +13149,7 @@ public fun ShortArray.toTypedArray(): Array<Short> {
     val result = arrayOfNulls<Short>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Short>
 }
 
@@ -13161,7 +13161,7 @@ public fun IntArray.toTypedArray(): Array<Int> {
     val result = arrayOfNulls<Int>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Int>
 }
 
@@ -13173,7 +13173,7 @@ public fun LongArray.toTypedArray(): Array<Long> {
     val result = arrayOfNulls<Long>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Long>
 }
 
@@ -13185,7 +13185,7 @@ public fun FloatArray.toTypedArray(): Array<Float> {
     val result = arrayOfNulls<Float>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Float>
 }
 
@@ -13197,7 +13197,7 @@ public fun DoubleArray.toTypedArray(): Array<Double> {
     val result = arrayOfNulls<Double>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Double>
 }
 
@@ -13209,7 +13209,7 @@ public fun BooleanArray.toTypedArray(): Array<Boolean> {
     val result = arrayOfNulls<Boolean>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Boolean>
 }
 
@@ -13221,7 +13221,7 @@ public fun CharArray.toTypedArray(): Array<Char> {
     val result = arrayOfNulls<Char>(size)
     for (index in indices)
         result[index] = this[index]
-    @Suppress("CAST_NEVER_SUCCEEDS")
+    @Suppress("UNCHECKED_CAST")
     return result as Array<Char>
 }
 
