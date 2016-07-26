@@ -184,6 +184,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13055`](https://youtrack.jetbrains.com/issue/KT-13055) Exception in "Specify Type Explicitly" intention
 - [`KT-12942`](https://youtrack.jetbrains.com/issue/KT-12942) "Replace 'when' with 'if'" intention changes semantics when 'if' statements are used
 - [`KT-12646`](https://youtrack.jetbrains.com/issue/KT-12646) 'Convert to block body' should use partial body resolve
+- [`KT-12919`](https://youtrack.jetbrains.com/issue/KT-12919) Use simple name in "Change function return type" quickfix
 
 ##### New features
 

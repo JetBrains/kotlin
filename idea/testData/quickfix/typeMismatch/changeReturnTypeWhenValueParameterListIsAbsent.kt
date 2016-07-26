@@ -1,4 +1,4 @@
-// "Change 'A.hasNext' function return type to 'Boolean'" "true"
+// "Change 'hasNext' function return type to 'Boolean'" "true"
 abstract class A {
     abstract operator fun hasNext
     abstract operator fun next(): Int

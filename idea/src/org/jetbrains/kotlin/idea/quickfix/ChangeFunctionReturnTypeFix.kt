@@ -68,7 +68,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
             return changeFunctionLiteralReturnTypeFix.text
         }
 
-        val functionName = element.fqName?.asString() ?: element.name
+        val functionName = element.name
 
         if (isUnitType && element.hasBlockBody()) {
             return if (functionName == null)
