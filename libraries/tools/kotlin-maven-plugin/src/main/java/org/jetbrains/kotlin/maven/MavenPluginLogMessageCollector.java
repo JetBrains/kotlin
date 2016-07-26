@@ -16,23 +16,41 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.openapi.util.Pair;
 import org.apache.maven.plugin.logging.Log;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MavenPluginLogMessageCollector implements MessageCollector {
     private final Log log;
     private boolean hasErrors = false;
 
+    private final ArrayList<Pair<CompilerMessageLocation, String>> collectedErrors;
+
     public MavenPluginLogMessageCollector(Log log) {
+        this(log, false);
+    }
+
+    public MavenPluginLogMessageCollector(Log log, boolean collectErrors) {
         this.log = log;
+        this.collectedErrors = collectErrors ? new ArrayList<Pair<CompilerMessageLocation, String>>() : null;
     }
 
     @Override
     public boolean hasErrors() {
         return hasErrors;
+    }
+
+    @NotNull
+    public List<Pair<CompilerMessageLocation, String>> getCollectedErrors() {
+        return collectedErrors == null ? Collections.<Pair<CompilerMessageLocation, String>>emptyList() : Collections.unmodifiableList(collectedErrors);
     }
 
     @Override
@@ -46,6 +64,9 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
             log.debug(text);
         } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
             hasErrors = true;
+            if (collectedErrors != null) {
+                collectedErrors.add(new Pair<CompilerMessageLocation, String>(location, message));
+            }
             log.error(text);
         } else if (severity == CompilerMessageSeverity.INFO) {
             log.info(text);

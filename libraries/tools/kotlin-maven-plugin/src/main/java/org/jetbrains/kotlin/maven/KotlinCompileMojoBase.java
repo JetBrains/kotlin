@@ -16,20 +16,25 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.compiler.CompilationFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
@@ -133,15 +138,32 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        MessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
+        MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog(), true);
 
         ExitCode exitCode = compiler.exec(messageCollector, Services.EMPTY, arguments);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
-                throw new MojoExecutionException("Compilation error. See log for more details");
             case INTERNAL_ERROR:
-                throw new MojoExecutionException("Internal compiler error. See log for more details");
+                throw new KotlinCompilationFailureException(
+                        CollectionsKt.map(messageCollector.getCollectedErrors(), new Function1<Pair<CompilerMessageLocation, String>, CompilerMessage>() {
+                            @Override
+                            public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
+                                String lineContent = pair.getFirst().getLineContent();
+                                int lineContentLength = lineContent == null ? 0 : lineContent.length();
+
+                                return new CompilerMessage(
+                                        pair.getFirst().getPath(),
+                                        CompilerMessage.Kind.ERROR,
+                                        pair.getFirst().getLine(),
+                                        pair.getFirst().getColumn(),
+                                        pair.getFirst().getLine(),
+                                        Math.min(pair.getFirst().getColumn(), lineContentLength),
+                                        pair.getSecond()
+                                );
+                            }
+                        })
+                );
             default:
         }
     }
