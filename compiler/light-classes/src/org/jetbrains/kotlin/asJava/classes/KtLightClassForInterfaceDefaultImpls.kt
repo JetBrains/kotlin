@@ -27,6 +27,7 @@ class KtLightClassForInterfaceDefaultImpls(
 : KtLightClassForSourceDeclaration({ classFqName }, classOrObject){
     override fun getQualifiedName(): String = classFqName.asString()
 
+    override fun getName() = JvmAbi.DEFAULT_IMPLS_CLASS_NAME
     override fun getParent() = containingClass
 
     override fun copy(): PsiElement {

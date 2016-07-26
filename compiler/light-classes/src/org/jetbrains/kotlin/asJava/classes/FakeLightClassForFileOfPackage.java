@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker;
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -69,13 +68,6 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     public boolean isValid() {
         // This is intentionally false to prevent using this as a real class
         return false;
-    }
-
-
-    @NotNull
-    @Override
-    public FqName getFqName() {
-        return delegate.getFqName();
     }
 
     @NotNull

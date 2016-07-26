@@ -73,8 +73,6 @@ abstract class KtLightClassForSourceDeclaration(
 
     override val kotlinOrigin: KtClassOrObject = classOrObject
 
-    override fun getFqName(): FqName = classFqName
-
     abstract override fun copy(): PsiElement
     abstract override fun getParent(): PsiElement?
     abstract override fun getQualifiedName(): String?
@@ -158,12 +156,12 @@ abstract class KtLightClassForSourceDeclaration(
 
         val aClass = other as KtLightClassForSourceDeclaration
 
-        if (classFqName != aClass.classFqName) return false
+        if (classOrObject != aClass.classOrObject) return false
 
         return true
     }
 
-    override fun hashCode(): Int = classFqName.hashCode()
+    override fun hashCode(): Int = classOrObject.hashCode()
 
     override fun getContainingClass(): PsiClass? {
         if (classOrObject.parent === classOrObject.containingFile) return null
@@ -185,7 +183,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList.typeParameters
 
-    override fun getName(): String? = classFqName.shortName().asString()
+    override fun getName(): String? = classOrObject.nameAsName?.asString()
 
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {
