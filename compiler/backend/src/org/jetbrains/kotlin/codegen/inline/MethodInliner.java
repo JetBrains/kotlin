@@ -262,7 +262,8 @@ public class MethodInliner {
                             owner + "." + name + ", info " + transformationInfo;
                     InliningContext parent = inliningContext.getParent();
                     boolean shouldRegenerate = transformationInfo.shouldRegenerate(isSameModule);
-                    if (shouldRegenerate || (parent != null && parent.isContinuation())) {
+                    boolean isContinuation = parent != null && parent.isContinuation();
+                    if (shouldRegenerate || isContinuation) {
                         assert shouldRegenerate || inlineCallSiteInfo.getOwnerClassName().equals(transformationInfo.getOldClassName())
                                 : "Only coroutines can call their own constructors";
 
@@ -270,7 +271,7 @@ public class MethodInliner {
                         AnonymousObjectTransformationInfo info = (AnonymousObjectTransformationInfo) transformationInfo;
 
                         AnonymousObjectTransformationInfo oldInfo = inliningContext.findAnonymousObjectTransformationInfo(owner);
-                        if (oldInfo != null) {
+                        if (oldInfo != null && isContinuation) {
                             info = oldInfo;
                         }
 
