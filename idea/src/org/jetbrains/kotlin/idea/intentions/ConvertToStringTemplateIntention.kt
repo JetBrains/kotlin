@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertToStringTemplateIntention(),
-        { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
+        { it -> ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
 class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {

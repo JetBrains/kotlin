@@ -38,7 +38,11 @@ class HasPlatformTypeInspection(
         @JvmField var reportPlatformArguments: Boolean = false
 ) : IntentionBasedInspection<KtCallableDeclaration>(
         intention,
-        { intention.dangerousFlexibleTypeOrNull(it, publicAPIOnly, reportPlatformArguments) != null }
+        { element, inspection ->
+            with(inspection as HasPlatformTypeInspection) {
+                intention.dangerousFlexibleTypeOrNull(element, this.publicAPIOnly, this.reportPlatformArguments) != null
+            }
+        }
 ) {
 
     override val problemHighlightType = ProblemHighlightType.WEAK_WARNING

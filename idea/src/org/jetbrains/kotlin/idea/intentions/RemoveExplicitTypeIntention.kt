@@ -29,7 +29,7 @@ class RemoveSetterParameterTypeInspection(
         val intention: RemoveExplicitTypeIntention = RemoveExplicitTypeIntention()
 ) : IntentionBasedInspection<KtCallableDeclaration>(
         intention,
-        { intention.isSetterParameter(it) }
+        { it -> intention.isSetterParameter(it) }
 ) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
