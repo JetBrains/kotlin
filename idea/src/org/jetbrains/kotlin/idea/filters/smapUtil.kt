@@ -45,11 +45,15 @@ fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Proj
     return lineNumber > linesInFile
 }
 
-fun readClassFile(jvmName: JvmClassName, file: VirtualFile, project: Project, sourceCondition: (VirtualFile) -> Boolean = { true }): ByteArray? {
+fun readClassFile(project: Project,
+                  jvmName: JvmClassName,
+                  file: VirtualFile,
+                  sourceFileFilter: (VirtualFile) -> Boolean = { true },
+                  libFileFilter: (VirtualFile) -> Boolean = { true }): ByteArray? {
     val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
     when {
-        ProjectRootsUtil.isLibrarySourceFile(project, file) -> {
+        ProjectRootsUtil.isLibrarySourceFile(project, file) && libFileFilter(file) -> {
             val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
             val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
@@ -57,7 +61,7 @@ fun readClassFile(jvmName: JvmClassName, file: VirtualFile, project: Project, so
             return classFile.contentsToByteArray()
         }
 
-        ProjectRootsUtil.isProjectSourceFile(project, file) && sourceCondition(file) -> {
+        ProjectRootsUtil.isProjectSourceFile(project, file) && sourceFileFilter(file) -> {
             val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
             val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
 
@@ -72,7 +76,7 @@ fun readClassFile(jvmName: JvmClassName, file: VirtualFile, project: Project, so
 }
 
 private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
-    val outDirFile = File(outputDir.path).check { it.exists() } ?: return null
+    val outDirFile = File(outputDir.path).check(File::exists) ?: return null
 
     val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
     if (!parentDirectory.exists()) return null
@@ -85,20 +89,36 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
     return null
 }
 
-fun parseStrata(strata: String?, line: Int, project: Project, isKotlin2: Boolean, searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
-    if (strata == null) return null
+enum class SourceLineKind {
+    CALL_LINE,
+    EXECUTED_LINE
+}
 
-    val smap = SMAPParser.parse(strata)
+fun mapStacktraceLineToSource(smapData: SmapData,
+                              line: Int,
+                              project: Project,
+                              lineKind: SourceLineKind,
+                              searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
+    val smap = when (lineKind) {
+        SourceLineKind.CALL_LINE -> smapData.kotlinDebugStrata
+        SourceLineKind.EXECUTED_LINE -> smapData.kotlinStrata
+    } ?: return null
 
     val mappingInfo = smap.fileMappings.firstOrNull {
         it.getIntervalIfContains(line) != null
     } ?: return null
 
-    val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
-    val newSourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, newJvmName, mappingInfo.name) ?: return null
+    val jvmName = JvmClassName.byInternalName(mappingInfo.path)
+    val sourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(
+            project, searchScope, jvmName, mappingInfo.name) ?: return null
 
     val interval = mappingInfo.getIntervalIfContains(line)!!
-    return newSourceFile to (if (isKotlin2) interval.source else interval.mapDestToSource(line)) - 1
+    val sourceLine = when (lineKind) {
+        SourceLineKind.CALL_LINE -> interval.source - 1
+        SourceLineKind.EXECUTED_LINE -> interval.mapDestToSource(line) - 1
+    }
+
+    return sourceFile to sourceLine
 }
 
 fun readDebugInfo(bytes: ByteArray): SmapData? {
@@ -109,24 +129,27 @@ fun readDebugInfo(bytes: ByteArray): SmapData? {
             debugInfo = debug
         }
     }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
-    return debugInfo?.let { SmapData(it) }
+    return debugInfo?.let(::SmapData)
 }
 
 class SmapData(debugInfo: String) {
-    var kotlin1: String? = null
-        private set
-    var kotlin2: String? = null
-        private set
+    var kotlinStrata: SMAP?
+    var kotlinDebugStrata: SMAP?
 
     init {
-        val intervals = debugInfo.split(SMAP.END).filter { it.isNotBlank() }
+        val intervals = debugInfo.split(SMAP.END).filter(String::isNotBlank)
         when(intervals.count()) {
             1 -> {
-                kotlin1 = intervals[0] + SMAP.END
+                kotlinStrata = SMAPParser.parse(intervals[0] + SMAP.END)
+                kotlinDebugStrata = null
+            }
+            2 -> {
+                kotlinStrata = SMAPParser.parse(intervals[0] + SMAP.END)
+                kotlinDebugStrata = SMAPParser.parse(intervals[1] + SMAP.END)
             }
             else -> {
-                kotlin1 = intervals[0] + SMAP.END
-                kotlin2 = intervals[1] + SMAP.END
+                kotlinStrata = null
+                kotlinDebugStrata = null
             }
         }
     }

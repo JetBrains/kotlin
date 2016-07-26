@@ -20,33 +20,28 @@ import com.intellij.execution.filters.ExceptionFilter
 import com.intellij.execution.filters.Filter
 import com.intellij.execution.filters.HyperlinkInfo
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
-import com.intellij.openapi.compiler.CompilerPaths
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.codegen.inline.FileMapping
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
-import org.jetbrains.kotlin.codegen.inline.SMAP
-import org.jetbrains.kotlin.codegen.inline.SMAPParser
-import org.jetbrains.kotlin.idea.refactoring.getLineCount
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.tail
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import java.io.File
 import java.util.regex.Pattern
 
 class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter {
     private val exceptionFilter = ExceptionFilter(searchScope)
+
+    override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
+        val result = exceptionFilter.applyFilter(line, entireLength)
+        return if (result == null) null else patchResult(result, line)
+    }
+
+    private fun patchResult(result: Filter.Result, line: String): Filter.Result {
+        val newHyperlinkInfo = createHyperlinkInfo(line) ?: return result
+
+        return Filter.Result(result.resultItems.map {
+            Filter.ResultItem(it.getHighlightStartOffset(), it.getHighlightEndOffset(), newHyperlinkInfo, it.getHighlightAttributes())
+        })
+    }
 
     private fun createHyperlinkInfo(line: String): HyperlinkInfo? {
         val project = searchScope.project ?: return null
@@ -69,7 +64,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val virtualFile = file.virtualFile ?: return null
 
-        val hyperlinkInfoForInline = getHyperlinkInfoIfInline(jvmClassName, virtualFile, lineNumber + 1, project)
+        val hyperlinkInfoForInline = createHyperlinks(jvmClassName, virtualFile, lineNumber + 1, project)
         if (hyperlinkInfoForInline != null) {
             return hyperlinkInfoForInline
         }
@@ -77,47 +72,30 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         return OpenFileHyperlinkInfo(project, virtualFile, lineNumber)
     }
 
-    private fun getHyperlinkInfoIfInline(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): InlineFunctionHyperLinkInfo? {
-        val bytes = readClassFile(jvmName, file, project, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
-        return readDebugInfoForInlineFun(bytes, lineNumber, project)
-    }
-
-    private fun readDebugInfoForInlineFun(bytes: ByteArray, line: Int, project: Project): InlineFunctionHyperLinkInfo? {
+    private fun createHyperlinks(jvmName: JvmClassName, file: VirtualFile, line: Int, project: Project): InlineFunctionHyperLinkInfo? {
+        val bytes = readClassFile(project, jvmName, file,
+                                  sourceFileFilter = { sourceFile -> isInlineFunctionLineNumber(sourceFile, line, project) }) ?: return null
         val smapData = readDebugInfo(bytes) ?: return null
 
-        val inlineInfo = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
+        val inlineInfos = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
 
-        val (inlineFunctionBodyFile, inlineFunctionBodyLine) = parseStrata(smapData.kotlin1, line, project, false, searchScope) ?: return null
-        inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
+        val (inlineFunctionBodyFile, inlineFunctionBodyLine) =
+                mapStacktraceLineToSource(smapData, line, project, SourceLineKind.EXECUTED_LINE, searchScope) ?: return null
+
+        inlineInfos.add(InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
                 inlineFunctionBodyFile.virtualFile,
                 inlineFunctionBodyLine))
 
-        val kotlin2 = parseStrata(smapData.kotlin2, line, project, true, searchScope)
-        if (kotlin2 != null) {
-            inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.CallSiteInfo(
-                    kotlin2.first.virtualFile,
-                    kotlin2.second))
+        val inlineFunCallInfo = mapStacktraceLineToSource(smapData, line, project, SourceLineKind.CALL_LINE, searchScope)
+        if (inlineFunCallInfo != null) {
+            val (callSiteFile, callSiteLine) = inlineFunCallInfo
+            inlineInfos.add(InlineFunctionHyperLinkInfo.InlineInfo.CallSiteInfo(callSiteFile.virtualFile, callSiteLine))
         }
 
-        return InlineFunctionHyperLinkInfo(project, inlineInfo)
-    }
-
-    private fun patchResult(result: Filter.Result, line: String): Filter.Result {
-        val newHyperlinkInfo = createHyperlinkInfo(line) ?: return result
-
-        return Filter.Result(result.resultItems.map {
-                Filter.ResultItem(it.getHighlightStartOffset(), it.getHighlightEndOffset(), newHyperlinkInfo, it.getHighlightAttributes())
-        })
-
-    }
-
-    override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
-        val result = exceptionFilter.applyFilter(line, entireLength)
-        return if (result == null) null else patchResult(result, line)
+        return InlineFunctionHyperLinkInfo(project, inlineInfos)
     }
 
     companion object {
-
         // Matches strings like "\tat test.TestPackage$foo$f$1.invoke(a.kt:3)\n"
         //                   or "\tBreakpoint reached at test.TestPackage$foo$f$1.invoke(a.kt:3)\n"
         private val STACK_TRACE_ELEMENT_PATTERN = Pattern.compile("^[\\w|\\s]*at\\s+(.+)\\.(.+)\\((.+):(\\d+)\\)\\s*$")
