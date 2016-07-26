@@ -23,5 +23,6 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "io.netty:netty-all:4.1.2.Final"
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
