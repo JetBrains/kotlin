@@ -242,7 +242,7 @@ public class CodeInsightUtils {
     @Nullable
     public static PsiElement getElementAtOffsetIgnoreWhitespaceBefore(@NotNull PsiFile file, int offset) {
         PsiElement element = file.findElementAt(offset);
-        if (element instanceof PsiWhiteSpace) {
+        if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
             return file.findElementAt(element.getTextRange().getEndOffset());
         }
         return element;
@@ -251,7 +251,7 @@ public class CodeInsightUtils {
     @Nullable
     public static PsiElement getElementAtOffsetIgnoreWhitespaceAfter(@NotNull PsiFile file, int offset) {
         PsiElement element = file.findElementAt(offset - 1);
-        if (element instanceof PsiWhiteSpace) {
+        if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
             return file.findElementAt(element.getTextRange().getStartOffset() - 1);
         }
         return element;

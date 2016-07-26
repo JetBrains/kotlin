@@ -61,6 +61,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("commentSkipping.kt")
+        public void testCommentSkipping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/commentSkipping.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ComplexCallee.kt")
         public void testComplexCallee() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ComplexCallee.kt");
