@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -350,9 +351,17 @@ public class KotlinRefactoringUtil {
         if (editor.getSelectionModel().hasSelection()) {
             int selectionStart = editor.getSelectionModel().getSelectionStart();
             int selectionEnd = editor.getSelectionModel().getSelectionEnd();
-            String text = file.getText();
-            while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
-            while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
+
+            PsiElement firstElement = file.findElementAt(selectionStart);
+            PsiElement lastElement = file.findElementAt(selectionEnd - 1);
+
+            if (PsiTreeUtil.getParentOfType(firstElement, KtLiteralStringTemplateEntry.class, KtEscapeStringTemplateEntry.class) == null
+                    && PsiTreeUtil.getParentOfType(lastElement, KtLiteralStringTemplateEntry.class, KtEscapeStringTemplateEntry.class) == null) {
+                firstElement = PsiUtilsKt.getNextSiblingIgnoringWhitespaceAndComments(firstElement, true);
+                lastElement = PsiUtilsKt.getPrevSiblingIgnoringWhitespaceAndComments(lastElement, true);
+                selectionStart = firstElement.getTextRange().getStartOffset();
+                selectionEnd = lastElement.getTextRange().getEndOffset();
+            }
 
             for (CodeInsightUtils.ElementKind elementKind : elementKinds) {
                 PsiElement element = findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, elementKind);
