@@ -12993,6 +12993,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isSubclassOfIsSuperclassOf.kt")
+            public void testIsSubclassOfIsSuperclassOf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/isSubclassOfIsSuperclassOf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitives.kt")
+            public void testPrimitives() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/primitives.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleSupertypes.kt")
             public void testSimpleSupertypes() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/supertypes/simpleSupertypes.kt");
@@ -13136,6 +13148,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("wrongNumberOfArguments.kt")
                 public void testWrongNumberOfArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/createType/wrongNumberOfArguments.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Subtyping extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInSubtyping() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("platformType.kt")
+                public void testPlatformType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/subtyping/platformType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleGenericTypes.kt")
+                public void testSimpleGenericTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/subtyping/simpleGenericTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleSubtypeSupertype.kt")
+                public void testSimpleSubtypeSupertype() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/subtyping/simpleSubtypeSupertype.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeProjection.kt")
+                public void testTypeProjection() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/subtyping/typeProjection.kt");
                     doTest(fileName);
                 }
             }

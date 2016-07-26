@@ -223,3 +223,16 @@ val KClass<*>.allSuperclasses: Collection<KClass<*>>
     get() = allSupertypes.map { supertype ->
         supertype.classifier as? KClass<*> ?: throw KotlinReflectionInternalError("Supertype not a class: $supertype")
     }
+
+/**
+ * Returns `true` if `this` class is the same or is a (possibly indirect) subclass of [base], `false` otherwise.
+ */
+fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
+        this == base ||
+        DFS.ifAny(listOf(this), KClass<*>::superclasses) { it == base }
+
+/**
+ * Returns `true` if `this` class is the same or is a (possibly indirect) superclass of [derived], `false` otherwise.
+ */
+fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
+        derived.isSubclassOf(this)

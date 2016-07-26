@@ -19,6 +19,7 @@ package kotlin.reflect
 
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import kotlin.reflect.jvm.internal.KTypeImpl
 
 /**
@@ -34,4 +35,19 @@ fun KType.withNullability(nullable: Boolean): KType {
     if (kotlinType.isFlexible()) return KTypeImpl(TypeUtils.makeNullableAsSpecified(kotlinType, nullable)) { javaType }
 
     return if (!nullable) this else KTypeImpl(TypeUtils.makeNullable(kotlinType)) { javaType }
+}
+
+
+/**
+ * Returns `true` if `this` type is the same or is a subtype of [other], `false` otherwise.
+ */
+fun KType.isSubtypeOf(other: KType): Boolean {
+    return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+}
+
+/**
+ * Returns `true` if `this` type is the same or is a supertype of [other], `false` otherwise.
+ */
+fun KType.isSupertypeOf(other: KType): Boolean {
+    return other.isSubtypeOf(this)
 }
