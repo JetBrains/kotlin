@@ -8137,6 +8137,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("changeReturnTypeNoFqNameForAnonymousObject.kt")
+        public void testChangeReturnTypeNoFqNameForAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForCompanionObject.kt")
+        public void testChangeReturnTypeNoFqNameForCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForLocalClass.kt")
+        public void testChangeReturnTypeNoFqNameForLocalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForLocalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForNestedClass.kt")
+        public void testChangeReturnTypeNoFqNameForNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForTopLevelClass.kt")
+        public void testChangeReturnTypeNoFqNameForTopLevelClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForTopLevelClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("changeReturnTypeToSpecificNullable.kt")
         public void testChangeReturnTypeToSpecificNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeToSpecificNullable.kt");
