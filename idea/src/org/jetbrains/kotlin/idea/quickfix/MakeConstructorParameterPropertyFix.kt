@@ -35,10 +35,12 @@ import org.jetbrains.kotlin.psi.psiUtil.nonStaticOuterClasses
 class MakeConstructorParameterPropertyFix(
         element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
 ) : KotlinQuickFixAction<KtParameter>(element) {
-    override fun getFamilyName() = "Make primary constructor parameter a property"
+    override fun getFamilyName() = "Make constructor parameter a property"
 
     private val suffix = if (className != null) " in class '$className'" else ""
-    override fun getText() = "Make primary constructor parameter '${element.name}' a property" + suffix
+
+    override fun getText() =
+            "Make constructor parameter a property$suffix"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !element.hasValOrVar()

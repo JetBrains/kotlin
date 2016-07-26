@@ -1,4 +1,4 @@
-// "Make primary constructor parameter 'foo' a property" "true"
+// "Make constructor parameter a property" "true"
 
 class A(private var foo: String) {
     fun bar() {
