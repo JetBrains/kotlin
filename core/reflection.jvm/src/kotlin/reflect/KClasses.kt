@@ -54,6 +54,9 @@ val KClass<*>.companionObjectInstance: Any?
  * Returns a type corresponding to the given class with type parameters of that class substituted as the corresponding arguments.
  * For example, for class `MyMap<K, V>` [defaultType] would return the type `MyMap<K, V>`.
  */
+@Deprecated("This function creates a type which rarely makes sense for generic classes. " +
+            "For example, such type can only be used in signatures of members of that class. " +
+            "Use starProjectedType or createType() for clearer semantics.")
 val KClass<*>.defaultType: KType
     get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
 
