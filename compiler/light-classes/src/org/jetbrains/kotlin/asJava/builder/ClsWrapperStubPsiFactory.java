@@ -73,7 +73,7 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     }
 
     @Nullable
-    private static PsiElement getOriginalElement(@NotNull StubElement stub) {
+    public static PsiElement getOriginalElement(@NotNull StubElement stub) {
         LightElementOrigin origin = ((StubBase) stub).getUserData(ORIGIN);
         return origin != null ? origin.getOriginalElement() : null;
     }

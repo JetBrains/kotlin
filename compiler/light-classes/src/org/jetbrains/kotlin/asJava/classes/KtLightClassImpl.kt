@@ -16,17 +16,10 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 // light class for top level or (inner/nested of top level) source declarations
-class KtLightClassImpl(
-        classFqNameFunction: (KtClassOrObject) -> FqName,
-        classOrObject: KtClassOrObject
-) : KtLightClassForSourceDeclaration(classFqNameFunction, classOrObject) {
-    val fqName: FqName
-        get() = fqName
-
+class KtLightClassImpl(classOrObject: KtClassOrObject) : KtLightClassForSourceDeclaration(classOrObject) {
     override fun getQualifiedName() = classOrObject.fqName?.asString()
 
     override fun getParent() = if (classOrObject.isTopLevel())
@@ -34,5 +27,5 @@ class KtLightClassImpl(
     else
         containingClass
 
-    override fun copy() = KtLightClassImpl(classFqNameFunction, classOrObject.copy() as KtClassOrObject)
+    override fun copy() = KtLightClassImpl(classOrObject.copy() as KtClassOrObject)
 }

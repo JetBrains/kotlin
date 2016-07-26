@@ -198,9 +198,9 @@ class KtLightClassForFacade private constructor(
 
     override val clsDelegate: PsiClass
         get() {
-            val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.value.javaFileStub)
-                           ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
-            return psiClass
+            return LightClassUtil.findClass(lightClassDataCache.value.javaFileStub) {
+                facadeClassFqName.asString() == it.qualifiedName
+            } ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
         }
 
     override fun getNavigationElement() = files.iterator().next()

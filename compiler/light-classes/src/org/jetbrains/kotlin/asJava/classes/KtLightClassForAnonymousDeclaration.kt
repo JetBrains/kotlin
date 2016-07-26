@@ -21,13 +21,11 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.reference.SoftReference
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-internal open class KtLightClassForAnonymousDeclaration(fqNameFunction: ((KtClassOrObject) -> FqName),
-                                                        classOrObject: KtClassOrObject) :
-        KtLightClassForLocalDeclaration(fqNameFunction, classOrObject), PsiAnonymousClass {
+internal open class KtLightClassForAnonymousDeclaration(classOrObject: KtClassOrObject) :
+        KtLightClassForLocalDeclaration(classOrObject), PsiAnonymousClass {
 
     private var cachedBaseType: SoftReference<PsiClassType>? = null
 
@@ -119,7 +117,7 @@ internal open class KtLightClassForAnonymousDeclaration(fqNameFunction: ((KtClas
     override fun getTypeParameterList() = null
     override fun isEnum() = false
 
-    override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration(classFqNameFunction, classOrObject)
+    override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration(classOrObject)
 
     companion object {
         private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
