@@ -347,6 +347,10 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+            if (classOrObject.getContainingKtFile().isScript) {
+                return null
+            }
+
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
                 if (classOrObject.containingFile.virtualFile == null) return null
 
