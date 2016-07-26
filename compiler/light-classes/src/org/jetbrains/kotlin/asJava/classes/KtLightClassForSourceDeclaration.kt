@@ -78,6 +78,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     abstract override fun copy(): PsiElement
     abstract override fun getParent(): PsiElement?
+    abstract override fun getQualifiedName(): String?
 
     override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val javaFileStub = getJavaFileStub()
@@ -186,8 +187,6 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList.typeParameters
 
     override fun getName(): String? = classFqName.shortName().asString()
-
-    override fun getQualifiedName(): String? = classFqName.asString()
 
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {

@@ -24,6 +24,8 @@ class KtLightClassImpl(
         classFqNameFunction: (KtClassOrObject) -> FqName,
         classOrObject: KtClassOrObject
 ) : KtLightClassForSourceDeclaration(classFqNameFunction, classOrObject) {
+    override fun getQualifiedName() = classFqName.asString()
+
     override fun getParent() = if (classOrObject.isTopLevel())
         containingFile
     else
