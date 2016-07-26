@@ -4728,6 +4728,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("sealedOnMembers.kt")
+            public void testSealedOnMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/sealedOnMembers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unambiguousObjectExpressionType.kt")
             public void testUnambiguousObjectExpressionType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/unambiguousObjectExpressionType.kt");

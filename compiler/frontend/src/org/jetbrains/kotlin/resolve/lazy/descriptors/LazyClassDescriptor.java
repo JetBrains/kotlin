@@ -140,7 +140,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         else {
             Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
-            this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
+            this.modality = resolveModalityFromModifiers(modifierList, defaultModality, /* allowSealed = */ true);
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);

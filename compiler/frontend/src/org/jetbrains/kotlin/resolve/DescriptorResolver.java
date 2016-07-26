@@ -64,7 +64,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 
 public class DescriptorResolver {
@@ -681,7 +681,7 @@ public class DescriptorResolver {
         boolean hasBody = hasBody(property);
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
         Modality modality = containingDeclaration instanceof ClassDescriptor
-                            ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
+                            ? resolveMemberModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
                             : Modality.FINAL;
 
         final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
@@ -822,7 +822,7 @@ public class DescriptorResolver {
 
             setterDescriptor = new PropertySetterDescriptorImpl(
                     propertyDescriptor, annotations,
-                    resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
+                    resolveMemberModalityFromModifiers(setter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, setter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(setter)
@@ -902,7 +902,7 @@ public class DescriptorResolver {
 
             getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, getterAnnotations,
-                    resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
+                    resolveMemberModalityFromModifiers(getter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
@@ -1010,7 +1010,7 @@ public class DescriptorResolver {
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 classDescriptor,
                 propertyAnnotations,
-                resolveModalityFromModifiers(parameter, Modality.FINAL),
+                resolveMemberModalityFromModifiers(parameter, Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter, getDefaultVisibility(parameter, classDescriptor)),
                 isMutable,
                 name,
