@@ -191,6 +191,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
         args.languageVersion = kotlinOptions.languageVersion
         args.jvmTarget = kotlinOptions.jvmTarget
+        args.allowKotlinPackage = kotlinOptions.allowKotlinPackage
 
         fun addFriendPathForTestTask(friendKotlinTaskName: String) {
             val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
