@@ -34,6 +34,7 @@ open class KtLightClassForLocalDeclaration(
 ) : KtLightClassForSourceDeclaration(classFqNameFunction, classOrObject) {
 
     override fun copy(): PsiElement = KtLightClassForLocalDeclaration(classFqNameFunction, classOrObject.copy() as KtClassOrObject)
+    override fun getQualifiedName(): String? = null
 
     override fun getParent() = _parent
 
