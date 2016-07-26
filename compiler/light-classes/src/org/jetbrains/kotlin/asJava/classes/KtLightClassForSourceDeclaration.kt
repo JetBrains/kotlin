@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 import javax.swing.Icon
 
-open class KtLightClassForExplicitDeclaration(
+open class KtLightClassForSourceDeclaration(
         private val classFqNameFunction: ((KtClassOrObject) -> FqName),
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
@@ -159,7 +159,7 @@ open class KtLightClassForExplicitDeclaration(
     override fun getFqName(): FqName = classFqName
 
     override fun copy(): PsiElement {
-        return KtLightClassForExplicitDeclaration({ classFqName }, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForSourceDeclaration({ classFqName }, classOrObject.copy() as KtClassOrObject)
     }
 
     override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -239,7 +239,7 @@ open class KtLightClassForExplicitDeclaration(
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val aClass = other as KtLightClassForExplicitDeclaration
+        val aClass = other as KtLightClassForSourceDeclaration
 
         if (classFqName != aClass.classFqName) return false
 
@@ -275,9 +275,9 @@ open class KtLightClassForExplicitDeclaration(
     override fun getQualifiedName(): String? = classFqName.asString()
 
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
+        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
-                get() = this@KtLightClassForExplicitDeclaration.delegate.modifierList!!
+                get() = this@KtLightClassForSourceDeclaration.delegate.modifierList!!
         }
     }
 
@@ -375,7 +375,7 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         val qualifiedName: String?
-        if (baseClass is KtLightClassForExplicitDeclaration) {
+        if (baseClass is KtLightClassForSourceDeclaration) {
             val baseDescriptor = baseClass.getDescriptor()
             qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
         }
@@ -426,7 +426,7 @@ open class KtLightClassForExplicitDeclaration(
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
+        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
                 if (classOrObject.containingFile.virtualFile == null) {
                     return null
@@ -442,7 +442,7 @@ open class KtLightClassForExplicitDeclaration(
             }
 
             val fqName = predictFqName(classOrObject) ?: return null
-            return KtLightClassForExplicitDeclaration({ fqName }, classOrObject)
+            return KtLightClassForSourceDeclaration({ fqName }, classOrObject)
         }
 
         private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
@@ -516,6 +516,6 @@ open class KtLightClassForExplicitDeclaration(
             return false
         }
 
-        private val LOG = Logger.getInstance(KtLightClassForExplicitDeclaration::class.java)
+        private val LOG = Logger.getInstance(KtLightClassForSourceDeclaration::class.java)
     }
 }

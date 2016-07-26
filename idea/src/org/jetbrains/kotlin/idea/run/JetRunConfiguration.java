@@ -48,7 +48,7 @@ import kotlin.jvm.functions.Function1;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -389,7 +389,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         private String noFunctionFoundMessage(@NotNull PsiClass psiClass) {
             //noinspection ConstantConditions
             FqName classFqName = new FqName(psiClass.getQualifiedName());
-            if (psiClass instanceof KtLightClassForExplicitDeclaration) {
+            if (psiClass instanceof KtLightClassForSourceDeclaration) {
                 return String.format("Function 'main' not found in class '%s'", classFqName);
             }
             return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
