@@ -136,12 +136,12 @@ inline fun <reified T : PsiElement> PsiElement.getChildrenOfType(): Array<T> {
     return PsiTreeUtil.getChildrenOfType(this, T::class.java) ?: arrayOf()
 }
 
-fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
-    return siblings(withItself = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
+fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
+    return siblings(withItself = withItself).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
 }
 
-fun PsiElement.getPrevSiblingIgnoringWhitespaceAndComments(): PsiElement? {
-    return siblings(withItself = false, forward = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
+fun PsiElement.getPrevSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
+    return siblings(withItself = withItself, forward = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
 }
 
 inline fun <reified T : PsiElement> T.nextSiblingOfSameType() = PsiTreeUtil.getNextSiblingOfType(this, T::class.java)

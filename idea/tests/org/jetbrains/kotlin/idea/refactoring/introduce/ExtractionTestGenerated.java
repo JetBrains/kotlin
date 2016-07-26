@@ -61,6 +61,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("commentSkipping.kt")
+        public void testCommentSkipping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/commentSkipping.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ComplexCallee.kt")
         public void testComplexCallee() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ComplexCallee.kt");
@@ -732,6 +738,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             @TestMetadata("extractTrue.kt")
             public void testExtractTrue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/stringTemplates/extractTrue.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("extractTrueWithSpaces.kt")
+            public void testExtractTrueWithSpaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/stringTemplates/extractTrueWithSpaces.kt");
                 doIntroduceVariableTest(fileName);
             }
 
