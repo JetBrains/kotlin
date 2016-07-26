@@ -106,7 +106,7 @@ fun main(args: Array<String>) {
                 request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
                 Client.sendRequest(request, car.host, car.port, car.uid)
             }
-        } else if (readedString.equals("quit")) {
+        } else if (readedString.equals("stop")) {
             break
         } else {
             println("not supported command: $readedString")
