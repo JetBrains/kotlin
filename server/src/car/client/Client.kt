@@ -26,7 +26,6 @@ object Client {
 
     fun sendRequest(request: HttpRequest, host: String, port: Int, carUid: Int) {
         try {
-            println("sending to $host:$port")
             bootstrap.attr(AttributeKey.valueOf<String>("url"), request.uri())
             bootstrap.attr(AttributeKey.valueOf<Int>("uid"), carUid)
             val ch = bootstrap.connect(host, port).sync().channel()

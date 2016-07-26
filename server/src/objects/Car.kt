@@ -1,7 +1,5 @@
 package objects
 
-import car.client.Client
-
 /**
  * Created by user on 7/7/16.
  */
@@ -12,6 +10,7 @@ class Car constructor(uid: Int, host: String, port: Int) {
     val port: Int
 
     var free: Boolean
+    var lastAction: Long
 
     var x: Double
     var y: Double
@@ -23,6 +22,7 @@ class Car constructor(uid: Int, host: String, port: Int) {
         this.free = true
         x = 0.toDouble()
         y = 0.toDouble()
+        this.lastAction = System.currentTimeMillis()
     }
 
     override fun toString(): String {

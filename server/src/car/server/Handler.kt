@@ -1,5 +1,12 @@
 package car.server
 
+import CodedInputStream
+import CodedOutputStream
+import ConnectionRequest
+import ConnectionResponse
+import InvalidProtocolBufferException
+import RouteDoneRequest
+import RouteDoneResponse
 import connectUrl
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
@@ -8,14 +15,8 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.*
 import objects.Environment
 import routeDoneUrl
-import ConnectionRequest
-import ConnectionResponse
 import java.io.ByteArrayInputStream
-import CodedInputStream
-import CodedOutputStream
 import java.io.ByteArrayOutputStream
-import RouteDoneRequest
-import InvalidProtocolBufferException
 
 /**
  * Created by user on 7/6/16.
@@ -37,13 +38,12 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                     data.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
                 } catch (e: InvalidProtocolBufferException) {
                     success = false;
+                    ConnectionResponse.BuilderConnectionResponse().setCode(1).setErrorMsg("invalid protobuf request").build().writeTo(CodedOutputStream(answer))
                 }
                 if (success) {
                     val uid = environment.connectCar(data.ip, data.port)
-
                     ConnectionResponse.BuilderConnectionResponse().setUid(uid).build().writeTo(CodedOutputStream(answer))
                 }
-                //todo return connection error
             }
             routeDoneUrl -> {
                 val data = RouteDoneRequest.BuilderRouteDoneRequest().build()
@@ -58,11 +58,13 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                         val car = environment.map.get(id)
                         if (car != null) {
                             car.free = true
+                            car.lastAction = System.currentTimeMillis()
+                            RouteDoneResponse.BuilderRouteDoneResponse().setCode(0).setErrorMsg("").build().writeTo(CodedOutputStream(answer))
                         } else {
                             success = false
+                            RouteDoneResponse.BuilderRouteDoneResponse().setCode(2).setErrorMsg("car not found by id").build().writeTo(CodedOutputStream(answer))
                         }
                     })
-                    //todo return connection error
                 }
             }
             else -> {
