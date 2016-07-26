@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
@@ -155,22 +154,22 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
+    private val additionalClasspath = arrayListOf<File>()
+    private val compileClasspath: Iterable<File>
+            get() = (classpath + additionalClasspath)
+                    .filterTo(LinkedHashSet()) { it.exists() }
+
     val kaptOptions = KaptOptions()
     val pluginOptions = CompilerPluginOptions()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        // show kotlin compiler where to look for java source files
-//        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
         logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
 
-        if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            args.classpath = classpath.filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
-            logger.kotlinDebug("args.classpath = ${args.classpath}")
+        if (kotlinOptions.classpath?.isNotBlank() ?: false) {
+            logger.warn("kotlinOptions.classpath will be ignored")
         }
-
-        if (args.destination?.isNotBlank() ?: false) {
-            // TODO: fix if needed
-            logger.warn("Setting kotlinOptions.destination is not supported in gradle")
+        if (kotlinOptions.destination?.isNotBlank() ?: false) {
+            logger.warn("kotlinOptions.destination will be ignored")
         }
 
         logger.kotlinDebug("destinationDir = $destinationDir")
@@ -281,12 +280,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             return modifiedKotlinFiles
         }
 
-        fun isClassPathChanged(): Boolean {
-            // TODO: that doesn't look to wise - join it first and then split here, consider storing it somewhere in between
-            val classpath = args.classpath.split(File.pathSeparator).map { File(it) }.toHashSet()
-            val changedClasspath = modified.filter { classpath.contains(it) }
-            return changedClasspath.any()
-        }
+        fun isClassPathChanged(): Boolean =
+                modified.any { classpath.contains(it) }
 
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
             if (!incremental
@@ -354,8 +349,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
 
         if (isIncrementalDecided) {
-            // TODO: process as list here, merge into string later
-            args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
+            additionalClasspath.add(destinationDir)
         }
         else {
             // there is no point in updating annotation file since all files will be compiled anyway
@@ -428,7 +422,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
             lookupTracker: LookupTracker
     ): CompileChangedResults {
-        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        val moduleFile = makeModuleFile(args.moduleName,
+                isTest = false,
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = getJavaSourceRoots(),
+                classpath = compileClasspath,
+                friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
         val messageCollector = GradleMessageCollector(logger, outputItemCollector)
@@ -465,7 +465,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         // todo: can be optimized -- compile and remove only files that were not generated
         listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
 
-        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        val moduleFile = makeModuleFile(
+                args.moduleName,
+                isTest = false,
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = getJavaSourceRoots(),
+                classpath = compileClasspath,
+                friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val messageCollector = GradleMessageCollector(logger)
 
