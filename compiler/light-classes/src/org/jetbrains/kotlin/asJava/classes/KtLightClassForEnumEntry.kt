@@ -18,16 +18,14 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiEnumConstantInitializer
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtEnumEntry
 
 internal class KtLightClassForEnumEntry(
-        fqName: FqName,
         enumEntry: KtEnumEntry,
         private val enumConstant: PsiEnumConstant
-): KtLightClassForAnonymousDeclaration({ fqName }, enumEntry), PsiEnumConstantInitializer {
+): KtLightClassForAnonymousDeclaration(enumEntry), PsiEnumConstantInitializer {
     override fun getEnumConstant(): PsiEnumConstant = enumConstant
-    override fun copy() = KtLightClassForEnumEntry(classFqName, classOrObject as KtEnumEntry, enumConstant)
+    override fun copy() = KtLightClassForEnumEntry(classOrObject as KtEnumEntry, enumConstant)
 
     override fun getParent() = enumConstant
 }

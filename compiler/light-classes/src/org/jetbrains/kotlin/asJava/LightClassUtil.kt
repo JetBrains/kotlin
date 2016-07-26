@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.search.GlobalSearchScope
@@ -30,26 +29,24 @@ import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 object LightClassUtil {
 
-    fun findClass(fqn: FqName, stub: StubElement<*>): PsiClass? {
-        if (stub is PsiClassStub<*> && Comparing.equal(fqn.asString(), stub.qualifiedName)) {
+    fun findClass(stub: StubElement<*>, predicate: (PsiClassStub<*>) -> Boolean): PsiClass? {
+        if (stub is PsiClassStub<*> && predicate(stub)) {
             return stub.getPsi()
         }
 
         if (stub is PsiClassStub<*> || stub is PsiFileStub<*>) {
             for (child in stub.childrenStubs) {
-                val answer = findClass(fqn, child)
+                val answer = findClass(child, predicate)
                 if (answer != null) return answer
             }
         }
-
         return null
-    }/*package*/
+    }
 
     fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
             getLightClassAccessorMethods(accessor).firstOrNull()

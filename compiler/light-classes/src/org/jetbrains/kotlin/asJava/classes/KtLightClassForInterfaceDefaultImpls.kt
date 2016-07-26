@@ -17,21 +17,31 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.stubs.StubElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class KtLightClassForInterfaceDefaultImpls(
-        classFqName: FqName,
         classOrObject: KtClassOrObject)
-: KtLightClassForSourceDeclaration({ classFqName }, classOrObject){
-    override fun getQualifiedName(): String = classFqName.asString()
+: KtLightClassForSourceDeclaration(classOrObject){
+    override fun getQualifiedName(): String? = containingClass?.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
 
     override fun getName() = JvmAbi.DEFAULT_IMPLS_CLASS_NAME
     override fun getParent() = containingClass
 
     override fun copy(): PsiElement {
-        return KtLightClassForInterfaceDefaultImpls(classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForInterfaceDefaultImpls(classOrObject.copy() as KtClassOrObject)
+    }
+
+    override fun findDelegateClass(javaFileStub: PsiJavaFileStub): PsiClass? {
+        val interfaceClass = LightClassUtil.findClass(javaFileStub) {
+            ClsWrapperStubPsiFactory.getOriginalElement(it as StubElement<*>) == classOrObject
+        }
+        return interfaceClass?.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
     }
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
