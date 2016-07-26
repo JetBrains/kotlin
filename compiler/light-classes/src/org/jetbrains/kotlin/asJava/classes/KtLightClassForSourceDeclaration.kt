@@ -58,7 +58,7 @@ import javax.swing.Icon
 open class KtLightClassForSourceDeclaration(
         private val classFqNameFunction: ((KtClassOrObject) -> FqName),
         protected val classOrObject: KtClassOrObject)
-: KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+: KtLightClassBase(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     protected val classFqName : FqName by lazy(LazyThreadSafetyMode.PUBLICATION) {
