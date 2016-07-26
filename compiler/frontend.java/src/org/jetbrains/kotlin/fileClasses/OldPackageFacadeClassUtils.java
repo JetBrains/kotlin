@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.fileClasses;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;

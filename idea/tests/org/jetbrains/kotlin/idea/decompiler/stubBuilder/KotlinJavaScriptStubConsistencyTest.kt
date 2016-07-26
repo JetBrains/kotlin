@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.asJava.OldPackageFacadeClassUtils
+import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.js.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
