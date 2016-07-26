@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.psi.PsiEnumConstant
-import com.intellij.psi.PsiEnumConstantInitializer
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class KtLightClassForEnumEntry(
-        fqName: FqName,
-        enumEntry: KtEnumEntry,
-        private val enumConstant: PsiEnumConstant
-): KtLightClassForAnonymousDeclaration({ fqName }, enumEntry), PsiEnumConstantInitializer {
-    override fun getEnumConstant(): PsiEnumConstant = enumConstant
-    override fun copy() = KtLightClassForEnumEntry(classFqName, classOrObject as KtEnumEntry, enumConstant)
+// light class for top level or (inner/nested of top level) source declarations
+class KtLightClassImpl(
+        classFqNameFunction: (KtClassOrObject) -> FqName,
+        classOrObject: KtClassOrObject
+) : KtLightClassForSourceDeclaration(classFqNameFunction, classOrObject) {
+    override fun getParent() = if (classOrObject.isTopLevel())
+        containingFile
+    else
+        containingClass
 
-    override fun getParent() = enumConstant
+    override fun copy() = KtLightClassImpl(classFqNameFunction, classOrObject.copy() as KtClassOrObject)
 }

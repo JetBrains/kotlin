@@ -23,8 +23,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.impl.light.LightClass
-import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
@@ -42,21 +40,19 @@ import org.jetbrains.kotlin.asJava.elements.KtLightModifierListWithExplicitModif
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 import javax.swing.Icon
 
-open class KtLightClassForSourceDeclaration(
-        private val classFqNameFunction: ((KtClassOrObject) -> FqName),
+abstract class KtLightClassForSourceDeclaration(
+        protected val classFqNameFunction: ((KtClassOrObject) -> FqName),
         protected val classOrObject: KtClassOrObject)
 : KtLightClassBase(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
@@ -75,92 +71,12 @@ open class KtLightClassForSourceDeclaration(
         KtLightPsiReferenceList(listDelegate, this)
     }
 
-    private fun getLocalClassParent(): PsiElement? {
-        fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
-            if (method == null || name == null) return null
-
-            var containingClass: PsiClass? = method.containingClass ?: return null
-
-            val currentFileName = classOrObject.containingFile.name
-
-            var createWrapper = forceMethodWrapping
-            // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
-            if (containingClass is KtLightClassForFacade) {
-                containingClass = object : LightClass(containingClass as KtLightClassForFacade, KotlinLanguage.INSTANCE) {
-                    override fun getName(): String? {
-                        return currentFileName
-                    }
-                }
-                createWrapper = true
-            }
-
-            if (createWrapper) {
-                return object : LightMethod(myManager, method, containingClass!!, KotlinLanguage.INSTANCE) {
-                    override fun getParent(): PsiElement {
-                        return getContainingClass()!!
-                    }
-
-                    override fun getName(): String {
-                        return name
-                    }
-                }
-            }
-
-            return method
-        }
-
-        var declaration: PsiElement? = KtPsiUtil.getTopmostParentOfTypes(
-                classOrObject,
-                KtNamedFunction::class.java,
-                KtConstructor::class.java,
-                KtProperty::class.java,
-                KtAnonymousInitializer::class.java,
-                KtParameter::class.java)
-
-        if (declaration is KtParameter) {
-            declaration = declaration.getStrictParentOfType<KtNamedDeclaration>()
-        }
-
-        if (declaration is KtFunction) {
-            return getParentByPsiMethod(LightClassUtil.getLightClassMethod(declaration), declaration.name, false)
-        }
-
-        // Represent the property as a fake method with the same name
-        if (declaration is KtProperty) {
-            return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(declaration).getter, declaration.name, true)
-        }
-
-        if (declaration is KtAnonymousInitializer) {
-            val parent = declaration.parent
-            val grandparent = parent.parent
-
-            if (parent is KtClassBody && grandparent is KtClassOrObject) {
-                return grandparent.toLightClass()
-            }
-        }
-
-        if (declaration is KtClass) {
-            return declaration.toLightClass()
-        }
-        return null
-    }
-
-    private val _parent: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (classOrObject.isLocal())
-            getLocalClassParent()
-        else if (classOrObject.isTopLevel())
-            containingFile
-        else
-            containingClass
-    }
-
     override val kotlinOrigin: KtClassOrObject = classOrObject
 
     override fun getFqName(): FqName = classFqName
 
-    override fun copy(): PsiElement {
-        return KtLightClassForSourceDeclaration({ classFqName }, classOrObject.copy() as KtClassOrObject)
-    }
+    abstract override fun copy(): PsiElement
+    abstract override fun getParent(): PsiElement?
 
     override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val javaFileStub = getJavaFileStub()
@@ -259,8 +175,6 @@ open class KtLightClassForSourceDeclaration(
         // TODO: should return null
         return super.getContainingClass()
     }
-
-    override fun getParent(): PsiElement? = _parent
 
     private val _typeParameterList: PsiTypeParameterList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LightClassUtil.buildLightTypeParameterList(this, classOrObject)
@@ -428,21 +342,27 @@ open class KtLightClassForSourceDeclaration(
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
-                if (classOrObject.containingFile.virtualFile == null) {
-                    return null
-                }
+                if (classOrObject.containingFile.virtualFile == null) return null
 
+                val data = getLightClassDataExactly(classOrObject) ?: return null
                 return KtLightClassForAnonymousDeclaration(
-                        { predictFqName(it) ?: throw IllegalArgumentException("Failed to create fqname for anonymous class: " + classOrObject) },
+                        { data.jvmQualifiedName },
                         classOrObject)
+            }
+
+            if (classOrObject.isLocal()) {
+                if (classOrObject.containingFile.virtualFile == null) return null
+
+                val data = getLightClassDataExactly(classOrObject) ?: return null
+                return KtLightClassForLocalDeclaration({ data.jvmQualifiedName }, classOrObject)
             }
 
             if (isEnumEntryWithoutBody(classOrObject)) {
                 return null
             }
 
-            val fqName = predictFqName(classOrObject) ?: return null
-            return KtLightClassForSourceDeclaration({ fqName }, classOrObject)
+            val fqName = classOrObject.fqName ?: return null
+            return KtLightClassImpl({ fqName }, classOrObject)
         }
 
         private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
@@ -450,15 +370,6 @@ open class KtLightClassForSourceDeclaration(
                 return false
             }
             return classOrObject.getBody()?.declarations?.isEmpty() ?: true
-        }
-
-        private fun predictFqName(classOrObject: KtClassOrObject): FqName? {
-            if (classOrObject.isLocal()) {
-                if (classOrObject.containingFile.virtualFile == null) return null
-                val data = getLightClassDataExactly(classOrObject)
-                return data?.jvmQualifiedName
-            }
-            return classOrObject.fqName
         }
 
         fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
