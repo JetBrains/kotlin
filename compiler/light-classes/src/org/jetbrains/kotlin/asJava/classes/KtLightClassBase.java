@@ -44,10 +44,10 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 
 import java.util.List;
 
-public abstract class KtWrappingLightClass extends AbstractLightClass implements KtLightClass, PsiExtensibleClass {
+public abstract class KtLightClassBase extends AbstractLightClass implements KtLightClass, PsiExtensibleClass {
     private final ClassInnerStuffCache myInnersCache = new ClassInnerStuffCache(this);
 
-    protected KtWrappingLightClass(PsiManager manager) {
+    protected KtLightClassBase(PsiManager manager) {
         super(manager, KotlinLanguage.INSTANCE);
     }
 
@@ -125,7 +125,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
             @Override
             public PsiField fun(PsiField field) {
                 LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(field);
-                return KtLightFieldImpl.Factory.create(origin, field, KtWrappingLightClass.this);
+                return KtLightFieldImpl.Factory.create(origin, field, KtLightClassBase.this);
             }
         });
     }
@@ -143,7 +143,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
                     origin = origin.copy(PsiTreeUtil.getParentOfType(originalElement, KtProperty.class), origin.getOriginKind());
                 }
 
-                return KtLightMethodImpl.Factory.create(method, origin, KtWrappingLightClass.this);
+                return KtLightMethodImpl.Factory.create(method, origin, KtLightClassBase.this);
             }
         });
     }
