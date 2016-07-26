@@ -1,0 +1,38 @@
+group 'CarServer'
+version '1.0'
+
+buildscript {
+    ext.kotlin_version = '1.0.3'
+    ext.kotlinHome = "${System.env.HOME}/Library/Application Support/IdeaIC14/Kotlin"
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: "kotlin2js"
+
+sourceSets {
+    main.kotlin.srcDirs += 'src'
+}
+
+task copyKotlinJs(type: Copy) {
+    from "${projectDir}/helpers/kotlin.js"
+    into "${projectDir}/build/js/lib"
+}
+
+build.dependsOn copyKotlinJs
+
+compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/app.js"
+compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/helpers/prefix.js"
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
+}
