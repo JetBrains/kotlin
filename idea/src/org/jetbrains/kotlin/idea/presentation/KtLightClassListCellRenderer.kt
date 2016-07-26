@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.presentation
 
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.psi.presentation.java.ClassPresentationUtil
-import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 
 class KtLightClassListCellRenderer : PsiElementListCellRenderer<KtLightClass>() {
     override fun getElementText(element: KtLightClass) = ClassPresentationUtil.getNameForClass(element, false)

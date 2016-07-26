@@ -20,9 +20,9 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.compiled.ClsClassImpl
-import org.jetbrains.kotlin.asJava.KtLightFieldImpl
-import org.jetbrains.kotlin.asJava.KtLightMethodImpl
-import org.jetbrains.kotlin.asJava.KtWrappingLightClass
+import org.jetbrains.kotlin.asJava.classes.KtWrappingLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
+import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject

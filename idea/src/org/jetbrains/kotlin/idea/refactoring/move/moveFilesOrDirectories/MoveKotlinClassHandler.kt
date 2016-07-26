@@ -21,7 +21,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 
 class MoveKotlinClassHandler : MoveClassHandler {
     override fun doMoveClass(aClass: PsiClass, moveDestination: PsiDirectory): PsiClass? = null

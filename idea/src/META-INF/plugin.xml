@@ -263,8 +263,8 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade$FacadeStubCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade$FacadeStubCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"/>
@@ -574,7 +574,7 @@
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
-    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
+    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache"/>
 
     <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
