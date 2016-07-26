@@ -232,7 +232,7 @@ private fun globalResolveSessionProvider(
         reuseDataFrom: ProjectResolutionFacade? = null,
         syntheticFiles: Collection<KtFile> = listOf(),
         logProcessCanceled: Boolean = false
-): CachedValueProvider.Result<ModuleResolverProvider> {
+): ModuleResolverProvider {
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
     val globalContext = (delegateResolverProvider as? ModuleResolverProviderImpl)?.globalContext
@@ -242,8 +242,8 @@ private fun globalResolveSessionProvider(
     val moduleResolverProvider = createModuleResolverProvider(
             debugName, project, globalContext,
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
-            syntheticFiles, delegateResolverForProject, moduleFilter
+            syntheticFiles, delegateResolverForProject, moduleFilter, dependencies
     )
-    val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
-    return CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
+
+    return moduleResolverProvider
 }
