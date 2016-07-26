@@ -38,6 +38,8 @@ object CastDiagnosticsUtil {
             rhsType: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false
+        if (KotlinBuiltIns.isNothing(rhsType)) return false
+        if (KotlinBuiltIns.isNullableNothing(rhsType)) return TypeUtils.isNullableType(lhsType)
         if (lhsType.isError) return true
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true
         // This is an oversimplification (which does not render the method incomplete):
