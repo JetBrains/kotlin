@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
@@ -133,16 +132,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        MessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
+        MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
         ExitCode exitCode = compiler.exec(messageCollector, Services.EMPTY, arguments);
 
-        switch (exitCode) {
-            case COMPILATION_ERROR:
-                throw new MojoExecutionException("Compilation error. See log for more details");
-            case INTERNAL_ERROR:
-                throw new MojoExecutionException("Internal compiler error. See log for more details");
-            default:
+        if (exitCode != ExitCode.OK) {
+            messageCollector.throwKotlinCompilerException();
         }
     }
 
