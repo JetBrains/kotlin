@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.KtLightElement
-import org.jetbrains.kotlin.asJava.KtLightModifierList
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert
 

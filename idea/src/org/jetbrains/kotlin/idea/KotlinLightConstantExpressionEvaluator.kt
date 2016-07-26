@@ -21,7 +21,7 @@ import com.intellij.psi.PsiConstantEvaluationHelper
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.impl.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.asJava.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace

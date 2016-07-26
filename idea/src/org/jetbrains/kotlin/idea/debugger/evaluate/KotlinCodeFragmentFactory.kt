@@ -40,7 +40,7 @@ import com.sun.jdi.PrimitiveValue
 import com.sun.jdi.Value
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
