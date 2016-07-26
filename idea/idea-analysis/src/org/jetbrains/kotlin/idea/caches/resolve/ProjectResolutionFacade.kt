@@ -39,9 +39,12 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 internal class ProjectResolutionFacade(
         val project: Project,
-        computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
+        computeModuleResolverProvider: () -> ModuleResolverProvider
 ) {
-    private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
+    private val resolverCache = SynchronizedCachedValue(project, {
+        val resolverProvider = computeModuleResolverProvider()
+        CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
+    }, trackValue = false)
 
     val moduleResolverProvider: ModuleResolverProvider
         get() = resolverCache.getValue()
@@ -61,7 +64,9 @@ internal class ProjectResolutionFacade(
                         return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
                     }
                 }
-                CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
+
+                val allDependencies = resolverProvider.cacheDependencies + listOf(PsiModificationTracker.MODIFICATION_COUNT)
+                CachedValueProvider.Result.create(results, allDependencies)
             }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
