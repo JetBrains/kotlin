@@ -104,7 +104,7 @@ fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolea
     }
 
     if (copyDoc) {
-        val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+        val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement
         val kDoc = when (superDeclaration) {
             is KtDeclaration ->
                 findDocComment(superDeclaration)
