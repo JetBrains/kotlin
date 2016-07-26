@@ -98,20 +98,22 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    public static Modality resolveModalityFromModifiers(
+    public static Modality resolveMemberModalityFromModifiers(
             @NotNull KtModifierListOwner modifierListOwner,
             @NotNull Modality defaultModality
     ) {
-        return resolveModalityFromModifiers(modifierListOwner.getModifierList(), defaultModality);
+        return resolveModalityFromModifiers(modifierListOwner.getModifierList(), defaultModality, /* allowSealed = */ false);
     }
 
     @NotNull
-    public static Modality resolveModalityFromModifiers(@Nullable KtModifierList modifierList, @NotNull Modality defaultModality) {
+    public static Modality resolveModalityFromModifiers(
+            @Nullable KtModifierList modifierList, @NotNull Modality defaultModality, boolean allowSealed
+    ) {
         if (modifierList == null) return defaultModality;
         boolean hasAbstractModifier = modifierList.hasModifier(ABSTRACT_KEYWORD);
         boolean hasOverrideModifier = modifierList.hasModifier(OVERRIDE_KEYWORD);
 
-        if (modifierList.hasModifier(SEALED_KEYWORD)) {
+        if (allowSealed && modifierList.hasModifier(SEALED_KEYWORD)) {
             return Modality.SEALED;
         }
         if (modifierList.hasModifier(OPEN_KEYWORD)) {

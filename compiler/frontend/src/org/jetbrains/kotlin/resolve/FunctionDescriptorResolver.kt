@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorResolver.*
+import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
+import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
-import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers
+import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -164,7 +165,7 @@ class FunctionDescriptorResolver(
         val returnType = function.typeReference?.let { typeResolver.resolveType(innerScope, it, trace, true) }
 
         val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor))
-        val modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()))
+        val modality = resolveMemberModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()))
         functionDescriptor.initialize(
                 receiverType,
                 getDispatchReceiverParameterIfNeeded(containingDescriptor),

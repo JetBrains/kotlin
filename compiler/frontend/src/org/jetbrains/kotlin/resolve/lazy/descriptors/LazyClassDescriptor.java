@@ -54,7 +54,10 @@ import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,7 +140,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         else {
             Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
-            this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
+            this.modality = resolveModalityFromModifiers(modifierList, defaultModality, /* allowSealed = */ true);
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
