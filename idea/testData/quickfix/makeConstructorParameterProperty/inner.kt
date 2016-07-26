@@ -1,4 +1,4 @@
-// "Make primary constructor parameter 'bar' a property in class 'B'" "true"
+// "Make constructor parameter a property in class 'B'" "true"
 
 class B(bar: String) {
 
