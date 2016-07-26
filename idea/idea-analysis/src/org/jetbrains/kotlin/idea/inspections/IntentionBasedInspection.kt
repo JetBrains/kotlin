@@ -36,12 +36,24 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
 
-    constructor(intention: SelfTargetingRangeIntention<TElement>, additionalChecker: (TElement) -> Boolean = { true })
-    : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
+    constructor(
+            intention: SelfTargetingRangeIntention<TElement>
+    ) : this(listOf(IntentionData(intention)), null, intention.elementType)
+
+    constructor(
+            intention: SelfTargetingRangeIntention<TElement>,
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean
+    ) : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
+
+    constructor(
+            intention: SelfTargetingRangeIntention<TElement>,
+            additionalChecker: (TElement) -> Boolean
+    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), null, intention.elementType)
+
 
     data class IntentionData<TElement : PsiElement>(
             val intention: SelfTargetingRangeIntention<TElement>,
-            val additionalChecker: (TElement) -> Boolean = { true }
+            val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { element, inspection -> true }
     )
 
     open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null
@@ -67,7 +79,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                             range.shiftRight(-elementRange.startOffset)
                         }
 
-                        if (range != null && additionalChecker(targetElement)) {
+                        if (range != null && additionalChecker(targetElement, this@IntentionBasedInspection)) {
                             problemRange = problemRange?.union(range) ?: range
                             if (fixes == null) {
                                 fixes = SmartList<LocalQuickFix>()
@@ -94,10 +106,10 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
         get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
-    private class IntentionBasedQuickFix<TElement : PsiElement>(
+    private inner class IntentionBasedQuickFix(
             private val intention: SelfTargetingRangeIntention<TElement>,
             private val text: String,
-            private val additionalChecker: (TElement) -> Boolean,
+            private val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
             targetElement: TElement
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
 
@@ -112,7 +124,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 
         override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
             assert(startElement == endElement)
-            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(startElement)
+            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(startElement, this@IntentionBasedInspection)
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {

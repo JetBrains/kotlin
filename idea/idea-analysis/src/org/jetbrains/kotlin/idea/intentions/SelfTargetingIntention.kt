@@ -95,7 +95,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
             return false
         }
 
-        return inspection.intentions.single { it.intention.javaClass == javaClass }.additionalChecker(target)
+        return inspection.intentions.single { it.intention.javaClass == javaClass }.additionalChecker(target, inspection)
     }
 
     final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {

@@ -36,7 +36,7 @@ class ConvertLambdaToReferenceInspection(
         val intention: ConvertLambdaToReferenceIntention = ConvertLambdaToReferenceIntention()
 ) : IntentionBasedInspection<KtLambdaExpression>(
         intention,
-        { intention.shouldSuggestToConvert(it) }
+        { it -> intention.shouldSuggestToConvert(it) }
 )
 
 class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
