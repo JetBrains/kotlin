@@ -28,6 +28,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.ui.NonFocusableCheckBox
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -86,6 +88,7 @@ class KotlinVariableInplaceIntroducer(
                 expressionTypeCheckBox.setMnemonic('t')
                 expressionTypeCheckBox.addActionListener {
                     runWriteCommandAndRestart {
+                        updateVariableName()
                         if (expressionTypeCheckBox.isSelected) {
                             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
                             addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))

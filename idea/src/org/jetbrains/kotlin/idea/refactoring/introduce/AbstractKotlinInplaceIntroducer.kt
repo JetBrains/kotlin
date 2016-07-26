@@ -24,6 +24,8 @@ import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
@@ -59,6 +61,13 @@ abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         }
         finally {
             myEditor.putUserData(InplaceRefactoring.INTRODUCE_RESTART, false)
+        }
+    }
+
+    protected fun updateVariableName() {
+        val currentName = inputName.quoteIfNeeded()
+        if (KotlinNameSuggester.isIdentifier(currentName)) {
+            localVariable.setName(currentName)
         }
     }
 
