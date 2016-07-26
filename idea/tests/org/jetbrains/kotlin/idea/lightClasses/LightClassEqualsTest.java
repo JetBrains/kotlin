@@ -21,7 +21,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
@@ -41,7 +41,7 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
 
         PsiClass theClass = myFixture.getJavaFacade().findClass("A");
         assertNotNull(theClass);
-        assertInstanceOf(theClass, KtLightClassForExplicitDeclaration.class);
+        assertInstanceOf(theClass, KtLightClassForSourceDeclaration.class);
 
         doTestEquals(((KtLightClass) theClass).getKotlinOrigin());
     }

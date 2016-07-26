@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -51,7 +51,7 @@ open class FakeFileForLightClass(
 
     override fun hashCode(): Int {
         val thisClass = lightClass()
-        if (thisClass is KtLightClassForExplicitDeclaration) return ktFile.hashCode()
+        if (thisClass is KtLightClassForSourceDeclaration) return ktFile.hashCode()
         return thisClass.hashCode()
     }
 
@@ -61,8 +61,8 @@ open class FakeFileForLightClass(
         val thisClass = lightClass()
         val anotherClass = other.lightClass()
 
-        if (thisClass is KtLightClassForExplicitDeclaration) {
-            return anotherClass is KtLightClassForExplicitDeclaration && ktFile == other.ktFile
+        if (thisClass is KtLightClassForSourceDeclaration) {
+            return anotherClass is KtLightClassForSourceDeclaration && ktFile == other.ktFile
         }
 
         return thisClass == anotherClass

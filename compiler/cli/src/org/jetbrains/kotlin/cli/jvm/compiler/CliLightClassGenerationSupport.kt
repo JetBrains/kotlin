@@ -28,7 +28,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -134,7 +134,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
     }
 
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return KtLightClassForExplicitDeclaration.create(classOrObject)
+        return KtLightClassForSourceDeclaration.create(classOrObject)
     }
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {

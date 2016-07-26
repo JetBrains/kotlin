@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -145,7 +145,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (virtualFile != null) {
             when {
                 ProjectRootsUtil.isProjectSourceFile(project, virtualFile) ->
-                    return KtLightClassForExplicitDeclaration.create(classOrObject)
+                    return KtLightClassForSourceDeclaration.create(classOrObject)
                 ProjectRootsUtil.isLibraryClassFile(project, virtualFile) ->
                     return getLightClassForDecompiledClassOrObject(classOrObject)
                 ProjectRootsUtil.isLibrarySourceFile(project, virtualFile) ->
@@ -154,7 +154,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
         if (classOrObject.getContainingKtFile().analysisContext != null) {
             // explicit request to create light class from dummy.kt
-            return KtLightClassForExplicitDeclaration.create(classOrObject)
+            return KtLightClassForSourceDeclaration.create(classOrObject)
         }
         return null
     }

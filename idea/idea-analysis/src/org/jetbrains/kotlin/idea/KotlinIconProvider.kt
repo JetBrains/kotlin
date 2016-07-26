@@ -23,7 +23,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -90,7 +90,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
                 //TODO (light classes for decompiled files): correct presentation
                 if (origin != null) origin.getBaseIcon() else KotlinIcons.CLASS
             }
-            is KtLightClassForExplicitDeclaration -> navigationElement.getBaseIcon()
+            is KtLightClassForSourceDeclaration -> navigationElement.getBaseIcon()
             is KtNamedFunction -> when {
                 receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
                 getStrictParentOfType<KtNamedDeclaration>() is KtClass ->

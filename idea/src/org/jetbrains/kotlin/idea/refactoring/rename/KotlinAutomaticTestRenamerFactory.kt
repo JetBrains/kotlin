@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticTestRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 class KotlinAutomaticTestRenamerFactory : AutomaticTestRenamerFactory() {
     private fun getPsiClass(element: PsiElement): PsiClass? {
         return when (element) {
-            is KtLightClassForExplicitDeclaration -> element
+            is KtLightClassForSourceDeclaration -> element
             is KtClassOrObject -> element.toLightClass()
             is KtFile -> element.findFacadeClass()
             else -> null

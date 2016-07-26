@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 open class KtLightClassForInterfaceDefaultImpls(
         classFqName: FqName,
         classOrObject: KtClassOrObject)
-: KtLightClassForExplicitDeclaration({ classFqName }, classOrObject){
+: KtLightClassForSourceDeclaration({ classFqName }, classOrObject){
 
     override fun copy(): PsiElement {
         return KtLightClassForInterfaceDefaultImpls(classFqName, classOrObject.copy() as KtClassOrObject)
@@ -47,7 +47,7 @@ open class KtLightClassForInterfaceDefaultImpls(
         throw IncorrectOperationException("Impossible to rename DefaultImpls")
     }
 
-    override fun getContainingClass() = KtLightClassForExplicitDeclaration.create(classOrObject)
+    override fun getContainingClass() = KtLightClassForSourceDeclaration.create(classOrObject)
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }

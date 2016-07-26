@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal open class KtLightClassForAnonymousDeclaration(fqNameFunction: ((KtClassOrObject) -> FqName),
                                                         classOrObject: KtClassOrObject) :
-        KtLightClassForExplicitDeclaration(fqNameFunction, classOrObject), PsiAnonymousClass {
+        KtLightClassForSourceDeclaration(fqNameFunction, classOrObject), PsiAnonymousClass {
 
     private var cachedBaseType: SoftReference<PsiClassType>? = null
 
@@ -101,7 +101,7 @@ internal open class KtLightClassForAnonymousDeclaration(fqNameFunction: ((KtClas
     }
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
-        if (baseClass is KtLightClassForExplicitDeclaration) {
+        if (baseClass is KtLightClassForSourceDeclaration) {
             return super.isInheritor(baseClass, checkDeep)
         }
 
