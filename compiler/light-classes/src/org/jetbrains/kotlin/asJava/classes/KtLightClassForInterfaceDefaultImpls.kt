@@ -21,10 +21,11 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-open class KtLightClassForInterfaceDefaultImpls(
+class KtLightClassForInterfaceDefaultImpls(
         classFqName: FqName,
         classOrObject: KtClassOrObject)
 : KtLightClassForSourceDeclaration({ classFqName }, classOrObject){
+    override fun getParent() = containingClass
 
     override fun copy(): PsiElement {
         return KtLightClassForInterfaceDefaultImpls(classFqName, classOrObject.copy() as KtClassOrObject)
