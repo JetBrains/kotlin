@@ -21,6 +21,4 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass> {
-    fun getFqName(): FqName
-}
+interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass>

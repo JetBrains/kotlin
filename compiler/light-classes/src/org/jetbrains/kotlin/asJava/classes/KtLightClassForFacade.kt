@@ -106,7 +106,8 @@ class KtLightClassForFacade private constructor(
 
     override val kotlinOrigin: KtClassOrObject? get() = null
 
-    override fun getFqName(): FqName = facadeClassFqName
+    val fqName: FqName
+        get() = facadeClassFqName
 
     override fun getModifierList() = modifierList
 

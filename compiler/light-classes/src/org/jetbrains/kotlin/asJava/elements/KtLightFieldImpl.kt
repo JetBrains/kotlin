@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForEnumEntry
+import org.jetbrains.kotlin.asJava.classes.KtLightClassImpl
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -140,7 +141,7 @@ sealed class KtLightFieldImpl(
                 is PsiEnumConstant -> {
                     val kotlinEnumEntry = (origin as? LightMemberOriginForDeclaration)?.originalElement as? KtEnumEntry
                     val initializingClass = if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
-                        val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + kotlinEnumEntry.name)
+                        val enumConstantFqName = FqName((containingClass as KtLightClassImpl).fqName.asString() + "." + kotlinEnumEntry.name)
                         KtLightClassForEnumEntry(enumConstantFqName, kotlinEnumEntry, delegate)
                     }
                     else null

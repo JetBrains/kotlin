@@ -32,7 +32,7 @@ class KtLightClassForDecompiledDeclaration(
         override val kotlinOrigin: KtClassOrObject?,
         private val file: KtClsFile
 ) : KtLightClassBase(clsDelegate.manager) {
-    private val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName)
+    val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName)
 
     override fun copy() = this
 
@@ -54,15 +54,13 @@ class KtLightClassForDecompiledDeclaration(
 
     override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: file
 
-    override fun getFqName() = fqName
-
     override fun getParent() = clsDelegate.parent
 
     override fun equals(other: Any?): Boolean =
             other is KtLightClassForDecompiledDeclaration &&
-            getFqName() == other.getFqName()
+            fqName == other.fqName
 
     override fun hashCode(): Int =
-            getFqName().hashCode()
+            fqName.hashCode()
 }
 
