@@ -21,6 +21,37 @@ repositories {
     mavenCentral()
 }
 
+task compileProto(type: Exec) {
+    executable "./compileProto.sh"
+}
+task buildProtoLib(type: Copy) {
+    //just copy lib src to project
+    def pathToProtoKotSrc = "../proto/compiler/src/"
+    from pathToProtoKotSrc + "CodedInputStream.kt", pathToProtoKotSrc + "CodedOutputStream.kt",
+            pathToProtoKotSrc + "WireFormat.kt", pathToProtoKotSrc + "WireType.kt",
+            pathToProtoKotSrc + "InvalidProtocolBufferException.kt"
+    into "src/main/java"
+}
+
+task getDeps(type: Copy) {
+    from sourceSets.main.compileClasspath
+    into 'build/libs'
+}
+
+build.dependsOn getDeps
+compileKotlin.dependsOn compileProto
+compileProto.dependsOn buildProtoLib
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Gradle",
+                "Implementation-Version": version,
+                "Class-Path": "kotlin-runtime-1.0.3.jar kotlin-stdlib-1.0.3.jar netty-all-4.1.2.Final.jar",
+                "Main-Class": "ServerMainKt")
+    }
+
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "io.netty:netty-all:4.1.2.Final"
