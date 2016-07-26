@@ -38,7 +38,7 @@
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener</implementation-class>
     </component>
   </project-components>
 
