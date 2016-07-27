@@ -40,6 +40,9 @@ import java.util.jar.Manifest
 import javax.inject.Inject
 
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
+val KOTLIN_DSL_NAME = "kotlin"
+val KOTLIN_JS_DSL_NAME = "kotlin2js"
+val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
 abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val project: Project,
@@ -47,7 +50,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val sourceSet: SourceSet,
         val tasksProvider: KotlinTasksProvider,
         val kotlinSourceSetProvider: KotlinSourceSetProvider,
-        val pluginName: String,
+        val dslExtensionName: String,
         val compileTaskNameSuffix: String,
         val taskDescription: String
 ) {
@@ -75,7 +78,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         logger.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
         val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
         kotlinSourceSet.kotlin.srcDir(project.file(sourceRootDir))
-        sourceSet.addExtension(pluginName, kotlinSourceSet)
+        sourceSet.addExtension(dslExtensionName, kotlinSourceSet)
         return kotlinSourceSet
     }
 
@@ -117,7 +120,7 @@ class Kotlin2JvmSourceSetProcessor(
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<KotlinCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
-        pluginName = "kotlin",
+        dslExtensionName = KOTLIN_DSL_NAME,
         compileTaskNameSuffix = "kotlin",
         taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
@@ -184,7 +187,7 @@ class Kotlin2JsSourceSetProcessor(
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
-        pluginName = "kotlin2js",
+        dslExtensionName = KOTLIN_JS_DSL_NAME,
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
 ) {
@@ -304,7 +307,7 @@ open class KotlinAndroidPlugin(
             log.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
             val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
             kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-            sourceSet.addExtension("kotlin", kotlinSourceSet)
+            sourceSet.addExtension(KOTLIN_DSL_NAME, kotlinSourceSet)
 
             aptConfigurations.put(sourceSet.name,
                     project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
@@ -312,7 +315,7 @@ open class KotlinAndroidPlugin(
 
         val kotlinOptions = K2JVMCompilerArguments()
         kotlinOptions.noJdk = true
-        ext.addExtension("kotlinOptions", kotlinOptions)
+        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         project.createKaptExtension()
 
@@ -399,7 +402,7 @@ open class KotlinAndroidPlugin(
         val logger = kotlinTask.project.logger
 
         for (provider in variantData.sourceProviders) {
-            val kotlinSourceSet = provider.findExtension("kotlin") as? KotlinSourceSet ?: continue
+            val kotlinSourceSet = provider.findExtension(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
             kotlinTask.source(kotlinSourceSet.kotlin)
         }
 
