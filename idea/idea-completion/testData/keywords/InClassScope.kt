@@ -32,4 +32,5 @@ class TestClass {
 // EXIST:  annotation class
 // EXIST:  const
 // EXIST:  suspend
+// EXIST:  typealias
 // NOTHING_ELSE
