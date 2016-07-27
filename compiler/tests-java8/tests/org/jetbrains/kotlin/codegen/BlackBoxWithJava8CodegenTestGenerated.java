@@ -179,6 +179,33 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/box/mapGetOrDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MapGetOrDefault extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInMapGetOrDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/mapGetOrDefault"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("noTypeSafeBridge.kt")
+        public void testNoTypeSafeBridge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/mapGetOrDefault/noTypeSafeBridge.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeSafeBridge.kt")
+        public void testTypeSafeBridge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/mapGetOrDefault/typeSafeBridge.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeSafeBridgeNotNullAny.kt")
+        public void testTypeSafeBridgeNotNullAny() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/mapGetOrDefault/typeSafeBridgeNotNullAny.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/java8/box/mapRemove")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

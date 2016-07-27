@@ -937,13 +937,19 @@ public class FunctionCodegen {
             @NotNull Type returnType,
             @Nullable Type[] delegateParameterTypes
     ) {
-        BuiltinMethodsWithSpecialGenericSignature.DefaultValue defaultValue =
+        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription typeSafeBarrierDescription =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
-        if (defaultValue == null) return;
+        if (typeSafeBarrierDescription == null) return;
+
+        FunctionDescriptor overriddenBuiltin =
+                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor);
+
+        assert overriddenBuiltin != null : "Overridden built-in method should not be null for " + descriptor;
 
         Label defaultBranch = new Label();
 
         for (int i = 0; i < descriptor.getValueParameters().size(); i++) {
+            if (!typeSafeBarrierDescription.checkParameter(i)) continue;
             boolean isCheckForAny = delegateParameterTypes == null || OBJECT_TYPE.equals(delegateParameterTypes[i]);
 
             KotlinType kotlinType = descriptor.getValueParameters().get(i).getType();
@@ -967,7 +973,13 @@ public class FunctionCodegen {
         iv.goTo(afterDefaultBranch);
 
         iv.visitLabel(defaultBranch);
-        StackValue.constant(defaultValue.getValue(), returnType).put(returnType, iv);
+
+        if (typeSafeBarrierDescription.equals(BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)) {
+            iv.load(2, returnType);
+        }
+        else {
+            StackValue.constant(typeSafeBarrierDescription.getDefaultValue(), returnType).put(returnType, iv);
+        }
         iv.areturn(returnType);
 
         iv.visitLabel(afterDefaultBranch);

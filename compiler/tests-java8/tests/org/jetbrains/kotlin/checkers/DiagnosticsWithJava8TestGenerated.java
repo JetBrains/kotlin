@@ -139,6 +139,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             doTest(fileName);
         }
 
+        @TestMetadata("getOrDefault.kt")
+        public void testGetOrDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/getOrDefault.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mutableMapRemove.kt")
         public void testMutableMapRemove() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/mutableMapRemove.kt");

@@ -97,34 +97,45 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
     private val ERASED_COLLECTION_PARAMETER_SIGNATURES = ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES.map { it.signature }
 
-    enum class DefaultValue(val value: Any?) {
-        NULL(null), INDEX(-1), FALSE(false)
+    enum class TypeSafeBarrierDescription(val defaultValue: Any?) {
+        NULL(null), INDEX(-1), FALSE(false),
+
+        MAP_GET_OR_DEFAULT(null) {
+            override fun checkParameter(index: Int) = index != 1
+        };
+
+        open fun checkParameter(index: Int) = true
     }
 
     private val GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP =
             signatures {
                 mapOf(
                     javaUtil("Collection")
-                            .method("contains", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)             to DefaultValue.FALSE,
+                            .method("contains", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)             to TypeSafeBarrierDescription.FALSE,
                     javaUtil("Collection")
-                            .method("remove", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)               to DefaultValue.FALSE,
+                            .method("remove", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)               to TypeSafeBarrierDescription.FALSE,
+
                     javaUtil("Map")
-                            .method("containsKey", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)          to DefaultValue.FALSE,
+                            .method("containsKey", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)          to TypeSafeBarrierDescription.FALSE,
                     javaUtil("Map")
-                            .method("containsValue", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)        to DefaultValue.FALSE,
+                            .method("containsValue", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)        to TypeSafeBarrierDescription.FALSE,
                     javaUtil("Map")
                             .method("remove", "Ljava/lang/Object;Ljava/lang/Object;",
-                                    JvmPrimitiveType.BOOLEAN.desc)                                               to DefaultValue.FALSE,
+                                    JvmPrimitiveType.BOOLEAN.desc)                                               to TypeSafeBarrierDescription.FALSE,
 
                     javaUtil("Map")
-                            .method("get", "Ljava/lang/Object;", "Ljava/lang/Object;")                           to DefaultValue.NULL,
+                            .method("getOrDefault", "Ljava/lang/Object;Ljava/lang/Object;",
+                                    "Ljava/lang/Object;")                                                        to TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT,
+
                     javaUtil("Map")
-                            .method("remove", "Ljava/lang/Object;", "Ljava/lang/Object;")                        to DefaultValue.NULL,
+                            .method("get", "Ljava/lang/Object;", "Ljava/lang/Object;")                           to TypeSafeBarrierDescription.NULL,
+                    javaUtil("Map")
+                            .method("remove", "Ljava/lang/Object;", "Ljava/lang/Object;")                        to TypeSafeBarrierDescription.NULL,
 
                     javaUtil("List")
-                            .method("indexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)                  to DefaultValue.INDEX,
+                            .method("indexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)                  to TypeSafeBarrierDescription.INDEX,
                     javaUtil("List")
-                            .method("lastIndexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)              to DefaultValue.INDEX
+                            .method("lastIndexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)              to TypeSafeBarrierDescription.INDEX
                 )
             }
 
@@ -150,7 +161,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
     }
 
     @JvmStatic
-    fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): DefaultValue? {
+    fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): TypeSafeBarrierDescription? {
         if (functionDescriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
         return functionDescriptor.firstOverridden {
             it.computeJvmSignature() in SIGNATURE_TO_DEFAULT_VALUES_MAP.keys
@@ -182,7 +193,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
         val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP[builtinSignature]!!
 
-        return if (defaultValue == DefaultValue.NULL)
+        return if (defaultValue == TypeSafeBarrierDescription.NULL)
                     // return type is some generic type as 'Map.get'
                     SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
                 else
