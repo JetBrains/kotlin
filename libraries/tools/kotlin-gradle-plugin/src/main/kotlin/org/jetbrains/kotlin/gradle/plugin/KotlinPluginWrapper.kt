@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -14,23 +13,16 @@ import javax.inject.Inject
 // TODO: simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
 
 abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver): Plugin<Project> {
-
     val log = Logging.getLogger(this.javaClass)
 
     override fun apply(project: Project) {
-        val sourceBuildScript = findSourceBuildScript(project)
-        if (sourceBuildScript == null) {
-            log.error("Failed to determine source cofiguration of kotlin plugin. Can not download core. Please verify that this or any parent project " +
-                    "contains 'kotlin-gradle-plugin' in buildscript's classpath configuration.")
-            return
-        }
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.extensions.extraProperties?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        val plugin = getPlugin(sourceBuildScript)
+        val plugin = getPlugin()
         plugin.apply(project)
 
         val cleanUpBuildListener = CleanUpBuildListener(project)
@@ -38,39 +30,22 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
         project.gradle.addBuildListener(cleanUpBuildListener)
     }
 
-    protected abstract fun getPlugin(scriptHandler: ScriptHandler): Plugin<Project>
-
-    private fun findSourceBuildScript(project: Project): ScriptHandler? {
-        log.kotlinDebug("Looking for proper script handler")
-        var curProject = project
-        while (curProject != curProject.parent) {
-            log.kotlinDebug("Looking in project $project")
-            val scriptHandler = curProject.buildscript
-            val found = scriptHandler.configurations.findByName("classpath")?.firstOrNull { it.name.contains("kotlin-gradle-plugin") } != null
-            if (found) {
-                log.kotlinDebug("Found! returning...")
-                return scriptHandler
-            }
-            log.kotlinDebug("not found, switching to parent")
-            curProject = curProject.parent ?: break
-        }
-        return null
-    }
+    protected abstract fun getPlugin(): Plugin<Project>
 }
 
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin(scriptHandler: ScriptHandler) =
-            KotlinPlugin(scriptHandler, KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
+    override fun getPlugin() =
+            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin(scriptHandler: ScriptHandler) =
-            KotlinAndroidPlugin(scriptHandler, AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
+    override fun getPlugin() =
+            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin(scriptHandler: ScriptHandler) =
-            Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
+    override fun getPlugin() =
+            Kotlin2JsPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
 fun Logger.kotlinDebug(message: String) {

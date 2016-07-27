@@ -101,7 +101,6 @@ class Kotlin2JvmSourceSetProcessor(
         project: Project,
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
-        val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<KotlinCompile>(
@@ -168,7 +167,6 @@ class Kotlin2JsSourceSetProcessor(
         project: Project,
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
-        val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
@@ -217,7 +215,7 @@ class Kotlin2JsSourceSetProcessor(
 }
 
 
-abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: ScriptHandler, val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider) : Plugin<Project> {
+abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider) : Plugin<Project> {
     abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
@@ -242,12 +240,11 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
 
 
 open class KotlinPlugin(
-        scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
-) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
-            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
+            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
 
     override fun apply(project: Project) {
         project.createKaptExtension()
@@ -257,16 +254,14 @@ open class KotlinPlugin(
 
 
 open class Kotlin2JsPlugin(
-        scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
-) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
-            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
+            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
 }
 
 open class KotlinAndroidPlugin(
-        val scriptHandler: ScriptHandler,
         val tasksProvider: KotlinTasksProvider,
         private val kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : Plugin<Project> {
@@ -510,24 +505,6 @@ class SubpluginEnvironment(
             }
         }
     }
-}
-
-open class GradleUtils(val scriptHandler: ScriptHandler, val project: Project) {
-    public fun resolveDependencies(vararg coordinates: String): Collection<File> {
-        val dependencyHandler: DependencyHandler = scriptHandler.dependencies
-        val configurationsContainer: ConfigurationContainer = scriptHandler.configurations
-
-        val deps = coordinates.map { dependencyHandler.create(it) }
-        val configuration = configurationsContainer.detachedConfiguration(*deps.toTypedArray())
-
-        return configuration.resolvedConfiguration.getFiles { true }
-    }
-
-    public fun kotlinPluginVersion(): String = project.properties["kotlin.gradle.plugin.version"] as String
-    public fun kotlinPluginArtifactCoordinates(artifact: String): String = "org.jetbrains.kotlin:${artifact}:${kotlinPluginVersion()}"
-    public fun kotlinJsLibraryCoordinates(): String = kotlinPluginArtifactCoordinates("kotlin-js-library")
-
-    public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
 
 internal operator fun FileCollection.plus(other: FileCollection) = this.plus(other)
