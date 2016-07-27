@@ -1,7 +1,7 @@
 // "Make constructor parameter a property" "true"
 
-class A(private var foo: String) {
+class A(<selection>private<caret></selection> var foo: String) {
     fun bar() {
-        foo<caret> = ""
+        foo = ""
     }
 }
