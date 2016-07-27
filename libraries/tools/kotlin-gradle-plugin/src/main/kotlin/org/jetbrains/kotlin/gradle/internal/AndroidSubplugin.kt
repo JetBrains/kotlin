@@ -31,11 +31,11 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
 // Just a marker plugin.
-public class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
+class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     override fun apply(target: Project?) {}
 }
 
-public class AndroidSubplugin : KotlinGradleSubplugin {
+class AndroidSubplugin : KotlinGradleSubplugin {
     private companion object {
         @Volatile
         var migrateWarningReported: Boolean = false
