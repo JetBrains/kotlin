@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
@@ -56,10 +53,12 @@ class TypeParameterQualifier(
     override fun toString() = "TypeParameter{$descriptor}"
 }
 
+interface ClassifierQualifier : Qualifier
+
 class ClassQualifier(
         override val referenceExpression: KtSimpleNameExpression,
         override val descriptor: ClassDescriptor
-) : Qualifier {
+) : ClassifierQualifier {
     override val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
         ClassValueReceiver(this, it)
     }
@@ -79,7 +78,21 @@ class ClassQualifier(
     override fun toString() = "Class{$descriptor}"
 }
 
-class ClassValueReceiver(val classQualifier: ClassQualifier, private val type: KotlinType) : ExpressionReceiver {
+class TypeAliasQualifier(
+        override val referenceExpression: KtSimpleNameExpression,
+        override val descriptor: TypeAliasDescriptor,
+        val classDescriptor: ClassDescriptor
+) : ClassifierQualifier {
+    override val classValueReceiver: ClassValueReceiver?
+        get() = classDescriptor.classValueType?.let {
+            ClassValueReceiver(this, it)
+        }
+
+    override val staticScope: MemberScope
+        get() = classDescriptor.staticScope
+}
+
+class ClassValueReceiver(val classQualifier: ClassifierQualifier, private val type: KotlinType) : ExpressionReceiver {
     override fun getType() = type
 
     override val expression: KtExpression

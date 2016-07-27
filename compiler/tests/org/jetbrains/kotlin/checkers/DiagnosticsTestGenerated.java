@@ -19953,6 +19953,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaStaticMembersViaTypeAlias.kt")
+            public void testJavaStaticMembersViaTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/javaStaticMembersViaTypeAlias.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localTypeAlias.kt")
             public void testLocalTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/localTypeAlias.kt");

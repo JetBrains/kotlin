@@ -2330,6 +2330,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superCallTarget, false, receiver, resolvedCall);
         }
 
+        if (descriptor instanceof TypeAliasDescriptor) {
+            ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
+            if (classDescriptor == null) {
+                throw new IllegalStateException("Type alias " + descriptor + " static member refernece should be rejected by type checker, " +
+                                                "since there is no class corresponding to this type alias.");
+            }
+            descriptor = classDescriptor;
+        }
+
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (isObject(classDescriptor)) {

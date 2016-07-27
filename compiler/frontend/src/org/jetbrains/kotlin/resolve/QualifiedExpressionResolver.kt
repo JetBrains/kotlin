@@ -654,6 +654,10 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
                     is PackageViewDescriptor -> PackageQualifier(referenceExpression, descriptor)
                     is ClassDescriptor -> ClassQualifier(referenceExpression, descriptor)
                     is TypeParameterDescriptor -> TypeParameterQualifier(referenceExpression, descriptor)
+                    is TypeAliasDescriptor -> {
+                        val classDescriptor = descriptor.classDescriptor ?: return null
+                        TypeAliasQualifier(referenceExpression, descriptor, classDescriptor)
+                    }
                     else -> return null
                 }
 

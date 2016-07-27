@@ -875,6 +875,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/typealias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Typealias extends AbstractBlackBoxAgainstJavaCodegenTest {
+        public void testAllFilesPresentInTypealias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("javaStaticMembersViaTypeAlias.kt")
+        public void testJavaStaticMembersViaTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/typealias/javaStaticMembersViaTypeAlias.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
