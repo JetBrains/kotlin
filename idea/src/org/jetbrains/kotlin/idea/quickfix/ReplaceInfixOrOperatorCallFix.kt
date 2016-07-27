@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-class ReplaceInfixCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
+class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
 
@@ -81,18 +81,18 @@ class ReplaceInfixCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpres
             val expression = diagnostic.psiElement
             if (expression is KtArrayAccessExpression) {
                 if (expression.arrayExpression == null) return null
-                return ReplaceInfixCallFix(expression)
+                return ReplaceInfixOrOperatorCallFix(expression)
             }
             val parent = expression.parent
             return when (parent) {
                 is KtBinaryExpression -> {
                     if (parent.left == null || parent.right == null) null
-                    else ReplaceInfixCallFix(parent)
+                    else ReplaceInfixOrOperatorCallFix(parent)
                 }
                 is KtCallExpression -> {
                     if (parent.calleeExpression == null) null
                     else if (parent.parent is KtQualifiedExpression) null
-                    else ReplaceInfixCallFix(parent)
+                    else ReplaceInfixOrOperatorCallFix(parent)
                 }
                 else -> null
             }
