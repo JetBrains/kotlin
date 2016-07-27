@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
@@ -48,12 +47,3 @@ open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver
             Kotlin2JsPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
-fun Logger.kotlinDebug(message: String) {
-    this.debug("[KOTLIN] $message")
-}
-
-inline fun Logger.kotlinDebug(message: () -> String) {
-    if (isDebugEnabled) {
-        kotlinDebug(message())
-    }
-}
