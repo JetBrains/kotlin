@@ -6111,6 +6111,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unsafeGet.kt")
+            public void testUnsafeGet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeGet.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsafeInfixCall.kt")
             public void testUnsafeInfixCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInfixCall.kt");
@@ -6120,6 +6126,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("unsafePlus.kt")
             public void testUnsafePlus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafePlus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeSet.kt")
+            public void testUnsafeSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeSet.kt");
                 doTest(fileName);
             }
         }
