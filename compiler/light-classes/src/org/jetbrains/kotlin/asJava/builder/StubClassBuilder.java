@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.asJava.builder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.InnerClassSourceStrategy;
 import com.intellij.psi.impl.compiled.StubBuildingVisitor;
+import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
@@ -75,7 +77,8 @@ public class StubClassBuilder extends AbstractClassBuilder {
             @NotNull String[] interfaces
     ) {
         assert v == null : "defineClass() called twice?";
-        v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access, null);
+
+        v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access, calculateShortName(name));
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
 
@@ -93,6 +96,52 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
 
         ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightClassOrigin(origin));
+    }
+
+    @Nullable
+    private String calculateShortName(@NotNull String internalName) {
+        if (parent instanceof PsiJavaFileStub) {
+            String packagePrefix = getPackageInternalNamePrefix((PsiJavaFileStub) parent);
+            assert internalName.startsWith(packagePrefix) : internalName + " : " + packagePrefix;
+            return internalName.substring(packagePrefix.length());
+        }
+        if (parent instanceof PsiClassStub<?>) {
+            String parentPrefix = getClassInternalNamePrefix((PsiClassStub) parent);
+            if (parentPrefix == null) return null;
+
+            assert internalName.startsWith(parentPrefix) : internalName + " : " + parentPrefix;
+            return internalName.substring(parentPrefix.length());
+        }
+        return null;
+    }
+
+    @Nullable
+    private String getClassInternalNamePrefix(@NotNull PsiClassStub classStub) {
+        PsiJavaFileStub fileStub = (PsiJavaFileStub) parentStack.get(0);
+
+        String packageName = fileStub.getPackageName();
+
+        String classStubQualifiedName = classStub.getQualifiedName();
+        if (classStubQualifiedName == null) return null;
+
+        if (packageName.isEmpty()) {
+            return classStubQualifiedName.replace('.', '$') + "$";
+        }
+        else {
+            return packageName.replace('.', '/') + "/" + classStubQualifiedName.substring(packageName.length() + 1).replace('.', '$') + "$";
+        }
+    }
+
+
+    @NotNull
+    private static String getPackageInternalNamePrefix(@NotNull PsiJavaFileStub fileStub) {
+        String packageName = fileStub.getPackageName();
+        if (packageName.isEmpty()) {
+            return "";
+        }
+        else {
+            return packageName.replace('.', '/') + "/";
+        }
     }
 
     @NotNull
