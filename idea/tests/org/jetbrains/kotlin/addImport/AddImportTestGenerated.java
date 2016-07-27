@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AddImportTestGenerated extends AbstractAddImportTest {
     public void testAllFilesPresentInAddImport() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("CannotImportClass1.kt")

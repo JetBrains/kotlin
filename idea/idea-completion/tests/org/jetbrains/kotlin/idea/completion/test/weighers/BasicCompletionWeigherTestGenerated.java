@@ -38,7 +38,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     }
 
     public void testAllFilesPresentInBasic() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("CallableReference_NothingLast.kt")
@@ -196,7 +196,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInExpectedInfo() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("CompanionObjectMethod.kt")
@@ -289,7 +289,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ParameterNameAndType extends AbstractBasicCompletionWeigherTest {
         public void testAllFilesPresentInParameterNameAndType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("Deprecated.kt")

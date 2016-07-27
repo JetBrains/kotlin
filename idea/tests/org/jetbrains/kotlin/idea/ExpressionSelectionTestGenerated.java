@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionSelectionTestGenerated extends AbstractExpressionSelectionTest {
     public void testAllFilesPresentInExpressionSelection() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("binaryExpr.kt")

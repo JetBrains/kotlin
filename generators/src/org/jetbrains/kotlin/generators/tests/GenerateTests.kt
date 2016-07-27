@@ -146,7 +146,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 @Language("RegExp") private val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
-@Language("RegExp") private val KT_WITHOUT_DOTS_IN_NAME = """^([^\.]+)\.kt$"""
+@Language("RegExp") private val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")

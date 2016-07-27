@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructureTest {
     public void testAllFilesPresentInFileStructure() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("CheckLocationForKotlin.kt")
