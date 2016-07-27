@@ -2780,6 +2780,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notEquals.kt")
+            public void testNotEquals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/notEquals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notEqualsBrackets.kt")
+            public void testNotEqualsBrackets() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/notEqualsBrackets.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notEqualsBracketsComplex.kt")
+            public void testNotEqualsBracketsComplex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/notEqualsBracketsComplex.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("plusSanityTest.kt")
             public void testPlusSanityTest() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/plusSanityTest.kt");
