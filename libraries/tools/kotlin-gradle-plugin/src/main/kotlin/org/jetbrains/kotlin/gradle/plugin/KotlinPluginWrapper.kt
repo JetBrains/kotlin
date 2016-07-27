@@ -12,7 +12,7 @@ import javax.inject.Inject
 // TODO: simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
 
 abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver): Plugin<Project> {
-    val log = Logging.getLogger(this.javaClass)
+    private val log = Logging.getLogger(this.javaClass)
 
     override fun apply(project: Project) {
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too

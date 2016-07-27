@@ -94,7 +94,7 @@ class CleanUpBuildListener(private val project: Project) : BuildAdapter() {
 
 
 class CompilerServicesCleanup() {
-    val log = Logging.getLogger(this.javaClass)
+    private val log = Logging.getLogger(this.javaClass)
 
     operator fun invoke(gradleVersion: String) {
         log.kotlinDebug("compiler services cleanup")
