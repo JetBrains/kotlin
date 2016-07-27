@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<KtBinaryExpression>(element) {
+class ReplaceInfixCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
 
@@ -33,16 +34,38 @@ class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<Kt
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val psiFactory = KtPsiFactory(file)
-        if (element.operationToken == KtTokens.IDENTIFIER) {
-            val newExpression = psiFactory.createExpressionByPattern("$0?.$1($2)", element.left!!, element.operationReference, element.right!!)
-            element.replace(newExpression)
-        }
-        else {
-            val nameExpression = OperatorToFunctionIntention.convert(element).second
-            val callExpression = nameExpression.parent as KtCallExpression
-            val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
-            val safeExpression = psiFactory.createExpressionByPattern("$0?.$1", qualifiedExpression.receiverExpression, callExpression)
-            qualifiedExpression.replace(safeExpression)
+        when (element) {
+            is KtArrayAccessExpression -> {
+                val assignment = element.getAssignmentByLHS()
+                val right = assignment?.right
+                val arrayExpression = element.arrayExpression ?: return
+                if (assignment != null) {
+                    if (right == null) return
+                    val newExpression = psiFactory.createExpressionByPattern(
+                            "$0?.set($1, $2)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text }, right)
+                    assignment.replace(newExpression)
+                }
+                else {
+                    val newExpression = psiFactory.createExpressionByPattern(
+                            "$0?.get($1)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
+                    element.replace(newExpression)
+                }
+            }
+            is KtBinaryExpression -> {
+                if (element.operationToken == KtTokens.IDENTIFIER) {
+                    val newExpression = psiFactory.createExpressionByPattern(
+                            "$0?.$1($2)", element.left ?: return, element.operationReference, element.right ?: return)
+                    element.replace(newExpression)
+                }
+                else {
+                    val nameExpression = OperatorToFunctionIntention.convert(element).second
+                    val callExpression = nameExpression.parent as KtCallExpression
+                    val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
+                    val safeExpression = psiFactory.createExpressionByPattern(
+                            "$0?.$1", qualifiedExpression.receiverExpression, callExpression)
+                    qualifiedExpression.replace(safeExpression)
+                }
+            }
         }
     }
 
@@ -50,9 +73,14 @@ class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<Kt
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val expression = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpression>()!!
-            if (expression.left == null || expression.right == null) return null
-            return ReplaceInfixCallFix(expression)
+            val expression = diagnostic.psiElement
+            if (expression is KtArrayAccessExpression) {
+                if (expression.arrayExpression == null) return null
+                return ReplaceInfixCallFix(expression)
+            }
+            val binaryExpression = expression.parent as? KtBinaryExpression ?: return null
+            if (binaryExpression.left == null || binaryExpression.right == null) return null
+            return ReplaceInfixCallFix(binaryExpression)
         }
     }
 }
