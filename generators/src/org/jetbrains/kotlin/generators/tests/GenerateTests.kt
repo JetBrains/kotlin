@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import junit.framework.TestCase
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
@@ -143,7 +144,8 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
-private val kotlinFileOrScript = "^(.+)\\.(kt|kts)\$"
+@Language("RegExp") private val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
+@Language("RegExp") private val KT_WITHOUT_DOTS_IN_NAME = """^([^\.]+)\.kt$"""
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -560,7 +562,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractReferenceResolveTest>() {
-            model("resolve/references", pattern = """^([^\.]+)\.kt$""")
+            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractReferenceResolveInJavaTest>() {
@@ -652,8 +654,8 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractInsertImportOnPasteTest>() {
-            model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
-            model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCut", testClassName = "Cut", recursive = false)
+            model("copyPaste/imports", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
+            model("copyPaste/imports", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestCut", testClassName = "Cut", recursive = false)
         }
 
         testClass<AbstractHighlightExitPointsTest>() {
@@ -665,22 +667,22 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractShortenRefsTest>() {
-            model("shortenRefs", pattern = """^([^\.]+)\.kt$""")
+            model("shortenRefs", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
         testClass<AbstractAddImportTest>() {
-            model("addImport", pattern = """^([^\.]+)\.kt$""")
+            model("addImport", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartSelectionTest>() {
-            model("smartSelection", testMethod = "doTestSmartSelection", pattern = """^([^\.]+)\.kt$""")
+            model("smartSelection", testMethod = "doTestSmartSelection", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractKotlinFileStructureTest>() {
-            model("structureView/fileStructure", pattern = """^([^\.]+)\.kt$""")
+            model("structureView/fileStructure", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractExpressionSelectionTest>() {
-            model("expressionSelection", testMethod = "doTestExpressionSelection", pattern = """^([^\.]+)\.kt$""")
+            model("expressionSelection", testMethod = "doTestExpressionSelection", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass(AbstractCommonDecompiledTextTest::class.java) {
@@ -704,7 +706,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractOptimizeImportsTest>() {
-            model("editor/optimizeImports", pattern = """^([^\.]+)\.kt$""")
+            model("editor/optimizeImports", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractPositionManagerTest>() {
@@ -748,11 +750,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractExtractionTest>() {
-            model("refactoring/introduceVariable", pattern = kotlinFileOrScript, testMethod = "doIntroduceVariableTest")
-            model("refactoring/extractFunction", pattern = kotlinFileOrScript, testMethod = "doExtractFunctionTest")
-            model("refactoring/introduceProperty", pattern = kotlinFileOrScript, testMethod = "doIntroducePropertyTest")
-            model("refactoring/introduceParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceSimpleParameterTest")
-            model("refactoring/introduceLambdaParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceLambdaParameterTest")
+            model("refactoring/introduceVariable", pattern = KT_OR_KTS, testMethod = "doIntroduceVariableTest")
+            model("refactoring/extractFunction", pattern = KT_OR_KTS, testMethod = "doExtractFunctionTest")
+            model("refactoring/introduceProperty", pattern = KT_OR_KTS, testMethod = "doIntroducePropertyTest")
+            model("refactoring/introduceParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceSimpleParameterTest")
+            model("refactoring/introduceLambdaParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceLambdaParameterTest")
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
         }
 
@@ -835,7 +837,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
-            model("asJava/lightClasses", pattern = """^([^\.]+)\.kt$""")
+            model("asJava/lightClasses", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
@@ -849,11 +851,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBasicCompletionWeigherTest>() {
-            model("weighers/basic", pattern = """^([^\.]+)\.kt$""")
+            model("weighers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartCompletionWeigherTest>() {
-            model("weighers/smart", pattern = """^([^\.]+)\.kt$""")
+            model("weighers/smart", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractJSBasicCompletionTest>() {
