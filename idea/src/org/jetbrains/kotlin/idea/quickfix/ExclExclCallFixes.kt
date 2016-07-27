@@ -95,6 +95,9 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
                 return sibling
             }
         }
+        else if (psiElement is KtArrayAccessExpression) {
+            return psiElement.arrayExpression
+        }
         else if (psiElement is KtExpression) {
             return psiElement
         }

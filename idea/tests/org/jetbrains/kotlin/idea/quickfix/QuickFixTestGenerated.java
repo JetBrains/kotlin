@@ -4848,6 +4848,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unsafeCall4.kt")
+        public void testUnsafeCall4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/unsafeCall4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unsafeCall5.kt")
+        public void testUnsafeCall5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/unsafeCall5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("uselessCastStaticAssertIsFine.kt")
         public void testUselessCastStaticAssertIsFine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/uselessCastStaticAssertIsFine.kt");
