@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi

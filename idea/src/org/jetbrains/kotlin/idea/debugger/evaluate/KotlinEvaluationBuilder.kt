@@ -57,11 +57,11 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
+import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments

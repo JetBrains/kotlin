@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -261,7 +261,7 @@ class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         var elementAt = sourcePosition.elementAt
 
         var startOffset = file.getLineStartOffset(lineNumber) ?: elementAt.startOffset
-        var endOffset = file.getLineEndOffset(lineNumber) ?: elementAt.endOffset
+        val endOffset = file.getLineEndOffset(lineNumber) ?: elementAt.endOffset
 
         var topMostElement: PsiElement? = null
         while (topMostElement !is KtElement && startOffset < endOffset) {
