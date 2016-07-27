@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -45,7 +48,7 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        text = "Replace with '$operation' operator"
+        text = "Replace with '${operation.value}' operator"
         return calleeExpression.textRange
     }
 
@@ -55,14 +58,27 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
         val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return
         val receiver = element.receiverExpression
 
-        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
+        if (operation == KtTokens.EXCLEQ) {
+            val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
+            val newExpression = KtPsiFactory(element).createExpressionByPattern("$0 != $1", receiver, argument)
+            prefixExpression.replace(newExpression)
+        }
+        else {
+            val newExpression = KtPsiFactory(element).createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
+            element.replace(newExpression)
+        }
     }
 
-    private fun operation(calleeExpression: KtSimpleNameExpression): String? {
+    private fun PsiElement.getWrappingPrefixExpressionIfAny() =
+            (getLastParentOfTypeInRow<KtParenthesizedExpression>() ?: this).parent as? KtPrefixExpression
+
+    private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
         if (identifier == OperatorNameConventions.EQUALS) {
-            return KtTokens.EQEQ.value
+            val prefixExpression = calleeExpression.parent?.parent?.getWrappingPrefixExpressionIfAny()
+            return if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
+            else KtTokens.EQEQ
         }
-        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]?.value
+        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
     }
 }

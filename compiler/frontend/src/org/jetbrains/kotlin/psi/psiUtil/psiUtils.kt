@@ -361,3 +361,5 @@ fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
 
 fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset
 
+inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = parents.takeWhile { it is T }.lastOrNull()
+
