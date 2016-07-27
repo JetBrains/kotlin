@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletionWeigherTest {
     public void testAllFilesPresentInSmart() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/smart"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/smart"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("BooleanExpected.kt")

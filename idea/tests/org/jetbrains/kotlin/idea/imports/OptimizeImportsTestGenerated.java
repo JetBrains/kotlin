@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     public void testAllFilesPresentInOptimizeImports() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("AlreadyOptimized.kt")
@@ -262,7 +262,7 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AllUnderImports extends AbstractOptimizeImportsTest {
         public void testAllFilesPresentInAllUnderImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/allUnderImports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/allUnderImports"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassNameConflict.kt")

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
     public void testAllFilesPresentInSmartSelection() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("commentsAndExtraSpaces.kt")
