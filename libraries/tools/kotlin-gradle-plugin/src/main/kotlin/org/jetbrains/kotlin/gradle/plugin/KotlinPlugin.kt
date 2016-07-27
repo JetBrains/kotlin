@@ -14,7 +14,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -60,16 +59,11 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     protected val sourceSetName: String = sourceSet.name
     protected val sourceRootDir: String = "src/${sourceSetName}/kotlin"
     protected val absoluteSourceRootDir: String = project.projectDir.path + "/" + sourceRootDir
-    protected val kotlinSourceSet: KotlinSourceSet? =  createKotlinSourceSet()
-    protected val kotlinDirSet: SourceDirectorySet? = createKotlinDirSet()
+    protected val kotlinSourceSet: KotlinSourceSet = createKotlinSourceSet()
     protected val kotlinTask: T = createKotlinCompileTask()
-    protected val kotlinTaskName: String by lazy { kotlinTask.name }
     protected abstract val defaultKotlinDestinationDir: File
 
-    public fun run() {
-        if (kotlinSourceSet == null || kotlinDirSet == null) {
-            return
-        }
+    fun run() {
         addKotlinDirSetToSources()
         doTargetSpecificProcessing()
     }
@@ -82,23 +76,15 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         return kotlinSourceSet
     }
 
-    private fun createKotlinDirSet(): SourceDirectorySet? {
-        val srcDir = project.file(sourceRootDir)
-        logger.kotlinDebug("Creating Kotlin SourceDirectorySet for source set $kotlinSourceSet with src dir $srcDir")
-        val kotlinDirSet = kotlinSourceSet?.kotlin
-        kotlinDirSet?.srcDir(srcDir)
-        return kotlinDirSet
-    }
-
     private fun addKotlinDirSetToSources() {
-        logger.kotlinDebug("Adding Kotlin SourceDirectorySet $kotlinDirSet to source set $sourceSet")
-        sourceSet.allJava?.source(kotlinDirSet)
-        sourceSet.allSource?.source(kotlinDirSet)
-        sourceSet.resources?.filter?.exclude { kotlinDirSet!!.contains(it.file) }
+        val kotlinDirSet = kotlinSourceSet.kotlin
+        sourceSet.allJava.source(kotlinDirSet)
+        sourceSet.allSource.source(kotlinDirSet)
+        sourceSet.resources.filter.exclude { it.file in kotlinDirSet }
     }
 
-    private fun createKotlinCompileTask(suffix: String = ""): T {
-        val name = sourceSet.getCompileTaskName(compileTaskNameSuffix) + suffix
+    private fun createKotlinCompileTask(): T {
+        val name = sourceSet.getCompileTaskName(compileTaskNameSuffix)
         logger.kotlinDebug("Creating kotlin compile task $name")
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
@@ -166,11 +152,11 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, null, subpluginEnvironment, tasksProvider)
                 }
 
-                sourceSet.java.srcDirs.forEach { kotlinDirSet?.srcDir(it) }
+                sourceSet.java.srcDirs.forEach { kotlinSourceSet.kotlin.srcDir(it) }
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
-                kotlinTask.source(kotlinDirSet)
-                kotlinAfterJavaTask?.let { it.source(kotlinDirSet) }
+                kotlinTask.source(kotlinSourceSet.kotlin)
+                kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
                 configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
             }
@@ -212,10 +198,10 @@ class Kotlin2JsSourceSetProcessor(
             tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
-        build?.dependsOn(kotlinTaskName)
-        clean?.dependsOn("clean" + kotlinTaskName.capitalize())
-        kotlinTask.source(kotlinDirSet)
-
+        val taskName = kotlinTask.name
+        build?.dependsOn(taskName)
+        clean?.dependsOn("clean" + taskName.capitalize())
+        kotlinTask.source(kotlinSourceSet.kotlin)
         createCleanSourceMapTask()
     }
 
