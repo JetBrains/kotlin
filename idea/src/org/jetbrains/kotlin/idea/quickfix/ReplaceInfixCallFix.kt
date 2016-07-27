@@ -51,6 +51,11 @@ class ReplaceInfixCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpres
                     element.replace(newExpression)
                 }
             }
+            is KtCallExpression -> {
+                val newExpression = psiFactory.createExpressionByPattern(
+                        "$0?.invoke($1)", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
+                element.replace(newExpression)
+            }
             is KtBinaryExpression -> {
                 if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
@@ -78,9 +83,19 @@ class ReplaceInfixCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpres
                 if (expression.arrayExpression == null) return null
                 return ReplaceInfixCallFix(expression)
             }
-            val binaryExpression = expression.parent as? KtBinaryExpression ?: return null
-            if (binaryExpression.left == null || binaryExpression.right == null) return null
-            return ReplaceInfixCallFix(binaryExpression)
+            val parent = expression.parent
+            return when (parent) {
+                is KtBinaryExpression -> {
+                    if (parent.left == null || parent.right == null) null
+                    else ReplaceInfixCallFix(parent)
+                }
+                is KtCallExpression -> {
+                    if (parent.calleeExpression == null) null
+                    else if (parent.parent is KtQualifiedExpression) null
+                    else ReplaceInfixCallFix(parent)
+                }
+                else -> null
+            }
         }
     }
 }
