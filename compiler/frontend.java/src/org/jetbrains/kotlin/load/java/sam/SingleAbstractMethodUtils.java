@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.util.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.types.*;

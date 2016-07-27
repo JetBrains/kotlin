@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve
+package org.jetbrains.kotlin.resolve.calls.util
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getFunctionTypeArgumentProjections
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeProjection
 
-internal fun createValueParametersForInvokeInFunctionType(
+fun createValueParametersForInvokeInFunctionType(
         functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
 ): List<ValueParameterDescriptor> {
     return parameterTypes.mapIndexed { i, typeProjection ->

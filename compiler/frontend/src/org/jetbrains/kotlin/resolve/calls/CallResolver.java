@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.calls.util.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
