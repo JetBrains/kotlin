@@ -3,7 +3,6 @@ version '1.0'
 
 buildscript {
     ext.kotlin_version = '1.0.3'
-    ext.kotlinHome = "${System.env.HOME}/Library/Application Support/IdeaIC14/Kotlin"
 
     repositories {
         mavenCentral()
@@ -23,14 +22,17 @@ sourceSets {
     main.kotlin.srcDirs += 'src'
 }
 
-task copyKotlinJs(type: Copy) {
+task copySecondaryFiles(type: Copy) {
     from "${projectDir}/helpers/kotlin.js"
     into "${projectDir}/build/js/lib"
+
+    from "${projectDir}/helpers/package.json"
+    into "${projectDir}/build/js"
 }
 
-build.dependsOn copyKotlinJs
+build.dependsOn copySecondaryFiles
 
-compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/app.js"
+compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/main.js"
 compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/helpers/prefix.js"
 
 dependencies {
