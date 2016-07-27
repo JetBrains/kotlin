@@ -17,7 +17,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.internal.HasConvention
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtensionAware
@@ -45,7 +44,7 @@ import javax.inject.Inject
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
 
 abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
-        val project: ProjectInternal,
+        val project: Project,
         val javaBasePlugin: JavaBasePlugin,
         val sourceSet: SourceSet,
         val tasksProvider: KotlinTasksProvider,
@@ -114,7 +113,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 }
 
 class Kotlin2JvmSourceSetProcessor(
-        project: ProjectInternal,
+        project: Project,
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
@@ -181,7 +180,7 @@ class Kotlin2JvmSourceSetProcessor(
 }
 
 class Kotlin2JsSourceSetProcessor(
-        project: ProjectInternal,
+        project: Project,
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
@@ -234,18 +233,18 @@ class Kotlin2JsSourceSetProcessor(
 
 
 abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: ScriptHandler, val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider) : Plugin<Project> {
-    abstract fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
+    abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
 
-    public override fun apply(project: Project) {
+    override fun apply(project: Project) {
         val javaBasePlugin = project.plugins.apply(JavaBasePlugin::class.java)
         val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
+        configureSourceSetDefaults(project, javaBasePlugin, javaPluginConvention)
     }
 
-    open protected fun configureSourceSetDefaults(project: ProjectInternal,
+    open protected fun configureSourceSetDefaults(project: Project,
                                                   javaBasePlugin: JavaBasePlugin,
                                                   javaPluginConvention: JavaPluginConvention) {
         javaPluginConvention.sourceSets?.all(Action<SourceSet> { sourceSet ->
@@ -262,7 +261,7 @@ open class KotlinPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
-    override fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
+    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
             Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
 
     override fun apply(project: Project) {
@@ -277,7 +276,7 @@ open class Kotlin2JsPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
-    override fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
+    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
             Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
 }
 
@@ -289,9 +288,7 @@ open class KotlinAndroidPlugin(
 
     val log = Logging.getLogger(this.javaClass)
 
-    public override fun apply(p0: Project) {
-
-        val project = p0 as ProjectInternal
+    override fun apply(project: Project) {
         val ext = project.extensions.getByName("android") as BaseExtension
 
         val version = loadAndroidPluginVersion()
@@ -549,7 +546,7 @@ class SubpluginEnvironment(
     }
 }
 
-open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInternal) {
+open class GradleUtils(val scriptHandler: ScriptHandler, val project: Project) {
     public fun resolveDependencies(vararg coordinates: String): Collection<File> {
         val dependencyHandler: DependencyHandler = scriptHandler.dependencies
         val configurationsContainer: ConfigurationContainer = scriptHandler.configurations
