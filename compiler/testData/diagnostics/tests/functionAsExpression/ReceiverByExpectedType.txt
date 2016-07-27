@@ -1,0 +1,4 @@
+package
+
+public val test: kotlin.Unit
+public fun foo(/*0*/ f: kotlin.String.() -> kotlin.Int): kotlin.Unit
