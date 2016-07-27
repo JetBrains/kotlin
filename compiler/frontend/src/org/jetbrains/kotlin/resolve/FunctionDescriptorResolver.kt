@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
@@ -152,10 +149,12 @@ class FunctionDescriptorResolver(
 
         val receiverTypeRef = function.receiverTypeReference
         val receiverType =
-                if (receiverTypeRef != null)
+                if (receiverTypeRef != null) {
                     typeResolver.resolveType(innerScope, receiverTypeRef, trace, true)
-                else
-                    expectedFunctionType.getReceiverType()
+                }
+                else {
+                    if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
+                }
 
 
         val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
