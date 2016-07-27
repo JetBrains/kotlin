@@ -30,7 +30,6 @@ interface WithFileStubAndExtraDiagnostics: LightClassData {
 
 interface LightClassDataForKotlinClass: LightClassData {
     val classOrObject: KtClassOrObject
-    val jvmQualifiedName: FqName
 }
 
 object InvalidLightClassData: WithFileStubAndExtraDiagnostics, LightClassDataForKotlinClass {
@@ -39,8 +38,6 @@ object InvalidLightClassData: WithFileStubAndExtraDiagnostics, LightClassDataFor
     override val extraDiagnostics: Diagnostics
         get() = shouldNotBeCalled()
     override val classOrObject: KtClassOrObject
-        get() = shouldNotBeCalled()
-    override val jvmQualifiedName: FqName
         get() = shouldNotBeCalled()
 
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
@@ -52,14 +49,12 @@ data class KotlinFacadeLightClassData(
 ): LightClassData, WithFileStubAndExtraDiagnostics
 
 data class InnerKotlinClassLightClassData(
-        override val jvmQualifiedName: FqName,
         override val classOrObject: KtClassOrObject
 ): LightClassDataForKotlinClass
 
 data class OutermostKotlinClassLightClassData(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics,
-        override val jvmQualifiedName: FqName,
         override val classOrObject: KtClassOrObject,
         val allInnerClasses: Map<KtClassOrObject, InnerKotlinClassLightClassData>
 ): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics {

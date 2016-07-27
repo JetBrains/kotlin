@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassType
 import org.jetbrains.kotlin.name.FqName
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.sure
 
 abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
@@ -181,33 +179,19 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
             extraDiagnostics: Diagnostics): WithFileStubAndExtraDiagnostics {
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassData
 
-        val fqName = predictClassFqName(bindingContext, classDescriptor)
         val allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor)
 
         val innerClassesMap = ContainerUtil.newHashMap<KtClassOrObject, InnerKotlinClassLightClassData>()
         for (innerClassDescriptor in allInnerClasses) {
-            val declaration = descriptorToDeclaration(innerClassDescriptor)
-            if (declaration !is KtClassOrObject) continue
-
-            val innerLightClassData = InnerKotlinClassLightClassData(
-                    predictClassFqName(bindingContext, innerClassDescriptor),
-                    declaration)
-
-            innerClassesMap.put(declaration, innerLightClassData)
+            val declaration = descriptorToDeclaration(innerClassDescriptor) as? KtClassOrObject ?: continue
+            innerClassesMap.put(declaration, InnerKotlinClassLightClassData(declaration))
         }
 
         return OutermostKotlinClassLightClassData(
                 javaFileStub,
                 extraDiagnostics,
-                fqName,
                 classOrObject,
                 innerClassesMap)
-    }
-
-    private fun predictClassFqName(bindingContext: BindingContext, classDescriptor: ClassDescriptor): FqName {
-        val asmType = CodegenBinding.getAsmType(bindingContext, classDescriptor)
-        //noinspection ConstantConditions
-        return JvmClassName.byInternalName(asmType.className.replace('.', '/')).fqNameForClassNameWithoutDollars
     }
 
     override val files: Collection<KtFile>
