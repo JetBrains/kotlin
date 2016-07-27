@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
@@ -37,3 +38,14 @@ internal inline fun <reified T : Any> Any.addExtension(name: String, extension: 
 
 internal fun Any.findExtension(name: String): Any? =
         (this as ExtensionAware).extensions.findByName(name)
+
+
+internal fun Logger.kotlinDebug(message: String) {
+    this.debug("[KOTLIN] $message")
+}
+
+internal inline fun Logger.kotlinDebug(message: () -> String) {
+    if (isDebugEnabled) {
+        kotlinDebug(message())
+    }
+}
