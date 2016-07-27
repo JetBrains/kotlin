@@ -213,7 +213,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
         contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,
         resolutionFacade: ResolutionFacade,
-        predictableSmartCastsOnly: Boolean
+        stableSmartCastsOnly: Boolean
 ): Collection<KotlinType>? {
     val receiverExpression: KtExpression?
     when (this) {
@@ -225,7 +225,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
 
                     is DoubleColonLHS.Expression -> {
                         val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
-                        return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext, moduleDescriptor, predictableSmartCastsOnly)
+                        return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
                     }
                 }
             }
@@ -281,7 +281,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
     val dataFlowInfo = bindingContext.getDataFlowInfo(contextElement)
 
     return receiverValues.flatMap {
-        receiverValueTypes(it, dataFlowInfo, bindingContext, moduleDescriptor, predictableSmartCastsOnly)
+        receiverValueTypes(it, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
     }
 }
 
@@ -290,10 +290,10 @@ private fun receiverValueTypes(
         dataFlowInfo: DataFlowInfo,
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
-        predictableSmartCastsOnly: Boolean
+        stableSmartCastsOnly: Boolean
 ): List<KotlinType> {
     val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
-    return if (dataFlowValue.isPredictable || !predictableSmartCastsOnly) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
+    return if (dataFlowValue.isStable || !stableSmartCastsOnly) { // we don't include smart cast receiver types for "unstable" receiver value to mark members grayed
         SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
     }
     else {

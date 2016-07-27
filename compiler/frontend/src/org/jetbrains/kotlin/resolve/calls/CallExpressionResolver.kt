@@ -319,7 +319,7 @@ class CallExpressionResolver(
         var initialDataFlowInfoForArguments = context.dataFlowInfo
         val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
         val receiverCanBeNull = receiverDataFlowValue != null &&
-                                initialDataFlowInfoForArguments.getPredictableNullability(receiverDataFlowValue).canBeNull()
+                                initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
         if (receiverDataFlowValue != null && element.safe) {
             // Additional "receiver != null" information should be applied if we consider a safe call
             if (receiverCanBeNull) {

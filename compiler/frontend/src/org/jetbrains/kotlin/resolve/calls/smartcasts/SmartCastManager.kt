@@ -116,7 +116,7 @@ class SmartCastManager {
                 recordExpressionType: Boolean
         ) {
             if (KotlinBuiltIns.isNullableNothing(type)) return
-            if (dataFlowValue.isPredictable) {
+            if (dataFlowValue.isStable) {
                 trace.record(SMARTCAST, expression, type)
                 if (recordExpressionType) {
                     //TODO
@@ -154,10 +154,10 @@ class SmartCastManager {
                     if (expression != null) {
                         recordCastOrError(expression, possibleType, c.trace, dataFlowValue, recordExpressionType)
                     }
-                    else if (calleeExpression != null && dataFlowValue.isPredictable) {
+                    else if (calleeExpression != null && dataFlowValue.isStable) {
                         c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression, possibleType)
                     }
-                    return SmartCastResult(possibleType, dataFlowValue.isPredictable)
+                    return SmartCastResult(possibleType, dataFlowValue.isStable)
                 }
             }
 
@@ -183,7 +183,7 @@ class SmartCastManager {
                         recordCastOrError(expression, dataFlowValue.type, c.trace, dataFlowValue, recordExpressionType)
                     }
 
-                    return SmartCastResult(dataFlowValue.type, immanentlyNotNull || dataFlowValue.isPredictable)
+                    return SmartCastResult(dataFlowValue.type, immanentlyNotNull || dataFlowValue.isStable)
                 }
                 return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, calleeExpression, recordExpressionType)
             }

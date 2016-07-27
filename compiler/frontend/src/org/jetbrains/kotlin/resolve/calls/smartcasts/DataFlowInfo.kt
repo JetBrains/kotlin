@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import com.google.common.collect.ImmutableMap
 import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -31,18 +30,18 @@ interface DataFlowInfo {
     val completeTypeInfo: SetMultimap<DataFlowValue, KotlinType>
 
     /**
-     * Returns collected nullability for the given value, NOT taking its predictability into account.
+     * Returns collected nullability for the given value, NOT taking its stability into account.
      */
     fun getCollectedNullability(key: DataFlowValue): Nullability
 
     /**
-     * Returns collected nullability for the given value if it's predictable.
+     * Returns collected nullability for the given value if it's stable.
      * Otherwise basic value nullability is returned
      */
-    fun getPredictableNullability(key: DataFlowValue): Nullability
+    fun getStableNullability(key: DataFlowValue): Nullability
 
     /**
-     * Returns possible types for the given value, NOT taking its predictability into account.
+     * Returns possible types for the given value, NOT taking its stability into account.
      *
      * IMPORTANT: by default, the original (native) type for this value
      * are NOT included. So it's quite possible to get an empty set here.
@@ -50,13 +49,13 @@ interface DataFlowInfo {
     fun getCollectedTypes(key: DataFlowValue): Set<KotlinType>
 
     /**
-     * Returns possible types for the given value if it's predictable.
+     * Returns possible types for the given value if it's stable.
      * Otherwise, basic value type is returned.
      *
      * IMPORTANT: by default, the original (native) type for this value
      * are NOT included. So it's quite possible to get an empty set here.
      */
-    fun getPredictableTypes(key: DataFlowValue): Set<KotlinType>
+    fun getStableTypes(key: DataFlowValue): Set<KotlinType>
 
     /**
      * Call this function to clear all data flow information about

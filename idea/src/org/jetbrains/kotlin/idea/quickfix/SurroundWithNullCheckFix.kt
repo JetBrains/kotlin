@@ -67,7 +67,7 @@ class SurroundWithNullCheckFix(
                 else -> return null
             } as? KtReferenceExpression ?: return null
 
-            if (!nullableExpression.isPredictable()) return null
+            if (!nullableExpression.isStable()) return null
 
             return SurroundWithNullCheckFix(expression, nullableExpression)
         }
@@ -80,7 +80,7 @@ class SurroundWithNullCheckFix(
             val forExpression = nullableExpression.parent?.parent as? KtForExpression ?: return null
             if (forExpression.parent !is KtBlockExpression) return null
 
-            if (!nullableExpression.isPredictable()) return null
+            if (!nullableExpression.isStable()) return null
 
             return SurroundWithNullCheckFix(forExpression, nullableExpression)
         }
@@ -97,16 +97,16 @@ class SurroundWithNullCheckFix(
 
             if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
 
-            if (!nullableExpression.isPredictable()) return null
+            if (!nullableExpression.isStable()) return null
 
             return SurroundWithNullCheckFix(call, nullableExpression)
         }
     }
 }
 
-private fun KtExpression.isPredictable(): Boolean {
+private fun KtExpression.isStable(): Boolean {
     val context = this.analyze()
     val nullableType = this.getType(context) ?: return false
     val containingDescriptor = this.getResolutionScope(context, this.getResolutionFacade()).ownerDescriptor
-    return DataFlowValueFactory.createDataFlowValue(this, nullableType, context, containingDescriptor).isPredictable
+    return DataFlowValueFactory.createDataFlowValue(this, nullableType, context, containingDescriptor).isStable
 }

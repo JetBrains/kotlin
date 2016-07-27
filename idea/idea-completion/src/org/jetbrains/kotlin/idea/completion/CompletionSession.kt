@@ -439,7 +439,7 @@ abstract class CompletionSession(
 
         var receiverTypes = callTypeAndReceiver.receiverTypes(
                 bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
-                predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
+                stableSmartCastsOnly = true /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes?.map { it.makeNotNullable() }

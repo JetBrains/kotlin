@@ -72,7 +72,7 @@ interface IdentifierInfo {
             val safe: Boolean,
             val receiverType: KotlinType?
     ) : IdentifierInfo {
-        override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
+        override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind == STABLE_VALUE) selectorInfo.kind else OTHER
 
         override fun equals(other: Any?) = other is Qualified && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
 

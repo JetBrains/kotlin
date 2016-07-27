@@ -316,25 +316,25 @@ object DataFlowValueFactory {
         if (!variableDescriptor.isVar) return STABLE_VALUE
         if (variableDescriptor is SyntheticFieldDescriptor) return MUTABLE_PROPERTY
 
-        // Local variable classification: PREDICTABLE or UNPREDICTABLE
+        // Local variable classification: STABLE or CAPTURED
         val preliminaryVisitor = PreliminaryDeclarationVisitor.getVisitorByVariable(variableDescriptor, bindingContext)
-                                 ?: return UNPREDICTABLE_VARIABLE
-        // A case when we just analyse an expression alone: counts as unpredictable
+                                 // A case when we just analyse an expression alone: counts as captured
+                                 ?: return CAPTURED_VARIABLE
 
         // Analyze who writes variable
-        // If there is no writer: predictable
+        // If there is no writer: stable
         val writers = preliminaryVisitor.writers(variableDescriptor)
-        if (writers.isEmpty()) return PREDICTABLE_VARIABLE
+        if (writers.isEmpty()) return STABLE_VARIABLE
 
-        // If access element is inside closure: unpredictable
+        // If access element is inside closure: captured
         val variableContainingDeclaration = getVariableContainingDeclaration(variableDescriptor)
-        if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) return UNPREDICTABLE_VARIABLE
+        if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) return CAPTURED_VARIABLE
 
-        // Otherwise, predictable iff considered position is BEFORE all writers except declarer itself
+        // Otherwise, stable iff considered position is BEFORE all writers except declarer itself
         return if (isAccessedBeforeAllClosureWriters(variableContainingDeclaration, writers, bindingContext, accessElement))
-            PREDICTABLE_VARIABLE
+            STABLE_VARIABLE
         else
-            UNPREDICTABLE_VARIABLE
+            CAPTURED_VARIABLE
     }
 
     /**

@@ -38,7 +38,7 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
         // Local value, or parameter, or private / internal member value without open / custom getter,
         // or protected / public member value from the same module without open / custom getter
         // Smart casts are completely safe
-        STABLE_VALUE("stable"),
+        STABLE_VALUE("stable val"),
         // Member value with open / custom getter
         // Smart casts are not safe
         PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),
@@ -47,10 +47,10 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
         ALIEN_PUBLIC_PROPERTY("alien public", "public API property declared in different module"),
         // Local variable not yet captured by a changing closure
         // Smart casts are safe but possible changes in loops / closures ahead must be taken into account
-        PREDICTABLE_VARIABLE("predictable", "local variable that can be changed since the check in a loop"),
+        STABLE_VARIABLE("stable var", "local variable that can be changed since the check in a loop"),
         // Local variable already captured by a changing closure
         // Smart casts are not safe
-        UNPREDICTABLE_VARIABLE("unpredictable", "local variable that is captured by a changing closure"),
+        CAPTURED_VARIABLE("captured var", "local variable that is captured by a changing closure"),
         // Member variable regardless of its visibility
         // Smart casts are not safe
         MUTABLE_PROPERTY("member", "mutable property that could have been changed by this time"),
@@ -59,17 +59,13 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
         OTHER("other", "complex expression");
 
         override fun toString() = str
-
-        fun isStable() = this == STABLE_VALUE
     }
 
     /**
-     * Both stable values and predictable local variables are considered "predictable".
-     * Predictable means here we do not expect some sudden change of their values,
+     * Stable means here we do not expect some sudden change of their values,
      * like accessing mutable properties in another thread, so smart casts can be used safely.
      */
-    val isPredictable = (kind == Kind.STABLE_VALUE || kind == Kind.PREDICTABLE_VARIABLE)
-        @JvmName("isPredictable") get
+    val isStable = (kind == Kind.STABLE_VALUE || kind == Kind.STABLE_VARIABLE)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

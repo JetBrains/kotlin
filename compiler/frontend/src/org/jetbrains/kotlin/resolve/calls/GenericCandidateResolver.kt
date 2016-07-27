@@ -195,7 +195,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         if (deparenthesizedArgument == null || type == null) return type
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
-        if (!dataFlowValue.isPredictable) return type
+        if (!dataFlowValue.isStable) return type
 
         val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type

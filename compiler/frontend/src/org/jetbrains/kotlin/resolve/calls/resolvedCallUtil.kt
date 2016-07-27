@@ -82,7 +82,7 @@ private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionConte
     if (!call.isSafeCall()) return false
     val receiverValue = getExplicitReceiverValue()?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
                         ?: return false
-    return context.dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()
+    return context.dataFlowInfo.getStableNullability(receiverValue).canBeNull()
 }
 
 fun ResolvedCall<*>.makeNullableTypeIfSafeReceiver(type: KotlinType?, context: CallResolutionContext<*>) =

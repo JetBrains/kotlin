@@ -341,7 +341,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, c);
         Collection<KotlinType> possibleTypes = Sets.newHashSet(type);
-        possibleTypes.addAll(dataFlowInfo.getPredictableTypes(dataFlowValue));
+        possibleTypes.addAll(dataFlowInfo.getStableTypes(dataFlowValue));
         return possibleTypes;
     }
 

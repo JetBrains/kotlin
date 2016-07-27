@@ -142,7 +142,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // Receivers are normally analyzed at resolve, with an exception of KT-10175
         if (type != null && !type.isError() && !isLValueOrUnsafeReceiver(expression)) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
-            Nullability nullability = context.dataFlowInfo.getPredictableNullability(dataFlowValue);
+            Nullability nullability = context.dataFlowInfo.getStableNullability(dataFlowValue);
             if (!nullability.canBeNonNull() && nullability.canBeNull()) {
                 if (isDangerousWithNull(expression, context)) {
                     context.trace.report(ALWAYS_NULL.on(expression));
@@ -878,7 +878,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private static boolean isKnownToBeNotNull(KtExpression expression, KotlinType jetType, ExpressionTypingContext context) {
         DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
-        return !context.dataFlowInfo.getPredictableNullability(dataFlowValue).canBeNull();
+        return !context.dataFlowInfo.getStableNullability(dataFlowValue).canBeNull();
     }
 
     /**
@@ -1221,7 +1221,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             boolean jumpInRight = KotlinBuiltIns.isNothing(rightType);
             DataFlowValue nullValue = DataFlowValue.nullValue(components.builtIns);
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
-            if (jumpInRight || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
+            if (jumpInRight || !rightDataFlowInfo.getStableNullability(leftValue).canBeNull()) {
                 dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue);
                 if (left instanceof KtBinaryExpressionWithTypeRHS) {
                     dataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, dataFlowInfo, context);
@@ -1360,7 +1360,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         new Function1<DataFlowValue, Nullability>() {
                             @Override
                             public Nullability invoke(DataFlowValue value) {
-                                return context.dataFlowInfo.getPredictableNullability(value);
+                                return context.dataFlowInfo.getStableNullability(value);
                             }
                         });
             }

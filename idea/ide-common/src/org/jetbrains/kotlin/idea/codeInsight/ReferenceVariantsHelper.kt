@@ -186,7 +186,7 @@ class ReferenceVariantsHelper(
                 listOf(useReceiverType)
             }
             else {
-                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)!!
+                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, stableSmartCastsOnly = false)!!
             }
 
             descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
@@ -244,7 +244,7 @@ class ReferenceVariantsHelper(
                 listOf(useReceiverType)
             }
             else {
-                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)!!
+                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, stableSmartCastsOnly = false)!!
             }
 
             val constructorFilter = { descriptor: ClassDescriptor -> if (isStatic) true else descriptor.isInner }

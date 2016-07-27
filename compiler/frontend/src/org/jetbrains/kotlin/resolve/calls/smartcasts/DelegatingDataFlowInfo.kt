@@ -75,10 +75,10 @@ internal class DelegatingDataFlowInfo private constructor(
 
     override fun getCollectedNullability(key: DataFlowValue) = getNullability(key, false)
 
-    override fun getPredictableNullability(key: DataFlowValue) = getNullability(key, true)
+    override fun getStableNullability(key: DataFlowValue) = getNullability(key, true)
 
-    private fun getNullability(key: DataFlowValue, predictableOnly: Boolean) =
-            if (predictableOnly && !key.isPredictable) {
+    private fun getNullability(key: DataFlowValue, stableOnly: Boolean) =
+            if (stableOnly && !key.isStable) {
                 key.immanentNullability
             }
             else {
@@ -132,10 +132,10 @@ internal class DelegatingDataFlowInfo private constructor(
         return enrichedTypes
     }
 
-    override fun getPredictableTypes(key: DataFlowValue) = getPredictableTypes(key, true)
+    override fun getStableTypes(key: DataFlowValue) = getStableTypes(key, true)
 
-    private fun getPredictableTypes(key: DataFlowValue, enrichWithNotNull: Boolean) =
-            if (!key.isPredictable) LinkedHashSet() else getCollectedTypes(key, enrichWithNotNull)
+    private fun getStableTypes(key: DataFlowValue, enrichWithNotNull: Boolean) =
+            if (!key.isStable) LinkedHashSet() else getCollectedTypes(key, enrichWithNotNull)
 
     /**
      * Call this function to clear all data flow information about
@@ -151,11 +151,11 @@ internal class DelegatingDataFlowInfo private constructor(
 
     override fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
         val nullability = Maps.newHashMap<DataFlowValue, Nullability>()
-        val nullabilityOfB = getPredictableNullability(b)
+        val nullabilityOfB = getStableNullability(b)
         putNullability(nullability, a, nullabilityOfB, affectReceiver = false)
 
         val newTypeInfo = newTypeInfo()
-        var typesForB = getPredictableTypes(b)
+        var typesForB = getStableTypes(b)
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A, there is no reason to do it
         // because own type is not saved in this set
@@ -170,8 +170,8 @@ internal class DelegatingDataFlowInfo private constructor(
 
     override fun equate(a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean): DataFlowInfo {
         val builder = Maps.newHashMap<DataFlowValue, Nullability>()
-        val nullabilityOfA = getPredictableNullability(a)
-        val nullabilityOfB = getPredictableNullability(b)
+        val nullabilityOfA = getStableNullability(a)
+        val nullabilityOfB = getStableNullability(b)
 
         var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB)) or
                       putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA))
@@ -179,8 +179,8 @@ internal class DelegatingDataFlowInfo private constructor(
         // NB: == has no guarantees of type equality, see KT-11280 for the example
         val newTypeInfo = newTypeInfo()
         if (sameTypes) {
-            newTypeInfo.putAll(a, getPredictableTypes(b, false))
-            newTypeInfo.putAll(b, getPredictableTypes(a, false))
+            newTypeInfo.putAll(a, getStableTypes(b, false))
+            newTypeInfo.putAll(b, getStableTypes(a, false))
             if (a.type != b.type) {
                 // To avoid recording base types of own type
                 if (!a.type.isSubtypeOf(b.type)) {
@@ -226,8 +226,8 @@ internal class DelegatingDataFlowInfo private constructor(
 
     override fun disequate(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
         val builder = Maps.newHashMap<DataFlowValue, Nullability>()
-        val nullabilityOfA = getPredictableNullability(a)
-        val nullabilityOfB = getPredictableNullability(b)
+        val nullabilityOfA = getStableNullability(a)
+        val nullabilityOfB = getStableNullability(b)
 
         val changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert())) or
                       putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()))

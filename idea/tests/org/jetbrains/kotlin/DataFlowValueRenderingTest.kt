@@ -47,7 +47,7 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
 
     private fun DataFlowValue.render() =
             // If it is not a stable identifier, there's no point in rendering it
-            if (!isPredictable) null
+            if (!isStable) null
             else identifierInfo.render()
 
     override fun getTestDataPath() : String {
