@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.nonStaticOuterClasses
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class MakeConstructorParameterPropertyFix(
         element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
@@ -49,6 +47,12 @@ class MakeConstructorParameterPropertyFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.firstChild)
         element.addModifier(KtTokens.PRIVATE_KEYWORD)
+        element.visibilityModifier()?.let { private ->
+            editor?.apply {
+                selectionModel.setSelection(private.startOffset, private.endOffset)
+                caretModel.moveToOffset(private.endOffset)
+            }
+        }
     }
 
     companion object Factory : KotlinIntentionActionsFactory() {
