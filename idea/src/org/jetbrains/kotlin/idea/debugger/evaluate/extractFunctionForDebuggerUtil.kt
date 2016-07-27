@@ -22,8 +22,6 @@ import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -361,9 +359,5 @@ private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {
 
 private fun wrapInRunFun(expression: KtExpression): PsiElement? {
     val replacedBody = replaceByRunFunction(expression)
-
-    // Increment modification tracker to clear ResolveCache after changes in function body
-    (PsiManager.getInstance(expression.project).modificationTracker as PsiModificationTrackerImpl).incCounter()
-
     return replacedBody.lambdaArguments.first().getLambdaExpression().bodyExpression?.firstChild
 }
