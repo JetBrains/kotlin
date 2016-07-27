@@ -3,14 +3,17 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.initialization.dsl.ScriptHandler
+import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import javax.inject.Inject
 
 // TODO: simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
 
-abstract class KotlinBasePluginWrapper: Plugin<Project> {
+abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver): Plugin<Project> {
 
     val log = Logging.getLogger(this.javaClass)
 
@@ -55,16 +58,19 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
     }
 }
 
-open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
-    override fun getPlugin(scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider())
+open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(scriptHandler: ScriptHandler) =
+            KotlinPlugin(scriptHandler, KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
-open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, AndroidTasksProvider())
+open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(scriptHandler: ScriptHandler) =
+            KotlinAndroidPlugin(scriptHandler, AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
-open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider())
+open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(scriptHandler: ScriptHandler) =
+            Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver))
 }
 
 fun Logger.kotlinDebug(message: String) {
