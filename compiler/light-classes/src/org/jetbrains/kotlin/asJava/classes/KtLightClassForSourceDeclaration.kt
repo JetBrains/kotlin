@@ -357,15 +357,16 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 return KtLightClassForAnonymousDeclaration(classOrObject)
             }
 
+            if (isEnumEntryWithoutBody(classOrObject)) {
+                return null
+            }
+
             if (classOrObject.isLocal()) {
                 if (classOrObject.containingFile.virtualFile == null) return null
 
                 return KtLightClassForLocalDeclaration(classOrObject)
             }
 
-            if (isEnumEntryWithoutBody(classOrObject)) {
-                return null
-            }
 
             return KtLightClassImpl(classOrObject)
         }
