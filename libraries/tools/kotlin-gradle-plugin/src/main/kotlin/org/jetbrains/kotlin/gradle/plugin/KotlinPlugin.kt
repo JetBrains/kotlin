@@ -16,10 +16,8 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.initialization.dsl.ScriptHandler
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -73,15 +71,13 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         doTargetSpecificProcessing()
     }
 
-    private fun createKotlinSourceSet(): KotlinSourceSet? =
-            if (sourceSet is HasConvention) {
-                logger.kotlinDebug("Creating KotlinSourceSet for source set ${sourceSet}")
-                val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
-                sourceSet.convention.plugins.put(pluginName, kotlinSourceSet)
-                kotlinSourceSet
-            } else {
-                null
-            }
+    private fun createKotlinSourceSet(): KotlinSourceSet {
+        logger.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
+        val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
+        kotlinSourceSet.kotlin.srcDir(project.file(sourceRootDir))
+        sourceSet.addExtension(pluginName, kotlinSourceSet)
+        return kotlinSourceSet
+    }
 
     private fun createKotlinDirSet(): SourceDirectorySet? {
         val srcDir = project.file(sourceRootDir)
@@ -305,23 +301,18 @@ open class KotlinAndroidPlugin(
         val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
 
         ext.sourceSets.all { sourceSet ->
-            if (sourceSet is HasConvention) {
-                val sourceSetName = sourceSet.name
-                val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSetName)
-                sourceSet.convention.plugins.put("kotlin", kotlinSourceSet)
-                val kotlinDirSet = kotlinSourceSet.kotlin
-                kotlinDirSet.srcDir(project.file("src/$sourceSetName/kotlin"))
+            log.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
+            val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
+            kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
+            sourceSet.addExtension("kotlin", kotlinSourceSet)
 
-                aptConfigurations.put(sourceSet.name,
-                        project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
-
-                project.logger.kotlinDebug("Created kotlin sourceDirectorySet at ${kotlinDirSet.srcDirs}")
-            }
+            aptConfigurations.put(sourceSet.name,
+                    project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
         }
 
-        val extensions = (ext as ExtensionAware).extensions
-        extensions.add("kotlinOptions", K2JVMCompilerArguments::class.java)
-        AndroidGradleWrapper.setNoJdk(extensions.getByName("kotlinOptions"))
+        val kotlinOptions = K2JVMCompilerArguments()
+        kotlinOptions.noJdk = true
+        ext.addExtension("kotlinOptions", kotlinOptions)
 
         project.createKaptExtension()
 
@@ -333,7 +324,7 @@ open class KotlinAndroidPlugin(
 
                 val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
                 processVariantData(variantManager.variantDataList, project,
-                        ext, plugin, aptConfigurations)
+                        ext, plugin, aptConfigurations, kotlinOptions)
             }
         }
     }
@@ -343,11 +334,10 @@ open class KotlinAndroidPlugin(
             project: Project,
             androidExt: BaseExtension,
             androidPlugin: BasePlugin,
-            aptConfigurations: Map<String, Configuration>
+            aptConfigurations: Map<String, Configuration>,
+            kotlinOptions: K2JVMCompilerArguments
     ) {
         val logger = project.logger
-        val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
-
         val subpluginEnvironment = loadSubplugins(project)
 
         for (variantData in variantDataList) {
@@ -365,9 +355,7 @@ open class KotlinAndroidPlugin(
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
 
             kotlinTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-$kotlinTaskName")
-            if (kotlinOptions != null) {
-                kotlinTask.setProperty("kotlinOptions", kotlinOptions)
-            }
+            kotlinTask.kotlinOptions = kotlinOptions
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
@@ -411,7 +399,7 @@ open class KotlinAndroidPlugin(
         val logger = kotlinTask.project.logger
 
         for (provider in variantData.sourceProviders) {
-            val kotlinSourceSet = getExtension<KotlinSourceSet>(provider, "kotlin")
+            val kotlinSourceSet = provider.findExtension("kotlin") as? KotlinSourceSet ?: continue
             kotlinTask.source(kotlinSourceSet.kotlin)
         }
 
@@ -423,17 +411,6 @@ open class KotlinAndroidPlugin(
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
         get() = variantConfiguration.sortedSourceProviders
-
-    fun <T> getExtension(obj: Any, extensionName: String): T {
-        if (obj is ExtensionAware) {
-            val result = obj.extensions.findByName(extensionName)
-            if (result != null) {
-                return result as T
-            }
-        }
-        val result = (obj as HasConvention).convention.plugins[extensionName]
-        return result as T
-    }
 }
 
 private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, kotlinAfterJavaTask: KotlinCompile?, logger: Logger) {

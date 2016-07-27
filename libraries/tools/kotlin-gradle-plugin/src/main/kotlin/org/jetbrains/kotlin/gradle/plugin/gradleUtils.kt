@@ -2,10 +2,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.AbstractTask
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
-import kotlin.reflect.KProperty
 
 internal fun AbstractCompile.appendClasspathDynamically(file: File) {
     var added = false
@@ -32,3 +31,9 @@ internal fun Task.finalizedByIfNotFailed(finalizer: Task) {
 fun AbstractCompile.mapClasspath(fn: ()->FileCollection) {
     conventionMapping.map("classpath", fn)
 }
+
+internal inline fun <reified T : Any> Any.addExtension(name: String, extension: T) =
+        (this as ExtensionAware).extensions.add(name, extension)
+
+internal fun Any.findExtension(name: String): Any? =
+        (this as ExtensionAware).extensions.findByName(name)
