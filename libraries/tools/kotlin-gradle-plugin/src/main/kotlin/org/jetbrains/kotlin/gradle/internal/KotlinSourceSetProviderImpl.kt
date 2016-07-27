@@ -5,35 +5,30 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
 import java.lang.reflect.Constructor
 
-interface KotlinSourceSet {
-
-    fun getKotlin(): SourceDirectorySet
-    fun kotlin(configureClosure: Closure<Any?>?): KotlinSourceSet
-
+internal class KotlinSourceSetProviderImpl constructor(private val fileResolver: FileResolver) : KotlinSourceSetProvider {
+    override fun create(displayName: String): KotlinSourceSet =
+            KotlinSourceSetImpl(displayName, fileResolver)
 }
 
-
-open class KotlinSourceSetImpl(displayName: String?, resolver: FileResolver?): KotlinSourceSet {
-
-    private val kotlin: DefaultSourceDirectorySet = createDefaultSourceDirectorySet(displayName + " Kotlin source", resolver)
+private class KotlinSourceSetImpl(displayName: String, resolver: FileResolver) : KotlinSourceSet {
+    override val kotlin: SourceDirectorySet =
+            createDefaultSourceDirectorySet(displayName + " Kotlin source", resolver)
 
     init {
         kotlin.filter?.include("**/*.java", "**/*.kt")
     }
 
-    override fun getKotlin(): SourceDirectorySet {
-        return kotlin
-    }
-
     override fun kotlin(configureClosure: Closure<Any?>?): KotlinSourceSet {
-        ConfigureUtil.configure(configureClosure, getKotlin())
+        ConfigureUtil.configure(configureClosure, kotlin)
         return this
     }
 }
 
-private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> DefaultSourceDirectorySet = run {
+private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> SourceDirectorySet = run {
     val klass = DefaultSourceDirectorySet::class.java
     val defaultConstructor = klass.constructorOrNull(String::class.java, FileResolver::class.java)
 

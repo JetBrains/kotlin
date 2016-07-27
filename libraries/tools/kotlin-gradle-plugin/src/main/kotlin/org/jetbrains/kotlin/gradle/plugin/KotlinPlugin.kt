@@ -30,8 +30,6 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -51,6 +49,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val javaBasePlugin: JavaBasePlugin,
         val sourceSet: SourceSet,
         val tasksProvider: KotlinTasksProvider,
+        val kotlinSourceSetProvider: KotlinSourceSetProvider,
         val pluginName: String,
         val compileTaskNameSuffix: String,
         val taskDescription: String
@@ -78,7 +77,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     private fun createKotlinSourceSet(): KotlinSourceSet? =
             if (sourceSet is HasConvention) {
                 logger.kotlinDebug("Creating KotlinSourceSet for source set ${sourceSet}")
-                val kotlinSourceSet = KotlinSourceSetImpl(sourceSet.name, project.fileResolver)
+                val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
                 sourceSet.convention.plugins.put(pluginName, kotlinSourceSet)
                 kotlinSourceSet
             } else {
@@ -88,7 +87,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     private fun createKotlinDirSet(): SourceDirectorySet? {
         val srcDir = project.file(sourceRootDir)
         logger.kotlinDebug("Creating Kotlin SourceDirectorySet for source set $kotlinSourceSet with src dir $srcDir")
-        val kotlinDirSet = kotlinSourceSet?.getKotlin()
+        val kotlinDirSet = kotlinSourceSet?.kotlin
         kotlinDirSet?.srcDir(srcDir)
         return kotlinDirSet
     }
@@ -119,9 +118,10 @@ class Kotlin2JvmSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<KotlinCompile>(
-        project, javaBasePlugin, sourceSet, tasksProvider,
+        project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         pluginName = "kotlin",
         compileTaskNameSuffix = "kotlin",
         taskDescription = "Compiles the $sourceSet.kotlin."
@@ -185,9 +185,10 @@ class Kotlin2JsSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
-        tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-        project, javaBasePlugin, sourceSet, tasksProvider,
+        project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         pluginName = "kotlin2js",
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
@@ -232,7 +233,7 @@ class Kotlin2JsSourceSetProcessor(
 }
 
 
-abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: ScriptHandler, val tasksProvider: KotlinTasksProvider) : Plugin<Project> {
+abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: ScriptHandler, val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider) : Plugin<Project> {
     abstract fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
 
     public override fun apply(project: Project) {
@@ -256,9 +257,13 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
 }
 
 
-open class KotlinPlugin @Inject constructor(scriptHandler: ScriptHandler, tasksProvider: KotlinTasksProvider) : AbstractKotlinPlugin(scriptHandler, tasksProvider) {
+open class KotlinPlugin(
+        scriptHandler: ScriptHandler,
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider
+) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
     override fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
-            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider)
+            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
 
     override fun apply(project: Project) {
         project.createKaptExtension()
@@ -267,13 +272,20 @@ open class KotlinPlugin @Inject constructor(scriptHandler: ScriptHandler, tasksP
 }
 
 
-open class Kotlin2JsPlugin @Inject constructor(scriptHandler: ScriptHandler, tasksProvider: KotlinTasksProvider) : AbstractKotlinPlugin(scriptHandler, tasksProvider) {
+open class Kotlin2JsPlugin(
+        scriptHandler: ScriptHandler,
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider
+) : AbstractKotlinPlugin(scriptHandler, tasksProvider, kotlinSourceSetProvider) {
     override fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
-            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider)
+            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, scriptHandler, tasksProvider, kotlinSourceSetProvider)
 }
 
-
-open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHandler, val tasksProvider: KotlinTasksProvider) : Plugin<Project> {
+open class KotlinAndroidPlugin(
+        val scriptHandler: ScriptHandler,
+        val tasksProvider: KotlinTasksProvider,
+        private val kotlinSourceSetProvider: KotlinSourceSetProvider
+) : Plugin<Project> {
 
     val log = Logging.getLogger(this.javaClass)
 
@@ -298,9 +310,9 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         ext.sourceSets.all { sourceSet ->
             if (sourceSet is HasConvention) {
                 val sourceSetName = sourceSet.name
-                val kotlinSourceSet = KotlinSourceSetImpl(sourceSetName, project.fileResolver)
+                val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSetName)
                 sourceSet.convention.plugins.put("kotlin", kotlinSourceSet)
-                val kotlinDirSet = kotlinSourceSet.getKotlin()
+                val kotlinDirSet = kotlinSourceSet.kotlin
                 kotlinDirSet.srcDir(project.file("src/$sourceSetName/kotlin"))
 
                 aptConfigurations.put(sourceSet.name,
@@ -403,8 +415,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
         for (provider in variantData.sourceProviders) {
             val kotlinSourceSet = getExtension<KotlinSourceSet>(provider, "kotlin")
-            val kotlinSourceDirectorySet = kotlinSourceSet.getKotlin()
-            kotlinTask.source(kotlinSourceDirectorySet)
+            kotlinTask.source(kotlinSourceSet.kotlin)
         }
 
         for (javaSrcDir in AndroidGradleWrapper.getJavaSources(variantData)) {
