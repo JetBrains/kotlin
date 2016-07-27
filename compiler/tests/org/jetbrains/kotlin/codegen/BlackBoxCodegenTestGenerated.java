@@ -11273,6 +11273,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInSpecificCollectionIndices.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("kt13241_Array.kt")
+            public void testKt13241_Array() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_Array.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt13241_CharSequence.kt")
+            public void testKt13241_CharSequence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_CharSequence.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt13241_Collection.kt")
+            public void testKt13241_Collection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_Collection.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/literal")
