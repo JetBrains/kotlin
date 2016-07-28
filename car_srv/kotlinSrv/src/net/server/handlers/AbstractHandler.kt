@@ -1,4 +1,6 @@
-package server.handlers
+package net.server.handlers
+
+import trimBuffer
 
 /**
  * Created by user on 7/27/16.
@@ -16,25 +18,23 @@ abstract class AbstractHandler(protoDecoder: dynamic, protoEncoder: dynamic) {
 
     fun execute(data: List<Byte>, response: dynamic) {
 
-        val message = protoDecoder.decode(data.toByteArray())
+
+        val message = if (protoDecoder != null) protoDecoder.decode(data.toByteArray()) else null
         val resultMessage: dynamic = {}
         js("resultMessage = {}")//todo bad?
         val afterExecute: () -> Unit = {
-            val protoEn = this.protoEncoder//temporarily:)
-            val resultMsg = resultMessage
-            val resultObject = js("new protoEn(resultMsg)")
-
-            val resultBuffer = resultObject.encode()
-            val byteArray = ByteArray(resultBuffer.limit);
-            for (i in 0..resultBuffer.limit - 1) {
-                byteArray[i] = resultBuffer.buffer[i]
+            if (this.protoEncoder != null) {
+                val protoEn = this.protoEncoder//temporarily:)
+                val resultMsg = resultMessage
+                val resultObject = js("new protoEn(resultMsg)")
+                val resultBuffer = resultObject.encode()
+                response.write(trimBuffer(resultBuffer.buffer, resultBuffer.limit))
             }
-            response.write(js("new Buffer(byteArray)"))
             response.end()
         }
-        makeResult(message, resultMessage, afterExecute)
+        makeResponse(message, resultMessage, afterExecute)
     }
 
-    abstract fun makeResult(message: dynamic, resultMessage: dynamic, finalCallback: () -> Unit)
+    abstract fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit)
 
 }

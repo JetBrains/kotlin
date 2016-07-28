@@ -1,9 +1,9 @@
-package server.handlers.rc
+package net.server.handlers.rc
 
-import carControl.RouteExecutorImpl
-import server.handlers.AbstractHandler
-import thisCar
+import MicroController
 import carControl.RouteExecutorImpl.MoveDirection
+import exceptions.RcControlException
+import net.server.handlers.AbstractHandler
 
 /**
  * Created by user on 7/27/16.
@@ -12,10 +12,9 @@ class Control : AbstractHandler {
 
     constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
 
-    override fun makeResult(message: dynamic, resultMessage: dynamic, finalCallback: () -> Unit) {
+    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
         val commandNumber = message.command
-        resultMessage.code = 0
-        resultMessage.errorMsg = ""
+        val sid = message.sid
         val command = when (commandNumber) {
             protoDecoder.Command.stop -> {
                 MoveDirection.STOP
@@ -34,7 +33,18 @@ class Control : AbstractHandler {
             }
             else -> MoveDirection.STOP
         }
-        thisCar.move(command, 0.0, {})
+        val resultCode:Int
+        val resultMsg:String
+        try {
+            MicroController.instance.RcMove(command, sid)
+            resultCode = 0
+            resultMsg = ""
+        } catch (e: RcControlException) {
+            resultCode = 12
+            resultMsg = "incorrect remote control sid"
+        }
+        responseMessage.code = resultCode
+        responseMessage.errorMsg = resultMsg
         finalCallback.invoke()
     }
 }
