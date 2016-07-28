@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -93,13 +94,15 @@ class SurroundWithNullCheckFix(
             val nullableExpression = typeMismatch.psiElement as? KtReferenceExpression ?: return null
             val argument = nullableExpression.parent as? KtValueArgument ?: return null
             val call = argument.getParentOfType<KtCallExpression>(true) ?: return null
-            if (call.parent !is KtBlockExpression) return null
+
+            val rootCall = call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
+            if (rootCall.parent !is KtBlockExpression) return null
 
             if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
 
             if (!nullableExpression.isStable()) return null
 
-            return SurroundWithNullCheckFix(call, nullableExpression)
+            return SurroundWithNullCheckFix(rootCall, nullableExpression)
         }
     }
 }
