@@ -1,4 +1,4 @@
-import client.Client
+import clientClasses.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import java.io.ByteArrayOutputStream
