@@ -27,6 +27,7 @@ import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -339,7 +340,7 @@ fun getStepOverPosition(
         }
 
         return try {
-            nextLocation.sourceName("Kotlin") == file.name
+            nextLocation.sourceName(KOTLIN_STRATA_NAME) == file.name
         }
         catch(e: AbsentInformationException) {
             return true
