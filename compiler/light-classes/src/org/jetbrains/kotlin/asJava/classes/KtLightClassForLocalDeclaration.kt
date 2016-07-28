@@ -36,7 +36,7 @@ open class KtLightClassForLocalDeclaration(
 
     override fun getParent() = _parent
 
-    private val _parent: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION, this::computeParent)
+    private val _parent: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeParent() }
 
     private fun computeParent(): PsiElement? {
         fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
