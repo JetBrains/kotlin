@@ -133,8 +133,9 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
     override fun resolve(script: ScriptContents,
                          environment: Map<String, Any?>?,
+                         report: (ScriptDependenciesResolverEx.ReportSeverity, String, ScriptContents.Position?) -> Unit,
                          previousDependencies: KotlinScriptExternalDependencies?
-    ): KotlinScriptExternalDependencies?
+    ): Future<KotlinScriptExternalDependencies?>
     {
         val cp = script.annotations.flatMap {
             when (it) {
@@ -153,7 +154,7 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
         return object : KotlinScriptExternalDependencies {
             override val classpath: Iterable<File> = classpathFromClassloader() + cp
             override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
-        }
+        }.asFuture()
     }
 
     private fun classpathFromClassloader(): List<File> =

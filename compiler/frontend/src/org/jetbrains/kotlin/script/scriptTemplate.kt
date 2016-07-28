@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.*
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = "*.\\.kts"
@@ -50,17 +52,34 @@ annotation class ScriptFilePattern(val pattern: String)
 annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
 
 interface ScriptContents {
+
+    data class Position(val line: Int, val col: Int)
+
     val file: File?
     val annotations: Iterable<Annotation>
     val text: CharSequence?
 }
 
+class PseudoFuture<T>(private val value: T): Future<T> {
+    override fun get(): T = value
+    override fun get(p0: Long, p1: TimeUnit): T  = value
+    override fun cancel(p0: Boolean): Boolean = false
+    override fun isDone(): Boolean = true
+    override fun isCancelled(): Boolean = false
+}
+
+fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
+
 // TODO: rename to just ScriptDependenciesResolver as soon as current deprecated one will be dropped
 interface ScriptDependenciesResolverEx {
+
+    enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
+
     fun resolve(script: ScriptContents,
                 environment: Map<String, Any?>?,
-                previousDependencies: KotlinScriptExternalDependencies? = null
-    ): KotlinScriptExternalDependencies? = null
+                report: (ReportSeverity, String, ScriptContents.Position?) -> Unit,
+                previousDependencies: KotlinScriptExternalDependencies?
+    ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
 @Deprecated("Use new ScriptDependenciesResolverEx")
@@ -108,14 +127,16 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
         private val resolver by lazy { resolverAnn?.resolver?.primaryConstructor?.call() }
         override fun resolve(script: ScriptContents,
                              environment: Map<String, Any?>?,
+                             report: (ScriptDependenciesResolverEx.ReportSeverity, String, ScriptContents.Position?) -> Unit,
                              previousDependencies: KotlinScriptExternalDependencies?
-        ): KotlinScriptExternalDependencies? =
+        ): Future<KotlinScriptExternalDependencies?> =
                 resolver?.resolve(
                         environment?.get("projectRoot") as? File?,
                         script.file,
                         emptyList(),
                         environment as Any?
                 )
+                .asFuture()
     }
 
     private val definitionData by lazy {
@@ -158,8 +179,11 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
                     }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
                 }
-        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, annotationWrappers.map { it.getProxy(classLoader) }), environment, previousDependencies)
-        return fileDeps
+        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, annotationWrappers.map { it.getProxy(classLoader) }),
+                                                        environment,
+                                                        { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? -> },
+                                                        previousDependencies)
+        return fileDeps?.get()
     }
 
     private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
