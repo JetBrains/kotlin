@@ -17,8 +17,6 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
     var angle: Double
 
     var moveDirection: MoveDirection = MoveDirection.STOP
-    var startMoveOn: Int = 0
-
 
     val routeExecutor: RouteExecutor
     val controller: Control
@@ -29,6 +27,10 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
         this.x = 0.0
         this.y = 0.0
         this.angle = 0.0
+    }
+
+    fun stopCar() {
+        move(MoveDirection.STOP, 0.0, {})
     }
 
     fun refreshLocation(delta: Int) {

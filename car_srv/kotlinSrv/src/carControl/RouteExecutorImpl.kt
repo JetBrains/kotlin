@@ -1,6 +1,5 @@
 package carControl
 
-import thisCar
 
 /**
  * Created by user on 7/27/16.
@@ -44,10 +43,10 @@ class RouteExecutorImpl : RouteExecutor {
 
     fun executeCommand(commands: List<Pair<MoveDirection, Double>>, currentCommandIdx: Int) {
         if (currentCommandIdx == commands.size) {
-            thisCar.routeDone()
+            MicroController.instance.car.routeDone()
         }
         val currentCommand = commands.get(currentCommandIdx)
-        thisCar.move(currentCommand.first, currentCommand.second, {
+        MicroController.instance.car.move(currentCommand.first, currentCommand.second, {
             executeCommand(commands, currentCommandIdx + 1)
         })
     }

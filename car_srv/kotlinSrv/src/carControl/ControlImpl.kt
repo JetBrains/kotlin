@@ -1,7 +1,7 @@
 package carControl
 
+import MicroController
 import require
-import transportFilePath
 
 
 /**
@@ -51,7 +51,7 @@ class ControlImpl : Control {
 
 
     fun writeToFile(byte: Byte) {
-        fs.appendFile(transportFilePath, byte.toString(), "binary", { err ->
+        fs.appendFile(MicroController.instance.transportFilePath, byte.toString(), "binary", { err ->
             if (err) {
                 println("error")
             } else {
