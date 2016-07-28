@@ -123,9 +123,10 @@ fun getCarServerThread(): Thread {
         val bossGroup = NioEventLoopGroup(1)
         val workerGroup = NioEventLoopGroup()
         val b = ServerBootstrap()
+        val initializer = car.server.Initializer(handlerThreadsCount)
         b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel().javaClass)
-                .childHandler(car.server.Initializer(handlerThreadsCount))
+                .childHandler(initializer)
 
         try {
             val channel = b.bind(carServerPort).sync().channel()
@@ -135,6 +136,7 @@ fun getCarServerThread(): Thread {
         } finally {
             bossGroup.shutdownGracefully()
             workerGroup.shutdownGracefully()
+            initializer.group.shutdownGracefully()
         }
     })
 }
@@ -145,9 +147,10 @@ fun getWebServerThread(): Thread {
         val bossGroup = NioEventLoopGroup(1)
         val workerGroup = NioEventLoopGroup()
         val b = ServerBootstrap()
+        val initializer = web.server.Initializer(handlerThreadsCount)
         b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel().javaClass)
-                .childHandler(web.server.Initializer(handlerThreadsCount))
+                .childHandler(initializer)
 
         try {
             val channel = b.bind(webServerPort).sync().channel()
@@ -157,6 +160,7 @@ fun getWebServerThread(): Thread {
         } finally {
             bossGroup.shutdownGracefully()
             workerGroup.shutdownGracefully()
+            initializer.group.shutdownGracefully()
         }
     })
 }
