@@ -1,6 +1,6 @@
 import DirectionRequest.Command
-import client.Client
-import client.ClientHandler
+import clientClasses.Client
+import clientClasses.ClientHandler
 import com.martiansoftware.jsap.FlaggedOption
 import com.martiansoftware.jsap.JSAP
 
