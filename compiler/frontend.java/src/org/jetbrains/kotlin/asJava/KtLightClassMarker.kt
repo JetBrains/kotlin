@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-public interface KtJavaMirrorMarker {
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+
+interface KtLightClassMarker {
+    val originKind: LightClassOriginKind
 }

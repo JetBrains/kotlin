@@ -32,7 +32,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory.getOriginalElement
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -61,7 +61,7 @@ import java.util.*
 import javax.swing.Icon
 
 abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtClassOrObject)
-: KtLightClassBase(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+: KtLightClassBase(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -433,4 +433,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
         private val LOG = Logger.getInstance(KtLightClassForSourceDeclaration::class.java)
     }
+
+    override val originKind: LightClassOriginKind
+        get() = LightClassOriginKind.SOURCE
 }

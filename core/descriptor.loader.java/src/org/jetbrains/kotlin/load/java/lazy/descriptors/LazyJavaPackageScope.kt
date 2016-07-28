@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindEx
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -130,7 +131,7 @@ class LazyJavaPackageScope(
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return listOf()
 
         return jPackage.getClasses(nameFilter).mapNotNull { klass ->
-            if (klass.isKotlinLightClass) null else klass.name
+            if (klass.lightClassOriginKind == LightClassOriginKind.SOURCE) null else klass.name
         }
     }
 

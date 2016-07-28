@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 
 class JavaDescriptorResolver(
         val packageFragmentProvider: LazyJavaPackageFragmentProvider,
@@ -28,7 +29,7 @@ class JavaDescriptorResolver(
 ) {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         val fqName = javaClass.fqName
-        if (fqName != null && javaClass.isKotlinLightClass) {
+        if (fqName != null && javaClass.lightClassOriginKind == LightClassOriginKind.SOURCE) {
             return javaResolverCache.getClassResolvedFromSource(fqName)
         }
 
