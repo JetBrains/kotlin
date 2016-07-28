@@ -2,6 +2,7 @@ package carControl
 
 import MicroController
 import require
+import setTimeout
 
 
 /**
@@ -41,21 +42,13 @@ class ControlImpl : Control {
     }
 
     override fun delay(ms: Int, callBack: () -> Unit) {
-        setTimeOut(callBack, ms)
+        setTimeout(callBack, ms)
     }
-
-    @native
-    fun setTimeOut(callBack: () -> Unit, ms: Int) {
-
-    }
-
 
     fun writeToFile(byte: Byte) {
         fs.appendFile(MicroController.instance.transportFilePath, byte.toString(), "binary", { err ->
             if (err) {
-                println("error")
-            } else {
-                println("ok")
+                println("error\n" + err.toString())
             }
         })
     }
