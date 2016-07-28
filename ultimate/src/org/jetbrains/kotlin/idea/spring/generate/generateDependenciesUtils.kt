@@ -27,7 +27,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PropertyUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.spring.CommonSpringModel
@@ -50,8 +49,8 @@ import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.DomUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.KtLightClass
-import org.jetbrains.kotlin.asJava.KtLightMethod
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -59,11 +58,11 @@ import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.InsertHandlerProvider
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.editor.BatchTemplateRunner
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*

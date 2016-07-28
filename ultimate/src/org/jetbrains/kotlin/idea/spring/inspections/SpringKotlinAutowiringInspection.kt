@@ -18,7 +18,11 @@ import com.intellij.spring.model.SpringBeanPointer
 import com.intellij.spring.model.converters.SpringConverterUtil
 import com.intellij.spring.model.highlighting.SpringAutowireUtil
 import com.intellij.spring.model.highlighting.SpringJavaAutowiringInspection
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.registerWithElementsUnwrapped
