@@ -330,6 +330,9 @@ public class ErrorUtils {
         return new ErrorScope(debugMessage);
     }
 
+    // Do not move it into AbstractTypeConstructor.Companion because of cycle in initialization(see KT-13264)
+    public static final SimpleType ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES = createErrorType("<LOOP IN SUPERTYPES>");
+
     private static final KotlinType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final PropertyDescriptor ERROR_PROPERTY = createErrorProperty();
 

@@ -28,12 +28,12 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     private class Supertypes(
             val allSupertypes: Collection<KotlinType>) {
             // initializer is only needed as a stub for case when 'getSupertypes' is called while 'supertypes' are being calculated
-            var supertypesWithoutCycles: List<KotlinType> = listOf(ERROR_TYPE)
+            var supertypesWithoutCycles: List<KotlinType> = listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES)
     }
 
     private val supertypes = storageManager.createLazyValueWithPostCompute(
             { Supertypes(computeSupertypes()) },
-            { Supertypes(listOf(ERROR_TYPE)) },
+            { Supertypes(listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES)) },
             { supertypes ->
                 // It's important that loops disconnection begins in post-compute phase, because it guarantees that
                 // when we start calculation supertypes of supertypes (for computing neighbours), they start their disconnection loop process
@@ -51,20 +51,17 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
                 supertypes.supertypesWithoutCycles = (resultWithoutCycles as? List<KotlinType>) ?: resultWithoutCycles.toList()
             })
 
+    private fun TypeConstructor.computeNeighbours(): Collection<KotlinType> =
+            (this as? AbstractTypeConstructor)?.let {
+                abstractClassifierDescriptor ->
+                abstractClassifierDescriptor.supertypes().allSupertypes +
+                abstractClassifierDescriptor.getAdditionalNeighboursInSupertypeGraph()
+            } ?: supertypes
+
     protected abstract fun computeSupertypes(): Collection<KotlinType>
     protected abstract val supertypeLoopChecker: SupertypeLoopChecker
     protected open fun reportSupertypeLoopError(type: KotlinType) {}
     protected open fun getAdditionalNeighboursInSupertypeGraph(): Collection<KotlinType> = emptyList()
     protected open fun defaultSupertypeIfEmpty(): KotlinType? = null
 
-    private companion object {
-        val ERROR_TYPE = ErrorUtils.createErrorType("Loop in supertypes")
-
-        fun TypeConstructor.computeNeighbours(): Collection<KotlinType> =
-                (this as? AbstractTypeConstructor)?.let {
-                    abstractClassifierDescriptor ->
-                    abstractClassifierDescriptor.supertypes().allSupertypes +
-                    abstractClassifierDescriptor.getAdditionalNeighboursInSupertypeGraph()
-                } ?: supertypes
-    }
 }
