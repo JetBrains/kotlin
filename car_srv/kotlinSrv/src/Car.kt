@@ -71,12 +71,12 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
             if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
                 controller.delay(getTimeForMoving(value, velocityMove), callBack)
             } else {
-                controller.delay(getTimeForMoving(value, velocityMove), callBack)
+                controller.delay(getTimeForMoving(value, velocityRotation), callBack)
             }
         }
     }
 
     fun getTimeForMoving(value: Double, velocity: Double): Int {
-        return 1000 * (Math.abs(value) * velocity).toInt()
+        return (1000 * Math.abs(value) / velocity).toInt()
     }
 }
