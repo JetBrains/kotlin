@@ -1,9 +1,11 @@
 package clientClasses
 
 import io.netty.bootstrap.Bootstrap
+import io.netty.channel.EventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
+import io.netty.util.AttributeKey
 import java.net.ConnectException
 
 /**
@@ -13,17 +15,27 @@ class Client constructor(host: String, port: Int) {
 
     val host: String
     val port: Int
+    val group: EventLoopGroup
+
 
     init {
         this.host = host
         this.port = port
+        group = NioEventLoopGroup(1)
+    }
+
+    val bootstrap: Bootstrap = makeBootstrap()
+
+    private fun makeBootstrap(): Bootstrap {
+        val b = Bootstrap()
+        b.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
+                .attr(AttributeKey.newInstance<String>("url"), "")
+        return b
     }
 
     fun sendRequest(request: HttpRequest) {
-        val group = NioEventLoopGroup(1)
         try {
-            val bootstrap = Bootstrap()
-            bootstrap.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
+            bootstrap.attr(AttributeKey.valueOf<String>("url"), request.uri())
             val channelFuture = bootstrap.connect(host, port).sync()
             val channel = channelFuture.channel()
             channel.writeAndFlush(request)
@@ -34,9 +46,11 @@ class Client constructor(host: String, port: Int) {
         } catch (e: ConnectException) {
             ClientHandler.requestResult.code = 10
             ClientHandler.requestResult.errorString = "don't can connect to server ($host:$port)"
-        } finally {
-            group.shutdownGracefully()
         }
+    }
+
+    fun close() {
+        group.shutdownGracefully()
     }
 
 }

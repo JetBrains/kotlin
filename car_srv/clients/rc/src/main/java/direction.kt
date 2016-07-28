@@ -1,10 +1,14 @@
-class DirectionRequest private constructor (command: DirectionRequest.Command = DirectionRequest.Command.fromIntToCommand(0)) {
+class DirectionRequest private constructor (command: DirectionRequest.Command = DirectionRequest.Command.fromIntToCommand(0), sid: Int = 0) {
   var command : DirectionRequest.Command
+    private set
+
+  var sid : Int
     private set
 
 
   init {
     this.command = command
+    this.sid = sid
   }
   enum class Command(val ord: Int) {
     stop (0),
@@ -31,9 +35,12 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
     if (command != DirectionRequest.Command.fromIntToCommand(0)) {
       output.writeEnum (1, command.ord)
     }
+    if (sid != 0) {
+      output.writeInt32 (2, sid)
+    }
   }
 
-  class BuilderDirectionRequest constructor (command: DirectionRequest.Command = DirectionRequest.Command.fromIntToCommand(0)) {
+  class BuilderDirectionRequest constructor (command: DirectionRequest.Command = DirectionRequest.Command.fromIntToCommand(0), sid: Int = 0) {
     var command : DirectionRequest.Command
       private set
     fun setCommand(value: DirectionRequest.Command): DirectionRequest.BuilderDirectionRequest {
@@ -41,19 +48,30 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
       return this
     }
 
+    var sid : Int
+      private set
+    fun setSid(value: Int): DirectionRequest.BuilderDirectionRequest {
+      sid = value
+      return this
+    }
+
 
     init {
       this.command = command
+      this.sid = sid
     }
 
     fun writeTo (output: CodedOutputStream) {
       if (command != DirectionRequest.Command.fromIntToCommand(0)) {
         output.writeEnum (1, command.ord)
       }
+      if (sid != 0) {
+        output.writeInt32 (2, sid)
+      }
     }
 
     fun build(): DirectionRequest {
-      return DirectionRequest(command)
+      return DirectionRequest(command, sid)
     }
 
     fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -67,6 +85,11 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
           if (wireType != WireType.VARINT) {
             throw InvalidProtocolBufferException("Error: Field number 1 has wire type WireType.VARINT but read ${wireType.toString()}")}
           command = DirectionRequest.Command.fromIntToCommand(input.readEnumNoTag())
+        }
+        2 -> {
+          if (wireType != WireType.VARINT) {
+            throw InvalidProtocolBufferException("Error: Field number 2 has wire type WireType.VARINT but read ${wireType.toString()}")}
+          sid = input.readInt32NoTag()
         }
       }
       return true}
@@ -86,6 +109,9 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
       if (command != DirectionRequest.Command.fromIntToCommand(0)) {
         size += WireFormat.getEnumSize(1, command.ord)
       }
+      if (sid != 0) {
+        size += WireFormat.getInt32Size(2, sid)
+      }
       size += WireFormat.getVarint32Size(size) + WireFormat.getTagSize(fieldNumber, WireType.LENGTH_DELIMITED)
       return size
     }
@@ -94,6 +120,9 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
       if (command != DirectionRequest.Command.fromIntToCommand(0)) {
         size += WireFormat.getEnumSize(1, command.ord)
       }
+      if (sid != 0) {
+        size += WireFormat.getInt32Size(2, sid)
+      }
       return size
     }
   }
@@ -101,6 +130,7 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
 
   fun mergeWith (other: DirectionRequest) {
     command = other.command
+    sid = other.sid
   }
 
   fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {
@@ -115,6 +145,9 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
     if (command != DirectionRequest.Command.fromIntToCommand(0)) {
       size += WireFormat.getEnumSize(1, command.ord)
     }
+    if (sid != 0) {
+      size += WireFormat.getInt32Size(2, sid)
+    }
     size += WireFormat.getVarint32Size(size) + WireFormat.getTagSize(fieldNumber, WireType.LENGTH_DELIMITED)
     return size
   }
@@ -122,6 +155,9 @@ class DirectionRequest private constructor (command: DirectionRequest.Command = 
     var size = 0
     if (command != DirectionRequest.Command.fromIntToCommand(0)) {
       size += WireFormat.getEnumSize(1, command.ord)
+    }
+    if (sid != 0) {
+      size += WireFormat.getInt32Size(2, sid)
     }
     return size
   }
