@@ -21,6 +21,8 @@ import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 
 
 private fun comparableVersionStr(version: String) =
@@ -124,26 +126,13 @@ class CompilerServicesCleanup() {
     }
 
     private fun stopZipFileCache() {
-        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
+        ZipFileCache.stopBackgroundThread()
         log.kotlinDebug("ZipFileCache finished successfully")
-    }
-
-    private fun callVoidStaticMethod(classFqName: String, methodName: String) {
-        val shortName = classFqName.substring(classFqName.lastIndexOf('.') + 1)
-
-        log.kotlinDebug("Looking for $shortName class")
-        val cls = Class.forName(classFqName)
-
-        log.kotlinDebug("Looking for $methodName() method")
-        val method = cls.getMethod(methodName)
-
-        log.kotlinDebug("Call $shortName.$methodName()")
-        method.invoke(null)
     }
 
     private fun cleanJarCache() {
         log.kotlinDebug("Clean JAR cache")
-        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        ZipHandler.clearFileAccessorCache()
         log.kotlinDebug("JAR cache cleared")
     }
 }
