@@ -2744,6 +2744,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsCompareTo.kt")
+            public void testEqualsCompareTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/equalsCompareTo.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/extensionFunction.kt");
@@ -2753,6 +2759,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("functionLiteralArgument.kt")
             public void testFunctionLiteralArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/functionLiteralArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("greater.kt")
+            public void testGreater() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/greater.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lessEquals.kt")
+            public void testLessEquals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/lessEquals.kt");
                 doTest(fileName);
             }
 
@@ -2813,6 +2831,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("rangeToSanityTest.kt")
             public void testRangeToSanityTest() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/rangeToSanityTest.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCompareTo.kt")
+            public void testSafeCompareTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/safeCompareTo.kt");
                 doTest(fileName);
             }
 

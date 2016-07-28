@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -36,6 +37,17 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
         KtDotQualifiedExpression::class.java,
         "Replace call with binary operator"
 ), HighPriorityAction {
+
+    private fun IElementType.inverted(): KtSingleValueToken? = when (this) {
+        KtTokens.LT -> KtTokens.GT
+        KtTokens.GT -> KtTokens.LT
+
+        KtTokens.GTEQ -> KtTokens.LTEQ
+        KtTokens.LTEQ -> KtTokens.GTEQ
+
+        else -> null
+    }
+
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return null
         val operation = operation(calleeExpression) ?: return null
@@ -58,15 +70,24 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
         val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return
         val receiver = element.receiverExpression
 
-        if (operation == KtTokens.EXCLEQ) {
-            val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
-            val newExpression = KtPsiFactory(element).createExpressionByPattern("$0 != $1", receiver, argument)
-            prefixExpression.replace(newExpression)
+        val factory = KtPsiFactory(element)
+        when (operation) {
+            KtTokens.EXCLEQ -> {
+                val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
+                val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument)
+                prefixExpression.replace(newExpression)
+            }
+            in OperatorConventions.COMPARISON_OPERATIONS -> {
+                val binaryParent = element.parent as? KtBinaryExpression ?: return
+                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
+                binaryParent.replace(newExpression)
+            }
+            else -> {
+                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
+                element.replace(newExpression)
+            }
         }
-        else {
-            val newExpression = KtPsiFactory(element).createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
-            element.replace(newExpression)
-        }
+
     }
 
     private fun PsiElement.getWrappingPrefixExpressionIfAny() =
@@ -74,11 +95,31 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
-        if (identifier == OperatorNameConventions.EQUALS) {
-            val prefixExpression = calleeExpression.parent?.parent?.getWrappingPrefixExpressionIfAny()
-            return if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
-            else KtTokens.EQEQ
+        return when (identifier) {
+            OperatorNameConventions.EQUALS -> {
+                val prefixExpression = calleeExpression.parent?.parent?.getWrappingPrefixExpressionIfAny()
+                if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
+                else KtTokens.EQEQ
+            }
+            OperatorNameConventions.COMPARE_TO -> {
+                // callee -> call -> DotQualified -> Binary
+                val dotQualified = calleeExpression.parent?.parent
+                val binaryParent = dotQualified?.parent as? KtBinaryExpression ?: return null
+                val notZero = when {
+                    binaryParent.right?.text == "0" -> binaryParent.left
+                    binaryParent.left?.text == "0" -> binaryParent.right
+                    else -> return null
+                }
+                if (notZero != dotQualified) return null
+                val token = binaryParent.operationToken as? KtSingleValueToken ?: return null
+                if (token in OperatorConventions.COMPARISON_OPERATIONS) {
+                    if (notZero == binaryParent.left) token else token.inverted()
+                }
+                else {
+                    null
+                }
+            }
+            else -> OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
         }
-        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
     }
 }
