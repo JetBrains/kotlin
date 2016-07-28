@@ -112,7 +112,6 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         javaBasePlugin.configureForSourceSet(sourceSet, kotlinTask)
         kotlinTask.description = taskDescription
         kotlinTask.source(kotlinDirSet)
-        mapKotlinTaskProperties(project, kotlinTask)
     }
 
     protected abstract fun doCreateTask(project: Project, taskName: String): T
@@ -355,7 +354,6 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
-            mapKotlinTaskProperties(project, kotlinTask)
 
             kotlinTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-$kotlinTaskName")
             if (kotlinOptions != null) {

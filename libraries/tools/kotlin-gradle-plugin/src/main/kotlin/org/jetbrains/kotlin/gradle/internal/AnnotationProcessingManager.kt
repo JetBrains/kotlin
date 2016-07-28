@@ -53,7 +53,6 @@ fun Project.initKapt(
 
     if (kaptExtension.generateStubs) {
         kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask, kotlinOptions, tasksProvider)
-        mapKotlinTaskProperties(this, kotlinAfterJavaTask)
 
         kotlinTask.logger.kotlinDebug("kapt: Using class file stubs")
 
