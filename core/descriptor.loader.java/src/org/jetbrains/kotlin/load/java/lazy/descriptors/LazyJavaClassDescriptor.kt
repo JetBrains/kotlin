@@ -61,6 +61,10 @@ class LazyJavaClassDescriptor(
 
     init {
         c.components.javaResolverCache.recordClass(jClass, this)
+
+        assert(jClass.lightClassOriginKind == null) {
+            "Creating LazyJavaClassDescriptor for light class $jClass"
+        }
     }
 
     private val kind = when {

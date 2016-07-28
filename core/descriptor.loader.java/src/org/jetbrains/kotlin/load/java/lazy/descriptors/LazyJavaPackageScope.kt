@@ -64,6 +64,17 @@ class LazyJavaPackageScope(
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
                 val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
+
+                if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
+                    throw IllegalStateException(
+                            "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
+                            "JavaClass: $javaClass\n" +
+                            "ClassId: $classId\n" +
+                            "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
+                            "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(classId)}\n"
+                    )
+                }
+
                 javaClass?.let { it ->
                     LazyJavaClassDescriptor(c, ownerDescriptor, it)
                 }
