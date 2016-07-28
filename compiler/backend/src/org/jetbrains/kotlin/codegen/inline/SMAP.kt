@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
 import java.util.*
 
+val KOTLIN_STRATA_NAME = "Kotlin"
+val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
+
 //TODO join parameter
 class SMAPBuilder(
         val source: String,
@@ -48,7 +51,7 @@ class SMAPBuilder(
     private fun generateDefaultStrata(realMappings: List<FileMapping>): String {
         val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
         val lineMappings = "*L" + realMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S Kotlin\n$fileIds\n$lineMappings\n*E\n"
+        return "*S $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
     }
 
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
@@ -66,7 +69,7 @@ class SMAPBuilder(
         val newMappings = listOf(combinedMapping)
         val fileIds = "*F" + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
         val lineMappings = "*L" + newMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S KotlinDebug\n$fileIds\n$lineMappings\n*E\n"
+        return "*S $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
     }
 
     private fun RangeMapping.toSMAP(fileId: Int): String {

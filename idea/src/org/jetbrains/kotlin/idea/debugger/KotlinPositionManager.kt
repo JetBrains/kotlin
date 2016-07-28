@@ -34,6 +34,7 @@ import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -246,7 +247,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         try {
             val line = position.line + 1
             val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
-                type.locationsOfLine("Kotlin", null, line).filter { it.sourceName("Kotlin") == position.file.name }
+                type.locationsOfLine(KOTLIN_STRATA_NAME, null, line).filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
             else
                 type.locationsOfLine(line)
             if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
@@ -273,7 +274,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
+    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
 }
 
 inline fun <U, V> U.readAction(crossinline f: (U) -> V): V {
