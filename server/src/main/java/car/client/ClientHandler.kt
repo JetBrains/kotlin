@@ -1,15 +1,16 @@
 package car.client
 
+import CodedInputStream
+import InvalidProtocolBufferException
+import LocationResponse
 import getLocationUrl
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.handler.codec.http.HttpContent
+import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
-import LocationResponse
 import java.io.ByteArrayInputStream
-import CodedInputStream
-import InvalidProtocolBufferException
+import java.util.*
 
 /**
  * Created by user on 7/8/16.
@@ -41,6 +42,7 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
                         })
                     }
                 } catch (e: InvalidProtocolBufferException) {
+                    println("invalic proto format!")
                 }
             }
             else -> {
@@ -51,7 +53,7 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: Any?) {
-        if (msg is HttpContent) {
+        if (msg is DefaultHttpContent) {
             val contentsBytes = msg.content();
             contentBytes = ByteArray(contentsBytes.capacity())
             contentsBytes.readBytes(contentBytes)

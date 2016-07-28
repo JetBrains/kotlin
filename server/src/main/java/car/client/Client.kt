@@ -1,11 +1,11 @@
 package car.client
 
+import Exceptions.InactiveCarException
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
 import io.netty.util.AttributeKey
-import objects.Environment
 import java.net.ConnectException
 
 /**
@@ -34,10 +34,7 @@ object Client {
         } catch (e: InterruptedException) {
 
         } catch (e: ConnectException) {
-            val carMap = Environment.instance.map
-            synchronized(carMap, {
-                carMap.remove(carUid)
-            })
+            throw InactiveCarException()
         }
     }
 

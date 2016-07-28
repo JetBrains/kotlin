@@ -1,3 +1,4 @@
+import Exceptions.InactiveCarException
 import car.client.Client
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.Unpooled
@@ -77,7 +78,13 @@ fun main(args: Array<String>) {
                         request.headers().set(HttpHeaderNames.HOST, car.host)
                         request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
                         request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-                        Client.sendRequest(request, car.host, car.port, id)
+                        try {
+                            Client.sendRequest(request, car.host, car.port, id)
+                        } catch (e: InactiveCarException) {
+                            synchronized(environment, {
+                                environment.map.remove(id)
+                            })
+                        }
                         break
                     } else {
                         val wayPointData = wayPointInputString.split(" ")
@@ -99,13 +106,24 @@ fun main(args: Array<String>) {
             }
         } else if (readedString.equals("refloc", true)) {
             val cars = synchronized(environment, { environment.map.values })
+            val inactiveCarUids = mutableListOf<Int>()
             for (car in cars) {
                 val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, getLocationUrl, Unpooled.EMPTY_BUFFER)
                 request.headers().set(HttpHeaderNames.HOST, car.host)
                 request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
                 request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-                Client.sendRequest(request, car.host, car.port, car.uid)
+                try {
+                    Client.sendRequest(request, car.host, car.port, car.uid)
+                } catch (e: InactiveCarException) {
+                    inactiveCarUids.add(car.uid)
+                }
+                println("ref loc done")
             }
+            synchronized(environment, {
+                for (id in inactiveCarUids) {
+                    environment.map.remove(id)
+                }
+            })
         } else if (readedString.equals("stop")) {
             break
         } else {
