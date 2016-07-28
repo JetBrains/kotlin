@@ -27,11 +27,14 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
 import java.io.File
@@ -120,7 +123,7 @@ class Kotlin2JvmSourceSetProcessor(
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider
-) : KotlinSourceSetProcessor<AbstractCompile>(
+) : KotlinSourceSetProcessor<KotlinCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin",
         compileTaskNameSuffix = "kotlin",
@@ -131,7 +134,7 @@ class Kotlin2JvmSourceSetProcessor(
         private var cachedKotlinAnnotationProcessingDep: String? = null
     }
 
-    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+    override fun doCreateTask(project: Project, taskName: String): KotlinCompile =
             tasksProvider.createKotlinJVMTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
@@ -166,7 +169,7 @@ class Kotlin2JvmSourceSetProcessor(
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
-                            aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
+                            aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
                     kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
                             sourceSetName, null, subpluginEnvironment) {
@@ -193,7 +196,7 @@ class Kotlin2JsSourceSetProcessor(
         sourceSet: SourceSet,
         val scriptHandler: ScriptHandler,
         tasksProvider: KotlinTasksProvider
-) : KotlinSourceSetProcessor<AbstractCompile>(
+) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider,
         pluginName = "kotlin2js",
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
@@ -215,7 +218,7 @@ class Kotlin2JsSourceSetProcessor(
 
     private fun shouldGenerateSourceMap() = kotlinTask.property("sourceMap")
 
-    override fun doCreateTask(project: Project, taskName: String): AbstractCompile =
+    override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
             tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
@@ -325,7 +328,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         })
 
         val extensions = (ext as ExtensionAware).extensions
-        extensions.add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
+        extensions.add("kotlinOptions", K2JVMCompilerArguments::class.java)
         AndroidGradleWrapper.setNoJdk(extensions.getByName("kotlinOptions"))
 
         project.createKaptExtension()
@@ -437,7 +440,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
-                        aptFiles.toSet(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader, variantData)
+                        aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
 
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
