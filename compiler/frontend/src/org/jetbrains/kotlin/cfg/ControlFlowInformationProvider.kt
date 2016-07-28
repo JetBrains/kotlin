@@ -14,498 +14,419 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import kotlin.jvm.functions.Function3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtilsKt;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserKt;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptorKt;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.TailRecursionKind.*
+import org.jetbrains.kotlin.cfg.VariableUseState.*
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.sideEffectFree
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.referencedProperty
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils.*
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import java.util.*
 
-import java.util.*;
+class ControlFlowInformationProvider private constructor(
+        private val subroutine: KtElement,
+        private val trace: BindingTrace,
+        private val pseudocode: Pseudocode
+) {
 
-import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
-import static org.jetbrains.kotlin.cfg.VariableUseState.*;
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.types.TypeUtils.*;
-
-public class ControlFlowInformationProvider {
-
-    private final KtElement subroutine;
-    private final Pseudocode pseudocode;
-    private final BindingTrace trace;
-    private PseudocodeVariablesData pseudocodeVariablesData;
-
-    private ControlFlowInformationProvider(
-            @NotNull KtElement declaration,
-            @NotNull BindingTrace trace,
-            @NotNull Pseudocode pseudocode
-    ) {
-        this.subroutine = declaration;
-        this.trace = trace;
-        this.pseudocode = pseudocode;
+    private val pseudocodeVariablesData by lazy {
+        PseudocodeVariablesData(pseudocode, trace.bindingContext)
     }
 
-    public ControlFlowInformationProvider(
-            @NotNull KtElement declaration,
-            @NotNull BindingTrace trace
-    ) {
-        this(declaration, trace, new ControlFlowProcessor(trace).generatePseudocode(declaration));
-    }
+    constructor(declaration: KtElement, trace: BindingTrace)
+    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration)) {}
 
-    private PseudocodeVariablesData getPseudocodeVariablesData() {
-        if (pseudocodeVariablesData == null) {
-            pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode, trace.getBindingContext());
-        }
-        return pseudocodeVariablesData;
-    }
-
-    public void checkForLocalClassOrObjectMode() {
+    fun checkForLocalClassOrObjectMode() {
         // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.
         // Almost all checks can be done when the container is analyzed
         // except recording initialized variables (this information is needed for DeclarationChecker).
-        recordInitializedVariables();
+        recordInitializedVariables()
     }
 
-    public void checkDeclaration() {
+    fun checkDeclaration() {
 
-        recordInitializedVariables();
+        recordInitializedVariables()
 
-        checkLocalFunctions();
+        checkLocalFunctions()
 
-        markUninitializedVariables();
+        markUninitializedVariables()
 
-        markUnusedVariables();
+        markUnusedVariables()
 
-        markStatements();
+        markStatements()
 
-        markUnusedExpressions();
+        markUnusedExpressions()
 
-        checkIfExpressions();
+        checkIfExpressions()
 
-        checkWhenExpressions();
+        checkWhenExpressions()
 
-        checkConstructorConsistency();
+        checkConstructorConsistency()
     }
 
-    public void checkFunction(@Nullable KotlinType expectedReturnType) {
-        UnreachableCode unreachableCode = collectUnreachableCode();
-        reportUnreachableCode(unreachableCode);
+    fun checkFunction(expectedReturnType: KotlinType?) {
+        val unreachableCode = collectUnreachableCode()
+        reportUnreachableCode(unreachableCode)
 
-        if (subroutine instanceof KtFunctionLiteral) return;
+        if (subroutine is KtFunctionLiteral) return
 
-        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, unreachableCode);
+        checkDefiniteReturn(expectedReturnType ?: NO_EXPECTED_TYPE, unreachableCode)
 
-        markTailCalls();
+        markTailCalls()
     }
 
-    private void collectReturnExpressions(@NotNull final Collection<KtElement> returnedExpressions) {
-        final Set<Instruction> instructions = Sets.newHashSet(pseudocode.getInstructions());
-        SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
-        for (Instruction previousInstruction : exitInstruction.getPreviousInstructions()) {
-            previousInstruction.accept(new InstructionVisitor() {
-                @Override
-                public void visitReturnValue(@NotNull ReturnValueInstruction instruction) {
+    private fun collectReturnExpressions(returnedExpressions: MutableCollection<KtElement>) {
+        val instructions = pseudocode.instructions.toHashSet()
+        val exitInstruction = pseudocode.exitInstruction
+        for (previousInstruction in exitInstruction.previousInstructions) {
+            previousInstruction.accept(object : InstructionVisitor() {
+                override fun visitReturnValue(instruction: ReturnValueInstruction) {
                     if (instructions.contains(instruction)) { //exclude non-local return expressions
-                        returnedExpressions.add(instruction.getElement());
+                        returnedExpressions.add(instruction.element)
                     }
                 }
 
-                @Override
-                public void visitReturnNoValue(@NotNull ReturnNoValueInstruction instruction) {
+                override fun visitReturnNoValue(instruction: ReturnNoValueInstruction) {
                     if (instructions.contains(instruction)) {
-                        returnedExpressions.add(instruction.getElement());
+                        returnedExpressions.add(instruction.element)
                     }
                 }
 
 
-                @Override
-                public void visitJump(@NotNull AbstractJumpInstruction instruction) {
+                override fun visitJump(instruction: AbstractJumpInstruction) {
                     // Nothing
                 }
 
-                @Override
-                public void visitUnconditionalJump(@NotNull UnconditionalJumpInstruction instruction) {
-                    redirectToPrevInstructions(instruction);
+                override fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction) {
+                    redirectToPrevInstructions(instruction)
                 }
 
-                private void redirectToPrevInstructions(Instruction instruction) {
-                    for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
-                        previousInstruction.accept(this);
+                private fun redirectToPrevInstructions(instruction: Instruction) {
+                    for (redirectInstruction in instruction.previousInstructions) {
+                        redirectInstruction.accept(this)
                     }
                 }
 
-                @Override
-                public void visitNondeterministicJump(@NotNull NondeterministicJumpInstruction instruction) {
-                    redirectToPrevInstructions(instruction);
+                override fun visitNondeterministicJump(instruction: NondeterministicJumpInstruction) {
+                    redirectToPrevInstructions(instruction)
                 }
 
-                @Override
-                public void visitMarkInstruction(@NotNull MarkInstruction instruction) {
-                    redirectToPrevInstructions(instruction);
+                override fun visitMarkInstruction(instruction: MarkInstruction) {
+                    redirectToPrevInstructions(instruction)
                 }
 
-                @Override
-                public void visitInstruction(@NotNull Instruction instruction) {
-                    if (instruction instanceof KtElementInstruction) {
-                        KtElementInstruction elementInstruction = (KtElementInstruction) instruction;
-                        returnedExpressions.add(elementInstruction.getElement());
+                override fun visitInstruction(instruction: Instruction) {
+                    if (instruction is KtElementInstruction) {
+                        returnedExpressions.add(instruction.element)
                     }
                     else {
-                        throw new IllegalStateException(instruction + " precedes the exit point");
+                        throw IllegalStateException("$instruction precedes the exit point")
                     }
                 }
-            });
+            })
         }
     }
 
-    private void checkLocalFunctions() {
-        for (LocalFunctionDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            KtElement element = localDeclarationInstruction.getElement();
-            if (element instanceof KtDeclarationWithBody) {
-                KtDeclarationWithBody localDeclaration = (KtDeclarationWithBody) element;
+    private fun checkLocalFunctions() {
+        for (localDeclarationInstruction in pseudocode.localDeclarations) {
+            val element = localDeclarationInstruction.element
+            if (element is KtDeclarationWithBody) {
 
-                CallableDescriptor functionDescriptor =
-                        (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
-                KotlinType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+                val functionDescriptor = trace.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element) as? CallableDescriptor
+                val expectedType = functionDescriptor?.returnType
 
-                ControlFlowInformationProvider providerForLocalDeclaration =
-                        new ControlFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
+                val providerForLocalDeclaration = ControlFlowInformationProvider(element, trace, localDeclarationInstruction.body)
 
-                providerForLocalDeclaration.checkFunction(expectedType);
+                providerForLocalDeclaration.checkFunction(expectedType)
             }
         }
     }
 
-    private void checkDefiniteReturn(final @NotNull KotlinType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
-        assert subroutine instanceof KtDeclarationWithBody;
-        KtDeclarationWithBody function = (KtDeclarationWithBody) subroutine;
+    private fun checkDefiniteReturn(expectedReturnType: KotlinType, unreachableCode: UnreachableCode) {
+        val function = subroutine as? KtDeclarationWithBody
+                       ?: throw AssertionError("checkDefiniteReturn is called for ${subroutine.text} which is not KtDeclarationWithBody")
 
-        if (!function.hasBody()) return;
+        if (!function.hasBody()) return
 
-        List<KtElement> returnedExpressions = Lists.newArrayList();
-        collectReturnExpressions(returnedExpressions);
+        val returnedExpressions = arrayListOf<KtElement>()
+        collectReturnExpressions(returnedExpressions)
 
-        final boolean blockBody = function.hasBlockBody();
+        val blockBody = function.hasBlockBody()
 
-        final boolean[] noReturnError = new boolean[] { false };
-        for (KtElement returnedExpression : returnedExpressions) {
-            returnedExpression.accept(new KtVisitorVoid() {
-                @Override
-                public void visitReturnExpression(@NotNull KtReturnExpression expression) {
+        var noReturnError = false
+        for (returnedExpression in returnedExpressions) {
+            returnedExpression.accept(object : KtVisitorVoid() {
+                override fun visitReturnExpression(expression: KtReturnExpression) {
                     if (!blockBody) {
-                        trace.report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
+                        trace.report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression))
                     }
                 }
 
-                @Override
-                public void visitKtElement(@NotNull KtElement element) {
-                    if (!(element instanceof KtExpression || element instanceof KtWhenCondition)) return;
+                override fun visitKtElement(element: KtElement) {
+                    if (!(element is KtExpression || element is KtWhenCondition)) return
 
                     if (blockBody && !noExpectedType(expectedReturnType)
-                            && !KotlinBuiltIns.isUnit(expectedReturnType)
-                            && !unreachableCode.getElements().contains(element)) {
-                        noReturnError[0] = true;
+                        && !KotlinBuiltIns.isUnit(expectedReturnType)
+                        && !unreachableCode.elements.contains(element)) {
+                        noReturnError = true
                     }
                 }
-            });
+            })
         }
-        if (noReturnError[0]) {
-            trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(function));
-        }
-    }
-
-    private void reportUnreachableCode(@NotNull UnreachableCode unreachableCode) {
-        for (KtElement element : unreachableCode.getElements()) {
-            trace.report(UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)));
-            trace.record(BindingContext.UNREACHABLE_CODE, element, true);
+        if (noReturnError) {
+            trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(function))
         }
     }
 
-    @NotNull
-    private UnreachableCode collectUnreachableCode() {
-        Set<KtElement> reachableElements = Sets.newHashSet();
-        Set<KtElement> unreachableElements = Sets.newHashSet();
-        for (Instruction instruction : pseudocode.getInstructionsIncludingDeadCode()) {
-            if (!(instruction instanceof KtElementInstruction)
-                    || instruction instanceof LoadUnitValueInstruction
-                    || instruction instanceof MergeInstruction
-                    || (instruction instanceof MagicInstruction && ((MagicInstruction) instruction).getSynthetic())) continue;
+    private fun reportUnreachableCode(unreachableCode: UnreachableCode) {
+        for (element in unreachableCode.elements) {
+            trace.report(Errors.UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)))
+            trace.record(BindingContext.UNREACHABLE_CODE, element, true)
+        }
+    }
 
-            KtElement element = ((KtElementInstruction) instruction).getElement();
+    private fun collectUnreachableCode(): UnreachableCode {
+        val reachableElements = hashSetOf<KtElement>()
+        val unreachableElements = hashSetOf<KtElement>()
+        for (instruction in pseudocode.instructionsIncludingDeadCode) {
+            if (instruction !is KtElementInstruction
+                || instruction is LoadUnitValueInstruction
+                || instruction is MergeInstruction
+                || instruction is MagicInstruction && instruction.synthetic)
+                continue
 
-            if (instruction instanceof JumpInstruction) {
-                boolean isJumpElement = element instanceof KtBreakExpression
-                                        || element instanceof KtContinueExpression
-                                        || element instanceof KtReturnExpression
-                                        || element instanceof KtThrowExpression;
-                if (!isJumpElement) continue;
+            val element = instruction.element
+
+            if (instruction is JumpInstruction) {
+                val isJumpElement = element is KtBreakExpression
+                                    || element is KtContinueExpression
+                                    || element is KtReturnExpression
+                                    || element is KtThrowExpression
+                if (!isJumpElement) continue
             }
 
-            if (instruction.getDead()) {
-                unreachableElements.add(element);
+            if (instruction.dead) {
+                unreachableElements.add(element)
             }
             else {
-                reachableElements.add(element);
+                reachableElements.add(element)
             }
         }
-        return new UnreachableCodeImpl(reachableElements, unreachableElements);
+        return UnreachableCodeImpl(reachableElements, unreachableElements)
     }
 
-////////////////////////////////////////////////////////////////////////////////
-//  Uninitialized variables analysis
+    ////////////////////////////////////////////////////////////////////////////////
+    //  Uninitialized variables analysis
 
-    private void markUninitializedVariables() {
-        final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
-        final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
-        final boolean processClassOrObject = subroutine instanceof KtClassOrObject;
+    private fun markUninitializedVariables() {
+        val varWithUninitializedErrorGenerated = hashSetOf<VariableDescriptor>()
+        val varWithValReassignErrorGenerated = hashSetOf<VariableDescriptor>()
+        val processClassOrObject = subroutine is KtClassOrObject
 
-        PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<InitControlFlowInfo>> initializers =
-                pseudocodeVariablesData.getVariableInitializers();
-        final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
-        final BlockScopeVariableInfo blockScopeVariableInfo = pseudocodeVariablesData.getBlockScopeVariableInfo();
+        val initializers = pseudocodeVariablesData.variableInitializers
+        val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true)
+        val blockScopeVariableInfo = pseudocodeVariablesData.blockScopeVariableInfo
 
-        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
+        val reportedDiagnosticMap = hashMapOf<Instruction, DiagnosticFactory<*>>()
 
-        PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, initializers,
-                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableControlFlowState>>() {
-                    @Override
-                    public void execute(
-                            @NotNull Instruction instruction,
-                            @Nullable Map<VariableDescriptor, VariableControlFlowState> in,
-                            @Nullable Map<VariableDescriptor, VariableControlFlowState> out
-                    ) {
-                        assert in != null && out != null;
-                        VariableInitContext ctxt =
-                                new VariableInitContext(instruction, reportedDiagnosticMap, in, out, blockScopeVariableInfo);
-                        if (ctxt.variableDescriptor == null) return;
-                        if (instruction instanceof ReadValueInstruction) {
-                            ReadValueInstruction readValueInstruction = (ReadValueInstruction) instruction;
-                            KtElement element = readValueInstruction.getElement();
-                            if (PseudocodeUtil.isThisOrNoDispatchReceiver(readValueInstruction, trace.getBindingContext()) &&
-                                declaredVariables.contains(ctxt.variableDescriptor)) {
-                                checkIsInitialized(ctxt, element, varWithUninitializedErrorGenerated);
-                            }
-                            return;
-                        }
-                        if (!(instruction instanceof WriteValueInstruction)) return;
-                        WriteValueInstruction writeValueInstruction = (WriteValueInstruction) instruction;
-                        KtElement element = writeValueInstruction.getLValue();
-                        if (!(element instanceof KtExpression)) return;
-                        boolean error = checkValReassignment(ctxt, (KtExpression) element, writeValueInstruction,
-                                                             varWithValReassignErrorGenerated);
-                        if (!error && processClassOrObject) {
-                            error = checkAssignmentBeforeDeclaration(ctxt, (KtExpression) element);
-                        }
-                        if (!error && processClassOrObject) {
-                            checkInitializationForCustomSetter(ctxt, (KtExpression) element);
-                        }
-                    }
+        pseudocode.traverse(TraversalOrder.FORWARD, initializers) {
+            instruction: Instruction,
+            enterData: Map<VariableDescriptor, VariableControlFlowState>,
+            exitData: Map<VariableDescriptor, VariableControlFlowState> ->
+
+            val ctxt = VariableInitContext(instruction, reportedDiagnosticMap, enterData, exitData, blockScopeVariableInfo)
+            if (ctxt.variableDescriptor == null) return@traverse
+            if (instruction is ReadValueInstruction) {
+                val element = instruction.element
+                if (PseudocodeUtil.isThisOrNoDispatchReceiver(instruction, trace.bindingContext)
+                    && declaredVariables.contains(ctxt.variableDescriptor)) {
+                    checkIsInitialized(ctxt, element, varWithUninitializedErrorGenerated)
                 }
-        );
-    }
-
-    private void recordInitializedVariables() {
-        PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
-        recordInitializedVariables(pseudocode, initializers);
-        for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
-            recordInitializedVariables(instruction.getBody(), initializers);
+                return@traverse
+            }
+            if (instruction !is WriteValueInstruction) return@traverse
+            val element = instruction.lValue as? KtExpression ?: return@traverse
+            var error = checkValReassignment(ctxt, element, instruction,
+                                             varWithValReassignErrorGenerated)
+            if (!error && processClassOrObject) {
+                error = checkAssignmentBeforeDeclaration(ctxt, element)
+            }
+            if (!error && processClassOrObject) {
+                checkInitializationForCustomSetter(ctxt, element)
+            }
         }
     }
 
-    private boolean isDefinitelyInitialized(@NotNull PropertyDescriptor propertyDescriptor) {
-        if (propertyDescriptor.isLateInit()) return true;
-        if (trace.get(BACKING_FIELD_REQUIRED, propertyDescriptor) == Boolean.TRUE) return false;
-        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-        if (property instanceof KtProperty && ((KtProperty) property).hasDelegate()) return false;
-        return true;
+    private fun recordInitializedVariables() {
+        val pseudocode = pseudocodeVariablesData.pseudocode
+        val initializers = pseudocodeVariablesData.variableInitializers
+        recordInitializedVariables(pseudocode, initializers)
+        for (instruction in pseudocode.localDeclarations) {
+            recordInitializedVariables(instruction.body, initializers)
+        }
     }
 
-    private void checkIsInitialized(
-            @NotNull VariableInitContext ctxt,
-            @NotNull KtElement element,
-            @NotNull Collection<VariableDescriptor> varWithUninitializedErrorGenerated
+    private fun PropertyDescriptor.isDefinitelyInitialized(): Boolean {
+        if (isLateInit) return true
+        if (trace.get(BACKING_FIELD_REQUIRED, this) ?: false) return false
+        val property = DescriptorToSourceUtils.descriptorToDeclaration(this)
+        if (property is KtProperty && property.hasDelegate()) return false
+        return true
+    }
+
+    private fun checkIsInitialized(
+            ctxt: VariableInitContext,
+            element: KtElement,
+            varWithUninitializedErrorGenerated: MutableCollection<VariableDescriptor>
     ) {
-        if (!(element instanceof KtSimpleNameExpression)) return;
+        if (element !is KtSimpleNameExpression) return
 
-
-        boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
-        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (!isDefinitelyInitialized && variableDescriptor instanceof PropertyDescriptor) {
-            isDefinitelyInitialized = isDefinitelyInitialized((PropertyDescriptor) variableDescriptor);
+        var isDefinitelyInitialized = ctxt.exitInitState?.definitelyInitialized() ?: false
+        val variableDescriptor = ctxt.variableDescriptor
+        if (!isDefinitelyInitialized && variableDescriptor is PropertyDescriptor) {
+            isDefinitelyInitialized = variableDescriptor.isDefinitelyInitialized()
         }
         if (!isDefinitelyInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
-            if (!(variableDescriptor instanceof PropertyDescriptor)) {
-                varWithUninitializedErrorGenerated.add(variableDescriptor);
+            if (variableDescriptor !is PropertyDescriptor) {
+                variableDescriptor?.let { varWithUninitializedErrorGenerated.add(it) }
             }
-            if (variableDescriptor instanceof ValueParameterDescriptor) {
-                report(Errors.UNINITIALIZED_PARAMETER.on((KtSimpleNameExpression) element,
-                                                         (ValueParameterDescriptor) variableDescriptor), ctxt);
-            }
-            else {
-                report(Errors.UNINITIALIZED_VARIABLE.on((KtSimpleNameExpression) element, variableDescriptor), ctxt);
+            when (variableDescriptor) {
+                is ValueParameterDescriptor -> report(Errors.UNINITIALIZED_PARAMETER.on(element, variableDescriptor), ctxt)
+                is VariableDescriptor -> report(Errors.UNINITIALIZED_VARIABLE.on(element, variableDescriptor), ctxt)
             }
         }
     }
 
-    // Should return KtDeclarationWithBody or KtClassOrObject
-    @Nullable
-    public static KtDeclaration getElementParentDeclaration(@NotNull KtElement element) {
-        //noinspection unchecked
-        return PsiTreeUtil.getParentOfType(element, KtDeclarationWithBody.class, KtClassOrObject.class);
-    }
-
-    @Nullable
-    private DeclarationDescriptor getDeclarationDescriptor(@Nullable KtDeclaration declaration) {
-        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-        if (descriptor instanceof ClassDescriptor) {
+    private fun getDeclarationDescriptor(declaration: KtDeclaration?): DeclarationDescriptor? {
+        val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+        return if (descriptor is ClassDescriptor) {
             // For a class primary constructor, we cannot directly get ConstructorDescriptor by KtClassInitializer,
             // so we have to do additional conversion: KtClassInitializer -> KtClassOrObject -> ClassDescriptor -> ConstructorDescriptor
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            return classDescriptor.getUnsubstitutedPrimaryConstructor();
+            descriptor.unsubstitutedPrimaryConstructor
         }
         else {
-            return descriptor;
+            descriptor
         }
     }
 
-    private boolean isCapturedWrite(
-            @NotNull VariableDescriptor variableDescriptor,
-            @NotNull WriteValueInstruction writeValueInstruction
-    ) {
-        DeclarationDescriptor containingDeclarationDescriptor = variableDescriptor.getContainingDeclaration();
+    private fun isCapturedWrite(
+            variableDescriptor: VariableDescriptor,
+            writeValueInstruction: WriteValueInstruction
+    ): Boolean {
+        val containingDeclarationDescriptor = variableDescriptor.containingDeclaration
         // Do not consider member / top-level properties
-        if (containingDeclarationDescriptor instanceof ClassOrPackageFragmentDescriptor) return false;
-        KtDeclaration parentDeclaration = getElementParentDeclaration(writeValueInstruction.getElement());
+        if (containingDeclarationDescriptor is ClassOrPackageFragmentDescriptor) return false
+        var parentDeclaration = getElementParentDeclaration(writeValueInstruction.element)
         while (true) {
-            DeclarationDescriptor parentDescriptor = getDeclarationDescriptor(parentDeclaration);
-            if (containingDeclarationDescriptor.equals(parentDescriptor)) {
-                return false;
+            val parentDescriptor = getDeclarationDescriptor(parentDeclaration)
+            if (containingDeclarationDescriptor == parentDescriptor) {
+                return false
             }
-            else if (parentDeclaration instanceof KtObjectDeclaration) {
+            else if (parentDeclaration is KtObjectDeclaration) {
                 // anonymous object counts here the same as its owner
-                parentDeclaration = getElementParentDeclaration(parentDeclaration);
+                parentDeclaration = getElementParentDeclaration(parentDeclaration)
             }
             else {
-                return true;
+                return true
             }
         }
     }
 
-    private boolean checkValReassignment(
-            @NotNull VariableInitContext ctxt,
-            @NotNull KtExpression expression,
-            @NotNull WriteValueInstruction writeValueInstruction,
-            @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated
-    ) {
-        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        PropertyDescriptor propertyDescriptor = SyntheticFieldDescriptorKt.getReferencedProperty(variableDescriptor);
+    private fun checkValReassignment(
+            ctxt: VariableInitContext,
+            expression: KtExpression,
+            writeValueInstruction: WriteValueInstruction,
+            varWithValReassignErrorGenerated: MutableCollection<VariableDescriptor>
+    ): Boolean {
+        val variableDescriptor = ctxt.variableDescriptor
+        val propertyDescriptor = variableDescriptor?.referencedProperty
         if (KtPsiUtil.isBackingFieldReference(variableDescriptor) && propertyDescriptor != null) {
-            KtPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, KtPropertyAccessor.class);
+            val accessor = PsiTreeUtil.getParentOfType(expression, KtPropertyAccessor::class.java)
             if (accessor != null) {
-                DeclarationDescriptor accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor);
-                if (propertyDescriptor.getGetter() == accessorDescriptor) {
+                val accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor)
+                if (propertyDescriptor.getter === accessorDescriptor) {
                     //val can be reassigned through backing field inside its own getter
-                    return false;
+                    return false
                 }
             }
         }
 
-        boolean mayBeInitializedNotHere = ctxt.enterInitState.mayBeInitialized();
-        boolean hasBackingField = true;
-        if (variableDescriptor instanceof PropertyDescriptor) {
-            hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
-        }
-        if (variableDescriptor.isVar() && variableDescriptor instanceof PropertyDescriptor) {
-            DeclarationDescriptor descriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), expression);
-            PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
+        val mayBeInitializedNotHere = ctxt.enterInitState?.mayBeInitialized() ?: false
+        val hasBackingField = (variableDescriptor as? PropertyDescriptor)?.let {
+            trace.get(BindingContext.BACKING_FIELD_REQUIRED, it)
+        } ?: true
+        if (variableDescriptor is PropertyDescriptor && variableDescriptor.isVar) {
+            val descriptor = BindingContextUtils.getEnclosingDescriptor(trace.bindingContext, expression)
+            val setterDescriptor = variableDescriptor.setter
 
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
-            ReceiverValue receiverValue = null;
-            if (resolvedCall != null) {
-                receiverValue = ResolvedCallUtilKt.getDispatchReceiverWithSmartCast(resolvedCall);
-            }
+            val receiverValue = expression.getResolvedCall(trace.bindingContext)?.getDispatchReceiverWithSmartCast()
 
-            if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
-                    && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
-                report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),
-                                                  setterDescriptor), ctxt);
-                return true;
+            if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor)
+                && setterDescriptor != null
+                && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
+                report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.visibility,
+                                                  setterDescriptor), ctxt)
+                return true
             }
         }
-        boolean isThisOrNoDispatchReceiver =
-                PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.getBindingContext());
-        boolean captured = isCapturedWrite(variableDescriptor, writeValueInstruction);
-        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver || captured) && !variableDescriptor.isVar()) {
-            boolean hasReassignMethodReturningUnit = false;
-            KtSimpleNameExpression operationReference = null;
-            PsiElement parent = expression.getParent();
-            if (parent instanceof KtBinaryExpression) {
-                operationReference = ((KtBinaryExpression) parent).getOperationReference();
-            }
-            else if (parent instanceof KtUnaryExpression) {
-                operationReference = ((KtUnaryExpression) parent).getOperationReference();
-            }
+        val isThisOrNoDispatchReceiver = PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.bindingContext)
+        val captured = variableDescriptor?.let { isCapturedWrite(it, writeValueInstruction) } ?: false
+        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver || captured) &&
+            variableDescriptor != null && !variableDescriptor.isVar) {
+            var hasReassignMethodReturningUnit = false
+            val parent = expression.parent
+            val operationReference =
+                    when (parent) {
+                        is KtBinaryExpression -> parent.operationReference
+                        is KtUnaryExpression -> parent.operationReference
+                        else -> null
+                    }
             if (operationReference != null) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference);
-                if (descriptor instanceof FunctionDescriptor) {
-                    if (KotlinBuiltIns.isUnit(((FunctionDescriptor) descriptor).getReturnType())) {
-                        hasReassignMethodReturningUnit = true;
+                val descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference)
+                if (descriptor is FunctionDescriptor) {
+                    if (descriptor.returnType?.let { KotlinBuiltIns.isUnit(it) } ?: false) {
+                        hasReassignMethodReturningUnit = true
                     }
                 }
                 if (descriptor == null) {
-                    Collection<? extends DeclarationDescriptor> descriptors =
-                            trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference);
-                    if (descriptors != null) {
-                        for (DeclarationDescriptor referenceDescriptor : descriptors) {
-                            if (KotlinBuiltIns.isUnit(((FunctionDescriptor) referenceDescriptor).getReturnType())) {
-                                hasReassignMethodReturningUnit = true;
-                            }
+                    val descriptors = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: emptyList()
+                    for (referenceDescriptor in descriptors) {
+                        if ((referenceDescriptor as? FunctionDescriptor)?.returnType?.let { KotlinBuiltIns.isUnit(it) } ?: false) {
+                            hasReassignMethodReturningUnit = true
                         }
                     }
                 }
@@ -513,684 +434,554 @@ public class ControlFlowInformationProvider {
             if (!hasReassignMethodReturningUnit) {
                 if (!isThisOrNoDispatchReceiver || !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
                     if (captured && !mayBeInitializedNotHere && hasBackingField && isThisOrNoDispatchReceiver) {
-                        report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt);
+                        report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
                     }
                     else {
-                        report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt);
+                        report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
                     }
                 }
                 if (isThisOrNoDispatchReceiver) {
                     // try to get rid of repeating VAL_REASSIGNMENT diagnostic only for vars with no receiver
                     // or when receiver is this
-                    varWithValReassignErrorGenerated.add(variableDescriptor);
+                    varWithValReassignErrorGenerated.add(variableDescriptor)
                 }
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
-        if (!ctxt.enterInitState.isDeclared() && !ctxt.exitInitState.isDeclared()
-            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
-            report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkInitializationForCustomSetter(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
-        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (!(variableDescriptor instanceof PropertyDescriptor)
-            || ctxt.enterInitState.mayBeInitialized()
-            || !ctxt.exitInitState.mayBeInitialized()
-            || !variableDescriptor.isVar()
-            || !trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)
-        ) {
-            return false;
-        }
-
-        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
-        assert property instanceof KtProperty;
-        KtPropertyAccessor setter = ((KtProperty) property).getSetter();
-        if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && (setter == null || !setter.hasBody())) {
-            return false;
-        }
-
-        KtExpression variable = expression;
-        if (expression instanceof KtDotQualifiedExpression) {
-            if (((KtDotQualifiedExpression) expression).getReceiverExpression() instanceof KtThisExpression) {
-                variable = ((KtDotQualifiedExpression) expression).getSelectorExpression();
-            }
-        }
-        if (variable instanceof KtSimpleNameExpression) {
-            trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
-            return true;
-        }
-        return false;
-    }
-
-    private void recordInitializedVariables(
-            @NotNull Pseudocode pseudocode,
-            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> initializersMap
-    ) {
-        Edges<InitControlFlowInfo> initializers = initializersMap.get(pseudocode.getExitInstruction());
-        if (initializers == null) return;
-        Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
-        for (VariableDescriptor variable : declaredVariables) {
-            if (variable instanceof PropertyDescriptor) {
-                VariableControlFlowState variableControlFlowState = initializers.getIncoming().get(variable);
-                if (variableControlFlowState != null && variableControlFlowState.definitelyInitialized()) continue;
-                trace.record(BindingContext.IS_UNINITIALIZED, (PropertyDescriptor) variable);
-            }
-        }
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-//  "Unused variable" & "unused value" analyses
-
-    private void markUnusedVariables() {
-        final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<UseControlFlowInfo>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
-        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
-        InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
-                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {
-                    @Override
-                    public void execute(
-                            @NotNull Instruction instruction,
-                            @Nullable Map<VariableDescriptor, VariableUseState> in,
-                            @Nullable Map<VariableDescriptor, VariableUseState> out
-                    ) {
-
-                        assert in != null && out != null;
-                        VariableContext ctxt = new VariableUseContext(instruction, reportedDiagnosticMap, in, out);
-                        Set<VariableDescriptor> declaredVariables =
-                                pseudocodeVariablesData.getDeclaredVariables(instruction.getOwner(), false);
-                        VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                                instruction, false, trace.getBindingContext());
-                        if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor)
-                                || !ExpressionTypingUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
-                            return;
-                        }
-                        VariableUseState variableUseState = in.get(variableDescriptor);
-                        if (instruction instanceof WriteValueInstruction) {
-                            if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
-                            KtElement element = ((WriteValueInstruction) instruction).getElement();
-                            if (variableUseState != READ) {
-                                if (element instanceof KtBinaryExpression &&
-                                    ((KtBinaryExpression) element).getOperationToken() == KtTokens.EQ) {
-                                    KtExpression right = ((KtBinaryExpression) element).getRight();
-                                    if (right != null) {
-                                        report(Errors.UNUSED_VALUE.on((KtBinaryExpression) element, right, variableDescriptor), ctxt);
-                                    }
-                                }
-                                else if (element instanceof KtPostfixExpression) {
-                                    IElementType operationToken =
-                                            ((KtPostfixExpression) element).getOperationReference().getReferencedNameElementType();
-                                    if (operationToken == KtTokens.PLUSPLUS || operationToken == KtTokens.MINUSMINUS) {
-                                        report(Errors.UNUSED_CHANGED_VALUE.on(element, element), ctxt);
-                                    }
-                                }
-                            }
-                        }
-                        else if (instruction instanceof VariableDeclarationInstruction) {
-                            KtDeclaration element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
-                            if (!(element instanceof KtNamedDeclaration)) return;
-                            PsiElement nameIdentifier = ((KtNamedDeclaration) element).getNameIdentifier();
-                            if (nameIdentifier == null) return;
-                            if (!VariableUseState.isUsed(variableUseState)) {
-                                if (KtPsiUtil.isVariableNotParameterDeclaration(element)) {
-                                    report(Errors.UNUSED_VARIABLE.on((KtNamedDeclaration) element, variableDescriptor), ctxt);
-                                }
-                                else if (element instanceof KtParameter) {
-                                    PsiElement owner = element.getParent().getParent();
-                                    if (owner instanceof KtPrimaryConstructor) {
-                                        if (!((KtParameter) element).hasValOrVar()) {
-                                            KtClassOrObject containingClass = ((KtPrimaryConstructor) owner).getContainingClassOrObject();
-                                            DeclarationDescriptor containingClassDescriptor = trace.get(
-                                                    BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass
-                                            );
-                                            if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
-                                                report(Errors.UNUSED_PARAMETER.on((KtParameter) element, variableDescriptor), ctxt);
-                                            }
-                                        }
-                                    }
-                                    else if (owner instanceof KtFunction) {
-                                        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
-                                        boolean isMain = (owner instanceof KtNamedFunction) && mainFunctionDetector.isMain((KtNamedFunction) owner);
-                                        if (owner instanceof KtFunctionLiteral) return;
-                                        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
-                                        assert descriptor instanceof FunctionDescriptor : owner.getText();
-                                        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                                        String functionName = functionDescriptor.getName().asString();
-                                        KtFunction function = (KtFunction) owner;
-                                        if (isMain
-                                            || ModalityKt.isOverridableOrOverrides(functionDescriptor)
-                                            || function.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                                            || "getValue".equals(functionName) || "setValue".equals(functionName)
-                                            || "propertyDelegated".equals(functionName)
-                                                ) {
-                                            return;
-                                        }
-                                        report(Errors.UNUSED_PARAMETER.on((KtParameter) element, variableDescriptor), ctxt);
-                                    }
-                                }
-                            }
-                            else if (variableUseState == ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isVariableNotParameterDeclaration(element)) {
-                                report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((KtNamedDeclaration) element, variableDescriptor), ctxt);
-                            }
-                            else if (variableUseState == WRITTEN_AFTER_READ && element instanceof KtVariableDeclaration) {
-                                if (element instanceof KtProperty) {
-                                    KtExpression initializer = ((KtProperty) element).getInitializer();
-                                    if (initializer != null) {
-                                        report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(initializer, variableDescriptor), ctxt);
-                                    }
-                                }
-                                else if (element instanceof KtDestructuringDeclarationEntry) {
-                                    report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt);
-                                }
-                            }
-                        }
-                    }
-                };
-        PseudocodeTraverserKt.traverse(pseudocode, TraversalOrder.BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-//  "Unused expressions" in block
-
-    private void markUnusedExpressions() {
-        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
-        PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
-                    @Override
-                    public void execute(@NotNull Instruction instruction) {
-                        if (!(instruction instanceof KtElementInstruction)) return;
-
-                        KtElement element = ((KtElementInstruction)instruction).getElement();
-                        if (!(element instanceof KtExpression)) return;
-
-                        if (BindingContextUtilsKt.isUsedAsStatement((KtExpression) element, trace.getBindingContext())
-                            && PseudocodeUtilsKt.getSideEffectFree(instruction)) {
-                            VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
-                            report(
-                                    element instanceof KtLambdaExpression
-                                        ? Errors.UNUSED_LAMBDA_EXPRESSION.on((KtLambdaExpression) element)
-                                        : Errors.UNUSED_EXPRESSION.on(element),
-                                    ctxt
-                            );
-                        }
-                    }
-                }
-        );
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-// Statements
-
-    private void markStatements() {
-        PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
-                    @Override
-                    public void execute(@NotNull Instruction instruction) {
-                        PseudoValue value = instruction instanceof InstructionWithValue
-                                            ? ((InstructionWithValue) instruction).getOutputValue()
-                                            : null;
-                        Pseudocode pseudocode = instruction.getOwner();
-                        List<Instruction> usages = pseudocode.getUsages(value);
-                        boolean isUsedAsExpression = !usages.isEmpty();
-                        boolean isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages);
-                        for (KtElement element : pseudocode.getValueElements(value)) {
-                            trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression);
-                            trace.record(BindingContext.USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda);
-                        }
-                    }
-                }
-        );
-    }
-
-    private static boolean isUsedAsResultOfLambda(List<Instruction> usages) {
-        for (Instruction usage : usages) {
-            if (usage instanceof ReturnValueInstruction) {
-                KtElement returnElement = ((ReturnValueInstruction) usage).getElement();
-                PsiElement parentElement = returnElement.getParent();
-                if (!(returnElement instanceof KtReturnExpression ||
-                      parentElement instanceof KtDeclaration && !(parentElement instanceof KtFunctionLiteral))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void checkIfExpressions() {
-        PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
-                    @Override
-                    public void execute(@NotNull Instruction instruction) {
-                        PseudoValue value = instruction instanceof InstructionWithValue
-                                            ? ((InstructionWithValue) instruction).getOutputValue()
-                                            : null;
-                        for (KtElement element : instruction.getOwner().getValueElements(value)) {
-                            if (!(element instanceof KtIfExpression)) continue;
-                            KtIfExpression ifExpression = (KtIfExpression) element;
-
-                            if (BindingContextUtilsKt.isUsedAsExpression(ifExpression, trace.getBindingContext())) {
-                                KtExpression thenExpression = ifExpression.getThen();
-                                KtExpression elseExpression = ifExpression.getElse();
-
-                                if (thenExpression == null || elseExpression == null) {
-                                    trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
-                                }
-                                else {
-                                    checkImplicitCastOnConditionalExpression(ifExpression);
-                                }
-                            }
-                        }
-                    }
-                }
-        );
-    }
-
-    private static List<KtExpression> collectResultingExpressionsOfConditionalExpression(KtExpression expression) {
-        List<KtExpression> leafBranches = new ArrayList<KtExpression>();
-        collectResultingExpressionsOfConditionalExpressionRec(expression, leafBranches);
-        return leafBranches;
-    }
-
-    private static void collectResultingExpressionsOfConditionalExpressionRec(
-            @Nullable KtExpression expression,
-            @NotNull List<KtExpression> resultingExpressions
-    ) {
-        if (expression instanceof KtIfExpression) {
-            KtIfExpression ifExpression = (KtIfExpression) expression;
-            collectResultingExpressionsOfConditionalExpressionRec(ifExpression.getThen(), resultingExpressions);
-            collectResultingExpressionsOfConditionalExpressionRec(ifExpression.getElse(), resultingExpressions);
-        }
-        else if (expression instanceof KtWhenExpression) {
-            KtWhenExpression whenExpression = (KtWhenExpression) expression;
-            for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
-                collectResultingExpressionsOfConditionalExpressionRec(whenEntry.getExpression(), resultingExpressions);
-            }
-        }
-        else if (expression != null){
-            KtExpression resultingExpression = getResultingExpression(expression);
-            if (resultingExpression instanceof KtIfExpression || resultingExpression instanceof KtWhenExpression) {
-                collectResultingExpressionsOfConditionalExpressionRec(resultingExpression, resultingExpressions);
+    private fun checkAssignmentBeforeDeclaration(ctxt: VariableInitContext, expression: KtExpression) =
+            if (ctxt.enterInitState?.isDeclared ?: false
+                || ctxt.exitInitState?.isDeclared ?: false
+                || ctxt.enterInitState?.mayBeInitialized() ?: false
+                || !(ctxt.exitInitState?.mayBeInitialized() ?: false)) {
+                false
             }
             else {
-                resultingExpressions.add(resultingExpression);
-            }
-        }
-    }
-
-    private void checkImplicitCastOnConditionalExpression(@NotNull KtExpression expression) {
-        Collection<KtExpression> branchExpressions = collectResultingExpressionsOfConditionalExpression(expression);
-
-        KotlinType expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression);
-        if (expectedExpressionType != null && expectedExpressionType != DONT_CARE) return;
-
-        KotlinType expressionType = trace.getType(expression);
-        if (expressionType == null) {
-            return;
-        }
-        if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
-            boolean isUsedAsResultOfLambda = BindingContextUtilsKt.isUsedAsResultOfLambda(expression, trace.getBindingContext());
-            for (KtExpression branchExpression : branchExpressions) {
-                if (branchExpression == null) continue;
-                KotlinType branchType = trace.getType(branchExpression);
-                if (branchType == null
-                    || KotlinBuiltIns.isAnyOrNullableAny(branchType)
-                    || (isUsedAsResultOfLambda && KotlinBuiltIns.isUnitOrNullableUnit(branchType))) {
-                    return;
+                if (ctxt.variableDescriptor != null) {
+                    report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt)
                 }
+                true
             }
-            for (KtExpression branchExpression : branchExpressions) {
-                if (branchExpression == null) continue;
-                KotlinType branchType = trace.getType(branchExpression);
-                if (branchType == null) continue;
-                if (KotlinBuiltIns.isNothing(branchType)) continue;
-                trace.report(IMPLICIT_CAST_TO_ANY.on(getResultingExpression(branchExpression), branchType, expressionType));
-            }
-        }
-    }
 
-    private static @NotNull KtExpression getResultingExpression(@NotNull KtExpression expression) {
-        KtExpression finger = expression;
-        while (true) {
-            KtExpression deparenthesized = KtPsiUtil.deparenthesize(finger);
-            deparenthesized = KtPsiUtil.getExpressionOrLastStatementInBlock(deparenthesized);
-            if (deparenthesized == null || deparenthesized == finger) break;
-            finger = deparenthesized;
-        }
-        return finger;
-    }
-
-    private void checkWhenExpressions() {
-        final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
-        PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
-                    @Override
-                    public void execute(@NotNull Instruction instruction) {
-                        if (instruction instanceof MagicInstruction) {
-                            MagicInstruction magicInstruction = (MagicInstruction) instruction;
-                            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
-                                Instruction next = magicInstruction.getNext();
-                                if (next instanceof MergeInstruction) {
-                                    MergeInstruction mergeInstruction = (MergeInstruction) next;
-                                    if (initializers.containsKey(mergeInstruction) && initializers.containsKey(magicInstruction)) {
-                                        InitControlFlowInfo mergeInfo = initializers.get(mergeInstruction).getIncoming();
-                                        InitControlFlowInfo magicInfo = initializers.get(magicInstruction).getOutgoing();
-                                        if (mergeInstruction.getElement() instanceof KtWhenExpression &&
-                                            magicInfo.checkDefiniteInitializationInWhen(mergeInfo)) {
-                                            trace.record(IMPLICIT_EXHAUSTIVE_WHEN, (KtWhenExpression) mergeInstruction.getElement());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        PseudoValue value = instruction instanceof InstructionWithValue
-                                            ? ((InstructionWithValue) instruction).getOutputValue()
-                                            : null;
-                        for (KtElement element : instruction.getOwner().getValueElements(value)) {
-                            if (!(element instanceof KtWhenExpression)) continue;
-                            KtWhenExpression whenExpression = (KtWhenExpression) element;
-
-                            if (BindingContextUtilsKt.isUsedAsExpression(whenExpression, trace.getBindingContext())) {
-                                checkImplicitCastOnConditionalExpression(whenExpression);
-                            }
-
-                            if (whenExpression.getElseExpression() != null) continue;
-
-                            BindingContext context = trace.getBindingContext();
-                            List<WhenMissingCase> necessaryCases = WhenChecker.getNecessaryCases(whenExpression, context);
-                            if (!necessaryCases.isEmpty()) {
-                                trace.report(NO_ELSE_IN_WHEN.on(whenExpression, necessaryCases));
-                            }
-                            else if (whenExpression.getSubjectExpression() != null) {
-                                ClassDescriptor enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(
-                                        trace.getType(whenExpression.getSubjectExpression()));
-                                if (enumClassDescriptor != null) {
-                                    List<WhenMissingCase> missingCases = WhenChecker.getEnumMissingCases(
-                                            whenExpression, context, enumClassDescriptor
-                                    );
-                                    if (!missingCases.isEmpty()) {
-                                        trace.report(NON_EXHAUSTIVE_WHEN.on(whenExpression, missingCases));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-        );
-    }
-
-    private void checkConstructorConsistency() {
-        if (subroutine instanceof KtClassOrObject) {
-            ConstructorConsistencyChecker.check((KtClassOrObject) subroutine, trace, pseudocode, pseudocodeVariablesData);
-        }
-        else if (subroutine instanceof KtSecondaryConstructor) {
-            ConstructorConsistencyChecker.check((KtSecondaryConstructor) subroutine, trace, pseudocode, pseudocodeVariablesData);
-        }
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-// Tail calls
-
-    private void markTailCalls() {
-        final DeclarationDescriptor subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
-        if (!(subroutineDescriptor instanceof FunctionDescriptor)) return;
-        if (!((FunctionDescriptor) subroutineDescriptor).isTailrec()) return;
-
-        // finally blocks are copied which leads to multiple diagnostics reported on one instruction
-        class KindAndCall {
-            TailRecursionKind kind;
-            private final ResolvedCall<?> call;
-
-            KindAndCall(TailRecursionKind kind, ResolvedCall<?> call) {
-                this.kind = kind;
-                this.call = call;
-            }
-        }
-        final Map<KtElement, KindAndCall> calls = new HashMap<KtElement, KindAndCall>();
-        PseudocodeTraverserKt.traverse(
-                pseudocode,
-                TraversalOrder.FORWARD,
-                new FunctionVoid1<Instruction>() {
-                    @Override
-                    public void execute(@NotNull Instruction instruction) {
-                        if (!(instruction instanceof CallInstruction)) return;
-                        CallInstruction callInstruction = (CallInstruction) instruction;
-
-                        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(callInstruction.getElement(), trace.getBindingContext());
-                        if (resolvedCall == null) return;
-
-                        // is this a recursive call?
-                        CallableDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
-                        if (!functionDescriptor.getOriginal().equals(subroutineDescriptor)) return;
-                        // Overridden functions using default arguments at tail call are not included: KT-4285
-                        if (resolvedCall.getCall().getValueArguments().size() != functionDescriptor.getValueParameters().size() &&
-                            !functionDescriptor.getOverriddenDescriptors().isEmpty()) return;
-
-                        KtElement element = callInstruction.getElement();
-                        //noinspection unchecked
-                        KtExpression parent = PsiTreeUtil.getParentOfType(
-                                element,
-                                KtTryExpression.class, KtFunction.class, KtAnonymousInitializer.class
-                        );
-
-                        if (parent instanceof KtTryExpression) {
-                            // We do not support tail calls Collections.singletonMap() try-catch-finally, for simplicity of the mental model
-                            // very few cases there would be real tail-calls, and it's often not so easy for the user to see why
-                            calls.put(element, new KindAndCall(IN_TRY, resolvedCall));
-                            return;
-                        }
-
-                        boolean isTail = PseudocodeTraverserKt.traverseFollowingInstructions(
-                                callInstruction,
-                                new HashSet<Instruction>(),
-                                TraversalOrder.FORWARD,
-                                new TailRecursionDetector(subroutine, callInstruction)
-                        );
-
-                        // A tail call is not allowed to change dispatch receiver
-                        //   class C {
-                        //       fun foo(other: C) {
-                        //           other.foo(this) // not a tail call
-                        //       }
-                        //   }
-                        boolean sameDispatchReceiver =
-                                ResolvedCallUtilKt.hasThisOrNoDispatchReceiver(resolvedCall, trace.getBindingContext());
-
-                        TailRecursionKind kind = isTail && sameDispatchReceiver ? TAIL_CALL : NON_TAIL;
-
-                        KindAndCall kindAndCall = calls.get(element);
-                        calls.put(element,
-                                  new KindAndCall(
-                                          combineKinds(kind, kindAndCall == null ? null : kindAndCall.kind),
-                                          resolvedCall
-                                  )
-                        );
-                    }
-                }
-        );
-        boolean hasTailCalls = false;
-        for (Map.Entry<KtElement, KindAndCall> entry : calls.entrySet()) {
-            KtElement element = entry.getKey();
-            KindAndCall kindAndCall = entry.getValue();
-            switch (kindAndCall.kind) {
-                case TAIL_CALL:
-                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call.getCall(), TailRecursionKind.TAIL_CALL);
-                    hasTailCalls = true;
-                    break;
-                case IN_TRY:
-                    trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(element));
-                    break;
-                case NON_TAIL:
-                    trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(element));
-                    break;
-            }
+    private fun checkInitializationForCustomSetter(ctxt: VariableInitContext, expression: KtExpression): Boolean {
+        val variableDescriptor = ctxt.variableDescriptor
+        if (variableDescriptor !is PropertyDescriptor
+            || ctxt.enterInitState?.mayBeInitialized() ?: false
+            || !(ctxt.exitInitState?.mayBeInitialized() ?: false)
+            || !variableDescriptor.isVar
+            || !(trace.get(BindingContext.BACKING_FIELD_REQUIRED, variableDescriptor) ?: false)) {
+            return false
         }
 
-        if (!hasTailCalls) {
-            trace.report(Errors.NO_TAIL_CALLS_FOUND.on((KtNamedFunction) subroutine));
+        val property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor) as? KtProperty
+        ?: throw AssertionError("$variableDescriptor is not related to KtProperty")
+        val setter = property.setter
+        if (variableDescriptor.modality == Modality.FINAL && (setter == null || !setter.hasBody())) {
+            return false
         }
-    }
 
-    private static TailRecursionKind combineKinds(TailRecursionKind kind, @Nullable TailRecursionKind existingKind) {
-        TailRecursionKind resultingKind;
-        if (existingKind == null || existingKind == kind) {
-            resultingKind = kind;
+        val variable = if (expression is KtDotQualifiedExpression &&
+                           expression.receiverExpression is KtThisExpression) {
+            expression.selectorExpression
         }
         else {
-            if (check(kind, existingKind, IN_TRY, TAIL_CALL)) {
-                resultingKind = IN_TRY;
-            }
-            else if (check(kind, existingKind, IN_TRY, NON_TAIL)) {
-                resultingKind = IN_TRY;
-            }
-            else {
-                // TAIL_CALL, NON_TAIL
-                resultingKind = NON_TAIL;
+            expression
+        }
+        if (variable is KtSimpleNameExpression) {
+            trace.record(IS_UNINITIALIZED, variableDescriptor)
+            return true
+        }
+        return false
+    }
+
+    private fun recordInitializedVariables(
+            pseudocode: Pseudocode,
+            initializersMap: Map<Instruction, Edges<InitControlFlowInfo>>
+    ) {
+        val initializers = initializersMap[pseudocode.exitInstruction] ?: return
+        val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false)
+        for (variable in declaredVariables) {
+            if (variable is PropertyDescriptor) {
+                if (initializers.incoming[variable]?.definitelyInitialized() ?: false) continue
+                trace.record(BindingContext.IS_UNINITIALIZED, variable)
             }
         }
-        return resultingKind;
     }
 
-    private static boolean check(Object a, Object b, Object x, Object y) {
-        return (a == x && b == y) || (a == y && b == x);
+    ////////////////////////////////////////////////////////////////////////////////
+    //  "Unused variable" & "unused value" analyses
+
+    private fun markUnusedVariables() {
+        val variableStatusData = pseudocodeVariablesData.variableUseStatusData
+        val reportedDiagnosticMap = hashMapOf<Instruction, DiagnosticFactory<*>>()
+        pseudocode.traverse(TraversalOrder.BACKWARD, variableStatusData) {
+            instruction: Instruction,
+            enterData: Map<VariableDescriptor, VariableUseState>,
+            exitData: Map<VariableDescriptor, VariableUseState> ->
+
+            val ctxt = VariableUseContext(instruction, reportedDiagnosticMap)
+            val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.owner, false)
+            val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                    instruction, false, trace.bindingContext)
+            if (variableDescriptor == null
+                || !declaredVariables.contains(variableDescriptor)
+                || !ExpressionTypingUtils.isLocal(variableDescriptor.containingDeclaration, variableDescriptor)) {
+                return@traverse
+            }
+            val variableUseState = enterData[variableDescriptor]
+            when (instruction) {
+                is WriteValueInstruction -> {
+                    if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return@traverse
+                    if (variableUseState !== READ) {
+                        val element = instruction.element
+                        when (element) {
+                            is KtBinaryExpression -> if (element.operationToken === KtTokens.EQ) {
+                                element.right?.let {
+                                    report(Errors.UNUSED_VALUE.on(element, it, variableDescriptor), ctxt)
+                                }
+                            }
+                            is KtPostfixExpression -> {
+                                val operationToken = element.operationReference.getReferencedNameElementType()
+                                if (operationToken === KtTokens.PLUSPLUS || operationToken === KtTokens.MINUSMINUS) {
+                                    report(Errors.UNUSED_CHANGED_VALUE.on(element, element), ctxt)
+                                }
+                            }
+                        }
+                    }
+                }
+                is VariableDeclarationInstruction -> {
+                    val element = instruction.variableDeclarationElement as? KtNamedDeclaration ?: return@traverse
+                    element.nameIdentifier ?: return@traverse
+                    if (!VariableUseState.isUsed(variableUseState)) {
+                        if (KtPsiUtil.isVariableNotParameterDeclaration(element)) {
+                            report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                        }
+                        else if (element is KtParameter) {
+                            val owner = element.parent?.parent
+                            when (owner) {
+                                is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
+                                    val containingClass = owner.getContainingClassOrObject()
+                                    val containingClassDescriptor = trace.get(
+                                            BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass)
+                                    if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
+                                        report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                                    }
+                                }
+                                is KtFunction -> {
+                                    val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
+                                    val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
+                                    if (owner is KtFunctionLiteral) return@traverse
+                                    val functionDescriptor =
+                                            trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
+                                            ?: throw AssertionError(owner.text)
+                                    val functionName = functionDescriptor.name.asString()
+                                    if (isMain
+                                        || functionDescriptor.isOverridableOrOverrides
+                                        || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                                        || "getValue" == functionName
+                                        || "setValue" == functionName
+                                        || "propertyDelegated" == functionName) {
+                                        return@traverse
+                                    }
+                                    report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                                }
+                            }
+                        }
+                    }
+                    else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isVariableNotParameterDeclaration(element)) {
+                        report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                    }
+                    else if (variableUseState === WRITTEN_AFTER_READ && element is KtVariableDeclaration) {
+                        when (element) {
+                            is KtProperty ->
+                                element.initializer?.let {
+                                    report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(it, variableDescriptor), ctxt)
+                                }
+                            is KtDestructuringDeclarationEntry ->
+                                report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// Utility classes and methods
+    ////////////////////////////////////////////////////////////////////////////////
+    //  "Unused expressions" in block
+
+    private fun markUnusedExpressions() {
+        val reportedDiagnosticMap = hashMapOf<Instruction, DiagnosticFactory<*>>()
+        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+            if (instruction !is KtElementInstruction) return@traverse
+
+            val element = instruction.element as? KtExpression ?: return@traverse
+
+            if (element.isUsedAsStatement(trace.bindingContext) && instruction.sideEffectFree) {
+                val context = VariableContext(instruction, reportedDiagnosticMap)
+                report(when (element) {
+                           is KtLambdaExpression -> Errors.UNUSED_LAMBDA_EXPRESSION.on(element)
+                           else -> Errors.UNUSED_EXPRESSION.on(element)
+                       }, context)
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Statements
+
+    private fun markStatements() = pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+        val value = (instruction as? InstructionWithValue)?.outputValue
+        val pseudocode = instruction.owner
+        val usages = pseudocode.getUsages(value)
+        val isUsedAsExpression = !usages.isEmpty()
+        val isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages)
+        for (element in pseudocode.getValueElements(value)) {
+            trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression)
+            trace.record(BindingContext.USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
+        }
+    }
+
+    private fun checkIfExpressions() = pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+        val value = (instruction as? InstructionWithValue)?.outputValue
+        for (element in instruction.owner.getValueElements(value)) {
+            if (element !is KtIfExpression) continue
+
+            if (element.isUsedAsExpression(trace.bindingContext)) {
+                val thenExpression = element.then
+                val elseExpression = element.`else`
+
+                if (thenExpression == null || elseExpression == null) {
+                    trace.report(INVALID_IF_AS_EXPRESSION.on(element))
+                }
+                else {
+                    checkImplicitCastOnConditionalExpression(element)
+                }
+            }
+        }
+    }
+
+    private fun checkImplicitCastOnConditionalExpression(expression: KtExpression) {
+        val branchExpressions = collectResultingExpressionsOfConditionalExpression(expression)
+
+        val expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression)
+        if (expectedExpressionType != null && expectedExpressionType !== DONT_CARE) return
+
+        val expressionType = trace.getType(expression) ?: return
+        if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
+            val isUsedAsResultOfLambda = expression.isUsedAsResultOfLambda(trace.bindingContext)
+            for (branchExpression in branchExpressions) {
+                val branchType = trace.getType(branchExpression) ?: return
+                if (KotlinBuiltIns.isAnyOrNullableAny(branchType) ||
+                    isUsedAsResultOfLambda && KotlinBuiltIns.isUnitOrNullableUnit(branchType)) {
+                    return
+                }
+            }
+            for (branchExpression in branchExpressions) {
+                val branchType = trace.getType(branchExpression) ?: continue
+                if (KotlinBuiltIns.isNothing(branchType)) continue
+                trace.report(IMPLICIT_CAST_TO_ANY.on(getResultingExpression(branchExpression), branchType, expressionType))
+            }
+        }
+    }
+
+    private fun checkWhenExpressions() {
+        val initializers = pseudocodeVariablesData.variableInitializers
+        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+            if (instruction is MagicInstruction) {
+                if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                    val next = instruction.next
+                    if (next is MergeInstruction) {
+                        val mergeInfo = initializers[next]?.incoming
+                        val magicInfo = initializers[instruction]?.outgoing
+                        if (mergeInfo != null && magicInfo != null) {
+                            if (next.element is KtWhenExpression && magicInfo.checkDefiniteInitializationInWhen(mergeInfo)) {
+                                trace.record(IMPLICIT_EXHAUSTIVE_WHEN, next.element)
+                            }
+                        }
+                    }
+                }
+            }
+            val value = (instruction as? InstructionWithValue)?.outputValue
+            for (element in instruction.owner.getValueElements(value)) {
+                if (element !is KtWhenExpression) continue
+
+                if (element.isUsedAsExpression(trace.bindingContext)) {
+                    checkImplicitCastOnConditionalExpression(element)
+                }
+
+                if (element.elseExpression != null) continue
+
+                val context = trace.bindingContext
+                val necessaryCases = WhenChecker.getNecessaryCases(element, context)
+                if (!necessaryCases.isEmpty()) {
+                    trace.report(NO_ELSE_IN_WHEN.on(element, necessaryCases))
+                }
+                else {
+                    val subjectExpression = element.subjectExpression
+                    if (subjectExpression != null) {
+                        val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(trace.getType(subjectExpression))
+                        if (enumClassDescriptor != null) {
+                            val missingCases = WhenChecker.getEnumMissingCases(element, context, enumClassDescriptor)
+                            if (!missingCases.isEmpty()) {
+                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, missingCases))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkConstructorConsistency() {
+        when (subroutine) {
+            is KtClassOrObject -> ConstructorConsistencyChecker.check(subroutine, trace, pseudocode, pseudocodeVariablesData)
+            is KtSecondaryConstructor -> ConstructorConsistencyChecker.check(subroutine, trace, pseudocode, pseudocodeVariablesData)
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Tail calls
+
+    private fun markTailCalls() {
+        val subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine) as? FunctionDescriptor ?: return
+        if (!subroutineDescriptor.isTailrec) return
+
+        // finally blocks are copied which leads to multiple diagnostics reported on one instruction
+        class KindAndCall(var kind: TailRecursionKind, internal val call: ResolvedCall<*>)
+
+        val calls = HashMap<KtElement, KindAndCall>()
+        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+
+            if (instruction !is CallInstruction) return@traverse
+            val resolvedCall = instruction.element.getResolvedCall(trace.bindingContext) ?: return@traverse
+
+            // is this a recursive call?
+            val functionDescriptor = resolvedCall.resultingDescriptor
+            if (functionDescriptor.original != subroutineDescriptor) return@traverse
+            // Overridden functions using default arguments at tail call are not included: KT-4285
+            if (resolvedCall.call.valueArguments.size != functionDescriptor.valueParameters.size
+                && !functionDescriptor.overriddenDescriptors.isEmpty())
+                return@traverse
+
+            val element = instruction.element
+            //noinspection unchecked
+            val parent = PsiTreeUtil.getParentOfType(
+                    element,
+                    KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
+            )
+
+            if (parent is KtTryExpression) {
+                // We do not support tail calls Collections.singletonMap() try-catch-finally, for simplicity of the mental model
+                // very few cases there would be real tail-calls, and it's often not so easy for the user to see why
+                calls.put(element, KindAndCall(IN_TRY, resolvedCall))
+                return@traverse
+            }
+
+            val isTail = traverseFollowingInstructions(
+                    instruction,
+                    HashSet<Instruction>(),
+                    TraversalOrder.FORWARD,
+                    TailRecursionDetector(subroutine, instruction)
+            )
+
+            // A tail call is not allowed to change dispatch receiver
+            //   class C {
+            //       fun foo(other: C) {
+            //           other.foo(this) // not a tail call
+            //       }
+            //   }
+            val sameDispatchReceiver = resolvedCall.hasThisOrNoDispatchReceiver(trace.bindingContext)
+
+            val kind = if (isTail && sameDispatchReceiver) TAIL_CALL else NON_TAIL
+
+            val kindAndCall = calls[element]
+            calls.put(element, KindAndCall(combineKinds(kind, kindAndCall?.kind), resolvedCall))
+        }
+
+        var hasTailCalls = false
+        for ((element, kindAndCall) in calls) {
+            when (kindAndCall.kind) {
+                TAIL_CALL -> {
+                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call.call, TailRecursionKind.TAIL_CALL)
+                    hasTailCalls = true
+                }
+                IN_TRY -> trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(element))
+                NON_TAIL -> trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(element))
+            }
+        }
+
+        if (!hasTailCalls && subroutine is KtNamedFunction) {
+            trace.report(Errors.NO_TAIL_CALLS_FOUND.on(subroutine))
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Utility classes and methods
 
     /**
      * The method provides reporting of the same diagnostic only once for copied instructions
      * (depends on whether it should be reported for all or only for one of the copies)
      */
-    private void report(
-            @NotNull Diagnostic diagnostic,
-            @NotNull VariableContext ctxt
+    private fun report(
+            diagnostic: Diagnostic,
+            ctxt: VariableContext
     ) {
-        Instruction instruction = ctxt.instruction;
-        if (instruction.getCopies().isEmpty()) {
-            trace.report(diagnostic);
-            return;
+        val instruction = ctxt.instruction
+        if (instruction.copies.isEmpty()) {
+            trace.report(diagnostic)
+            return
         }
-        Map<Instruction, DiagnosticFactory<?>> previouslyReported = ctxt.reportedDiagnosticMap;
-        previouslyReported.put(instruction, diagnostic.getFactory());
+        val previouslyReported = ctxt.reportedDiagnosticMap
+        previouslyReported.put(instruction, diagnostic.factory)
 
-        boolean alreadyReported = false;
-        boolean sameErrorForAllCopies = true;
-        for (Instruction copy : instruction.getCopies()) {
-            DiagnosticFactory<?> previouslyReportedErrorFactory = previouslyReported.get(copy);
+        var alreadyReported = false
+        var sameErrorForAllCopies = true
+        for (copy in instruction.copies) {
+            val previouslyReportedErrorFactory = previouslyReported[copy]
             if (previouslyReportedErrorFactory != null) {
-                alreadyReported = true;
+                alreadyReported = true
             }
 
-            if (previouslyReportedErrorFactory != diagnostic.getFactory()) {
-                sameErrorForAllCopies = false;
+            if (previouslyReportedErrorFactory !== diagnostic.factory) {
+                sameErrorForAllCopies = false
             }
         }
 
-        if (mustBeReportedOnAllCopies(diagnostic.getFactory())) {
+        if (mustBeReportedOnAllCopies(diagnostic.factory)) {
             if (sameErrorForAllCopies) {
-                trace.report(diagnostic);
+                trace.report(diagnostic)
             }
         }
         else {
             //only one reporting required
             if (!alreadyReported) {
-                trace.report(diagnostic);
+                trace.report(diagnostic)
             }
         }
     }
 
-    private static boolean mustBeReportedOnAllCopies(@NotNull DiagnosticFactory<?> diagnosticFactory) {
-        return diagnosticFactory == UNUSED_VARIABLE
-               || diagnosticFactory == UNUSED_PARAMETER
-               || diagnosticFactory == UNUSED_CHANGED_VALUE;
+
+    private open inner class VariableContext(
+            internal val instruction: Instruction,
+            internal val reportedDiagnosticMap: MutableMap<Instruction, DiagnosticFactory<*>>
+    ) {
+        internal val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, trace.bindingContext)
     }
 
+    private inner class VariableInitContext(
+            instruction: Instruction,
+            map: MutableMap<Instruction, DiagnosticFactory<*>>,
+            `in`: Map<VariableDescriptor, VariableControlFlowState>,
+            out: Map<VariableDescriptor, VariableControlFlowState>,
+            blockScopeVariableInfo: BlockScopeVariableInfo
+    ) : VariableContext(instruction, map) {
+        internal val enterInitState = initialize(variableDescriptor, blockScopeVariableInfo, `in`)
+        internal val exitInitState = initialize(variableDescriptor, blockScopeVariableInfo, out)
 
-    private class VariableContext {
-        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap;
-        final Instruction instruction;
-        final VariableDescriptor variableDescriptor;
+        private fun initialize(
+                variableDescriptor: VariableDescriptor?,
+                blockScopeVariableInfo: BlockScopeVariableInfo,
+                map: Map<VariableDescriptor, VariableControlFlowState>
+        ): VariableControlFlowState? {
+            val state = map[variableDescriptor ?: return null]
+            if (state != null) return state
+            return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, blockScopeVariableInfo)
+        }
+    }
 
-        private VariableContext(
-                @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory<?>> map
+    private inner class VariableUseContext(
+            instruction: Instruction,
+            map: MutableMap<Instruction, DiagnosticFactory<*>>
+    ) : VariableContext(instruction, map)
+
+    companion object {
+
+        // Should return KtDeclarationWithBody or KtClassOrObject
+        fun getElementParentDeclaration(element: KtElement) =
+                PsiTreeUtil.getParentOfType(element, KtDeclarationWithBody::class.java, KtClassOrObject::class.java)
+
+        private fun isUsedAsResultOfLambda(usages: List<Instruction>): Boolean {
+            for (usage in usages) {
+                if (usage is ReturnValueInstruction) {
+                    val returnElement = usage.element
+                    val parentElement = returnElement.parent
+                    if (returnElement !is KtReturnExpression &&
+                        (parentElement !is KtDeclaration || parentElement is KtFunctionLiteral)) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+
+        private fun collectResultingExpressionsOfConditionalExpression(expression: KtExpression): List<KtExpression> {
+            val leafBranches = ArrayList<KtExpression>()
+            collectResultingExpressionsOfConditionalExpressionRec(expression, leafBranches)
+            return leafBranches
+        }
+
+        private fun collectResultingExpressionsOfConditionalExpressionRec(
+                expression: KtExpression?,
+                resultingExpressions: MutableList<KtExpression>
         ) {
-            this.instruction = instruction;
-            reportedDiagnosticMap = map;
-            variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, trace.getBindingContext());
-        }
-    }
-
-    private class VariableInitContext extends VariableContext {
-        final VariableControlFlowState enterInitState;
-        final VariableControlFlowState exitInitState;
-
-        private VariableInitContext(
-                @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory<?>> map,
-                @NotNull Map<VariableDescriptor, VariableControlFlowState> in,
-                @NotNull Map<VariableDescriptor, VariableControlFlowState> out,
-                @NotNull BlockScopeVariableInfo blockScopeVariableInfo
-        ) {
-            super(instruction, map);
-            enterInitState = initialize(variableDescriptor, blockScopeVariableInfo, in);
-            exitInitState = initialize(variableDescriptor, blockScopeVariableInfo, out);
+            when (expression) {
+                is KtIfExpression -> {
+                    collectResultingExpressionsOfConditionalExpressionRec(expression.then, resultingExpressions)
+                    collectResultingExpressionsOfConditionalExpressionRec(expression.`else`, resultingExpressions)
+                }
+                is KtWhenExpression -> for (whenEntry in expression.entries) {
+                    collectResultingExpressionsOfConditionalExpressionRec(whenEntry.expression, resultingExpressions)
+                }
+                is Any -> {
+                    val resultingExpression = getResultingExpression(expression)
+                    if (resultingExpression is KtIfExpression || resultingExpression is KtWhenExpression) {
+                        collectResultingExpressionsOfConditionalExpressionRec(resultingExpression, resultingExpressions)
+                    }
+                    else {
+                        resultingExpressions.add(resultingExpression)
+                    }
+                }
+            }
         }
 
-        private VariableControlFlowState initialize(
-                VariableDescriptor variableDescriptor,
-                BlockScopeVariableInfo blockScopeVariableInfo,
-                Map<VariableDescriptor, VariableControlFlowState> map
-        ) {
-            if (variableDescriptor == null) return null;
-            VariableControlFlowState state = map.get(variableDescriptor);
-            if (state != null) return state;
-            return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, blockScopeVariableInfo);
-        }
-    }
-
-    private class VariableUseContext extends VariableContext {
-        final VariableUseState enterUseState;
-        final VariableUseState exitUseState;
-
-
-        private VariableUseContext(
-                @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory<?>> map,
-                @NotNull Map<VariableDescriptor, VariableUseState> in,
-                @NotNull Map<VariableDescriptor, VariableUseState> out
-        ) {
-            super(instruction, map);
-            enterUseState = variableDescriptor != null ? in.get(variableDescriptor) : null;
-            exitUseState = variableDescriptor != null ? out.get(variableDescriptor) : null;
-        }
-    }
-
-    //TODO after KT-4621 rewrite to Kotlin
-    private abstract static class InstructionDataAnalyzeStrategy<D> implements Function3<Instruction, D, D, Unit> {
-        @Override
-        public Unit invoke(Instruction instruction, D enterData, D exitData) {
-            execute(instruction, enterData, exitData);
-            return Unit.INSTANCE;
+        private fun getResultingExpression(expression: KtExpression): KtExpression {
+            var finger = expression
+            while (true) {
+                var deparenthesized = KtPsiUtil.deparenthesize(finger)
+                deparenthesized = KtPsiUtil.getExpressionOrLastStatementInBlock(deparenthesized)
+                if (deparenthesized == null || deparenthesized === finger) break
+                finger = deparenthesized
+            }
+            return finger
         }
 
-        public abstract void execute(Instruction instruction, D enterData, D exitData);
-    }
-
-    private abstract static class FunctionVoid1<P> implements Function1<P, Unit> {
-        @Override
-        public Unit invoke(P p) {
-            execute(p);
-            return Unit.INSTANCE;
+        private fun combineKinds(kind: TailRecursionKind, existingKind: TailRecursionKind?): TailRecursionKind {
+            val resultingKind: TailRecursionKind
+            if (existingKind == null || existingKind == kind) {
+                resultingKind = kind
+            }
+            else {
+                if (check(kind, existingKind, IN_TRY, TAIL_CALL)) {
+                    resultingKind = IN_TRY
+                }
+                else if (check(kind, existingKind, IN_TRY, NON_TAIL)) {
+                    resultingKind = IN_TRY
+                }
+                else {
+                    // TAIL_CALL, NON_TAIL
+                    resultingKind = NON_TAIL
+                }
+            }
+            return resultingKind
         }
 
-        public abstract void execute(P p);
+        private fun check(a: Any, b: Any, x: Any, y: Any) = a === x && b === y || a === y && b === x
+
+        private fun mustBeReportedOnAllCopies(diagnosticFactory: DiagnosticFactory<*>) =
+                diagnosticFactory === UNUSED_VARIABLE
+                || diagnosticFactory === UNUSED_PARAMETER
+                || diagnosticFactory === UNUSED_CHANGED_VALUE
     }
 }
