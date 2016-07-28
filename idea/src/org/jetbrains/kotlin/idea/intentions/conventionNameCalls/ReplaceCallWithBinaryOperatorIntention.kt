@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -32,6 +33,17 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+class ReplaceCallWithComparisonInspection(
+        val intention: ReplaceCallWithBinaryOperatorIntention = ReplaceCallWithBinaryOperatorIntention()
+) : IntentionBasedInspection<KtDotQualifiedExpression>(
+        intention,
+        { qualifiedExpression ->
+            val calleeExpression = qualifiedExpression.callExpression?.calleeExpression as? KtSimpleNameExpression
+            val identifier = calleeExpression?.getReferencedNameAsName()
+            identifier == OperatorNameConventions.EQUALS || identifier == OperatorNameConventions.COMPARE_TO
+        }
+)
 
 class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
         KtDotQualifiedExpression::class.java,
