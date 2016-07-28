@@ -106,7 +106,7 @@ private fun Project.createKotlinAfterJavaTask(
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile {
     val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
-        conventionMapping.map("classpath") { kotlinTask.classpath }
+        mapClasspath { kotlinTask.classpath }
         this
     }
 

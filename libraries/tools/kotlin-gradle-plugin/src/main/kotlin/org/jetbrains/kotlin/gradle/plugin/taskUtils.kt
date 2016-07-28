@@ -28,3 +28,7 @@ internal fun Task.finalizedByIfNotFailed(finalizer: Task) {
     finalizer.onlyIf { this@finalizedByIfNotFailed.state.failure == null }
     this.finalizedBy(finalizer)
 }
+
+fun AbstractCompile.mapClasspath(fn: ()->FileCollection) {
+    conventionMapping.map("classpath", fn)
+}
