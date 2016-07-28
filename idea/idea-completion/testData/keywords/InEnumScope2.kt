@@ -27,6 +27,7 @@ enum class Test {
 // EXIST:  const
 // EXIST:  suspend
 // EXIST: fun
+// EXIST:  typealias
 
 /* TODO: items below are not valid here */
 // EXIST: class
