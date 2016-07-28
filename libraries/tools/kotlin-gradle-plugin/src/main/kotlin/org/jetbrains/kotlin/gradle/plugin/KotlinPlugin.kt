@@ -105,6 +105,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
         kotlinCompile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
+        kotlinCompile.mapClasspath { sourceSet.compileClasspath }
         return kotlinCompile
     }
 
@@ -371,7 +372,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-            kotlinTask.conventionMapping.map("classpath") { javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) }
+            kotlinTask.mapClasspath { javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) }
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
             var kotlinAfterJavaTask: KotlinCompile? = null
