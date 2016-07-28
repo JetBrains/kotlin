@@ -9151,6 +9151,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("chainedCallTypeMismatch.kt")
+        public void testChainedCallTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/chainedCallTypeMismatch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("chainedUnsafeCall.kt")
         public void testChainedUnsafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/chainedUnsafeCall.kt");
@@ -9178,6 +9184,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("invokeUnsafe.kt")
         public void testInvokeUnsafe() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectQualifier.kt")
+        public void testObjectQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/objectQualifier.kt");
             doTest(fileName);
         }
 

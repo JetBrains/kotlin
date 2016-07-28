@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class WrapWithSafeLetCallFix(
         expression: KtExpression,
@@ -71,7 +70,7 @@ class WrapWithSafeLetCallFix(
 
             if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
 
-            return WrapWithSafeLetCallFix(call, typeMismatch.psiElement)
+            return WrapWithSafeLetCallFix(call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call, typeMismatch.psiElement)
         }
     }
 }
