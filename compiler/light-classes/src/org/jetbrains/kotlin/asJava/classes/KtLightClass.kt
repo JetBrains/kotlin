@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass>
+interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass>, KtLightClassMarker

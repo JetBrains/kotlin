@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
@@ -59,7 +60,7 @@ class LazyJavaPackageFragmentProvider(
     private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val fqName = javaClass.fqName
-            if (fqName != null && javaClass.isKotlinLightClass) {
+            if (fqName != null && javaClass.lightClassOriginKind == LightClassOriginKind.SOURCE) {
                 return c.components.javaResolverCache.getClassResolvedFromSource(fqName)
             }
 

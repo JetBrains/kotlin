@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
@@ -89,8 +90,8 @@ class ReflectJavaClass(
                 .map(::ReflectJavaConstructor)
                 .toList()
 
-    override val isKotlinLightClass: Boolean
-        get() = false
+    override val lightClassOriginKind: LightClassOriginKind?
+        get() = null
 
     override val name: Name
         get() = Name.identifier(klass.simpleName)
