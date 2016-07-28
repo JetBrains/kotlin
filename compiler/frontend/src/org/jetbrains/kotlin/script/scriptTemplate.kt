@@ -171,18 +171,21 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
-        val classLoader = (template as Any).javaClass.classLoader
-        val annotationWrappers = getAnnotationEntries(file, project)
-                .mapNotNull { psiAnn ->
-                    // TODO: consider advanced matching using semantic similar to actual resolving
-                    definitionData.acceptedAnnotations.find { ann ->
-                        psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                    }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
-                }
-        val fileDeps = definitionData.resolver?.resolve(BasicScriptContents(file, annotationWrappers.map { it.getProxy(classLoader) }),
-                                                        environment,
-                                                        { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? -> },
-                                                        previousDependencies)
+
+        val script = BasicScriptContents(file) {
+            val classLoader = (template as Any).javaClass.classLoader
+            getAnnotationEntries(file, project)
+                    .mapNotNull { psiAnn ->
+                        // TODO: consider advanced matching using semantic similar to actual resolving
+                        definitionData.acceptedAnnotations.find { ann ->
+                            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
+                        }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }
+                    .map { it.getProxy(classLoader) }
+        }
+        val reportFn = { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? -> }
+
+        val fileDeps = definitionData.resolver?.resolve(script, environment, reportFn, previousDependencies)
         return fileDeps?.get()
     }
 
@@ -207,9 +210,10 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
         return getAnnotationEntriesFromPsiFile(psiFile)
     }
 
-    class BasicScriptContents<out TF>(val myFile: TF, override val annotations: Iterable<Annotation>) : ScriptContents {
-        override val file: File? get() = getFile(myFile)
-        override val text: CharSequence? get() = getFileContents(myFile)
+    class BasicScriptContents<out TF>(myFile: TF, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
+        override val file: File? by lazy { getFile(myFile) }
+        override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
+        override val text: CharSequence? by lazy { getFileContents(myFile) }
     }
 }
 
