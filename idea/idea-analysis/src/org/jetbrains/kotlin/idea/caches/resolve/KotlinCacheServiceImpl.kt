@@ -117,7 +117,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                         "sdk $sdk",
                         platform,
                         sdk,
-                        allModules = sdk?.let { SdkInfo(project, it) }.singletonOrEmptyList(),
                         moduleFilter = { it is SdkInfo },
                         dependencies = listOf(
                                 LibraryModificationTracker.getInstance(project),

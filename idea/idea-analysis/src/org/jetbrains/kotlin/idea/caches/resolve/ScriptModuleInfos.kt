@@ -66,8 +66,7 @@ private fun sdkDependencies(scriptDependencies: KotlinScriptExternalDependencies
         = findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) }.singletonOrEmptyList()
 
 fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): Sdk? {
-    val jdkTable = ProjectJdkTable.getInstance()
-    val allJdks = jdkTable.allJdks
+    val allJdks = getAllProjectSdks()
     // workaround for mismatched gradle wrapper and plugin version
     val javaHome = try { dependencies?.javaHome } catch (e: Throwable) { null }
 
