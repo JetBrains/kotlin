@@ -27,15 +27,15 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.extensions.extraProperties?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        val plugin = getPlugin(this.javaClass.classLoader, sourceBuildScript)
+        val plugin = getPlugin(sourceBuildScript)
         plugin.apply(project)
 
-        val cleanUpBuildListener = CleanUpBuildListener(this.javaClass.classLoader, project)
+        val cleanUpBuildListener = CleanUpBuildListener(project)
         cleanUpBuildListener.buildStarted()
         project.gradle.addBuildListener(cleanUpBuildListener)
     }
 
-    protected abstract fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
+    protected abstract fun getPlugin(scriptHandler: ScriptHandler): Plugin<Project>
 
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
         log.kotlinDebug("Looking for proper script handler")
@@ -56,15 +56,15 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
 }
 
 open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+    override fun getPlugin(scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider())
 }
 
 open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, AndroidTasksProvider(pluginClassLoader))
+    override fun getPlugin(scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, AndroidTasksProvider())
 }
 
 open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+    override fun getPlugin(scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider())
 }
 
 fun Logger.kotlinDebug(message: String) {

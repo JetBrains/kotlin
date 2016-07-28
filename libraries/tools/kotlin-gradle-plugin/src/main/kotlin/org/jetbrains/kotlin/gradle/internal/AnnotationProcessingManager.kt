@@ -22,13 +22,16 @@ import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.kapt.generateAnnotationProcessorWrapper
+import org.jetbrains.kotlin.gradle.tasks.kapt.generateKotlinAptAnnotation
 import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.zip.ZipFile
 
 fun Project.initKapt(
-        kotlinTask: AbstractCompile,
+        kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
         kaptManager: AnnotationProcessingManager,
         variantName: String,
@@ -129,7 +132,6 @@ public class AnnotationProcessingManager(
         private val aptFiles: Set<File>,
         val aptOutputDir: File,
         private val aptWorkingDir: File,
-        private val coreClassLoader: ClassLoader,
         private val androidVariant: Any? = null) {
 
     private val project = task.project
@@ -223,19 +225,19 @@ public class AnnotationProcessingManager(
     }
 
     private fun generateAnnotationProcessorStubs(javaTask: JavaCompile, processorFqNames: Set<String>, outputDir: File) {
-        val aptAnnotationFile = invokeCoreKaptMethod("generateKotlinAptAnnotation", outputDir) as File
+        val aptAnnotationFile = generateKotlinAptAnnotation(outputDir)
         project.logger.kotlinDebug("kapt: Stub annotation generated: $aptAnnotationFile")
 
         val stubOutputPackageDir = File(outputDir, "__gen")
         stubOutputPackageDir.mkdirs()
 
         for (processorFqName in processorFqNames) {
-            val wrapperFile = invokeCoreKaptMethod("generateAnnotationProcessorWrapper",
+            val wrapperFile = generateAnnotationProcessorWrapper(
                     processorFqName,
                     "__gen",
                     stubOutputPackageDir,
                     getProcessorStubClassName(processorFqName),
-                    taskQualifier) as File
+                    taskQualifier)
 
             project.logger.kotlinDebug("kapt: Wrapper for $processorFqName generated: $wrapperFile")
         }
@@ -348,16 +350,4 @@ public class AnnotationProcessingManager(
         project.logger.kotlinDebug("kapt: Discovered annotation processors: ${annotationProcessors.joinToString()}")
         return annotationProcessors
     }
-
-    private fun invokeCoreKaptMethod(methodName: String, vararg args: Any): Any {
-        val array = arrayOfNulls<Class<*>>(args.size)
-        args.forEachIndexed { i, arg -> array[i] = arg.javaClass }
-        val method = getCoreKaptPackageClass().getMethod(methodName, *array)
-        return method.invoke(null, *args)
-    }
-
-    private fun getCoreKaptPackageClass(): Class<*> {
-        return Class.forName("org.jetbrains.kotlin.gradle.tasks.kapt.KaptStubGeneratorUtilsKt", false, coreClassLoader)
-    }
-
 }
