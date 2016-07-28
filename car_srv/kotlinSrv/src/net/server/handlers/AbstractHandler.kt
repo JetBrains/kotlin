@@ -18,17 +18,16 @@ abstract class AbstractHandler(protoDecoder: dynamic, protoEncoder: dynamic) {
 
     fun execute(data: List<Byte>, response: dynamic) {
 
-
         val message = if (protoDecoder != null) protoDecoder.decode(data.toByteArray()) else null
         val resultMessage: dynamic = {}
-        js("resultMessage = {}")//todo bad?
+        js("resultMessage = {}")
         val afterExecute: () -> Unit = {
             if (this.protoEncoder != null) {
                 val protoEn = this.protoEncoder//temporarily:)
                 val resultMsg = resultMessage
-                val resultObject = js("new protoEn(resultMsg)")
-                val resultBuffer = resultObject.encode()
-                response.write(trimBuffer(resultBuffer.buffer, resultBuffer.limit))
+                val resultBuffer = js("new protoEn(resultMsg)").encode()
+                val trimBuffer = trimBuffer(resultBuffer.buffer, resultBuffer.limit)
+                response.write(trimBuffer)
             }
             response.end()
         }
