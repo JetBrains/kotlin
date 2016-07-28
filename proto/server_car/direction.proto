@@ -13,6 +13,7 @@ message DirectionRequest {
         right = 4;
     }
     Command command = 1;
+    int32 sid = 2;
 }
 
 message DirectionResponse {
