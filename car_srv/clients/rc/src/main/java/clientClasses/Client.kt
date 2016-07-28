@@ -1,4 +1,4 @@
-package client
+package clientClasses
 
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.nio.NioEventLoopGroup

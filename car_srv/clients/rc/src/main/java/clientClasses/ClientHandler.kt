@@ -1,4 +1,4 @@
-package client
+package clientClasses
 
 import CodedInputStream
 import DirectionResponse
