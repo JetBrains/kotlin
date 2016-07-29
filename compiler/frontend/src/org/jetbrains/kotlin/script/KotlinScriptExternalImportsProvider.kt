@@ -148,6 +148,6 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
 internal fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean {
     val c1 = asSequence().map { it.canonicalPath }
     val c2 = other.asSequence().map { it.canonicalPath }
-    return c1 == c2
+    return c1.zip(c2).all { it.first == it.second }
 }
 
