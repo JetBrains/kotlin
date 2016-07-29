@@ -1,4 +1,3 @@
-import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
 import net.server.handlers.flash.LoadBin
 import net.server.handlers.main.GetLocation
@@ -16,6 +15,9 @@ val deltaTimeLocationRefresh: Int = 100//ms
 
 val serverPort: Int = 8888
 val serverIp: String = "127.0.0.1"
+
+val mainServerAddress = "127.0.0.1"
+val mainServerPort = 7925
 
 val protoBuf = require("protobufjs")
 fun main(args: Array<String>) {

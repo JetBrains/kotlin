@@ -1,6 +1,8 @@
 package net
 
 import require
+import mainServerAddress
+import mainServerPort
 
 /**
  * Created by user on 7/28/16.
@@ -9,8 +11,8 @@ val http = require("http")
 
 fun sendRequest(dataBuffer: dynamic, url: String, successCallback: (responseData: ByteArray) -> Unit, errorCallback: (err: dynamic) -> Unit) {
     val options: dynamic = {}
-    val serverAddress = "127.0.0.1"
-    val port = 7925
+    val serverAddress = mainServerAddress
+    val port = mainServerPort
     js("options = {hostname:serverAddress, port:port, path:url, method:'POST'}")
 
     val request = http.request(options, { response ->
