@@ -50,7 +50,7 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
             }
         }
-        println("x=$x; y=$y; angle=$angle")
+//        println("x=$x; y=$y; angle=$angle")
     }
 
     fun routeDone() {
