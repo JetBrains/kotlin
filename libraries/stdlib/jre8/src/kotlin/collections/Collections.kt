@@ -9,7 +9,7 @@ package kotlin.collections
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.getOrDefault(key: K, defaultValue: V): V
-        = getOrDefault(key, defaultValue)
+        = (this as Map<K, V>).getOrDefault(key, defaultValue)
 
 
 /**
