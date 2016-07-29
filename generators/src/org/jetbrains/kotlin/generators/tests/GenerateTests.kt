@@ -1141,12 +1141,20 @@ fun main(args: Array<String>) {
             model("reservedWords/cases")
         }
 
+        testClass<AbstractFunctionCallableReferenceTest> {
+            model("callableReference/function/cases")
+        }
+
+        testClass<AbstractPropertyCallableReferenceTest> {
+            model("callableReference/property/cases")
+        }
+
         testClass<AbstractDynamicTest>() {
             model("dynamic/cases")
         }
 
         testClass<AbstractMultiModuleTest>() {
-            model("multiModule/cases", extension = null, recursive =false)
+            model("multiModule/cases")
         }
 
         testClass<AbstractInlineJsTest>() {
@@ -1162,7 +1170,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractInlineMultiModuleTest>() {
-            model("inlineMultiModule/cases", extension = null, recursive =false)
+            model("inlineMultiModule/cases", extension = null, recursive = false)
         }
 
         testClass<AbstractLabelTest>() {

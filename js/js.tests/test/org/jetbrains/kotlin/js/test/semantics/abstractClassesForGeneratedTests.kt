@@ -16,57 +16,51 @@
 
 package org.jetbrains.kotlin.js.test.semantics
 
-import org.jetbrains.kotlin.js.test.AbstractSingleFileTranslationWithDirectivesTest
-import org.jetbrains.kotlin.js.test.KotlinJSMultiFileTest
+import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
-import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
-abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
-    override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
-}
+abstract class AbstractBridgeTest : BasicBoxTest("bridges/")
 
-abstract class AbstractBridgeTest : AbstractBlackBoxTest("bridges/")
+abstract class AbstractFunctionCallableReferenceTest : BasicBoxTest("callableReference/function/")
 
-abstract class AbstractCallableReferenceTest(main: String) : SingleFileTranslationTest("callableReference/" + main)
+abstract class AbstractPropertyCallableReferenceTest : BasicBoxTest("callableReference/property/")
 
-abstract class AbstractCompanionObjectTest : SingleFileTranslationTest("objectIntrinsics/")
+abstract class AbstractCompanionObjectTest : BasicBoxTest("objectIntrinsics/")
 
-abstract class AbstractDynamicTest : SingleFileTranslationTest("dynamic/")
+abstract class AbstractDynamicTest : BasicBoxTest("dynamic/")
 
-abstract class AbstractFunctionExpressionTest : AbstractBlackBoxTest("functionExpression/")
+abstract class AbstractFunctionExpressionTest : BasicBoxTest("functionExpression/")
 
-abstract class AbstractInlineEvaluationOrderTest : AbstractSingleFileTranslationWithDirectivesTest("inlineEvaluationOrder/")
+abstract class AbstractInlineEvaluationOrderTest : BasicBoxTest("inlineEvaluationOrder/")
 
-abstract class AbstractInlineJsStdlibTest : AbstractSingleFileTranslationWithDirectivesTest("inlineStdlib/")
+abstract class AbstractInlineJsStdlibTest : BasicBoxTest("inlineStdlib/")
 
-abstract class AbstractInlineJsTest : AbstractSingleFileTranslationWithDirectivesTest("inline/")
+abstract class AbstractInlineJsTest : BasicBoxTest("inline/")
 
-abstract class AbstractJsCodeTest : AbstractSingleFileTranslationWithDirectivesTest("jsCode/")
+abstract class AbstractJsCodeTest : BasicBoxTest("jsCode/")
 
-abstract class AbstractLabelTest : AbstractSingleFileTranslationWithDirectivesTest("labels/")
+abstract class AbstractLabelTest : BasicBoxTest("labels/")
 
-abstract class AbstractMultiModuleTest : MultipleModulesTranslationTest("multiModule/")
+abstract class AbstractMultiModuleTest : BasicBoxTest("multiModule/")
 
 abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("inlineMultiModule/")
 
-abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")
+abstract class AbstractReservedWordTest : BasicBoxTest("reservedWords/")
 
-abstract class AbstractSecondaryConstructorTest : AbstractBlackBoxTest("secondaryConstructors/")
+abstract class AbstractSecondaryConstructorTest : BasicBoxTest("secondaryConstructors/")
 
-abstract class AbstractInnerNestedTest : AbstractBlackBoxTest("innerNested/")
+abstract class AbstractInnerNestedTest : BasicBoxTest("innerNested/")
 
-abstract class AbstractClassesTest : AbstractBlackBoxTest("classes/")
+abstract class AbstractClassesTest : BasicBoxTest("classes/")
 
-abstract class AbstractSuperTest : AbstractBlackBoxTest("super/")
+abstract class AbstractSuperTest : BasicBoxTest("super/")
 
-abstract class AbstractLocalClassesTest : AbstractBlackBoxTest("localClasses/")
+abstract class AbstractLocalClassesTest : BasicBoxTest("localClasses/")
 
-abstract class AbstractNonLocalReturnsTest : KotlinJSMultiFileTest("inline.generated/nonLocalReturns/")
+abstract class AbstractNonLocalReturnsTest : BasicBoxTest("inline.generated/nonLocalReturns/")
 
-abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
+abstract class AbstractRttiTest : BasicBoxTest("rtti/")
 
-abstract class AbstractCastTest : SingleFileTranslationTest("expression/cast/")
+abstract class AbstractCastTest : BasicBoxTest("expression/cast/")
 
-abstract class AbstractLightReflectionTest : SingleFileTranslationTest("reflection/light/")
-
-abstract class AbstractTypeAliasesTests : AbstractBlackBoxTest("typealiases/")
+abstract class AbstractLightReflectionTest : BasicBoxTest("reflection/light/")

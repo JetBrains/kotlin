@@ -14,12 +14,14 @@ fun A.bar(x: Int): Int {
     return x
 }
 
-fun box(): Boolean {
+fun box(): String {
     val funRef = A::bar
     val obj = A()
     var result = funRef(obj, 25)
-    if (result != 25 || obj.xx != 200) return false
+    if (result != 25 || obj.xx != 200) return "fail1: result = $result, expected 25; obj.xx = $obj.xx, expected 200"
 
     result = run(A(), 25, funRef)
-    return result == 25 && obj.xx == 200
+    if (result != 25 || obj.xx != 200) return "fail2: result = $result, expected 25; obj.xx = $obj.xx, expected 200"
+
+    return "OK"
 }
