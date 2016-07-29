@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -34,7 +35,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.*
 
-const val DEFAULT_SCRIPT_FILE_PATTERN = "*.\\.kts"
+const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -101,6 +102,8 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
                                               val resolver: ScriptDependenciesResolverEx? = null,
                                               val environment: Map<String, Any?>? = null
 ) : KotlinScriptDefinition {
+
+    private val log = Logger.getInstance(KotlinScriptDefinitionFromTemplate::class.java)
 
     // TODO: remove this and simplify definitionAnnotation as soon as deprecated annotations will be removed
     internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out ScriptDependenciesResolverEx>,
@@ -183,7 +186,15 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
                     }
                     .map { it.getProxy(classLoader) }
         }
-        val reportFn = { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? -> }
+        val reportFn = { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? ->
+            val msg = (position?.run { "[at $line:$col]" } ?: "") + s
+            when (reportSeverity) {
+                ScriptDependenciesResolverEx.ReportSeverity.ERROR -> log.error(msg)
+                ScriptDependenciesResolverEx.ReportSeverity.WARNING -> log.warn(msg)
+                ScriptDependenciesResolverEx.ReportSeverity.INFO -> log.info(msg)
+                ScriptDependenciesResolverEx.ReportSeverity.DEBUG -> log.debug(msg)
+            }
+        }
 
         val fileDeps = definitionData.resolver?.resolve(script, environment, reportFn, previousDependencies)
         return fileDeps?.get()
