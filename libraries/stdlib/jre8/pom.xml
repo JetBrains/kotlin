@@ -70,7 +70,7 @@
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${basedir}/test</sourceDir>
-                                <sourceDir>${basedir}/../jdk7/test</sourceDir>
+                                <sourceDir>${basedir}/../jre7/test</sourceDir>
                                 <sourceDir>${basedir}/../test</sourceDir>
                             </sourceDirs>
                         </configuration>
