@@ -22,9 +22,15 @@ enum class E(val x: Int) {
 ---------------------
 L0:
   1 <START>
+    v(E1(0))
+    magic[FAKE_INITIALIZER](E1(0)) -> <v0>
+    w(E1|<v0>)
+    r(0) -> <v1>
+    mark((0))
+    call((0), <init>|<v1>) -> <v2>
     v(val x: Int)
-    magic[FAKE_INITIALIZER](val x: Int) -> <v0>
-    w(x|<v0>)
+    magic[FAKE_INITIALIZER](val x: Int) -> <v3>
+    w(x|<v3>)
 L1:
     <END>                                          NEXT:[<SINK>]
 error:

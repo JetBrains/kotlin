@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
+import org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -57,9 +58,20 @@ public class BindingContextUtils {
     }
 
     @Nullable
+    public static VariableDescriptor variableDescriptorForDeclaration(@Nullable DeclarationDescriptor descriptor) {
+        if (descriptor instanceof VariableDescriptor)
+            return (VariableDescriptor) descriptor;
+        if (descriptor instanceof ClassDescriptor) {
+            return TowerLevelsKt.getFakeDescriptorForObject((ClassDescriptor) descriptor);
+        }
+        return null;
+    }
+
+    @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable KtElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
-        if (!onlyReference && (element instanceof KtVariableDeclaration || element instanceof KtParameter)) {
+        if (!onlyReference &&
+            (element instanceof KtVariableDeclaration || element instanceof KtParameter || element instanceof KtEnumEntry)) {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         }
         else if (element instanceof KtSimpleNameExpression) {
@@ -68,10 +80,7 @@ public class BindingContextUtils {
         else if (element instanceof KtQualifiedExpression) {
             descriptor = extractVariableDescriptorIfAny(bindingContext, ((KtQualifiedExpression) element).getSelectorExpression(), onlyReference);
         }
-        if (descriptor instanceof VariableDescriptor) {
-            return (VariableDescriptor) descriptor;
-        }
-        return null;
+        return variableDescriptorForDeclaration(descriptor);
     }
 
     public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,

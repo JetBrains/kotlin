@@ -3270,6 +3270,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumInterdependence.kt")
+            public void testEnumInterdependence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumInterdependence.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("infiniteLoops.kt")
             public void testInfiniteLoops() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/infiniteLoops.kt");

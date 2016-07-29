@@ -200,6 +200,10 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.declareFunction(subroutine, pseudocode)
     }
 
+    override fun declareEnumEntry(enumEntry: KtEnumEntry) {
+        delegateBuilder.declareEnumEntry(enumEntry)
+    }
+
     override fun repeatPseudocode(startLabel: Label, finishLabel: Label) {
         delegateBuilder.repeatPseudocode(startLabel, finishLabel)
     }

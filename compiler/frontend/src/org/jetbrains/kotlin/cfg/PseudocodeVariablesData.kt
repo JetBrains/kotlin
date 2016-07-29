@@ -25,9 +25,15 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
+import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import java.util.Collections
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
@@ -75,9 +81,8 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
-                if (descriptor != null) {
-                    assert(descriptor is VariableDescriptor)
-                    declaredVariables.add(descriptor as VariableDescriptor?)
+                variableDescriptorForDeclaration(descriptor)?.let {
+                    declaredVariables.add(it)
                 }
             }
         }
