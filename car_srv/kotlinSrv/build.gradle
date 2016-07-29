@@ -22,15 +22,24 @@ sourceSets {
     main.kotlin.srcDirs += 'src'
 }
 
-task copySecondaryFiles(type: Copy) {
+task copyKotlinLib(type: Copy) {
     from "${projectDir}/helpers/kotlin.js"
-    into "${projectDir}/build/js/lib"
-
     from "${projectDir}/helpers/package.json"
+
     into "${projectDir}/build/js"
 }
 
-build.dependsOn copySecondaryFiles
+task copyProtoFiles(type: Copy) {
+
+    from "${projectDir}/../../proto/carkot.proto"
+    from "${projectDir}/../../proto/server_car/"
+
+    into "${projectDir}/build/js/proto"
+}
+
+
+build.dependsOn copyKotlinLib
+build.dependsOn copyProtoFiles
 
 compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/main.js"
 compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/helpers/prefix.js"
