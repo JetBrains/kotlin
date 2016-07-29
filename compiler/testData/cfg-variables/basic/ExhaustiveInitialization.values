@@ -3,6 +3,10 @@ enum class Direction {
     NORTH, SOUTH, WEST, EAST
 }
 ---------------------
+    <v0>: Direction   NEW: magic[FAKE_INITIALIZER](NORTH,) -> <v0>
+    <v1>: Direction   NEW: magic[FAKE_INITIALIZER](SOUTH,) -> <v1>
+    <v2>: Direction   NEW: magic[FAKE_INITIALIZER](WEST,) -> <v2>
+    <v3>: Direction   NEW: magic[FAKE_INITIALIZER](EAST) -> <v3>
 =====================
 == foo ==
 fun foo(dir: Direction): Int {

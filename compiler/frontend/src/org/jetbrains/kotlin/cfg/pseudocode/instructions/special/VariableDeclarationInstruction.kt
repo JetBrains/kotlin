@@ -24,13 +24,16 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.kotlin.psi.KtEnumEntry
 
 class VariableDeclarationInstruction(
         element: KtDeclaration,
         blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
     init {
-        assert(element is KtVariableDeclaration || element is KtParameter) { "Invalid element: ${render(element)}}" }
+        assert(element is KtVariableDeclaration || element is KtParameter || element is KtEnumEntry) {
+            "Invalid element: ${render(element)}}"
+        }
     }
 
     val variableDeclarationElement: KtDeclaration

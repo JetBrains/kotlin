@@ -1263,6 +1263,24 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitClass(klass: KtClass) {
+            if (klass.isEnum()) {
+                klass.declarations.forEach {
+                    when (it) {
+                        is KtEnumEntry -> {
+                            val classDescriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, it]
+                            if (classDescriptor is ClassDescriptor) {
+                                builder.declareEnumEntry(it)
+                                builder.write(it, it, createSyntheticValue(it, MagicKind.FAKE_INITIALIZER),
+                                              AccessTarget.Declaration(FakeCallableDescriptorForObject(classDescriptor)), emptyMap())
+                                generateInstructions(it)
+                            }
+                        }
+                        is KtObjectDeclaration -> {
+                            generateInstructions(it)
+                        }
+                    }
+                }
+            }
             if (klass.hasPrimaryConstructor()) {
                 processParameters(klass.getPrimaryConstructorParameters())
 

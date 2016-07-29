@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -325,8 +326,12 @@ class ControlFlowInformationProvider private constructor(
                 variableDescriptor?.let { varWithUninitializedErrorGenerated.add(it) }
             }
             when (variableDescriptor) {
-                is ValueParameterDescriptor -> report(Errors.UNINITIALIZED_PARAMETER.on(element, variableDescriptor), ctxt)
-                is VariableDescriptor -> report(Errors.UNINITIALIZED_VARIABLE.on(element, variableDescriptor), ctxt)
+                is ValueParameterDescriptor ->
+                    report(Errors.UNINITIALIZED_PARAMETER.on(element, variableDescriptor), ctxt)
+                is FakeCallableDescriptorForObject ->
+                    report(Errors.UNINITIALIZED_ENUM_ENTRY.on(element, variableDescriptor.classDescriptor), ctxt)
+                is VariableDescriptor ->
+                    report(Errors.UNINITIALIZED_VARIABLE.on(element, variableDescriptor), ctxt)
             }
         }
     }
