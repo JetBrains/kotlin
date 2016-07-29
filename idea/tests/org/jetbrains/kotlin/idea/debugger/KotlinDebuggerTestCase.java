@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.debugger;
 
+import com.google.common.collect.Lists;
+import com.intellij.compiler.impl.CompilerUtil;
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.execution.configurations.JavaParameters;
@@ -115,18 +117,20 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
         IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_6);
 
+        String outputDirPath = getAppOutputPath();
+        File outDir = new File(outputDirPath);
+
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
             CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false,
                                                                      false);
 
-            String outputDir = getAppOutputPath();
             String sourcesDir = modulePath + File.separator + "src";
 
-            MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
+            MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
 
-            List<String> options = Arrays.asList("-d", outputDir, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
+            List<String> options = Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
             try {
                 KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
             }
@@ -136,6 +140,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             IS_TINY_APP_COMPILED = true;
         }
+
+        CompilerUtil.refreshOutputDirectories(Lists.newArrayList(outDir), false);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
