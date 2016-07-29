@@ -2,9 +2,9 @@
 
 
 #todo make as script params
-set host "voltus.ru"
-set userName "failiki"
-set password "qwerQWERqwer"
+set host "192.168.43.135"
+set userName "pi"
+set password "111"
 
 spawn ./gradlew build
 expect eof
