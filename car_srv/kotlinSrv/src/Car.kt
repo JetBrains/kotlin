@@ -7,9 +7,10 @@ import carControl.RouteExecutorImpl.MoveDirection
  */
 class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
+    val exec: dynamic
 
-    val velocityMove = 0.1
-    val velocityRotation = 5.0
+    val velocityMove = 0.3278
+    val velocityRotation = 12.3
 
     //position
     var x: Double
@@ -27,6 +28,7 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
         this.x = 0.0
         this.y = 0.0
         this.angle = 0.0
+        this.exec = require("child_process").exec
     }
 
     fun stopCar() {
@@ -59,21 +61,29 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
     fun move(moveDirection: MoveDirection, value: Double, callBack: () -> Unit) {
         //value - angle for rotation command and distance for forward/backward command
-        this.moveDirection = moveDirection
-        when (moveDirection) {
-            MoveDirection.STOP -> controller.stopCar()
-            MoveDirection.FORWARD -> controller.moveCarForward()
-            MoveDirection.BACKWARD -> controller.moveCarBackward()
-            MoveDirection.LEFT -> controller.moveCarLeft()
-            MoveDirection.RIGHT -> controller.moveCarRight()
-        }
-        if (moveDirection != MoveDirection.STOP) {
-            if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
-                controller.delay(getTimeForMoving(value, velocityMove), callBack)
-            } else {
-                controller.delay(getTimeForMoving(value, velocityRotation), callBack)
+        val functionAfterStty = { error: dynamic, stdOut: dynamic, stdErr: dynamic ->
+            if (error != null) {
+                println("error in execute stty\n" + error.toString())
+            }
+            this.moveDirection = moveDirection
+            when (moveDirection) {
+                MoveDirection.STOP -> controller.stopCar()
+                MoveDirection.FORWARD -> controller.moveCarForward()
+                MoveDirection.BACKWARD -> controller.moveCarBackward()
+                MoveDirection.LEFT -> controller.moveCarLeft()
+                MoveDirection.RIGHT -> controller.moveCarRight()
+            }
+            if (moveDirection != MoveDirection.STOP) {
+                if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
+                    controller.delay(getTimeForMoving(value, velocityMove), callBack)
+                } else {
+                    controller.delay(getTimeForMoving(value, velocityRotation), callBack)
+                }
             }
         }
+
+        exec("stty -F ${MicroController.instance.transportFilePath} raw -echo -echoe -echok", functionAfterStty)
+
     }
 
     fun getTimeForMoving(value: Double, velocity: Double): Int {
