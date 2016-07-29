@@ -32,18 +32,18 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleTestGenerated extends AbstractMultiModuleTest {
     public void testAllFilesPresentInCases() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/multiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/multiModule/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("moduleAndVariableNameClash")
+    @TestMetadata("moduleAndVariableNameClash.kt")
     public void testModuleAndVariableNameClash() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/moduleAndVariableNameClash/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/moduleAndVariableNameClash.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("useElementsFromDefaultPackageInAnotherModule")
+    @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
     public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule.kt");
         doTest(fileName);
     }
 }

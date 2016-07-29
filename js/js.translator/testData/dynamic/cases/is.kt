@@ -1,3 +1,4 @@
+// FILE: is.kt
 package foo
 
 class A
@@ -15,4 +16,8 @@ fun box(): String {
     testFalse { b is A }
 
     return "OK"
+}
+
+// FILE: is.js
+function B() {
 }

@@ -6,13 +6,13 @@ fun run(arg: Int, funRef:(Int) -> Int): Int {
 }
 fun inc(x: Int) = x + 1
 
-fun box(): Boolean {
+fun box(): String {
     val funRef = ::inc
-    if (funRef(5) != 6) return false
+    if (funRef(5) != 6) return "fail1"
 
-    if (run(5, funRef) != 6) return false
+    if (run(5, funRef) != 6) return "fail2"
 
-    if (run(5) {x -> x + 1} != 6) return false
+    if (run(5) {x -> x + 1} != 6) return "fail3"
 
-    return true
+    return "OK"
 }
