@@ -8529,6 +8529,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/normalLateinit.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("secondaryConstructorDelegateItself.kt")
+        public void testSecondaryConstructorDelegateItself() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/secondaryConstructorDelegateItself.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorDelegateLoop.kt")
+        public void testSecondaryConstructorDelegateLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/secondaryConstructorDelegateLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorDelegateSuper.kt")
+        public void testSecondaryConstructorDelegateSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryLateinit/secondaryConstructorDelegateSuper.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeUnnecessaryParentheses")
