@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -29,7 +30,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class RemoveUnnecessaryLateinitInspection : IntentionBasedInspection<KtProperty>(RemoveUnnecessaryLateinitIntention())
+class RemoveUnnecessaryLateinitInspection : IntentionBasedInspection<KtProperty>(RemoveUnnecessaryLateinitIntention()) {
+    override val problemHighlightType: ProblemHighlightType
+        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+}
 
 class RemoveUnnecessaryLateinitIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Remove unnecessary lateinit") {
     override fun applicabilityRange(element: KtProperty): TextRange? {
