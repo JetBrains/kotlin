@@ -613,6 +613,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("dexSeveralInlineFunctionsInOneFile.kt")
+        public void testDexSeveralInlineFunctionsInOneFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexSeveralInlineFunctionsInOneFile.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("funLiteral.kt")
         public void testFunLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");

@@ -352,6 +352,10 @@ data class RangeMapping(val source: Int, val dest: Int, var range: Int = 1, var 
         return skip || (dest <= destLine && destLine < dest + range)
     }
 
+    fun hasMappingForSource(sourceLine: Int): Boolean {
+        return skip || (source <= sourceLine && sourceLine < source + range)
+    }
+
     fun mapDestToSource(destLine: Int): Int {
         return if (skip) -1 else source + (destLine - dest)
     }
