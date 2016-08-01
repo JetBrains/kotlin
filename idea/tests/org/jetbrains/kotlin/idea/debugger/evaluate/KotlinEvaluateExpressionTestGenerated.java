@@ -697,6 +697,45 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaContext extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInJavaContext() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("jcBlock.kt")
+            public void testJcBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcBlock.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("jcImports.kt")
+            public void testJcImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcImports.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("jcLocalVariable.kt")
+            public void testJcLocalVariable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcLocalVariable.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("jcMarkedObject.kt")
+            public void testJcMarkedObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcMarkedObject.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("jcSimple.kt")
+            public void testJcSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcSimple.kt");
+                doSingleBreakpointTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

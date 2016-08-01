@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
@@ -25,6 +26,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -40,6 +42,10 @@ abstract class KtCodeFragment(
 
     private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
+
+    private val fakeContextForJavaFile: PsiElement? by lazy {
+        this.getCopyableUserData(FAKE_CONTEXT_FOR_JAVA_FILE)?.invoke()
+    }
 
     init {
         getViewProvider().forceCachedPsi(this)
@@ -67,7 +73,15 @@ abstract class KtCodeFragment(
 
     override fun isValid() = true
 
-    override fun getContext() = context
+    override fun getContext(): PsiElement? {
+        if (fakeContextForJavaFile != null) return fakeContextForJavaFile
+        if (context !is KtElement) {
+            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = ${context?.getElementTextWithContext()}")
+            return null
+        }
+
+        return context
+    }
 
     override fun getResolveScope() = context?.resolveScope ?: super.getResolveScope()
 
@@ -171,6 +185,8 @@ abstract class KtCodeFragment(
     companion object {
         val IMPORT_SEPARATOR: String = ","
         val RUNTIME_TYPE_EVALUATOR: Key<Function1<KtExpression, KotlinType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
-        val ADDITIONAL_CONTEXT_FOR_LAMBDA: Key<Function0<KtElement?>> = Key.create("ADDITIONAL_CONTEXT_FOR_LAMBDA")
+        val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
+
+        private val LOG = Logger.getInstance(KtCodeFragment::class.java)
     }
 }
