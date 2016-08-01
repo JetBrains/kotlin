@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -501,8 +502,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
 
-            assertTrue("Resolved call for '${element.text}'$lineAndColumn is not completed",
-                       (resolvedCall as MutableResolvedCall<*>).isCompleted)
+            if (!USE_NEW_INFERENCE) {
+                assertTrue("Resolved call for '${element.text}'$lineAndColumn is not completed",
+                           (resolvedCall as MutableResolvedCall<*>).isCompleted)
+            }
         }
 
         checkResolvedCallsInDiagnostics(bindingContext)
@@ -532,6 +535,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun assertResolvedCallsAreCompleted(diagnostic: Diagnostic, resolvedCalls: Collection<ResolvedCall<*>>) {
         val element = diagnostic.psiElement
         val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
+        if (USE_NEW_INFERENCE) return
 
         assertTrue("Resolved calls stored in ${diagnostic.factory.name}\nfor '${element.text}'$lineAndColumn are not completed",
                    resolvedCalls.all { (it as MutableResolvedCall<*>).isCompleted })

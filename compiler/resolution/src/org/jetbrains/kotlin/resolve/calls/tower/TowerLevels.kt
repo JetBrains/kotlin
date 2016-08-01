@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
@@ -63,13 +64,15 @@ internal abstract class AbstractScopeTowerLevel(
             if (descriptor.hasLowPriorityInOverloadResolution()) diagnostics.add(LowPriorityDescriptorDiagnostic)
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
-            if (!shouldSkipVisibilityCheck) {
-                Visibilities.findInvisibleMember(
-                        getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
-                        descriptor,
-                        scopeTower.lexicalScope.ownerDescriptor
-                )?.let { diagnostics.add(VisibilityError(it)) }
+            if (!USE_NEW_INFERENCE) {
+                val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
+                if (!shouldSkipVisibilityCheck) {
+                    Visibilities.findInvisibleMember(
+                            getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
+                            descriptor,
+                            scopeTower.lexicalScope.ownerDescriptor
+                    )?.let { diagnostics.add(VisibilityError(it)) }
+                }
             }
         }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)

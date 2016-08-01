@@ -250,7 +250,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         var result: MutableList<SimpleType>? = null
 
         anySupertype(baseType, { false }) {
-            val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING)
+            val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it
 
             when {
                 areEqualTypeConstructors(current.constructor, constructor) -> {
@@ -290,7 +290,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         return if (allPureSupertypes.isNotEmpty()) allPureSupertypes else supertypes
     }
 
-    private fun effectiveVariance(declared: Variance, useSite: Variance): Variance? {
+    fun effectiveVariance(declared: Variance, useSite: Variance): Variance? {
         if (declared == Variance.INVARIANT) return useSite
         if (useSite == Variance.INVARIANT) return declared
 
@@ -341,12 +341,15 @@ object NullabilityChecker {
     fun isPossibleSubtype(context: TypeCheckerContext, subType: SimpleType, superType: SimpleType): Boolean =
             context.runIsPossibleSubtype(subType, superType)
 
+    fun isSubtypeOfAny(type: UnwrappedType): Boolean =
+            TypeCheckerContext(false).hasNotNullSupertype(type.lowerIfFlexible(), SupertypesPolicy.LowerIfFlexible)
+
     private fun TypeCheckerContext.runIsPossibleSubtype(subType: SimpleType, superType: SimpleType): Boolean {
         // it makes for case String? & Any <: String
         assert(subType.isIntersectionType || subType.isSingleClassifierType || subType.isAllowedTypeVariable) {
             "Not singleClassifierType superType: $superType"
         }
-        assert(superType.isSingleClassifierType || subType.isAllowedTypeVariable) {
+        assert(superType.isSingleClassifierType || superType.isAllowedTypeVariable) {
             "Not singleClassifierType superType: $superType"
         }
 
@@ -391,7 +394,7 @@ object NullabilityChecker {
 /**
  * ClassType means that type constructor for this type is type for real class or interface
  */
-private val SimpleType.isClassType: Boolean get() = constructor.declarationDescriptor is ClassDescriptor
+val SimpleType.isClassType: Boolean get() = constructor.declarationDescriptor is ClassDescriptor
 
 /**
  * SingleClassifierType is one of the following types:
@@ -401,10 +404,10 @@ private val SimpleType.isClassType: Boolean get() = constructor.declarationDescr
  *
  * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
  */
-private val SimpleType.isSingleClassifierType: Boolean
+val SimpleType.isSingleClassifierType: Boolean
     get() = !isError &&
             constructor.declarationDescriptor !is TypeAliasDescriptor &&
             (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType)
 
-private val SimpleType.isIntersectionType: Boolean
+val SimpleType.isIntersectionType: Boolean
     get() = constructor is IntersectionTypeConstructor

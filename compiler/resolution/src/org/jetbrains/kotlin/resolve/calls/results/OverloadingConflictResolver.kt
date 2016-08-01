@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-class OverloadingConflictResolver<C : Any>(
+open class OverloadingConflictResolver<C : Any>(
         private val builtIns: KotlinBuiltIns,
         private val specificityComparator: TypeSpecificityComparator,
         private val getResultingDescriptor: (C) -> CallableDescriptor,

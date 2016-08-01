@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
+import java.util.*
+import kotlin.collections.HashSet
+
+fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 
 fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
     when (types.size) {
@@ -58,7 +62,92 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
 // types.size >= 2
 // It is incorrect see to nullability here, because of KT-12684
 private fun intersectTypes(types: List<SimpleType>): SimpleType {
-    val constructor = IntersectionTypeConstructor(types)
-    return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+    return TypeIntersector.intersectTypes(types)
 }
 
+object TypeIntersector {
+
+    internal fun intersectTypes(types: List<SimpleType>): SimpleType {
+        assert(types.size > 1) {
+            "Size should be at least 2, but it is ${types.size}"
+        }
+        val inputTypes = ArrayList<SimpleType>()
+        for (type in types) {
+            if (type.constructor is IntersectionTypeConstructor) {
+                inputTypes.addAll(type.constructor.supertypes.map {
+                    it.upperIfFlexible().let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
+                })
+            }
+            else {
+                inputTypes.add(type)
+            }
+        }
+        val resultNullability = inputTypes.fold(ResultNullability.START, ResultNullability::combine)
+        /**
+         * resultNullability. Value description:
+         * ACCEPT_NULL means that all types marked nullable
+         * NOT_NULL means that there is one type which is subtype of Any => all types can be marked not nullable
+         * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
+         * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
+         */
+        val correctNullability = inputTypes.mapTo(HashSet()) {
+            if (resultNullability == ResultNullability.NOT_NULL) it.makeNullableAsSpecified(false) else it
+        }
+
+        return intersectTypesWithoutIntersectionType(correctNullability)
+    }
+
+    // nullability here is correct
+    private fun intersectTypesWithoutIntersectionType(inputTypes: Set<SimpleType>): SimpleType {
+        // Any and Nothing should leave
+        // Note that duplicates should be dropped because we have Set here.
+        val filteredSupertypes = inputTypes.filterNot { upper ->
+            inputTypes.any { upper != it && NewKotlinTypeChecker.isSubtypeOf(it, upper) }
+        }
+
+        assert(filteredSupertypes.isNotEmpty()) {
+            "This collections cannot be empty! input types: ${inputTypes.joinToString()}"
+        }
+
+        if (filteredSupertypes.size < 2) return filteredSupertypes.single()
+
+        val constructor = IntersectionTypeConstructor(inputTypes)
+        return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+    }
+
+    /**
+     * Let T is type parameter with upper bound Any?. resultNullability(String? & T) = UNKNOWN => String? & T
+     */
+    private enum class ResultNullability {
+        START {
+            override fun combine(nextType: UnwrappedType) = nextType.resultNullability
+        },
+        ACCEPT_NULL {
+            override fun combine(nextType: UnwrappedType) = nextType.resultNullability
+        },
+        // example: type parameter without not-null supertype
+        UNKNOWN {
+            override fun combine(nextType: UnwrappedType) =
+                    nextType.resultNullability.let {
+                        if (it == ACCEPT_NULL) this else it
+                    }
+        },
+        NOT_NULL {
+            override fun combine(nextType: UnwrappedType) = this
+        };
+
+        abstract fun combine(nextType: UnwrappedType): ResultNullability
+
+        protected val UnwrappedType.resultNullability: ResultNullability
+            get() {
+                if (isMarkedNullable) return ACCEPT_NULL
+
+                if (NullabilityChecker.isSubtypeOfAny(this)) {
+                    return NOT_NULL
+                }
+                else {
+                    return UNKNOWN
+                }
+            }
+    }
+}
