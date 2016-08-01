@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 import java.io.File
+import java.util.*
 
 val DEX_BEFORE_PATCH_EXTENSION = "before_dex"
 
@@ -38,6 +36,7 @@ private fun applyDexLikePatch(file: File) {
 
     val visitor = writer
             .withRemoveSourceDebugExtensionVisitor()
+            .withRemoveSameLinesInLineTableVisitor()
 
     reader.accept(visitor, 0)
 
@@ -48,6 +47,26 @@ private fun ClassVisitor.withRemoveSourceDebugExtensionVisitor(): ClassVisitor {
     return object : ClassVisitor(Opcodes.ASM5, this) {
         override fun visitSource(source: String?, debug: String?) {
             super.visitSource(source, null)
+        }
+    }
+}
+
+private fun ClassVisitor.withRemoveSameLinesInLineTableVisitor(): ClassVisitor {
+    return object : ClassVisitor(Opcodes.ASM5, this) {
+        override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+            val methodVisitor = super.visitMethod(access, name, desc, signature, exceptions) ?: return null
+
+            return object : MethodVisitor(Opcodes.ASM5, methodVisitor) {
+                val labels = HashSet<String>()
+
+                override fun visitLineNumber(line: Int, start: Label?) {
+                    val added = labels.add(start.toString())
+
+                    if (added) {
+                        super.visitLineNumber(line, start)
+                    }
+                }
+            }
         }
     }
 }
