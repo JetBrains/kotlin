@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.psi.KtFile
@@ -40,40 +39,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import java.io.File
-
-fun inlineLineAndFileByPosition(lineNumber: Int, fqName: FqName, fileName: String, project: Project, searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
-    val internalName = fqName.asString().replace('.', '/')
-    val jvmClassName = JvmClassName.byInternalName(internalName)
-
-    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, jvmClassName, fileName) ?: return null
-
-    val virtualFile = file.virtualFile ?: return null
-
-    val bytes = readClassFile(project, jvmClassName, virtualFile, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
-    val smapData = readDebugInfo(bytes) ?: return null
-    return mapStacktraceLineToSource(smapData, lineNumber, project, SourceLineKind.EXECUTED_LINE, searchScope)
-}
-
-internal fun inlinedLinesNumbers(
-        inlineLineNumber: Int, inlineFileName: String,
-        destinationTypeFqName: FqName, destinationFileName: String,
-        project: Project, sourceSearchScope: GlobalSearchScope): List<Int> {
-    val internalName = destinationTypeFqName.asString().replace('.', '/')
-    val jvmClassName = JvmClassName.byInternalName(internalName)
-
-    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, sourceSearchScope, jvmClassName, destinationFileName) ?:
-               return listOf()
-
-    val virtualFile = file.virtualFile ?: return listOf()
-
-    val bytes = readClassFile(project, jvmClassName, virtualFile) ?: return listOf()
-    val smapData = readDebugInfo(bytes) ?: return listOf()
-
-    val smap = smapData.kotlinStrata ?: return listOf()
-
-    val mappingToInlinedFile = smap.fileMappings.firstOrNull() { it.name == inlineFileName } ?: return listOf()
-    return mappingToInlinedFile.lineMappings.map { it.mapSourceToDest(inlineLineNumber) }
-}
 
 fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
     val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false

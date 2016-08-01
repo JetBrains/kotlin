@@ -24,9 +24,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.PositionManagerEx
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -124,7 +122,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         if (lineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val inlinePosition = inlineLineAndFileByPosition(
+            val inlinePosition = getOriginalPositionOfInlinedLine(
                     location.lineNumber(), FqName(location.declaringType().name()), location.sourceName(),
                     myDebugProcess.project, GlobalSearchScope.allScope(myDebugProcess.project))
 
@@ -257,7 +255,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
         try {
             if (myDebugProcess.isDexDebug()) {
-                val inlineLocations = noStrataLocationsOfLineForInlineFunctions(type, position, myDebugProcess.searchScope)
+                val inlineLocations = getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope)
                 if (!inlineLocations.isEmpty()) {
                     return inlineLocations
                 }
@@ -303,9 +301,3 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 inline fun <U, V> U.readAction(crossinline f: (U) -> V): V {
     return runReadAction { f(this) }
 }
-
-@Volatile var emulateDexDebugInTests: Boolean = false
-
-private fun DebugProcess.isDexDebug() =
-        (emulateDexDebugInTests && ApplicationManager.getApplication ().isUnitTestMode) ||
-        (this.virtualMachineProxy as? VirtualMachineProxyImpl)?.virtualMachine?.name() == "Dalvik" // TODO: check other machine name
