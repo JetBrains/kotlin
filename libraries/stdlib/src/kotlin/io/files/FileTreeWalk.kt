@@ -21,20 +21,13 @@ public enum class FileWalkDirection {
 }
 
 /**
- * This class is intended to implement different file walk methods.
- * It allows to iterate through all files inside [start] directory.
- * If [start] is just a file, walker iterates only it.
- * If [start] does not exist, walker does not do any iterations at all.
+ * This class is intended to implement different file traversal methods.
+ * It allows to iterate through all files inside a given directory.
  *
- * @param start directory to walk into.
- * @param direction selects top-down or bottom-up order (in other words, parents first or children first).
- * @param onEnter is called on any entered directory before its files are visited and before it is visited itself,
- *  if `false` is returned, directory is not visited entirely.
- * @param onLeave is called on any left directory after its files are visited and after it is visited itself.
- * @param onFail is called on a directory when it's impossible to get its file list.
- * @param filter is called just before visiting a file, and if `false` is returned, file is not visited.
- * @param maxDepth is maximum walking depth, it must be positive. With a value of 1,
- * walker visits [start] and all its children, with a value of 2 also grandchildren, etc.
+ * Use [File.walk], [File.walkTopDown] or [File.walkBottomUp] extension functions to instantiate a `FileTreeWalk` instance.
+
+ * If the file path given is just a file, walker iterates only it.
+ * If the file path given does not exist, walker iterates nothing, i.e. it's equivalent to an empty sequence.
  */
 public class FileTreeWalk private constructor(
         private val start: File,
@@ -221,8 +214,9 @@ public class FileTreeWalk private constructor(
     }
 
     /**
-     * Sets enter directory predicate [function].
-     * Enter [function] is called BEFORE the corresponding directory and its files are visited.
+     * Sets a predicate [function], that is called on any entered directory before its files are visited
+     * and before it is visited itself.
+     *
      * If the [function] returns `false` the directory is not entered, and neither it nor its files are not visited.
      */
     public fun onEnter(function: (File) -> Boolean): FileTreeWalk {
@@ -230,25 +224,28 @@ public class FileTreeWalk private constructor(
     }
 
     /**
-     * Sets leave directory [function].
-     * Leave [function] is called AFTER the corresponding directory and its files are visited.
+     * Sets a callback [function], that is called on any left directory after its files are visited and after it is visited itself.
      */
     public fun onLeave(function: (File) -> Unit): FileTreeWalk {
         return FileTreeWalk(start, direction, onEnter, function, onFail, maxDepth)
     }
 
     /**
-     * Set fail entering directory [function].
-     * Fail [function] is called when walker is unable to get list of directory files.
-     * Enter and leave functions are called even in this case.
+     * Set a callback [function], that is called on a directory when it's impossible to get its file list.
+     *
+     * [onEnter] and [onLeave] callback functions are called even in this case.
      */
     public fun onFail(function: (File, IOException) -> Unit): FileTreeWalk {
         return FileTreeWalk(start, direction, onEnter, onLeave, function, maxDepth)
     }
 
     /**
-     * Sets maximum [depth] of walk. Int.MAX_VALUE is used for unlimited.
-     * Negative and zero values are not allowed.
+     * Sets the maximum [depth] of a directory tree to traverse. By default there is no limit.
+     *
+     * The value must be positive and [Int.MAX_VALUE] is used to specify an unlimited depth.
+     *
+     * With a value of 1, walker visits only the origin directory and all its immediate children,
+     * with a value of 2 also grandchildren, etc.
      */
     public fun maxDepth(depth: Int): FileTreeWalk {
         if (depth <= 0)
