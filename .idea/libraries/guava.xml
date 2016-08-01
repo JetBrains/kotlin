@@ -4,7 +4,7 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/guava-17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-17.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
