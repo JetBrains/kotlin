@@ -1,11 +1,11 @@
 package lIdentifier
 
 fun main(args: Array<String>) {
-    val a = 1
-    val b = 1
-    val c = 1
-    val d = 1
-    val e = 1
+    val a = "1"
+    val b = "1"
+    val c = "1"
+    val d = "1"
+    val e = "1"
     //Breakpoint!
     val f = 1
 }
@@ -17,4 +17,4 @@ fun main(args: Array<String>) {
 // DEBUG_LABEL: e = e-e
 
 // EXPRESSION: a
-// RESULT: 1: I
+// RESULT: "1": Ljava/lang/String;
