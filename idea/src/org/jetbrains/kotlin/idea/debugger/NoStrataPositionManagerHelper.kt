@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.SourcePosition
+import com.intellij.debugger.engine.DebugProcess
+import com.intellij.debugger.jdi.VirtualMachineProxyImpl
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
@@ -24,10 +28,26 @@ import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
-fun noStrataLocationsOfLineForInlineFunctions(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
+internal fun getOriginalPositionOfInlinedLine(
+        lineNumber: Int, fqName: FqName, fileName: String, project: Project, searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
+    val internalName = fqName.asString().replace('.', '/')
+    val jvmClassName = JvmClassName.byInternalName(internalName)
+
+    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, jvmClassName, fileName) ?: return null
+
+    val virtualFile = file.virtualFile ?: return null
+
+    val bytes = readClassFile(project, jvmClassName, virtualFile, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
+    val smapData = readDebugInfo(bytes) ?: return null
+    return mapStacktraceLineToSource(smapData, lineNumber, project, SourceLineKind.EXECUTED_LINE, searchScope)
+}
+
+internal fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
     val line = position.line
     val file = position.file
     val project = position.file.project
@@ -43,3 +63,30 @@ fun noStrataLocationsOfLineForInlineFunctions(type: ReferenceType, position: Sou
 
     return inlineLocations
 }
+
+private fun inlinedLinesNumbers(
+        inlineLineNumber: Int, inlineFileName: String,
+        destinationTypeFqName: FqName, destinationFileName: String,
+        project: Project, sourceSearchScope: GlobalSearchScope): List<Int> {
+    val internalName = destinationTypeFqName.asString().replace('.', '/')
+    val jvmClassName = JvmClassName.byInternalName(internalName)
+
+    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, sourceSearchScope, jvmClassName, destinationFileName) ?:
+               return listOf()
+
+    val virtualFile = file.virtualFile ?: return listOf()
+
+    val bytes = readClassFile(project, jvmClassName, virtualFile) ?: return listOf()
+    val smapData = readDebugInfo(bytes) ?: return listOf()
+
+    val smap = smapData.kotlinStrata ?: return listOf()
+
+    val mappingToInlinedFile = smap.fileMappings.firstOrNull() { it.name == inlineFileName } ?: return listOf()
+    return mappingToInlinedFile.lineMappings.map { it.mapSourceToDest(inlineLineNumber) }
+}
+
+@Volatile var emulateDexDebugInTests: Boolean = false
+
+fun DebugProcess.isDexDebug() =
+        (emulateDexDebugInTests && ApplicationManager.getApplication ().isUnitTestMode) ||
+        (this.virtualMachineProxy as? VirtualMachineProxyImpl)?.virtualMachine?.name() == "Dalvik" // TODO: check other machine names
