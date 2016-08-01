@@ -373,6 +373,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("dexInlineInClass.kt")
+        public void testDexInlineInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexInlineInClass.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("dexInlineInObject.kt")
+        public void testDexInlineInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexInlineInObject.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("dexStopInInlineFun.kt")
         public void testDexStopInInlineFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexStopInInlineFun.kt");
@@ -577,6 +589,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("dexInlineInObjectSameFile.kt")
+        public void testDexInlineInObjectSameFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexInlineInObjectSameFile.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("dexManyFilesWithInlineCalls1.kt")
         public void testDexManyFilesWithInlineCalls1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/dexManyFilesWithInlineCalls1.kt");
@@ -622,6 +640,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("fwPropertyInInterface.kt")
         public void testFwPropertyInInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/fwPropertyInInterface.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("inlineInObject.kt")
+        public void testInlineInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineInObject.kt");
             doCustomTest(fileName);
         }
 
