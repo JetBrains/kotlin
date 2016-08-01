@@ -31,24 +31,25 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.reflect.memberFunctions
 import kotlin.reflect.primaryConstructor
 
 data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
-                                              val resolver: ScriptDependenciesResolverEx? = null,
+                                              val resolver: ScriptDependenciesResolver? = null,
+                                              val scriptFilePattern: String? = null,
                                               val environment: Map<String, Any?>? = null
 ) : KotlinScriptDefinition {
 
-    private val log = Logger.getInstance(KotlinScriptDefinitionFromTemplate::class.java)
-
     // TODO: remove this and simplify definitionAnnotation as soon as deprecated annotations will be removed
-    internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out ScriptDependenciesResolverEx>,
-                                                val resolver: ScriptDependenciesResolverEx?,
+    internal class ScriptTemplateDefinitionData(val resolverClass: KClass<out ScriptDependenciesResolver>,
+                                                makeResolver: () -> ScriptDependenciesResolver?,
                                                 val scriptFilePattern: String?) {
+
+        val resolver: ScriptDependenciesResolver? by lazy(makeResolver)
+
         val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
-            val resolveMethod = ScriptDependenciesResolverEx::resolve
+            val resolveMethod = ScriptDependenciesResolver::resolve
             val resolverMethodAnnotations =
                     resolverClass.memberFunctions.find {
                         it.name == resolveMethod.name &&
@@ -64,33 +65,14 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
         }
     }
 
-    internal class ObsoleteResolverProxy(val resolverAnn: ScriptDependencyResolver?) : ScriptDependenciesResolverEx {
-        private val resolver by lazy { resolverAnn?.resolver?.primaryConstructor?.call() }
-        override fun resolve(script: ScriptContents,
-                             environment: Map<String, Any?>?,
-                             report: (ScriptDependenciesResolverEx.ReportSeverity, String, ScriptContents.Position?) -> Unit,
-                             previousDependencies: KotlinScriptExternalDependencies?
-        ): Future<KotlinScriptExternalDependencies?> =
-                resolver?.resolve(
-                        environment?.get("projectRoot") as? File?,
-                        script.file,
-                        emptyList(),
-                        environment as Any?
-                )
-                .asFuture()
-    }
-
     private val definitionData by lazy {
         val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
-        val obsoleteResolverAnn = template.annotations.firstIsInstanceOrNull<ScriptDependencyResolver>()
-        val filePattern = defAnn?.scriptFilePattern ?:
-                          template.annotations.firstIsInstanceOrNull<ScriptFilePattern>()?.pattern ?:
-                          DEFAULT_SCRIPT_FILE_PATTERN
+        val filePattern = scriptFilePattern ?: defAnn?.scriptFilePattern ?: DEFAULT_SCRIPT_FILE_PATTERN
         when {
-            resolver != null -> ScriptTemplateDefinitionData(resolver.javaClass.kotlin, resolver, filePattern)
-            defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver, defAnn.resolver.primaryConstructor?.call(), filePattern)
-            obsoleteResolverAnn != null -> ScriptTemplateDefinitionData(ObsoleteResolverProxy::class, ObsoleteResolverProxy(obsoleteResolverAnn), filePattern)
-            else -> ScriptTemplateDefinitionData(BasicScriptDependenciesResolver::class, BasicScriptDependenciesResolver(), filePattern)
+            resolver != null -> ScriptTemplateDefinitionData(resolver.javaClass.kotlin, { resolver }, filePattern)
+            // TODO: logScriptDefMessage missing or invalid constructor
+            defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver, { defAnn.resolver.primaryConstructor?.call() }, filePattern)
+            else -> ScriptTemplateDefinitionData(BasicScriptDependenciesResolver::class, ::BasicScriptDependenciesResolver, filePattern)
         }
     }
 
@@ -111,30 +93,22 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
+
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 
-        val script = BasicScriptContents(file) {
-            val classLoader = (template as Any).javaClass.classLoader
-            getAnnotationEntries(file, project)
-                    .mapNotNull { psiAnn ->
-                        // TODO: consider advanced matching using semantic similar to actual resolving
-                        definitionData.acceptedAnnotations.find { ann ->
-                            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                        }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
-                    }
-                    .map { it.getProxy(classLoader) }
-        }
-        val reportFn = { reportSeverity: ScriptDependenciesResolverEx.ReportSeverity, s: String, position: ScriptContents.Position? ->
-            val msg = (position?.run { "[at $line:$col]" } ?: "") + s
-            when (reportSeverity) {
-                ScriptDependenciesResolverEx.ReportSeverity.ERROR -> log.error(msg)
-                ScriptDependenciesResolverEx.ReportSeverity.WARNING -> log.warn(msg)
-                ScriptDependenciesResolverEx.ReportSeverity.INFO -> log.info(msg)
-                ScriptDependenciesResolverEx.ReportSeverity.DEBUG -> log.debug(msg)
-            }
-        }
-
-        val fileDeps = definitionData.resolver?.resolve(script, environment, reportFn, previousDependencies)
+        val script = BasicScriptContents(file, getAnnotations = {
+                val classLoader = (template as Any).javaClass.classLoader
+                getAnnotationEntries(file, project)
+                        .mapNotNull { psiAnn ->
+                            // TODO: consider advanced matching using semantic similar to actual resolving
+                            definitionData.acceptedAnnotations.find { ann ->
+                                psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
+                            }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                        }
+                        .map { it.getProxy(classLoader) }
+            })
+        val fileDeps = definitionData.resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
+        // TODO: use it as a Future
         return fileDeps?.get()
     }
 
@@ -163,5 +137,19 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
         override val file: File? by lazy { getFile(myFile) }
         override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
         override val text: CharSequence? by lazy { getFileContents(myFile) }
+    }
+
+    companion object {
+        internal val log = Logger.getInstance(KotlinScriptDefinitionFromTemplate::class.java)
+    }
+}
+
+internal fun logScriptDefMessage(reportSeverity: ScriptDependenciesResolver.ReportSeverity, s: String, position: ScriptContents.Position?): Unit {
+    val msg = (position?.run { "[at $line:$col]" } ?: "") + s
+    when (reportSeverity) {
+        ScriptDependenciesResolver.ReportSeverity.ERROR -> KotlinScriptDefinitionFromTemplate.log.error(msg)
+        ScriptDependenciesResolver.ReportSeverity.WARNING -> KotlinScriptDefinitionFromTemplate.log.warn(msg)
+        ScriptDependenciesResolver.ReportSeverity.INFO -> KotlinScriptDefinitionFromTemplate.log.info(msg)
+        ScriptDependenciesResolver.ReportSeverity.DEBUG -> KotlinScriptDefinitionFromTemplate.log.debug(msg)
     }
 }

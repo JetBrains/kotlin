@@ -82,7 +82,7 @@ class ScriptTest2 {
             environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, null, environment), runIsolated, suppressOutput)
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, null, null, environment), runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
@@ -126,14 +126,14 @@ class ScriptTest2 {
     }
 }
 
-class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolverEx {
+class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
     override fun resolve(script: ScriptContents,
                          environment: Map<String, Any?>?,
-                         report: (ScriptDependenciesResolverEx.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+                         report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
                          previousDependencies: KotlinScriptExternalDependencies?
     ): Future<KotlinScriptExternalDependencies?>
     {

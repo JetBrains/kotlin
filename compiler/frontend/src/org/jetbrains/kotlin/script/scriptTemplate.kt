@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script
 
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -28,18 +27,8 @@ const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolverEx> = BasicScriptDependenciesResolver::class,
+annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver> = BasicScriptDependenciesResolver::class,
                                           val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
-
-@Deprecated("Use ScriptTemplateDefinition")
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptFilePattern(val pattern: String)
-
-@Deprecated("Use ScriptTemplateDefinition")
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
 
 interface ScriptContents {
 
@@ -60,8 +49,7 @@ class PseudoFuture<T>(private val value: T): Future<T> {
 
 fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
 
-// TODO: rename to just ScriptDependenciesResolver as soon as current deprecated one will be dropped
-interface ScriptDependenciesResolverEx {
+interface ScriptDependenciesResolver {
 
     enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
 
@@ -72,16 +60,17 @@ interface ScriptDependenciesResolverEx {
     ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
-@Deprecated("Use new ScriptDependenciesResolverEx")
-interface ScriptDependenciesResolver {
-    fun resolve(projectRoot: File?,
-                scriptFile: File?,
-                annotations: Iterable<KtAnnotationEntry>,
-                context: Any?
+@Suppress("unused") // used in gradle-script-kotlin for a moment
+@Deprecated("Use new ScriptDependenciesResolver, this one is left for temporary compatibility of new resolvers to kotlin plugin 1.1-M01",
+            ReplaceWith("ScriptDependenciesResolver"))
+interface ScriptDependenciesResolverEx {
+    fun resolve(script: ScriptContents,
+                environment: Map<String, Any?>?,
+                previousDependencies: KotlinScriptExternalDependencies?
     ): KotlinScriptExternalDependencies? = null
 }
 
-class BasicScriptDependenciesResolver : ScriptDependenciesResolverEx
+class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
