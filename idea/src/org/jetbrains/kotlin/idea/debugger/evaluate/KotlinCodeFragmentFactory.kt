@@ -20,8 +20,10 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
-import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -141,7 +143,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     }
 
     private fun getWrappedContextElement(project: Project, context: PsiElement?)
-            = wrapContextIfNeeded(project, getContextElement(context))
+            = wrapContextIfNeeded(project, context, getContextElement(context))
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val kotlinCodeFragment = createCodeFragment(item, context, project)
@@ -202,7 +204,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     companion object {
         val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
         val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
-        @TestOnly val DEBUG_FRAME_FOR_TESTS: Key<StackFrameProxyImpl> = Key.create("DEBUG_FRAME_FOR_TESTS")
+        @TestOnly val DEBUG_CONTEXT_FOR_TESTS: Key<DebuggerContextImpl> = Key.create("DEBUG_CONTEXT_FOR_TESTS")
 
         fun getContextElement(elementAt: PsiElement?): KtElement? {
             if (elementAt == null) return null
@@ -283,17 +285,19 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
     }
 
-    private fun wrapContextIfNeeded(project: Project, originalContext: KtElement?): KtElement? {
-        val session = XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl
-                                            ?: return originalContext
+    private fun wrapContextIfNeeded(project: Project, originalContext: PsiElement?, newContext: KtElement?): KtElement? {
+        val markupMap: Map<*, ValueMarkup>? =
+                if (ApplicationManager.getApplication().isUnitTestMode)
+                    NodeDescriptorImpl.getMarkupMap(originalContext?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.debugProcess)
+                else
+                    (XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl)?.valueMarkers?.allMarkers
 
-        val markupMap = session.valueMarkers?.allMarkers
-        if (markupMap == null || markupMap.isEmpty()) return originalContext
+        if (markupMap == null || markupMap.isEmpty()) return newContext
 
         val (text, labels) = createCodeFragmentForLabeledObjects(project, markupMap)
-        if (text.isEmpty()) return originalContext
+        if (text.isEmpty()) return newContext
 
-        return createWrappingContext(text, labels, originalContext, project)
+        return createWrappingContext(text, labels, newContext, project)
     }
 
     // internal for test

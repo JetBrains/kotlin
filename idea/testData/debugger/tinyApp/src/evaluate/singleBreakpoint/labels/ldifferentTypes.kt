@@ -10,10 +10,6 @@ fun main(args: Array<String>) {
     // DEBUG_LABEL: strArray = strArray
     val strArray = arrayOf("str")
 
-    // EXPRESSION: primitive_DebugLabel
-    // RESULT: 1: I
-    // DEBUG_LABEL: primitive = primitive
-    val primitive = 1
     // EXPRESSION: primitiveArray_DebugLabel
     // RESULT: instance of java.lang.Integer[1] (id=ID): [Ljava/lang/Integer;
     // DEBUG_LABEL: primitiveArray = primitiveArray
