@@ -58,6 +58,20 @@ interface JvmDependenciesIndex {
     ): Set<String>
 }
 
+interface JvmDependenciesIndexFactory {
+    fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex
+}
+
+class JvmStaticDependenciesIndexFactory : JvmDependenciesIndexFactory {
+    override fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots)
+}
+
+class JvmUpdatableDependenciesIndexFactory : JvmDependenciesIndexFactory {
+    override fun makeIndexFor(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesDynamicCompoundIndex().apply {
+        addIndex(JvmDependenciesIndexImpl(roots))
+    }
+}
+
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
@@ -355,9 +369,10 @@ class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
     }
 
     override fun collectKnownClassNamesInPackage(packageFqName: FqName): Set<String> = lock.read {
-        indices.fold(hashSetOf(), { s, index -> s.addAll(index.collectKnownClassNamesInPackage(packageFqName)); s })
+        indices.flatMapTo(hashSetOf()) { it.collectKnownClassNamesInPackage(packageFqName) }
     }
 }
 
 private fun IntArrayList.lastOrNull() = if (isEmpty) null else get(size() - 1)
 private val IntArrayList.indices: IntRange get() = 0..(size() - 1)
+

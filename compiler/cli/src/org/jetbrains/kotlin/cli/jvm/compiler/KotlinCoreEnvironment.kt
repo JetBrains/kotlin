@@ -154,15 +154,15 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
-        val initialIndex = JvmDependenciesIndexImpl(initialRoots)
-        updateClasspathFromRootsIndex(initialIndex)
 
-        // replacing index with updatable one only for REPL mode, so we can add roots to classpath then compiling
-        // subsequent lines in REPL
-        rootsIndex = if (!configuration.getBoolean(CommonConfigurationKeys.REPL_MODE)) initialIndex
-                     else JvmDependenciesDynamicCompoundIndex().apply {
-                         addIndex(initialIndex)
-                     }
+        // TODO: pass index factory in the configuration to avoid selection logic here
+        // for a moment using updatable index for REPL mode, so we can add roots to classpath then compiling subsequent lines in REPL
+        val indexFactory = if (configuration.getBoolean(CommonConfigurationKeys.REPL_MODE)) JvmUpdatableDependenciesIndexFactory()
+                           else JvmStaticDependenciesIndexFactory()
+
+        rootsIndex = indexFactory.makeIndexFor(initialRoots)
+        updateClasspathFromRootsIndex(rootsIndex)
+
         (ServiceManager.getService(project, CoreJavaFileManager::class.java)
             as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
 

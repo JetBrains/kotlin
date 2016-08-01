@@ -48,12 +48,12 @@ internal class KtAnnotationWrapper(val psi: KtAnnotationEntry, val targetClass: 
             // TODO: consider inspecting `trace` to find diagnostics reported during the computation (such as division by zero, integer overflow, invalid annotation parameters etc.)
             val argName = arg.getArgumentName()?.asName?.toString()
             // TODO: consider reusing arguments mapping logic from compiler code
+            // TODO: find out how to properly report problems from here (now using bogus arg names as an indicator)
             val paramName = when {
                 argName == null && !namedStarted && targetAnnParams == null -> "$" // TODO: using invalid name here. Drop when annotation constructors will be accessible (se above)
-                argName == null && !namedStarted -> targetAnnParams?.get(i)?.name ?: throw IllegalArgumentException("Unnamed argument for $name at $i")
-                argName == null && namedStarted -> throw IllegalArgumentException("Invalid argument sequence for $name at arg $i")
-                targetAnnParams != null && targetAnnParams.none { it.name == argName } ->
-                    throw IllegalArgumentException("Unknown argument $argName for $name")
+                argName == null && !namedStarted -> targetAnnParams?.get(i)?.name ?: "$(Unnamed argument for $name at $i)"
+                argName == null && namedStarted -> "$(Invalid argument sequence for $name at arg $i)"
+                targetAnnParams != null && targetAnnParams.none { it.name == argName } -> "$(Unknown argument $argName for $name)"
                 else -> {
                     namedStarted = true
                     argName!!
@@ -64,7 +64,7 @@ internal class KtAnnotationWrapper(val psi: KtAnnotationEntry, val targetClass: 
         res
     }
 
-    internal class AnnProxyInvocationHandler<out K: KClass<out Any>>(val targetAnnClass: K, val annParams: Map<String, Any?>) : InvocationHandler {
+    internal class AnnProxyInvocationHandler(val targetAnnClass: KClass<out Annotation>, val annParams: Map<String, Any?>) : InvocationHandler {
         override fun invoke(proxy: Any?, method: Method?, params: Array<out Any>?): Any? = method?.let {
             // TODO: the functionality with checking annParams size is here only to workaround missing access to constructors in annotations. Drop as soon as possible (see above)
             annParams[it.name] ?: if (annParams.size == 1) annParams.values.firstOrNull() else null
