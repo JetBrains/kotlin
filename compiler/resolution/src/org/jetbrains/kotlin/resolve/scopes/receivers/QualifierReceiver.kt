@@ -27,8 +27,9 @@ class ReceiverValueWithSmartCastInfo(
         val receiverValue: ReceiverValue,
         val possibleTypes: Set<KotlinType>, // doesn't include receiver.type
         val isStable: Boolean
-): DetailedReceiver
-
+): DetailedReceiver {
+    override fun toString() = receiverValue.toString()
+}
 
 interface QualifierReceiver : Receiver, DetailedReceiver {
     val descriptor: DeclarationDescriptor

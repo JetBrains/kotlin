@@ -72,5 +72,6 @@ open class FakeCallableDescriptorForObject(
     override fun hashCode() = classDescriptor.hashCode()
 
     override fun getContainingDeclaration() = classDescriptor.getClassObjectReferenceTarget().containingDeclaration
-    override fun substitute(substitutor: TypeSubstitutor) = TODO("Substitution of FakeCallableDescriptorForObject is not supported")
+
+    override fun substitute(substitutor: TypeSubstitutor) = this
 }

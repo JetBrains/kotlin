@@ -41,6 +41,7 @@ interface CandidateFactory<out C: Candidate> {
 
 interface CandidateFactoryProviderForInvoke<C : Candidate> {
 
+    // variable here is resolved, invoke -- only chosen
     fun transformCandidate(variable: C, invoke: C): C
 
     fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<C>

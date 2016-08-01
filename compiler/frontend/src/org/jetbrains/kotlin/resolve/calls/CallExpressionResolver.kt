@@ -281,7 +281,7 @@ class CallExpressionResolver(
                 }
                 else when (resolutionResult.resultCode) {
                     NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                    else -> true
+                    else -> !USE_NEW_INFERENCE || resolutionResult.isSuccess
                 }
             }
 
