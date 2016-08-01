@@ -253,10 +253,10 @@ This was shown in the example with members and extensions above: a member functi
 
 Below we describe the groups of functions that are created to resolve `a.foo()`:
 
-1. _Members of `a`._
+1. _Members of `a`_.
 All overloaded member functions with the name `foo` have the same priority and go in one group.
 
-2. _Local extension functions._
+2. _Local extension functions_.
 Several groups of local extensions are created.
 The functions are prioritized by scopes: more local functions have higher priority and go earlier.
 Two overloaded functions from the same scope will be in the same group.
@@ -299,10 +299,10 @@ The value the function returns reveals an order of its group: the function #0 (a
 In this example it is simple to see which function is called: the closest local function #0.
 But the example illustrates well the different groups of functions:
 
-1. _Members._
+1. _Members_.
 The class `A` has no members named `foo`, so no groups are created.
 
-2. _Local extensions._
+2. _Local extensions_.
 Two local extension functions are declared: #0 and #1.
 They are declared in different scopes, so two groups are created.
 The group containing the function #0 (the closest one) has higher priority.
@@ -467,7 +467,7 @@ The function #3 goes at last here after the functions for the implicit receivers
 
 We described how the Kotlin compiler prioritizes the functions for resolving a call without an explicit receiver.
 
-_The order of implicit receivers is important._
+_The order of implicit receivers is important_.
 Note how in the following example after you swap two arguments of `with` functions, another method is called:
 
 [source,kotlin]
