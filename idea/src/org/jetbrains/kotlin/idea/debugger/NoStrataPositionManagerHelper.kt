@@ -82,7 +82,15 @@ private fun inlinedLinesNumbers(
     val smap = smapData.kotlinStrata ?: return listOf()
 
     val mappingsToInlinedFile = smap.fileMappings.filter() { it.name == inlineFileName }
-    return mappingsToInlinedFile.flatMap { it.lineMappings.map { it.mapSourceToDest(inlineLineNumber) } }
+    val mappingIntervals = mappingsToInlinedFile.flatMap { it.lineMappings }
+
+    val mappedLines = mappingIntervals.asSequence().
+            filter { rangeMapping -> rangeMapping.hasMappingForSource(inlineLineNumber) }.
+            map { rangeMapping -> rangeMapping.mapSourceToDest(inlineLineNumber) }.
+            filter { line -> line != -1 }.
+            toList()
+
+    return mappedLines
 }
 
 @Volatile var emulateDexDebugInTests: Boolean = false
