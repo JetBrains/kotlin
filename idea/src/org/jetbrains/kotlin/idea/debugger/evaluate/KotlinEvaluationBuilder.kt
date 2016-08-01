@@ -92,20 +92,18 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
-        val file = position.file
-        if (file !is KtFile) {
-            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
-        }
-
         if (position.line < 0) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression at $position")
         }
 
-        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-        if (document == null || document.lineCount < position.line) {
-            throw EvaluateExceptionUtil.createEvaluateException(
-                    "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
-                    "It may happen when you've changed source file after starting a debug process.")
+        val file = position.file
+        if (file is KtFile) {
+            val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+            if (document == null || document.lineCount < position.line) {
+                throw EvaluateExceptionUtil.createEvaluateException(
+                        "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
+                        "It may happen when you've changed source file after starting a debug process.")
+            }
         }
 
         if (codeFragment.context !is KtElement) {

@@ -1,0 +1,11 @@
+LineBreakpoint created at jcMarkedObject.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! jcMarkedObject.JcMarkedObjectKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+jcMarkedObject.kt:6
+JavaClass.java:39
+JavaClass.java:40
+Compile bytecode for i
+Compile bytecode for i_DebugLabel
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
