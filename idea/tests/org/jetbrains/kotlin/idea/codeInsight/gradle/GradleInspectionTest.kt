@@ -28,76 +28,10 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
-import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.junit.Assert
 import org.junit.Test
 
 class GradleInspectionTest : GradleImportingTestCase() {
-    @Test
-    fun testDifferentStdlibGradleVersion() {
-        val localFile = createProjectSubFile("build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
-            }
-        """)
-        importProject()
-
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
-
-        Assert.assertTrue(problems.size == 1)
-        Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
-    }
-
-    @Test
-    fun testDifferentStdlibGradleVersionWithVariables() {
-        createProjectSubFile("gradle.properties", """
-        |kotlin=1.0.1
-        |lib_version=1.0.3""".trimMargin())
-        val localFile = createProjectSubFile("build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: lib_version
-            }
-        """)
-        importProject()
-
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
-
-        Assert.assertTrue(problems.size == 1)
-        Assert.assertEquals("Plugin version (1.0.1) is not the same as library version (1.0.3)", problems.single())
-    }
-
     @Test
     fun testDifferentKotlinGradleVersion() {
         createProjectSubFile("gradle.properties", """test=1.0.1""")

@@ -32,11 +32,9 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
-import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
-import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
+import org.jetbrains.plugins.gradle.service.project.GradleExecutionHelper;
 import org.jetbrains.plugins.gradle.tooling.builder.ModelBuildScriptClasspathBuilderImpl;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.After;
@@ -56,7 +54,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeThat;
 
