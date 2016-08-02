@@ -71,7 +71,7 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     override fun getBinaryName(type: TypeElement) = JeName((type as JeTypeElement).psi.qualifiedName)
     
     //TODO
-    override fun getDocComment(e: Element?) = ""
+    override fun getDocComment(e: Element?) = null
 
     override fun isDeprecated(e: Element?): Boolean {
         return (e as? JeAnnotationOwner)?.annotationOwner?.findAnnotation("java.lang.Deprecated") != null
