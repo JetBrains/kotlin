@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
 private fun KtStringTemplateExpression.singleExpressionOrNull() =
-        children.firstOrNull()?.children?.firstOrNull() as? KtExpression
+        children.singleOrNull()?.children?.firstOrNull() as? KtExpression
 
 class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<KtStringTemplateExpression>(
         RemoveSingleExpressionStringTemplateIntention(),
