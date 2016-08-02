@@ -76,8 +76,9 @@ class LazyScriptClassMemberScope(
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
         val primaryConstructor = getPrimaryConstructor()!!
+        val parametersToPassToSuperclass = scriptDescriptor.scriptParametersToPassToSuperclass.map { it.first }
         for (valueParameterDescriptor in primaryConstructor.valueParameters) {
-            if (name == valueParameterDescriptor.name) {
+            if (name == valueParameterDescriptor.name && name !in parametersToPassToSuperclass) {
                 result.add(createPropertyFromScriptParameter(scriptDescriptor, valueParameterDescriptor))
             }
         }

@@ -17,13 +17,18 @@
 package org.jetbrains.kotlin.codegen;
 
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.ScriptContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -148,8 +153,6 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
             ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassNotAny(scriptDescriptor);
 
-            List<ValueParameterDescriptor> valueParameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
-
             if (superclass == null) {
                 iv.load(0, classType);
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false);
@@ -161,6 +164,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
                 iv.load(0, classType);
 
+                List<ValueParameterDescriptor> valueParameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
                 for (Pair<Name, KotlinType> superclassParam: superclassParamsMap) {
                     ValueParameterDescriptor valueParam = null;
                     for (ValueParameterDescriptor vpd: valueParameters) {
@@ -190,11 +194,11 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             }
 
             Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
-            int add = 0;
 
-            for (int i = 0; i < valueParameters.size(); i++) {
-                ValueParameterDescriptor parameter = valueParameters.get(i);
-                frameMap.enter(parameter, argTypes[i + add]);
+            List<ValueParameterDescriptor> parametersForProperties = getScriptParametersToUseAsProperties(scriptDescriptor);
+            for (int i = 0; i < parametersForProperties.size(); i++) {
+                ValueParameterDescriptor parameter = parametersForProperties.get(i);
+                frameMap.enter(parameter, argTypes[i]);
             }
 
             int offset = 1;
@@ -207,7 +211,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
             }
 
-            for (ValueParameterDescriptor parameter : valueParameters) {
+            for (ValueParameterDescriptor parameter : parametersForProperties) {
                 Type parameterType = typeMapper.mapType(parameter.getType());
                 iv.load(0, classType);
                 iv.load(offset, parameterType);
@@ -238,7 +242,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             classBuilder.newField(NO_ORIGIN, access, context.getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
 
-        for (ValueParameterDescriptor parameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {
+        for (ValueParameterDescriptor parameter : getScriptParametersToUseAsProperties(script)) {
             Type parameterType = typeMapper.mapType(parameter);
             int access = ACC_PUBLIC | ACC_FINAL;
             classBuilder.newField(JvmDeclarationOriginKt.OtherOrigin(parameter), access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
@@ -254,5 +258,23 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 genClassOrObject((KtClassOrObject) declaration);
             }
         }
+    }
+
+    @NotNull
+    private static List<ValueParameterDescriptor> getScriptParametersToUseAsProperties(@NotNull ScriptDescriptor scriptDescriptor) {
+        List<ValueParameterDescriptor> parameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
+        final List<Pair<Name, KotlinType>> superclassParamsMap = scriptDescriptor.getScriptParametersToPassToSuperclass();
+
+        return CollectionsKt.filter(parameters, new Function1<ValueParameterDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(ValueParameterDescriptor descriptor) {
+                for (Pair<Name, KotlinType> superclassParam : superclassParamsMap) {
+                    if (descriptor.getName().equals(superclassParam.getFirst())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
     }
 }

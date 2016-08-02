@@ -76,6 +76,20 @@ class ScriptTest2 {
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
+    @Test
+    fun testScriptWithoutParams() {
+        val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+    }
+
+    @Test
+    fun testScriptWithOverridenParam() {
+        val aClass = compileScript("overriden_parameter.kts", ScriptBaseClassWithOverridenProperty::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+    }
+
     private fun compileScript(
             scriptPath: String,
             scriptBase: KClass<out Any>,
@@ -167,17 +181,27 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
-abstract class ScriptWithIntParam(num: Int)
+abstract class ScriptWithIntParam(val num: Int)
 
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
-abstract class ScriptWithClassParam(param: TestParamClass)
+abstract class ScriptWithClassParam(val param: TestParamClass)
 
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
-abstract class ScriptWithBaseClass(num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
+abstract class ScriptWithBaseClass(val num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
+
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithoutParams(num: Int)
+
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptBaseClassWithOverridenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
