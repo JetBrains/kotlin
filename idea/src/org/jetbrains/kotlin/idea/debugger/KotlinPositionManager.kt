@@ -34,6 +34,7 @@ import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -41,9 +42,9 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -76,9 +77,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
-        if (location == null) {
-            throw NoDataException.INSTANCE
-        }
+        if (location == null) throw NoDataException.INSTANCE
 
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
@@ -121,6 +120,17 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (property != null) {
             return SourcePosition.createFromElement(property)
         }
+
+        if (lineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
+            val inlinePosition = getOriginalPositionOfInlinedLine(
+                    location.lineNumber(), FqName(location.declaringType().name()), location.sourceName(),
+                    myDebugProcess.project, GlobalSearchScope.allScope(myDebugProcess.project))
+
+            if (inlinePosition != null) {
+                return SourcePosition.createFromLine(inlinePosition.first, inlinePosition.second)
+            }
+        }
+
         return SourcePosition.createFromLine(psiFile, lineNumber)
     }
 
@@ -180,7 +190,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         catch (e: InternalError) {
             return null
         }
-
 
         val referenceInternalName: String
         try {
@@ -245,12 +254,24 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
         try {
+            if (myDebugProcess.isDexDebug()) {
+                val inlineLocations = getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope)
+                if (!inlineLocations.isEmpty()) {
+                    return inlineLocations
+                }
+            }
+
             val line = position.line + 1
+
             val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
-                type.locationsOfLine("Kotlin", null, line).filter { it.sourceName("Kotlin") == position.file.name }
+                type.locationsOfLine(KOTLIN_STRATA_NAME, null, line).filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
             else
                 type.locationsOfLine(line)
-            if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
+
+            if (locations == null || locations.isEmpty()) {
+                throw NoDataException.INSTANCE
+            }
+
             return locations
         }
         catch (e: AbsentInformationException) {
@@ -274,7 +295,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
+    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
 }
 
 inline fun <U, V> U.readAction(crossinline f: (U) -> V): V {

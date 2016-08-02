@@ -8480,6 +8480,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveSingleExpressionStringTemplate extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveSingleExpressionStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeSingleExpressionStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("emptyString.kt")
+        public void testEmptyString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/emptyString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("justString.kt")
+        public void testJustString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/justString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleStringTemplate.kt")
+        public void testMultipleStringTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/multipleStringTemplate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExpressionStringTemplate.kt")
+        public void testSingleExpressionStringTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/singleExpressionStringTemplate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExpressionStringTemplateWithMethodCall.kt")
+        public void testSingleExpressionStringTemplateWithMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/singleExpressionStringTemplateWithMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExpressionStringTemplateWithNonStringType.kt")
+        public void testSingleExpressionStringTemplateWithNonStringType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/singleExpressionStringTemplateWithNonStringType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stringTemplateWithText.kt")
+        public void testStringTemplateWithText() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeSingleExpressionStringTemplate/stringTemplateWithText.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeUnnecessaryParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

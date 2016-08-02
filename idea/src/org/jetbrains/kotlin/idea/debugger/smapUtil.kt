@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.filters
+package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.CompilerPaths
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -66,9 +66,9 @@ fun readClassFile(project: Project,
             val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
 
             val className = fqNameWithInners.asString().replace('.', '$')
-            val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
+            val classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
 
-            return classByByDirectory.readBytes()
+            return classByDirectory.readBytes()
         }
 
         else -> return null
@@ -80,6 +80,13 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
 
     val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
     if (!parentDirectory.exists()) return null
+
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+        val beforeDexFileClassFile = File(parentDirectory, className + ".class.before_dex")
+        if (beforeDexFileClassFile.exists()) {
+            return beforeDexFileClassFile
+        }
+    }
 
     val classFile = File(parentDirectory, className + ".class")
     if (classFile.exists()) {
