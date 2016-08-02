@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.annotation.AnnotationProcessingExtension
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -83,7 +82,8 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         generatedOutputDirFile.mkdirs()
         
         val javaRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS]
-                ?.filterIsInstance<JavaSourceRoot>()?.map { it.file } ?: emptyList()
+                ?.filter { it.javaClass.canonicalName == "org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot" }
+                ?.map { it.javaClass.getMethod("getFile")(it) as File } ?: emptyList()
         
         val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
