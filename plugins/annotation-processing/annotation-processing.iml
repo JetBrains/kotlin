@@ -14,6 +14,5 @@
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
-    <orderEntry type="module" module-name="cli" />
   </component>
 </module>
