@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import org.gradle.tooling.ProjectConnection
@@ -38,10 +39,12 @@ class GradleScriptTemplateProvider(project: Project): ScriptTemplateProvider {
                     org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID)
         }
         catch (e: NoClassDefFoundError) {
-            // TODO: log warning and consider displaying it to user
+            // TODO: consider displaying the warning to the user
+            Logger.getInstance(GradleScriptTemplateProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
             null
         }
         catch (e: ClassNotFoundException) {
+            Logger.getInstance(GradleScriptTemplateProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
             null // see todo above
         }
     }

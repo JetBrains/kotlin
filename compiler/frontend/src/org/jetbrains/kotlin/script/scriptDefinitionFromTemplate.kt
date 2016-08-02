@@ -71,7 +71,13 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
         when {
             resolver != null -> ScriptTemplateDefinitionData(resolver.javaClass.kotlin, { resolver }, filePattern)
             // TODO: logScriptDefMessage missing or invalid constructor
-            defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver, { defAnn.resolver.primaryConstructor?.call() }, filePattern)
+            defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver,
+                                                           {
+                                                               defAnn.resolver.primaryConstructor?.call() ?: null.apply {
+                                                                   log.error("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
+                                                               }
+                                                           },
+                                                           filePattern)
             else -> ScriptTemplateDefinitionData(BasicScriptDependenciesResolver::class, ::BasicScriptDependenciesResolver, filePattern)
         }
     }
@@ -92,7 +98,6 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
-
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 

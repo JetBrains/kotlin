@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.startup.StartupManager
@@ -99,7 +100,7 @@ class KotlinScriptConfigurationManager(
     fun getAllLibrarySourcesScope() = NonClasspathDirectoriesScope(getAllLibrarySources())
 
     private fun reloadScriptDefinitions() {
-        (makeScriptDefsFromTemplateProviderExtensions(project, { ep, ex -> /* TODO: add logging here */ }) +
+        (makeScriptDefsFromTemplateProviderExtensions(project, { ep, ex -> log.error("[kts] Error loading definition from ${ep.id}", ex) }) +
          loadScriptConfigsFromProjectRoot(File(project.basePath ?: "")).map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) }).let {
             if (it.isNotEmpty()) {
                 scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
@@ -150,6 +151,7 @@ class KotlinScriptConfigurationManager(
             // TODO: report this somewhere, but do not throw: assert(res != null, { "Invalid classpath entry '$this': exists: ${exists()}, is directory: $isDirectory, is file: $isFile" })
             return res
         }
+        internal val log = Logger.getInstance(KotlinScriptConfigurationManager::class.java)
     }
 }
 

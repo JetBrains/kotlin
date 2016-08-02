@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -42,6 +43,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                else scriptDefinitionProvider.findScriptDefinition(file)
                 ?.let { it.getDependenciesFor(file, project, null) }
                 .apply {
+                    log.info("[kts] new cached deps for $path: ${this?.classpath?.joinToString(File.pathSeparator)}")
                     cacheLock.write {
                         if (this == null) {
                             cacheOfNulls.add(path)
@@ -62,6 +64,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
                 if (scriptDef != null) {
                     val deps = scriptDef.getDependenciesFor(file, project, null)
+                    log.info("[kts] cached deps for $path: ${deps?.classpath?.joinToString(File.pathSeparator)}")
                     if (deps != null) {
                         cache.put(path, deps)
                     }
@@ -88,16 +91,21 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                     deps != null && (oldDeps == null ||
                                      !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
                         // changed or new
+                        log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
                         cache.put(path, deps)
                         cacheOfNulls.remove(path)
                         file
                     }
                     deps != null -> {
                         // same as before
+                        log.info("[kts] unchanged deps for $path")
                         null
                     }
                     else -> {
-                        if (cache.remove(path) != null || cacheOfNulls.remove(path)) file // cleared
+                        if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
+                            log.info("[kts] removed deps for $path")
+                            file
+                        } // cleared
                         else null // same as before
                     }
                 }
@@ -142,12 +150,15 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         @JvmStatic
         fun getInstance(project: Project): KotlinScriptExternalImportsProvider? =
                 ServiceManager.getService(project, KotlinScriptExternalImportsProvider::class.java)
+        internal val log = Logger.getInstance(KotlinScriptExternalImportsProvider::class.java)
     }
 }
 
-internal fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean {
-    val c1 = asSequence().map { it.canonicalPath }
-    val c2 = other.asSequence().map { it.canonicalPath }
-    return c1.zip(c2).all { it.first == it.second }
-}
+internal fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean =
+        with (Pair(iterator(), other.iterator())) {
+            while (first.hasNext() && second.hasNext()) {
+                if (first.next().canonicalPath != second.next().canonicalPath) return false
+            }
+            !(first.hasNext() || second.hasNext())
+        }
 
