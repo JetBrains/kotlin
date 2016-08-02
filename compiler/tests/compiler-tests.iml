@@ -66,5 +66,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="ir.tests" scope="TEST" />
   </component>
 </module>

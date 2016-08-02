@@ -51,6 +51,10 @@
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.backend.jvm/ir.backend.jvm.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.backend.jvm/ir.backend.jvm.iml" group="compiler/ir" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" group="compiler/ir" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tests/ir.tests.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tests/ir.tests.iml" group="compiler/ir" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" filepath="$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />

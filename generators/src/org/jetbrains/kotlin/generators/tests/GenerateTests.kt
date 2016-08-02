@@ -121,6 +121,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
+import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
@@ -237,6 +238,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractBytecodeTextTest>() {
             model("codegen/bytecodeText")
+        }
+
+        testClass<AbstractIrTextTestCase>() {
+            model("ir/irText")
         }
 
         testClass<AbstractBytecodeListingTest>() {

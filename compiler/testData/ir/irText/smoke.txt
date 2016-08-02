@@ -1,0 +1,15 @@
+IrFile /smoke.kt
+  IrFunction public fun testFun(): kotlin.Unit
+    ??? IrDummyBody
+  IrProperty public val testSimpleVal: kotlin.Int = 1
+    ??? IrDummyBody
+  IrProperty public val testValWithGetter: kotlin.Int
+    IrPropertyGetter public fun <get-testValWithGetter>(): kotlin.Int
+      ??? IrDummyBody
+  IrProperty public var testSimpleVar: kotlin.Int
+    ??? IrDummyBody
+  IrProperty public var testVarWithAccessors: kotlin.Int
+    IrPropertyGetter public fun <get-testVarWithAccessors>(): kotlin.Int
+      ??? IrDummyBody
+    IrPropertySetter public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit
+      ??? IrDummyBody
