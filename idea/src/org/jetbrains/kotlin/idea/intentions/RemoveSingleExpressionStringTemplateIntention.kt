@@ -30,9 +30,15 @@ private fun KtStringTemplateExpression.singleExpressionOrNull() =
         children.singleOrNull()?.children?.firstOrNull() as? KtExpression
 
 class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<KtStringTemplateExpression>(
-        RemoveSingleExpressionStringTemplateIntention()
+        RemoveSingleExpressionStringTemplateIntention(),
+        additionalChecker = {
+            templateExpression ->
+            templateExpression.singleExpressionOrNull()?.let {
+                KotlinBuiltIns.isString(it.getType(it.analyze()))
+            } ?: false
+        }
 ) {
-    override val problemText = "Single-expression string template"
+    override val problemText = "Redundant string template"
 }
 
 class RemoveSingleExpressionStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
