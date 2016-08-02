@@ -47,8 +47,8 @@ class GradleScriptTemplateProvider(project: Project): ScriptTemplateProvider {
     }
 
     private val gradleJvmOptions: List<String> by lazy {
-        gradleExeSettings?.let { settings ->
-            CommandLineTokenizer(settings.daemonVmOptions).toList()
+        gradleExeSettings?.daemonVmOptions?.let { vmOptions ->
+            CommandLineTokenizer(vmOptions).toList()
                     .mapNotNull { it?.let { it as? String } }
                     .filterNot { it.isBlank() }
                     .distinct()
