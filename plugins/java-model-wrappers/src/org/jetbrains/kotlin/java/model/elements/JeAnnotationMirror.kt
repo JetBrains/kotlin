@@ -33,27 +33,19 @@ class JeAnnotationMirror(val psi: PsiAnnotation) : AnnotationMirror {
         return JeDeclaredType(PsiTypesUtil.getClassType(psiClass), psiClass)
     }
 
-    override fun getElementValues(): Map<out ExecutableElement, AnnotationValue> {
-        val annotationClass = resolveAnnotationClass() ?: return emptyMap()
-        
-        return mutableMapOf<ExecutableElement, AnnotationValue>().apply {
-            for (attribute in psi.parameterList.attributes) {
-                val attributeValue = attribute.value ?: continue
-                val method = annotationClass.methods.firstOrNull {
-                    it is PsiAnnotationMethod && it.name == attribute.name 
-                } ?: return emptyMap()
-                put(JeMethodExecutableElement(method), JeAnnotationValue(attributeValue))
-            }
-        }
-    }
+    override fun getElementValues(): Map<out ExecutableElement, AnnotationValue> = getElementValues(false)
+    
+    fun getAllElementValues(): Map<out ExecutableElement, AnnotationValue> = getElementValues(true)
 
-    fun getAllElementValues(): Map<out ExecutableElement, AnnotationValue> {
+    private fun getElementValues(withDefaults: Boolean): Map<out ExecutableElement, AnnotationValue> {
         val annotationClass = resolveAnnotationClass() ?: return emptyMap()
 
         return mutableMapOf<ExecutableElement, AnnotationValue>().apply {
             for (method in annotationClass.methods) {
                 method as? PsiAnnotationMethod ?: continue
-                val attributeValue = psi.findAttributeValue(method.name) ?: method.defaultValue ?: continue
+                val attributeValue = psi.findDeclaredAttributeValue(method.name) 
+                                     ?: (if (withDefaults) method.defaultValue else null)
+                                     ?: continue
                 put(JeMethodExecutableElement(method), JeAnnotationValue(attributeValue))
             }
         }
