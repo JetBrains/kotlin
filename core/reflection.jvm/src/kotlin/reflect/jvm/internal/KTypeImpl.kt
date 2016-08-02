@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
+import org.jetbrains.kotlin.load.java.structure.reflect.parameterizedTypeArguments
 import org.jetbrains.kotlin.load.java.structure.reflect.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -75,12 +76,7 @@ internal class KTypeImpl(
             val typeArguments = type.arguments
             if (typeArguments.isEmpty()) return emptyList()
 
-            // Lazy because it's not needed to compute javaType right away, only inside the lazy value for each argument,
-            // and also because sometimes (e.g. in case of star projections), this won't be needed at all.
-            // Note that this instance is created before the loop because ParameterizedType#actualTypeArguments clones the array
-            val javaTypeArguments by lazy(PUBLICATION) {
-                (javaType as ParameterizedType).actualTypeArguments
-            }
+            val parameterizedTypeArguments by lazy(PUBLICATION) { javaType.parameterizedTypeArguments }
 
             return typeArguments.mapIndexed { i, typeProjection ->
                 if (typeProjection.isStarProjection) {
@@ -100,7 +96,7 @@ internal class KTypeImpl(
                                 javaType.genericComponentType
                             }
                             is ParameterizedType -> {
-                                val argument = javaTypeArguments[i]
+                                val argument = parameterizedTypeArguments[i]
                                 // In "Foo<out Bar>", the JVM type of the first type argument should be "Bar", not "? extends Bar"
                                 if (argument !is WildcardType) argument
                                 else argument.lowerBounds.firstOrNull() ?: argument.upperBounds.first()

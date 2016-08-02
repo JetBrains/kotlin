@@ -32,6 +32,10 @@ public interface KType {
     /**
      * Type arguments passed for the parameters of the classifier in this type.
      * For example, in the type `Array<out Number>` the only type argument is `out Number`.
+     *
+     * In case this type is based on an inner class, the returned list contains the type arguments provided for the innermost class first,
+     * then its outer class, and so on.
+     * For example, in the type `Outer<A, B>.Inner<C, D>` the returned list is `[C, D, A, B]`.
      */
     public val arguments: List<KTypeProjection>
 

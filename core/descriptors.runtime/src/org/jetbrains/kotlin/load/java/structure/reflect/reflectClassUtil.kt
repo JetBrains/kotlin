@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Array
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 val Class<*>.safeClassLoader: ClassLoader
     get() = classLoader ?: ClassLoader.getSystemClassLoader()
@@ -74,3 +76,16 @@ val Class<*>.desc: String
 
 fun Class<*>.createArrayType(): Class<*> =
         Array.newInstance(this, 0).javaClass
+
+/**
+ * @return all arguments of a parameterized type, including those of outer classes in case this type represents an inner generic.
+ * The returned list starts with the arguments to the innermost class, then continues with those of its outer class, and so on.
+ * For example, for the type `Outer<A, B>.Inner<C, D>` the result would be `[C, D, A, B]`.
+ */
+val Type.parameterizedTypeArguments: List<Type>
+    get() {
+        if (this !is ParameterizedType) return emptyList()
+        if (ownerType == null) return actualTypeArguments.toList()
+
+        return generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.asSequence() }.toList()
+    }

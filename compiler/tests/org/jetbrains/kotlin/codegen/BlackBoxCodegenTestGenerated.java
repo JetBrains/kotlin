@@ -12464,6 +12464,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("innerGenericTypeArgument.kt")
+                public void testInnerGenericTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/innerGenericTypeArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("memberFunctions.kt")
                 public void testMemberFunctions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/memberFunctions.kt");
@@ -13170,6 +13176,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("classifiersOfBuiltInTypes.kt")
             public void testClassifiersOfBuiltInTypes() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/classifiersOfBuiltInTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerGenericArguments.kt")
+            public void testInnerGenericArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/types/innerGenericArguments.kt");
                 doTest(fileName);
             }
 
