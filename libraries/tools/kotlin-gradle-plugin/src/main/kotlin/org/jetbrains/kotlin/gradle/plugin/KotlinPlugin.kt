@@ -65,6 +65,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     protected val kotlinDirSet: SourceDirectorySet? = createKotlinDirSet()
     protected val kotlinTask: T = createKotlinCompileTask()
     protected val kotlinTaskName: String by lazy { kotlinTask.name }
+    protected abstract val defaultKotlinDestinationDir: File
 
     public fun run() {
         if (kotlinSourceSet == null || kotlinDirSet == null) {
@@ -106,6 +107,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         kotlinCompile.description = taskDescription
         kotlinCompile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
         kotlinCompile.mapClasspath { sourceSet.compileClasspath }
+        kotlinCompile.destinationDir = defaultKotlinDestinationDir
         return kotlinCompile
     }
 
@@ -129,6 +131,9 @@ class Kotlin2JvmSourceSetProcessor(
         private var cachedKotlinAnnotationProcessingDep: String? = null
     }
 
+    override val defaultKotlinDestinationDir: File
+        get() = File(project.buildDir, "kotlin-classes/$sourceSetName")
+
     override fun doCreateTask(project: Project, taskName: String): KotlinCompile =
             tasksProvider.createKotlinJVMTask(project, taskName)
 
@@ -144,8 +149,6 @@ class Kotlin2JvmSourceSetProcessor(
 
         project.afterEvaluate { project ->
             if (project != null) {
-                kotlinTask.destinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
-
                 val subpluginEnvironment = loadSubplugins(project)
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
@@ -189,12 +192,13 @@ class Kotlin2JsSourceSetProcessor(
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
 ) {
+    override val defaultKotlinDestinationDir: File
+            get() = File(project.buildDir, "kotlin2js/${sourceSetName}")
 
     val copyKotlinJsTaskName = sourceSet.getTaskName("copy", "kotlinJs")
     val clean = project.tasks.findByName("clean")
     val build = project.tasks.findByName("build")
 
-    val defaultKotlinDestinationDir = File(project.buildDir, "kotlin2js/${sourceSetName}")
     private fun kotlinTaskDestinationDir(): File? = kotlinTask.destinationDir
     private fun kotlinJsDestinationDir(): File? = (kotlinTask.property("outputFile") as String).let { File(it) }.let { if (it.isDirectory) it else it.parentFile }
 
@@ -209,7 +213,6 @@ class Kotlin2JsSourceSetProcessor(
             tasksProvider.createKotlinJSTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
-        kotlinTask.destinationDir = defaultKotlinDestinationDir
         build?.dependsOn(kotlinTaskName)
         clean?.dependsOn("clean" + kotlinTaskName.capitalize())
         kotlinTask.source(kotlinDirSet)
@@ -349,6 +352,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
+            // todo: Investigate possibility of creating and configuring kotlinTask before evaluation
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
 
             kotlinTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-$kotlinTaskName")

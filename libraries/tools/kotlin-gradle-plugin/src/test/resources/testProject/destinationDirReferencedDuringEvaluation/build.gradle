@@ -1,0 +1,25 @@
+buildscript {
+    ext.kotlin_verion = '1.1-SNAPSHOT'
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_verion"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "kotlin"
+
+repositories {
+    maven { url 'file://' + pathToKotlinPlugin }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_verion"
+    testCompile 'junit:junit:4.12'
+}
+
+// important to test that destinationDir is configured before evaluation
+test.testClassesDir = project.tasks.compileTestKotlin.destinationDir
