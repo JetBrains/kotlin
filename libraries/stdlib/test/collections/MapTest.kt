@@ -252,12 +252,12 @@ class MapTest {
     }
 
     @test fun filter() {
-        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
-        val filteredByKey = map.filter { it.key == "b" }
+        val map: Map<out String, Int> = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val filteredByKey = map.filter { it.key[0] == 'b' }
         assertEquals(1, filteredByKey.size)
         assertEquals(3, filteredByKey["b"])
 
-        val filteredByKey2 = map.filterKeys { it == "b" }
+        val filteredByKey2 = map.filterKeys { it[0] == 'b' }
         assertEquals(1, filteredByKey2.size)
         assertEquals(3, filteredByKey2["b"])
 
@@ -267,7 +267,7 @@ class MapTest {
         assertEquals(2, filteredByValue["c"])
         assertEquals(2, filteredByValue["a"])
 
-        val filteredByValue2 = map.filterValues { it == 2 }
+        val filteredByValue2 = map.filterValues { it % 2 == 0 }
         assertEquals(2, filteredByValue2.size)
         assertEquals(null, filteredByValue2["b"])
         assertEquals(2, filteredByValue2["c"])

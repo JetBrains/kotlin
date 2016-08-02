@@ -98,13 +98,13 @@ private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
 /** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<K, V>.isNotEmpty(): Boolean = !isEmpty()
+public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
  * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
  */
 @kotlin.internal.InlineOnly
-public inline fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
+public inline fun <K, V> Map<K, V>?.orEmpty() : Map<K, V> = this ?: emptyMap()
 
 /**
  * Checks if the map contains the given key. This method allows to use the `x in map` syntax for checking
@@ -223,7 +223,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
  * @sample test.collections.MapTest.iterateWithProperties
  */
 @kotlin.internal.InlineOnly
-public inline operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = entries.iterator()
+public inline operator fun <K, V> Map<out K, V>.iterator(): Iterator<Map.Entry<K, V>> = entries.iterator()
 
 /**
  * Returns a [MutableIterator] over the mutable entries in the [MutableMap].
@@ -238,7 +238,7 @@ public inline operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<M
  * Populates the given [destination] map with entries having the keys of this map and the values obtained
  * by applying the [transform] function to each entry in this [Map].
  */
-public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<out K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     return entries.associateByTo(destination, { it.key }, transform)
 }
 
@@ -249,7 +249,7 @@ public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<K, V>.mapValuesTo(de
  * In case if any two entries are mapped to the equal keys, the value of the latter one will overwrite
  * the value associated with the former one.
  */
-public inline fun <K, V, R, C : MutableMap<in R, in V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, C : MutableMap<in R, in V>> Map<out K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     return entries.associateByTo(destination, transform, { it.value })
 }
 
@@ -289,7 +289,7 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
  * @sample test.collections.MapTest.mapValues
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
+public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
     return mapValuesTo(LinkedHashMap<K, R>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
 }
 
@@ -305,7 +305,7 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
  * @sample test.collections.MapTest.mapKeys
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
+public inline fun <K, V, R> Map<out K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
     return mapKeysTo(LinkedHashMap<R, V>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
 }
 
@@ -314,7 +314,7 @@ public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R)
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
+public inline fun <K, V> Map<out K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
     for (entry in this) {
         if (predicate(entry.key)) {
@@ -329,7 +329,7 @@ public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K,
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
+public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
     for (entry in this) {
         if (predicate(entry.value)) {
@@ -345,7 +345,7 @@ public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, C : MutableMap<in K, in V>> Map<out K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
         if (predicate(element)) {
             destination.put(element.key, element.value)
@@ -359,7 +359,7 @@ public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterTo(destinat
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
+public inline fun <K, V> Map<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterTo(LinkedHashMap<K, V>(), predicate)
 }
 
@@ -368,7 +368,7 @@ public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolea
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, C : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
         if (!predicate(element)) {
             destination.put(element.key, element.value)
@@ -382,7 +382,7 @@ public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterNotTo(desti
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
+public inline fun <K, V> Map<out K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterNotTo(LinkedHashMap<K, V>(), predicate)
 }
 

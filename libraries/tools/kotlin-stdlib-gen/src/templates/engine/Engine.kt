@@ -327,7 +327,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
             Lists -> "List<$isAsteriskOrT>"
-            Maps -> "Map<K, V>"
+            Maps -> "Map<out K, V>"
             Sets -> "Set<$isAsteriskOrT>"
             Sequences -> "Sequence<$isAsteriskOrT>"
             InvariantArraysOfObjects -> "Array<T>"

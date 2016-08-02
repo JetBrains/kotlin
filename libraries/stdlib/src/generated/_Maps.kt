@@ -16,7 +16,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns a [List] containing all key-value pairs.
  */
-public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
+public fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>> {
     if (size == 0)
         return emptyList()
     val iterator = entries.iterator()
@@ -36,14 +36,14 @@ public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
  */
-public inline fun <K, V, R> Map<K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R> {
+public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
 }
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
  */
-public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
         destination.addAll(list)
@@ -55,7 +55,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(des
  * Returns a list containing the results of applying the given [transform] function
  * to each entry in the original map.
  */
-public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
+public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     return mapTo(ArrayList<R>(size), transform)
 }
 
@@ -63,7 +63,7 @@ public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): Li
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each entry in the original map.
  */
-public inline fun <K, V, R : Any> Map<K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R> {
+public inline fun <K, V, R : Any> Map<out K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -71,7 +71,7 @@ public inline fun <K, V, R : Any> Map<K, V>.mapNotNull(transform: (Map.Entry<K, 
  * Applies the given [transform] function to each entry in the original map
  * and appends only the non-null results to the given [destination].
  */
-public inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C {
+public inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<out K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C {
     forEach { element -> transform(element)?.let { destination.add(it) } }
     return destination
 }
@@ -80,7 +80,7 @@ public inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<K, V>.mapNotN
  * Applies the given [transform] function to each entry of the original map
  * and appends the results to the given [destination].
  */
-public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (item in this)
         destination.add(transform(item))
     return destination
@@ -89,7 +89,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destina
 /**
  * Returns `true` if all entries match the given [predicate].
  */
-public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
 }
@@ -97,7 +97,7 @@ public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean):
 /**
  * Returns `true` if map has at least one entry.
  */
-public fun <K, V> Map<K, V>.any(): Boolean {
+public fun <K, V> Map<out K, V>.any(): Boolean {
     for (element in this) return true
     return false
 }
@@ -105,7 +105,7 @@ public fun <K, V> Map<K, V>.any(): Boolean {
 /**
  * Returns `true` if at least one entry matches the given [predicate].
  */
-public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+public inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
 }
@@ -114,14 +114,14 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
  * Returns the number of entries in this map.
  */
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<K, V>.count(): Int {
+public inline fun <K, V> Map<out K, V>.count(): Int {
     return size
 }
 
 /**
  * Returns the number of entries matching the given [predicate].
  */
-public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
+public inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
@@ -131,7 +131,7 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
  * Performs the given [action] on each entry.
  */
 @kotlin.internal.HidesMembers
-public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {
+public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) action(element)
 }
 
@@ -139,7 +139,7 @@ public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): U
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  */
 @kotlin.internal.InlineOnly
-public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return entries.maxBy(selector)
 }
 
@@ -147,28 +147,28 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
  */
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
     return entries.maxWith(comparator)
 }
 
 /**
  * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  */
-public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return entries.minBy(selector)
 }
 
 /**
  * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
  */
-public fun <K, V> Map<K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
     return entries.minWith(comparator)
 }
 
 /**
  * Returns `true` if the map has no entries.
  */
-public fun <K, V> Map<K, V>.none(): Boolean {
+public fun <K, V> Map<out K, V>.none(): Boolean {
     for (element in this) return false
     return true
 }
@@ -176,7 +176,7 @@ public fun <K, V> Map<K, V>.none(): Boolean {
 /**
  * Returns `true` if no entries match the given [predicate].
  */
-public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
 }
@@ -185,14 +185,14 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
  * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
  */
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
+public inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
     return entries
 }
 
 /**
  * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
  */
-public fun <K, V> Map<K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
+public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return Sequence { this.iterator() }
 }
 
