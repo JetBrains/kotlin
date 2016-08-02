@@ -32,7 +32,7 @@ import java.io.File
 abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase() {
     fun doTest(path: String) {
         val config = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
-        val env = createAndroidTestEnvironment(config, getResPaths(path))
+        val env = createTestEnvironment(config, getResPaths(path))
         val project = env.project
 
         val ext = PackageFragmentProviderExtension.getInstances(project).first { it is AndroidPackageFragmentProviderExtension }

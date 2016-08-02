@@ -30,7 +30,7 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val layoutPaths = getResPaths(path)
-        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
+        myEnvironment = createTestEnvironment(configuration, layoutPaths)
     }
 
     override fun doTest(path: String) {

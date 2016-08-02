@@ -35,10 +35,21 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 
-class AnnotationProcessingExtension(
+class ClasspathBasedAnnotationProcessingExtension(
+        val annotationProcessingClasspath: List<String>,
+        generatedSourcesOutputDir: File,
+        classesOutputDir: File,
+        javaSourceRoots: List<File>
+) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots) {
+    override fun loadAnnotationProcessors(): List<Processor> {
+        val classLoader = URLClassLoader(annotationProcessingClasspath.map { File(it).toURI().toURL() }.toTypedArray())
+        return ServiceLoader.load(Processor::class.java, classLoader).toList()
+    }
+}
+
+abstract class AbstractAnnotationProcessingExtension(
         val generatedSourcesOutputDir: File,
         val classesOutputDir: File,
-        val annotationProcessingClasspath: List<String>,
         val javaSourceRoots: List<File>
 ) : AnalysisCompletedHandlerExtension {
     private var annotationProcessingComplete = false
@@ -53,7 +64,7 @@ class AnnotationProcessingExtension(
             return null
         }
         
-        val processors = loadAnnotationProcessors(annotationProcessingClasspath)
+        val processors = loadAnnotationProcessors()
         if (processors.isEmpty()) return null
         
         val analysisContext = AnalysisContext(hashMapOf())
@@ -114,11 +125,8 @@ class AnnotationProcessingExtension(
         annotationProcessingComplete = true
         return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedSourcesOutputDir))
     }
-    
-    private fun loadAnnotationProcessors(classpath: List<String>): List<Processor> {
-        val classLoader = URLClassLoader(classpath.map { File(it).toURI().toURL() }.toTypedArray())
-        return ServiceLoader.load(Processor::class.java, classLoader).toList()
-    } 
+
+    protected abstract fun loadAnnotationProcessors(): List<Processor>
 }
 
 internal class AnalysisContext(annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>) {

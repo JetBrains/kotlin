@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.annotation.AnnotationProcessingExtension
+import org.jetbrains.kotlin.annotation.ClasspathBasedAnnotationProcessingExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -88,7 +88,8 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
         
-        val annotationProcessingExtension = AnnotationProcessingExtension(generatedOutputDirFile, classesOutputDir, classpath, javaRoots)
+        val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
+                classpath, generatedOutputDirFile, classesOutputDir, javaRoots)
         AnalysisCompletedHandlerExtension.registerExtension(project, annotationProcessingExtension)
     }
 }

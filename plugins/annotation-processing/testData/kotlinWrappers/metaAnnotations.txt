@@ -1,0 +1,9 @@
+@kotlin.annotation.Repeatable
+@kotlin.Deprecated
+@kotlin.annotation.Retention(value = RUNTIME)
+@kotlin.annotation.Target(allowedTargets = { CLASS, CONSTRUCTOR, EXPRESSION })
+@java.lang.annotation.Retention(value = RUNTIME)
+@java.lang.annotation.Target(value = { TYPE, CONSTRUCTOR })
+public abstract @interface Anno {
+
+}

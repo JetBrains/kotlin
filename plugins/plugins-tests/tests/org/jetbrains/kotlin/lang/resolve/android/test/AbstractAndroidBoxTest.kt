@@ -41,7 +41,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val layoutPaths = File(path).listFiles { it -> it.name.startsWith("layout") && it.isDirectory }!!.map { "$path${it.name}/" }
-        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
+        myEnvironment = createTestEnvironment(configuration, layoutPaths)
     }
 
     fun doCompileAgainstAndroidSdkTest(path: String) {

@@ -30,5 +30,10 @@
         <jarDirectory url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="java-model-wrappers" scope="TEST" />
+    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="light-classes" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="junit-plugin" level="project" />
+    <orderEntry type="module" module-name="annotation-processing" scope="TEST" />
   </component>
 </module>
