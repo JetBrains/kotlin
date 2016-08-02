@@ -23,7 +23,7 @@ import com.intellij.execution.filters.OpenFileHyperlinkInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.regex.Pattern
 
