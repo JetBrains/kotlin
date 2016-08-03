@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.js.test.semantics
 
-import org.jetbrains.kotlin.js.test.*
+import org.jetbrains.kotlin.js.test.AbstractSingleFileTranslationWithDirectivesTest
+import org.jetbrains.kotlin.js.test.KotlinJSMultiFileTest
+import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
+import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
 abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
     override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
@@ -60,6 +63,8 @@ abstract class AbstractLocalClassesTest : AbstractBlackBoxTest("localClasses/")
 
 abstract class AbstractNonLocalReturnsTest : KotlinJSMultiFileTest("inline.generated/nonLocalReturns/")
 
-public abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
+abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
 
-public abstract class AbstractCastTest : SingleFileTranslationTest("expression/cast/")
+abstract class AbstractCastTest : SingleFileTranslationTest("expression/cast/")
+
+abstract class AbstractLightReflectionTest : SingleFileTranslationTest("reflection/light/")

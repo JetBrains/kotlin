@@ -192,7 +192,7 @@
     }
 
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
-        var obj = function () {};
+        var obj = {};
 
         obj.$metadata$ = computeMetadata(bases, properties, staticProperties);
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
@@ -301,6 +301,7 @@
     Kotlin.createTrait = function (basesFun, properties, staticProperties) {
         function $o() {
             var klass = Kotlin.createTraitNow(getBases(basesFun), properties, staticProperties);
+            klass.name = $o.className;
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
@@ -320,8 +321,8 @@
     Kotlin.createObject = function (basesFun, constructor, functions, staticProperties) {
         constructor = constructor || function() {};
         function $o() {
-            var klass = Kotlin.createClassNow(getBases(basesFun), null, functions, staticProperties);
-            var obj = new klass();
+            var klass = Kotlin.createClassNow(getBases(basesFun), constructor, functions, staticProperties);
+            var obj = Object.create(klass.prototype);
             var metadata = klass.$metadata$;
             metadata.type = Kotlin.TYPE.OBJECT;
             Object.defineProperty(this, $o.className, {value: obj});

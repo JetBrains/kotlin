@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 
 fun generateDelegateCall(
         fromDescriptor: FunctionDescriptor,
@@ -75,4 +78,30 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
 
     result += Pair(subList(lastIndex, size), lastClass)
     return result
+}
+
+fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsNameRef {
+    val referenceToJsClass: JsNameRef
+
+    val classifierDescriptor = type.constructor.declarationDescriptor
+
+    if (classifierDescriptor is ClassDescriptor) {
+        val reference = context.getQualifiedReference(classifierDescriptor)
+        if (classifierDescriptor.kind == ClassKind.OBJECT) {
+            referenceToJsClass = JsAstUtils.pureFqn("constructor", JsInvocation(JsNameRef("getPrototypeOf", JsNameRef("Object")), reference))
+        }
+        else {
+            referenceToJsClass = reference
+        }
+    }
+    else if (classifierDescriptor is TypeParameterDescriptor) {
+        assert(classifierDescriptor.isReified)
+
+        referenceToJsClass = context.getNameForDescriptor(classifierDescriptor).makeRef()
+    }
+    else {
+        throw IllegalStateException("Can't get reference for $type")
+    }
+
+    return referenceToJsClass
 }
