@@ -551,7 +551,7 @@ private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
 /**
  * Returns a sequence which invokes the function to calculate the next value on each iteration until the function returns `null`.
  *
- * Returned sequence is constrained to be iterated only once.
+ * The returned sequence is constrained to be iterated only once.
  *
  * @see constrainOnce
  */
@@ -560,10 +560,13 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
 }
 
 /**
- * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
- * until the function returns `null`. The sequence starts with the specified [seed].
+ * Returns a sequence defined by the starting value [seed] and the function [nextFunction],
+ * which is invoked to calculate the next value based on the previous one on each iteration.
  *
- * The sequence can be iterated multiple times, each time starting with the [seed].
+ * The sequence produces values until it encounters first `null` value.
+ * If [seed] is `null`, an empty sequence is produced.
+ *
+ * The sequence can be iterated multiple times, each time starting with [seed].
  */
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequence<T> =
@@ -573,9 +576,13 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
         GeneratorSequence({ seed }, nextFunction)
 
 /**
- * Returns a sequence which invokes the function [seedFunction] to get the first item and then
- * [nextFunction] to calculate the next value based on the previous one on each iteration
- * until the function returns `null`. The sequence starts with the value returned by [seedFunction].
+ * Returns a sequence defined by the function [seedFunction], which is invoked to produce the starting value,
+ * and the [nextFunction], which is invoked to calculate the next value based on the previous one on each iteration.
+ *
+ * The sequence produces values until it encounters first `null` value.
+ * If [seedFunction] returns `null`, an empty sequence is produced.
+ *
+ * The sequence can be iterated multiple times.
  */
 public fun <T: Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
         GeneratorSequence(seedFunction, nextFunction)
