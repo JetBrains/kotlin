@@ -412,6 +412,6 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
         })
 
-        return getContextElement(codeFragment.findElementAt(codeFragment.text.length - 5)) as? KtElement
+        return codeFragment.getContentElement().statements.lastOrNull()
     }
 }
