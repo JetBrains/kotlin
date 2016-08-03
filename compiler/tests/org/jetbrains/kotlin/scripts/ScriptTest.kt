@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
@@ -41,7 +42,7 @@ import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 
-class ScriptTest: TestCase() {
+class ScriptTest : KtUsefulTestCase() {
     @Test
     fun testScriptWithParam() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
