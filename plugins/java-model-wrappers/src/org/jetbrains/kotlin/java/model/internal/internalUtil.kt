@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.java.model.internal
 
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
 import com.intellij.psi.PsiModifier.*
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiModifierListOwner
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import javax.lang.model.element.Modifier
 
 private val HAS_DEFAULT by lazy {
@@ -49,6 +48,17 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
         }
     }
 }
+
+internal fun PsiExpression.calcConstantValue(evaluator: PsiConstantEvaluationHelper? = null): Any? {
+    return when (this) {
+        is PsiLiteral -> value
+        is KtLightAnnotation.LightExpressionValue<*> -> getConstantValue()
+        is PsiExpression -> (evaluator ?: getConstantEvaluator(this)).computeConstantExpression(this)
+        else -> null
+    }
+}
+
+private fun getConstantEvaluator(expression: PsiExpression) = JavaPsiFacade.getInstance(expression.project).constantEvaluationHelper
 
 internal val PsiModifierListOwner.isStatic: Boolean
     get() = hasModifierProperty(PsiModifier.STATIC)
