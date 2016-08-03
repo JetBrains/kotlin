@@ -76,13 +76,13 @@ fun KtElement.renderTrimmed(): String {
         }
 
         override fun visitPrefixExpression(expression: KtPrefixExpression) {
-            builder.append("${expression.operationReference.getReferencedName()}")
+            builder.append(expression.operationReference.getReferencedName())
             expression.baseExpression?.accept(this)
         }
 
         override fun visitPostfixExpression(expression: KtPostfixExpression) {
             expression.baseExpression?.accept(this)
-            builder.append("${expression.operationReference.getReferencedName()}")
+            builder.append(expression.operationReference.getReferencedName())
         }
 
         override fun visitBinaryExpression(expression: KtBinaryExpression) {

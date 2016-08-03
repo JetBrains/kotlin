@@ -55,7 +55,7 @@ class ModulesDependenciesTest : TestCase() {
 
         TestCase.assertTrue("Number of modules have dependencies to module $COMPILER_TESTS_MODULE_NAME. Such dependencies can cause multiple " +
                             "tests execution on teamcity when running configuration with 'Search tests across module dependencies' enabled:\n" +
-                            "${badModulesList.joinToString(separator = "\n")}",
+                            badModulesList.joinToString(separator = "\n"),
                             badModulesList.isEmpty())
     }
 

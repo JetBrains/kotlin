@@ -54,7 +54,7 @@ class KotlinSuppressIntentionAction private constructor(
         when (suppressAt) {
             is KtModifierListOwner ->
                 suppressAt.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(),
-                                         "$id",
+                                         id,
                                          whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
                                          addToExistingAnnotation = { entry ->
                                              addArgumentToSuppressAnnotation(entry, id)

@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
 
     println("prefix=$versionPrefix incrementPart=$incrementPart result=$result filePath=$filePath")
 
-    File("$filePath").writeText("$result")
+    File(filePath).writeText(result)
 }
 
 main(args)
