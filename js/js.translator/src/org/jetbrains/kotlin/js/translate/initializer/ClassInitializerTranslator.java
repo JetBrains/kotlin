@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtParameter;
@@ -77,12 +78,22 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), declaration);
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
+        Name name = classDescriptor.getName();
+
+        JsFunction ctorFunction;
         if (primaryConstructor != null) {
-            return context.getFunctionObject(primaryConstructor);
+            ctorFunction = context.getFunctionObject(primaryConstructor);
         }
         else {
-            return new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + classDescriptor.getName().asString());
+            ctorFunction = new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + name.asString());
         }
+
+        // TODO use name from JsName when class annotated by that
+        if (!name.isSpecial()) {
+            ctorFunction.setName(ctorFunction.getScope().declareName(name.asString()));
+        }
+
+        return ctorFunction;
     }
 
     @NotNull
@@ -198,9 +209,12 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, JsFunction initializer) {
-        JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
-        initializer.setName(ref);
-        JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(ref)));
+        if (initializer.getName() == null) {
+            JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
+            initializer.setName(ref);
+        }
+
+        JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(initializer.getName())));
         call.getArguments().add(JsLiteral.THIS);
         call.getArguments().addAll(arguments);
         initializerStatements.add(0, call.makeStmt());

@@ -139,9 +139,6 @@ class ClassTranslator private constructor(
             invocationArguments += JsObjectLiteral(staticProperties, true)
         }
 
-        if (primaryConstructor != null && primaryConstructor!!.function.body.isEmpty) {
-            invocationArguments[invocationArguments.indexOf(primaryConstructor!!.function)] = JsLiteral.NULL
-        }
         this.definitionPlace = definitionPlace
     }
 
