@@ -24,6 +24,7 @@ fun snapshots(): List<GenericFunction> {
         doc { f ->
             """
             Returns a [Set] of all ${f.element.pluralize()}.
+
             The returned set preserves the element iteration order of the original ${f.collection}.
             """
         }
@@ -172,7 +173,9 @@ fun snapshots(): List<GenericFunction> {
             """
             Returns a [Map] containing key-value pairs provided by [transform] function
             applied to ${f.element.pluralize()} of the given ${f.collection}.
+
             If any of two pairs would have the same key the last one gets added to the map.
+
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
@@ -215,6 +218,7 @@ fun snapshots(): List<GenericFunction> {
             """
             Populates and returns the [destination] mutable map with key-value pairs
             provided by [transform] function applied to each ${f.element} of the given ${f.collection}.
+
             If any of two pairs would have the same key the last one gets added to the map.
             """
         }
@@ -236,7 +240,9 @@ fun snapshots(): List<GenericFunction> {
             """
             Returns a [Map] containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
             returned from [keySelector] function applied to each ${f.element}.
+
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
@@ -286,6 +292,7 @@ fun snapshots(): List<GenericFunction> {
             Populates and returns the [destination] mutable map with key-value pairs,
             where key is provided by the [keySelector] function applied to each ${f.element} of the given ${f.collection}
             and value is the ${f.element} itself.
+
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
@@ -307,7 +314,9 @@ fun snapshots(): List<GenericFunction> {
         doc { f ->
             """
             Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
+
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+
             The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
@@ -359,6 +368,7 @@ fun snapshots(): List<GenericFunction> {
             Populates and returns the [destination] mutable map with key-value pairs,
             where key is provided by the [keySelector] function and
             and value is provided by the [valueTransform] function applied to ${f.element.pluralize()} of the given ${f.collection}.
+
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }

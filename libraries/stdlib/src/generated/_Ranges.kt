@@ -255,6 +255,7 @@ public operator fun ClosedRange<Float>.contains(value: Short): Boolean {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
@@ -263,6 +264,7 @@ public infix fun Int.downTo(to: Byte): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
@@ -271,6 +273,7 @@ public infix fun Long.downTo(to: Byte): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Byte): IntProgression {
@@ -279,6 +282,7 @@ public infix fun Byte.downTo(to: Byte): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Byte): IntProgression {
@@ -287,6 +291,7 @@ public infix fun Short.downTo(to: Byte): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Char.downTo(to: Char): CharProgression {
@@ -295,6 +300,7 @@ public infix fun Char.downTo(to: Char): CharProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Int): IntProgression {
@@ -303,6 +309,7 @@ public infix fun Int.downTo(to: Int): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Int): LongProgression {
@@ -311,6 +318,7 @@ public infix fun Long.downTo(to: Int): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
@@ -319,6 +327,7 @@ public infix fun Byte.downTo(to: Int): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Int): IntProgression {
@@ -327,6 +336,7 @@ public infix fun Short.downTo(to: Int): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Long): LongProgression {
@@ -335,6 +345,7 @@ public infix fun Int.downTo(to: Long): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Long): LongProgression {
@@ -343,6 +354,7 @@ public infix fun Long.downTo(to: Long): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
@@ -351,6 +363,7 @@ public infix fun Byte.downTo(to: Long): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Long): LongProgression {
@@ -359,6 +372,7 @@ public infix fun Short.downTo(to: Long): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Short): IntProgression {
@@ -367,6 +381,7 @@ public infix fun Int.downTo(to: Short): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Short): LongProgression {
@@ -375,6 +390,7 @@ public infix fun Long.downTo(to: Short): LongProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Short): IntProgression {
@@ -383,6 +399,7 @@ public infix fun Byte.downTo(to: Short): IntProgression {
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
+ * 
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Short): IntProgression {
@@ -464,6 +481,7 @@ public infix fun Short.until(to: Byte): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Char.MIN_VALUE].
  */
 public infix fun Char.until(to: Char): CharRange {
@@ -474,6 +492,7 @@ public infix fun Char.until(to: Char): CharRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
 public infix fun Int.until(to: Int): IntRange {
@@ -491,6 +510,7 @@ public infix fun Long.until(to: Int): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
 public infix fun Byte.until(to: Int): IntRange {
@@ -501,6 +521,7 @@ public infix fun Byte.until(to: Int): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Int.MIN_VALUE].
  */
 public infix fun Short.until(to: Int): IntRange {
@@ -511,6 +532,7 @@ public infix fun Short.until(to: Int): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
 public infix fun Int.until(to: Long): LongRange {
@@ -521,6 +543,7 @@ public infix fun Int.until(to: Long): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
 public infix fun Long.until(to: Long): LongRange {
@@ -531,6 +554,7 @@ public infix fun Long.until(to: Long): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
 public infix fun Byte.until(to: Long): LongRange {
@@ -541,6 +565,7 @@ public infix fun Byte.until(to: Long): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
  * The [to] value must be greater than [Long.MIN_VALUE].
  */
 public infix fun Short.until(to: Long): LongRange {
@@ -579,6 +604,7 @@ public infix fun Short.until(to: Short): IntRange {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
@@ -587,6 +613,7 @@ public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Byte.coerceAtLeast(minimumValue: Byte): Byte {
@@ -595,6 +622,7 @@ public fun Byte.coerceAtLeast(minimumValue: Byte): Byte {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Short.coerceAtLeast(minimumValue: Short): Short {
@@ -603,6 +631,7 @@ public fun Short.coerceAtLeast(minimumValue: Short): Short {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Int.coerceAtLeast(minimumValue: Int): Int {
@@ -611,6 +640,7 @@ public fun Int.coerceAtLeast(minimumValue: Int): Int {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Long.coerceAtLeast(minimumValue: Long): Long {
@@ -619,6 +649,7 @@ public fun Long.coerceAtLeast(minimumValue: Long): Long {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Float.coerceAtLeast(minimumValue: Float): Float {
@@ -627,6 +658,7 @@ public fun Float.coerceAtLeast(minimumValue: Float): Float {
 
 /**
  * Ensures that this value is not less than the specified [minimumValue].
+ * 
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
 public fun Double.coerceAtLeast(minimumValue: Double): Double {
@@ -635,6 +667,7 @@ public fun Double.coerceAtLeast(minimumValue: Double): Double {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
@@ -643,6 +676,7 @@ public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Byte.coerceAtMost(maximumValue: Byte): Byte {
@@ -651,6 +685,7 @@ public fun Byte.coerceAtMost(maximumValue: Byte): Byte {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Short.coerceAtMost(maximumValue: Short): Short {
@@ -659,6 +694,7 @@ public fun Short.coerceAtMost(maximumValue: Short): Short {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Int.coerceAtMost(maximumValue: Int): Int {
@@ -667,6 +703,7 @@ public fun Int.coerceAtMost(maximumValue: Int): Int {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Long.coerceAtMost(maximumValue: Long): Long {
@@ -675,6 +712,7 @@ public fun Long.coerceAtMost(maximumValue: Long): Long {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Float.coerceAtMost(maximumValue: Float): Float {
@@ -683,6 +721,7 @@ public fun Float.coerceAtMost(maximumValue: Float): Float {
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
+ * 
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
 public fun Double.coerceAtMost(maximumValue: Double): Double {
@@ -691,6 +730,7 @@ public fun Double.coerceAtMost(maximumValue: Double): Double {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T {
@@ -708,6 +748,7 @@ public fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T 
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte {
@@ -719,6 +760,7 @@ public fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
@@ -730,6 +772,7 @@ public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int {
@@ -741,6 +784,7 @@ public fun Int.coerceIn(minimumValue: Int, maximumValue: Int): Int {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long {
@@ -752,6 +796,7 @@ public fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
@@ -763,6 +808,7 @@ public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
 
 /**
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
 public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
@@ -774,6 +820,7 @@ public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
 
 /**
  * Ensures that this value lies in the specified [range].
+ * 
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
@@ -783,6 +830,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
 
 /**
  * Ensures that this value lies in the specified [range].
+ * 
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
 public fun Int.coerceIn(range: ClosedRange<Int>): Int {
@@ -792,6 +840,7 @@ public fun Int.coerceIn(range: ClosedRange<Int>): Int {
 
 /**
  * Ensures that this value lies in the specified [range].
+ * 
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
 public fun Long.coerceIn(range: ClosedRange<Long>): Long {

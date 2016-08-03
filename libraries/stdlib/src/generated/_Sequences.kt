@@ -456,7 +456,9 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to elements of the given sequence.
+ * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
  * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
@@ -466,7 +468,9 @@ public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>):
 /**
  * Returns a [Map] containing the elements from the given sequence indexed by the key
  * returned from [keySelector] function applied to each element.
+ * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
  * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
@@ -475,7 +479,9 @@ public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, 
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given sequence.
+ * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
  * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
@@ -486,6 +492,7 @@ public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, value
  * Populates and returns the [destination] mutable map with key-value pairs,
  * where key is provided by the [keySelector] function applied to each element of the given sequence
  * and value is the element itself.
+ * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
@@ -499,6 +506,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(d
  * Populates and returns the [destination] mutable map with key-value pairs,
  * where key is provided by the [keySelector] function and
  * and value is provided by the [valueTransform] function applied to elements of the given sequence.
+ * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
@@ -511,6 +519,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByT
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
  * provided by [transform] function applied to each element of the given sequence.
+ * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
@@ -553,6 +562,7 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
 
 /**
  * Returns a [Set] of all elements.
+ * 
  * The returned set preserves the element iteration order of the original sequence.
  */
 public fun <T> Sequence<T>.toSet(): Set<T> {
@@ -569,6 +579,7 @@ public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
 
 /**
  * Returns a [SortedSet] of all elements.
+ * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
 @kotlin.jvm.JvmVersion
@@ -597,7 +608,9 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 /**
  * Groups elements of the original sequence by the key returned by the given [keySelector] function
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * 
  * The returned map preserves the entry iteration order of the keys produced from the original sequence.
+ * 
  * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
@@ -608,7 +621,9 @@ public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * Groups values returned by the [valueTransform] function applied to each element of the original sequence
  * by the key returned by the given [keySelector] function applied to the element
  * and returns a map where each group key is associated with a list of corresponding values.
+ * 
  * The returned map preserves the entry iteration order of the keys produced from the original sequence.
+ * 
  * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
@@ -618,7 +633,9 @@ public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTran
 /**
  * Groups elements of the original sequence by the key returned by the given [keySelector] function
  * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * 
  * @return The [destination] map.
+ * 
  * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
@@ -634,7 +651,9 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.group
  * Groups values returned by the [valueTransform] function applied to each element of the original sequence
  * by the key returned by the given [keySelector] function applied to the element
  * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * 
  * @return The [destination] map.
+ * 
  * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
@@ -734,6 +753,7 @@ public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
 
 /**
  * Returns a sequence containing only distinct elements from the given sequence.
+ * 
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  */
 public fun <T> Sequence<T>.distinct(): Sequence<T> {
@@ -743,6 +763,7 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
 /**
  * Returns a sequence containing only elements from the given sequence
  * having distinct keys returned by the given [selector] function.
+ * 
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  */
 public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
@@ -751,6 +772,7 @@ public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
 
 /**
  * Returns a mutable set containing all distinct elements from the given sequence.
+ * 
  * The returned set preserves the element iteration order of the original sequence.
  */
 public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
@@ -1023,6 +1045,7 @@ public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] array.
+ * 
  * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1038,6 +1061,7 @@ public operator fun <T> Sequence<T>.minus(elements: Array<out T>): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] collection.
+ * 
  * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1055,6 +1079,7 @@ public operator fun <T> Sequence<T>.minus(elements: Iterable<T>): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] sequence.
+ * 
  * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1105,6 +1130,7 @@ public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] array.
+ * 
  * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1114,6 +1140,7 @@ public operator fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] collection.
+ * 
  * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1123,6 +1150,7 @@ public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] sequence.
+ * 
  * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
@@ -1155,6 +1183,7 @@ public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (T, R) -> V)
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
+ * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -1177,6 +1206,7 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
 
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
+ * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
