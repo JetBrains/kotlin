@@ -42,6 +42,8 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
+        body(Maps) { "return entries.asSequence()" }
+
         doc(Sequences) { "Returns this sequence as a [Sequence]."}
         inline(Sequences) { Inline.Only }
         body(Sequences) { "return this" }

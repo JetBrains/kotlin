@@ -193,6 +193,6 @@ public inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
  * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
  */
 public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
-    return Sequence { this.iterator() }
+    return entries.asSequence()
 }
 
