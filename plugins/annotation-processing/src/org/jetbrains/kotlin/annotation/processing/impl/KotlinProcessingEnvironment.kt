@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.annotation.processing.impl
 
 import java.util.*
+import javax.annotation.processing.Filer
+import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.SourceVersion
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 class KotlinProcessingEnvironment(
-        private val elements: KotlinElements,
-        private val types: KotlinTypes,
-        private val messager: KotlinMessager,
+        private val elements: Elements,
+        private val types: Types,
+        private val messager: Messager,
         options: Map<String, String>,
-        private val filer: KotlinFiler
+        private val filer: Filer
 ) : ProcessingEnvironment {
     private val options = Collections.unmodifiableMap(options) 
     
