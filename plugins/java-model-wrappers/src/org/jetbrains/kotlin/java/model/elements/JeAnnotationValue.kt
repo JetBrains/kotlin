@@ -17,27 +17,34 @@
 package org.jetbrains.kotlin.java.model.elements
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.java.model.internal.calcConstantValue
 import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.AnnotationValueVisitor
 
-fun JeAnnotationValue(psi: PsiAnnotationMemberValue): AnnotationValue = when (psi) {
-    is PsiLiteral -> JeLiteralAnnotationValue(psi)
-    is PsiAnnotation -> JeAnnotationAnnotationValue(psi)
-    is PsiArrayInitializerMemberValue -> JeArrayAnnotationValue(psi)
-    is PsiClassObjectAccessExpression -> JeTypeAnnotationValue(psi)
-    is PsiReferenceExpression -> {
-        // TODO check static final field -> primitive, reference to enum value
-        val element = psi.resolve()
-        if (element is PsiEnumConstant) {
-            JeEnumValueAnnotationValue(element)
+fun JeAnnotationValue(psi: PsiAnnotationMemberValue): AnnotationValue {
+    val original = psi.originalElement
+    val annotationValue = when (original) {
+        is PsiLiteral -> JeLiteralAnnotationValue(original)
+        is PsiAnnotation -> JeAnnotationAnnotationValue(original)
+        is PsiArrayInitializerMemberValue -> JeArrayAnnotationValue(original)
+        is PsiClassObjectAccessExpression -> JeTypeAnnotationValue(original)
+        is PsiReferenceExpression -> {
+            val element = original.resolve()
+            if (element is PsiEnumConstant) {
+                JeEnumValueAnnotationValue(element)
+            } 
+            else if (element is PsiField && element.hasInitializer()) {
+                JeAnnotationValue(element.initializer ?: error("Field should have an initializer"))
+            }
+            else {
+                JeErrorAnnotationValue(psi)
+            }
         }
-        else {
-            JeErrorAnnotationValue(psi)
-        }
+        is PsiExpression -> JeExpressionAnnotationValue(original)
+        else -> throw AssertionError("Unsupported annotation element value: $psi (original = $original)")
     }
-    is PsiExpression -> JeExpressionAnnotationValue(psi)
-    else -> throw AssertionError("Unsupported annotation element value: $psi")
+    return annotationValue
 }
 
 internal class JeAnnotationAnnotationValue(val psi: PsiAnnotation) : AnnotationValue {
@@ -78,11 +85,11 @@ internal class JeLiteralAnnotationValue(val psi: PsiLiteral) : JePrimitiveAnnota
 }
 
 internal class JeExpressionAnnotationValue(val psi: PsiExpression) : JePrimitiveAnnotationValue() {
-    override fun getValue() = JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper.computeConstantExpression(psi)
+    override fun getValue() = psi.calcConstantValue()
 }
 
 internal class JeArrayAnnotationValue(val psi: PsiArrayInitializerMemberValue) : AnnotationValue {
-    override fun getValue() = psi.initializers.map { JeAnnotationValue(it) }
+    override fun getValue() = psi.initializers.map(::JeAnnotationValue)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
 }
 

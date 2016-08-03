@@ -74,7 +74,7 @@ private fun getConstantValue(
     
     when {
         returnType == PsiType.NULL || returnType == PsiType.VOID -> unexpectedType("void")
-        jReturnType == String::class.java -> return calculateConstantValue(psiValue, evaluator)
+        jReturnType == String::class.java -> return (psiValue as? PsiExpression)?.calcConstantValue(evaluator)
         jReturnType == Class::class.java -> {
             val type = getObjectType(psiValue).toJeType(manager)
             return MirroredTypeExceptionProxy(type)
@@ -105,7 +105,7 @@ private fun getConstantValue(
                     ?: error("$psiValue can not be resolved to enum constant")
             return AnnotationUtil.createEnumValue(jReturnType, enumConstant.name)
         }
-        else -> return castPrimitiveValue(returnType, calculateConstantValue(psiValue, evaluator))
+        else -> return castPrimitiveValue(returnType, (psiValue as? PsiExpression)?.calcConstantValue(evaluator))
     }
 }
 
@@ -147,13 +147,6 @@ private fun charValue(value: Any?): Char = value as? Char ?: 0.toChar()
 private fun longValue(value: Any?): Long = (value as? Number)?.toLong() ?: 0
 private fun floatValue(value: Any?): Float = (value as? Number)?.toFloat() ?: 0f
 private fun doubleValue(value: Any?): Double = (value as? Number)?.toDouble() ?: 0.0
-
-private fun calculateConstantValue(value: PsiAnnotationMemberValue?, evaluator: PsiConstantEvaluationHelper) = when (value) {
-    is PsiLiteral -> value.value
-    is KtLightAnnotation.LightExpressionValue<*> -> value.getConstantValue()
-    is PsiExpression -> evaluator.computeConstantExpression(value)
-    else -> null
-}
 
 private fun unexpectedType(type: String): Nothing = error("Unexpected type: $type")
 private fun unexpectedType(type: PsiType): Nothing = unexpectedType(type.presentableText)

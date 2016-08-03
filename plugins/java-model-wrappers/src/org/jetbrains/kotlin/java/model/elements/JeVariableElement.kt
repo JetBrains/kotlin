@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.java.model.elements
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.java.model.*
+import org.jetbrains.kotlin.java.model.internal.calcConstantValue
 import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -37,11 +38,7 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
         return containingClass?.let { JeTypeElement(it) }
     }
 
-    override fun getConstantValue(): Any? {
-        val initializer = psi.initializer ?: return null
-        val evaluationHelper = JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper
-        return evaluationHelper.computeConstantExpression(initializer)
-    }
+    override fun getConstantValue() = psi.initializer?.calcConstantValue()
 
     override fun getKind() = when (psi) {
         is PsiField -> ElementKind.FIELD
