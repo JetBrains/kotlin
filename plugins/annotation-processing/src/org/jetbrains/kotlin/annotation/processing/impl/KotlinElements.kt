@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiSuperMethodUtil
-import com.intellij.psi.util.PsiTypesUtil
+import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.JeAnnotationOwner
 import org.jetbrains.kotlin.java.model.JeElement
 import org.jetbrains.kotlin.java.model.JeName
@@ -37,26 +35,26 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     override fun hides(hider: Element, hidden: Element): Boolean {
         val hiderMethod = (hider as? JeMethodExecutableElement)?.psi ?: return false
         val hiddenMethod = (hidden as? JeMethodExecutableElement)?.psi ?: return false
-        
-        if (hiderMethod.name != hiddenMethod.name) return false
-        if (hiderMethod.parameterList.parametersCount != hiddenMethod.parameterList.parametersCount) return false
-        
+
         val hiderMethodClass = hiderMethod.containingClass ?: return false
         val hiddenMethodClass = hiddenMethod.containingClass ?: return false
-        
-        if (PsiTypesUtil.getClassType(hiddenMethodClass) !in hiderMethodClass.superTypes) return false
 
-        if (hiderMethod.returnType != hiddenMethod.returnType) return false
-        for (i in 0..hiderMethod.parameterList.parametersCount - 1) {
-            if (hiderMethod.parameterList.parameters[i].type != hiddenMethod.parameterList.parameters[i].type) return false
-        }
+        if (PsiTypesUtil.getClassType(hiddenMethodClass) !in hiderMethodClass.superTypes) return false
         
-        return true
+        return isSubSignature(hiderMethod, hiddenMethod)
     }
 
     override fun overrides(overrider: ExecutableElement, overridden: ExecutableElement, type: TypeElement): Boolean {
         overrider as? JeMethodExecutableElement ?: return false
         overridden as? JeMethodExecutableElement ?: return false
+        type as? JeTypeElement ?: return false
+
+        if (overrider.psi == overridden.psi) return false
+
+        // if 'type' is a subtype of overrider's containing class
+        if (type.psi.isSubclassOf(overridden.psi.containingClass) && type.psi.isSubclassOf(overrider.psi.containingClass)) {
+            return isSubSignature(overrider.psi, overridden.psi)
+        }
         
         return PsiSuperMethodUtil.isSuperMethod(overrider.psi, overridden.psi)
     }
@@ -74,6 +72,8 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     override fun getDocComment(e: Element?) = null
 
     override fun isDeprecated(e: Element?): Boolean {
+        val deprecated = ((e as? JeElement)?.psi as? PsiDocCommentOwner)?.isDeprecated ?: false
+        if (deprecated) return true
         return (e as? JeAnnotationOwner)?.annotationOwner?.findAnnotation("java.lang.Deprecated") != null
     }
 
@@ -132,9 +132,26 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     override fun isFunctionalInterface(type: TypeElement): Boolean {
         val jeTypeElement = type as? JeTypeElement ?: return false
         if (!jeTypeElement.psi.isInterface) return false
-        if (jeTypeElement.psi.allMethods.size != 1) return false
+        if (jeTypeElement.psi.allMethods.count { it.hasModifierProperty(PsiModifier.ABSTRACT) } != 1) return false
         return true
     }
+}
+
+private fun PsiClass.isSubclassOf(other: PsiClass?): Boolean {
+    if (other == null) return false
+    return TypeConversionUtil.isAssignable(PsiTypesUtil.getClassType(other), PsiTypesUtil.getClassType(this), false)
+}
+
+private fun isSubSignature(childMethod: PsiMethod, superMethod: PsiMethod): Boolean {
+    if (childMethod.name != superMethod.name) return false
+    if (childMethod.parameterList.parametersCount != superMethod.parameterList.parametersCount) return false
+
+    if (childMethod.returnType != superMethod.returnType) return false
+    for (i in 0..childMethod.parameterList.parametersCount - 1) {
+        if (childMethod.parameterList.parameters[i].type != superMethod.parameterList.parameters[i].type) return false
+    }
+    
+    return true
 }
 
 object Constants {
