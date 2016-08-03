@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
@@ -135,22 +134,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     return@putCopyableUserData emptyFile
                 }
 
-                val fakeFunctionText = StringBuilder().apply {
-                    append("fun _java_locals_debug_fun_() {\n")
-
-                    val psiNameHelper = PsiNameHelper.getInstance(project)
-                    visibleVariables.forEach {
-                        val variable = it.key
-                        val variableName = variable.name()
-                        if (!psiNameHelper.isIdentifier(variableName)) return@forEach
-
-                        val kotlinProperty = createKotlinProperty(project, variableName, variable.type().name(), it.value) ?: return@forEach
-                        append("$kotlinProperty\n")
-                    }
-
-                    append("val _debug_context_val = 1\n")
-                    append("}")
-                }.toString()
+                val fakeFunctionText = "fun _java_locals_debug_fun_() {\n" +
+                                       visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project) +
+                                       "}"
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
                 val fakeFunction = fakeFile.declarations.firstOrNull() as? KtFunction
@@ -330,24 +316,30 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
         //internal for tests
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
+            @Suppress("UNCHECKED_CAST")
+            val variables = markupMap.entries.associate {
+                val (value, markup) = it
+                "${markup.text}$DEBUG_LABEL_SUFFIX" to value as? Value
+            }.filterValues { it != null } as Map<String, Value>
+
+            return variables.kotlinVariablesAsText(project) to variables
+        }
+
+        private fun Map<String, Value>.kotlinVariablesAsText(project: Project): String {
             val sb = StringBuilder()
-            val labeledObjects = HashMap<String, Value>()
+
             val psiNameHelper = PsiNameHelper.getInstance(project)
+            for ((variableName, variableValue) in entries) {
+                if (!psiNameHelper.isIdentifier(variableName)) continue
 
-            val entrySet: Set<Map.Entry<*, ValueMarkup>> = markupMap.entries
-            for ((value, markup) in entrySet) {
-                val labelName = markup.text
-                if (!psiNameHelper.isIdentifier(labelName)) continue
-
-                val objectRef = value as? Value ?: continue
-
-                val labelNameWithSuffix = "$labelName$DEBUG_LABEL_SUFFIX"
-                sb.append("${createKotlinProperty(project, labelNameWithSuffix, objectRef.type().name(), objectRef)}\n")
-
-                labeledObjects.put(labelNameWithSuffix, objectRef)
+                val kotlinProperty = createKotlinProperty(project, variableName, variableValue.type().name(), variableValue)
+                                     ?: continue
+                sb.append("$kotlinProperty\n")
             }
-            sb.append("val _debug_context_val = 1")
-            return sb.toString() to labeledObjects
+
+            sb.append("val _debug_context_val = 1\n")
+
+            return sb.toString()
         }
 
         private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): String? {
@@ -420,6 +412,6 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
         })
 
-        return getContextElement(codeFragment.findElementAt(codeFragment.text.length - 1)) as? KtElement
+        return getContextElement(codeFragment.findElementAt(codeFragment.text.length - 5)) as? KtElement
     }
 }
