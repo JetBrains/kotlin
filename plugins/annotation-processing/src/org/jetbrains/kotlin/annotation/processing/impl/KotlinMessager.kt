@@ -24,6 +24,12 @@ import javax.tools.Diagnostic
 import javax.tools.Diagnostic.Kind
 
 class KotlinMessager : Messager {
+    var errorCount: Int = 0
+        private set
+    
+    var warningCount: Int = 0
+        private set
+
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence) = printMessage(kind, msg, null)
 
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence, e: Element?) = printMessage(kind, msg, e, null)
@@ -34,7 +40,14 @@ class KotlinMessager : Messager {
 
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence, e: Element?, a: AnnotationMirror?, v: AnnotationValue?) {
         val output = when (kind) {
-            Kind.ERROR, Kind.WARNING, Kind.MANDATORY_WARNING -> System.err
+            Kind.ERROR -> {
+                errorCount++
+                System.err
+            }
+            Kind.WARNING, Kind.MANDATORY_WARNING -> {
+                warningCount++
+                System.err
+            }
             else -> System.out
         }
         output.println(msg)

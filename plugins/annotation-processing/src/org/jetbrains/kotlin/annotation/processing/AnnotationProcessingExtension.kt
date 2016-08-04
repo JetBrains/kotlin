@@ -34,13 +34,15 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
+import javax.tools.Diagnostic
 
 class ClasspathBasedAnnotationProcessingExtension(
         val annotationProcessingClasspath: List<String>,
         generatedSourcesOutputDir: File,
         classesOutputDir: File,
-        javaSourceRoots: List<File>
-) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots) {
+        javaSourceRoots: List<File>,
+        verboseOutput: Boolean
+) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots, verboseOutput) {
     override fun loadAnnotationProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { File(it).toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -50,10 +52,16 @@ class ClasspathBasedAnnotationProcessingExtension(
 abstract class AbstractAnnotationProcessingExtension(
         val generatedSourcesOutputDir: File,
         val classesOutputDir: File,
-        val javaSourceRoots: List<File>
+        val javaSourceRoots: List<File>,
+        val verboseOutput: Boolean
 ) : AnalysisCompletedHandlerExtension {
     private var annotationProcessingComplete = false
+    private val messager = KotlinMessager()
 
+    private inline fun log(message: () -> String) {
+        if (verboseOutput) messager.printMessage(Diagnostic.Kind.OTHER, "Kapt: " + message())
+    }
+    
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
@@ -63,12 +71,19 @@ abstract class AbstractAnnotationProcessingExtension(
         if (annotationProcessingComplete) {
             return null
         }
-        
+
         val processors = loadAnnotationProcessors()
-        if (processors.isEmpty()) return null
+        if (processors.isEmpty()) {
+            log { "No annotation processors detected, exiting" }
+            return null
+        }
+        
+        log { "Analysing Kotlin files: " + files.map { it.virtualFile.path } }
         
         val analysisContext = AnalysisContext(hashMapOf())
         analysisContext.analyzeFiles(files)
+        
+        log { "Analysing Java source roots: $javaSourceRoots" }
         
         val psiManager = PsiManager.getInstance(project)
         for (javaSourceRoot in javaSourceRoots) {
@@ -84,19 +99,21 @@ abstract class AbstractAnnotationProcessingExtension(
         }
         
         val options = emptyMap<String, String>()
+        log { "Options: $options" }
         
         val javaPsiFacade = JavaPsiFacade.getInstance(project)
         val projectScope = GlobalSearchScope.projectScope(project)
         
         val filer = KotlinFiler(generatedSourcesOutputDir, classesOutputDir)
-        val messages = KotlinMessager()
         val types = KotlinTypes(javaPsiFacade, PsiManager.getInstance(project), projectScope)
         val elements = KotlinElements(javaPsiFacade, projectScope)
         
-        val processingEnvironment = KotlinProcessingEnvironment(elements, types, messages, options, filer)
+        val processingEnvironment = KotlinProcessingEnvironment(elements, types, messager, options, filer)
         processors.forEach { it.init(processingEnvironment) }
         
-        // Round 1
+        log { "Initialized processors: " + processors.joinToString { it.javaClass.name } }
+        
+        log { "Starting round 1" }
         val round1Environment = KotlinRoundEnvironment(analysisContext)
         for (processor in processors) {
             val supportedAnnotationNames = processor.supportedAnnotationTypes
@@ -107,20 +124,31 @@ abstract class AbstractAnnotationProcessingExtension(
                 false -> processor.supportedAnnotationTypes.filter { it in analysisContext.annotationsMap } 
             }
             
-            if (applicableAnnotationNames.isEmpty()) continue
+            if (applicableAnnotationNames.isEmpty()) {
+                log { "Skipping processor " + processor.javaClass.name + ": no relevant annotations" }
+                continue
+            }
 
             val applicableAnnotations = applicableAnnotationNames
                     .map { javaPsiFacade.findClass(it, projectScope)?.let { JeTypeElement(it) } }
                     .filterNotNullTo(hashSetOf())
+            
+            log {
+                val annotationNames = applicableAnnotations.joinToString { it.qualifiedName.toString() }
+                "Processing with " + processor.javaClass.name + " (annotations: " + annotationNames + ")"
+            }
 
             processor.process(applicableAnnotations, round1Environment)
         }
 
-        // Round 2
+        log { "Starting round 2 (final)" }
         val round2Environment = KotlinRoundEnvironment(AnalysisContext(hashMapOf()), isProcessingOver = true)
         for (processor in processors) {
             processor.process(emptySet(), round2Environment)
         }
+        
+        fun Int.count(noun: String) = if (this == 1) "$this $noun" else "$this ${noun}s"
+        log { "Annotation processing complete, ${messager.errorCount.count("error")}, ${messager.warningCount.count("warning")}" }
 
         annotationProcessingComplete = true
         return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedSourcesOutputDir))
