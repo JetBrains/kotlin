@@ -1,0 +1,171 @@
+== A ==
+class A {
+    companion object
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== B ==
+object B {
+    val A.Companion.foo: X get() = X
+}
+---------------------
+L0:
+  1 <START>
+    v(val A.Companion.foo: X get() = X)
+L1:
+    <END>                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== X ==
+object X
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== C ==
+object C {
+    operator fun X.invoke() = println("Hello!")
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== invoke ==
+operator fun X.invoke() = println("Hello!")
+---------------------
+L0:
+  1 <START>
+    mark("Hello!")
+    r("Hello!") -> <v0>
+    mark(println("Hello!"))
+    magic[UNRESOLVED_CALL](println("Hello!")|<v0>, !<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                          PREV:[]
+sink:
+    <SINK>                                                           PREV:[<ERROR>, <END>]
+=====================
+== with ==
+inline fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
+---------------------
+L0:
+  1 <START>
+    v(receiver: T)
+    magic[FAKE_INITIALIZER](receiver: T) -> <v0>
+    w(receiver|<v0>)
+    v(block: T.() -> R)
+    magic[FAKE_INITIALIZER](block: T.() -> R) -> <v1>
+    w(block|<v1>)
+    mark(receiver.block())
+    r(block) -> <v2>
+    r(receiver) -> <v3>
+    mark(block())
+    call(block(), invoke|<v2>, <v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+    <END>                                                NEXT:[<SINK>]
+error:
+    <ERROR>                                              PREV:[]
+sink:
+    <SINK>                                               PREV:[<ERROR>, <END>]
+=====================
+== use ==
+fun use() = with(C) {
+    with(B) {
+        A.foo()
+    }
+}
+---------------------
+L0:
+  1 <START>
+    r(C) -> <v0>
+    mark({ with(B) { A.foo() } })
+    jmp?(L2)                                                          NEXT:[r({ with(B) { A.foo() } }) -> <v1>, d({ with(B) { A.foo() } })]
+    d({ with(B) { A.foo() } })                                        NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ with(B) { A.foo() } }) -> <v1>                                PREV:[jmp?(L2)]
+    mark(with(C) { with(B) { A.foo() } })
+    call(with(C) { with(B) { A.foo() } }, with|<v0>, <v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                                           PREV:[]
+sink:
+    <SINK>                                                            PREV:[<ERROR>, <END>, d({ with(B) { A.foo() } })]
+=====================
+== anonymous_0 ==
+{
+    with(B) {
+        A.foo()
+    }
+}
+---------------------
+L3:
+  2 <START>
+  3 mark(with(B) { A.foo() })
+    r(B) -> <v0>
+    mark({ A.foo() })
+    jmp?(L5)                                              NEXT:[r({ A.foo() }) -> <v1>, d({ A.foo() })]
+    d({ A.foo() })                                        NEXT:[<SINK>]
+L5 [after local declaration]:
+    r({ A.foo() }) -> <v1>                                PREV:[jmp?(L5)]
+    mark(with(B) { A.foo() })
+    call(with(B) { A.foo() }, with|<v0>, <v1>) -> <v2>
+  2 ret(*|<v2>) L4
+L4:
+    <END>                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                               PREV:[]
+sink:
+    <SINK>                                                PREV:[<ERROR>, <END>, d({ A.foo() })]
+=====================
+== anonymous_1 ==
+{
+        A.foo()
+    }
+---------------------
+L6:
+  4 <START>
+  5 mark(A.foo())
+    mark(A.foo())
+    magic[IMPLICIT_RECEIVER](foo) -> <v0>
+    mark(A)
+    r(A, Companion) -> <v1>
+    r(foo|<v0>, <v1>) -> <v2>
+    magic[IMPLICIT_RECEIVER](foo()) -> <v3>
+    mark(foo())
+    call(foo(), invoke|<v2>, <v3>) -> <v4>
+  4 ret(*|<v4>) L7
+L7:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

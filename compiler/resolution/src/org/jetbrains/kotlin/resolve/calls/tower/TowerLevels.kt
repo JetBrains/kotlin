@@ -260,7 +260,7 @@ private fun ResolutionScope.getContributedObjectVariables(name: Name, location: 
 }
 
 
-private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? {
+fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? {
     if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null // todo
 
     return FakeCallableDescriptorForObject(classifier)
