@@ -589,6 +589,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ReturnInFunctionWithoutBody.kt")
+        public void testReturnInFunctionWithoutBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ReturnInFunctionWithoutBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SafeCallInvoke.kt")
         public void testSafeCallInvoke() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SafeCallInvoke.kt");

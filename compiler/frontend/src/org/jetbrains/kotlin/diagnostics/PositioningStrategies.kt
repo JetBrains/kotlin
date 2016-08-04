@@ -477,4 +477,14 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField val RETURN_WITH_LABEL: PositioningStrategy<KtReturnExpression> = object: PositioningStrategy<KtReturnExpression>() {
+        override fun mark(element: KtReturnExpression): List<TextRange> {
+            val labeledExpression = element.labeledExpression
+            if (labeledExpression != null) {
+                return markRange(element, labeledExpression)
+            }
+
+            return markElement(element.returnKeyword)
+        }
+    }
 }

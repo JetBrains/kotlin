@@ -774,8 +774,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtSimpleNameExpression> EXPRESSION_EXPECTED_PACKAGE_FOUND = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, PositioningStrategies.RETURN_WITH_LABEL);
+    DiagnosticFactory0<KtReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory0.create(ERROR, PositioningStrategies.RETURN_WITH_LABEL);
     DiagnosticFactory0<KtDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
 

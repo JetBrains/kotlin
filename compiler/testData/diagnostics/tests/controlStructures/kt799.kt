@@ -12,9 +12,9 @@ fun test() {
     doSmth(if (true) 3 else return, <!TOO_MANY_ARGUMENTS!>1<!>)
 }
 
-val a : Nothing = <!RETURN_NOT_ALLOWED!>return 1<!>
+val a : Nothing = <!RETURN_NOT_ALLOWED!>return<!> 1
 
-val b = <!RETURN_NOT_ALLOWED!>return 1<!>
+val b = <!RETURN_NOT_ALLOWED!>return<!> 1
 
 val c = doSmth(if (true) 3 else <!RETURN_NOT_ALLOWED!>return<!>)
 
