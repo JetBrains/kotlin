@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.checkers;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -32,6 +33,12 @@ import java.io.File;
 import static org.jetbrains.kotlin.resolve.lazy.ResolveSession.areDescriptorsCreatedForDeclaration;
 
 public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtureTestCase {
+    public void doTest(@NotNull VirtualFile file) throws Exception {
+        myFixture.configureFromExistingVirtualFile(file);
+        checkHighlighting(true, false, false);
+        checkResolveToDescriptor();
+    }
+
     public void doTest(@NotNull String filePath) throws Exception {
         myFixture.configureByFile(filePath);
         checkHighlighting(true, false, false);

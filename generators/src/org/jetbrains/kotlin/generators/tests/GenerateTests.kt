@@ -106,6 +106,8 @@ import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
+import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
+import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
@@ -829,6 +831,14 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIdeReplCompletionTest>() {
             model("repl/completion")
+        }
+
+        testClass<AbstractScriptConfigurationHighlightingTest> {
+            model("script/definition/highlighting", extension = null, recursive = false)
+        }
+
+        testClass<AbstractScriptConfigurationNavigationTest> {
+            model("script/definition/navigation", extension = null, recursive = false)
         }
     }
 

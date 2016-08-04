@@ -40,6 +40,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.kotlin.test.ReferenceUtils.getFileWithDir;
+import static org.jetbrains.kotlin.test.ReferenceUtils.renderAsGotoImplementation;
+
 public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
         doTest();
@@ -124,19 +127,11 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
         String expectedTarget = InTextDirectivesUtils.findStringWithPrefixes(text, "// TARGET:");
 
         assertEquals(expectedBinaryFile, getFileWithDir(resolved));
-        assertEquals(expectedTarget, ReferenceUtils.renderAsGotoImplementation(resolved));
+        assertEquals(expectedTarget, renderAsGotoImplementation(resolved));
         PsiElement srcElement = resolved.getNavigationElement();
         Assert.assertNotEquals(srcElement, resolved);
         assertEquals(expectedSourceFile, getFileWithDir(srcElement));
-        assertEquals(expectedTarget, ReferenceUtils.renderAsGotoImplementation(srcElement));
-    }
-
-    @NotNull
-    private static String getFileWithDir(@NotNull PsiElement resolved) {
-        PsiFile targetFile = resolved.getContainingFile();
-        PsiDirectory targetDir = targetFile.getParent();
-        assertNotNull(targetDir);
-        return targetDir.getName() + "/" + targetFile.getName();
+        assertEquals(expectedTarget, renderAsGotoImplementation(srcElement));
     }
 
     @Override

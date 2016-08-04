@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.test;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.psi.PsiAnonymousClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtClass;
@@ -64,5 +62,12 @@ public final class ReferenceUtils {
                // for PsiPackage, presentableText is FQ name of current package
                ? presentableText
                : locationString + "." + presentableText;
+    }
+
+    @NotNull
+    public static String getFileWithDir(@NotNull PsiElement resolved) {
+        PsiFile targetFile = resolved.getContainingFile();
+        PsiDirectory targetDir = targetFile.getParent();
+        return targetDir.getName() + "/" + targetFile.getName();
     }
 }
