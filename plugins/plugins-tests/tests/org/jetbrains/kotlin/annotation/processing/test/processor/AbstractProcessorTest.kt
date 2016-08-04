@@ -40,7 +40,7 @@ import javax.lang.model.element.*
 
 class AnnotationProcessingExtensionForTests(
         val processors: List<Processor>
-) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf()) {
+) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true) {
     override fun loadAnnotationProcessors() = processors
     
     private companion object {

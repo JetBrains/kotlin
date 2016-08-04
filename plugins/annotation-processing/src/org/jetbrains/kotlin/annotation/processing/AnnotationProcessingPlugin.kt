@@ -37,6 +37,9 @@ object AnnotationProcessingConfigurationKeys {
     
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
+
+    val VERBOSE_MODE: CompilerConfigurationKey<String> = 
+            CompilerConfigurationKey.create<String>("verbose mode")
 }
 
 class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
@@ -52,12 +55,15 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
         val ANNOTATION_PROCESSOR_CLASSPATH_OPTION: CliOption =
                 CliOption("apclasspath", "<classpath>", "Annotation processor classpath", 
                           required = false, allowMultipleOccurrences = true)
+
+        val VERBOSE_MODE_OPTION: CliOption =
+                CliOption("verbose", "true | false", "Enable verbose output", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
-            listOf(GENERATED_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, CLASS_FILES_OUTPUT_DIR_OPTION)
+            listOf(GENERATED_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, CLASS_FILES_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -68,6 +74,7 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
             }
             GENERATED_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR, value)
             CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
+            VERBOSE_MODE_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.VERBOSE_MODE, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -88,8 +95,10 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
         
+        val verboseOutput = configuration.get(AnnotationProcessingConfigurationKeys.VERBOSE_MODE) == "true"
+        
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
-                classpath, generatedOutputDirFile, classesOutputDir, javaRoots)
+                classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput)
         AnalysisCompletedHandlerExtension.registerExtension(project, annotationProcessingExtension)
     }
 }
