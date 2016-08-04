@@ -29,6 +29,7 @@ import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -42,6 +43,8 @@ class KotlinLanguageInjector : LanguageInjector {
     override fun getLanguagesToInject(host: PsiLanguageInjectionHost, injectionPlacesRegistrar: InjectedLanguagePlaces) {
         if (!host.isValidHost) return
         val ktHost: KtElement = host as? KtElement ?: return
+
+        if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
 
         val injectionInfo = findInjectionInfo(host) ?: return
 
