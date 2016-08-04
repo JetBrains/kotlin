@@ -17,14 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.SourceLocation
-import org.jetbrains.kotlin.ir.declarations.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 
-class IrDummyBody(override val sourceLocation: SourceLocation) : IrBody {
+
+interface IrReturnExpression : IrExpression {
+    val returnValueExpression: IrExpression?
+}
+
+class IrReturnExpressionImpl(
+        sourceLocation: SourceLocation,
+        type: KotlinType,
+        override val returnValueExpression: IrExpression?
+) : IrExpressionBase(sourceLocation, type), IrReturnExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitElement(this, data)
+            visitor.visitReturnExpression(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // No children
+        returnValueExpression?.accept(visitor, data)
     }
 }

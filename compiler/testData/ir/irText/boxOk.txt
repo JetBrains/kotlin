@@ -1,0 +1,3 @@
+IrFile /boxOk.kt
+  IrFunction public fun box(): kotlin.String
+    ??? IrDummyBody

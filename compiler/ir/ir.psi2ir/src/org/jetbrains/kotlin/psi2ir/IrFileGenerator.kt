@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.psi2ir
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrModule
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 
-class IrGeneratorContext(
-        val inputFiles: List<KtFile>,
-        val irModule: IrModule,
-        val bindingContext: BindingContext
-) {
-    val moduleDescriptor: ModuleDescriptor get() = irModule.descriptor
-    val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
+class IrFileGenerator(
+        context: IrGeneratorContext,
+        val ktFile: KtFile,
+        override val irDeclaration: IrFile,
+        override val parent: IrModuleGenerator
+) : IrDeclarationGeneratorBase(context, irDeclaration, parent, irDeclaration.fileEntry as PsiSourceManager.PsiFileEntry) {
+    fun generateFileContent() {
+        generateAnnotationEntries(ktFile.annotationEntries)
 
-    val sourceManager = PsiSourceManager()
-    val irElementFactory = IrElementFactory(irModule, sourceManager)
+        for (topLevelDeclaration in ktFile.declarations) {
+            generateMemberDeclaration(topLevelDeclaration, irDeclaration)
+        }
+    }
 }
-

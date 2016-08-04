@@ -1,15 +1,21 @@
 IrFile /smoke.kt
-  IrFunction public fun testFun(): kotlin.Unit
-    ??? IrDummyBody
+  IrFunction public fun testFun(): kotlin.String
+    IrBlockExpression type=kotlin.Nothing
+      IrReturnExpression type=kotlin.Nothing
+        IrStringLiteral OK
   IrProperty public val testSimpleVal: kotlin.Int = 1
-    ??? IrDummyBody
+    IrReturnExpression type=kotlin.Int
+      IrIntLiteral type=kotlin.Int value=1
   IrProperty public val testValWithGetter: kotlin.Int
     IrPropertyGetter public fun <get-testValWithGetter>(): kotlin.Int
-      ??? IrDummyBody
+      IrReturnExpression type=kotlin.Int
+        IrIntLiteral type=kotlin.Int value=42
   IrProperty public var testSimpleVar: kotlin.Int
-    ??? IrDummyBody
+    IrReturnExpression type=kotlin.Int
+      IrIntLiteral type=kotlin.Int value=2
   IrProperty public var testVarWithAccessors: kotlin.Int
     IrPropertyGetter public fun <get-testVarWithAccessors>(): kotlin.Int
-      ??? IrDummyBody
+      IrReturnExpression type=kotlin.Int
+        IrIntLiteral type=kotlin.Int value=42
     IrPropertySetter public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit
-      ??? IrDummyBody
+      IrBlockExpression type=kotlin.Unit

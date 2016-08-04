@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.visitors
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 
 interface IrElementVisitor<out R, in D> {
     fun visitElement(element: IrElement, data: D): R
@@ -36,4 +36,19 @@ interface IrElementVisitor<out R, in D> {
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
 
     fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
+
+    fun visitLiteral(expression: IrLiteral, data: D): R = visitExpression(expression, data)
+    fun visitNullLiteral(expression: IrNullLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitTrueLiteral(expression: IrTrueLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitFalseLiteral(expression: IrFalseLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitIntLiteral(expression: IrIntLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitLongLiteral(expression: IrLongLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitFloatLiteral(expression: IrFloatLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitDoubleLiteral(expression: IrDoubleLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitCharLiteral(expression: IrCharLiteral, data: D): R = visitLiteral(expression, data)
+    fun visitStringLiteral(expression: IrStringLiteral, data: D): R = visitLiteral(expression, data)
+
+    fun visitReturnExpression(expression: IrReturnExpression, data: D): R = visitExpression(expression, data)
+    fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
+    fun visitStringTemplate(expression: IrStringTemplateExpression, data: D) = visitExpression(expression, data)
 }

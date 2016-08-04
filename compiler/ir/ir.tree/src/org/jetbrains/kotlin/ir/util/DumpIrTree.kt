@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrDeclaration.dump(): String {
@@ -27,11 +27,11 @@ fun IrDeclaration.dump(): String {
     return sb.toString()
 }
 
-class DumpIrTreeVisitor(out: Appendable): IrElementVisitorVoid {
+class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, Nothing?> {
     val printer = Printer(out, "  ")
     val elementRenderer = RenderIrElementVisitor()
 
-    override fun visitElement(element: IrElement) {
+    override fun visitElement(element: IrElement, data: Nothing?) {
         printer.println(element.accept(elementRenderer, null))
         printer.pushIndent()
         element.acceptChildren(this, null)

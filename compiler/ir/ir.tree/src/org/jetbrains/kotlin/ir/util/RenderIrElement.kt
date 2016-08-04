@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -48,7 +48,19 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "IrPropertySetter ${declaration.renderDescriptor()}"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
-            expression.javaClass.simpleName
+            "??? ${expression.javaClass.simpleName} type=${expression.renderType()}"
+
+    override fun visitStringLiteral(expression: IrStringLiteral, data: Nothing?): String =
+            "IrStringLiteral ${expression.value}"
+
+    override fun visitIntLiteral(expression: IrIntLiteral, data: Nothing?): String =
+            "IrIntLiteral type=${expression.renderType()} value=${expression.value}"
+
+    override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
+            "IrBlockExpression type=${expression.renderType()}"
+
+    override fun visitReturnExpression(expression: IrReturnExpression, data: Nothing?): String =
+            "IrReturnExpression type=${expression.renderType()}"
 
     companion object {
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
@@ -61,5 +73,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
         private fun IrDeclaration.renderDescriptor(): String = DESCRIPTOR_RENDERER.render(descriptor)
+        private fun IrExpression.renderType(): String = DESCRIPTOR_RENDERER.renderType(type)
     }
 }

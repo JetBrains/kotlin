@@ -86,9 +86,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             val expectedTextFile: File? = expectedTextFileName?.let {
                 val textFile = File(dir, expectedTextFileName)
                 if (!textFile.exists()) {
-                    TestCase.assertTrue("Can't create an IR expected text file: ${textFile.absolutePath}", textFile.createNewFile())
+                    TestCase.assertTrue("Can't create an IR expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
                     PrintWriter(FileWriter(textFile)).use {
-                        it.println("$expectedTextFileName: new IR expected text file for ${testFile.name}")
+                        it.println("$expectedTextFileName: new IR expected text containingFile for ${testFile.name}")
                     }
                 }
                 textFile
