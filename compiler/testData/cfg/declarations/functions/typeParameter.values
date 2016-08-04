@@ -4,5 +4,5 @@ fun <T> foo() {
 }
 ---------------------
 T       <v0>: *   NEW: magic[UNRESOLVED_CALL](T) -> <v0>
-{ T }   <v0>: *   COPY                                  
+{ T }   <v0>: *   COPY
 =====================

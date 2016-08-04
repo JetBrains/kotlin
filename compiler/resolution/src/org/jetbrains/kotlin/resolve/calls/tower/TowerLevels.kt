@@ -268,7 +268,7 @@ private fun ResolutionScope.getContributedObjectVariables(name: Name, location: 
     return listOfNotNull(objectDescriptor)
 }
 
-private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
+fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
         when (classifier) {
             is TypeAliasDescriptor ->
                 getFakeDescriptorForObject(classifier.classDescriptor)

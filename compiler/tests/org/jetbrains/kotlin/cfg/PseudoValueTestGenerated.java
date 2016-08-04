@@ -376,6 +376,18 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/delegationBySuperCall.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("ObjectEnumQualifiers.kt")
+                public void testObjectEnumQualifiers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/ObjectEnumQualifiers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("QualifierReceiverWithOthers.kt")
+                public void testQualifierReceiverWithOthers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/QualifierReceiverWithOthers.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/cfg/declarations/functionLiterals")

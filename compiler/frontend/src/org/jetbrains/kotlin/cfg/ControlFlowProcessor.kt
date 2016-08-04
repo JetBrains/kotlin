@@ -48,12 +48,11 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
@@ -266,8 +265,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             if (resolvedCall is VariableAsFunctionResolvedCall) {
                 generateCall(resolvedCall.variableCall)
             }
-            else if (!generateCall(expression) && expression.parent !is KtCallExpression) {
-                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, generateAndGetReceiverIfAny(expression))
+            else {
+                if (resolvedCall == null) {
+                    val qualifier = trace.bindingContext[BindingContext.QUALIFIER, expression]
+                    if (qualifier != null && generateQualifier(expression, qualifier)) return
+                }
+                if (!generateCall(expression) && expression.parent !is KtCallExpression) {
+                    createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, generateAndGetReceiverIfAny(expression))
+                }
             }
         }
 
@@ -1364,6 +1369,18 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         override fun visitKtElement(element: KtElement) {
             createNonSyntheticValue(element, MagicKind.UNSUPPORTED_ELEMENT)
+        }
+
+        private fun generateQualifier(expression: KtExpression, qualifier: Qualifier): Boolean {
+            val qualifierDescriptor = qualifier.descriptor
+            if (qualifierDescriptor is ClassDescriptor) {
+                getFakeDescriptorForObject(qualifierDescriptor)?.let {
+                    mark(expression)
+                    builder.read(expression, AccessTarget.Declaration(it), emptyMap())
+                    return true
+                }
+            }
+            return false
         }
 
         private fun generateCall(callElement: KtElement): Boolean {

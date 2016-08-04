@@ -13959,6 +13959,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("JavaQualifier.kt")
+            public void testJavaQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/JavaQualifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PackageVsClass.kt")
             public void testPackageVsClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsClass.kt");
