@@ -12,7 +12,7 @@ fun test2() : Any = a@ {return@a 1}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
 fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@test4<!> }
 fun test5(): Any = l@{ return@l }
-fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
+fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return<!> 1}
 
 fun bbb() {
   return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
@@ -136,7 +136,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else <!TYPE_MISMATCH!>{}<!>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else 2
 
-val a = <!RETURN_NOT_ALLOWED!>return 1<!>
+val a = <!RETURN_NOT_ALLOWED!>return<!> 1
 
 class A() {
 }
