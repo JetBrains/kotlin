@@ -29,10 +29,9 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
-import kotlin.properties.Delegates
 
 abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    private var consoleRunner: KotlinConsoleRunner by Delegates.notNull()
+    private var consoleRunner: KotlinConsoleRunner? = null
 
     override fun setUp() {
         super.setUp()
@@ -40,7 +39,8 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     }
 
     override fun tearDown() {
-        consoleRunner.dispose()
+        consoleRunner?.dispose()
+        consoleRunner = null
         super.tearDown()
     }
 
@@ -48,19 +48,20 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     override fun defaultCompletionType() = CompletionType.BASIC
 
     override fun doTest(testPath: String) {
+        val runner = consoleRunner!!
         val file = File(testPath)
         val lines = file.readLines()
-        lines.prefixedWith(">> ").forEach { consoleRunner.successfulLine(it) } // not actually executing anything, only simulating
+        lines.prefixedWith(">> ").forEach { runner.successfulLine(it) } // not actually executing anything, only simulating
         val codeSample = lines.prefixedWith("-- ").joinToString("\n")
 
         runWriteAction {
-            val editor = consoleRunner.consoleView.editorDocument
+            val editor = runner.consoleView.editorDocument
             editor.setText(codeSample)
-            FileDocumentManager.getInstance().saveDocument(consoleRunner.consoleView.editorDocument)
-            PsiDocumentManager.getInstance(getProject()).commitAllDocuments()
+            FileDocumentManager.getInstance().saveDocument(runner.consoleView.editorDocument)
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
         }
 
-        myFixture.configureFromExistingVirtualFile(consoleRunner.consoleFile.virtualFile)
+        myFixture.configureFromExistingVirtualFile(runner.consoleFile.virtualFile)
         myFixture.editor.caretModel.moveToOffset(myFixture.editor.document.getLineEndOffset(0))
 
         testCompletion(file.readText(), getPlatform(), { completionType, count -> myFixture.complete(completionType, count) })
