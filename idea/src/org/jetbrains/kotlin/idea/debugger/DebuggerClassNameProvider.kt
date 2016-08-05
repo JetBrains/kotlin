@@ -225,7 +225,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
 
             var isSuccess = true
             val applicationEx = ApplicationManagerEx.getApplicationEx()
-            if (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread) {
+            if (!applicationEx.isUnitTestMode && (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread)) {
                 applicationEx.invokeAndWait(
                         {
                             isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
