@@ -70,7 +70,7 @@ class LazyJavaPackageScope(
                             "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
                             "JavaClass: $javaClass\n" +
                             "ClassId: $classId\n" +
-                            "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
+                            "findKotlinClass(JavaClass) = ${if (javaClass != null) c.components.kotlinClassFinder.findKotlinClass(javaClass)?.toString() else "<empty>"}\n" +
                             "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(classId)}\n"
                     )
                 }
