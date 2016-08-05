@@ -519,18 +519,36 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     private fun File.isJavaFile() =
             extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
+    
+    private fun File.isKapt2GeneratedDirectory(): Boolean {
+        val kapt2GeneratedSourcesDir = File(project.buildDir, "generated/source/kapt2")
+        if (!kapt2GeneratedSourcesDir.isDirectory) return false
+        return FileUtil.isAncestor(kapt2GeneratedSourcesDir, this, /* strict = */ false)
+    }
+
+    private fun filterOutKapt2Directories(vararg sources: Any?): Array<Any> {
+        return sources.flatMap { source ->
+            when (source) {
+                is File -> if (source.isKapt2GeneratedDirectory()) emptyList<File>() else listOf(source)
+                is SourceDirectorySet -> source.srcDirs.filter { !it.isKapt2GeneratedDirectory() }
+                else -> emptyList<File>()
+            }
+        }.toTypedArray()
+    }
 
     // override setSource to track source directory sets and files (for generated android folders)
-    override fun setSource(source: Any?) {
+    override fun setSource(sources: Any?) {
         sourceRoots.clear()
-        addSourceRoot(source)
-        super.setSource(source)
+        val sourcesToAdd = filterOutKapt2Directories(sources)
+        addSourceRoots(*sourcesToAdd)
+        super.setSource(sourcesToAdd.firstOrNull())
     }
 
     // override source to track source directory sets and files (for generated android folders)
     override fun source(vararg sources: Any?): SourceTask? {
-        sources.forEach { addSourceRoot(it) }
-        return super.source(sources)
+        val sourcesToAdd = filterOutKapt2Directories(*sources)
+        addSourceRoots(*sourcesToAdd)
+        return super.source(*sourcesToAdd)
     }
 
     fun findRootsForSources(sources: Iterable<File>): Set<File> {
@@ -548,13 +566,11 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         return resultRoots
     }
 
-    private fun addSourceRoot(source: Any?) {
-        when (source) {
-            is SourceDirectorySet -> {
-                sourceRoots.addAll(source.srcDirs)
-            }
-            is File -> {
-                sourceRoots.add(source)
+    private fun addSourceRoots(vararg sources: Any?) {
+        for (source in sources) {
+            when (source) {
+                is SourceDirectorySet -> sourceRoots.addAll(source.srcDirs)
+                is File -> sourceRoots.add(source)
             }
         }
     }
