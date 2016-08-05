@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -49,6 +50,9 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     if (dispatchReceiverValue is ImplicitReceiver) {
         // foo() -- implicit receiver
         dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
+    }
+    else if (dispatchReceiverValue is ClassValueReceiver) {
+        dispatchReceiverDescriptor = dispatchReceiverValue.classQualifier.descriptor
     }
     else if (dispatchReceiverValue is ExpressionReceiver) {
         val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)

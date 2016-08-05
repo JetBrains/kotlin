@@ -29,7 +29,7 @@ enum class D(val x: Int) {
 }
 
 enum class E(val v: Int) {
-    E1(Nested.COPY);
+    E1(Nested.<!UNINITIALIZED_VARIABLE!>COPY<!>);
 
     object Nested {
         val COPY = E1.v
