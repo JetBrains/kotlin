@@ -2599,6 +2599,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implementComparableInSubclass.kt")
+        public void testImplementComparableInSubclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/implementComparableInSubclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inheritSetAndHashSet.kt")
         public void testInheritSetAndHashSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");
