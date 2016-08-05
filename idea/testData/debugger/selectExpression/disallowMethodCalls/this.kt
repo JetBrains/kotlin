@@ -4,4 +4,4 @@ class MyClass {
     }
 }
 
-// EXPECTED: null
+// EXPECTED: this
