@@ -685,6 +685,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("tailRecursionComplex.kt")
+        public void testTailRecursionComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/tailRecursionComplex.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
@@ -3249,6 +3255,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("checkPropertyAccessor.kt")
             public void testCheckPropertyAccessor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkPropertyAccessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorPropertyInterdependence.kt")
+            public void testConstructorPropertyInterdependence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/constructorPropertyInterdependence.kt");
                 doTest(fileName);
             }
 
