@@ -70,6 +70,7 @@ public class SpecialFiles {
         excludedFiles.add("qualifiedName.kt"); // Cannot change package name
         excludedFiles.add("topLevelProperty.kt"); // Cannot change package name
         excludedFiles.add("typeParameters.kt"); // Cannot change package name
+        excludedFiles.add("kt13133.kt"); // Cannot change package name
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
