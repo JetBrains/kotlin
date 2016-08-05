@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava.classes
+package kotlin.js
 
-import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KtLightClassMarker
-import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
+@native
+interface JsClass<T> {
+    val name: String
+}
 
-interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass>, KtLightClassMarker
+@native
+fun <T> jsClass(): JsClass<T> = noImpl
+
+val <T> T.jsClass: JsClass<T>
+    get() = js("Object").getPrototypeOf(this).constructor

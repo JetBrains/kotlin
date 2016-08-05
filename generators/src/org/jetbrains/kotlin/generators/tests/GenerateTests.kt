@@ -1029,6 +1029,10 @@ fun main(args: Array<String>) {
         testClass<AbstractCastTest>() {
             model("expression/cast/cases")
         }
+
+        testClass<AbstractLightReflectionTest>() {
+            model("reflection/light/cases")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {

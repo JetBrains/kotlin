@@ -62,4 +62,8 @@ public class EnumTest extends SingleFileTranslationTest {
     public void testInitializationOrder() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testImplementsComparable() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

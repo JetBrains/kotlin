@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -315,6 +316,8 @@ private fun Map<TypeParameterDescriptor, KotlinType>.addReifiedTypeArgsTo(
         if (!param.isReified) continue
 
         val argumentType = get(param) ?: continue
+
+        reifiedTypeArguments.add(getReferenceToJsClass(argumentType, context))
 
         val isCheckCallable = patternTranslator.getIsTypeCheckCallable(argumentType)
         reifiedTypeArguments.add(isCheckCallable)

@@ -23,9 +23,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker;
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile;
  * <p/>
  * See {@link LineBreakpoint#findClassCandidatesInSourceContent} for the primary usage this was introduced
  */
-public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KtLightClass, KtJavaMirrorMarker {
+public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KtLightClass {
     private final KtLightClassForFacade delegate;
     private final KtFile file;
 
@@ -104,5 +104,11 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     @Override
     public int hashCode() {
         return file.hashCode() * 31 + delegate.hashCode();
+    }
+
+    @NotNull
+    @Override
+    public LightClassOriginKind getOriginKind() {
+        return LightClassOriginKind.SOURCE;
     }
 }

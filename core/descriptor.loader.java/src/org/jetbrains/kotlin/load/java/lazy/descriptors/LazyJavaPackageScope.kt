@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindEx
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -63,6 +64,17 @@ class LazyJavaPackageScope(
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
                 val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
+
+                if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
+                    throw IllegalStateException(
+                            "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
+                            "JavaClass: $javaClass\n" +
+                            "ClassId: $classId\n" +
+                            "findKotlinClass(JavaClass) = ${if (javaClass != null) c.components.kotlinClassFinder.findKotlinClass(javaClass)?.toString() else "<empty>"}\n" +
+                            "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(classId)}\n"
+                    )
+                }
+
                 javaClass?.let { it ->
                     LazyJavaClassDescriptor(c, ownerDescriptor, it)
                 }
@@ -130,7 +142,7 @@ class LazyJavaPackageScope(
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return listOf()
 
         return jPackage.getClasses(nameFilter).mapNotNull { klass ->
-            if (klass.isKotlinLightClass) null else klass.name
+            if (klass.lightClassOriginKind == LightClassOriginKind.SOURCE) null else klass.name
         }
     }
 

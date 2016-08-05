@@ -1,0 +1,5 @@
+package
+
+public fun foo1(): () -> kotlin.String
+public fun foo2(): () -> kotlin.String
+public fun foo3(): () -> kotlin.String

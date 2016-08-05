@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,6 +128,9 @@ public final class FunctionTranslator extends AbstractTranslator {
 
         for (TypeParameterDescriptor type : descriptor.getTypeParameters()) {
             if (type.isReified()) {
+                JsName paramNameForType = context().getNameForDescriptor(type);
+                jsParameters.add(new JsParameter(paramNameForType));
+
                 String suggestedName = Namer.isInstanceSuggestedName(type);
                 JsName paramName = functionObject.getScope().declareName(suggestedName);
                 jsParameters.add(new JsParameter(paramName));

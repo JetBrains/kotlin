@@ -35,42 +35,42 @@ public class KotlinParser implements PsiParser {
 
     @Override
     @NotNull
-    public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder) {
+    public ASTNode parse(@NotNull IElementType iElementType, @NotNull PsiBuilder psiBuilder) {
         throw new IllegalStateException("use another parse");
     }
 
     // we need this method because we need psiFile
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
-        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile)
             || psiFile.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)) {
-            jetParsing.parseScript();
+            ktParsing.parseScript();
         }
         else {
-            jetParsing.parseFile();
+            ktParsing.parseFile();
         }
         return psiBuilder.getTreeBuilt();
     }
 
     @NotNull
     public static ASTNode parseTypeCodeFragment(PsiBuilder psiBuilder) {
-        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        jetParsing.parseTypeCodeFragment();
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        ktParsing.parseTypeCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 
     @NotNull
     public static ASTNode parseExpressionCodeFragment(PsiBuilder psiBuilder) {
-        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        jetParsing.parseExpressionCodeFragment();
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        ktParsing.parseExpressionCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 
     @NotNull
     public static ASTNode parseBlockCodeFragment(PsiBuilder psiBuilder) {
-        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        jetParsing.parseBlockCodeFragment();
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        ktParsing.parseBlockCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 }

@@ -71,11 +71,15 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val isInterface: Boolean
     val isAnnotationType: Boolean
     val isEnum: Boolean
-    val isKotlinLightClass: Boolean
+    val lightClassOriginKind: LightClassOriginKind?
 
     val methods: Collection<JavaMethod>
     val fields: Collection<JavaField>
     val constructors: Collection<JavaConstructor>
+}
+
+enum class LightClassOriginKind {
+    SOURCE, BINARY
 }
 
 interface JavaMember : JavaModifierListOwner, JavaAnnotationOwner, JavaNamedElement {
