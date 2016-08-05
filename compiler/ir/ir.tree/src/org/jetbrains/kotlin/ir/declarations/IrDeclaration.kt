@@ -25,39 +25,33 @@ import java.util.*
 
 interface IrDeclaration : IrElement {
     val descriptor: DeclarationDescriptor
-    val containingDeclaration: IrDeclaration?
+    override val parent: IrDeclaration?
 }
 
 interface IrCompoundDeclaration : IrDeclaration {
     val childDeclarations: List<IrDeclaration>
-    fun addChildDeclaration(child: IrDeclaration)
 }
 
 interface IrDeclarationNonRoot : IrDeclaration {
-    override val containingDeclaration: IrDeclaration
+    override val parent: IrDeclaration
 }
 
-abstract class IrDeclarationBase(
-        sourceLocation: SourceLocation,
-        override val containingDeclaration: IrDeclaration?
-) : IrElementBase(sourceLocation), IrDeclaration
+abstract class IrDeclarationBase(sourceLocation: SourceLocation) : IrElementBase(sourceLocation), IrDeclaration {
+    override var parent: IrDeclaration? = null
+}
 
-abstract class IrDeclarationNonRootBase(
-        sourceLocation: SourceLocation,
-        override val containingDeclaration: IrDeclaration
-) : IrElementBase(sourceLocation), IrDeclarationNonRoot
+abstract class IrDeclarationNonRootBase(sourceLocation: SourceLocation) : IrElementBase(sourceLocation), IrDeclarationNonRoot
 
-abstract class IrCompoundDeclarationBase(
-        sourceLocation: SourceLocation,
-        containingDeclaration: IrDeclaration?
-) : IrDeclarationBase(sourceLocation, containingDeclaration), IrCompoundDeclaration {
+abstract class IrCompoundDeclarationBase(sourceLocation: SourceLocation) : IrDeclarationBase(sourceLocation), IrCompoundDeclaration {
     override val childDeclarations: MutableList<IrDeclaration> = ArrayList()
-
-    override fun addChildDeclaration(child: IrDeclaration) {
-        childDeclarations.add(child)
-    }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         childDeclarations.forEach { it.accept(visitor, data) }
     }
 }
+
+val IrDeclaration.containingDeclaration: IrDeclaration?
+    get() = parent
+
+val IrDeclarationNonRoot.continingDeclaration: IrDeclaration
+    get() = parent

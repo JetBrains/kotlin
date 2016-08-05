@@ -36,9 +36,9 @@ interface IrDelegatedProperty : IrProperty {
 
 abstract class IrPropertyBase(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrDeclaration,
         override val descriptor: PropertyDescriptor
-) : IrDeclarationNonRootBase(sourceLocation, containingDeclaration), IrProperty {
+) : IrDeclarationNonRootBase(sourceLocation), IrProperty {
+    override lateinit var parent: IrDeclaration
     override var getter: IrPropertyGetter? = null
     override var setter: IrPropertySetter? = null
 
@@ -55,10 +55,9 @@ abstract class IrPropertyBase(
 
 class IrSimplePropertyImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrDeclaration,
         descriptor: PropertyDescriptor,
         override val valueInitializer: IrBody?
-) : IrPropertyBase(sourceLocation, containingDeclaration, descriptor), IrSimpleProperty {
+) : IrPropertyBase(sourceLocation, descriptor), IrSimpleProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitSimpleProperty(this, data)
 
@@ -70,10 +69,9 @@ class IrSimplePropertyImpl(
 
 class IrDelegatedPropertyImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrDeclaration,
         descriptor: PropertyDescriptor,
         override val delegateInitializer: IrBody
-) : IrPropertyBase(sourceLocation, containingDeclaration, descriptor), IrDelegatedProperty {
+) : IrPropertyBase(sourceLocation, descriptor), IrDelegatedProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDelegatedProperty(this, data)
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrElement {
+    val parent: IrElement?
     val sourceLocation: SourceLocation
     fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
     fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D): Unit

@@ -35,20 +35,12 @@ interface IrElementVisitor<out R, in D> {
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
 
+    fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
+    fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
+
     fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
-
-    fun visitLiteral(expression: IrLiteral, data: D): R = visitExpression(expression, data)
-    fun visitNullLiteral(expression: IrNullLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitTrueLiteral(expression: IrTrueLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitFalseLiteral(expression: IrFalseLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitIntLiteral(expression: IrIntLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitLongLiteral(expression: IrLongLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitFloatLiteral(expression: IrFloatLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitDoubleLiteral(expression: IrDoubleLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitCharLiteral(expression: IrCharLiteral, data: D): R = visitLiteral(expression, data)
-    fun visitStringLiteral(expression: IrStringLiteral, data: D): R = visitLiteral(expression, data)
-
+    fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: D): R = visitExpression(expression, data)
     fun visitReturnExpression(expression: IrReturnExpression, data: D): R = visitExpression(expression, data)
     fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
-    fun visitStringTemplate(expression: IrStringTemplateExpression, data: D) = visitExpression(expression, data)
+    fun visitStringTemplate(expression: IrStringConcatenationExpression, data: D) = visitExpression(expression, data)
 }

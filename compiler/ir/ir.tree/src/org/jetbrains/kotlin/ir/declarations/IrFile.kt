@@ -29,11 +29,10 @@ interface IrFile : IrCompoundDeclaration {
 
 class IrFileImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrModule,
         override val name: String,
         override val fileEntry: SourceLocationManager.FileEntry,
         override val descriptor: PackageFragmentDescriptor
-) : IrCompoundDeclarationBase(sourceLocation, containingDeclaration), IrFile {
+) : IrCompoundDeclarationBase(sourceLocation), IrFile {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFile(this, data)
 }

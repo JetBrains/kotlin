@@ -19,15 +19,16 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceLocation
-import org.jetbrains.kotlin.ir.declarations.IrBody
 import org.jetbrains.kotlin.types.KotlinType
 
 
-interface IrExpression : IrElement, IrBody {
+interface IrExpression : IrElement {
     val type: KotlinType
 }
 
 abstract class IrExpressionBase(
         sourceLocation: SourceLocation,
         override val type: KotlinType
-) : IrElementBase(sourceLocation), IrExpression
+) : IrElementBase(sourceLocation), IrExpression {
+    override lateinit var parent: IrElement
+}

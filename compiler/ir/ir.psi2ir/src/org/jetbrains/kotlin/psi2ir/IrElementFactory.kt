@@ -26,11 +26,11 @@ import java.util.*
 class IrElementFactory(val irModule: IrModule, val sourceManager: PsiSourceManager) {
     val ktFileToIrFile = LinkedHashMap<KtFile, IrFile>()
 
-    fun createIrFile(ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrFile {
+    fun createIrFile(ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrFileImpl {
         val fileEntry = sourceManager.getOrCreateFileEntry(ktFile)
-        val irFile = IrFileImpl(fileEntry.getRootSourceLocation(), irModule, fileEntry.getRecognizableName(), fileEntry, descriptor)
+        val irFile = IrFileImpl(fileEntry.getRootSourceLocation(), fileEntry.getRecognizableName(), fileEntry, descriptor)
+        irFile.parent = irModule
         ktFileToIrFile.put(ktFile, irFile)
         return irFile
     }
-
 }

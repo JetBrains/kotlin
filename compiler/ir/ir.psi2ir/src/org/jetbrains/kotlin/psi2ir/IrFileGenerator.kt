@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.psi2ir
 
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFileImpl
 import org.jetbrains.kotlin.psi.KtFile
 
 class IrFileGenerator(
         context: IrGeneratorContext,
         val ktFile: KtFile,
-        override val irDeclaration: IrFile,
+        override val irDeclaration: IrFileImpl,
         override val parent: IrModuleGenerator
 ) : IrDeclarationGeneratorBase(context, irDeclaration, parent, irDeclaration.fileEntry as PsiSourceManager.PsiFileEntry) {
     fun generateFileContent() {

@@ -25,21 +25,11 @@ interface IrModule : IrCompoundDeclaration {
     override val descriptor: ModuleDescriptor
 
     val files: List<IrFile>
-    fun addFile(file: IrFile)
 }
 
-class IrModuleImpl(override val descriptor: ModuleDescriptor) : IrDeclarationBase(NO_LOCATION, null), IrModule {
+class IrModuleImpl(override val descriptor: ModuleDescriptor) : IrDeclarationBase(NO_LOCATION), IrModule {
     override val files: MutableList<IrFile> = ArrayList()
     override val childDeclarations: List<IrDeclaration> get() = files
-
-    override fun addFile(file: IrFile) {
-        files.add(file)
-    }
-
-    override fun addChildDeclaration(child: IrDeclaration) {
-        if (child !is IrFile) throw IllegalArgumentException("Only IrFile can be contained in IrModule, got $child")
-        addFile(child)
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitModule(this, data)

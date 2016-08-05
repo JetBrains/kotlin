@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.expressions
+package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceLocation
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
-
-interface IrBlockExpression : IrExpression {
-    val childExpressions: List<IrExpression>
+interface IrBody : IrElement {
+    override val parent: IrDeclaration
 }
 
-class IrBlockExpressionImpl(
-        sourceLocation: SourceLocation,
-        type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrBlockExpression {
-    override val childExpressions: MutableList<IrExpression> = ArrayList()
+interface IrExpressionBody : IrBody {
+    val expression: IrExpression
+}
 
+abstract class IrBodyBase(sourceLocation: SourceLocation): IrElementBase(sourceLocation), IrBody {
+    override lateinit var parent: IrDeclaration
+}
+
+class IrExpressionBodyImpl(
+        sourceLocation: SourceLocation,
+        override val expression: IrExpression
+) : IrBodyBase(sourceLocation), IrExpressionBody {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBlockExpression(this, data)
+            visitor.visitExpressionBody(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        childExpressions.forEach { it.accept(visitor, data) }
+        expression.accept(visitor, data)
     }
 }

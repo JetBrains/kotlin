@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrPropertyAccessor : IrFunction {
     override val descriptor: PropertyAccessorDescriptor
-    val property: IrProperty get() = containingDeclaration as IrProperty
+    override val parent: IrProperty
 }
 
 interface IrPropertyGetter : IrPropertyAccessor {
@@ -37,26 +37,25 @@ interface IrPropertySetter : IrPropertyAccessor {
 
 abstract class IrPropertyAccessorBase(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrProperty,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation, containingDeclaration), IrPropertyAccessor
+) : IrFunctionBase(sourceLocation), IrPropertyAccessor {
+    override lateinit var parent: IrProperty
+}
 
 class IrPropertyGetterImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrProperty,
         override val descriptor: PropertyGetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, containingDeclaration, body), IrPropertyGetter {
+) : IrPropertyAccessorBase(sourceLocation, body), IrPropertyGetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertyGetter(this, data)
 }
 
 class IrPropertySetterImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrProperty,
         override val descriptor: PropertySetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, containingDeclaration, body), IrPropertySetter {
+) : IrPropertyAccessorBase(sourceLocation, body), IrPropertySetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertySetter(this, data)
 }

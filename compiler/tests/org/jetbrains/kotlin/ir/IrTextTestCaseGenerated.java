@@ -35,6 +35,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("boxOk.kt")
+    public void testBoxOk() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/boxOk.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("smoke.kt")
     public void testSmoke() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smoke.kt");

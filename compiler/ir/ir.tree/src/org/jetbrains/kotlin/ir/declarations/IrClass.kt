@@ -26,9 +26,8 @@ interface IrClass : IrCompoundDeclaration {
 
 class IrClassImpl(
         sourceLocation: SourceLocation,
-        containingDeclaration: IrDeclaration,
         override val descriptor: ClassDescriptor
-) : IrCompoundDeclarationBase(sourceLocation, containingDeclaration), IrClass {
+) : IrCompoundDeclarationBase(sourceLocation), IrClass {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 }

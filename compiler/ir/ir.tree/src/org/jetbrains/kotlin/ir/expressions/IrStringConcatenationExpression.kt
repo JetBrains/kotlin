@@ -16,25 +16,21 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-interface IrStringTemplateExpression : IrExpression {
+interface IrStringConcatenationExpression : IrExpression {
     val entries: List<IrExpression>
-    fun addStringTemplateEntry(entry: IrExpression)
 }
 
-class IrStringTemplateExpressionImpl(
+class IrStringConcatenationExpressionImpl(
         sourceLocation: SourceLocation,
         type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrStringTemplateExpression {
+) : IrExpressionBase(sourceLocation, type), IrStringConcatenationExpression {
     override val entries: MutableList<IrExpression> = ArrayList()
-
-    override fun addStringTemplateEntry(entry: IrExpression) {
-        entries.add(entry)
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitStringTemplate(this, data)

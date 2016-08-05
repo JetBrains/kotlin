@@ -47,14 +47,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
             "IrPropertySetter ${declaration.renderDescriptor()}"
 
+    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
+            "IrExpressionBody"
+
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
             "??? ${expression.javaClass.simpleName} type=${expression.renderType()}"
 
-    override fun visitStringLiteral(expression: IrStringLiteral, data: Nothing?): String =
-            "IrStringLiteral ${expression.value}"
-
-    override fun visitIntLiteral(expression: IrIntLiteral, data: Nothing?): String =
-            "IrIntLiteral type=${expression.renderType()} value=${expression.value}"
+    override fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: Nothing?): String =
+            "IrLiteral ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
             "IrBlockExpression type=${expression.renderType()}"

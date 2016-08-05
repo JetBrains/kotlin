@@ -25,27 +25,27 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 class IrExpressionGenerator(
         override val context: IrGeneratorContext,
         val containingFile: PsiSourceManager.PsiFileEntry
-) : KtVisitor<IrExpression, Nothing?>(), IrGenerator {
+) : KtVisitor<IrExpressionBase, Nothing?>(), IrGenerator {
     fun generateExpression(ktExpression: KtExpression) = ktExpression.irExpr()
 
-    private fun KtElement.irExpr(): IrExpression = accept(this@IrExpressionGenerator, null)
+    private fun KtElement.irExpr(): IrExpressionBase = accept(this@IrExpressionGenerator, null)
     private fun KtElement.loc() = this@IrExpressionGenerator.containingFile.getSourceLocationForElement(this)
     private fun KtExpression.type() = getType(this) ?: TODO("no type for expression")
 
-    override fun visitExpression(expression: KtExpression, data: Nothing?): IrExpression =
+    override fun visitExpression(expression: KtExpression, data: Nothing?): IrExpressionBase =
             IrDummyExpression(expression.loc(), expression.type())
 
-    override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrExpression {
+    override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrExpressionBase {
         val irBlock = IrBlockExpressionImpl(expression.loc(), expression.type())
-        expression.statements.forEach { irBlock.addChildExpression(it.irExpr()) }
+        expression.statements.forEach { irBlock.childExpressions.add(it.irExpr()) }
         return irBlock
     }
 
-    override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrExpression =
+    override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrExpressionBase =
             IrReturnExpressionImpl(expression.loc(), expression.type(),
                                    expression.returnedExpression?.irExpr())
 
-    override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
+    override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpressionBase {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
                                   ?: error("KtConstantExpression was not evaluated: ${expression.text}")
         val constantValue = compileTimeConstant.toConstantValue(expression.type())
@@ -53,24 +53,24 @@ class IrExpressionGenerator(
 
         return when (constantValue) {
             is StringValue ->
-                IrStringLiteralImpl(expression.loc(), constantType, constantValue.value)
+                IrLiteralExpressionImpl.string(expression.loc(), constantType, constantValue.value)
             is IntValue ->
-                IrIntLiteralImpl(expression.loc(), constantType, constantValue.value)
+                IrLiteralExpressionImpl.int(expression.loc(), constantType, constantValue.value)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
     }
 
-    override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrExpression {
+    override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrExpressionBase {
         if (expression.entries.size == 1 && expression.entries[0] is KtLiteralStringTemplateEntry) {
             return expression.entries[0].irExpr()
         }
 
-        val irStringTemplate = IrStringTemplateExpressionImpl(expression.loc(), expression.type())
-        expression.entries.forEach { irStringTemplate.addStringTemplateEntry(it.irExpr()) }
+        val irStringTemplate = IrStringConcatenationExpressionImpl(expression.loc(), expression.type())
+        expression.entries.forEach { irStringTemplate.entries.add(it.irExpr()) }
         return irStringTemplate
     }
 
-    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrExpression =
-            IrStringLiteralImpl(entry.loc(), context.builtIns.stringType, entry.text)
+    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrExpressionBase =
+            IrLiteralExpressionImpl.string(entry.loc(), context.builtIns.stringType, entry.text)
 }

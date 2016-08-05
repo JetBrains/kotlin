@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrModule
+import org.jetbrains.kotlin.ir.declarations.IrModuleImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class IrGeneratorContext(
         val inputFiles: List<KtFile>,
-        val irModule: IrModule,
+        val irModule: IrModuleImpl,
         val bindingContext: BindingContext
 ) {
     val moduleDescriptor: ModuleDescriptor get() = irModule.descriptor

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.SourceLocation
-
 interface SourceLocationManager {
     interface FileEntry {
         fun getLineNumber(sourceLocation: SourceLocation): Int
