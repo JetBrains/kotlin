@@ -27,22 +27,37 @@ interface IrBody : IrElement {
     override val parent: IrDeclaration
 }
 
-interface IrExpressionBody : IrBody {
-    val expression: IrExpression
-}
+interface IrExpressionBody : IrBody, IrExpressionOwner1
 
 abstract class IrBodyBase(sourceLocation: SourceLocation): IrElementBase(sourceLocation), IrBody {
     override lateinit var parent: IrDeclaration
 }
 
-class IrExpressionBodyImpl(
-        sourceLocation: SourceLocation,
-        override val expression: IrExpression
-) : IrBodyBase(sourceLocation), IrExpressionBody {
+// TODO IrExpressionBodyImpl vs IrCompoundExpression1Impl: extract common base class?
+class IrExpressionBodyImpl(sourceLocation: SourceLocation) : IrBodyBase(sourceLocation), IrExpressionBody {
+    override var childExpression: IrExpression? = null
+        set(newExpression) {
+            field?.detach()
+            field = newExpression
+            newExpression?.setTreeLocation(this, IrExpressionOwner1.EXPRESSION_INDEX)
+        }
+
+    override fun getChildExpression(index: Int): IrExpression? =
+            if (index == IrExpressionOwner1.EXPRESSION_INDEX) childExpression else null
+
+    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
+        validateChild(oldChild)
+        childExpression = newChild
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitExpressionBody(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        expression.accept(visitor, data)
+        acceptChildExpressions(visitor, data)
+    }
+
+    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
+        childExpression?.accept(visitor, data)
     }
 }

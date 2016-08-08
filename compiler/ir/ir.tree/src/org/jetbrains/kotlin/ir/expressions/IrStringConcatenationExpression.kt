@@ -22,20 +22,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-interface IrStringConcatenationExpression : IrExpression {
-    val entries: List<IrExpression>
-}
+interface IrStringConcatenationExpression : IrCompoundExpressionN
 
 class IrStringConcatenationExpressionImpl(
         sourceLocation: SourceLocation,
         type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrStringConcatenationExpression {
-    override val entries: MutableList<IrExpression> = ArrayList()
-
+) : IrCompoundExpressionNBase(sourceLocation, type), IrStringConcatenationExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitStringTemplate(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        entries.forEach { it.accept(visitor, data) }
-    }
 }

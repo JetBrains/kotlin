@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBodyBase
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrReturnExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.returnedExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -98,8 +99,9 @@ abstract class IrDeclarationGeneratorBase(
                 if (ktBody is KtBlockExpression)
                     irExpression
                 else
-                    IrReturnExpressionImpl(sourceLocation, irExpression.type, irExpression).apply { irExpression.parent = this }
+                    IrReturnExpressionImpl(sourceLocation, irExpression.type)
+                            .apply { returnedExpression = irExpression }
 
-        return IrExpressionBodyImpl(sourceLocation,bodyExpression)
+        return IrExpressionBodyImpl(sourceLocation).apply { childExpression = bodyExpression }
     }
 }

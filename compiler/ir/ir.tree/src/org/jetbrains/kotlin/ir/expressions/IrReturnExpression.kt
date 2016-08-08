@@ -21,19 +21,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 
-interface IrReturnExpression : IrExpression {
-    val returnValueExpression: IrExpression?
-}
+interface IrReturnExpression : IrExpression, IrExpressionOwner1
+
+var IrReturnExpression.returnedExpression: IrExpression?
+    get() = childExpression
+    set(newReturnedExpression) { childExpression = newReturnedExpression }
 
 class IrReturnExpressionImpl(
         sourceLocation: SourceLocation,
-        type: KotlinType,
-        override val returnValueExpression: IrExpression?
-) : IrExpressionBase(sourceLocation, type), IrReturnExpression {
+        type: KotlinType
+) : IrCompoundExpression1Base(sourceLocation, type), IrReturnExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturnExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        returnValueExpression?.accept(visitor, data)
-    }
 }

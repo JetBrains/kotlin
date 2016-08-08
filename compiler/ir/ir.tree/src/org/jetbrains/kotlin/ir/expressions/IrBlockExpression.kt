@@ -19,19 +19,14 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 
-interface IrBlockExpression : IrExpression {
-    val childExpressions: List<IrExpression>
-}
+interface IrBlockExpression : IrCompoundExpressionN
 
 class IrBlockExpressionImpl(
         sourceLocation: SourceLocation,
         type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrBlockExpression {
-    override val childExpressions: MutableList<IrExpression> = ArrayList()
-
+) : IrCompoundExpressionNBase(sourceLocation, type), IrBlockExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitBlockExpression(this, data)
 

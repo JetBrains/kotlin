@@ -42,8 +42,8 @@ class IrExpressionGenerator(
     }
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrExpressionBase =
-            IrReturnExpressionImpl(expression.loc(), expression.type(),
-                                   expression.returnedExpression?.irExpr())
+            IrReturnExpressionImpl(expression.loc(), expression.type())
+                    .apply { this.childExpression = expression.returnedExpression?.irExpr() }
 
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpressionBase {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
@@ -67,7 +67,7 @@ class IrExpressionGenerator(
         }
 
         val irStringTemplate = IrStringConcatenationExpressionImpl(expression.loc(), expression.type())
-        expression.entries.forEach { irStringTemplate.entries.add(it.irExpr()) }
+        expression.entries.forEach { irStringTemplate.addChildExpression(it.irExpr()) }
         return irStringTemplate
     }
 

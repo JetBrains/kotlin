@@ -23,12 +23,34 @@ import org.jetbrains.kotlin.types.KotlinType
 
 
 interface IrExpression : IrElement {
+    override val parent: IrExpressionOwner?
+    val index: Int
     val type: KotlinType
+
+    fun setTreeLocation(parent: IrExpressionOwner?, index: Int)
+
+    companion object {
+        const val DETACHED_INDEX = Int.MIN_VALUE
+    }
+}
+
+fun IrExpression.detach() {
+    setTreeLocation(null, IrExpression.DETACHED_INDEX)
+}
+
+fun IrExpressionOwner.validateChild(child: IrExpression) {
+    assert(child.parent == this && getChildExpression(child.index) == child) { "Inconsistent child: $child" }
 }
 
 abstract class IrExpressionBase(
         sourceLocation: SourceLocation,
         override val type: KotlinType
 ) : IrElementBase(sourceLocation), IrExpression {
-    override lateinit var parent: IrElement
+    override var parent: IrExpressionOwner? = null
+    override var index: Int = IrExpression.DETACHED_INDEX
+
+    override fun setTreeLocation(parent: IrExpressionOwner?, index: Int) {
+        this.parent = parent
+        this.index = index
+    }
 }
