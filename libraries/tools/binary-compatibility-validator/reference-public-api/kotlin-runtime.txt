@@ -376,6 +376,11 @@ public abstract class kotlin/jvm/internal/CallableReference : kotlin/reflect/KCa
 	protected fun getReflected ()Lkotlin/reflect/KCallable;
 	public fun getReturnType ()Lkotlin/reflect/KType;
 	public fun getSignature ()Ljava/lang/String;
+	public fun getTypeParameters ()Ljava/util/List;
+	public fun getVisibility ()Lkotlin/reflect/KVisibility;
+	public fun isAbstract ()Z
+	public fun isFinal ()Z
+	public fun isOpen ()Z
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -410,7 +415,18 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun getObjectInstance ()Ljava/lang/Object;
 	public fun getQualifiedName ()Ljava/lang/String;
 	public fun getSimpleName ()Ljava/lang/String;
+	public fun getSupertypes ()Ljava/util/List;
+	public fun getTypeParameters ()Ljava/util/List;
+	public fun getVisibility ()Lkotlin/reflect/KVisibility;
 	public fun hashCode ()I
+	public fun isAbstract ()Z
+	public fun isCompanion ()Z
+	public fun isData ()Z
+	public fun isFinal ()Z
+	public fun isInner ()Z
+	public fun isInstance (Ljava/lang/Object;)Z
+	public fun isOpen ()Z
+	public fun isSealed ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -497,7 +513,18 @@ public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/Functio
 	public fun getParameters ()Ljava/util/List;
 	public fun getReturnType ()Lkotlin/reflect/KType;
 	public fun getSignature ()Ljava/lang/String;
+	public fun getTypeParameters ()Ljava/util/List;
+	public fun getVisibility ()Lkotlin/reflect/KVisibility;
 	public fun hashCode ()I
+	public fun isAbstract ()Z
+	public fun isExternal ()Z
+	public fun isFinal ()Z
+	public fun isInfix ()Z
+	public fun isInline ()Z
+	public fun isOpen ()Z
+	public fun isOperator ()Z
+	public fun isSuspend ()Z
+	public fun isTailrec ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -735,7 +762,11 @@ public abstract class kotlin/jvm/internal/PrimitiveSpreadBuilder {
 public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/reflect/KProperty {
 	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
+	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
+	protected fun getReflected ()Lkotlin/reflect/KProperty;
 	public fun hashCode ()I
+	public fun isConst ()Z
+	public fun isLateinit ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1107,9 +1138,14 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getParameters ()Ljava/util/List;
 	public abstract fun getReturnType ()Lkotlin/reflect/KType;
+	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun getVisibility ()Lkotlin/reflect/KVisibility;
+	public abstract fun isAbstract ()Z
+	public abstract fun isFinal ()Z
+	public abstract fun isOpen ()Z
 }
 
-public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KDeclarationContainer {
+public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KClassifier, kotlin/reflect/KDeclarationContainer {
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun getConstructors ()Ljava/util/Collection;
 	public abstract fun getMembers ()Ljava/util/Collection;
@@ -1117,7 +1153,21 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun getObjectInstance ()Ljava/lang/Object;
 	public abstract fun getQualifiedName ()Ljava/lang/String;
 	public abstract fun getSimpleName ()Ljava/lang/String;
+	public abstract fun getSupertypes ()Ljava/util/List;
+	public abstract fun getTypeParameters ()Ljava/util/List;
+	public abstract fun getVisibility ()Lkotlin/reflect/KVisibility;
 	public abstract fun hashCode ()I
+	public abstract fun isAbstract ()Z
+	public abstract fun isCompanion ()Z
+	public abstract fun isData ()Z
+	public abstract fun isFinal ()Z
+	public abstract fun isInner ()Z
+	public abstract fun isInstance (Ljava/lang/Object;)Z
+	public abstract fun isOpen ()Z
+	public abstract fun isSealed ()Z
+}
+
+public abstract interface class kotlin/reflect/KClassifier {
 }
 
 public abstract interface class kotlin/reflect/KDeclarationContainer {
@@ -1125,6 +1175,12 @@ public abstract interface class kotlin/reflect/KDeclarationContainer {
 }
 
 public abstract interface class kotlin/reflect/KFunction : kotlin/Function, kotlin/reflect/KCallable {
+	public abstract fun isExternal ()Z
+	public abstract fun isInfix ()Z
+	public abstract fun isInline ()Z
+	public abstract fun isOperator ()Z
+	public abstract fun isSuspend ()Z
+	public abstract fun isTailrec ()Z
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty : kotlin/reflect/KProperty {
@@ -1163,7 +1219,11 @@ public abstract interface class kotlin/reflect/KParameter : kotlin/reflect/KAnno
 	public abstract fun getKind ()Lkotlin/reflect/KParameter$Kind;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getType ()Lkotlin/reflect/KType;
+	public abstract fun isCoroutine ()Z
+	public abstract fun isCrossinline ()Z
+	public abstract fun isNoinline ()Z
 	public abstract fun isOptional ()Z
+	public abstract fun isVararg ()Z
 }
 
 public final class kotlin/reflect/KParameter$Kind : java/lang/Enum {
@@ -1176,6 +1236,8 @@ public final class kotlin/reflect/KParameter$Kind : java/lang/Enum {
 
 public abstract interface class kotlin/reflect/KProperty : kotlin/reflect/KCallable {
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty$Getter;
+	public abstract fun isConst ()Z
+	public abstract fun isLateinit ()Z
 }
 
 public abstract interface class kotlin/reflect/KProperty$Accessor {
@@ -1210,7 +1272,53 @@ public abstract interface class kotlin/reflect/KProperty2$Getter : kotlin/jvm/fu
 }
 
 public abstract interface class kotlin/reflect/KType {
+	public abstract fun getArguments ()Ljava/util/List;
+	public abstract fun getClassifier ()Lkotlin/reflect/KClassifier;
 	public abstract fun isMarkedNullable ()Z
+}
+
+public abstract interface class kotlin/reflect/KTypeParameter : kotlin/reflect/KClassifier {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getUpperBounds ()Ljava/util/List;
+	public abstract fun getVariance ()Lkotlin/reflect/KVariance;
+	public abstract fun isReified ()Z
+}
+
+public final class kotlin/reflect/KTypeProjection {
+	public static final field Companion Lkotlin/reflect/KTypeProjection$Companion;
+	public final fun component1 ()Lkotlin/reflect/KVariance;
+	public final fun component2 ()Lkotlin/reflect/KType;
+	public final fun copy (Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+	public static synthetic fun copy$default (Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;ILjava/lang/Object;)Lkotlin/reflect/KTypeProjection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Lkotlin/reflect/KType;
+	public final fun getVariance ()Lkotlin/reflect/KVariance;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/reflect/KTypeProjection$Companion {
+	public final fun contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+	public final fun covariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+	public final fun getSTAR ()Lkotlin/reflect/KTypeProjection;
+	public final fun invariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+}
+
+public final class kotlin/reflect/KVariance : java/lang/Enum {
+	public static final field IN Lkotlin/reflect/KVariance;
+	public static final field INVARIANT Lkotlin/reflect/KVariance;
+	public static final field OUT Lkotlin/reflect/KVariance;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVariance;
+	public static fun values ()[Lkotlin/reflect/KVariance;
+}
+
+public final class kotlin/reflect/KVisibility : java/lang/Enum {
+	public static final field INTERNAL Lkotlin/reflect/KVisibility;
+	public static final field PRIVATE Lkotlin/reflect/KVisibility;
+	public static final field PROTECTED Lkotlin/reflect/KVisibility;
+	public static final field PUBLIC Lkotlin/reflect/KVisibility;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVisibility;
+	public static fun values ()[Lkotlin/reflect/KVisibility;
 }
 
 public abstract interface annotation class org/jetbrains/annotations/Mutable : java/lang/annotation/Annotation {
