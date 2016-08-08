@@ -64,6 +64,10 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean
 
         return approximation
     }
+
+    (unwrap() as? AbbreviatedType)?.let {
+        return AbbreviatedType(it.expandedType, it.abbreviation.approximateNonDynamicFlexibleTypes(preferNotNull))
+    }
     return KotlinTypeFactory.simpleType(annotations,
                                         constructor,
                                         arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },

@@ -128,6 +128,7 @@ internal class DescriptorRendererImpl(
         if (abbreviated != null) {
             // TODO nullability is lost for abbreviated type?
             val abbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.abbreviation)
+            if (!renderUnabbreviatedType) return abbreviatedRendered
             val unabbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.expandedType)
             return "$abbreviatedRendered /* = $unabbreviatedRendered */"
         }

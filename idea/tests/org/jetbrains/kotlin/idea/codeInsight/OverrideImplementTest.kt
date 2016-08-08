@@ -259,4 +259,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testAbstractAndNonAbstractInheritedFromInterface() {
         doImplementFileTest("getFoo")
     }
+
+    fun testTypeAliasNotExpanded() {
+        doOverrideFileTest("test")
+    }
 }
