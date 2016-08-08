@@ -31,7 +31,7 @@ object WireFormat {
         var size = 0
         while (curValue != 0) {
             size += 1
-            curValue = value ushr VARINT_INFO_BITS_COUNT
+            curValue = curValue ushr VARINT_INFO_BITS_COUNT
         }
         return size
     }
@@ -41,7 +41,7 @@ object WireFormat {
         var size = 0
         while (curValue != 0L) {
             size += 1
-            curValue = value ushr VARINT_INFO_BITS_COUNT
+            curValue = curValue ushr VARINT_INFO_BITS_COUNT
         }
         return size
     }

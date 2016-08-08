@@ -292,7 +292,7 @@ void FieldGenerator::generateSerializationForPrimitives(io::Printer * printer, b
     }
     else {
         if (noTag) {
-            printer->Print(vars, "output.write$suffix$NoTag ()\n");
+            printer->Print(vars, "output.write$suffix$NoTag ($fieldName$)\n");
         }
         else {
             printer->Print(vars, "output.write$suffix$ ($fieldNumber$, $fieldName$)\n");

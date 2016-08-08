@@ -10,9 +10,11 @@ class KotlinOutputStream(val buffer: ByteArray) {
     }
 
     fun write (data: ByteArray, begin: Int, size: Int) {
-        for (i in begin..(begin + size - 1)) {
+        var i = begin
+        while (i < begin + size) {
             buffer[pos] = data[i]
             pos += 1
+            i++
         }
     }
 }

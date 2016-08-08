@@ -87,68 +87,6 @@ class CodedOutputStream(val buffer: ByteArray) {
         writeInt64NoTag((value shl 1) xor (value shr 63))
     }
 
-    fun writeFixed32(fieldNumber: Int, value: Int?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_32)
-        writeFixed32NoTag(value)
-    }
-
-    fun writeFixed32NoTag(value: Int) {
-        writeLittleEndian(value)
-    }
-
-    // See notes on unsigned integers implementation above
-    fun writeSFixed32(fieldNumber: Int, value: Int?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_32)
-        writeSFixed32NoTag(value)
-    }
-
-    fun writeSFixed32NoTag(value: Int) {
-        writeLittleEndian(value)
-    }
-
-    fun writeFixed64(fieldNumber: Int, value: Long?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_64)
-        writeFixed64NoTag(value)
-    }
-
-    fun writeFixed64NoTag(value: Long) {
-        writeLittleEndian(value)
-    }
-
-    // See notes on unsigned integers implementation above
-    fun writeSFixed64(fieldNumber: Int, value: Long?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_64)
-        writeSFixed64NoTag(value)
-    }
-
-    fun writeSFixed64NoTag(value: Long) {
-        writeLittleEndian(value)
-    }
-
-    fun writeDouble(fieldNumber: Int, value: Double?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_64)
-        writeDoubleNoTag(value)
-    }
-
-    fun writeDoubleNoTag(value: Double) {
-        writeLittleEndian(value)
-    }
-
-    fun writeFloat(fieldNumber: Int, value: Float?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.FIX_32)
-        writeFloatNoTag(value)
-    }
-
-    fun writeFloatNoTag(value: Float) {
-        writeLittleEndian(value)
-    }
-
     fun writeString(fieldNumber: Int, value: String?) {
         value ?: return
         writeTag(fieldNumber, WireType.LENGTH_DELIMITED)
@@ -179,39 +117,7 @@ class CodedOutputStream(val buffer: ByteArray) {
      *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
      */
 
-    fun writeLittleEndian(value: Int?) {
-        value ?: return
-        val bb = ByteBuffer.allocate(4)
-        bb.order(ByteOrder.LITTLE_ENDIAN)
-        bb.putInt(value)
-        output.write(bb.array())
-    }
-
-    fun writeLittleEndian(value: Long?) {
-        value ?: return
-        val bb = ByteBuffer.allocate(8)
-        bb.order(ByteOrder.LITTLE_ENDIAN)
-        bb.putLong(value)
-        output.write(bb.array())
-    }
-
-    fun writeLittleEndian(value: Double?) {
-        value ?: return
-        val bb = ByteBuffer.allocate(8)
-        bb.order(ByteOrder.LITTLE_ENDIAN)
-        bb.putDouble(value)
-        output.write(bb.array())
-    }
-
-    fun writeLittleEndian(value: Float?) {
-        value ?: return
-        val bb = ByteBuffer.allocate(4)
-        bb.order(ByteOrder.LITTLE_ENDIAN)
-        bb.putFloat(value)
-        output.write(bb.array())
-    }
-
-    fun writeInt32NoTag(value: Int?) {
+     fun writeInt32NoTag(value: Int?) {
         value ?: return
         var curValue: Int = value
 
@@ -233,7 +139,7 @@ class CodedOutputStream(val buffer: ByteArray) {
 
             res[resSize] = curByte.toByte()
             resSize++
-        } while(curValue != 0)
+        } while (curValue != 0)
         output.write(res, 0, resSize)
     }
 

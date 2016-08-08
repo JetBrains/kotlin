@@ -99,71 +99,6 @@ class CodedInputStream(buffer: ByteArray) {
         return readZigZag64NoTag()
     }
 
-    fun readFixed32(expectedFieldNumber: Int): Int {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
-        return readFixed32NoInt()
-    }
-
-    fun readFixed32NoInt(): Int {
-        return readLittleEndianInt()
-    }
-
-    fun readSFixed32(expectedFieldNumber: Int): Int {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
-        return readSFixed32NoTag()
-    }
-
-    fun readSFixed32NoTag(): Int {
-        return readLittleEndianInt()
-    }
-
-    fun readFixed64(expectedFieldNumber: Int): Long {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
-        return readFixed64NoTag()
-    }
-
-    fun readFixed64NoTag(): Long {
-        return readLittleEndianLong()
-    }
-
-    fun readSFixed64(expectedFieldNumber: Int): Long {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
-        return readSFixed64NoTag()
-    }
-
-    fun readSFixed64NoTag(): Long {
-        return readLittleEndianLong()
-    }
-
-    fun readDouble(expectedFieldNumber: Int): Double {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_64)
-        return readDoubleNoTag()
-    }
-
-    fun readDoubleNoTag(): Double {
-        return readLittleEndianDouble()
-    }
-
-    fun readFloat(expectedFieldNumber: Int): Float {
-        val tag = readTag(expectedFieldNumber, WireType.FIX_32)
-        return readFloatNoTag()
-    }
-
-    fun readFloatNoTag(): Float {
-        return readLittleEndianFloat()
-    }
-
-    fun readString(expectedFieldNumber: Int): String {
-        val tag = readTag(expectedFieldNumber, WireType.LENGTH_DELIMITED)
-        return readStringNoTag()
-    }
-
-    fun readStringNoTag(): String {
-        val length = readInt32NoTag()
-        val value = String(readRawBytes(length))
-        return value
-    }
-
     fun readBytes(expectedFieldNumber: Int): ByteArray {
         val tag = readTag(expectedFieldNumber, WireType.LENGTH_DELIMITED)
         return readBytesNoTag()
@@ -200,34 +135,12 @@ class CodedInputStream(buffer: ByteArray) {
         }
     }
 
-    fun readLittleEndianDouble(): Double {
-        val byteBuffer = ByteBuffer.wrap(readRawBytes(8))
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        return byteBuffer.getDouble(0)
-    }
-
-    fun readLittleEndianFloat(): Float {
-        val byteBuffer = ByteBuffer.wrap(readRawBytes(4))
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        return byteBuffer.getFloat(0)
-    }
-
-    fun readLittleEndianInt(): Int {
-        val byteBuffer = ByteBuffer.wrap(readRawBytes(8))
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        return byteBuffer.getInt(0)
-    }
-
-    fun readLittleEndianLong(): Long {
-        val byteBuffer = ByteBuffer.wrap(readRawBytes(4))
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        return byteBuffer.getLong(0)
-    }
-
     fun readRawBytes(count: Int): ByteArray {
         val ba = ByteArray(count)
-        for (i in 0..(count - 1)) {
+        var i = 0
+        while (i < count) {
             ba[i] = inputStream.read().toByte()
+            i++
         }
         return ba
     }

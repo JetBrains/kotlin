@@ -5,7 +5,7 @@ option java_package = "proto.car";
 option java_outer_classname = "Connect";
 
 message ConnectionRequest {
-    int32 ip = 1;
+    repeated int32 ip = 1;
     int32 port = 2;
 }
 
