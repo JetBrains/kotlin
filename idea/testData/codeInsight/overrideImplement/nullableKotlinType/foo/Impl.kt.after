@@ -1,0 +1,9 @@
+interface IBase {
+    fun foo(): Any?
+}
+
+class C : IBase {
+    override fun foo(): Any? {
+        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+    }
+}
