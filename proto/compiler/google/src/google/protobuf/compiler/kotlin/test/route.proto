@@ -5,12 +5,8 @@ option java_package = "proto.car";
 option java_outer_classname = "Route";
 
 message RouteRequest {
-    repeated WayPoint way_points = 1; 
-
-    message WayPoint {
-        int32 distance = 2;
-        int32 angle_delta = 3; 
-    }
+    repeated int32 dinstances = 1; 
+    repeated int32 angle_deltas = 2;
 }
 
 message RouteResponse {

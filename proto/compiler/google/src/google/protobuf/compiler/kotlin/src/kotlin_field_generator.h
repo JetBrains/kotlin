@@ -27,11 +27,11 @@ private:
     void generateSetter(io::Printer * printer) const;
     void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;
 
-    void generateSerializationForPacked     (io::Printer * printer, bool isRead, bool noTag) const;
-    void generateSerializationForRepeated   (io::Printer * printer, bool isRead, bool noTag) const;
-    void generateSerializationForEnums      (io::Printer * printer, bool isRead, bool noTag) const;
-    void generateSerializationForMessages   (io::Printer * printer, bool isRead, bool noTag) const;
-    void generateSerializationForPrimitives (io::Printer * printer, bool isRead, bool noTag) const;
+    void generateSerializationForPacked     (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
+    void generateSerializationForRepeated   (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
+    void generateSerializationForEnums      (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
+    void generateSerializationForMessages   (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
+    void generateSerializationForPrimitives (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
 public:
     ClassGenerator const * enclosingClass;    // class, in which that field is defined
     NameResolver * nameResolver;
@@ -84,8 +84,8 @@ public:
 
     string getWireType() const;
     void generateCode(io::Printer * printer, bool isBuilder) const;
-    void generateSerializationCode(io::Printer * printer, bool isRead = false, bool noTag = false) const;
-    void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false) const;
+    void generateSerializationCode (io::Printer * printer, bool isRead = false, bool noTag = false, bool isField = true) const;
+    void generateSizeEstimationCode(io::Printer * printer, string varName, bool noTag = false, bool isField = true) const;
     FieldGenerator(FieldDescriptor const * descriptor, ClassGenerator const * enclosingClass, NameResolver * nameResolver);
 };
 

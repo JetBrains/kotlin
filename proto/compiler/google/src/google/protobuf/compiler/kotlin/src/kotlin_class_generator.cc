@@ -149,7 +149,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
 
         // concatenate repeated fields
         if (properties[i]->getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
-            printer->Print(vars, "$fieldName$.addAll(other.$fieldName$)\n");
+            printer->Print(vars, "$fieldName$ = $fieldName$.plus((other.$fieldName$))\n");
         }
 
         // Bytes type is handled separately

@@ -17,7 +17,7 @@ namespace kotlin {
 
 string FieldGenerator::getInitValue() const {
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
-        return "mutableListOf()";
+        return getFullType() + "(0)";
     }
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
         return getBuilderFullType() + "().build()";
@@ -58,12 +58,13 @@ FieldGenerator::FieldGenerator(FieldDescriptor const * descriptor, ClassGenerato
         , protoLabel(descriptor->label())
 { }
 
-void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool isRead, bool noTag) const {
+void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool isRead, bool noTag, bool isField) const {
     map <string, string> vars;
     vars["fieldNumber"] = std::to_string(getFieldNumber());
-    vars["builderType"] = getUnderlyingTypeGenerator().getFullType();
+    vars["underlyingType"] = getUnderlyingTypeGenerator().getFullType();
     vars["initValue"] = getUnderlyingTypeGenerator().getInitValue();
     vars["fieldName"] = simpleName;
+    vars["arrayType"] = getFullType();
 
     bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
                        descriptor->type() != FieldDescriptor::TYPE_MESSAGE &&
@@ -74,10 +75,12 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         if (!noTag) {
             printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
         }
-        printer->Print(vars, "val expectedSize = input.readInt32NoTag()\n");
-        printer->Print("var readSize = 0\n");
-        printer->Print(vars, "while(readSize != expectedSize) {\n");
-        printer->Indent();
+        printer->Print(vars, "val expectedByteSize = input.readInt32NoTag()\n");
+
+        /* Now we want to compute element size of array. For this, we are estimating byte size of a single element,
+         * and then divide byte size of whole array by byte size of single element.
+         */
+        printer->Print(vars, "var singleElemSize = 0\n");
 
         /* hack: copy current FieldGenerator and change label to OPTIONAL. Also change name to
            name of iterator in for-loop.
@@ -89,40 +92,44 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
            (then writing CodedOutputStream.writeMessage will be possible).
          */
         FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
+        singleFieldGen.simpleName = "singleElemSize";
+        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
 
-        /* Another dirty hack here: create tmp variable of a given type and read it from input stream
-           then add that tmp var into list.
-           This is made because simple recursive call will generate code that tries to array[i].mergeFrom().
-           This is incorrect because array has old size, while 'i' iterates over new size, which can lead
-           to ArrayOutOfIndex errors.
-        */
-        printer->Print(vars, "var tmp: $builderType$ = $initValue$\n");
+        printer->Print(vars, "val arraySize = expectedByteSize / singleElemSize\n");
+
+        // Allocate new array of estimated size
+        printer->Print(vars, "val newArray = $arrayType$(arraySize)\n");
+
+        printer->Print("var i = 0\n");
+        printer->Print(vars, "while(i < arraySize) {\n");
+        printer->Indent();
+
+        printer->Print(vars, "var tmp: $underlyingType$ = $initValue$\n");
         singleFieldGen.simpleName = "tmp";
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
-        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true);
-        singleFieldGen.generateSizeEstimationCode(printer, /* varName = */
-                                                  "readSize"); // add size of current element to total size //TODO: think is it's ok that we estimate size with tag here
+        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
 
-        printer->Print(vars, "$fieldName$.add(tmp)\n");
+        printer->Print(vars, "$fieldName$[i] = tmp\n");
+        printer->Print("i += 1\n");
 
         printer->Outdent();
         printer->Print("}\n");
     }
     else {
         /**
-       * Protobuf format:
-       * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
-       * - Write tag explicitly
-       * - Write length as int32 (note that tag shouldn't be added)
-       * - Write all repeated elements via recursive call (for primitive types without tags)
-       */
+         * Protobuf format:
+         * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
+         * - Write tag explicitly
+         * - Write length as int32 (note that tag shouldn't be added)
+         * - Write all repeated elements via recursive call (for primitive types without tags)
+         */
         // tag
         printer->Print(vars, "output.writeTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
 
         // length
         printer->Print(vars, "var arrayByteSize = 0\n");
-        generateSizeEstimationCode(printer, "arrayByteSize", /* noTag = */ true);
+        generateSizeEstimationCode(printer, "arrayByteSize", /* noTag = */ true, /* isField = */ false);
         printer->Print(vars, "output.writeInt32NoTag(arrayByteSize)\n");
 
         // all elements
@@ -134,75 +141,14 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         singleFieldGen.simpleName = "item";
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
-        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive);
+        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive, /* isField = */ false);
 
         printer->Outdent(); // for-loop
         printer->Print("}\n");
     }
 }
 
-void FieldGenerator::generateSerializationForRepeated(io::Printer *printer, bool isRead, bool noTag) const {
-    map <string, string> vars;
-    vars["fieldNumber"] = std::to_string(getFieldNumber());
-    vars["builderType"] = getUnderlyingTypeGenerator().getFullType();
-    vars["initValue"] = getUnderlyingTypeGenerator().getInitValue();
-    vars["fieldName"] = simpleName;
-
-    if (isRead) {
-        printer->Print("var readSize = 0\n");
-        /* hack: copy current FieldGenerator and change label to OPTIONAL. Also change name to
-           name of iterator in for-loop.
-           This will allow to re-use this function for generating serialization code for elements of array.
-           More importantly, this will care about nested types too.
-           Efficiently, it inlines serialization code for all underlying types.
-           This hack isn't necessary from the architectural point of view and could be safely
-           removed as soon as target code will support inheritance and interfaces.
-           (then writing CodedOutputStream.writeMessage will be possible).
-         */
-        FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
-
-        /* Another dirty hack here: create tmp variable of a given type and read it from input stream
-           then add that tmp var into list.
-           This is made because simple recursive call will generate code that tries to array[i].mergeFrom().
-           This is incorrect because array has old size, while 'i' iterates over new size, which can lead
-           to ArrayOutOfIndex errors.
-        */
-        printer->Print(vars, "var tmp: $builderType$ = $initValue$\n");
-        singleFieldGen.simpleName = "tmp";
-        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
-
-        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true);
-        singleFieldGen.generateSizeEstimationCode(printer, /* varName = */
-                                                  "readSize", /* noTag = */ true); // add size of current element to total size. Note that
-
-        printer->Print(vars, "$fieldName$.add(tmp)\n");
-    }
-    else {
-       /**
-        * Protobuf format:
-        * - Check if size of array is > 0, because empty repeated fields shouldn't appear in message
-        * - Write tag explicitly
-        * - Write length as int32 (note that tag shouldn't be added)
-        * - Write all repeated elements via recursive call (for primitive types without tags)
-        */
-
-        // all elements
-        printer->Print(vars, "for (item in $fieldName$) {\n");
-        printer->Indent();
-
-        // hack: see above
-        FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
-        singleFieldGen.simpleName = "item";
-        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
-
-        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true);
-
-        printer->Outdent(); // for-loop
-        printer->Print("}\n");
-    }
-}
-
-void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool isRead, bool noTag) const {
+void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool isRead, bool noTag, bool isField) const {
 
     map <string, string> vars;
     vars["converter"] = getEnumFromIntConverter();
@@ -229,7 +175,7 @@ void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool i
     }
 }
 
-void FieldGenerator::generateSerializationForMessages(io::Printer * printer, bool isRead, bool noTag) const {
+void FieldGenerator::generateSerializationForMessages(io::Printer * printer, bool isRead, bool noTag, bool isField) const {
     map <string, string> vars;
     vars["fieldNumber"] = std::to_string(getFieldNumber());
     vars["dollar"] = "$";
@@ -274,7 +220,7 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
     }
 }
 
-void FieldGenerator::generateSerializationForPrimitives(io::Printer * printer, bool isRead, bool noTag) const {
+void FieldGenerator::generateSerializationForPrimitives(io::Printer * printer, bool isRead, bool noTag, bool isField) const {
     map <string, string> vars;
     vars["fieldName"] = simpleName;
     vars["suffix"] = getKotlinFunctionSuffix();
@@ -297,7 +243,7 @@ void FieldGenerator::generateSerializationForPrimitives(io::Printer * printer, b
     }
 }
 
-void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag) const {
+void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead, bool noTag, bool isField) const {
     map <string, string> vars;
     vars["fieldName"] = simpleName;
     vars["initValue"] = getInitValue();
@@ -307,60 +253,50 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
      * Note that it should be first check because of Google's FieldDescriptor structure */
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
         // we shouldn't write fields with default values when writing
-        if (!isRead) {
+        if (!isRead && isField) {
             printer->Print(vars, "if ($fieldName$.size > 0) {\n");
             printer->Indent();
         }
 
         bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
                             descriptor->type() != FieldDescriptor::TYPE_MESSAGE &&
-                            descriptor->type() != FieldDescriptor::TYPE_STRING &&
-                            descriptor->type() != FieldDescriptor::TYPE_ENUM;
+                            descriptor->type() != FieldDescriptor::TYPE_STRING;
         if (isPrimitive) {
-            generateSerializationForPacked(printer, isRead, noTag);
+            generateSerializationForPacked(printer, isRead, noTag, isField);
         }
         else {
-            generateSerializationForRepeated(printer, isRead, noTag);
+            throw UnreachableStateException("Arrays of non-primitive types are not supported");
         }
     }
 
-    /* Then check is current field is enum. We have to handle it separately too, because
-     * we have to pass enums as Int's to CodedStreams as per protobuf-format */
-    else if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
-        // we shouldn't write fields with default values when writing
-        if (!isRead) {
-            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-            printer->Indent();
-        }
-
-        generateSerializationForEnums(printer, isRead, noTag);
-    }
-
-    /* Then check for nested messages. Here we re-use writeTo method, that should be defined in
-     * that message.
-     * Note that readFrom/writeTo methods write message as it's top-level message, i.e. without
-     * any tags. Therefore, we have to prepend tags and size manually. */
-    else if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
-        // we shouldn't write fields with default values when writing
-        if (!isRead) {
-            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-            printer->Indent();
-        }
-
-        generateSerializationForMessages(printer, isRead, noTag);
-    }
-    /* Finally, serialize trivial cases */
     else {
-        // we shouldn't write fields with default values when writing
-        if (!isRead) {
+        // we shouldn't write fair fields with default values
+        if (!isRead && isField) {
             printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
             printer->Indent();
         }
 
-        generateSerializationForPrimitives(printer, isRead, noTag);
+        /* Then check is current field is enum. We have to handle it separately too, because
+         * we have to pass enums as Int's to CodedStreams as per protobuf-format */
+        if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
+            generateSerializationForEnums(printer, isRead, noTag, isField);
+        }
+
+        /* Then check for nested messages. Here we re-use writeTo method, that should be defined in
+         * that message.
+         * Note that readFrom/writeTo methods write message as it's top-level message, i.e. without
+         * any tags. Therefore, we have to prepend tags and size manually. */
+        else if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
+            generateSerializationForMessages(printer, isRead, noTag, isField);
+        }
+
+        /* Finally, serialize trivial cases */
+        else {
+            generateSerializationForPrimitives(printer, isRead, noTag, isField);
+        }
     }
 
-    if (!isRead) {
+    if (!isRead && isField) {
         printer->Outdent();
         printer->Print("}\n");
     }
@@ -392,36 +328,11 @@ void FieldGenerator::generateRepeatedMethods(io::Printer * printer, bool isBuild
 
     // generate indexed setter for builders
     if (isBuilder) {
-        printer->Print(vars, "fun set$elementType$(index: Int, $arg$: $elementType$): $builderName$ {\n");
+        printer->Print(vars, "fun set$fieldName$ByIndex(index: Int, $arg$: $elementType$): $builderName$ {\n");
         printer->Indent();
         printer->Print(vars, "$fieldName$[index] = $arg$\n");
         printer->Print(vars, "return this\n");
         printer->Outdent();
-        printer->Print("}\n");
-    }
-
-    if (isBuilder) {
-        // generate single-add for builders
-        printer->Print(vars, "fun add$elementType$($arg$: $elementType$): $builderName$ {\n");
-        printer->Indent();
-        printer->Print(vars, "$fieldName$.add($arg$)\n"
-                             "return this\n");
-        printer->Outdent();
-        printer->Print(vars, "}\n");
-
-        // generate addAll for builders
-        printer->Print(vars, "fun addAll$elementType$($arg$: Iterable<$elementType$>): $builderName$ {\n");
-        printer->Indent();
-        printer->Print(vars, "for (item in $arg$) {\n");
-        printer->Indent();
-        printer->Print(vars, "$fieldName$.add(item)\n");
-
-        printer->Outdent();     // for-loop
-        printer->Print("}\n");
-
-        printer->Print("return this\n");
-
-        printer->Outdent();     // function body
         printer->Print("}\n");
     }
 }
@@ -430,7 +341,7 @@ string FieldGenerator::getKotlinFunctionSuffix() const {
     return name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type());
 }
 
-void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag) const {
+void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag, bool isField) const {
     map<string, string> vars;
     vars["varName"] = varName;
     vars["fieldName"] = simpleName;
@@ -459,7 +370,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
         singleFieldGen.simpleName = "item";
-        singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag);
+        singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag, /* isField = */ false);
 
         printer->Outdent();     // for-loop
         printer->Print("}\n");
@@ -477,42 +388,38 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         return;
     }
 
+    // If we are generating code for fair field (not for dummy), then we should check for default value
+    // Note that we can't lift that check up, because repeated fields should be treated separately
+    if (isField) {
+        printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+        printer->Indent();
+    }
+
     // Then, call getSize recursively for nested messages
     // TODO: currently suboptimal repeatative calls getSize() are being made. We can optimize it later via caching calls to getSize()
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-        printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-        printer->Indent();
         vars["maybeNoTag"] = noTag ? "NoTag" : "";
         vars["maybeFieldNumber"] = noTag ? "" : std::to_string(getFieldNumber());
         printer->Print(vars, "$varName$ += $fieldName$.getSize$maybeNoTag$($maybeFieldNumber$)"
-                             "\n");
-        printer->Outdent();     // if-clause
-        printer->Print("}\n");
-        return;
+                "\n");
     }
 
+
     // Next, process enums as they should be casted to ints manually
-    if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
-        printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-        printer->Indent();
-
+    else if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
         printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
-
-        printer->Outdent();     // if-clause
-        printer->Print("}\n");
-        return;
     }
 
     // Finally, get size of all primitive types trivially via call to WireFormat in runtime
-    vars["kotlinSuffix"] = getKotlinFunctionSuffix();
-    printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-    printer->Indent();
+    else {
+        vars["kotlinSuffix"] = getKotlinFunctionSuffix();
+        printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size($fieldNumber$, $fieldName$)\n");
+    }
 
-    printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size($fieldNumber$, $fieldName$)\n");
-
-    printer->Outdent();     // if-clause
-    printer->Print("}\n");
-    return;
+    if (isField) {
+        printer->Outdent();     // if-clause
+        printer->Print("}\n");
+    }
 }
 
 FieldDescriptor::Label FieldGenerator::getProtoLabel() const {
@@ -543,7 +450,7 @@ string FieldGenerator::getSimpleType() const {
 
 string FieldGenerator::getFullType() const {
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
-        return "MutableList <" + getUnderlyingTypeGenerator().getFullType() + ">";
+        return getUnderlyingTypeGenerator().getFullType() + "Array";
     }
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE ||
             getProtoType() == FieldDescriptor::TYPE_ENUM) {
