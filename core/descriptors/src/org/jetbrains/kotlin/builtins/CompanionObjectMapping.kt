@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-class CompanionObjectMapping {
+object CompanionObjectMapping {
     private val classesFqNames = linkedSetOf<FqName>()
 
     init {
