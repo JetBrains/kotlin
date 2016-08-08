@@ -78,7 +78,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         executeWhileBlock(condition.firstChild as KtBinaryExpression, bodyExpression.firstChild, scopeDepth, checkConditionBeforeExecute = false)
     }
 
-    private fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
+    fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
@@ -191,6 +191,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth)
     }
 
+
     private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
         val standardType = LLVMMapStandardType(receiverType!!.type!!)
@@ -229,7 +230,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return result
     }
 
-    private fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement): LLVMSingleValue? {
+    fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement?): LLVMSingleValue? {
         val type = receiver.type as LLVMReferenceType
         val clazz = resolveClassOrObjectLocation(type)
         val field = clazz.fieldsIndex[selectorName]
@@ -240,7 +241,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             return result
         }
 
-        val names = parseArgList(call as KtCallExpression, scopeDepth)
+        val names = parseArgList(call!! as KtCallExpression, scopeDepth)
         val typePath = type.location.joinToString(".")
         val types = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
         val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(')}$types"
@@ -486,7 +487,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         }
     }
 
-    private fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue)
+    fun executeBinaryExpression(operator: IElementType, referenceName: KtSimpleNameExpression?, left: LLVMSingleValue, right: LLVMSingleValue)
             = addPrimitiveBinaryOperation(operator, referenceName, left, right)
 
     private fun evaluateElvisOperator(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {

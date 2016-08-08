@@ -1,7 +1,9 @@
 package org.kotlinnative.translator
 
 import com.intellij.psi.PsiElement
+import jdk.nashorn.internal.ir.Block
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
@@ -28,6 +30,7 @@ abstract class StructCodegen(open val state: TranslationState,
     val enumFields = HashMap<String, LLVMVariable>()
 
     val constructorFields = ArrayList<LLVMVariable>()
+    val initializedFields = HashMap<LLVMVariable, KtExpression>()
 
     abstract val type: LLVMReferenceType
     abstract var size: Int
@@ -64,11 +67,15 @@ abstract class StructCodegen(open val state: TranslationState,
         for (declaration in declarations) {
             when (declaration) {
                 is KtProperty -> {
-                    val ktType = state.bindingContext.get(BindingContext.TYPE, declaration.typeReference)!!
+                    val ktType = state.bindingContext.get(BindingContext.TYPE, declaration.typeReference)
+                            ?: state.bindingContext.get(BindingContext.VARIABLE, declaration)!!.type
                     val field = resolveType(declaration, ktType)
                     field.offset = offset
                     offset++
 
+                    if ((declaration.initializer != null) && !(this is ObjectCodegen)){
+                        initializedFields.put(field, declaration.initializer!!)
+                    }
                     fields.add(field)
                     fieldsIndex[field.label] = field
                     size += field.type.size
@@ -133,7 +140,6 @@ abstract class StructCodegen(open val state: TranslationState,
     }
 
     private fun generateLoadArguments(thisField: LLVMVariable) {
-
         val thisVariable = LLVMVariable(thisField.label, thisField.type, thisField.label, LLVMRegisterScope(), pointer = 0)
         codeBuilder.loadArgument(thisVariable, false)
 
@@ -163,6 +169,16 @@ abstract class StructCodegen(open val state: TranslationState,
             }
 
         }
+
+        val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
+        val receiverThis = LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1)
+        for ((variable, initializer) in initializedFields) {
+            val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevel, call = null)!!
+            val right = blockCodegen.evaluateExpression(initializer, scopeDepth = blockCodegen.topLevel)!!
+
+            blockCodegen.executeBinaryExpression(KtTokens.EQ, referenceName = null, left = left, right = right)
+        }
+
     }
 
     private fun generateReturn() {
