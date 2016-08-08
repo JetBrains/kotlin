@@ -1,0 +1,9 @@
+buildscript {
+    ext.kotlin_version = '0.1-SNAPSHOT'
+    repositories {
+        maven { url 'file://' + pathToKotlinPlugin }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}

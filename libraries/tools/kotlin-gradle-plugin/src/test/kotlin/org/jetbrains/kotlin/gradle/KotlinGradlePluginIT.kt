@@ -246,4 +246,20 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains(":compileKotlin UP-TO-DATE")
         }
     }
+
+    @Test
+    fun testMoveClassToOtherModule() {
+        val project = Project("moveClassToOtherModule", GRADLE_VERSION)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Connected to daemon")
+        }
+
+        project.performModifications()
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Connected to daemon")
+        }
+    }
 }
