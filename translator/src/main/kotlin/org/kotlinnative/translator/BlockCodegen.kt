@@ -584,17 +584,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
-        val node = expr.node
+        val expressionKotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
+        val expressionValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)?.getValue(expressionKotlinType)
 
-        val type = when (node.elementType) {
-            KtNodeTypes.BOOLEAN_CONSTANT -> LLVMBooleanType()
-            KtNodeTypes.INTEGER_CONSTANT -> LLVMIntType()
-            KtNodeTypes.FLOAT_CONSTANT -> LLVMDoubleType()
-            KtNodeTypes.CHARACTER_CONSTANT -> LLVMCharType()
-            KtNodeTypes.NULL -> LLVMNullType()
-            else -> throw IllegalArgumentException("Unknown type")
-        }
-        return LLVMConstant(node.firstChildNode.text, type, pointer = 0)
+        val type = LLVMMapStandardType(expressionKotlinType)
+
+        return LLVMConstant(expressionValue?.toString() ?: "", type, pointer = 0)
     }
 
     private fun evaluatePsiElement(element: PsiElement, scopeDepth: Int): LLVMSingleValue? {

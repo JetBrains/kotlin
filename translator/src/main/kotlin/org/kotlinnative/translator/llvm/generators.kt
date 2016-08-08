@@ -1,6 +1,7 @@
 package org.kotlinnative.translator.llvm
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.kotlinnative.translator.llvm.types.*
@@ -22,6 +23,7 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
     type.toString() == "Long" -> LLVMVariable(name, LLVMLongType(), name, scope)
     type.toString() == "Float" -> LLVMVariable(name, LLVMFloatType(), name, scope)
     type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope)
+    type.nameIfStandardType.toString() == "Nothing" -> LLVMVariable(name, LLVMNullType(), name, scope)
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
     type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1)), name, scope, pointer = 1)
     else -> LLVMVariable(name, LLVMReferenceType(type.toString()), name, scope, pointer = 1)
