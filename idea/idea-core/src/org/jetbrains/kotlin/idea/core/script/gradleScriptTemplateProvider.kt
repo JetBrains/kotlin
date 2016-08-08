@@ -23,13 +23,13 @@ import com.intellij.openapi.project.Project
 import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.script.ScriptTemplateProvider
+import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
 import java.util.*
 
-class GradleScriptTemplateProvider(project: Project): ScriptTemplateProvider {
+class GradleScriptTemplateProvider(project: Project): ScriptTemplatesProvider {
 
     private val gradleExeSettings: GradleExecutionSettings? by lazy {
         try {
@@ -62,7 +62,7 @@ class GradleScriptTemplateProvider(project: Project): ScriptTemplateProvider {
     override val version: Int = 1
     override val isValid: Boolean get() = gradleExeSettings?.gradleHome != null
 
-    override val templateClassName: String = "org.gradle.script.lang.kotlin.KotlinBuildScript"
+    override val templateClassNames: Iterable<String> = listOf("org.gradle.script.lang.kotlin.KotlinBuildScript")
     override val dependenciesClasspath: Iterable<String> by lazy {
         gradleExeSettings?.gradleHome?.let { File(it, "lib") }
                 ?.let { if (it.exists()) it else null }

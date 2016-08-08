@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import java.io.File
 import java.net.URLClassLoader
 
-interface ScriptTemplateProvider {
+interface ScriptTemplatesProvider {
 
     // for resolving ambiguities
     val id: String
@@ -31,7 +31,7 @@ interface ScriptTemplateProvider {
 
     val isValid: Boolean
 
-    val templateClassName: String
+    val templateClassNames: Iterable<String>
 
     val resolver: ScriptDependenciesResolver? get() = null
 
@@ -42,33 +42,35 @@ interface ScriptTemplateProvider {
     val environment: Map<String, Any?>?
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<ScriptTemplateProvider>("org.jetbrains.kotlin.scriptTemplateProvider")
+        val EP_NAME = ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplateProvider")
     }
 }
 
 fun makeScriptDefsFromTemplateProviderExtensions(project: Project,
-                                                 errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+                                                 errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromTemplate> =
-        makeScriptDefsFromTemplateProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplateProvider.EP_NAME).extensions.asIterable(),
+        makeScriptDefsFromTemplateProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                             errorsHandler)
 
-fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplateProvider>,
-                                        errorsHandler: ((ScriptTemplateProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplatesProvider>,
+                                        errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromTemplate> {
     val idToVersion = hashMapOf<String, Int>()
-    return providers.filter { it.isValid }.sortedByDescending { it.version }.mapNotNull { provider ->
+    return providers.filter { it.isValid }.sortedByDescending { it.version }.flatMap { provider ->
         try {
             idToVersion.get(provider.id)?.let { ver -> errorsHandler(provider, RuntimeException("Conflicting scriptTemplateProvider ${provider.id}, using one with version $ver")) }
             Logger.getInstance("makeScriptDefsFromTemplateProviders")
-                    .info("[kts] loading script definition ${provider.templateClassName} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
-            val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplateProvider::class.java.classLoader)
-            val cl = loader.loadClass(provider.templateClassName)
-            idToVersion.put(provider.id, provider.version)
-            KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
+                    .info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
+            val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
+            provider.templateClassNames.map {
+                val cl = loader.loadClass(it)
+                idToVersion.put(provider.id, provider.version)
+                KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
+            }
         }
         catch (ex: Exception) {
             errorsHandler(provider, ex)
-            null
+            emptyList<KotlinScriptDefinitionFromTemplate>()
         }
     }
 }
