@@ -36,9 +36,9 @@ enum class E(val v: Int) {
         val COPY = E1.v
     }
 }
-// From KT-13322
+// From KT-13322: cross reference should not be reported here
 object Object1 {
-    val y: Any = Object2.z // z is not yet initialized (?!)
+    val y: Any = Object2.z
     object Object2 {
         val z: Any = Object1.y
     }
