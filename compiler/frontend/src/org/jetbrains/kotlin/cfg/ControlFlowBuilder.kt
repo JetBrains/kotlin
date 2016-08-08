@@ -48,6 +48,8 @@ interface ControlFlowBuilder {
     fun declareVariable(property: KtVariableDeclaration)
     fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode)
 
+    fun declareEnumEntry(enumEntry: KtEnumEntry)
+
     // Labels
     fun createUnboundLabel(): Label
 
@@ -128,6 +130,8 @@ interface ControlFlowBuilder {
             expression: KtExpression,
             operation: PredefinedOperation,
             inputValues: List<PseudoValue>): OperationInstruction
+
+    fun read(element: KtElement, target: AccessTarget, receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction
 
     fun write(
             assignment: KtElement,

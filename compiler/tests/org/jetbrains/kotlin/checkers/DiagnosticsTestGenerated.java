@@ -691,6 +691,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("tailRecursionComplex.kt")
+        public void testTailRecursionComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/tailRecursionComplex.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
@@ -3099,6 +3105,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("constructorPropertyInterdependence.kt")
+            public void testConstructorPropertyInterdependence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/constructorPropertyInterdependence.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("definiteReturnInWhen.kt")
             public void testDefiniteReturnInWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturnInWhen.kt");
@@ -3114,6 +3126,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("elvisNotProcessed.kt")
             public void testElvisNotProcessed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/elvisNotProcessed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumInterdependence.kt")
+            public void testEnumInterdependence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumInterdependence.kt");
                 doTest(fileName);
             }
 
@@ -13635,6 +13653,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("GenericClassVsPackage.kt")
             public void testGenericClassVsPackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/GenericClassVsPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("JavaQualifier.kt")
+            public void testJavaQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/JavaQualifier.kt");
                 doTest(fileName);
             }
 

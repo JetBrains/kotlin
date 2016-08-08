@@ -274,6 +274,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
         }
 
+        override fun declareEnumEntry(enumEntry: KtEnumEntry) {
+            add(VariableDeclarationInstruction(enumEntry, currentScope))
+        }
+
         override fun loadUnit(expression: KtExpression) {
             add(LoadUnitValueInstruction(expression, currentScope))
         }
@@ -331,21 +335,19 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             labelCount = pseudocode.repeatPart(startLabel, finishLabel, labelCount)
         }
 
-        override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue {
-            return read(expression)
-        }
+        override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?) = read(expression)
 
-        override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue {
-            return read(expression)
-        }
+        override fun createAnonymousObject(expression: KtObjectLiteralExpression) = read(expression)
 
-        override fun createLambda(expression: KtFunction): InstructionWithValue {
-            return read(if (expression is KtFunctionLiteral) expression.getParent() as KtLambdaExpression else expression)
-        }
+        override fun createLambda(expression: KtFunction) =
+                read(if (expression is KtFunctionLiteral) expression.getParent() as KtLambdaExpression else expression)
 
-        override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue {
-            return if (inputValues.isEmpty()) read(expression) else magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE)
-        }
+        override fun loadStringTemplate(
+                expression: KtStringTemplateExpression,
+                inputValues: List<PseudoValue>
+        ): InstructionWithValue =
+                if (inputValues.isEmpty()) read(expression)
+                else magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE)
 
         override fun magic(
                 instructionElement: KtElement,
@@ -367,9 +369,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun readVariable(
                 expression: KtExpression,
                 resolvedCall: ResolvedCall<*>,
-                receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction {
-            return read(expression, resolvedCall, receiverValues)
-        }
+                receiverValues: Map<PseudoValue, ReceiverValue>
+        ) = read(expression, resolvedCall, receiverValues)
 
         override fun call(
                 valueElement: KtElement,
@@ -404,16 +405,19 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
+        override fun read(
+                element: KtElement,
+                target: AccessTarget,
+                receiverValues: Map<PseudoValue, ReceiverValue>
+        ) = ReadValueInstruction(element, currentScope, target, receiverValues, valueFactory).apply {
+            add(this)
+        }
+
         private fun read(
                 expression: KtExpression,
                 resolvedCall: ResolvedCall<*>? = null,
-                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap<PseudoValue, ReceiverValue>()): ReadValueInstruction {
-            val accessTarget = if (resolvedCall != null) AccessTarget.Call(resolvedCall) else AccessTarget.BlackBox
-            val instruction = ReadValueInstruction(
-                    expression, currentScope, accessTarget, receiverValues, valueFactory)
-            add(instruction)
-            return instruction
-        }
+                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap<PseudoValue, ReceiverValue>()
+        ) = read(expression, if (resolvedCall != null) AccessTarget.Call(resolvedCall) else AccessTarget.BlackBox, receiverValues)
     }
 
     private class TryFinallyBlockInfo(private val finallyBlock: GenerationTrigger) : BlockInfo() {
