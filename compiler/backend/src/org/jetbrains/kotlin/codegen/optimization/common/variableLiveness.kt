@@ -27,10 +27,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import java.util.*
 
 
-class VariableLivenessFrame(val maxLocals: Int) {
+class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame> {
     private val bitSet = BitSet(maxLocals)
 
-    fun mergeFrom(other: VariableLivenessFrame) {
+    override fun mergeFrom(other: VariableLivenessFrame) {
         bitSet.or(other.bitSet)
     }
 
@@ -51,48 +51,24 @@ class VariableLivenessFrame(val maxLocals: Int) {
 
     override fun hashCode() = bitSet.hashCode()
 }
-
-fun analyzeLiveness(node: MethodNode): Array<VariableLivenessFrame> {
+fun analyzeLiveness(node: MethodNode): List<VariableLivenessFrame> {
     val typeAnnotatedFrames = MethodTransformer.analyze("fake", node, OptimizationBasicInterpreter())
+    return analyze(node, object : BackwardAnalysisInterpreter<VariableLivenessFrame> {
+        override fun newFrame(maxLocals: Int) = VariableLivenessFrame(maxLocals)
+        override fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) = defVar(frame, insn)
+        override fun use(frame: VariableLivenessFrame, insn: AbstractInsnNode) =
+                useVar(frame, insn, node, typeAnnotatedFrames[node.instructions.indexOf(insn)])
 
-    val graph = ControlFlowGraph.build(node)
-    val insnList = node.instructions
-    val frames = Array(insnList.size()) { VariableLivenessFrame(node.maxLocals) }
-    val insnArray = insnList.toArray()
-
-    // see Figure 9.16 from Dragon book
-    var wereChanges: Boolean
-
-    do {
-        wereChanges = false
-        for (insn in insnArray) {
-            val index = insnList.indexOf(insn)
-            val newFrame = VariableLivenessFrame(node.maxLocals)
-            for (successorIndex in graph.getSuccessorsIndices(insn)) {
-                newFrame.mergeFrom(frames[successorIndex])
-            }
-
-            def(newFrame, insn)
-            use(newFrame, insn, node, typeAnnotatedFrames[index])
-
-            if (frames[index] != newFrame) {
-                frames[index] = newFrame
-                wereChanges = true
-            }
-        }
-
-    } while (wereChanges)
-
-    return frames
+    })
 }
 
-private fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
+private fun defVar(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
     if (insn is VarInsnNode && insn.isStoreOperation()) {
         frame.markDead(insn.`var`)
     }
 }
 
-private fun use(
+private fun useVar(
         frame: VariableLivenessFrame,
         insn: AbstractInsnNode,
         node: MethodNode,
