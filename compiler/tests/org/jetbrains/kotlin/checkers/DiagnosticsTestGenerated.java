@@ -3212,6 +3212,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/propertyAccess.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("twoSecondaryConstructors.kt")
+            public void testTwoSecondaryConstructors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/twoSecondaryConstructors.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis")
