@@ -33,16 +33,19 @@ class FunctionCodegen(override val state: TranslationState,
             LLVMInstanceOfStandardType(it.name.toString(), it.type)
         })
 
+        returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
+        external = isExternal()
+        name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
+
         if (isExtensionDeclaration) {
             val receiverType = descriptor.extensionReceiverParameter!!.type
             val translatorType = LLVMMapStandardType(receiverType)
             functionNamePrefix += translatorType.toString() + "."
+
+            val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
+            extensionFunctionsOfThisType.put(name, this)
+            state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
         }
-
-
-        returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
-        external = isExternal()
-        name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
 
         val retType = returnType!!.type
         when (retType) {
@@ -97,10 +100,6 @@ class FunctionCodegen(override val state: TranslationState,
             val receiverParameter = state.bindingContext.get(BindingContext.FUNCTION, function)!!.extensionReceiverParameter!!
             val receiverType = receiverParameter.type
             val translatorType = LLVMMapStandardType(receiverType)
-
-            val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
-            extensionFunctionsOfThisType.put(name, this)
-            state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
 
             val classVal = LLVMVariable("classvariable.this", translatorType, pointer = 0)
             variableManager.addVariable("this", classVal, 0)
