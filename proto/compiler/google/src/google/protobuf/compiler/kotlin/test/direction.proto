@@ -17,5 +17,5 @@ message DirectionRequest {
 
 message DirectionResponse {
     int32 code = 1;
-    string errorMsg = 2;
+    int32 errorMsg = 2;
 }

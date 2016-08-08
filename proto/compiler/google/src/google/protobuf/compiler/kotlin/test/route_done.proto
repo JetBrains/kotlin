@@ -6,5 +6,5 @@ option java_outer_classname = "RouteDone";
 
 message RouteDoneResponse {
     int32 code = 1;
-    string errorMsg = 2;
+    int32 errorMsg = 2;
 }

@@ -8,12 +8,12 @@ message RouteRequest {
     repeated WayPoint way_points = 1; 
 
     message WayPoint {
-        double distance = 2;
-        double angle_delta = 3; 
+        int32 distance = 2;
+        int32 angle_delta = 3; 
     }
 }
 
 message RouteResponse {
     int32 code = 1;
-    string errorMsg = 2;
+    int32 errorMsg = 2;
 }
