@@ -68,55 +68,45 @@ public interface KType {
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#type-projections)
  * for more information.
  */
-public sealed class KTypeProjection {
-    /**
-     * The type specified in the projection, or `null` if this is a star projection.
-     */
-    public abstract val type: KType?
+public data class KTypeProjection private constructor(
+        /**
+         * The use-site variance specified in the projection, or `null` if this is a star projection.
+         */
+        public val variance: KVariance?,
+        /**
+         * The type specified in the projection, or `null` if this is a star projection.
+         */
+        public val type: KType?
+) {
+    public companion object {
+        /**
+         * Star projection, denoted by the `*` character.
+         * For example, in the type `KClass<*>`, `*` is the star projection.
+         * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#star-projections)
+         * for more information.
+         */
+        public val STAR: KTypeProjection = KTypeProjection(null, null)
 
-    /**
-     * The use-site variance specified in the projection, or `null` if this is a star projection.
-     */
-    public abstract val variance: KVariance?
+        /**
+         * Creates an invariant projection of a given type. Invariant projection is just the type itself,
+         * without any use-site variance modifiers applied to it.
+         * For example, in the type `Set<String>`, `String` is an invariant projection of the type represented by the class `String`.
+         */
+        public fun invariant(type: KType): KTypeProjection =
+                KTypeProjection(KVariance.INVARIANT, type)
 
-    /**
-     * Invariant projection of a type. Invariant projection is just the type itself, without any use-site variance modifiers applied to it.
-     * For example, in the type `Set<String>`, `String` is an invariant projection of the type represented by the class `String`.
-     */
-    public data class Invariant(override val type: KType) : KTypeProjection() {
-        override val variance: KVariance?
-            get() = KVariance.INVARIANT
-    }
+        /**
+         * Creates a contravariant projection of a given type, denoted by the `in` modifier applied to a type.
+         * For example, in the type `MutableList<in Number>`, `in Number` is a contravariant projection of the type of class `Number`.
+         */
+        public fun contravariant(type: KType): KTypeProjection =
+                KTypeProjection(KVariance.IN, type)
 
-    /**
-     * Contravariant projection of a type, denoted by the `in` modifier applied to a type.
-     * For example, in the type `MutableList<in Number>`, `in Number` is a contravariant projection of the type of class `Number`.
-     */
-    public data class In(override val type: KType) : KTypeProjection() {
-        override val variance: KVariance?
-            get() = KVariance.IN
-    }
-
-    /**
-     * Covariant projection of a type, denoted by the `out` modifier applied to a type.
-     * For example, in the type `Array<out Number>`, `out Number` is a covariant projection of the type of class `Number`.
-     */
-    public data class Out(override val type: KType) : KTypeProjection() {
-        override val variance: KVariance?
-            get() = KVariance.OUT
-    }
-
-    /**
-     * Star projection, denoted by the `*` character.
-     * For example, in the type `KClass<*>`, `*` is the star projection.
-     * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#star-projections)
-     * for more information.
-     */
-    public object Star : KTypeProjection() {
-        override val type: KType?
-            get() = null
-
-        override val variance: KVariance?
-            get() = null
+        /**
+         * Creates a covariant projection of a given type, denoted by the `out` modifier applied to a type.
+         * For example, in the type `Array<out Number>`, `out Number` is a covariant projection of the type of class `Number`.
+         */
+        public fun covariant(type: KType): KTypeProjection =
+                KTypeProjection(KVariance.OUT, type)
     }
 }

@@ -1,8 +1,8 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 fun string(): String = null!!
 
@@ -19,10 +19,10 @@ fun box(): String {
 
     assertEquals(
             listOf(
-                    KTypeProjection.Invariant(string),
-                    KTypeProjection.In(string),
-                    KTypeProjection.Out(string),
-                    KTypeProjection.Star
+                    KTypeProjection.invariant(string),
+                    KTypeProjection.contravariant(string),
+                    KTypeProjection.covariant(string),
+                    KTypeProjection.STAR
             ),
             ::projections.returnType.arguments
     )
@@ -32,11 +32,11 @@ fun box(): String {
     )
 
     val outNumber = ::array.returnType.arguments.single()
-    assertTrue(outNumber is KTypeProjection.Out)
+    assertEquals(KVariance.OUT, outNumber.variance)
     assertEquals(Number::class, outNumber.type?.classifier)
 
-    // There should be no use-site projection, despite the fact that the corresponding parameter has 'out' variance
-    assertTrue(::list.returnType.arguments.single() is KTypeProjection.Invariant)
+    // There should be no use-site variance, despite the fact that the corresponding parameter has 'out' variance
+    assertEquals(KVariance.INVARIANT, ::list.returnType.arguments.single().variance)
 
     return "OK"
 }

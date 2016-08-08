@@ -66,11 +66,11 @@ private fun createKotlinType(
     val parameters = typeConstructor.parameters
     return KotlinTypeFactory.simpleType(typeAnnotations, typeConstructor, arguments.mapIndexed { index, typeProjection ->
         val type = (typeProjection.type as KTypeImpl?)?.type
-        when (typeProjection) {
-            is KTypeProjection.Invariant -> TypeProjectionImpl(Variance.INVARIANT, type!!)
-            is KTypeProjection.In -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)
-            is KTypeProjection.Out -> TypeProjectionImpl(Variance.OUT_VARIANCE, type!!)
-            is KTypeProjection.Star -> StarProjectionImpl(parameters[index])
+        when (typeProjection.variance) {
+            KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)
+            KVariance.IN -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)
+            KVariance.OUT -> TypeProjectionImpl(Variance.OUT_VARIANCE, type!!)
+            null -> StarProjectionImpl(parameters[index])
         }
     }, nullable)
 }
@@ -89,5 +89,5 @@ val KClassifier.starProjectedType: KType
         val typeParameters = descriptor.typeConstructor.parameters
         if (typeParameters.isEmpty()) return createType() // TODO: optimize, get defaultType from ClassDescriptor
 
-        return createType(typeParameters.map { KTypeProjection.Star })
+        return createType(typeParameters.map { KTypeProjection.STAR })
     }

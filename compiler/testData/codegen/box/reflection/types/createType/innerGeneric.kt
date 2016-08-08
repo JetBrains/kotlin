@@ -15,7 +15,7 @@ class A<T1> {
 fun foo(): A<Int>.B<Double, Float>.C<Long> = null!!
 
 fun box(): String {
-    fun KClass<*>.inv() = KTypeProjection.Invariant(this.createType())
+    fun KClass<*>.inv() = KTypeProjection.invariant(this.createType())
 
     val type = A.B.C::class.createType(listOf(Long::class.inv(), Double::class.inv(), Float::class.inv(), Int::class.inv()))
     assertEquals("A<kotlin.Int>.B<kotlin.Double, kotlin.Float>.C<kotlin.Long>", type.toString())

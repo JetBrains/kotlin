@@ -80,7 +80,7 @@ internal class KTypeImpl(
 
             return typeArguments.mapIndexed { i, typeProjection ->
                 if (typeProjection.isStarProjection) {
-                    KTypeProjection.Star
+                    KTypeProjection.STAR
                 }
                 else {
                     val type = KTypeImpl(typeProjection.type) {
@@ -105,9 +105,9 @@ internal class KTypeImpl(
                         }
                     }
                     when (typeProjection.projectionKind) {
-                        Variance.INVARIANT -> KTypeProjection.Invariant(type)
-                        Variance.IN_VARIANCE -> KTypeProjection.In(type)
-                        Variance.OUT_VARIANCE -> KTypeProjection.Out(type)
+                        Variance.INVARIANT -> KTypeProjection.invariant(type)
+                        Variance.IN_VARIANCE -> KTypeProjection.contravariant(type)
+                        Variance.OUT_VARIANCE -> KTypeProjection.covariant(type)
                     }
                 }
             }

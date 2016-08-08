@@ -20,7 +20,7 @@ class Outer<O> {
 }
 
 fun box(): String {
-    val p = KTypeProjection.Star
+    val p = KTypeProjection.STAR
 
     test(String::class, listOf(p))
     test(String::class, listOf(p, p))

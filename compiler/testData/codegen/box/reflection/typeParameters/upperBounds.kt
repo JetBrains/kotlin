@@ -1,8 +1,8 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DefaultBound<T>
 class NullableAnyBound<T : Any?>
@@ -33,7 +33,7 @@ fun box(): String {
 
         assertEquals(Comparable::class, cm.classifier)
         val cmt = cm.arguments.single()
-        assertTrue(cmt is KTypeProjection.Invariant)
+        assertEquals(KVariance.INVARIANT, cmt.variance)
         assertEquals(it, cmt.type!!.classifier)
     }
 
@@ -51,7 +51,7 @@ fun box(): String {
     val recursiveGenericBound = recursiveGenericTypeParameter.upperBounds.single()
     assertEquals(Enum::class, recursiveGenericBound.classifier)
     recursiveGenericBound.arguments.single().let { projection ->
-        assertTrue(projection is KTypeProjection.Invariant)
+        assertEquals(KVariance.INVARIANT, projection.variance)
         assertEquals(recursiveGenericTypeParameter, projection.type!!.classifier)
     }
 
