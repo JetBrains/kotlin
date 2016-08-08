@@ -3564,6 +3564,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonAbstractInInterface.kt")
+                public void testNonAbstractInInterface() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/nonAbstractInInterface.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("objectMemberValNoReceiver.kt")
                 public void testObjectMemberValNoReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/objectMemberValNoReceiver.kt");

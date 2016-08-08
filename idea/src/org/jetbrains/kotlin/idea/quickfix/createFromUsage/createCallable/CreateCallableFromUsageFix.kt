@@ -141,7 +141,10 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
-        if (receiverInfo is TypeInfo.Empty) return !isExtension
+        if (receiverInfo is TypeInfo.Empty) {
+            if (callableInfos.any { it is PropertyInfo && it.possibleContainers.isEmpty() }) return false
+            return !isExtension
+        }
         // TODO: Remove after companion object extensions are supported
         if (isExtension && receiverInfo.staticContextRequired) return false
 
@@ -158,6 +161,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 isFunction && insertToJavaInterface && receiverInfo.staticContextRequired ->
                     false
                 !isExtension && declaration is KtTypeParameter -> false
+                propertyInfo != null && !propertyInfo.isAbstract && declaration is KtClass && declaration.isInterface() -> false
                 else ->
                     declaration != null
             }
