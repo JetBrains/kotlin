@@ -21,8 +21,10 @@ import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 
 
 private fun comparableVersionStr(version: String) =
@@ -107,6 +109,8 @@ class CompilerServicesCleanup() {
         if (SystemUtils.IS_OS_WINDOWS) {
             cleanJarCache()
         }
+
+        (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
 
         // making cleanup of static objects only on recognized versions of gradle and if version < 2.4
         // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
