@@ -30,7 +30,7 @@ for i in $( ls "$DIRECTORY/input" $1); do
 	clang-3.6 -S -emit-llvm $DIRECTORY/linked/main.c -o $DIRECTORY/linked/main.ll -Wno-implicit-function-declaration
 	rm -f $DIRECTORY/linked/main.c
 
-	cp ./src/main/resources/kotlib/linked/* $DIRECTORY/linked/
+	cp ./src/main/resources/kotlib/linked/x86/* $DIRECTORY/linked/
 
 	if [ -f "$DIRECTORY/c/$TEST.c" ]
 	then
