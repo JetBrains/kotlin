@@ -84,6 +84,7 @@
 - [`KT-13207`](https://youtrack.jetbrains.com/issue/KT-13207) Exception on safe delete from intention in 2016.2
 - [`KT-12887`](https://youtrack.jetbrains.com/issue/KT-12887) "Extend selection" should select call's invoked expression
 - [`KT-13383`](https://youtrack.jetbrains.com/issue/KT-13383), [`KT-13379`](https://youtrack.jetbrains.com/issue/KT-13379) Override/Implement Members: Do not make return type non-nullable if base return type is explicitly nullable
+- [`KT-13218`](https://youtrack.jetbrains.com/issue/KT-13218) Extract Function: Fix AssertionError on callable references
 - Fix exception when choose Gradle configurer after project is synced
 - Allow configuring Kotlin in Gradle module without Kotlin sources
 - Show all Kotlin annotations when browsing hierarchy of "java.lang.Annotation"
