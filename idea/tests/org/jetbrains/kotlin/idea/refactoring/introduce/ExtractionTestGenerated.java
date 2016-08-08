@@ -831,6 +831,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("callableReferenceSelector.kt")
+            public void testCallableReferenceSelector() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/callableReferenceSelector.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("calleeExpression.kt")
             public void testCalleeExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/calleeExpression.kt");
