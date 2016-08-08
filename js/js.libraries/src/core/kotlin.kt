@@ -92,7 +92,9 @@ internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>):
 }
 
 // no singleton map implementation in js, return map as is
-internal inline fun <K, V> Map<K, V>.toSingletonMap(): Map<K, V> = this
+internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
+
+internal inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
 
 internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
         if (isVarargs)

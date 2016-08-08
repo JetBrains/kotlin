@@ -445,6 +445,7 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
  */
 public fun <K, V> Map<out K, V>.toMap(): Map<K, V> = when (size) {
     0 -> emptyMap()
+    1 -> toSingletonMap()
     else -> toMutableMap()
 }
 
@@ -551,11 +552,16 @@ public inline operator fun <K, V> MutableMap<in K, in V>.plusAssign(map: Map<K, 
 // do not expose for now @kotlin.internal.InlineExposed
 internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
     0 -> emptyMap()
-    1 -> toSingletonMap()
+    1 -> toSingletonMapOrSelf()
     else -> this
 }
 
-// creates a singleton copy of map, if it there is specialization available in target platform
+// creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
 @kotlin.jvm.JvmVersion
-internal fun <K, V> Map<K, V>.toSingletonMap(): Map<K, V>
-        = with (entries.iterator().next()) { Collections.singletonMap(key, value) }
+@kotlin.internal.InlineOnly
+internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
+
+// creates a singleton copy of map
+@kotlin.jvm.JvmVersion
+internal fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
+    = with (entries.iterator().next()) { Collections.singletonMap(key, value) }
