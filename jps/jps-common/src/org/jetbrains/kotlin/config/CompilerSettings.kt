@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.config
 
 class CompilerSettings {
     var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
+    var scriptTemplates: String = ""
+    var scriptTemplatesClasspath: String = ""
     var copyJsLibraryFiles: Boolean = true
     var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
