@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.kotlinnative.translator.llvm.*
@@ -100,7 +101,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateThisExpression(): LLVMSingleValue? {
-        return variableManager.getLLVMvalue("this")
+        return variableManager.get("this")
     }
 
     fun evaluateStringTemplateExpression(expr: KtStringTemplateExpression): LLVMSingleValue? {
@@ -172,7 +173,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         var receiver = when (receiverExpr) {
             is KtCallExpression,
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
-            else -> variableManager.getLLVMvalue(receiverName)
+            else -> variableManager.get(receiverName)
         }
 
         if (receiver != null) {
@@ -212,7 +213,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateClassScopedDotExpression(clazz: ClassCodegen, selector: KtExpression, scopeDepth: Int): LLVMSingleValue? = when (selector) {
-
         is KtCallExpression -> evaluateCallExpression(selector, scopeDepth, clazz)
         is KtReferenceExpression -> evaluateReferenceExpression(selector, scopeDepth, clazz)
         else -> throw UnsupportedOperationException()
@@ -221,12 +221,10 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateNameReferenceExpression(expr: KtNameReferenceExpression, classScope: ClassCodegen? = null): LLVMSingleValue? {
         val fieldName = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)!!.name.toString()
         val field = classScope!!.companionFieldsIndex[fieldName]
-
         val companionObject = classScope.companionFieldsSource[fieldName]
-
-        val receiver = variableManager.getLLVMvalue(companionObject!!.fullName)!!
-
+        val receiver = variableManager.get(companionObject!!.fullName)!!
         val result = codeBuilder.getNewVariable(field!!.type, pointer = 1)
+
         codeBuilder.loadClassField(result, receiver, field.offset)
         return result
     }
@@ -282,10 +280,22 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return indexVariable
     }
 
-    private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when (expr) {
-        is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
-        else -> if ((expr is KtNameReferenceExpression) && (classScope != null)) evaluateNameReferenceExpression(expr, classScope)
-        else variableManager.getLLVMvalue(expr.firstChild.text)
+    private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when {
+        expr is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
+        isEnumClassField(expr) -> resolveEnumClassField(expr)
+        (expr is KtNameReferenceExpression) && (classScope != null) -> evaluateNameReferenceExpression(expr, classScope)
+        else -> variableManager.get(expr.firstChild.text)
+    }
+
+    private fun resolveEnumClassField(expr: KtReferenceExpression): LLVMSingleValue {
+        val field = state.classes[expr.getType(state.bindingContext).toString()]!!.enumFields[expr.text]!!
+        return codeBuilder.loadAndGetVariable(codeBuilder.loadAndGetVariable(field))
+    }
+
+    private fun isEnumClassField(expr: KtReferenceExpression): Boolean {
+        val name = expr.getType(state.bindingContext)?.toString() ?: return false
+        val clazz = state.classes[name] ?: return false
+        return clazz.enumFields.containsKey(expr.text)
     }
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? {
@@ -308,7 +318,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             return evaluateConstructorCallExpression(LLVMVariable(name, descriptor.type, scope = LLVMVariableScope()), args)
         }
 
-        val localFunction = variableManager.getLLVMvalue(name)
+        val localFunction = variableManager.get(name)
         if (localFunction != null) {
             val type = localFunction.type as LLVMFunctionType
             val args = loadArgsIfRequired(names, type.arguments)
@@ -321,7 +331,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             if (classDescriptor.companionMethods.containsKey(methodShortName)) {
                 val descriptor = classDescriptor.companionMethods[methodShortName] ?: return null
                 val parentDescriptor = descriptor.parentCodegen!!
-                val receiver = variableManager.getLLVMvalue(parentDescriptor.fullName)!!
+                val receiver = variableManager.get(parentDescriptor.fullName)!!
                 val methodFullName = descriptor.name
 
                 val returnType = descriptor.returnType!!.type
@@ -613,7 +623,9 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateWhenItem(item: KtWhenEntry, target: LLVMSingleValue, resultVariable: LLVMVariable, elseLabel: LLVMLabel, endLabel: LLVMLabel, isElse: Boolean, scopeDepth: Int) {
         val successConditionsLabel = codeBuilder.getNewLabel(prefix = "when_condition_success")
         var nextLabel = codeBuilder.getNewLabel(prefix = "when_condition_condition")
+
         codeBuilder.addUnconditionalJump(nextLabel)
+
         for (condition in item.conditions) {
             codeBuilder.markWithLabel(nextLabel)
             nextLabel = codeBuilder.getNewLabel(prefix = "when_condition_condition")
@@ -623,10 +635,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
             codeBuilder.addCondition(conditionResult, successConditionsLabel, nextLabel)
         }
+
         codeBuilder.markWithLabel(nextLabel)
         codeBuilder.addComment("last condition item")
         codeBuilder.addUnconditionalJump(if (isElse) successConditionsLabel else elseLabel)
         codeBuilder.markWithLabel(successConditionsLabel)
+
         val successExpression = evaluateExpression(item.expression, scopeDepth + 1)
         codeBuilder.storeVariable(resultVariable, successExpression ?: return)
         codeBuilder.addUnconditionalJump(endLabel)
@@ -638,9 +652,11 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val whenExpression = expr.subjectExpression
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
         val expressionType = LLVMMapStandardType(kotlinType)
+        if (state.classes.containsKey(kotlinType.toString())) {
+            (expressionType as LLVMReferenceType).prefix = "class"
+        }
 
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
-
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
         codeBuilder.allocStackPointedVarAsValue(resultVariable)
 

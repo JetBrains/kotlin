@@ -1,7 +1,9 @@
 package org.kotlinnative.translator.llvm
 
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.kotlinnative.translator.llvm.types.*
+import org.kotlinnative.translator.llvm.types.LLVMCharType
+import org.kotlinnative.translator.llvm.types.LLVMIntType
+import org.kotlinnative.translator.llvm.types.LLVMStringType
+import org.kotlinnative.translator.llvm.types.LLVMType
 
 class LLVMBuilder(val arm: Boolean) {
     private val POINTER_SIZE = 4
@@ -28,9 +30,9 @@ class LLVMBuilder(val arm: Boolean) {
         }
     }
 
-    fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null): LLVMVariable {
+    fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null, scope: LLVMScope = LLVMRegisterScope()): LLVMVariable {
         variableCount++
-        return LLVMVariable("var$variableCount", type, kotlinName, LLVMRegisterScope(), pointer)
+        return LLVMVariable("var$variableCount", type, kotlinName, scope, pointer)
     }
 
     fun getNewLabel(scope: LLVMScope = LLVMRegisterScope(), prefix: String): LLVMLabel {
@@ -181,9 +183,12 @@ class LLVMBuilder(val arm: Boolean) {
         localCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
-    fun declareGlobalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {
-        localCode.appendln("$variable = global ${variable.type} $defaultValue, align ${variable.type.align}")
+    fun defineGlobalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {
+        localCode.appendln("$variable = global ${variable.getType()} $defaultValue, align ${variable.type.align}")
     }
+
+    fun makeStructInitializer(args: List<LLVMVariable>, values: List<String>)
+            = "{ ${ args.mapIndexed { i: Int, variable: LLVMVariable -> "${variable.type} ${values[i]}" }.joinToString() } }"
 
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(source.pointer > 0)
