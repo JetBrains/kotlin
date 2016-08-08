@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.explicateAsText
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.and
@@ -83,11 +82,28 @@ internal fun checkRedeclarations(
         result: MutableList<UsageInfo>
 ) {
     fun getSiblingWithNewName(): DeclarationDescriptor? {
+        val containingDescriptor = descriptor.containingDeclaration
+
         if (descriptor is ValueParameterDescriptor) {
-            return descriptor.containingDeclaration.valueParameters.firstOrNull { it.name.asString() == newName }
+            return (containingDescriptor as CallableDescriptor).valueParameters.firstOrNull { it.name.asString() == newName }
         }
 
-        val containingDescriptor = descriptor.containingDeclaration
+        if (descriptor is TypeParameterDescriptor) {
+            val typeParameters = when (containingDescriptor) {
+                is ClassDescriptor -> containingDescriptor.declaredTypeParameters
+                is CallableDescriptor -> containingDescriptor.typeParameters
+                else -> emptyList()
+            }
+            typeParameters.firstOrNull { it.name.asString() == newName }?.let { return it }
+
+            val containingDeclaration = (containingDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtDeclaration
+                                        ?: return null
+            val dummyVar = KtPsiFactory(containingDeclaration).createProperty("val foo: $newName")
+            val outerScope = containingDeclaration.getResolutionScope()
+            val context = dummyVar.analyzeInContext(outerScope, containingDeclaration)
+            return context[BindingContext.VARIABLE, dummyVar]?.type?.constructor?.declarationDescriptor
+        }
+
         val containingScope = when (containingDescriptor) {
             is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
             is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
