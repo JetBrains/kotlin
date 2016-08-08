@@ -1815,6 +1815,42 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noAnnotationForTypeBound.kt")
+                public void testNoAnnotationForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noAnnotationForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAnnotationForTypeConstraint.kt")
+                public void testNoAnnotationForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noAnnotationForTypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noEnumForTypeBound.kt")
+                public void testNoEnumForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noEnumForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noEnumForTypeConstraint.kt")
+                public void testNoEnumForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noEnumForTypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noObjectForTypeBound.kt")
+                public void testNoObjectForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noObjectForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noObjectForTypeConstraint.kt")
+                public void testNoObjectForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noObjectForTypeConstraint.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("objectNotQualifierNoTypeArgs.kt")
                 public void testObjectNotQualifierNoTypeArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/objectNotQualifierNoTypeArgs.kt");
