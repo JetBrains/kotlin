@@ -9,6 +9,8 @@ where possible options include:
   -no-reflect                Don't include Kotlin reflection implementation into classpath
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
+  -script-templates <comma separated class names>
+                             Script definition template classes
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for runtime libraries discovery
   -module-name               Module name
   -jvm-target <version>      Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
