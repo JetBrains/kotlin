@@ -20,15 +20,22 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrClass : IrCompoundDeclaration {
+interface IrClass : IrCompoundDeclaration, IrMemberDeclaration {
     override val descriptor: ClassDescriptor
 }
 
 class IrClassImpl(
         sourceLocation: SourceLocation,
+        kind: IrDeclarationKind,
         override val descriptor: ClassDescriptor
-) : IrCompoundDeclarationBase(sourceLocation), IrClass {
+) : IrCompoundDeclarationBase(sourceLocation, kind), IrClass {
+    override var parent: IrCompoundDeclaration? = null
+
+    override fun setTreeLocation(parent: IrCompoundDeclaration?, index: Int) {
+        this.parent = parent
+        this.index = index
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 }
-

@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir
+package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.*
 
-interface IrElement {
-    val sourceLocation: SourceLocation
-    val parent: IrElement?
+class PairListImpl<T>(val first: T, val second: T) : AbstractList<T>() {
+    override val size: Int get() = 2
 
-    fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
-    fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D): Unit
+    override fun get(index: Int): T =
+            when (index) {
+                0 -> first
+                1 -> second
+                else -> throw IndexOutOfBoundsException(index.toString())
+            }
 }
 
-abstract class IrElementBase(override val sourceLocation: SourceLocation) : IrElement
+fun <T> pairList(first: T, second: T): List<T> =
+        PairListImpl(first, second)

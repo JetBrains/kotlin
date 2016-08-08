@@ -17,19 +17,33 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.NO_LOCATION
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-interface IrModule : IrCompoundDeclaration {
+interface IrModule : IrDeclaration {
     override val descriptor: ModuleDescriptor
 
     val files: List<IrFile>
+
+    fun addFile(file: IrFile)
 }
 
-class IrModuleImpl(override val descriptor: ModuleDescriptor) : IrDeclarationBase(NO_LOCATION), IrModule {
+class IrModuleImpl(
+        override val descriptor: ModuleDescriptor
+) : IrDeclarationBase(NO_LOCATION, IrDeclarationKind.DEFINED), IrModule {
+    init {
+        index = 0
+    }
+
+    override val parent: IrCompoundDeclaration? get() = null
+
     override val files: MutableList<IrFile> = ArrayList()
-    override val childDeclarations: List<IrDeclaration> get() = files
+
+    override fun addFile(file: IrFile) {
+        files.add(file)
+    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitModule(this, data)

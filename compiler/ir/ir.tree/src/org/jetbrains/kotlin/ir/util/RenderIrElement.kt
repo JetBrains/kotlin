@@ -30,7 +30,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "??? ${element.javaClass.simpleName}"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-            "??? ${declaration.javaClass.simpleName} ${declaration.descriptor.name}"
+            "??? ${declaration.javaClass.simpleName} ${declaration.descriptor?.name}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
             "IrFile ${declaration.name}"
@@ -39,13 +39,13 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "IrFunction ${declaration.renderDescriptor()}"
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-            "IrProperty ${declaration.renderDescriptor()}"
+            "IrProperty ${declaration.renderDescriptor()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
 
     override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?): String =
-            "IrPropertyGetter ${declaration.renderDescriptor()}"
+            "IrPropertyGetter ${declaration.renderDescriptor()} property=${declaration.property?.name()}"
 
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
-            "IrPropertySetter ${declaration.renderDescriptor()}"
+            "IrPropertySetter ${declaration.renderDescriptor()} property=${declaration.property?.name()}"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "IrExpressionBody"
@@ -72,7 +72,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        private fun IrDeclaration.renderDescriptor(): String = DESCRIPTOR_RENDERER.render(descriptor)
+        private fun IrDeclaration.name(): String = descriptor?.let { it.name.toString() } ?: "<none>"
+        private fun IrDeclaration.renderDescriptor(): String = descriptor?.let { DESCRIPTOR_RENDERER.render(it) } ?: "<none>"
         private fun IrExpression.renderType(): String = DESCRIPTOR_RENDERER.renderType(type)
     }
 }

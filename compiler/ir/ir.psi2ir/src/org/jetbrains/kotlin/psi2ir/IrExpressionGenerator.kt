@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 
 class IrExpressionGenerator(
         override val context: IrGeneratorContext,
-        val containingFile: PsiSourceManager.PsiFileEntry
+        val fileElementFactory: IrFileElementFactory
 ) : KtVisitor<IrExpressionBase, Nothing?>(), IrGenerator {
     fun generateExpression(ktExpression: KtExpression) = ktExpression.irExpr()
 
     private fun KtElement.irExpr(): IrExpressionBase = accept(this@IrExpressionGenerator, null)
-    private fun KtElement.loc() = this@IrExpressionGenerator.containingFile.getSourceLocationForElement(this)
+    private fun KtElement.loc() = this@IrExpressionGenerator.fileElementFactory.getLocationInFile(this)
     private fun KtExpression.type() = getType(this) ?: TODO("no type for expression")
 
     override fun visitExpression(expression: KtExpression, data: Nothing?): IrExpressionBase =

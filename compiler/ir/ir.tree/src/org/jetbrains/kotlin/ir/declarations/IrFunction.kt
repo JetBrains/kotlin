@@ -18,26 +18,37 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.SourceLocation
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrFunction : IrDeclarationNonRoot {
+interface IrFunction : IrMemberDeclaration {
     override val descriptor: FunctionDescriptor
     val body: IrBody
 }
 
-abstract class IrFunctionBase(sourceLocation: SourceLocation) : IrDeclarationNonRootBase(sourceLocation), IrFunction {
+abstract class IrFunctionBase(
+        sourceLocation: SourceLocation,
+        kind: IrDeclarationKind
+) : IrCompoundDeclarationBase(sourceLocation, kind), IrFunction {
+    override var parent: IrCompoundDeclaration? = null
+
+    override fun setTreeLocation(parent: IrCompoundDeclaration?, index: Int) {
+        this.parent = parent
+        this.index = index
+    }
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        super.acceptChildDeclarations(visitor, data)
         body.accept(visitor, data)
     }
 }
 
 class IrFunctionImpl(
         sourceLocation: SourceLocation,
+        kind: IrDeclarationKind,
         override val descriptor: FunctionDescriptor,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation) {
-    override lateinit var parent: IrDeclaration
-
+) : IrFunctionBase(sourceLocation, kind) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }

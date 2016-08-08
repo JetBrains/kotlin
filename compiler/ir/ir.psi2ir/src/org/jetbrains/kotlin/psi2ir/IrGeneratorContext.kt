@@ -31,6 +31,5 @@ class IrGeneratorContext(
     val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
 
     val sourceManager = PsiSourceManager()
-    val irElementFactory = IrElementFactory(irModule, sourceManager)
 }
 

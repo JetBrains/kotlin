@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.ir.declarations.IrModule
-import org.jetbrains.kotlin.ir.declarations.IrModuleImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class IrModuleGenerator(override val context: IrGeneratorContext) : IrDeclarationGenerator {
@@ -27,9 +26,10 @@ class IrModuleGenerator(override val context: IrGeneratorContext) : IrDeclaratio
     fun generateModuleContent() {
         for (ktFile in context.inputFiles) {
             val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile) { "no package fragment for file" }
-            val irFile = context.irElementFactory.createIrFile(ktFile, packageFragmentDescriptor)
-            context.irModule.files.add(irFile)
-            val generator = IrFileGenerator(context, ktFile, irFile, this)
+            val irFileElementFactory = IrFileElementFactory.create(context.irModule, context.sourceManager, ktFile, packageFragmentDescriptor)
+            val irFile = irFileElementFactory.irFileImpl
+            context.irModule.addFile(irFile)
+            val generator = IrFileGenerator(ktFile, context, irFile, this, irFileElementFactory)
             generator.generateFileContent()
         }
     }

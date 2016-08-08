@@ -24,8 +24,8 @@ interface IrElementVisitor<out R, in D> {
     fun visitElement(element: IrElement, data: D): R
 
     fun visitDeclaration(declaration: IrDeclaration, data: D): R = visitElement(declaration, data)
+    fun visitModule(declaration: IrModule, data: D): R = visitDeclaration(declaration, data)
     fun visitCompoundDeclaration(declaration: IrCompoundDeclaration, data: D): R = visitDeclaration(declaration, data)
-    fun visitModule(declaration: IrModule, data: D): R = visitCompoundDeclaration(declaration, data)
     fun visitFile(declaration: IrFile, data: D): R = visitCompoundDeclaration(declaration, data)
     fun visitClass(declaration: IrClass, data: D): R = visitCompoundDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D): R = visitDeclaration(declaration, data)

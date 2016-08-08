@@ -17,41 +17,34 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.util.*
+import org.jetbrains.kotlin.ir.SourceLocation
 
 interface IrDeclaration : IrElement {
-    val descriptor: DeclarationDescriptor
-    override val parent: IrDeclaration?
-}
+    override val parent: IrCompoundDeclaration?
+    val index: Int
 
-interface IrCompoundDeclaration : IrDeclaration {
-    val childDeclarations: List<IrDeclaration>
-}
+    val descriptor: DeclarationDescriptor?
+    val kind: IrDeclarationKind
 
-interface IrDeclarationNonRoot : IrDeclaration {
-    override val parent: IrDeclaration
-}
-
-abstract class IrDeclarationBase(sourceLocation: SourceLocation) : IrElementBase(sourceLocation), IrDeclaration {
-    override var parent: IrDeclaration? = null
-}
-
-abstract class IrDeclarationNonRootBase(sourceLocation: SourceLocation) : IrElementBase(sourceLocation), IrDeclarationNonRoot
-
-abstract class IrCompoundDeclarationBase(sourceLocation: SourceLocation) : IrDeclarationBase(sourceLocation), IrCompoundDeclaration {
-    override val childDeclarations: MutableList<IrDeclaration> = ArrayList()
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        childDeclarations.forEach { it.accept(visitor, data) }
+    companion object {
+        const val DETACHED_INDEX = Int.MIN_VALUE
     }
+}
+
+enum class IrDeclarationKind {
+    DEFINED,
+    DEFAULT_PROPERTY_ACCESSOR,
+}
+
+abstract class IrDeclarationBase(
+        sourceLocation: SourceLocation,
+        override val kind: IrDeclarationKind
+) : IrElementBase(sourceLocation), IrDeclaration {
+    override var index: Int = IrDeclaration.DETACHED_INDEX
 }
 
 val IrDeclaration.containingDeclaration: IrDeclaration?
     get() = parent
 
-val IrDeclarationNonRoot.continingDeclaration: IrDeclaration
-    get() = parent

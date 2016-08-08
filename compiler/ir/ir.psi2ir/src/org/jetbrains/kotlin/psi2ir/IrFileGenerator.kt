@@ -20,16 +20,17 @@ import org.jetbrains.kotlin.ir.declarations.IrFileImpl
 import org.jetbrains.kotlin.psi.KtFile
 
 class IrFileGenerator(
+        private val ktFile: KtFile,
         context: IrGeneratorContext,
-        val ktFile: KtFile,
-        override val irDeclaration: IrFileImpl,
-        override val parent: IrModuleGenerator
-) : IrDeclarationGeneratorBase(context, irDeclaration, parent, irDeclaration.fileEntry as PsiSourceManager.PsiFileEntry) {
+        irDeclaration: IrFileImpl,
+        parent: IrModuleGenerator,
+        fileFileElementFactory: IrFileElementFactory
+) : IrDeclarationGeneratorBase(context, irDeclaration, parent, fileFileElementFactory) {
     fun generateFileContent() {
         generateAnnotationEntries(ktFile.annotationEntries)
 
         for (topLevelDeclaration in ktFile.declarations) {
-            generateMemberDeclaration(topLevelDeclaration, irDeclaration)
+            generateMemberDeclaration(topLevelDeclaration)
         }
     }
 }

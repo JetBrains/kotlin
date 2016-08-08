@@ -4,24 +4,24 @@ IrFile /smoke.kt
       IrBlockExpression type=kotlin.Nothing
         IrReturnExpression type=kotlin.Nothing
           IrLiteral String type=kotlin.String value='OK'
-  IrProperty public val testSimpleVal: kotlin.Int = 1
+  IrProperty public val testSimpleVal: kotlin.Int = 1 getter=null setter=null
     IrExpressionBody
       IrReturnExpression type=kotlin.Int
         IrLiteral Int type=kotlin.Int value='1'
-  IrProperty public val testValWithGetter: kotlin.Int
-    IrPropertyGetter public fun <get-testValWithGetter>(): kotlin.Int
-      IrExpressionBody
-        IrReturnExpression type=kotlin.Int
-          IrLiteral Int type=kotlin.Int value='42'
-  IrProperty public var testSimpleVar: kotlin.Int
+  IrProperty public val testValWithGetter: kotlin.Int getter=<get-testValWithGetter> setter=null
+  IrPropertyGetter public fun <get-testValWithGetter>(): kotlin.Int property=testValWithGetter
+    IrExpressionBody
+      IrReturnExpression type=kotlin.Int
+        IrLiteral Int type=kotlin.Int value='42'
+  IrProperty public var testSimpleVar: kotlin.Int getter=null setter=null
     IrExpressionBody
       IrReturnExpression type=kotlin.Int
         IrLiteral Int type=kotlin.Int value='2'
-  IrProperty public var testVarWithAccessors: kotlin.Int
-    IrPropertyGetter public fun <get-testVarWithAccessors>(): kotlin.Int
-      IrExpressionBody
-        IrReturnExpression type=kotlin.Int
-          IrLiteral Int type=kotlin.Int value='42'
-    IrPropertySetter public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit
-      IrExpressionBody
-        IrBlockExpression type=kotlin.Unit
+  IrProperty public var testVarWithAccessors: kotlin.Int getter=<get-testVarWithAccessors> setter=<set-testVarWithAccessors>
+  IrPropertyGetter public fun <get-testVarWithAccessors>(): kotlin.Int property=testVarWithAccessors
+    IrExpressionBody
+      IrReturnExpression type=kotlin.Int
+        IrLiteral Int type=kotlin.Int value='42'
+  IrPropertySetter public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit property=testVarWithAccessors
+    IrExpressionBody
+      IrBlockExpression type=kotlin.Unit
