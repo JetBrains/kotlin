@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java;
 
 import kotlin.text.Regex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
@@ -103,7 +103,6 @@ public final class JvmAbi {
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
-               !JavaToKotlinClassMap.INSTANCE.isMappedCompanion((ClassDescriptor) companionObject);
+               !CompanionObjectMapping.INSTANCE.hasMappingToObject((ClassDescriptor) companionObject);
     }
 }
-

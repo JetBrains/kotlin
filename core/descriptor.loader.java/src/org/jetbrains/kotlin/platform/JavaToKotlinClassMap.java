@@ -43,7 +43,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
 
     private final Map<FqNameUnsafe, FqName> mutableToReadOnly = new HashMap<FqNameUnsafe, FqName>();
     private final Map<FqNameUnsafe, FqName> readOnlyToMutable = new HashMap<FqNameUnsafe, FqName>();
-    private final CompanionObjectMapping companionObjectMapping;
 
     private JavaToKotlinClassMap() {
         add(Object.class, FQ_NAMES.any);
@@ -69,8 +68,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             add(ClassId.topLevel(jvmType.getWrapperFqName()), KotlinBuiltIns.getPrimitiveFqName(jvmType.getPrimitiveType()));
         }
 
-        companionObjectMapping = new CompanionObjectMapping();
-        for (FqName fqName : companionObjectMapping.allClassesWithIntrinsicCompanions()) {
+        for (FqName fqName : CompanionObjectMapping.INSTANCE.allClassesWithIntrinsicCompanions()) {
             add(ClassId.topLevel(
                     new FqName("kotlin.jvm.internal." + fqName.shortName().asString() + "CompanionObject")),
                     fqName.child(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT));
@@ -117,10 +115,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     @Nullable
     public ClassId mapKotlinToJava(@NotNull FqNameUnsafe kotlinFqName) {
         return kotlinToJava.get(kotlinFqName);
-    }
-
-    public boolean isMappedCompanion(@NotNull ClassDescriptor descriptor) {
-        return companionObjectMapping.hasMappingToObject(descriptor);
     }
 
     private void add(

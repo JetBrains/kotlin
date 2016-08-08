@@ -27,24 +27,20 @@ import org.jetbrains.org.objectweb.asm.Type;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public class FieldInfo {
-
-    private static final CompanionObjectMapping COMPANION_OBJECT_MAPPING = new CompanionObjectMapping();
-
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper) {
         if (!classDescriptor.getKind().isSingleton() || DescriptorUtils.isEnumEntry(classDescriptor)) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (isNonCompanionObject(classDescriptor) || COMPANION_OBJECT_MAPPING.hasMappingToObject(classDescriptor)) {
+        if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.hasMappingToObject(classDescriptor)) {
             return createSingletonViaInstance(classDescriptor, typeMapper);
         }
-        else {
-            ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
-            assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
-            Type ownerType = typeMapper.mapType(ownerDescriptor);
-            return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), classDescriptor.getName().asString(), true);
-        }
+
+        ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
+        assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
+        Type ownerType = typeMapper.mapType(ownerDescriptor);
+        return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), classDescriptor.getName().asString(), true);
     }
 
     @NotNull
