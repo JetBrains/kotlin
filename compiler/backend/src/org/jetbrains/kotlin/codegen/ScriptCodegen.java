@@ -18,17 +18,17 @@ package org.jetbrains.kotlin.codegen;
 
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.ScriptContext;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -36,14 +36,19 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -117,7 +122,19 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        // TODO
+        // TODO: copypaste from ImplementationBodyCodegen, so the script is seen as a KClass by reflection; implement separate kind with proper API
+        final DescriptorSerializer serializer =
+                DescriptorSerializer.create(scriptDescriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
+
+        final ProtoBuf.Class classProto = serializer.classProto(scriptDescriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, classProto);
+                return Unit.INSTANCE;
+            }
+        });
     }
 
     private void genConstructor(
