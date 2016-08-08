@@ -18,9 +18,10 @@ class PropertyCodegen(val state: TranslationState, val variableManager: Variable
         val value = varInfo.value
         if (kotlinType.nameIfStandardType != null) {
             val variableType = LLVMInstanceOfStandardType(property.name ?: return, kotlinType).type
-            val variable = LLVMVariable(property.name.toString(), variableType, property.name.toString(), LLVMVariableScope(), pointer = 1)
+            val variable = LLVMVariable(property.name.toString(), variableType, property.name.toString(), LLVMVariableScope())
             variableManager.addGlobalVariable(property.name.toString(), variable)
             codeBuilder.defineGlobalVariable(variable, variableType.parseArg(value.toString()))
+            variable.pointer++
         }
     }
 

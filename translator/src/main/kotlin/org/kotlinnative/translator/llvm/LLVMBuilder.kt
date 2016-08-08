@@ -20,7 +20,18 @@ class LLVMBuilder(val arm: Boolean) {
     private fun initBuilder() {
         val declares = arrayOf(
                 "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @${if (arm) "malloc_static" else "malloc"}(i32)")
+                if (arm) "declare i8* @malloc_static(i32)" else
+                    """
+                    declare i8* @malloc(i32) #0
+                    define i8* @malloc_static(i32 %size) #0 {
+                      %1 = alloca i32, align 4
+                      store i32 %size, i32* %1, align 4
+                      %2 = load i32* %1, align 4
+                      %3 = call i8* @malloc(i32 %2)
+                      ret i8* %3
+                    }
+                """)
+
 
         declares.forEach { globalCode.appendln(it) }
 
@@ -188,7 +199,7 @@ class LLVMBuilder(val arm: Boolean) {
     }
 
     fun makeStructInitializer(args: List<LLVMVariable>, values: List<String>)
-            = "{ ${ args.mapIndexed { i: Int, variable: LLVMVariable -> "${variable.type} ${values[i]}" }.joinToString() } }"
+            = "{ ${args.mapIndexed { i: Int, variable: LLVMVariable -> "${variable.type} ${values[i]}" }.joinToString()} }"
 
     fun loadAndGetVariable(source: LLVMVariable): LLVMVariable {
         assert(source.pointer > 0)
