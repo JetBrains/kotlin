@@ -15,10 +15,11 @@ import WireFormat.VARINT_UTIL_BIT_MASK
  */
 
 // TODO: refactor correctness checks into readTag
-class CodedInputStream(input: java.io.InputStream) {
-    val bufferedInput: java.io.BufferedInputStream
+class CodedInputStream(buffer: ByteArray) {
+    var errorMessage: String = ""
+    val inputStream: KotlinInputStream
     init {
-        bufferedInput = java.io.BufferedInputStream(input)  // TODO: Java's realization uses hand-written buffers. Why?
+        inputStream = KotlinInputStream(buffer)  // TODO: Java's realization uses hand-written buffers. Why?
     }
 
     fun readInt32(expectedFieldNumber: Int): Int {
@@ -66,7 +67,10 @@ class CodedInputStream(input: java.io.InputStream) {
         val boolValue = when (readValue) {
             0 -> false
             1 -> true
-            else -> throw InvalidProtocolBufferException("Expected boolean-encoding (1 or 0), got $readValue")
+            else -> {
+                errorMessage = "Expected boolean-encoding (1 or 0), got $readValue"
+                false
+            }
         }
         return boolValue
     }
@@ -181,14 +185,18 @@ class CodedInputStream(input: java.io.InputStream) {
             expectedWireType: WireType,
             actualWireType: WireType) {
         if (expectedFieldNumber != actualFieldNumber) {
-            throw InvalidProtocolBufferException(
+            errorMessage =
                     "Error in protocol format: \n " +
-                            "Expected field number ${expectedFieldNumber}, got ${actualFieldNumber}")
+                            "Expected field number ${expectedFieldNumber}, got ${actualFieldNumber}"
+            println(errorMessage)
+            return
         }
 
         if (expectedWireType != actualWireType) {
-            throw InvalidProtocolBufferException("Error in protocol format: \n " +
-                    "Expected ${expectedWireType.name} type, got ${actualWireType.name}")
+            errorMessage = "Error in protocol format: \n " +
+                    "Expected ${expectedWireType.name} type, got ${actualWireType.name}"
+            println(errorMessage)
+            return
         }
     }
 
@@ -219,7 +227,7 @@ class CodedInputStream(input: java.io.InputStream) {
     fun readRawBytes(count: Int): ByteArray {
         val ba = ByteArray(count)
         for (i in 0..(count - 1)) {
-            ba[i] = bufferedInput.read().toByte()
+            ba[i] = inputStream.read().toByte()
         }
         return ba
     }
@@ -231,7 +239,8 @@ class CodedInputStream(input: java.io.InputStream) {
         }
         val tag = readInt32NoTag()
         if (tag == 0) {     // if we somehow had read 0-tag, then message is corrupted
-            throw InvalidProtocolBufferException("Invalid tag 0")
+            errorMessage = "Invalid tag 0"
+            return 0
         }
 
         val actualFieldNumber = WireFormat.getTagFieldNumber(tag)
@@ -246,7 +255,7 @@ class CodedInputStream(input: java.io.InputStream) {
         var result: Int = 0
         var step: Int = 0
         while (!done) {
-            val byte: Int = bufferedInput.read()
+            val byte: Int = inputStream.read().toInt()
             result = result or
                     (
                         (byte and VARINT_INFO_BITS_MASK)
@@ -267,7 +276,7 @@ class CodedInputStream(input: java.io.InputStream) {
         var result: Long = 0
         var step: Int = 0
         while (!done) {
-            val byte: Int = bufferedInput.read()
+            val byte: Int = inputStream.read().toInt()
             result = result or
                     (
                         (byte and VARINT_INFO_BITS_MASK).toLong()
@@ -275,7 +284,7 @@ class CodedInputStream(input: java.io.InputStream) {
                         (VARINT_INFO_BITS_COUNT * step)
                     )
             step++
-            if ((byte and VARINT_UTIL_BIT_MASK) == 0 || byte == -1) {
+            if ((byte and VARINT_UTIL_BIT_MASK) == 0 /* || byte == -1 ???? */) {
                 done = true
             }
         }
@@ -296,10 +305,7 @@ class CodedInputStream(input: java.io.InputStream) {
 
     // checks if at least one more byte can be read from underlying input stream
     fun isAtEnd(): Boolean {
-        bufferedInput.mark(1)
-        val byte = bufferedInput.read()
-        bufferedInput.reset()
-        return byte == -1
+        return inputStream.isAtEnd()
     }
 }
 

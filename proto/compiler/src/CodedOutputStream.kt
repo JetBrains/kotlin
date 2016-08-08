@@ -8,7 +8,13 @@ import WireFormat.VARINT_UTIL_BIT_MASK
  * Created by user on 7/6/16.
  */
 
-class CodedOutputStream(val output: java.io.OutputStream) {
+class CodedOutputStream(val buffer: ByteArray) {
+    val output = KotlinOutputStream(buffer)
+
+    fun toByteArray(): ByteArray {
+        return buffer
+    }
+
     fun writeTag(fieldNumber: Int, type: WireType) {
         val tag = (fieldNumber shl 3) or type.ordinal
         writeInt32NoTag(tag)
@@ -156,6 +162,9 @@ class CodedOutputStream(val output: java.io.OutputStream) {
 
     fun writeBytes(fieldNumber: Int, value: ByteArray?) {
         value ?: return
+        if (value.size == 0) {
+            return
+        }
         writeTag(fieldNumber, WireType.LENGTH_DELIMITED)
         writeBytesNoTag(value)
     }

@@ -1,7 +1,7 @@
 /**
  * Created by Dmitry Savvinov on 7/6/16.
  * Enum for possible WireTypes.
- * See details at [official Google reference]()https://developers.google.com/protocol-buffers/docs/encoding#structure)
+ * See details at [official Google reference](https://developers.google.com/protocol-buffers/docs/encoding#structure)
  */
 
 enum class WireType(val id: Int) {
@@ -10,10 +10,11 @@ enum class WireType(val id: Int) {
     LENGTH_DELIMITED(2),    // string, bytes, embedded messages, packed repeated fields
     START_GROUP(3),         // groups (deprecated)
     END_GROUP(4),           // groups (deprecated)
-    FIX_32(5);              // fixed32, sfixed32, float
+    FIX_32(5),              // fixed32, sfixed32, float
+    UNDEFINED(6);           // indicates error when parsing from Int
 
     companion object {
-        infix fun from (value: Byte): WireType {
+        fun from (value: Byte): WireType {
             return when (value) {
                 0.toByte() -> VARINT
                 1.toByte() -> FIX_64
@@ -21,7 +22,7 @@ enum class WireType(val id: Int) {
                 3.toByte() -> START_GROUP
                 4.toByte() -> END_GROUP
                 5.toByte() -> FIX_32
-                else -> throw IllegalArgumentException()
+                else -> UNDEFINED
             }
         }
     }

@@ -14,7 +14,7 @@ object WireFormat {
     val FIXED_64_BYTE_SIZE: Int = 8
 
     fun getTagWireType(tag: Int): WireType {
-        return WireType from (tag and TAG_TYPE_MASK).toByte()
+        return WireType.from ( (tag and TAG_TYPE_MASK).toByte())
     }
 
     fun getTagFieldNumber(tag: Int): Int {
