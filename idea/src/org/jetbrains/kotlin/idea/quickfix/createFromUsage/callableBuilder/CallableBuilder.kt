@@ -446,6 +446,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             if (containingElement is KtClass && containingElement.isInterface()) "" else "abstract "
                         }
                         else if (containingElement is KtClassOrObject
+                                 && !(containingElement is KtClass && containingElement.isInterface())
                                  && containingElement.isAncestor(config.originalElement)
                                  && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR) "private "
                         else ""
@@ -453,7 +454,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
-                            containingElement is KtClass && containingElement.isInterface() && !config.isExtension -> ""
                             callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR -> ""
                             callableInfo.isAbstract -> ""
                             else -> "{}"

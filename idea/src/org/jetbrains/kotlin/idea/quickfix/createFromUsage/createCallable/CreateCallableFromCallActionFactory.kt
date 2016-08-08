@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -183,7 +184,23 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             return PropertyInfo(name, receiverType, returnType, varExpected, possibleContainers)
         }
 
-        object Default : Property()
+        object Default : Property() {
+            override fun doCreateCallableInfo(
+                    expression: KtSimpleNameExpression,
+                    context: BindingContext,
+                    name: String,
+                    receiverType: TypeInfo,
+                    possibleContainers: List<KtElement>
+            ): CallableInfo? {
+                return super.doCreateCallableInfo(
+                        expression,
+                        context,
+                        name,
+                        receiverType,
+                        possibleContainers.filterNot { it is KtClassBody && (it.parent as KtClassOrObject).isInterfaceClass() }
+                )
+            }
+        }
 
         object Abstract : Property() {
             override fun doCreateCallableInfo(
