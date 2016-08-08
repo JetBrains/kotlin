@@ -1,5 +1,6 @@
 #!/usr/bin/expect
 
+# XXX this script works super slow on eugene's machine
 
 set host ""
 set userName "pi"

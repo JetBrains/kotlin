@@ -22,9 +22,24 @@ repositories {
 }
 
 task compileProto(type: Exec) {
+    /*
+     * XXX Kotlin proto compiler calling convention will change soon.
+     * It would provide fixed path to protoc in its project directory.
+     */
     executable "./compileProto.sh"
 }
 task buildProtoLib(type: Copy) {
+    /*
+     * XXX Will need to rework.
+     * New Kotlin protobuf compiler will have build.sh script that
+     * generates jar file with Kotlin protobuf runtime classes
+     * and .proto => .kt compiler executable.
+     * Also you copy this files into src of your server and even
+     * commit copied files into git repository.
+     * This is not acceptable. This files shouldn't be part of
+     * your src in any way.
+     * Also Kotlin protoc generated files shouldn't be part of your src too.
+     */
     //just copy lib src to project
     def pathToProtoKotSrc = "../proto/compiler/src/"
     from pathToProtoKotSrc + "CodedInputStream.kt", pathToProtoKotSrc + "CodedOutputStream.kt",
