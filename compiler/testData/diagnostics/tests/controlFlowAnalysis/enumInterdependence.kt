@@ -29,7 +29,8 @@ enum class D(val x: Int) {
 }
 
 enum class E(val v: Int) {
-    E1(Nested.<!UNINITIALIZED_VARIABLE!>COPY<!>);
+    // KT-11769 related: there is no predictable initialization order for enum entry with non-companion object
+    E1(Nested.COPY);
 
     object Nested {
         val COPY = E1.v
@@ -40,5 +41,26 @@ object Object1 {
     val y: Any = Object2.z // z is not yet initialized (?!)
     object Object2 {
         val z: Any = Object1.y
+    }
+}
+
+// From KT-11769
+enum class Fruit(personal: Int) {
+    APPLE(1);
+
+    companion object {
+        val common = 20
+    }
+
+    val score = personal + <!UNINITIALIZED_VARIABLE!>common<!>
+}
+
+// From KT-6054
+enum class MyEnum {
+    A, B;
+    val x = when(<!DEBUG_INFO_LEAKING_THIS!>this<!>) {
+        <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
+        <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
+        else -> 3
     }
 }
