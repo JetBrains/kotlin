@@ -12,5 +12,6 @@
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.idea.debugger.DiagnosticSuppressorForDebugger"/>
 
         <scriptTemplateProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptTemplateProvider"/>
+        <scriptTemplateProvider implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
     </extensions>
 </idea-plugin>

@@ -67,6 +67,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
     private JComboBox moduleKindComboBox;
+    private JTextField scriptTemplatesField;
+    private JTextField scriptTemplatesClasspathField;
+    private JLabel scriptTemplatesLabel;
+    private JLabel scriptTemplatesClasspathLabel;
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -143,6 +147,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
+               ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
+               ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
                ComparingUtils.isModified(copyRuntimeFilesCheckBox, compilerSettings.getCopyJsLibraryFiles()) ||
                ComparingUtils.isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
@@ -164,6 +170,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
+        compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
         compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
         compilerSettings.setOutputDirectoryForJsLibraryFiles(outputDirectory.getText());
 
@@ -195,6 +203,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+        scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
+        scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
         copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
         outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
