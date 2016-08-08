@@ -1267,6 +1267,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitClass(klass: KtClass) {
+            if (klass.hasPrimaryConstructor()) {
+                processParameters(klass.getPrimaryConstructorParameters())
+
+                // delegation specifiers of primary constructor, anonymous class and property initializers
+                generateHeaderDelegationSpecifiers(klass)
+                generateInitializersForScriptClassOrObject(klass)
+            }
+
+            generateDeclarationForLocalClassOrObjectIfNeeded(klass)
+
             if (klass.isEnum()) {
                 klass.declarations.forEach {
                     when (it) {
@@ -1279,21 +1289,12 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                                 generateInstructions(it)
                             }
                         }
-                        is KtObjectDeclaration -> {
+                        is KtObjectDeclaration -> if (it.isCompanion()) {
                             generateInstructions(it)
                         }
                     }
                 }
             }
-            if (klass.hasPrimaryConstructor()) {
-                processParameters(klass.getPrimaryConstructorParameters())
-
-                // delegation specifiers of primary constructor, anonymous class and property initializers
-                generateHeaderDelegationSpecifiers(klass)
-                generateInitializersForScriptClassOrObject(klass)
-            }
-
-            generateDeclarationForLocalClassOrObjectIfNeeded(klass)
         }
 
         override fun visitScript(script: KtScript) {
