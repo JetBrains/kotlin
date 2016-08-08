@@ -85,3 +85,42 @@ define void @kotlinclib_set_int(i32 %data, i32 %index, i32 %value) {
   store i32 %7, i32* %11, align 4
   ret void
 }
+
+
+; Function Attrs: nounwind uwtable
+define signext i16 @kotlinclib_get_short(i32 %data, i32 %index) {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  store i32 %data, i32* %1, align 4
+  store i32 %index, i32* %2, align 4
+  %3 = load i32* %1, align 4
+  %4 = sext i32 %3 to i64
+  %5 = inttoptr i64 %4 to i16*
+  %6 = load i32* %2, align 4
+  %7 = sext i32 %6 to i64
+  %8 = getelementptr inbounds i16* %5, i64 %7
+  %9 = load i16* %8, align 2
+  ret i16 %9
+}
+
+; Function Attrs: nounwind uwtable
+define void @kotlinclib_set_short(i32 %data, i32 %index, i16 signext %value) {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %3 = alloca i16, align 2
+  %ptr = alloca i16*, align 8
+  store i32 %data, i32* %1, align 4
+  store i32 %index, i32* %2, align 4
+  store i16 %value, i16* %3, align 2
+  %4 = load i32* %1, align 4
+  %5 = sext i32 %4 to i64
+  %6 = inttoptr i64 %5 to i16*
+  store i16* %6, i16** %ptr, align 8
+  %7 = load i16* %3, align 2
+  %8 = load i16** %ptr, align 8
+  %9 = load i32* %2, align 4
+  %10 = sext i32 %9 to i64
+  %11 = getelementptr inbounds i16* %8, i64 %10
+  store i16 %7, i16* %11, align 2
+  ret void
+}
