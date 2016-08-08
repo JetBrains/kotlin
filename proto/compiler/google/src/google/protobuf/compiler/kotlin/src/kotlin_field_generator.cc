@@ -32,6 +32,10 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     map<string, string> vars;
     vars["name"] = simpleName;
     vars["field"] = getFullType();
+    vars["protoType"] = getProtoType();
+
+    generateComment(printer);
+
     printer->Print(vars, "var $name$ : $field$\n");
 
     // make setter private
@@ -93,13 +97,19 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
          */
         FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
         singleFieldGen.simpleName = "singleElemSize";
+
+        printer->Print("\n");
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
+        printer->Print("\n");
 
         printer->Print(vars, "val arraySize = expectedByteSize / singleElemSize\n");
 
         // Allocate new array of estimated size
         printer->Print(vars, "val newArray = $arrayType$(arraySize)\n");
 
+        // place declaration of new variable in anonymous scope for hygiene
+        printer->Print("run {\n");
+        printer->Indent();
         printer->Print("var i = 0\n");
         printer->Print(vars, "while(i < arraySize) {\n");
         printer->Indent();
@@ -113,7 +123,10 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         printer->Print(vars, "$fieldName$[i] = tmp\n");
         printer->Print("i += 1\n");
 
-        printer->Outdent();
+        printer->Outdent();     // while-loop
+        printer->Print("}\n");
+
+        printer->Outdent();     // anonymous scope
         printer->Print("}\n");
     }
     else {
@@ -129,10 +142,17 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
 
         // length
         printer->Print(vars, "var arrayByteSize = 0\n");
+
+        printer->Print("\n");
         generateSizeEstimationCode(printer, "arrayByteSize", /* noTag = */ true, /* isField = */ false);
         printer->Print(vars, "output.writeInt32NoTag(arrayByteSize)\n");
+        printer->Print("\n");
 
         // all elements
+        // place declaration of new variable in anonymous scope for hygiene
+        printer->Print("run {\n");
+        printer->Indent();
+
         printer->Print("var i = 0\n");
         printer->Print(vars, "while (i < $fieldName$.size) {\n");
         printer->Indent();
@@ -145,7 +165,11 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive, /* isField = */ false);
 
         printer->Print(vars, "i += 1\n");
-        printer->Outdent(); // for-loop
+
+        printer->Outdent();         // while-loop
+        printer->Print("}\n");
+
+        printer->Outdent();         // anonymous scope
         printer->Print("}\n");
     }
 }
@@ -250,6 +274,9 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
     vars["fieldName"] = simpleName;
     vars["initValue"] = getInitValue();
 
+    if (isField) {
+        generateComment(printer);
+    }
 
     /* Try to generate syntax for serialization of repeated fields.
      * Note that it should be first check because of Google's FieldDescriptor structure */
@@ -376,7 +403,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag, /* isField = */ false);
 
         printer->Print(vars, "i += 1\n");
-        
+
         printer->Outdent();     // for-loop
         printer->Print("}\n");
 
@@ -496,6 +523,17 @@ string FieldGenerator::getWireType() const {
         return "WireType.LENGTH_DELIMITED";
     }
     return name_resolving::protobufTypeToKotlinWireType(descriptor->type());
+}
+
+void FieldGenerator::generateComment(io::Printer *printer) const {
+    map <string, string> vars;
+
+    vars["repeated"] = descriptor->is_repeated() ? "repeated " : "";
+    vars["declared_type"] = descriptor->type_name();
+    vars["name"] = descriptor->name();
+    vars["number"] = std::to_string(descriptor->number());
+
+    printer->Print(vars, "//$repeated$$declared_type$ $name$ = $number$\n");
 }
 
 

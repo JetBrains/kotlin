@@ -22,13 +22,12 @@ class NameResolver;         // declared in kotlin_name_resolver.h
 class FieldGenerator {
 private:
     FieldDescriptor const * descriptor;
-    // TODO: refactor from field generator to some static utility namespace
 
     void generateSetter(io::Printer * printer) const;
+    void generateComment(io::Printer * printer) const;
     void generateRepeatedMethods(io::Printer * printer, bool isBuilder) const;
 
     void generateSerializationForPacked     (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
-    void generateSerializationForRepeated   (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
     void generateSerializationForEnums      (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
     void generateSerializationForMessages   (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
     void generateSerializationForPrimitives (io::Printer * printer, bool isRead, bool noTag, bool isField) const;

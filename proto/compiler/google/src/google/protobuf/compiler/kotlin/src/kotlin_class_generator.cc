@@ -21,31 +21,33 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     generateHeader(printer, isBuilder);
     printer->Indent();
 
-    /*
-     * Field generator should know if it is generating code for builder
-     * or for fair class to choose between 'val' and 'var'.
-     * Also note that fields should be declared before init section.
-     */
-
+    // Generate code for property declaration
+    printer->Print("//========== Properties ===========\n");
     for (FieldGenerator *gen: properties) {
         gen->generateCode(printer, isBuilder);
         printer->Print("\n");
     }
 
     // Generate field for errors code
-    printer->Print("\n");
-    printer->Print("var errorCode: Int = 0\n");
+    printer->Print("var errorCode: Int = 0\n\n");
 
-    printer->Print("\n");
     generateInitSection(printer);
+    printer->Print("\n");
+
 
     // enum declarations and nested classes declarations only for fair classes
     if (!isBuilder) {
+        if (enumsDeclaraions.size() > 0) {
+            printer->Print("//========== Nested enums declarations ===========\n");
+        }
         for (EnumGenerator *gen: enumsDeclaraions) {
             gen->generateCode(printer);
             printer->Print("\n");
         }
 
+        if (classesDeclarations.size() > 0) {
+            printer->Print("//========== Nested classes declarations ===========\n");
+        }
         for (ClassGenerator *gen: classesDeclarations) {
             gen->generateCode(printer);
             printer->Print("\n");
@@ -53,30 +55,37 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     }
 
     // write serialization methods only for fair classes, read methods only for Builders)
-    printer->Print("\n");
+    printer->Print("//========== Serialization methods ===========\n");
     generateWriteToMethod(printer);
+    printer->Print("\n");
 
     // builder, mergeFrom and only for fair classes
     if (!isBuilder) {
-        printer->Print("\n");
-        generateBuilder(printer);
 
-        printer->Print("\n");
         generateMergeMethods(printer);
+        printer->Print("\n");
     }
 
     // build() and setters are only for builders
     if (isBuilder) {
-        printer->Print("\n");
+        printer->Print("//========== Mutating methods ===========\n");
         generateBuildMethod(printer);
-
         printer->Print("\n");
+
         generateParseMethods(printer);
+        printer->Print("\n");
     }
 
     // getSize()
+    printer->Print("//========== Size-related methods ===========\n");
     generateGetSizeMethod(printer);
+    printer->Print("\n");
 
+    if (!isBuilder) {
+        printer->Print("//========== Builder ===========\n");
+        generateBuilder(printer);
+        printer->Print("\n");
+    }
     printer->Outdent();
     printer->Print("}\n");
 }
@@ -139,7 +148,6 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     map <string, string> vars;
 
     // mergeWith(other: Message)
-    printer->Print("\n");
     vars["className"] = getFullType();
     printer->Print(vars, "fun mergeWith (other: $className$) {\n");
     printer->Indent();
@@ -203,6 +211,7 @@ void ClassGenerator::generateWriteToMethod(io::Printer *printer) const {
     // generate code for serialization/deserialization of fields
     for (int i = 0; i < properties.size(); ++i) {
         properties[i]->generateSerializationCode(printer, /* isRead = */ false, /* noTag = */ false);
+        printer->Print("\n");
     }
 
     printer->Outdent();
@@ -319,7 +328,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Print("return true");
     printer->Outdent();
     printer->Print("}\n");  // parseFieldFrom body
-
+    printer->Print("\n");
 
     // ====== parseFromWithSize(input: CodedInputStream, expectedSize: Int) =========
     printer->Print(vars,
@@ -346,7 +355,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
 
     printer->Outdent(); // function body
     printer->Print("}\n");
-
+    printer->Print("\n");
 
     // ======== parseFrom(input: CodedInputStream) =========
     printer->Print(vars,
@@ -375,7 +384,7 @@ void ClassGenerator::generateGetSizeMethod(io::Printer *printer) const {
     printer->Print("return size\n");
     printer->Outdent();
     printer->Print("}\n");
-
+    printer->Print("\n");
 
     // getSizeNoTag(): Int
     printer->Print("fun getSizeNoTag(): Int {\n");
