@@ -67,10 +67,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -107,8 +104,9 @@ fun createKotlinFile(fileName: String,
                      targetDir: PsiDirectory,
                      packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile {
     targetDir.checkCreateFile(fileName)
+    val packageFqName = packageName?.let(::FqName) ?: FqName.ROOT
     val file = PsiFileFactory.getInstance(targetDir.project).createFileFromText(
-            fileName, KotlinFileType.INSTANCE, if (!packageName.isNullOrBlank()) "package $packageName \n\n" else ""
+            fileName, KotlinFileType.INSTANCE, if (!packageFqName.isRoot) "package ${packageFqName.quoteSegmentsIfNeeded()} \n\n" else ""
     )
 
     return targetDir.add(file) as KtFile
