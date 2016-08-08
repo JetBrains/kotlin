@@ -1,6 +1,0 @@
-syntax = "proto3";
-
-message SomeMessage {
-	string stringField = 1;
-	int32 int32Field = 2;
-}
