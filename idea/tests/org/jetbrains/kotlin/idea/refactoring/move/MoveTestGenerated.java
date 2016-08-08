@@ -473,6 +473,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToNewFileAndQuotePackage/moveClassToNewFileAndQuotePackage.test")
+    public void testKotlin_moveTopLevelDeclarations_moveClassToNewFileAndQuotePackage_MoveClassToNewFileAndQuotePackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToNewFileAndQuotePackage/moveClassToNewFileAndQuotePackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test")
     public void testKotlin_moveTopLevelDeclarations_moveClassToPackage_MoveClassToPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test");
