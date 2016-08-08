@@ -281,6 +281,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameClassTypeParameterRedeclaration/renameClassTypeParameterRedeclaration.test")
+    public void testRenameClassTypeParameterRedeclaration_RenameClassTypeParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameClassTypeParameterRedeclaration/renameClassTypeParameterRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameClassTypeParameterRedeclarationWithOuterScope/renameClassTypeParameterRedeclarationWithOuterScope.test")
+    public void testRenameClassTypeParameterRedeclarationWithOuterScope_RenameClassTypeParameterRedeclarationWithOuterScope() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameClassTypeParameterRedeclarationWithOuterScope/renameClassTypeParameterRedeclarationWithOuterScope.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameClassWithAutoVarConventions/renameClassWithAutoVarConventions.test")
     public void testRenameClassWithAutoVarConventions_RenameClassWithAutoVarConventions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameClassWithAutoVarConventions/renameClassWithAutoVarConventions.test");
@@ -350,6 +362,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameFieldIdentifier/fieldIdentifier.test")
     public void testRenameFieldIdentifier_FieldIdentifier() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameFieldIdentifier/fieldIdentifier.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameFunctionTypeParameterRedeclaration/renameFunctionTypeParameterRedeclaration.test")
+    public void testRenameFunctionTypeParameterRedeclaration_RenameFunctionTypeParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameFunctionTypeParameterRedeclaration/renameFunctionTypeParameterRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameFunctionTypeParameterRedeclarationWithOuterScope/renameFunctionTypeParameterRedeclarationWithOuterScope.test")
+    public void testRenameFunctionTypeParameterRedeclarationWithOuterScope_RenameFunctionTypeParameterRedeclarationWithOuterScope() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameFunctionTypeParameterRedeclarationWithOuterScope/renameFunctionTypeParameterRedeclarationWithOuterScope.test");
         doTest(fileName);
     }
 
