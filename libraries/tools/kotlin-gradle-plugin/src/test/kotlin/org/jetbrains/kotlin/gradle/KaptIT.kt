@@ -8,7 +8,7 @@ import org.junit.Test
 class KaptIT: BaseGradleIT() {
 
     companion object {
-        private const val GRADLE_VERSION = "2.10"
+        private const val GRADLE_VERSION = "2.14.1"
     }
 
     override fun defaultBuildOptions(): BuildOptions =
@@ -34,7 +34,9 @@ class KaptIT: BaseGradleIT() {
             assertContains("example.KotlinTest PASSED")
         }
 
-        project.build("build") {
+        // clean build is important
+        // because clean can delete hack annotation file before build
+        project.build("clean", "build") {
             assertSuccessful()
         }
     }
