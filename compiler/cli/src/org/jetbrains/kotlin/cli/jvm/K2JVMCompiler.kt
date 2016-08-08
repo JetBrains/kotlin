@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.management.ManagementFactory
+import java.net.URLClassLoader
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -100,7 +104,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        configuration.addJvmClasspathRoots(getClasspath(paths, arguments))
+        val classpath = getClasspath(paths, arguments)
+        configuration.addJvmClasspathRoots(classpath)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
@@ -109,9 +114,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return ExitCode.OK
         }
 
-        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-
-        if (arguments.skipMetadataVersionCheck) {
+       if (arguments.skipMetadataVersionCheck) {
             JvmMetadataVersion.skipCheck = true
         }
 
@@ -159,16 +162,28 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleScript.modules, directory)
                 configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, moduleFile)
 
+                val scriptResolverEnv = hashMapOf<String, Any?>()
+                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
+
                 val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
+
+                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
+
+                val scriptResolverEnv = hashMapOf<String, Any?>()
+                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
+
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
                 val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
+
+                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
 
                 return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, paths, scriptArgs)
             }
@@ -182,8 +197,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     }
                 }
 
+                val scriptResolverEnv = hashMapOf<String, Any?>()
+                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
+
                 val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
+
+                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
@@ -211,6 +231,52 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             )
             return INTERNAL_ERROR
         }
+    }
+
+    private fun configureScriptDefinitions(arguments: K2JVMCompilerArguments,
+                                           configuration: CompilerConfiguration,
+                                           messageCollector: MessageCollector,
+                                           scriptResolverEnv: HashMap<String, Any?>): Boolean {
+        val classpath = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance(JvmClasspathRoot::class.java).mapNotNull { it.file }
+        // TODO: consider using escaping to allow kotlin escaped names in class names
+        val scriptTemplates = arguments.scriptTemplates?.split(',', ' ')
+        if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
+            val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
+            var hasErrors = false
+            for (template in scriptTemplates) {
+                try {
+                    val cls = classloader.loadClass(template)
+                    val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, scriptResolverEnv)
+                    configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
+                    messageCollector.report(
+                            CompilerMessageSeverity.INFO,
+                            "Added script definition $template to configuration: files pattern: \"${def.scriptFilePattern}\", resolver: ${def.resolver?.javaClass?.name}",
+                            CompilerMessageLocation.NO_LOCATION
+                    )
+                }
+                catch (ex: ClassNotFoundException) {
+                    messageCollector.report(
+                            CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template (used classpath: ${classloader.urLs.joinToString()})", CompilerMessageLocation.NO_LOCATION
+                    )
+                    hasErrors = true
+                }
+                catch (ex: Exception) {
+                    messageCollector.report(
+                            CompilerMessageSeverity.ERROR, "Error processing script definition template $template: ${ex.message}", CompilerMessageLocation.NO_LOCATION
+                    )
+                    hasErrors = true
+                    break
+                }
+            }
+            if (hasErrors) {
+                messageCollector.report(
+                        CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)", CompilerMessageLocation.NO_LOCATION
+                )
+                return false
+            }
+        }
+        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+        return true
     }
 
     private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {
