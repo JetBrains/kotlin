@@ -44,14 +44,13 @@ void EnumGenerator::generateCode(io::Printer * printer) const {
     // Generate enum values.
     for (int i = 0; i < enumValues.size(); ++i) {
         enumValues[i]->generateCode(printer);
-        if (i + 1 != enumValues.size()) {
-            printer->Print(",");
-        }
-        else {
-            printer->Print(";");    // semicolon is necessary as companion object will follow
-        }
+        printer->Print(",");
         printer->Print("\n");
     }
+
+    // Generate additional value that will indicate errors in parsing this enum from int
+    vars["size"] = std::to_string(enumValues.size());
+    printer->Print(vars, "Unexpected($size$);\n");
 
     printer->Print("\n");
     generateEnumConverter(printer);
@@ -86,9 +85,7 @@ void EnumGenerator::generateEnumConverter(io::Printer *printer) const {
 
     // catch cast errors in else-clause
     printer->Print(vars,
-                   "else -> throw InvalidProtocolBufferException("
-                           "\"Error: got unexpected int $dollar${ord} while parsing $type$ \""
-                           ");\n");
+                   "else -> Unexpected\n");
 
     printer->Outdent();     // when-clause
     printer->Print("}\n");

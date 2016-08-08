@@ -257,10 +257,7 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
                        "$fieldName$.mergeFromWithSize(input, expectedSize)\n");
 
         // check that actual size equal to expected size
-        printer->Print(vars, "if (expectedSize != $fieldName$.getSizeNoTag()) { "
-                "throw InvalidProtocolBufferException ("
-                "\"Expected size $dollar${expectedSize} got $dollar${$fieldName$.getSizeNoTag()}"
-                "\") }\n");
+        printer->Print(vars, "if (expectedSize != $fieldName$.getSizeNoTag()) { errorCode = 3; return false }\n");
         printer->Outdent();
         printer->Print("}\n");
     }

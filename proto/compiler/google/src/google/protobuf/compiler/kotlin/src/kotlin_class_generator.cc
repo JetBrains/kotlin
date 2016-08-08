@@ -21,15 +21,20 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     generateHeader(printer, isBuilder);
     printer->Indent();
 
-    /**
-    * Field generator should know if it is generating code for builder.
-    * or for fair class to choose between 'val' and 'var'.
-    * Also note that fields should be declared before init section.
-    */
+    /*
+     * Field generator should know if it is generating code for builder
+     * or for fair class to choose between 'val' and 'var'.
+     * Also note that fields should be declared before init section.
+     */
+
     for (FieldGenerator *gen: properties) {
         gen->generateCode(printer, isBuilder);
         printer->Print("\n");
     }
+
+    // Generate field for errors code
+    printer->Print("\n");
+    printer->Print("var errorCode: Int = 0\n");
 
     printer->Print("\n");
     generateInitSection(printer);
@@ -298,13 +303,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
         printer->Indent();
 
         // check that wire type of that field is equal to expected
-        printer->Print(vars, "if (wireType != $kotlinWireType$) {\n");
-        printer->Indent();
-        printer->Print(vars, "throw InvalidProtocolBufferException(\""
-                               "Error: Field number $fieldNumber$ has wire type $kotlinWireType$"
-                               " but read $dl${wireType.toString()}\")");
-        printer->Outdent();
-        printer->Print("}\n");
+        printer->Print(vars, "if (wireType != $kotlinWireType$) { errorCode = 1; return false } \n");
 
         properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true);
 
@@ -340,7 +339,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     vars["dollar"] = "$";
     printer->Print(vars,
                    "if (getSizeNoTag() > expectedSize) { "
-                           "throw InvalidProtocolBufferException(\"Error: expected size of message $dollar$expectedSize, but have read at least $dollar${getSizeNoTag()}\") "
+                           "errorCode = 2 "
                            "}\n");
 
     printer->Print("return this\n");
