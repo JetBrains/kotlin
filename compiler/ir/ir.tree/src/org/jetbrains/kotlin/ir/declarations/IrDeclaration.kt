@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.SourceLocation
 
 interface IrDeclaration : IrElement {
     override val parent: IrDeclarationOwner?
@@ -51,8 +50,9 @@ enum class IrDeclarationOriginKind {
 }
 
 abstract class IrDeclarationBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         override val originKind: IrDeclarationOriginKind
-) : IrElementBase(sourceLocation), IrDeclaration {
+) : IrElementBase(startOffset, endOffset), IrDeclaration {
     override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
 }

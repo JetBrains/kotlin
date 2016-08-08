@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -43,29 +42,32 @@ interface IrPropertySetter : IrPropertyAccessor {
 }
 
 abstract class IrPropertyAccessorBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation, originKind), IrPropertyAccessor {
+) : IrFunctionBase(startOffset, endOffset, originKind), IrPropertyAccessor {
     override var property: IrProperty? = null
 }
 
 class IrPropertyGetterImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: PropertyGetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, originKind, body), IrPropertyGetter {
+) : IrPropertyAccessorBase(startOffset, endOffset, originKind, body), IrPropertyGetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertyGetter(this, data)
 }
 
 class IrPropertySetterImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: PropertySetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, originKind, body), IrPropertySetter {
+) : IrPropertyAccessorBase(startOffset, endOffset, originKind, body), IrPropertySetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertySetter(this, data)
 }

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrDummyExpression(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         type: KotlinType
-) : IrExpressionBase(sourceLocation, type) {
+) : IrExpressionBase(startOffset, endOffset, type) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitElement(this, data)
 

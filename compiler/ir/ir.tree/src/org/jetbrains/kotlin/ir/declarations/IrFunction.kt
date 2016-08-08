@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -30,20 +29,22 @@ interface IrFunction : IrMemberDeclaration {
 }
 
 abstract class IrFunctionBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind
-) : IrMemberDeclarationBase(sourceLocation, originKind), IrFunction {
+) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrFunction {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         body.accept(visitor, data)
     }
 }
 
 class IrFunctionImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: FunctionDescriptor,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation, originKind) {
+) : IrFunctionBase(startOffset, endOffset, originKind) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }

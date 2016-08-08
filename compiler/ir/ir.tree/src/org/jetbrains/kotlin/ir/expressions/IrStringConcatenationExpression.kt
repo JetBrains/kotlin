@@ -16,18 +16,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 interface IrStringConcatenationExpression : IrCompoundExpressionN
 
 class IrStringConcatenationExpressionImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         type: KotlinType
-) : IrCompoundExpressionNBase(sourceLocation, type), IrStringConcatenationExpression {
+) : IrCompoundExpressionNBase(startOffset, endOffset, type), IrStringConcatenationExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitStringTemplate(this, data)
 }

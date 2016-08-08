@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -24,9 +23,10 @@ import org.jetbrains.kotlin.types.KotlinType
 interface IrBlockExpression : IrCompoundExpressionN
 
 class IrBlockExpressionImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         type: KotlinType
-) : IrCompoundExpressionNBase(sourceLocation, type), IrBlockExpression {
+) : IrCompoundExpressionNBase(startOffset, endOffset, type), IrBlockExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitBlockExpression(this, data)
 

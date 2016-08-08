@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -28,9 +27,10 @@ interface IrCompoundExpression1 : IrCompoundExpression, IrExpressionOwner1
 interface IrCompoundExpressionN : IrCompoundExpression, IrExpressionOwnerN
 
 abstract class IrCompoundExpressionNBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         override val type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrCompoundExpressionN {
+) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpressionN {
     override val childExpressions: MutableList<IrExpression> = ArrayList()
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -68,9 +68,10 @@ abstract class IrCompoundExpressionNBase(
 
 // TODO IrExpressionBodyImpl vs IrCompoundExpression1Impl: extract common base class?
 abstract class IrCompoundExpression1Base(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         override val type: KotlinType
-) : IrExpressionBase(sourceLocation, type), IrCompoundExpression1 {
+) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpression1 {
     override var childExpression: IrExpression? = null
         set(newExpression) {
             field?.detach()

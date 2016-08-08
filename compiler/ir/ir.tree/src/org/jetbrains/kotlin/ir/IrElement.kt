@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrElement {
-    val sourceLocation: SourceLocation
+    val startOffset: Int
+    val endOffset: Int
     val parent: IrElement?
 
     fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
     fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D): Unit
 }
 
-abstract class IrElementBase(override val sourceLocation: SourceLocation) : IrElement
+abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement

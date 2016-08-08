@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -45,11 +43,12 @@ sealed class IrLiteralKind<out T>(val asString: kotlin.String)  {
 }
 
 class IrLiteralExpressionImpl<out T> (
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         type: KotlinType,
         override val kind: IrLiteralKind<T>,
         override val value: T
-) : IrExpressionBase(sourceLocation, type), IrLiteralExpression<T> {
+) : IrExpressionBase(startOffset, endOffset, type), IrLiteralExpression<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitLiteral(this, data)
 
@@ -58,11 +57,11 @@ class IrLiteralExpressionImpl<out T> (
     }
 
     companion object {
-        fun string(sourceLocation: SourceLocation, type: KotlinType, value: String): IrLiteralExpressionImpl<String> =
-                IrLiteralExpressionImpl(sourceLocation, type, IrLiteralKind.String, value)
+        fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrLiteralExpressionImpl<String> =
+                IrLiteralExpressionImpl(startOffset, endOffset, type, IrLiteralKind.String, value)
 
-        fun int(sourceLocation: SourceLocation, type: KotlinType, value: Int): IrLiteralExpressionImpl<Int> =
-                IrLiteralExpressionImpl(sourceLocation, type, IrLiteralKind.Int, value)
+        fun int(startOffset: Int, endOffset: Int, type: KotlinType, value: Int): IrLiteralExpressionImpl<Int> =
+                IrLiteralExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Int, value)
     }
 }
 

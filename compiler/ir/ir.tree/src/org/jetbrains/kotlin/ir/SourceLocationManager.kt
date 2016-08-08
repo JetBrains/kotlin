@@ -16,11 +16,27 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrFile
+
+const val UNDEFINED_OFFSET: Int = -1
+
+data class SourceRangeInfo(
+        val filePath: String,
+        val startOffset: Int,
+        val startLineNumber: Int,
+        val startColumnNumber: Int,
+        val endOffset: Int,
+        val endLineNumber: Int,
+        val endColumnNumber: Int
+)
+
 interface SourceLocationManager {
     interface FileEntry {
-        fun getLineNumber(sourceLocation: SourceLocation): Int
-        fun getColumnNumber(sourceLocation: SourceLocation): Int
+        val maxOffset: Int
+        fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
+        fun getLineNumber(offset: Int): Int
+        fun getColumnNumber(offset: Int): Int
     }
 
-    fun getFileEntry(sourceLocation: SourceLocation): FileEntry?
+    fun getFileEntry(irFile: IrFile): FileEntry?
 }

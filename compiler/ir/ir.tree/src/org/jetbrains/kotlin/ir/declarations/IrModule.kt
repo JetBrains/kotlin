@@ -17,13 +17,15 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.NO_LOCATION
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
 interface IrModule : IrDeclaration {
     override val descriptor: ModuleDescriptor
+
+    override val startOffset: Int get() = UNDEFINED_OFFSET
+    override val endOffset: Int get() = UNDEFINED_OFFSET
 
     override val parent: Nothing? get() = null
     override val indexInParent: Int get() = MODULE_INDEX
@@ -41,8 +43,6 @@ interface IrModule : IrDeclaration {
 class IrModuleImpl(
         override val descriptor: ModuleDescriptor
 ) : IrModule {
-    override val sourceLocation: Long
-        get() = NO_LOCATION
 
     override val originKind: IrDeclarationOriginKind
         get() = IrDeclarationOriginKind.DEFINED

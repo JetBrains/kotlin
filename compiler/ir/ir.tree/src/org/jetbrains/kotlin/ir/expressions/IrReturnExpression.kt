@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -30,9 +29,10 @@ var IrReturnExpression.returnedExpression: IrExpression?
     }
 
 class IrReturnExpressionImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         type: KotlinType
-) : IrCompoundExpression1Base(sourceLocation, type), IrReturnExpression {
+) : IrCompoundExpression1Base(startOffset, endOffset, type), IrReturnExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturnExpression(this, data)
 }

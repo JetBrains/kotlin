@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -43,9 +42,10 @@ fun IrExpressionOwner.validateChild(child: IrExpression) {
 }
 
 abstract class IrExpressionBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         override val type: KotlinType
-) : IrElementBase(sourceLocation), IrExpression {
+) : IrElementBase(startOffset, endOffset), IrExpression {
     override var parent: IrExpressionOwner? = null
     override var index: Int = IrExpression.DETACHED_INDEX
 

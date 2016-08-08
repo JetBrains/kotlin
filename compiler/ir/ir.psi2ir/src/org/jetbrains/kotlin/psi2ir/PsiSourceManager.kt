@@ -16,52 +16,63 @@
 
 package org.jetbrains.kotlin.psi2ir
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.SourceLocationManager
-import org.jetbrains.kotlin.ir.fileIndex
-import org.jetbrains.kotlin.ir.fileOffset
+import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import java.util.*
 
 class PsiSourceManager : SourceLocationManager {
-    class PsiFileEntry (val index: Int, val file: PsiFile) : SourceLocationManager.FileEntry {
-        private val document = file.viewProvider.document
+    class PsiFileEntry(val psiFile: PsiFile) : SourceLocationManager.FileEntry {
+        private val document = psiFile.viewProvider.document
 
-        override fun getLineNumber(sourceLocation: SourceLocation): Int =
-                document?.getLineNumber(sourceLocation.fileOffset) ?: -1
+        override val maxOffset: Int
+            get() = document?.textLength ?: Int.MAX_VALUE
 
-        override fun getColumnNumber(sourceLocation: SourceLocation): Int =
-                document?.getLineStartOffset(sourceLocation.fileOffset) ?: -1
+        override fun getLineNumber(offset: Int): Int =
+                document?.getLineNumber(offset) ?: -1
 
-        fun getRootSourceLocation(): SourceLocation =
-                SourceLocation(index, 0)
+        override fun getColumnNumber(offset: Int): Int {
+            val startOffset = document?.getLineStartOffset(offset) ?: return -1
+            return offset - startOffset
+        }
 
-        fun getSourceLocationForElement(element: PsiElement): SourceLocation =
-                SourceLocation(index, element.textOffset)
+        override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
+                SourceRangeInfo(
+                        filePath = getRecognizableName(),
+                        startOffset = beginOffset,
+                        startLineNumber = getLineNumber(beginOffset),
+                        startColumnNumber = getColumnNumber(beginOffset),
+                        endOffset = endOffset,
+                        endLineNumber = getLineNumber(endOffset),
+                        endColumnNumber = getColumnNumber(endOffset)
+                )
 
-        fun getRecognizableName(): String = file.virtualFile?.path ?: file.name
+        fun getRecognizableName(): String = psiFile.virtualFile?.path ?: psiFile.name
 
-        override fun toString(): String = "#$index: ${getRecognizableName()}"
+        override fun toString(): String = "${getRecognizableName()}"
     }
 
-    private val fileEntries = ArrayList<PsiFileEntry>()
     private val fileEntriesByPsiFile = HashMap<PsiFile, PsiFileEntry>()
-
-    override fun getFileEntry(sourceLocation: Long): PsiFileEntry? =
-            fileEntries.getOrNull(sourceLocation.fileIndex)
+    private val fileEntriesByIrFile = HashMap<IrFile, PsiFileEntry>()
 
     fun createFileEntry(psiFile: PsiFile): PsiFileEntry {
         if (psiFile in fileEntriesByPsiFile) error("PsiFileEntry is already created for $psiFile")
-
-        val newEntry = PsiFileEntry(fileEntries.size, psiFile)
-        fileEntries.add(newEntry)
+        val newEntry = PsiFileEntry(psiFile)
         fileEntriesByPsiFile[psiFile] = newEntry
         return newEntry
+    }
+
+    fun putFileEntry(irFile: IrFile, fileEntry: PsiFileEntry) {
+        fileEntriesByIrFile[irFile] = fileEntry
     }
 
     fun getOrCreateFileEntry(psiFile: PsiFile): PsiFileEntry =
             fileEntriesByPsiFile.getOrElse(psiFile) { createFileEntry(psiFile) }
 
-    fun getFileEntry(psiFile: PsiFile): PsiFileEntry? = fileEntriesByPsiFile[psiFile]
+    fun getFileEntry(psiFile: PsiFile): PsiFileEntry? =
+            fileEntriesByPsiFile[psiFile]
+
+    override fun getFileEntry(irFile: IrFile): SourceLocationManager.FileEntry =
+            fileEntriesByIrFile[irFile]!!
 }

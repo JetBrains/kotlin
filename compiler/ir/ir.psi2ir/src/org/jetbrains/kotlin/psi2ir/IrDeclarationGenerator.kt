@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrReturnExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.returnedExpression
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
 interface IrDeclarationGenerator : IrGenerator {
@@ -92,16 +94,18 @@ abstract class IrDeclarationGeneratorBase(
     }
 
     fun generateExpressionBody(ktBody: KtExpression): IrBody {
-        val sourceLocation = fileElementFactory.getLocationInFile(ktBody)
         val irExpression = irExpressionGenerator.generateExpression(ktBody)
+
+        val startOffset = ktBody.startOffset
+        val endOffset = ktBody.endOffset
 
         val bodyExpression =
                 if (ktBody is KtBlockExpression)
                     irExpression
                 else
-                    IrReturnExpressionImpl(sourceLocation, irExpression.type)
+                    IrReturnExpressionImpl(startOffset, endOffset, irExpression.type)
                             .apply { returnedExpression = irExpression }
 
-        return IrExpressionBodyImpl(sourceLocation, containingDeclaration).apply { childExpression = bodyExpression }
+        return IrExpressionBodyImpl(startOffset, endOffset, containingDeclaration).apply { childExpression = bodyExpression }
     }
 }

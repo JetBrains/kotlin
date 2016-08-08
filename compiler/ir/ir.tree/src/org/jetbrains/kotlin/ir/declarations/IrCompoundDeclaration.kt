@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -44,8 +43,9 @@ interface IrMemberDeclaration : IrDeclaration {
 }
 
 abstract class IrDeclarationOwnerBase(
-        sourceLocation: SourceLocation
-) : IrElementBase(sourceLocation), IrDeclarationOwner {
+        startOffset: Int,
+        endOffset: Int
+) : IrElementBase(startOffset, endOffset), IrDeclarationOwner {
     protected val childDeclarations: MutableList<IrMemberDeclaration> = ArrayList()
 
     override val childrenCount: Int
@@ -87,9 +87,10 @@ abstract class IrDeclarationOwnerBase(
 
 // TODO synchronization?
 abstract class IrCompoundDeclarationBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         override val originKind: IrDeclarationOriginKind
-) : IrDeclarationOwnerBase(sourceLocation), IrCompoundDeclaration {
+) : IrDeclarationOwnerBase(startOffset, endOffset), IrCompoundDeclaration {
     override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -98,9 +99,10 @@ abstract class IrCompoundDeclarationBase(
 }
 
 abstract class IrCompoundMemberDeclarationBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind
-) : IrCompoundDeclarationBase(sourceLocation, originKind), IrMemberDeclaration {
+) : IrCompoundDeclarationBase(startOffset, endOffset, originKind), IrMemberDeclaration {
     private var parentImpl: IrDeclarationOwner? = null
 
     override var parent: IrDeclarationOwner
@@ -116,9 +118,10 @@ abstract class IrCompoundMemberDeclarationBase(
 }
 
 abstract class IrMemberDeclarationBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind
-) : IrDeclarationBase(sourceLocation, originKind), IrMemberDeclaration {
+) : IrDeclarationBase(startOffset, endOffset, originKind), IrMemberDeclaration {
     private var parentImpl: IrDeclarationOwner? = null
 
     override var parent: IrDeclarationOwner

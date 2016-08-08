@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
+import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrFile : IrCompoundDeclaration {
@@ -32,10 +32,10 @@ interface IrFile : IrCompoundDeclaration {
 }
 
 class IrFileImpl(
-        sourceLocation: SourceLocation,
+        val fileEntry: SourceLocationManager.FileEntry,
         override val name: String,
         override val descriptor: PackageFragmentDescriptor
-) : IrCompoundDeclarationBase(sourceLocation, IrDeclarationOriginKind.DEFINED), IrFile {
+) : IrCompoundDeclarationBase(0, fileEntry.maxOffset, IrDeclarationOriginKind.DEFINED), IrFile {
     override lateinit var module: IrModule
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

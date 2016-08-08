@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -42,10 +41,11 @@ interface IrDelegatedProperty : IrProperty {
 
 // TODO synchronization?
 abstract class IrPropertyBase(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: PropertyDescriptor
-) : IrMemberDeclarationBase(sourceLocation, originKind), IrProperty {
+) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
             newGetter?.property = this
@@ -65,11 +65,12 @@ abstract class IrPropertyBase(
 }
 
 class IrSimplePropertyImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
         override val valueInitializer: IrBody?
-) : IrPropertyBase(sourceLocation, originKind, descriptor), IrSimpleProperty {
+) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrSimpleProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitSimpleProperty(this, data)
 
@@ -79,11 +80,12 @@ class IrSimplePropertyImpl(
 }
 
 class IrDelegatedPropertyImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
         override val delegateInitializer: IrBody
-) : IrPropertyBase(sourceLocation, originKind, descriptor), IrDelegatedProperty {
+) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrDelegatedProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDelegatedProperty(this, data)
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrClass : IrCompoundDeclaration, IrMemberDeclaration {
@@ -28,10 +27,11 @@ interface IrClass : IrCompoundDeclaration, IrMemberDeclaration {
 }
 
 class IrClassImpl(
-        sourceLocation: SourceLocation,
+        startOffset: Int,
+        endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: ClassDescriptor
-) : IrCompoundMemberDeclarationBase(sourceLocation, originKind), IrClass {
+) : IrCompoundMemberDeclarationBase(startOffset, endOffset, originKind), IrClass {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 }
