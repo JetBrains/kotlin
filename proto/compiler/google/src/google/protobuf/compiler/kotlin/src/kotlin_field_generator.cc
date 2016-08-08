@@ -133,16 +133,18 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         printer->Print(vars, "output.writeInt32NoTag(arrayByteSize)\n");
 
         // all elements
-        printer->Print(vars, "for (item in $fieldName$) {\n");
+        printer->Print("var i = 0\n");
+        printer->Print(vars, "while (i < $fieldName$.size) {\n");
         printer->Indent();
 
-        // hack: see above
+        // hack: similar to one above
         FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
-        singleFieldGen.simpleName = "item";
+        singleFieldGen.simpleName = simpleName + "[i]";
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ isPrimitive, /* isField = */ false);
 
+        printer->Print(vars, "i += 1\n");
         printer->Outdent(); // for-loop
         printer->Print("}\n");
     }
@@ -363,15 +365,18 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         printer->Print("var arraySize = 0\n");
 
         // iterate over all elements of array
-        printer->Print(vars, "for (item in $fieldName$) {\n");
+        printer->Print("var i = 0\n");
+        printer->Print(vars, "while (i < $fieldName$.size) {\n");
         printer->Indent();
 
         // hack: reuse generateSizeEstimationCode in the same manner as in generateSerializationCode
         FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
-        singleFieldGen.simpleName = "item";
+        singleFieldGen.simpleName = simpleName + "[i]";
         singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag, /* isField = */ false);
 
+        printer->Print(vars, "i += 1\n");
+        
         printer->Outdent();     // for-loop
         printer->Print("}\n");
 
