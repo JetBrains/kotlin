@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceLocation
 
 interface IrDeclaration : IrElement {
-    override val parent: IrCompoundDeclaration?
-    val index: Int
+    override val parent: IrDeclarationOwner?
+    val indexInParent: Int
 
     val descriptor: DeclarationDescriptor?
-    val kind: IrDeclarationKind
+
+    val declarationKind: IrDeclarationKind
+    val originKind: IrDeclarationOriginKind
 
     companion object {
         const val DETACHED_INDEX = Int.MIN_VALUE
@@ -34,17 +36,23 @@ interface IrDeclaration : IrElement {
 }
 
 enum class IrDeclarationKind {
+    MODULE,
+    FILE,
+    FUNCTION,
+    PROPERTY,
+    PROPERTY_GETTER,
+    PROPERTY_SETTER,
+    CLASS
+}
+
+enum class IrDeclarationOriginKind {
     DEFINED,
     DEFAULT_PROPERTY_ACCESSOR,
 }
 
 abstract class IrDeclarationBase(
         sourceLocation: SourceLocation,
-        override val kind: IrDeclarationKind
+        override val originKind: IrDeclarationOriginKind
 ) : IrElementBase(sourceLocation), IrDeclaration {
-    override var index: Int = IrDeclaration.DETACHED_INDEX
+    override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
 }
-
-val IrDeclaration.containingDeclaration: IrDeclaration?
-    get() = parent
-

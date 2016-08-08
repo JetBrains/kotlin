@@ -21,7 +21,7 @@ typealias SourceLocation = Long
 fun SourceLocation(index: Int, offset: Int) =
         (index.toLong() shl 32) + offset.toLong()
 
-const val NO_LOCATION: SourceLocation = -1L
+const val NO_LOCATION: SourceLocation = Long.MIN_VALUE
 const val UNDEFINED_INDEX: Int = -1
 const val UNDEFINED_OFFSET: Int = -1
 

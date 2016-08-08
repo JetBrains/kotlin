@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwner
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwnerBase
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -27,14 +29,13 @@ interface IrBody : IrElement {
     override val parent: IrDeclaration
 }
 
-interface IrExpressionBody : IrBody, IrExpressionOwner1
-
-abstract class IrBodyBase(sourceLocation: SourceLocation): IrElementBase(sourceLocation), IrBody {
-    override lateinit var parent: IrDeclaration
-}
+interface IrExpressionBody : IrBody, IrExpressionOwner1, IrDeclarationOwner
 
 // TODO IrExpressionBodyImpl vs IrCompoundExpression1Impl: extract common base class?
-class IrExpressionBodyImpl(sourceLocation: SourceLocation) : IrBodyBase(sourceLocation), IrExpressionBody {
+class IrExpressionBodyImpl(
+        sourceLocation: SourceLocation,
+        override val parent: IrDeclaration
+) : IrDeclarationOwnerBase(sourceLocation), IrExpressionBody {
     override var childExpression: IrExpression? = null
         set(newExpression) {
             field?.detach()

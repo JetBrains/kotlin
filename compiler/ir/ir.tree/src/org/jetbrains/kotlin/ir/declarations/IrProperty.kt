@@ -26,6 +26,9 @@ interface IrProperty : IrMemberDeclaration {
     var getter: IrPropertyGetter?
     var setter: IrPropertySetter?
 
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.PROPERTY
+
     fun <D> acceptAccessors(visitor: IrElementVisitor<Unit, D>, data: D)
 }
 
@@ -40,16 +43,9 @@ interface IrDelegatedProperty : IrProperty {
 // TODO synchronization?
 abstract class IrPropertyBase(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         override val descriptor: PropertyDescriptor
-) : IrDeclarationBase(sourceLocation, kind), IrProperty {
-    override var parent: IrCompoundDeclaration? = null
-
-    override fun setTreeLocation(parent: IrCompoundDeclaration?, index: Int) {
-        this.parent = parent
-        this.index = index
-    }
-
+) : IrMemberDeclarationBase(sourceLocation, originKind), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
             newGetter?.property = this
@@ -70,10 +66,10 @@ abstract class IrPropertyBase(
 
 class IrSimplePropertyImpl(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
         override val valueInitializer: IrBody?
-) : IrPropertyBase(sourceLocation, kind, descriptor), IrSimpleProperty {
+) : IrPropertyBase(sourceLocation, originKind, descriptor), IrSimpleProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitSimpleProperty(this, data)
 
@@ -84,10 +80,10 @@ class IrSimplePropertyImpl(
 
 class IrDelegatedPropertyImpl(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
         override val delegateInitializer: IrBody
-) : IrPropertyBase(sourceLocation, kind, descriptor), IrDelegatedProperty {
+) : IrPropertyBase(sourceLocation, originKind, descriptor), IrDelegatedProperty {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDelegatedProperty(this, data)
 

@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceLocation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-interface IrCompoundDeclaration : IrDeclaration {
+interface IrDeclarationOwner : IrElement {
+    val childrenCount: Int
     fun getChildDeclaration(index: Int): IrMemberDeclaration?
     fun addChildDeclaration(child: IrMemberDeclaration)
     fun replaceChildDeclaration(oldChild: IrMemberDeclaration, newChild: IrMemberDeclaration)
@@ -32,27 +35,24 @@ interface IrCompoundDeclaration : IrDeclaration {
     fun <D> acceptChildDeclarations(visitor: IrElementVisitor<Unit, D>, data: D)
 }
 
+interface IrCompoundDeclaration : IrDeclaration, IrDeclarationOwner
+
 interface IrMemberDeclaration : IrDeclaration {
-    fun setTreeLocation(parent: IrCompoundDeclaration?, index: Int)
+    override val parent: IrDeclarationOwner
+
+    fun setTreeLocation(parent: IrDeclarationOwner?, index: Int)
 }
 
-// TODO synchronization?
-abstract class IrCompoundDeclarationBase(
-        sourceLocation: SourceLocation,
-        kind: IrDeclarationKind
-) : IrDeclarationBase(sourceLocation, kind), IrCompoundDeclaration {
+abstract class IrDeclarationOwnerBase(
+        sourceLocation: SourceLocation
+) : IrElementBase(sourceLocation), IrDeclarationOwner {
     protected val childDeclarations: MutableList<IrMemberDeclaration> = ArrayList()
+
+    override val childrenCount: Int
+        get() = childDeclarations.size
 
     override fun getChildDeclaration(index: Int): IrMemberDeclaration? =
             childDeclarations.getOrNull(index)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildDeclarations(visitor, data)
-    }
-
-    override fun <D> acceptChildDeclarations(visitor: IrElementVisitor<Unit, D>, data: D) {
-        childDeclarations.forEach { it.accept(visitor, data) }
-    }
 
     override fun addChildDeclaration(child: IrMemberDeclaration) {
         child.setTreeLocation(this, childDeclarations.size)
@@ -61,8 +61,8 @@ abstract class IrCompoundDeclarationBase(
 
     override fun removeChildDeclaration(child: IrMemberDeclaration) {
         validateChild(child)
-        childDeclarations.removeAt(child.index)
-        for (i in child.index ..childDeclarations.size - 1) {
+        childDeclarations.removeAt(child.indexInParent)
+        for (i in child.indexInParent..childDeclarations.size - 1) {
             childDeclarations[i].setTreeLocation(this, i)
         }
         child.detach()
@@ -75,9 +75,61 @@ abstract class IrCompoundDeclarationBase(
 
     override fun replaceChildDeclaration(oldChild: IrMemberDeclaration, newChild: IrMemberDeclaration) {
         validateChild(oldChild)
-        childDeclarations[oldChild.index] = newChild
-        newChild.setTreeLocation(this, oldChild.index)
+        childDeclarations[oldChild.indexInParent] = newChild
+        newChild.setTreeLocation(this, oldChild.indexInParent)
         oldChild.detach()
+    }
+
+    override fun <D> acceptChildDeclarations(visitor: IrElementVisitor<Unit, D>, data: D) {
+        childDeclarations.forEach { it.accept(visitor, data) }
+    }
+}
+
+// TODO synchronization?
+abstract class IrCompoundDeclarationBase(
+        sourceLocation: SourceLocation,
+        override val originKind: IrDeclarationOriginKind
+) : IrDeclarationOwnerBase(sourceLocation), IrCompoundDeclaration {
+    override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        acceptChildDeclarations(visitor, data)
+    }
+}
+
+abstract class IrCompoundMemberDeclarationBase(
+        sourceLocation: SourceLocation,
+        originKind: IrDeclarationOriginKind
+) : IrCompoundDeclarationBase(sourceLocation, originKind), IrMemberDeclaration {
+    private var parentImpl: IrDeclarationOwner? = null
+
+    override var parent: IrDeclarationOwner
+        get() = parentImpl!!
+        set(newParent) {
+            parentImpl = newParent
+        }
+
+    override fun setTreeLocation(parent: IrDeclarationOwner?, index: Int) {
+        this.parentImpl = parent
+        this.indexInParent = index
+    }
+}
+
+abstract class IrMemberDeclarationBase(
+        sourceLocation: SourceLocation,
+        originKind: IrDeclarationOriginKind
+) : IrDeclarationBase(sourceLocation, originKind), IrMemberDeclaration {
+    private var parentImpl: IrDeclarationOwner? = null
+
+    override var parent: IrDeclarationOwner
+        get() = parentImpl!!
+        set(newParent) {
+            parentImpl = newParent
+        }
+
+    override fun setTreeLocation(parent: IrDeclarationOwner?, index: Int) {
+        this.parentImpl = parent
+        this.indexInParent = index
     }
 }
 
@@ -85,6 +137,6 @@ fun IrMemberDeclaration.detach() {
     setTreeLocation(null, IrDeclaration.DETACHED_INDEX)
 }
 
-fun IrCompoundDeclaration.validateChild(child: IrMemberDeclaration) {
-    assert(child.parent == this && getChildDeclaration(child.index) == child) { "Invalid child: $child" }
+fun IrDeclarationOwner.validateChild(child: IrMemberDeclaration) {
+    assert(child.parent == this && getChildDeclaration(child.indexInParent) == child) { "Invalid child: $child" }
 }

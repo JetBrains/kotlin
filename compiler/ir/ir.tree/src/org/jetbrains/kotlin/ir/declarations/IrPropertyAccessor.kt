@@ -30,36 +30,42 @@ interface IrPropertyAccessor : IrFunction {
 
 interface IrPropertyGetter : IrPropertyAccessor {
     override val descriptor: PropertyGetterDescriptor
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.PROPERTY_GETTER
 }
 
 interface IrPropertySetter : IrPropertyAccessor {
     override val descriptor: PropertySetterDescriptor
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.PROPERTY_SETTER
 }
 
 abstract class IrPropertyAccessorBase(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation, kind), IrPropertyAccessor {
+) : IrFunctionBase(sourceLocation, originKind), IrPropertyAccessor {
     override var property: IrProperty? = null
 }
 
 class IrPropertyGetterImpl(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         override val descriptor: PropertyGetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, kind, body), IrPropertyGetter {
+) : IrPropertyAccessorBase(sourceLocation, originKind, body), IrPropertyGetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertyGetter(this, data)
 }
 
 class IrPropertySetterImpl(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         override val descriptor: PropertySetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(sourceLocation, kind, body), IrPropertySetter {
+) : IrPropertyAccessorBase(sourceLocation, originKind, body), IrPropertySetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertySetter(this, data)
 }

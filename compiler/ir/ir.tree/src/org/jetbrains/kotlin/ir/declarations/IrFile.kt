@@ -22,16 +22,21 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrFile : IrCompoundDeclaration {
     val name: String
+    val module: IrModule
     override val descriptor: PackageFragmentDescriptor
+
+    override val parent: Nothing? get() = null
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.FILE
 }
 
 class IrFileImpl(
         sourceLocation: SourceLocation,
-        val module: IrModule,
         override val name: String,
         override val descriptor: PackageFragmentDescriptor
-) : IrCompoundDeclarationBase(sourceLocation, IrDeclarationKind.DEFINED), IrFile {
-    override val parent: IrCompoundDeclaration? = null
+) : IrCompoundDeclarationBase(sourceLocation, IrDeclarationOriginKind.DEFINED), IrFile {
+    override lateinit var module: IrModule
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFile(this, data)

@@ -41,11 +41,11 @@ class IrFileElementFactory private constructor(
             }
 
     fun createFunction(ktFunction: KtFunction, functionDescriptor: FunctionDescriptor, body: IrBody): IrFunction =
-            IrFunctionImpl(getLocationInFile(ktFunction), IrDeclarationKind.DEFINED, functionDescriptor, body)
+            IrFunctionImpl(getLocationInFile(ktFunction), IrDeclarationOriginKind.DEFINED, functionDescriptor, body)
                     .addToContainer()
 
     fun createSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor, valueInitializer: IrBody?): IrSimpleProperty =
-            IrSimplePropertyImpl(getLocationInFile(ktProperty), IrDeclarationKind.DEFINED, propertyDescriptor, valueInitializer)
+            IrSimplePropertyImpl(getLocationInFile(ktProperty), IrDeclarationOriginKind.DEFINED, propertyDescriptor, valueInitializer)
                     .addToContainer()
 
     fun createPropertyGetter(
@@ -54,7 +54,7 @@ class IrFileElementFactory private constructor(
             getterDescriptor: PropertyGetterDescriptor,
             getterBody: IrBody
     ): IrPropertyGetter =
-            IrPropertyGetterImpl(getLocationInFile(ktPropertyAccessor), IrDeclarationKind.DEFINED, getterDescriptor, getterBody)
+            IrPropertyGetterImpl(getLocationInFile(ktPropertyAccessor), IrDeclarationOriginKind.DEFINED, getterDescriptor, getterBody)
                     .apply { irProperty.getter = this }
                     .addToContainer()
 
@@ -64,16 +64,16 @@ class IrFileElementFactory private constructor(
             setterDescriptor: PropertySetterDescriptor,
             setterBody: IrBody
     ) : IrPropertySetter =
-            IrPropertySetterImpl(getLocationInFile(ktPropertyAccessor), IrDeclarationKind.DEFINED, setterDescriptor, setterBody)
+            IrPropertySetterImpl(getLocationInFile(ktPropertyAccessor), IrDeclarationOriginKind.DEFINED, setterDescriptor, setterBody)
                     .apply { irProperty.setter = this }
                     .addToContainer()
 
     companion object {
-        fun create(irModule: IrModule, sourceManager: PsiSourceManager, ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrFileElementFactory {
+        fun create(irModule: IrModuleImpl, sourceManager: PsiSourceManager, ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrFileElementFactory {
             val fileEntry = sourceManager.getOrCreateFileEntry(ktFile)
             val fileSourceLocation = fileEntry.getRootSourceLocation()
             val fileName = fileEntry.getRecognizableName()
-            val irFile = IrFileImpl(fileSourceLocation, irModule, fileName, descriptor)
+            val irFile = IrFileImpl(fileSourceLocation, fileName, descriptor)
             irModule.addFile(irFile)
             return IrFileElementFactory(fileEntry, irFile, irFile)
         }

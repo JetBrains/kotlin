@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBodyBase
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrReturnExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.returnedExpression
@@ -91,7 +91,7 @@ abstract class IrDeclarationGeneratorBase(
         return propertyDescriptor
     }
 
-    fun generateExpressionBody(ktBody: KtExpression): IrBodyBase {
+    fun generateExpressionBody(ktBody: KtExpression): IrBody {
         val sourceLocation = fileElementFactory.getLocationInFile(ktBody)
         val irExpression = irExpressionGenerator.generateExpression(ktBody)
 
@@ -102,6 +102,6 @@ abstract class IrDeclarationGeneratorBase(
                     IrReturnExpressionImpl(sourceLocation, irExpression.type)
                             .apply { returnedExpression = irExpression }
 
-        return IrExpressionBodyImpl(sourceLocation).apply { childExpression = bodyExpression }
+        return IrExpressionBodyImpl(sourceLocation, containingDeclaration).apply { childExpression = bodyExpression }
     }
 }

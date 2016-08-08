@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 
-interface IrReturnExpression : IrExpression, IrExpressionOwner1
+interface IrReturnExpression : IrCompoundExpression1
 
 var IrReturnExpression.returnedExpression: IrExpression?
     get() = childExpression
-    set(newReturnedExpression) { childExpression = newReturnedExpression }
+    set(newReturnedExpression) {
+        childExpression = newReturnedExpression
+    }
 
 class IrReturnExpressionImpl(
         sourceLocation: SourceLocation,

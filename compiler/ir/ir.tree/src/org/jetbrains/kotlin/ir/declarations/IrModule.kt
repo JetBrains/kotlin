@@ -25,24 +25,33 @@ import java.util.*
 interface IrModule : IrDeclaration {
     override val descriptor: ModuleDescriptor
 
+    override val parent: Nothing? get() = null
+    override val indexInParent: Int get() = MODULE_INDEX
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.MODULE
+
     val files: List<IrFile>
 
-    fun addFile(file: IrFile)
+    companion object {
+        const val MODULE_INDEX = -1
+    }
 }
 
 class IrModuleImpl(
         override val descriptor: ModuleDescriptor
-) : IrDeclarationBase(NO_LOCATION, IrDeclarationKind.DEFINED), IrModule {
-    init {
-        index = 0
-    }
+) : IrModule {
+    override val sourceLocation: Long
+        get() = NO_LOCATION
 
-    override val parent: IrCompoundDeclaration? get() = null
+    override val originKind: IrDeclarationOriginKind
+        get() = IrDeclarationOriginKind.DEFINED
 
     override val files: MutableList<IrFile> = ArrayList()
 
-    override fun addFile(file: IrFile) {
+    fun addFile(file: IrFileImpl) {
         files.add(file)
+        file.module = this
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

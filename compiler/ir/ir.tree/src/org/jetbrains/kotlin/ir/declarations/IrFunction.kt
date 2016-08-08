@@ -24,31 +24,26 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 interface IrFunction : IrMemberDeclaration {
     override val descriptor: FunctionDescriptor
     val body: IrBody
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.FUNCTION
 }
 
 abstract class IrFunctionBase(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind
-) : IrCompoundDeclarationBase(sourceLocation, kind), IrFunction {
-    override var parent: IrCompoundDeclaration? = null
-
-    override fun setTreeLocation(parent: IrCompoundDeclaration?, index: Int) {
-        this.parent = parent
-        this.index = index
-    }
-
+        originKind: IrDeclarationOriginKind
+) : IrMemberDeclarationBase(sourceLocation, originKind), IrFunction {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        super.acceptChildDeclarations(visitor, data)
         body.accept(visitor, data)
     }
 }
 
 class IrFunctionImpl(
         sourceLocation: SourceLocation,
-        kind: IrDeclarationKind,
+        originKind: IrDeclarationOriginKind,
         override val descriptor: FunctionDescriptor,
         override val body: IrBody
-) : IrFunctionBase(sourceLocation, kind) {
+) : IrFunctionBase(sourceLocation, originKind) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }
