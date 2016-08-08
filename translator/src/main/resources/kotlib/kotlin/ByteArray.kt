@@ -7,7 +7,7 @@ class ByteArray(var size: Int) {
     val data: Int
 
     /** Returns the number of elements in the array. */
-    //val size: Int
+    //size: Int
 
     init {
         this.data = malloc_array(this.size)
