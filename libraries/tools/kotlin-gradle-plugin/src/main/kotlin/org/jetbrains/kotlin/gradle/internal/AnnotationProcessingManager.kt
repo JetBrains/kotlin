@@ -188,20 +188,13 @@ class AnnotationProcessingManager(
 
     fun generateJavaHackFile() {
         val javaHackPackageDir = File(hackAnnotationDir, GEN_ANNOTATION)
-
-        if (!javaHackPackageDir.exists()) javaHackPackageDir.mkdirs()
-
         val javaHackClFile = File(javaHackPackageDir, "Cl.java")
-        val previouslyExisted = javaHackClFile.exists()
-        val comment = System.currentTimeMillis().toString() + "-" + random.nextInt()
 
-        javaHackClFile.writeText(
-                "// $comment\n" +
-                        "package __gen.annotation;\n" +
-                        "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
-
-        project.logger.kotlinDebug("kapt: Java file stub generated: $javaHackClFile " +
-                "(previously existed: $previouslyExisted)")
+        if (!javaHackClFile.exists()) {
+            javaHackClFile.parentFile.mkdirs()
+            javaHackClFile.writeText("package __gen.annotation;\n" +
+                                     "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
+        }
     }
 
     private fun appendAnnotationsArguments() {
