@@ -1,8 +1,9 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'firstOrNull{}'"
 fun foo(list: List<String>) {
-    val <caret>result: String? = list.firstOrNull { // search for first non-empty string in the list
-        it.length > 0
-    }// string should be non-empty
+    // string should be non-empty
     // save it into result
+    val result: String? = list.firstOrNull { // search for first non-empty string in the list
+        it.length > 0
+    }
 }
