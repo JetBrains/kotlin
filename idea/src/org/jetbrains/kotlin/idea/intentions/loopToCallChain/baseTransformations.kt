@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
-abstract class ReplaceLoopResultTransformation(override val loop: KtForExpression): ResultTransformation {
+abstract class ReplaceLoopResultTransformation(final override val loop: KtForExpression): ResultTransformation {
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
 
@@ -36,7 +36,7 @@ abstract class ReplaceLoopResultTransformation(override val loop: KtForExpressio
 }
 
 abstract class AssignToVariableResultTransformation(
-        override val loop: KtForExpression,
+        final override val loop: KtForExpression,
         protected val initialization: VariableInitialization
 ) : ResultTransformation {
 
