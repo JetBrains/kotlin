@@ -5,6 +5,8 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
+import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.util.*
@@ -285,7 +288,17 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         expr is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
         isEnumClassField(expr) -> resolveEnumClassField(expr)
         (expr is KtNameReferenceExpression) && (classScope != null) -> evaluateNameReferenceExpression(expr, classScope)
-        else -> variableManager.get(expr.firstChild.text)
+        else -> {
+            val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)
+            when (referenceContext) {
+                is PropertyDescriptorImpl -> {
+                    val receiverThis = variableManager.get("this")!!
+                    evaluateMemberMethodOrField(receiverThis, expr.firstChild.text, topLevel, call = null)!!
+                }
+                else -> variableManager.get(expr.firstChild.text)
+            }
+
+        }
     }
 
     private fun resolveEnumClassField(expr: KtReferenceExpression): LLVMSingleValue {
