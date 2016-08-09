@@ -1266,6 +1266,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
+        private fun processEntryOrObject(entryOrObject: KtClassOrObject) {
+            val classDescriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, entryOrObject]
+            if (classDescriptor is ClassDescriptor) {
+                builder.declareEntryOrObject(entryOrObject)
+                builder.write(entryOrObject, entryOrObject, createSyntheticValue(entryOrObject, MagicKind.FAKE_INITIALIZER),
+                              AccessTarget.Declaration(FakeCallableDescriptorForObject(classDescriptor)), emptyMap())
+                generateInstructions(entryOrObject)
+            }
+        }
+
         override fun visitClass(klass: KtClass) {
             if (klass.hasPrimaryConstructor()) {
                 processParameters(klass.getPrimaryConstructorParameters())
@@ -1281,16 +1291,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 klass.declarations.forEach {
                     when (it) {
                         is KtEnumEntry -> {
-                            val classDescriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, it]
-                            if (classDescriptor is ClassDescriptor) {
-                                builder.declareEnumEntry(it)
-                                builder.write(it, it, createSyntheticValue(it, MagicKind.FAKE_INITIALIZER),
-                                              AccessTarget.Declaration(FakeCallableDescriptorForObject(classDescriptor)), emptyMap())
-                                generateInstructions(it)
-                            }
+                            processEntryOrObject(it)
                         }
                         is KtObjectDeclaration -> if (it.isCompanion()) {
-                            generateInstructions(it)
+                            processEntryOrObject(it)
                         }
                     }
                 }

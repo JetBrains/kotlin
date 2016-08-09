@@ -3306,6 +3306,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumCompanionInterdependence.kt")
+            public void testEnumCompanionInterdependence() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumCompanionInterdependence.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumInterdependence.kt")
             public void testEnumInterdependence() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumInterdependence.kt");

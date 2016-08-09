@@ -1,0 +1,178 @@
+package
+
+public final enum class B : kotlin.Enum<B> {
+    enum entry B1
+
+    enum entry B2
+
+    private constructor B(/*0*/ x: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: B): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<B!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val COPY: B
+        public final val SUM: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): B
+    public final /*synthesized*/ fun values(): kotlin.Array<B>
+}
+
+public final enum class C : kotlin.Enum<C> {
+    enum entry C1
+
+    enum entry C2
+
+    private constructor C(/*0*/ x: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<C!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val COPY: C
+        public final val SUM: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C
+    public final /*synthesized*/ fun values(): kotlin.Array<C>
+}
+
+public final enum class EnumCompanion1 : kotlin.Enum<EnumCompanion1> {
+    enum entry INSTANCE
+
+    enum entry ANOTHER
+
+    private constructor EnumCompanion1(/*0*/ x: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumCompanion1): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumCompanion1!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion1
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion1>
+}
+
+public final enum class EnumCompanion2 : kotlin.Enum<EnumCompanion2> {
+    enum entry INSTANCE
+
+    private constructor EnumCompanion2(/*0*/ x: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumCompanion2): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumCompanion2!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion2
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion2>
+}
+
+public final enum class EnumCompanion3 : kotlin.Enum<EnumCompanion3> {
+    enum entry INSTANCE
+
+    enum entry ANOTHER
+
+    private constructor EnumCompanion3(/*0*/ x: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumCompanion3): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumCompanion3!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion3
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion3>
+}
+
+public final enum class Fruit : kotlin.Enum<Fruit> {
+    enum entry APPLE
+
+    private constructor Fruit(/*0*/ personal: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final val score: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Fruit): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Fruit!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val common: kotlin.Int = 20
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Fruit
+    public final /*synthesized*/ fun values(): kotlin.Array<Fruit>
+}
