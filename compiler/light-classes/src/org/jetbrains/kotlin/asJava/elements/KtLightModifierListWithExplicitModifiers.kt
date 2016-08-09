@@ -93,37 +93,39 @@ class KtLightModifierList(
 
 internal fun computeAnnotations(lightElement: PsiModifierList,
                                 delegate: PsiAnnotationOwner): CachedValue<Array<out PsiAnnotation>> {
-    val cacheManager = CachedValuesManager.getManager(lightElement.project)
-    return cacheManager.createCachedValue<Array<out PsiAnnotation>>(
-            {
-                val lightOwner = lightElement.parent as? KtLightElement<*, *>
-                val declaration = lightOwner?.kotlinOrigin as? KtDeclaration
-                val descriptor = declaration?.let { LightClassGenerationSupport.getInstance(lightElement.project).resolveToDescriptor(it) }
-                val annotatedDescriptor = when {
-                    descriptor !is PropertyDescriptor || lightOwner !is KtLightMethod -> descriptor
-                    JvmAbi.isGetterName(lightOwner.name) -> descriptor.getter
-                    JvmAbi.isSetterName(lightOwner.name) -> descriptor.setter
-                    else -> descriptor
+    fun doCompute(): Array<PsiAnnotation> {
+        val lightOwner = lightElement.parent as? KtLightElement<*, *>
+        val declaration = lightOwner?.kotlinOrigin as? KtDeclaration
+        if (declaration != null && !declaration.isValid) return PsiAnnotation.EMPTY_ARRAY
+        val descriptor = declaration?.let { LightClassGenerationSupport.getInstance(lightElement.project).resolveToDescriptor(it) }
+        val annotatedDescriptor = when {
+            descriptor !is PropertyDescriptor || lightOwner !is KtLightMethod -> descriptor
+            JvmAbi.isGetterName(lightOwner.name) -> descriptor.getter
+            JvmAbi.isSetterName(lightOwner.name) -> descriptor.setter
+            else -> descriptor
+        }
+        val ktAnnotations = annotatedDescriptor?.annotations?.getAllAnnotations() ?: emptyList()
+        var nextIndex = 0
+        val result = delegate
+                .annotations
+                .map { clsAnnotation ->
+                    val currentIndex = ktAnnotations.indexOfFirst(nextIndex) {
+                        it.annotation.type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() == clsAnnotation.qualifiedName
+                    }
+                    if (currentIndex >= 0) {
+                        nextIndex = currentIndex + 1
+                        val ktAnnotation = ktAnnotations[currentIndex]
+                        val entry = ktAnnotation.annotation.source.getPsi() as? KtAnnotationEntry ?: return@map clsAnnotation
+                        KtLightAnnotation(clsAnnotation, entry, lightElement)
+                    }
+                    else clsAnnotation
                 }
-                val ktAnnotations = annotatedDescriptor?.annotations?.getAllAnnotations() ?: emptyList()
-                var nextIndex = 0
-                val result = delegate.annotations
-                        .map { clsAnnotation ->
-                            val currentIndex = ktAnnotations.indexOfFirst(nextIndex) {
-                                it.annotation.type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() == clsAnnotation.qualifiedName
-                            }
-                            if (currentIndex >= 0) {
-                                nextIndex = currentIndex + 1
-                                val ktAnnotation = ktAnnotations[currentIndex]
-                                val entry = ktAnnotation.annotation.source.getPsi() as? KtAnnotationEntry ?: return@map clsAnnotation
-                                KtLightAnnotation(clsAnnotation, entry, lightElement)
-                            }
-                            else clsAnnotation
-                        }
-                        .toTypedArray()
+                .toTypedArray()
+        return result
+    }
 
-                CachedValueProvider.Result.create(result, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-            },
+    return CachedValuesManager.getManager(lightElement.project).createCachedValue<Array<out PsiAnnotation>>(
+            { CachedValueProvider.Result.create(doCompute(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
             false
     )
 }
