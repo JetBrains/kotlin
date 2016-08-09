@@ -1,5 +1,5 @@
-group 'ast-kotlin'
-version '1.0-SNAPSHOT'
+group 'translator'
+version '1.0'
 
 buildscript {
     ext.kotlin_version = '1.0.3'
@@ -18,11 +18,13 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.1"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-compiler', version: '1.0.3'
+    compile 'com.github.jshmrsn:karg:a636b3e'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
@@ -34,4 +36,3 @@ jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-mainClassName = 'MainKt'

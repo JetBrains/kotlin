@@ -21,6 +21,8 @@
     <bytecodeTargetLevel>
       <module name="ast-kotlin_main" target="1.8" />
       <module name="ast-kotlin_test" target="1.8" />
+      <module name="translator_main" target="1.8" />
+      <module name="translator_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ast-kotlin.iml" filepath="$PROJECT_DIR$/.idea/modules/ast-kotlin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ast-kotlin_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ast-kotlin_main.iml" group="ast-kotlin" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ast-kotlin_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ast-kotlin_test.iml" group="ast-kotlin" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/translator.iml" filepath="$PROJECT_DIR$/.idea/modules/translator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/translator_main.iml" filepath="$PROJECT_DIR$/.idea/modules/translator_main.iml" group="translator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/translator_test.iml" filepath="$PROJECT_DIR$/.idea/modules/translator_test.iml" group="translator" />
     </modules>
   </component>
 </project>

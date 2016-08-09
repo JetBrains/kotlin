@@ -1,77 +1,77 @@
 BIN_DIR=$(PWD)/bin
 SRC_DIR=$(PWD)/src
-LIB_DIR=$(SRC_DIR)/lib
+LIB_DIR=$(PWD)/lib
+TRANSLATOR_DIR=$(PWD)/../translator
+KOTSTD_DIR=$(PWD)/../kotstd
+CAR_HW_DIR=$(PWD)/../car_hw
+
 OS_ARCH=linux-arm
-
-LIB_CMSIS_DIR=$(LIB_DIR)/cmsis
-LIB_STDPERIPH_DIR=$(LIB_DIR)/stdperiph
-LIB_STM32F4D_DIR=$(LIB_DIR)/stm32f4d
-LIB_USB_DEV_DIR=$(LIB_DIR)/usb_device
-LIB_USB_OTG_DIR=$(LIB_DIR)/usb_otg
-LIB_USB_VCP_DIR=$(LIB_DIR)/usb_vcp
-
-LIB_CMSIS_OBJ=$(BIN_DIR)/libcmsis.o
-LIB_STDPERIPH_OBJ=$(BIN_DIR)/libstdperiph.o
-LIB_STM32F4D_OBJ=$(BIN_DIR)/libstm32f4d.o
-LIB_USB_DEV_OBJ=$(BIN_DIR)/libusbdevice.o
-LIB_USB_OTG_OBJ=$(BIN_DIR)/libusbotg.o
-LIB_USB_VCP_OBJ=$(BIN_DIR)/libusbvcp.o
 
 CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
 CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
 ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
 
+LIB_KOT=$(BIN_DIR)/kotlib.o
+LIB_KOTSTD=$(KOTSTD_DIR)/build/stdlib_arm.ll
+LIB_CAR_HW=$(CAR_HW_DIR)/bin/car_hw.o
+
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-as
+KT=$(TRANSLATOR_DIR)/build/libs/translator-1.0.jar
 LD=arm-none-eabi-ld
 OBJ_COPY=arm-none-eabi-objcopy
 GDB=arm-none-eabi-gdb
 
-USB_CONF_DIR=$(LIB_DIR)/usb_conf
-INCLUDES=-I$(LIB_CMSIS_DIR) \
-		 -I$(LIB_STDPERIPH_DIR) \
-		 -I$(LIB_STM32F4D_DIR) \
-		 -I$(LIB_USB_DEV_DIR) \
-		 -I$(LIB_USB_OTG_DIR) \
-		 -I$(LIB_USB_VCP_DIR) \
-		 -I$(USB_CONF_DIR) \
-		 -I$(SRC_DIR)
+LL=llc-3.6
+LLINK=llvm-link-3.6
+
+KTFLAGS=-I $(KOTSTD_DIR)/include --arm
+LLINK_FLAGS=-S
+ASMFLAGS=-g -mthumb
+
 DEFINES=-DUSE_STM32_DISCOVERY=1 -DUSE_STDPERIPH_DRIVER=1 -DSTM32F4XX=1 -DHSE_VALUE=8000000
 CFLAGS=-g -nostdlib -ffreestanding -O0 \
        -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \
        $(DEFINES)
-ASMFLAGS=-g -mthumb
 
 LD_ALL_DEPS=$(LD) -r $(filter %.o,$^) -o $@
-CC_ALL_DEPS=$(CC) $(CFLAGS) -c $(INCLUDES) $(filter %.c,$^) -o $@
 AS_ALL_DEPS=$(AS) $(ASMFLAGS) $(filter %.s,$^) -o $@
+LL_ALL_DEPS=$(LL) $(LLFLAGS) $(filter %.ll, $^) -o $@
+KT_ALL_DEPS=java -jar $(KT) $(KTFLAGS) -o $@ $(filter %.kt, $^)
+LLINK_ALL_DEPS=$(LLINK) $(LLINK_FLAGS) $(filter %.ll,$^) > $@
 
-dirhs=$(wildcard $(1)/*.h)
-dircs=$(wildcard $(1)/*.c)
-dircs_to_prefxd_objs=\
-	$(patsubst $(1)/%.c,$(BIN_DIR)/$(2)%.o,$(call dircs,$1))
+all: $(KT) $(CAR_FMW_BIN)
 
 $(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 	$(OBJ_COPY) -O binary $< $@
 
-$(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
-		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) \
-		$(LIB_USB_DEV_OBJ) $(LIB_USB_OTG_OBJ) \
-		$(LIB_USB_VCP_OBJ)
-	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
+$(CAR_FMW_ELF): $(LIB_CAR_HW) $(LIB_KOT)
+	$(CC) $(CFLAGS) $^ -T stm32_flash.ld -o $@
 
-CAR_OBJ_PREFIX=car_
-$(CAR_FMW_OBJ): \
-		$(call dircs_to_prefxd_objs,$(SRC_DIR),$(CAR_OBJ_PREFIX))
-	$(LD_ALL_DEPS)
-
-$(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
-		$(call dirhs,$(SRC_DIR))
-	$(CC_ALL_DEPS)
+$(LIB_CAR_HW):
+	cd $(CAR_HW_DIR) && make
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+$(LIB_KOT): $(BIN_DIR)/kotlib.s
+	$(AS_ALL_DEPS)
+
+$(BIN_DIR)/kotlib.s: $(BIN_DIR)/kotlib.ll
+	$(LL_ALL_DEPS)
+
+$(BIN_DIR)/kotlib.ll: $(LIB_DIR)/app.ll $(LIB_KOTSTD)
+	$(LLINK_ALL_DEPS)
+
+$(LIB_KOTSTD):
+	cd $(KOTSTD_DIR) && make
+
+$(LIB_DIR)/app.ll: $(SRC_DIR)/*.kt
+	$(KT_ALL_DEPS)
+
+$(KT):
+	cd $(TRANSLATOR_DIR) && ./gradlew jar
 
 flash: $(CAR_FMW_BIN)
 	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000
@@ -83,10 +83,8 @@ debug:
 
 clean:
 	rm -rf bin/*
+	rm -rf lib/*
+	cd $(CAR_HW_DIR) && make clean
+	cd $(KOTSTD_DIR) && make clean
 
-tags:
-	ctags -R *
-
-include $(LIB_DIR)/**/Makefile
-
-.PHONY: clean debug flash tags
+.PHONY: clean debug flash

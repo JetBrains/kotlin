@@ -1,34 +1,33 @@
 import com.intellij.openapi.util.Disposer
+import com.jshmrsn.karg.parseArguments
 import org.kotlinnative.translator.ProjectTranslator
 import org.kotlinnative.translator.parseAndAnalyze
 import java.io.File
 import java.util.*
 
 fun main(args: Array<String>) {
-
-    if (args.isEmpty()) {
-        println("Enter filename")
-        return
-    }
-
+    val arguments = parseArguments(args, ::DefaultArguments)
+    val disposer = Disposer.newDisposable()
     val analyzedFiles = ArrayList<String>()
 
-    val kotlib = File("build/resources/main/kotlib/kotlin").listFiles()
-    for (resource in kotlib) {
-        analyzedFiles.add(resource.absolutePath)
+    val stdlib = mutableListOf<String>()
+    if (arguments.includeDir != null) {
+        stdlib.addAll(File(arguments.includeDir).listFiles().map { it.absolutePath })
+        analyzedFiles.addAll(stdlib)
     }
 
-    analyzedFiles.addAll(args.toList())
+    analyzedFiles.addAll(arguments.sources)
 
-    val disposer = Disposer.newDisposable()
-    val state = parseAndAnalyze(analyzedFiles, disposer, arm = false)
-
+    val state = parseAndAnalyze(analyzedFiles, disposer, arguments.arm ?: false)
     val files = state.environment.getSourceFiles()
-    if (files.isEmpty()) {
-        print("Empty")
+    val code = ProjectTranslator(files, state).generateCode()
+
+    if (arguments.output == null) {
+        println(code)
         return
     }
 
-    println(ProjectTranslator(files, state).generateCode())
+    val output = File(arguments.output)
+    output.writeText(code)
 }
 
