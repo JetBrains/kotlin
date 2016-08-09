@@ -6,6 +6,9 @@ import org.junit.Test as test
 
 class MapTest {
 
+    // just a static type check
+    fun <T> assertStaticTypeIs(value: T) {}
+
     @test fun getOrElse() {
         val data = mapOf<String, Int>()
         val a = data.getOrElse("foo") { 2 }
@@ -150,16 +153,24 @@ class MapTest {
         val m1 = mapOf("beverage" to "beer", "location" to "Mells")
         val m2 = m1.mapValues { it.value + "2" }
 
-        assertEquals("beer2", m2["beverage"])
-        assertEquals("Mells2", m2["location"])
+        assertEquals(mapOf("beverage" to "beer2", "location" to "Mells2"), m2)
+
+        val m1p: Map<out String, String> = m1
+        val m3 = m1p.mapValuesTo(hashMapOf()) { it.value.length }
+        assertStaticTypeIs<HashMap<String, Int>>(m3)
+        assertEquals(mapOf("beverage" to 4, "location" to 5), m3)
     }
 
     @test fun mapKeys() {
         val m1 = mapOf("beverage" to "beer", "location" to "Mells")
         val m2 = m1.mapKeys { it.key + "2" }
 
-        assertEquals("beer", m2["beverage2"])
-        assertEquals("Mells", m2["location2"])
+        assertEquals(mapOf("beverage2" to "beer", "location2" to "Mells"), m2)
+
+        val m1p: Map<out String, String> = m1
+        val m3 = m1p.mapKeysTo(mutableMapOf()) { it.key.length }
+        assertStaticTypeIs<MutableMap<Int, String>>(m3)
+        assertEquals(mapOf(8 to "Mells"), m3)
     }
 
     @test fun createFrom() {
@@ -252,26 +263,38 @@ class MapTest {
     }
 
     @test fun filter() {
-        val map: Map<out String, Int> = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
         val filteredByKey = map.filter { it.key[0] == 'b' }
-        assertEquals(1, filteredByKey.size)
-        assertEquals(3, filteredByKey["b"])
+        assertEquals(mapOf("b" to 3), filteredByKey)
 
         val filteredByKey2 = map.filterKeys { it[0] == 'b' }
-        assertEquals(1, filteredByKey2.size)
-        assertEquals(3, filteredByKey2["b"])
+        assertEquals(mapOf("b" to 3), filteredByKey2)
 
         val filteredByValue = map.filter { it.value == 2 }
-        assertEquals(2, filteredByValue.size)
-        assertEquals(null, filteredByValue["b"])
-        assertEquals(2, filteredByValue["c"])
-        assertEquals(2, filteredByValue["a"])
+        assertEquals(mapOf("a" to 2, "c" to 2), filteredByValue)
 
         val filteredByValue2 = map.filterValues { it % 2 == 0 }
-        assertEquals(2, filteredByValue2.size)
-        assertEquals(null, filteredByValue2["b"])
-        assertEquals(2, filteredByValue2["c"])
-        assertEquals(2, filteredByValue2["a"])
+        assertEquals(mapOf("a" to 2, "c" to 2), filteredByValue2)
+    }
+
+    @test fun filterOutProjectedTo() {
+        val map: Map<out String, Int> = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+
+        val filteredByKey = map.filterTo(mutableMapOf()) { it.key[0] == 'b' }
+        assertStaticTypeIs<MutableMap<String, Int>>(filteredByKey)
+        assertEquals(mapOf("b" to 3), filteredByKey)
+
+        val filteredByKey2 = map.filterKeys { it[0] == 'b' }
+        assertStaticTypeIs<Map<String, Int>>(filteredByKey2)
+        assertEquals(mapOf("b" to 3), filteredByKey2)
+
+        val filteredByValue = map.filterNotTo(hashMapOf()) { it.value != 2 }
+        assertStaticTypeIs<HashMap<String, Int>>(filteredByValue)
+        assertEquals(mapOf("a" to 2, "c" to 2), filteredByValue)
+
+        val filteredByValue2 = map.filterValues { it % 2 == 0 }
+        assertStaticTypeIs<Map<String, Int>>(filteredByValue2)
+        assertEquals(mapOf("a" to 2, "c" to 2), filteredByValue2)
     }
 
     @test fun any() {
