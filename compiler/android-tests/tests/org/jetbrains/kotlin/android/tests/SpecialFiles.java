@@ -41,9 +41,14 @@ public class SpecialFiles {
         excludedFiles.add("kt1482_2279.kt");
         excludedFiles.add("extensionMethod.kt");
         excludedFiles.add("functionNtoStringNoReflect.kt");
+        excludedFiles.add("innerGeneric.kt");
+        excludedFiles.add("simpleCreateType.kt");
 
         // Reflection is used to check full class name
         excludedFiles.add("native");
+
+        // "IOOBE: Invalid index 4, size is 4" for java.lang.reflect.ParameterizedType on Android
+        excludedFiles.add("innerGenericTypeArgument.kt");
 
         // Cannot change package name
         excludedFiles.add("nestedInPackage.kt");
