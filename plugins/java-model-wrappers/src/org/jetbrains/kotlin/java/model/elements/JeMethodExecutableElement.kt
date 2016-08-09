@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.elements
 
-import com.intellij.psi.PsiAnnotationMethod
-import com.intellij.psi.PsiAnnotationOwner
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.*
 import org.jetbrains.kotlin.java.model.internal.isStatic
@@ -29,8 +26,8 @@ import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), ExecutableElement, JeModifierListOwner, JeAnnotationOwner {
-    override fun getEnclosingElement() = psi.containingClass?.let { JeTypeElement(it) }
+class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement, ExecutableElement, JeModifierListOwner, JeAnnotationOwner {
+    override fun getEnclosingElement() = psi.containingClass?.let(::JeTypeElement)
 
     override fun getSimpleName(): JeName {
         if (psi.isConstructor) return JeName.INIT
@@ -41,7 +38,7 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), Exec
 
     override fun getTypeParameters() = psi.typeParameters.map { JeTypeParameterElement(it, this) }
 
-    override fun getParameters() = psi.parameterList.parameters.map { JeVariableElement(it) }
+    override fun getParameters() = psi.parameterList.parameters.map(::JeVariableElement)
 
     override fun getDefaultValue(): AnnotationValue? {
         val annotationMethod = psi as? PsiAnnotationMethod ?: return null
@@ -68,9 +65,6 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement(), Exec
 
     override fun getEnclosedElements() = emptyList<Element>()
     
-    override val annotationOwner: PsiAnnotationOwner?
-        get() = psi.modifierList
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false

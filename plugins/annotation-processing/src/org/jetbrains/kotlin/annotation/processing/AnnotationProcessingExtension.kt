@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -190,14 +191,9 @@ internal class AnalysisContext(annotationsMap: MutableMap<String, MutableList<Ps
     fun analyzeDeclaration(declaration: PsiElement) {
         if (declaration !is PsiModifierListOwner) return
 
-        //TODO support inherited annotations
-
-        val annotations = declaration.modifierList?.annotations
-        if (annotations != null) {
-            for (annotation in annotations) {
-                val fqName = annotation.qualifiedName ?: continue
-                mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
-            }
+        for (annotation in declaration.getAnnotationsWithInherited()) {
+            val fqName = annotation.qualifiedName ?: return
+            mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
         }
 
         if (declaration is PsiClass) {

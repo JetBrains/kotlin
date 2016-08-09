@@ -26,7 +26,7 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ElementVisitor
 import javax.lang.model.element.VariableElement
 
-class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableElement, JeModifierListOwner, JeAnnotationOwner {
+class JeVariableElement(override val psi: PsiVariable) : JeElement, VariableElement, JeModifierListOwner, JeAnnotationOwner {
     override fun getSimpleName() = JeName(psi.name)
 
     override fun getEnclosingElement(): JeElement? {
@@ -35,7 +35,7 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
         }
         
         val containingClass = (psi as? PsiMember)?.containingClass ?: PsiTreeUtil.getParentOfType(psi, PsiClass::class.java) 
-        return containingClass?.let { JeTypeElement(it) }
+        return containingClass?.let(::JeTypeElement)
     }
 
     override fun getConstantValue() = psi.initializer?.calcConstantValue()
@@ -52,9 +52,6 @@ class JeVariableElement(override val psi: PsiVariable) : JeElement(), VariableEl
 
     override fun getEnclosedElements() = emptyList<Element>()
     
-    override val annotationOwner: PsiAnnotationOwner?
-        get() = psi.modifierList
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false

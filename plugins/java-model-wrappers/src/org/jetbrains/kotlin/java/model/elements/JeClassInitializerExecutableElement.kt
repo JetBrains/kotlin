@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.java.model.types.JeNoneType
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-class JeClassInitializerExecutableElement(override val psi: PsiClassInitializer) : JeElement(),
+class JeClassInitializerExecutableElement(override val psi: PsiClassInitializer) : JeElement,
         ExecutableElement, JeNoAnnotations, JeModifierListOwner
 {
     val isStaticInitializer = psi.isStatic

@@ -19,6 +19,6 @@ package org.jetbrains.kotlin.java.model
 import com.intellij.psi.PsiElement
 import javax.lang.model.element.Element
 
-abstract class JeElement : Element {
-    abstract val psi: PsiElement
+interface JeElement : Element {
+    val psi: PsiElement
 }

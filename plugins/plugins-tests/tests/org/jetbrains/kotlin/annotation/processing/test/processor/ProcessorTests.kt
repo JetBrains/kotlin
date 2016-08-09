@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.elements.JeVariableElement
@@ -70,6 +71,31 @@ class ProcessorTests : AbstractProcessorTest() {
     
     fun testDoesNotRun() = testShouldNotRun("DoesNotRun", "Anno")
     fun testDoesNotRun2() = testShouldNotRun("DoesNotRun2", "Anno")
+
+    fun testInheritedAnnotations() {
+        val handledClasses = mutableListOf<String>()
+        test("InheritedAnnotations", "Anno") { set, roundEnv, env ->
+            assertEquals(1, set.size)
+            val annotatedElements = roundEnv.getElementsAnnotatedWith(set.first())
+            for (element in annotatedElements) {
+                handledClasses += element.simpleName.toString()
+            }
+
+            val implAnnotations = annotatedElements.first { it.simpleName.toString() == "Impl" }.annotationMirrors
+            // Should contain the inherited annotation
+            assertEquals(1, implAnnotations.size)
+            assertEquals("Anno", (implAnnotations.first() as JeAnnotationMirror).psi.qualifiedName)
+        }
+        // IntfImpl should not be here. Annotations can be inherited only from superclasses (not interfaces).
+        assertEquals(listOf("Base", "Impl", "Intf"), handledClasses.sorted())
+    }
+
+    fun testInheritedAnnotationsOverridden() = test("InheritedAnnotationsOverridden", "Anno") { set, roundEnv, env ->
+        assertEquals(1, set.size)
+        val annotatedElements = roundEnv.getElementsAnnotatedWith(set.first())
+        assertEquals(2, annotatedElements.size)
+        val implAnnotations = annotatedElements.first { it.simpleName.toString() == "Impl" }.annotationMirrors
+        assertEquals(1, implAnnotations.size)
+        assertEquals("Tom", implAnnotations.first().elementValues.values.first().value)
+    }
 }
-
-

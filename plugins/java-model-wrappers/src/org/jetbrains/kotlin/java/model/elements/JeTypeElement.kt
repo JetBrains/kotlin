@@ -25,16 +25,13 @@ import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-class JeTypeElement(override val psi: PsiClass) : JeElement(), TypeElement, JeAnnotationOwner, JeModifierListOwner {
+class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnnotationOwner, JeModifierListOwner {
     override fun getEnclosingElement(): Element? {
         psi.containingClass?.let { return JeTypeElement(it) }
         val javaFile = psi.containingFile as? PsiJavaFile ?: return null
-        return JavaPsiFacade.getInstance(psi.project).findPackage(javaFile.packageName)?.let { JePackageElement(it) }
+        return JavaPsiFacade.getInstance(psi.project).findPackage(javaFile.packageName)?.let(::JePackageElement)
     }
     
-    override val annotationOwner: PsiAnnotationOwner?
-        get() = psi.modifierList
-
     override fun getSimpleName() = JeName(psi.name)
 
     override fun getQualifiedName() = JeName(psi.qualifiedName)
