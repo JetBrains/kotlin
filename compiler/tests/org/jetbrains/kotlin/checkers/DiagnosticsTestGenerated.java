@@ -1811,6 +1811,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("syntheticExtensionOnLHS.kt")
+                public void testSyntheticExtensionOnLHS() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/syntheticExtensionOnLHS.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("valueOfTypeParameterType.kt")
                 public void testValueOfTypeParameterType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/valueOfTypeParameterType.kt");

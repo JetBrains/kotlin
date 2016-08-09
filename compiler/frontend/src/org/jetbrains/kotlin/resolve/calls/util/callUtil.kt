@@ -229,6 +229,12 @@ fun Call.isSafeCall(): Boolean {
 
 fun Call.isExplicitSafeCall(): Boolean = callOperationNode?.elementType == KtTokens.SAFE_ACCESS
 
+fun Call.isCallableReference(): Boolean {
+    val callElement = callElement
+    return callElement is KtNameReferenceExpression &&
+           (callElement.parent as? KtCallableReferenceExpression)?.callableReference == callElement
+}
+
 fun Call.createLookupLocation(): KotlinLookupLocation {
     val calleeExpression = calleeExpression
     val element =

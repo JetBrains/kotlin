@@ -1500,6 +1500,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("syntheticExtensionOnLHS.kt")
+            public void testSyntheticExtensionOnLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/syntheticExtensionOnLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound/inline")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
