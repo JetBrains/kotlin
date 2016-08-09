@@ -219,7 +219,7 @@ class LLVMBuilder(val arm: Boolean) {
 
     fun createClass(name: String, fields: List<LLVMVariable>) {
         val code = "%class.$name = type { ${fields.map { it.getType() }.joinToString()} }"
-        localCode.appendln(code)
+        globalCode.appendln(code)
     }
 
     fun bitcast(src: LLVMVariable, llvmType: LLVMVariable): LLVMVariable {

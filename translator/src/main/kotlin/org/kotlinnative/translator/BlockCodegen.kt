@@ -176,6 +176,17 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         var receiver = when (receiverExpr) {
             is KtCallExpression,
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            is KtNameReferenceExpression ->{
+                val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
+                variableManager.get(receiverName)
+                when (referenceContext) {
+                    is PropertyDescriptorImpl -> {
+                        val receiverThis = variableManager.get("this")!!
+                        evaluateMemberMethodOrField(receiverThis, receiverName, topLevel, call = null)!! as LLVMVariable
+                    }
+                    else -> variableManager.get(receiverName)
+                }
+            }
             else -> variableManager.get(receiverName)
         }
 

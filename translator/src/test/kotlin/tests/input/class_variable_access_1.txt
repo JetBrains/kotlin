@@ -1,0 +1,1 @@
+class_variable_access_1_test_Int(22) == 30
