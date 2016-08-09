@@ -110,6 +110,7 @@
 #### Formatter
 
 - [`KT-12830`](https://youtrack.jetbrains.com/issue/KT-12830) Remove spaces before *?* in nullable types
+- [`KT-13314`](https://youtrack.jetbrains.com/issue/KT-13314) Format spaces around !is and !in
 
 #### Intention actions, inspections and quickfixes
 
