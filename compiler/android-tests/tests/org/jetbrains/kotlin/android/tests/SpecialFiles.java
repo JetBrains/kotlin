@@ -22,79 +22,85 @@ import java.util.Set;
 
 public class SpecialFiles {
     private static final Set<String> excludedFiles = Sets.newHashSet();
-    private static final Set<String> filesCompiledWithoutStdLib = Sets.newHashSet();
 
     static {
         fillExcludedFiles();
     }
-
 
     public static Set<String> getExcludedFiles() {
         return excludedFiles;
     }
 
     private static void fillExcludedFiles() {
-        excludedFiles.add("native"); // Reflection is used to check full class name
+        // Reflection
+        excludedFiles.add("enclosing");
+        excludedFiles.add("noReflectAtRuntime");
+        excludedFiles.add("methodsFromAny");
+        excludedFiles.add("genericProperty.kt");
+        excludedFiles.add("kt3238.kt");
+        excludedFiles.add("kt1482_2279.kt");
+        excludedFiles.add("extensionMethod.kt");
+        excludedFiles.add("functionNtoStringNoReflect.kt");
 
-        excludedFiles.add("enclosing"); //reflection tests
-        excludedFiles.add("noReflectAtRuntime"); //reflection tests
-        excludedFiles.add("methodsFromAny"); //reflection tests
-        excludedFiles.add("genericProperty.kt"); //reflection tests
+        // Reflection is used to check full class name
+        excludedFiles.add("native");
 
-        excludedFiles.add("kt3238.kt"); // Reflection
-        excludedFiles.add("kt1482_2279.kt"); // Reflection
-        excludedFiles.add("extensionMethod.kt"); // Reflection loadClass
+        // Cannot change package name
+        excludedFiles.add("nestedInPackage.kt");
+        excludedFiles.add("packageQualifiedMethod.kt");
+        excludedFiles.add("classObjectToString.kt");
+        excludedFiles.add("assertionStackTrace.kt");
+        excludedFiles.add("anonymousObjectReifiedSupertype.kt");
+        excludedFiles.add("innerAnonymousObject.kt");
+        excludedFiles.add("nestedReifiedSignature.kt");
+        excludedFiles.add("recursiveInnerAnonymousObject.kt");
+        excludedFiles.add("approximateCapturedTypes.kt");
+        excludedFiles.add("classForEnumEntry.kt");
+        excludedFiles.add("kt10143.kt");
+        excludedFiles.add("internalTopLevelOtherPackage.kt");
+        excludedFiles.add("noPrivateDelegation.kt");
+        excludedFiles.add("platformTypeAssertionStackTrace.kt");
+        excludedFiles.add("packages.kt");
+        excludedFiles.add("kt10259.kt");
+        excludedFiles.add("kt11081.kt");
+        excludedFiles.add("kt6990.kt");
+        excludedFiles.add("mainInFiles.kt");
+        excludedFiles.add("noClassForSimpleEnum.kt");
+        excludedFiles.add("simpleClassLiteral.kt");
+        excludedFiles.add("jvmName.kt");
+        excludedFiles.add("qualifiedName.kt");
+        excludedFiles.add("topLevelProperty.kt");
+        excludedFiles.add("typeParameters.kt");
+        excludedFiles.add("kt13133.kt");
 
-        excludedFiles.add("nestedInPackage.kt"); // Cannot change package name
-        excludedFiles.add("packageQualifiedMethod.kt"); // Cannot change package name
-        excludedFiles.add("classObjectToString.kt"); // Cannot change package name
-        excludedFiles.add("assertionStackTrace.kt"); // Cannot change package name
-        excludedFiles.add("anonymousObjectReifiedSupertype.kt"); // Cannot change package name
-        excludedFiles.add("innerAnonymousObject.kt"); // Cannot change package name
-        excludedFiles.add("nestedReifiedSignature.kt"); // Cannot change package name
-        excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
-        excludedFiles.add("approximateCapturedTypes.kt"); // Cannot change package name
-        excludedFiles.add("classForEnumEntry.kt"); // Cannot change package name
-        excludedFiles.add("kt10143.kt"); // Cannot change package name
-        excludedFiles.add("internalTopLevelOtherPackage.kt"); // Cannot change package name
-        excludedFiles.add("noPrivateDelegation.kt"); // Cannot change package name
-        excludedFiles.add("platformTypeAssertionStackTrace.kt"); // Cannot change package name
-        excludedFiles.add("packages.kt"); // Cannot change package name
-        excludedFiles.add("kt10259.kt"); // Cannot change package name
-        excludedFiles.add("kt11081.kt"); // Cannot change package name
-        excludedFiles.add("kt6990.kt"); // Cannot change package name
-        excludedFiles.add("mainInFiles.kt"); // Cannot change package name
-        excludedFiles.add("noClassForSimpleEnum.kt"); // Cannot change package name
-        excludedFiles.add("simpleClassLiteral.kt"); // Cannot change package name
-        excludedFiles.add("jvmName.kt"); // Cannot change package name
-        excludedFiles.add("qualifiedName.kt"); // Cannot change package name
-        excludedFiles.add("topLevelProperty.kt"); // Cannot change package name
-        excludedFiles.add("typeParameters.kt"); // Cannot change package name
-        excludedFiles.add("kt13133.kt"); // Cannot change package name
+        // StackOverflow with StringBuilder (escape())
+        excludedFiles.add("kt684.kt");
 
-        excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
+        // Wrong enclosing info or signature after package renaming
+        excludedFiles.add("enclosingInfo");
+        excludedFiles.add("signature");
+        excludedFiles.add("genericBackingFieldSignature.kt");
+        excludedFiles.add("genericMethodSignature.kt");
+        excludedFiles.add("kt11121.kt");
+        excludedFiles.add("kt5112.kt");
 
-        excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
-        excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
-        excludedFiles.add("kt11121.kt"); // Wrong signature after package renaming
-        excludedFiles.add("kt5112.kt"); // Wrong signature after package renaming
+        // Some classes are not visible on android
+        excludedFiles.add("classpath.kt");
 
-        excludedFiles.add("classpath.kt"); // Some classes are not visible on android
+        // Out of memory
+        excludedFiles.add("manyNumbers.kt");
 
-        excludedFiles.add("manyNumbers.kt"); // Out of memory
+        // Native methods
+        excludedFiles.add("external");
 
-        excludedFiles.add("external"); //native methods
+        // Additional nested class in 'Thread' class on Android
+        excludedFiles.add("nestedClasses.kt");
+        // No 'modifiers' field in 'java.lang.reflect.Field' class
+        excludedFiles.add("kt12200Const.kt");
 
-        excludedFiles.add("enclosingInfo"); //  Wrong enclosing info after package renaming
-        excludedFiles.add("signature"); //  Wrong signature after package renaming
-
-        excludedFiles.add("functionNtoStringNoReflect.kt"); // disabled cause test executed with reflection
-
-        excludedFiles.add("nestedClasses.kt"); // additional nested class in 'Thread' class on Android
-        excludedFiles.add("kt12200Const.kt"); // no 'modifiers' field in 'java.lang.reflect.Field' class
-
-        excludedFiles.add("closureOfInnerLocalClass.kt"); // KT-8120
-        excludedFiles.add("closureWithSelfInstantiation.kt"); // KT-8120
+        // KT-8120
+        excludedFiles.add("closureOfInnerLocalClass.kt");
+        excludedFiles.add("closureWithSelfInstantiation.kt");
     }
 
     private SpecialFiles() {
