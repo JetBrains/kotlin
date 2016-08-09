@@ -11,10 +11,9 @@ fun box(): String {
     assertTrue(primitiveInt.isSubclassOf(primitiveInt))
     assertTrue(wrapperInt.isSubclassOf(wrapperInt))
 
-    // Currently KClass for int != KClass for java.lang.Integer, thus they are not a subclass of each other either
-    // TODO: reconsider this decision
-    assertFalse(primitiveInt.isSubclassOf(wrapperInt))
-    assertFalse(wrapperInt.isSubclassOf(primitiveInt))
+    // KClass for int equals KClass for java.lang.Integer, so they are also a subclass of each other
+    assertTrue(primitiveInt.isSubclassOf(wrapperInt))
+    assertTrue(wrapperInt.isSubclassOf(primitiveInt))
 
     return "OK"
 }

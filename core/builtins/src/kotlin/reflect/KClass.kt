@@ -123,15 +123,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
 
     /**
      * Returns `true` if [other] is a [KClass] instance representing the same class on a given platform.
+     * On JVM this means that all of the following conditions are satisfied:
      *
-     * On JVM this means that the given instance is backed by the same [Class] object as this one. In particular, it requires
-     * that the two classes are loaded with the same class loader and have the same name. Note that there are cases where the behavior
-     * of this method may seem unintuitive:
-     * * For each JVM primitive type, there are two classes at runtime: one for the primitive itself, and another for the wrapper class.
-     *   [KClass] instances for those classes are different: [KClass] for `int` is **not equal** to [KClass] for `java.lang.Integer`,
-     *   although both have the same qualified name [kotlin.Int].
-     * * For JVM arrays of different types, [KClass] instances are different,
-     *   although all of them have the same qualified name [kotlin.Array].
+     * 1. [other] has the same fully qualified name as this instance.
+     * 2. [other]'s backing [Class] object is loaded with the same class loader as the [Class] object of this instance.
+     * 3. If the classes represent [Array], then [Class] objects of their element types are equal.
      */
     override fun equals(other: Any?): Boolean
 

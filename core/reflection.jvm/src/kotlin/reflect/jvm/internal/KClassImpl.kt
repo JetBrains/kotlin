@@ -196,10 +196,10 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         get() = descriptor.isCompanionObject
 
     override fun equals(other: Any?): Boolean =
-            other is KClassImpl<*> && jClass == other.jClass
+            other is KClassImpl<*> && javaObjectType == other.javaObjectType
 
     override fun hashCode(): Int =
-            jClass.hashCode()
+            javaObjectType.hashCode()
 
     override fun toString(): String {
         return "class " + classId.let { classId ->

@@ -2356,6 +2356,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("primitiveKClassEquality.kt")
+        public void testPrimitiveKClassEquality() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classLiteral/primitiveKClassEquality.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -12000,6 +12006,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("objectInstance.kt")
             public void testObjectInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/classes/objectInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitiveKClassEquality.kt")
+            public void testPrimitiveKClassEquality() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/classes/primitiveKClassEquality.kt");
                 doTest(fileName);
             }
 
