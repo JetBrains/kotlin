@@ -112,9 +112,15 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
                         }
                         .map { it.getProxy(classLoader) }
             })
-        val fileDeps = definitionData.resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
-        // TODO: use it as a Future
-        return fileDeps?.get()
+        try {
+            val fileDeps = definitionData.resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
+            // TODO: use it as a Future
+            return fileDeps?.get()
+        }
+        catch (ex: ClassCastException) {
+            logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.ERROR, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
+            return null
+        }
     }
 
     private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
