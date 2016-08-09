@@ -59,6 +59,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
             is KtDestructuringDeclarationEntry -> "variable"
+            is KtTypeAlias -> "type alias"
             is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> "property"
             is KtLightClassForFacade -> "facade class"
             is RenameKotlinPropertyProcessor.PropertyMethodWrapper -> "property accessor"
