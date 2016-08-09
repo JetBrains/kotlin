@@ -331,6 +331,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isUpcast(KotlinType candidateType, KotlinType targetType, KotlinTypeChecker typeChecker) {
+        if (KotlinBuiltIns.isNullableNothing(candidateType)) return false;
         if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false;
 
         if (isFunctionType(candidateType) && isFunctionType(targetType)) {
