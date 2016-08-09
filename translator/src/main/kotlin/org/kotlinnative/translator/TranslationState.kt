@@ -46,7 +46,7 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
         override fun hasErrors(): Boolean = hasError
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-            println("[report] $message")
+            System.err.println("[report] $message")
             hasError = severity.isError || hasError
         }
     }
@@ -90,4 +90,3 @@ fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
 
     return if (analyzer.hasErrors()) null else analyzer.analysisResult
 }
-

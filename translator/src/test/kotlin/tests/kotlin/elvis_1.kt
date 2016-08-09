@@ -1,15 +1,15 @@
 
-class MyClass(val i: Int)
+class elvis_1_MyClass(val i: Int)
 
 fun elvis_test_1(x: Int): Int {
-    var z: MyClass? = null
+    var z: elvis_1_MyClass? = null
 
     if (x > 1) {
-        z = MyClass(1)
+        z = elvis_1_MyClass(1)
     } else {
     }
 
-    val y = z ?: return 0
+    z ?: return 0
     return 1
 }
 

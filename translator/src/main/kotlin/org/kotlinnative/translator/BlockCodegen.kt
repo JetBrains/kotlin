@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.util.*
@@ -172,7 +173,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         var receiver = when (receiverExpr) {
             is KtCallExpression,
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
-            is KtNameReferenceExpression ->{
+            is KtNameReferenceExpression -> {
                 val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
                 variableManager.get(receiverName)
                 when (referenceContext) {
@@ -280,12 +281,48 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
         val arrayNameVariable = evaluateReferenceExpression(expr.arrayExpression as KtReferenceExpression, scope) as LLVMVariable
-        val arrayIndex = evaluateConstantExpression(expr.indexExpressions.first() as KtConstantExpression)
-        val arrayReceivedVariable = codeBuilder.loadAndGetVariable(arrayNameVariable)
-        val arrayElementType = (arrayNameVariable.type as LLVMArray).basicType()
-        val indexVariable = codeBuilder.getNewVariable(arrayElementType, pointer = 1)
-        codeBuilder.loadVariableOffset(indexVariable, arrayReceivedVariable, arrayIndex)
-        return indexVariable
+        return when (arrayNameVariable.type) {
+            is LLVMReferenceType -> {
+                val callMaker = state.bindingContext.get(BindingContext.CALL, expr)
+                when (callMaker!!.callType) {
+                    Call.CallType.ARRAY_SET_METHOD,
+                    Call.CallType.ARRAY_GET_METHOD -> {
+                        val arrayActionType = if (callMaker.callType == Call.CallType.ARRAY_SET_METHOD) "set" else "get"
+                        val explicitReceiver = callMaker.explicitReceiver as ExpressionReceiver
+                        val expression = explicitReceiver.expression as KtReferenceExpression
+
+                        val receiver = evaluateReferenceExpression(expression, scope)!! as LLVMVariable
+                        val pureReceiver = loadArgumentIfRequired(receiver, LLVMVariable("", receiver.type, pointer = 1))
+
+                        val targetClassName = (receiver.type as LLVMReferenceType).type
+
+                        val names = parseValueArguments(callMaker.valueArguments, scope)
+                        val methodName = "$targetClassName.$arrayActionType${if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
+                        val type = receiver.type as LLVMReferenceType
+                        val clazz = resolveClassOrObjectLocation(type)
+
+                        val method = clazz.methods[methodName]!!
+                        val returnType = clazz.methods[methodName]!!.returnType!!.type
+
+                        val loadedArgs = loadArgsIfRequired(names, method.args)
+                        val callArgs = mutableListOf<LLVMSingleValue>(pureReceiver)
+                        callArgs.addAll(loadedArgs)
+
+                        return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
+                    }
+                    else -> throw IllegalStateException()
+                }
+            }
+            else -> {
+                val arrayIndex = evaluateConstantExpression(expr.indexExpressions.first() as KtConstantExpression)
+                val arrayReceivedVariable = codeBuilder.loadAndGetVariable(arrayNameVariable)
+                val arrayElementType = (arrayNameVariable.type as LLVMArray).basicType()
+                val indexVariable = codeBuilder.getNewVariable(arrayElementType, pointer = 1)
+                codeBuilder.loadVariableOffset(indexVariable, arrayReceivedVariable, arrayIndex)
+                indexVariable
+            }
+        }
+
     }
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when {
@@ -446,6 +483,10 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun parseArgList(expr: KtCallExpression, scopeDepth: Int): ArrayList<LLVMSingleValue> {
         val args = expr.getValueArgumentsInParentheses()
+        return parseValueArguments(args, scopeDepth)
+    }
+
+    private fun parseValueArguments(args: List<ValueArgument>, scopeDepth: Int): ArrayList<LLVMSingleValue> {
         val result = ArrayList<LLVMSingleValue>()
 
         for (arg in args) {
@@ -456,13 +497,18 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return result
     }
 
-    private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable {
+    private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable? {
         val operator = expr.operationToken
         if (operator == KtTokens.ELVIS) {
             return evaluateElvisOperator(expr, scopeDepth)
         }
+        val left = evaluateExpression(expr.firstChild, scopeDepth)
+        if (expr.firstChild is KtArrayAccessExpression) {
+            return null
+        } else {
+            left ?: throw UnsupportedOperationException("Wrong binary exception")
+        }
 
-        val left = evaluateExpression(expr.firstChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
         val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
 
         return executeBinaryExpression(operator, expr.operationReference, left, right)
@@ -707,7 +753,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         codeBuilder.addUnconditionalJump(if (checkConditionBeforeExecute) conditionLabel else bodyLabel)
         codeBuilder.markWithLabel(conditionLabel)
-        val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)
+        val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)!!
 
         codeBuilder.addCondition(conditionResult, bodyLabel, exitLabel)
         evaluateCodeBlock(bodyExpression, bodyLabel, conditionLabel, scopeDepth + 1)
@@ -731,7 +777,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun executeIfExpression(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, ifExpression: KtIfExpression, scopeDepth: Int): LLVMVariable? {
-        val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)
+        val conditionResult: LLVMVariable = evaluateBinaryExpression(condition, scopeDepth + 1)!!
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, ifExpression)!!.type!!
         val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope()).type
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
@@ -755,7 +801,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun executeIfBlock(condition: KtBinaryExpression, thenExpression: PsiElement, elseExpression: PsiElement?, scopeDepth: Int): LLVMVariable? {
-        val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)
+        val conditionResult = evaluateBinaryExpression(condition, scopeDepth + 1)!!
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
         val endLabel = codeBuilder.getNewLabel(prefix = "if")
