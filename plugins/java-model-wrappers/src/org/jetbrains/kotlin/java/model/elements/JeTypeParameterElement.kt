@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.java.model.elements
 
 import com.intellij.psi.PsiAnnotationOwner
+import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.JeAnnotationOwner
@@ -32,7 +33,7 @@ import javax.lang.model.element.TypeParameterElement
 class JeTypeParameterElement(
         override val psi: PsiTypeParameter,
         val parent: JeElement?
-) : JeElement(), TypeParameterElement, JeAnnotationOwner, JeModifierListOwner {
+) : JeElement, TypeParameterElement, JeAnnotationOwner, JeModifierListOwner {
     override fun getSimpleName() = JeName(psi.name)
 
     override fun getEnclosingElement() = parent
@@ -48,9 +49,6 @@ class JeTypeParameterElement(
     override fun getBounds() = psi.superTypes.map { it.toJeType(psi.manager) }
 
     override fun getGenericElement() = parent
-
-    override val annotationOwner: PsiAnnotationOwner?
-        get() = psi.modifierList
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

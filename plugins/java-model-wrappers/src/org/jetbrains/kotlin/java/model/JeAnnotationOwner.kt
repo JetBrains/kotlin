@@ -16,18 +16,19 @@
 
 package org.jetbrains.kotlin.java.model
 
-import com.intellij.psi.PsiAnnotationOwner
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.internal.KotlinAnnotationProxyMaker
+import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
 import java.lang.reflect.Array as RArray
 
-interface JeAnnotationOwner : Element {
-    val annotationOwner: PsiAnnotationOwner?
+interface JeAnnotationOwner : JeElement {
+    override val psi: PsiModifierListOwner
     
-    override fun getAnnotationMirrors() = annotationOwner?.annotations?.map { JeAnnotationMirror(it) } ?: emptyList()
+    override fun getAnnotationMirrors() = psi.getAnnotationsWithInherited().map(::JeAnnotationMirror)
     
     override fun <A : Annotation> getAnnotation(annotationClass: Class<A>): A? {
         return getAnnotationsByType(annotationClass, onlyFirst = true).firstOrNull()
@@ -49,11 +50,11 @@ interface JeAnnotationOwner : Element {
 
         val annotationFqName = annotationClass.canonicalName
         
-        val allAnnotations = annotationOwner?.annotations?.filter { it.qualifiedName == annotationFqName } ?: return emptyList()
+        val allAnnotations = psi.getAnnotationsWithInherited().filter { it.qualifiedName == annotationFqName }
         if (allAnnotations.isEmpty()) return emptyList()
         
         val annotations = if (onlyFirst) listOf(allAnnotations.first()) else allAnnotations
-        
+
         val annotationDeclarations = annotations.map { it to it.nameReferenceElement?.resolve() as? PsiClass }.filter { it.second != null }
 
         @Suppress("UNCHECKED_CAST")

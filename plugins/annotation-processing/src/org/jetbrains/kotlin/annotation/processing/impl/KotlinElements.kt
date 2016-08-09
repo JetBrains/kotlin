@@ -74,7 +74,7 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
     override fun isDeprecated(e: Element?): Boolean {
         val deprecated = ((e as? JeElement)?.psi as? PsiDocCommentOwner)?.isDeprecated ?: false
         if (deprecated) return true
-        return (e as? JeAnnotationOwner)?.annotationOwner?.findAnnotation("java.lang.Deprecated") != null
+        return (e as? JeAnnotationOwner)?.psi?.modifierList?.findAnnotation("java.lang.Deprecated") != null
     }
 
     override fun getAllMembers(type: TypeElement) = (type as? JeTypeElement)?.getAllMembers() ?: emptyList()

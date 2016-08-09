@@ -26,7 +26,7 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ElementVisitor
 import javax.lang.model.element.PackageElement
 
-class JePackageElement(override val psi: PsiPackage) : JeElement(), PackageElement, JeModifierListOwner, JeNoAnnotations {
+class JePackageElement(override val psi: PsiPackage) : JeElement, PackageElement, JeModifierListOwner, JeNoAnnotations {
     override fun getEnclosingElement() = null
 
     override fun getSimpleName() = JeName(psi.name)
@@ -39,7 +39,7 @@ class JePackageElement(override val psi: PsiPackage) : JeElement(), PackageEleme
 
     override fun getQualifiedName() = JeName(psi.qualifiedName)
 
-    override fun getEnclosedElements() = psi.classes.map { JeTypeElement(it) }
+    override fun getEnclosedElements() = psi.classes.map(::JeTypeElement)
 
     override fun asType() = JePackageTypeMirror
     

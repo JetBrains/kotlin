@@ -67,3 +67,32 @@ internal val PsiModifierListOwner.isFinal: Boolean
     get() = hasModifierProperty(PsiModifier.FINAL)
 
 fun PsiModifierListOwner.getJavaModifiers() = modifierList?.getJavaModifiers() ?: emptySet()
+
+fun PsiModifierListOwner.getAnnotationsWithInherited(): List<PsiAnnotation> {
+    val annotations = modifierList?.annotations?.toMutableList() ?: mutableListOf()
+
+    if (this is PsiClass) {
+        var superClass = superClass
+        while (superClass != null) {
+            superClass.modifierList?.annotations?.let { superClassAnnotations ->
+                for (annotation in superClassAnnotations) {
+                    // Do not add the inherited annotation from the superclass
+                    // if the current class has an annotation with the same qualified name
+                    if (!annotation.isInherited()
+                        || annotations.any { it.qualifiedName == annotation.qualifiedName }) continue
+                    annotations += annotation
+                }
+            }
+
+            superClass = superClass.superClass
+        }
+    }
+
+    return annotations
+}
+
+private fun PsiAnnotation.isInherited(): Boolean {
+    val annotationClass = nameReferenceElement?.resolve() as? PsiClass ?: return false
+    val annotations = annotationClass.modifierList?.annotations ?: return false
+    return annotations.any { it.qualifiedName == "java.lang.annotation.Inherited" }
+}
