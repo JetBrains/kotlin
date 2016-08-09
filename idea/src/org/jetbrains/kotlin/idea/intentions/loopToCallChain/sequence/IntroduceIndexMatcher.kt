@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.*
 
+/**
+ * Analyzes the rest of the loop and detects index variable manually incremented inside.
+ * So it does not produce any transformation in its result but adds an index variable.
+ */
 object IntroduceIndexMatcher : TransformationMatcher {
     override val indexVariableAllowed: Boolean
         get() = false // old index variable is still needed - cannot introduce another one
