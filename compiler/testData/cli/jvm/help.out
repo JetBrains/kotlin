@@ -9,7 +9,7 @@ where possible options include:
   -no-reflect                Don't include Kotlin reflection implementation into classpath
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
-  -script-templates <comma separated class names>
+  -script-templates <fully qualified class name[,]>
                              Script definition template classes
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for runtime libraries discovery
   -module-name               Module name

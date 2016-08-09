@@ -29,7 +29,7 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
 import java.util.*
 
-class GradleScriptTemplateProvider(project: Project): ScriptTemplatesProvider {
+class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
 
     private val gradleExeSettings: GradleExecutionSettings? by lazy {
         try {
@@ -40,11 +40,11 @@ class GradleScriptTemplateProvider(project: Project): ScriptTemplatesProvider {
         }
         catch (e: NoClassDefFoundError) {
             // TODO: consider displaying the warning to the user
-            Logger.getInstance(GradleScriptTemplateProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
+            Logger.getInstance(GradleScriptTemplatesProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
             null
         }
         catch (e: ClassNotFoundException) {
-            Logger.getInstance(GradleScriptTemplateProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
+            Logger.getInstance(GradleScriptTemplatesProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
             null // see todo above
         }
     }

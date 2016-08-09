@@ -162,28 +162,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleScript.modules, directory)
                 configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, moduleFile)
 
-                val scriptResolverEnv = hashMapOf<String, Any?>()
-                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
-
-                val environment = createCoreEnvironment(rootDisposable, configuration)
-                if (messageCollector.hasErrors()) return COMPILATION_ERROR
-
-                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
+                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                                  ?: return COMPILATION_ERROR
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
 
-                val scriptResolverEnv = hashMapOf<String, Any?>()
-                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
-
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
-                val environment = createCoreEnvironment(rootDisposable, configuration)
-                if (messageCollector.hasErrors()) return COMPILATION_ERROR
-
-                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
+                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                                  ?: return COMPILATION_ERROR
 
                 return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, paths, scriptArgs)
             }
@@ -197,13 +187,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     }
                 }
 
-                val scriptResolverEnv = hashMapOf<String, Any?>()
-                if (!configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)) return COMPILATION_ERROR
-
-                val environment = createCoreEnvironment(rootDisposable, configuration)
-                if (messageCollector.hasErrors()) return COMPILATION_ERROR
-
-                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
+                val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                                  ?: return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
@@ -233,30 +218,47 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    private fun createEnvironmentWithScriptingSupport(rootDisposable: Disposable,
+                                                      configuration: CompilerConfiguration,
+                                                      arguments: K2JVMCompilerArguments,
+                                                      messageCollector: MessageCollector
+    ): KotlinCoreEnvironment? {
+
+        val scriptResolverEnv = hashMapOf<String, Any?>()
+        configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)
+        if (!messageCollector.hasErrors()) {
+            val environment = createCoreEnvironment(rootDisposable, configuration)
+            if (!messageCollector.hasErrors()) {
+                scriptResolverEnv.put("projectRoot", environment.project.run { basePath ?: baseDir?.canonicalPath }?.let(::File))
+                return environment
+            }
+        }
+        return null
+    }
+
     private fun configureScriptDefinitions(arguments: K2JVMCompilerArguments,
                                            configuration: CompilerConfiguration,
                                            messageCollector: MessageCollector,
-                                           scriptResolverEnv: HashMap<String, Any?>): Boolean {
+                                           scriptResolverEnv: HashMap<String, Any?>) {
         val classpath = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance(JvmClasspathRoot::class.java).mapNotNull { it.file }
         // TODO: consider using escaping to allow kotlin escaped names in class names
-        val scriptTemplates = arguments.scriptTemplates?.split(',', ' ')
-        if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
+        if (arguments.scriptTemplates != null && arguments.scriptTemplates.isNotEmpty()) {
             val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
             var hasErrors = false
-            for (template in scriptTemplates) {
+            for (template in arguments.scriptTemplates) {
                 try {
                     val cls = classloader.loadClass(template)
                     val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, scriptResolverEnv)
                     configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                     messageCollector.report(
                             CompilerMessageSeverity.INFO,
-                            "Added script definition $template to configuration: files pattern: \"${def.scriptFilePattern}\", resolver: ${def.resolver?.javaClass?.name}",
+                            "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",
                             CompilerMessageLocation.NO_LOCATION
                     )
                 }
                 catch (ex: ClassNotFoundException) {
                     messageCollector.report(
-                            CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template (used classpath: ${classloader.urLs.joinToString()})", CompilerMessageLocation.NO_LOCATION
+                            CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template", CompilerMessageLocation.NO_LOCATION
                     )
                     hasErrors = true
                 }
@@ -272,11 +274,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 messageCollector.report(
                         CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)", CompilerMessageLocation.NO_LOCATION
                 )
-                return false
+                return
             }
         }
         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-        return true
     }
 
     private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {

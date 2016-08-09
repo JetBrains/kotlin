@@ -56,7 +56,7 @@ and related functionality, except the following parts:
   - `@file:ScriptTemplate` annotation is not supported
   - the parameters `javaHome` and `scripts` from `KotlinScriptExternalDependencies` are not used yet
 - Implement support for custom template-based scripts in IDEA: resolving, completion and navigation to symbols from script classpath and sources
-- Implement GradleScriptTemplateProvider extension that supplies a script template if gradle with
+- Implement GradleScriptTemplatesProvider extension that supplies a script template if gradle with
 [kotlin script support](https://github.com/gradle/gradle-script-kotlin) is used in the project
 
 

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -63,11 +61,12 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -247,18 +246,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        final DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
-
-        final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
-
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
-            @Override
-            public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, classProto);
-                return Unit.INSTANCE;
-            }
-        });
+        generateKotlinClassMetadataAnnotation(descriptor);
     }
 
     private void writeEnclosingMethod() {

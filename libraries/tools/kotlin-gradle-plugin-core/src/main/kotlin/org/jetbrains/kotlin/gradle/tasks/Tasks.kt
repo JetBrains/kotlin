@@ -192,10 +192,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.languageVersion = kotlinOptions.languageVersion
         args.jvmTarget = kotlinOptions.jvmTarget
         args.allowKotlinPackage = kotlinOptions.allowKotlinPackage
+        args.reportPerf = kotlinOptions.reportPerf
+
         args.scriptTemplates = kotlinOptions.scriptTemplates
 
-        if (args.scriptTemplates?.isNotBlank() ?: false) {
-            logger.kotlinDebug { "scriptTemplates = ${args.scriptTemplates}" }
+        if (args.scriptTemplates?.isNotEmpty() ?: false) {
+            logger.kotlinDebug { "scriptTemplates = ${args.scriptTemplates.joinToString()}" }
         }
 
         fun addFriendPathForTestTask(friendKotlinTaskName: String) {

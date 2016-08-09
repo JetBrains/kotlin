@@ -34,7 +34,7 @@
         <extensionPoint name="storageComponentContainerContributor"
                         interface="org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
                         area="IDEA_PROJECT"/>
-        <extensionPoint name="scriptTemplateProvider"
+        <extensionPoint name="scriptTemplatesProvider"
                         interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
                         area="IDEA_PROJECT"/>
     </extensionPoints>

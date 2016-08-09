@@ -123,18 +123,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     @Override
     protected void generateKotlinMetadataAnnotation() {
         // TODO: copypaste from ImplementationBodyCodegen, so the script is seen as a KClass by reflection; implement separate kind with proper API
-        final DescriptorSerializer serializer =
-                DescriptorSerializer.create(scriptDescriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
-
-        final ProtoBuf.Class classProto = serializer.classProto(scriptDescriptor).build();
-
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
-            @Override
-            public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, classProto);
-                return Unit.INSTANCE;
-            }
-        });
+        generateKotlinClassMetadataAnnotation(scriptDescriptor);
     }
 
     private void genConstructor(

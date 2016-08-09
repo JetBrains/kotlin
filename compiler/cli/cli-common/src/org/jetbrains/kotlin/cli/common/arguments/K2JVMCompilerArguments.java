@@ -52,8 +52,8 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public boolean script;
 
     @Argument(value = "script-templates", description = "Script definition template classes")
-    @ValueDescription("<comma separated class names>")
-    public String scriptTemplates;
+    @ValueDescription("<fully qualified class name[,]>")
+    public String[] scriptTemplates;
 
     @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for runtime libraries discovery")
     @ValueDescription("<path>")

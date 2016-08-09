@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -33,10 +36,13 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
@@ -45,10 +51,13 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -57,8 +66,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ClassBuilderModeUtilKt.shouldGenerateMetadata;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
@@ -698,4 +706,20 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
         return StackValue.onStack(callableMethod.getReturnType());
     }
+
+    protected void generateKotlinClassMetadataAnnotation(ClassDescriptor descriptor) {
+        final DescriptorSerializer serializer =
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
+
+        final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, classProto);
+                return Unit.INSTANCE;
+            }
+        });
+    }
+
 }

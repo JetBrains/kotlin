@@ -42,24 +42,24 @@ interface ScriptTemplatesProvider {
     val environment: Map<String, Any?>?
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplateProvider")
+        val EP_NAME = ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplatesProvider")
     }
 }
 
-fun makeScriptDefsFromTemplateProviderExtensions(project: Project,
-                                                 errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
+                                                  errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromTemplate> =
-        makeScriptDefsFromTemplateProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
-                                            errorsHandler)
+        makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
+                                             errorsHandler)
 
-fun makeScriptDefsFromTemplateProviders(providers: Iterable<ScriptTemplatesProvider>,
-                                        errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
+                                         errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromTemplate> {
     val idToVersion = hashMapOf<String, Int>()
     return providers.filter { it.isValid }.sortedByDescending { it.version }.flatMap { provider ->
         try {
-            idToVersion.get(provider.id)?.let { ver -> errorsHandler(provider, RuntimeException("Conflicting scriptTemplateProvider ${provider.id}, using one with version $ver")) }
-            Logger.getInstance("makeScriptDefsFromTemplateProviders")
+            idToVersion.get(provider.id)?.let { ver -> errorsHandler(provider, RuntimeException("Conflicting scriptTemplatesProvider ${provider.id}, using one with version $ver")) }
+            Logger.getInstance("makeScriptDefsFromTemplatesProviders")
                     .info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
             val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
             provider.templateClassNames.map {
