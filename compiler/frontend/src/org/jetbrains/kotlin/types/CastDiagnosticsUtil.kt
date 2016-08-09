@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import com.google.common.base.Predicates
-import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 object CastDiagnosticsUtil {
 
@@ -36,7 +34,8 @@ object CastDiagnosticsUtil {
     fun isCastPossible(
             lhsType: KotlinType,
             rhsType: KotlinType,
-            platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
+            platformToKotlinClassMap: PlatformToKotlinClassMap
+    ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
