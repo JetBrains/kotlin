@@ -2,22 +2,24 @@ package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.kotlinnative.translator.exceptions.TranslationException
 import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
 
-class ClassCodegen(override val state: TranslationState,
-                   override val variableManager: VariableManager,
+class ClassCodegen(state: TranslationState,
+                   variableManager: VariableManager,
                    val clazz: KtClass,
-                   override val codeBuilder: LLVMBuilder,
+                   codeBuilder: LLVMBuilder,
                    parentCodegen: StructCodegen? = null) :
 
         StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder, parentCodegen) {
 
     val annotation: Boolean
     val enum: Boolean
+    var companionObjectCodegen: ObjectCodegen? = null
 
     override var size: Int = 0
     override val structName: String = clazz.name!!
@@ -58,31 +60,44 @@ class ClassCodegen(override val state: TranslationState,
         }
     }
 
-    fun generate() {
+    override fun prepareForGenerate() {
         if (annotation) {
             return
         }
-
-        generate(clazz.declarations)
-        nestedClasses.forEach { x, classCodegen -> classCodegen.generate() }
+        super.prepareForGenerate()
+        nestedClasses.forEach { x, classCodegen -> classCodegen.prepareForGenerate() }
 
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
         if (companionObjectDescriptor != null) {
             val companionObject = clazz.getCompanionObjects().first()
-            val property = ObjectCodegen(state, variableManager, companionObject, codeBuilder, this)
-            val companionObjectName = structName + "." + companionObject.name
-            property.generate()
+            companionObjectCodegen = ObjectCodegen(state, variableManager, companionObject, codeBuilder, this)
+            companionObjectCodegen!!.prepareForGenerate()
+        }
+    }
 
-            for ((key, value) in property.methods) {
+    override fun generate() {
+        if (annotation) {
+            return
+        }
+
+        super.generate()
+        nestedClasses.forEach { x, classCodegen -> classCodegen.generate() }
+
+        if (companionObjectCodegen != null) {
+            val companionObject = clazz.getCompanionObjects().first()
+            val companionObjectName = structName + "." + companionObject.name
+            companionObjectCodegen!!.generate()
+
+            for ((key, value) in companionObjectCodegen!!.methods) {
                 val methodName = key.removePrefix(companionObjectName + ".")
                 companionMethods.put(structName + "." + methodName, value)
             }
-            companionFields.addAll(property.fields)
-            for (field in property.fields) {
-                companionFieldsSource.put(field.label, property)
+            companionFields.addAll(companionObjectCodegen!!.fields)
+            for (field in companionObjectCodegen!!.fields) {
+                companionFieldsSource.put(field.label, companionObjectCodegen!!)
             }
-            companionFieldsIndex.putAll(property.fieldsIndex)
+            companionFieldsIndex.putAll(companionObjectCodegen!!.fieldsIndex)
         }
     }
 

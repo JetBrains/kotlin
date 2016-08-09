@@ -8,10 +8,10 @@ import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.LLVMVariableScope
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
 
-class ObjectCodegen(override val state: TranslationState,
-                    override val variableManager: VariableManager,
+class ObjectCodegen(state: TranslationState,
+                    variableManager: VariableManager,
                     val objectDeclaration: KtObjectDeclaration,
-                    override val codeBuilder: LLVMBuilder,
+                    codeBuilder: LLVMBuilder,
                     parentCodegen: StructCodegen? = null) :
         StructCodegen(state, variableManager, objectDeclaration, state.bindingContext.get(BindingContext.CLASS, objectDeclaration) ?: throw TranslationException(),
                 codeBuilder, parentCodegen = parentCodegen) {
@@ -28,8 +28,12 @@ class ObjectCodegen(override val state: TranslationState,
         generateInnerFields(objectDeclaration.declarations)
     }
 
-    fun generate() {
-        generate(objectDeclaration.declarations)
+    override fun prepareForGenerate() {
+        super.prepareForGenerate()
+    }
+
+    override fun generate() {
+        super.generate()
         val classInstance = LLVMVariable("object.instance.$structName", type, objectDeclaration.name, LLVMVariableScope(), pointer = 1)
         codeBuilder.addGlobalIntialize(classInstance, type)
         variableManager.addGlobalVariable(fullName, classInstance)

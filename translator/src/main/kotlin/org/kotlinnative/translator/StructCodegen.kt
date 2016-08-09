@@ -13,11 +13,11 @@ import org.kotlinnative.translator.llvm.types.LLVMReferenceType
 import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
-abstract class StructCodegen(open val state: TranslationState,
-                             open val variableManager: VariableManager,
-                             open val classOrObject: KtClassOrObject,
+abstract class StructCodegen(val state: TranslationState,
+                             val variableManager: VariableManager,
+                             val classOrObject: KtClassOrObject,
                              val classDescriptor: ClassDescriptor,
-                             open val codeBuilder: LLVMBuilder,
+                             val codeBuilder: LLVMBuilder,
                              val parentCodegen: StructCodegen? = null) {
 
     val fields = ArrayList<LLVMVariable>()
@@ -39,12 +39,8 @@ abstract class StructCodegen(open val state: TranslationState,
     val fullName: String
         get() = "${if (type.location.size > 0) "${type.location.joinToString(".")}." else ""}$structName"
 
-    fun generate(declarations: List<KtDeclaration>) {
-        generateStruct()
-        generateEnumFields()
-        generatePrimaryConstructor()
-
-        for (declaration in declarations) {
+    open fun prepareForGenerate() {
+        for (declaration in classOrObject.declarations) {
             when (declaration) {
                 is KtNamedFunction -> {
                     val function = FunctionCodegen(state, variableManager, declaration, codeBuilder, this)
@@ -52,6 +48,12 @@ abstract class StructCodegen(open val state: TranslationState,
                 }
             }
         }
+    }
+
+    open fun generate() {
+        generateStruct()
+        generateEnumFields()
+        generatePrimaryConstructor()
 
         val classVal = LLVMVariable("classvariable.this", type, pointer = if (type.isPrimitive()) 0 else 1)
         variableManager.addVariable("this", classVal, 0)
@@ -73,7 +75,7 @@ abstract class StructCodegen(open val state: TranslationState,
                     field.offset = offset
                     offset++
 
-                    if ((declaration.initializer != null) && !(this is ObjectCodegen)){
+                    if ((declaration.initializer != null) && !(this is ObjectCodegen)) {
                         initializedFields.put(field, declaration.initializer!!)
                     }
                     fields.add(field)

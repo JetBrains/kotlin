@@ -12,10 +12,10 @@ import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
 
-class FunctionCodegen(override val state: TranslationState,
-                      override val variableManager: VariableManager,
+class FunctionCodegen(state: TranslationState,
+                      variableManager: VariableManager,
                       val function: KtNamedFunction,
-                      override val codeBuilder: LLVMBuilder,
+                      codeBuilder: LLVMBuilder,
                       val parentCodegen: StructCodegen? = null) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
