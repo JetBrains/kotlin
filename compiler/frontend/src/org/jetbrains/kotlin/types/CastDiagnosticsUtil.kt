@@ -37,9 +37,12 @@ object CastDiagnosticsUtil {
             lhsType: KotlinType,
             rhsType: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false
+        val rhsNullable = TypeUtils.isNullableType(rhsType)
+        val lhsNullable = TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
-        if (KotlinBuiltIns.isNullableNothing(rhsType)) return TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
+        if (lhsNullable && rhsNullable) return true
         if (lhsType.isError) return true
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true
         // This is an oversimplification (which does not render the method incomplete):

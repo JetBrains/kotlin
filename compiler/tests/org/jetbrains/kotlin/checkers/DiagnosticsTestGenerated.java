@@ -2673,6 +2673,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NullableToNullable.kt")
+            public void testNullableToNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/NullableToNullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WhenErasedDisallowFromAny.kt")
             public void testWhenErasedDisallowFromAny() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/WhenErasedDisallowFromAny.kt");
