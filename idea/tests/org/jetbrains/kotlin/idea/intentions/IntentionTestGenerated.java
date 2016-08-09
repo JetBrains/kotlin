@@ -7362,6 +7362,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addToCollection_addAfterLoop.kt")
+        public void testAddToCollection_addAfterLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection_addAfterLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addToCollection_badReceiver1.kt")
         public void testAddToCollection_badReceiver1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection_badReceiver1.kt");
