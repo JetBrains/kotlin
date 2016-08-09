@@ -344,7 +344,7 @@ object KotlinToJVMBytecodeCompiler {
         val state = analyzeAndGenerate(environment) ?: return null
 
         try {
-            val classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader(), null)
+            val classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader())
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
