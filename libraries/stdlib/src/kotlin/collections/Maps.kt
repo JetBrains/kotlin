@@ -238,7 +238,7 @@ public inline operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<M
  * Populates the given [destination] map with entries having the keys of this map and the values obtained
  * by applying the [transform] function to each entry in this [Map].
  */
-public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<out K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, M : MutableMap<in K, in R>> Map<out K, V>.mapValuesTo(destination: M, transform: (Map.Entry<K, V>) -> R): M {
     return entries.associateByTo(destination, { it.key }, transform)
 }
 
@@ -249,7 +249,7 @@ public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<out K, V>.mapValuesT
  * In case if any two entries are mapped to the equal keys, the value of the latter one will overwrite
  * the value associated with the former one.
  */
-public inline fun <K, V, R, C : MutableMap<in R, in V>> Map<out K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, M : MutableMap<in R, in V>> Map<out K, V>.mapKeysTo(destination: M, transform: (Map.Entry<K, V>) -> R): M {
     return entries.associateByTo(destination, transform, { it.value })
 }
 
@@ -345,7 +345,7 @@ public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): 
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<in K, in V>> Map<out K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
         if (predicate(element)) {
             destination.put(element.key, element.value)
@@ -368,7 +368,7 @@ public inline fun <K, V> Map<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Bo
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
         if (!predicate(element)) {
             destination.put(element.key, element.value)
