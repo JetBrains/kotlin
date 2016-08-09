@@ -4,8 +4,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
-import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.util.*
@@ -32,7 +29,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         if (isBlock) {
             expressionWalker(expr, scopeDepth)
         } else {
-
             var result = evaluateExpression(expr, scopeDepth)!!
             when (result) {
                 is LLVMVariable -> {
@@ -205,7 +201,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth)
     }
 
-
     private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
         val standardType = LLVMMapStandardType(receiverType!!.type!!)
@@ -221,9 +216,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         }
 
         val args = mutableListOf(loadArgumentIfRequired(receiverExpression, typeThisArgument))
-
         args.addAll(loadArgsIfRequired(names, extensionCodegen.args))
-
         return evaluateFunctionCallExpression(LLVMVariable(extensionCodegen.fullName, extensionCodegen.returnType!!.type, scope = LLVMVariableScope()), args)
     }
 
@@ -335,7 +328,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             val args = loadArgsIfRequired(names, descriptor.args)
             return evaluateFunctionCallExpression(LLVMVariable(function, descriptor.returnType!!.type, scope = LLVMVariableScope()), args)
         }
-
 
         if (state.classes.containsKey(name)) {
             val descriptor = state.classes[name] ?: return null
@@ -478,9 +470,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluatePostfixExpression(expr: KtPostfixExpression, scopeDepth: Int): LLVMSingleValue? {
         val operator = expr.operationToken
-
         val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
-
         return executePostfixExpression(operator, expr.operationReference, left as LLVMVariable)
     }
 
@@ -579,7 +569,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         }
     }
 
-
     private fun addPrimitiveBinaryOperation(operator: IElementType, referenceName: KtSimpleNameExpression?, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
         val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
         val secondNativeOp = codeBuilder.receiveNativeValue(secondOp)
@@ -621,9 +610,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
         val expressionKotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
         val expressionValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)?.getValue(expressionKotlinType)
-
         val type = LLVMMapStandardType(expressionKotlinType)
-
         return LLVMConstant(expressionValue?.toString() ?: "", type, pointer = 0)
     }
 
@@ -695,6 +682,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             evaluateWhenItem(item, targetExpression, resultVariable, nextLabel, endLabel, item.isElse, scopeDepth + 1)
             codeBuilder.addComment("end new when item")
         }
+
         codeBuilder.addComment("else branch of when expression")
         codeBuilder.markWithLabel(nextLabel)
         codeBuilder.addUnconditionalJump(endLabel)
@@ -758,6 +746,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         codeBuilder.storeVariable(resultVariable, thenResultExpression ?: return null)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(elseLabel)
+
         val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1)
         codeBuilder.storeVariable(resultVariable, elseResultExpression ?: return null)
         codeBuilder.addUnconditionalJump(endLabel)
@@ -815,7 +804,6 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                     reference.pointer += 1
 
                     codeBuilder.storeNull(reference)
-
                     variableManager.addVariable(identifier, reference, scopeDepth)
                     return null
                 }
