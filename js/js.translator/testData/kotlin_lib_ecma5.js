@@ -366,12 +366,18 @@
         return false;
     }
 
+    /**
+     *
+     * @param {*} object
+     * @param {Function|Object} klass
+     * @returns {Boolean}
+     */
     Kotlin.isType = function (object, klass) {
         if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
             return false;
         }
         else {
-            if (object instanceof klass) {
+            if (typeof klass === "function" && object instanceof klass) {
                 return true;
             }
             else if (isNativeClass(klass) || klass.$metadata$.type == Kotlin.TYPE.CLASS) {
