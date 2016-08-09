@@ -13,6 +13,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -53,6 +54,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -164,6 +166,7 @@ fun generators(): List<GenericFunction> {
             """
             Returns a set containing all elements of the original set and the given [elements] array,
             which aren't already in this set.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -220,6 +223,7 @@ fun generators(): List<GenericFunction> {
             """
             Returns a set containing all elements of the original set and the given [elements] sequence,
             which aren't already in this set.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -255,6 +259,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set except the given [element].
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -283,6 +288,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set except the given [element].
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -329,6 +335,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set except the elements contained in the given [elements] collection.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -386,6 +393,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set except the elements contained in the given [elements] array.
+
             The returned set preserves the element iteration order of the original set.
             """
         }
@@ -437,6 +445,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) {
             """
             Returns a set containing all elements of the original set except the elements contained in the given [elements] sequence.
+
             The returned set preserves the element iteration order of the original set.
             """
         }

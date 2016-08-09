@@ -10,6 +10,7 @@ fun sets(): List<GenericFunction> {
         doc { f ->
             """
             Returns a mutable set containing all distinct ${f.element.pluralize()} from the given ${f.collection}.
+
             The returned set preserves the element iteration order of the original ${f.collection}.
             """
         }
@@ -97,6 +98,7 @@ fun sets(): List<GenericFunction> {
         doc { f ->
             """
             Returns a set containing all distinct elements from both collections.
+
             The returned set preserves the element iteration order of the original ${f.collection}.
             Those elements of the [other] collection that are unique are iterated in the end
             in the order of the [other] collection.
@@ -118,6 +120,7 @@ fun sets(): List<GenericFunction> {
         doc { f ->
             """
             Returns a set containing all elements that are contained by both this set and the specified collection.
+
             The returned set preserves the element iteration order of the original ${f.collection}.
             """
         }
@@ -137,6 +140,7 @@ fun sets(): List<GenericFunction> {
         doc { f ->
             """
             Returns a set containing all elements that are contained by this ${f.collection} and not contained by the specified collection.
+
             The returned set preserves the element iteration order of the original ${f.collection}.
             """
         }
