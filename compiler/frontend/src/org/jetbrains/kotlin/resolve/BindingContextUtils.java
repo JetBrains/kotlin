@@ -71,7 +71,8 @@ public class BindingContextUtils {
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable KtElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
         if (!onlyReference &&
-            (element instanceof KtVariableDeclaration || element instanceof KtParameter || element instanceof KtEnumEntry)) {
+            (element instanceof KtVariableDeclaration || element instanceof KtParameter ||
+             element instanceof KtEnumEntry || element instanceof KtObjectDeclaration)) {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         }
         else if (element instanceof KtSimpleNameExpression) {
