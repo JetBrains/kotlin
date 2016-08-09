@@ -24,5 +24,6 @@ dependencies {
 }
 
 jar {
+    archiveName = "protokot-runtime.jar"
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
