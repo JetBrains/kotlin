@@ -433,6 +433,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NotIn.after.kt")
+        public void testNotIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NotIn.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotIs.after.kt")
+        public void testNotIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NotIs.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NullableType.after.kt")
         public void testNullableType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NullableType.after.kt");
