@@ -85,6 +85,7 @@ class FilterTransformation(
             // we merge filter transformations here instead of FilterTransformation.mergeWithPrevious() because of filterIndexed that won't merge otherwise
 
             var (transformation, currentState) = matchOneTransformation(state) ?: return null
+            assert(currentState.indexVariable == state.indexVariable) // indexVariable should not change
 
             if (transformation is FilterTransformation) {
                 while (true) {
@@ -92,6 +93,7 @@ class FilterTransformation(
 
                     val (nextTransformation, nextState) = matchOneTransformation(currentState) ?: break
                     if (nextTransformation !is FilterTransformation) break
+                    assert(nextState.indexVariable == currentState.indexVariable) // indexVariable should not change
 
                     val indexVariable = transformation.indexVariable ?: nextTransformation.indexVariable
                     val mergedCondition = KtPsiFactory(state.outerLoop).createExpressionByPattern(
