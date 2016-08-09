@@ -134,7 +134,7 @@ class KotlinInplacePropertyIntroducer(
             }
         }
 
-        val occurrenceCount = extractionResult.duplicateReplacers.size + 1
+        val occurrenceCount = extractionResult.duplicateReplacers.size
         if (occurrenceCount > 1) {
             addPanelControl(
                     ControlWrapper {
