@@ -199,9 +199,12 @@ string protobufTypeToKotlinWireType(FieldDescriptor::Type type) {
 NameResolver::NameResolver() {
     names = map<string, string>();
     builders = map<string, string>();
+    generators = map<string, ClassGenerator *>();
 }
 
-void NameResolver::addClass(string simpleName, string parentName) {
+void NameResolver::addClass(string simpleName, string parentName, ClassGenerator * classGenerator) {
+    generators[simpleName] = classGenerator;
+
     if (parentName == "") {
         names[simpleName] = simpleName;
         builders[simpleName] = simpleName + ".Builder" + simpleName;
@@ -219,6 +222,10 @@ string NameResolver::getClassName(string simpleName) {
 
 string NameResolver::getBuilderName(string classSimpleName) {
     return builders[classSimpleName];
+}
+
+ClassGenerator * NameResolver::getClassGenerator(string simpleName) {
+    return generators[simpleName];
 }
 
 } // namespace kotlin

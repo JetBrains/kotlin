@@ -27,6 +27,7 @@ public:
     string getFullType() const;
     string getBuidlerSimpleType() const;
     string getBuilderFullType() const;
+    string getBuilderInitValue() const;
 
     vector <FieldGenerator *>   properties;
     vector <ClassGenerator *>   classesDeclarations;
@@ -46,7 +47,6 @@ private:
     NameResolver * nameResolver;
 
     void generateHeader         (io::Printer * printer, bool isBuilder = false) const;
-    void generateConstructor    (io::Printer * printer, bool isBuilder = false) const;
     void generateBuilder        (io::Printer * printer) const;
     void generateBuildMethod    (io::Printer * printer) const;
     void generateInitSection    (io::Printer * printer) const;

@@ -9,6 +9,7 @@
 #include <google/protobuf/descriptor.h>
 #include <map>
 #include "kotlin_field_generator.h"
+#include "kotlin_class_generator.h"
 
 namespace google {
 namespace protobuf {
@@ -22,12 +23,14 @@ class NameResolver {
 public:
     NameResolver();
 
-    void addClass (string simpleName, string parentName);
+    void addClass (string simpleName, string parentName, ClassGenerator * classGenerator);
     string getClassName (string simpleName);
     string getBuilderName (string classSimpleName);
+    ClassGenerator * getClassGenerator (string simpleName);
 private:
     std::map <string, string> names;
     std::map <string, string> builders;
+    std::map <string, ClassGenerator *> generators;
 };
 namespace name_resolving {
 

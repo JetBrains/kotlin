@@ -7,6 +7,7 @@
 #include "kotlin_enum_generator.h"
 #include "kotlin_field_generator.h"
 #include "kotlin_name_resolver.h"
+#include "UnreachableStateException.h"
 #include <algorithm>
 
 namespace google {
@@ -34,9 +35,6 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     // Generate construction routines
     generateInitSection(printer);
     printer->Print("\n");
-    generateConstructor(printer, isBuilder);
-    printer->Print("\n");
-
 
     // enum declarations and nested classes declarations only for fair classes
     if (!isBuilder) {
@@ -106,15 +104,15 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
     int nested_types_count = descriptor->nested_type_count();
     for (int i = 0; i < nested_types_count; ++i) {
         Descriptor const * nestedClassDescriptor = descriptor->nested_type(i);
-        nameResolver->addClass(nestedClassDescriptor->name(), getFullType());
         classesDeclarations.push_back(new ClassGenerator(nestedClassDescriptor, nameResolver));
+        nameResolver->addClass(nestedClassDescriptor->name(), getFullType(), classesDeclarations.back());
     }
 
     int enums_declarations_count = descriptor->enum_type_count();
     for (int i = 0; i < enums_declarations_count; ++i) {
         EnumDescriptor const * nestedEnumDescriptor = descriptor->enum_type(i);
-        nameResolver->addClass(nestedEnumDescriptor->name(), getFullType());
         enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor, nameResolver));
+        nameResolver->addClass(nestedEnumDescriptor->name(), getFullType(), /* classGenerator = */ nullptr);
     }
 
     /**
@@ -185,8 +183,9 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Indent();
 
     vars["builderName"] = getBuilderFullType();
-    printer->Print(vars, "val builder = $builderName$()\n");
-    printer->Print("mergeWith(builder.parseFromWithSize(input, expectedSize).build())");
+    vars["initValue"] = getBuilderInitValue();
+    printer->Print(vars, "val builder = $initValue$\n");
+    printer->Print("mergeWith(builder.parseFromWithSize(input, expectedSize).build())\n");
 
     printer->Outdent();
     printer->Print("}\n");
@@ -197,8 +196,8 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
     printer->Indent();
 
     vars["builderName"] = getBuilderFullType();
-    printer->Print(vars, "val builder = $builderName$()\n");
-    printer->Print("mergeWith(builder.parseFrom(input).build())");
+    printer->Print(vars, "val builder = $initValue$\n");
+    printer->Print("mergeWith(builder.parseFrom(input).build())\n");
 
     printer->Outdent();
     printer->Print("}\n");
@@ -221,7 +220,7 @@ void ClassGenerator::generateWriteToMethod(io::Printer *printer) const {
     printer->Print("}\n");
 }
 
-void ClassGenerator::generateConstructor(io::Printer * printer, bool isBuilder) const {
+void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const {
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
@@ -231,35 +230,12 @@ void ClassGenerator::generateConstructor(io::Printer * printer, bool isBuilder) 
         }
     }
 
-    map <string, string> vars;
-    vars["name"] = isBuilder ? getBuidlerSimpleType() : getSimpleType();
-    vars["private"] = isBuilder ? "" : "private ";
-    vars["arguments"] = argumentList;
-    printer->Print(vars, "$private$constructor ($arguments$) : this() {\n");
-    printer->Indent();
-
-    for (int i = 0; i < properties.size(); ++i) {
-        map <string, string> vars;
-        vars["name"] = properties[i]->simpleName;
-        vars["initVal"] = properties[i]->getInitValue();
-        printer->Print(vars,
-                       "this.$name$ = $name$"
-                       "\n"
-        );
-    }
-
-    printer->Outdent();
-    printer->Print("}\n");
-}
-
-void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const {
-
-
     map<string, string> vars;
     vars["name"] = isBuilder? getBuidlerSimpleType() : getSimpleType();
     vars["maybePrivate"] = isBuilder? "" : " private";
+    vars["args"] = argumentList;
     printer->Print(vars,
-                   "class $name$$maybePrivate$ constructor () {"
+                   "class $name$$maybePrivate$ constructor ($args$) {"
                            "\n"
     );
 }
@@ -294,7 +270,7 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
         vars["name"] = properties[i]->simpleName;
         vars["initVal"] = properties[i]->getInitValue();
         printer->Print(vars,
-                       "this.$name$ = $initVal$"
+                       "this.$name$ = $name$"
                                "\n"
         );
     }
@@ -439,6 +415,19 @@ string ClassGenerator::getBuilderFullType() const {
 
 string ClassGenerator::getBuidlerSimpleType() const {
     return "Builder" + getSimpleType();
+}
+
+string ClassGenerator::getBuilderInitValue() const {
+    // build list of arguments like 'field1: Type1, field2: Type2, ... '
+    string argumentList = "";
+    for (int i = 0; i < properties.size(); ++i) {
+        argumentList += properties[i]->simpleName + " = " + properties[i]->getInitValue();
+        if (i + 1 != properties.size()) {
+            argumentList += ", ";
+        }
+    }
+
+    return getBuilderFullType() + "(" + argumentList + ")";
 }
 
 

@@ -37,8 +37,8 @@ bool FileGenerator::Generate(const FileDescriptor *file, const string &parameter
     for (int i = 0; i < topLevelMessagesCount; ++i) {
         Descriptor const * descriptor = file->message_type(i);
         // TODO: think about order of initialization and cross-branches calls. If we don't allow such things, everythign is ok atm
-        nameResolver->addClass(descriptor->name(), "");
         ClassGenerator * cgen = new ClassGenerator(descriptor, nameResolver);
+        nameResolver->addClass(descriptor->name(), /* parentName = */ "", cgen);
         classes.push_back(cgen);
     }
 

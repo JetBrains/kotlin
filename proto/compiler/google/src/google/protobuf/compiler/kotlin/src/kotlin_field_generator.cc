@@ -19,14 +19,28 @@ string FieldGenerator::getInitValue() const {
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
         return getFullType() + "(0)";
     }
+
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-        return getBuilderFullType() + "().build()";
+        ClassGenerator * cg = nameResolver->getClassGenerator(getSimpleType());
+        // build list of arguments like 'field1: Type1, field2: Type2, ... '
+        string argumentList = "";
+        for (int i = 0; i < cg->properties.size(); ++i) {
+            argumentList += cg->properties[i]->simpleName + " = " + cg->properties[i]->getInitValue();
+            if (i + 1 != cg->properties.size()) {
+                argumentList += ", ";
+            }
+        }
+
+        return getBuilderFullType() + "(" + argumentList + ").build()";
     }
+
     if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
         return getEnumFromIntConverter() + "(0)";
     }
     return name_resolving::protobufTypeToInitValue(getProtoType());
 }
+
+
 
 void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     map<string, string> vars;
@@ -37,11 +51,6 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     generateComment(printer);
 
     printer->Print(vars, "var $name$ : $field$\n");
-
-    // make setter private
-    printer->Indent();
-    printer->Print("private set\n");
-    printer->Outdent();
 
     // generate setter for builder
     if (isBuilder) {

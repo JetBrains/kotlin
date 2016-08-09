@@ -73,6 +73,7 @@ public:
      */
     string getInitValue() const;
 
+
     /* Return string, that is suitable as suffix for corresponding IO methods in ProtoKot runtime.
      *      Example: int64-field -> Int64 (readInt64() and writeInt64() methods exist in ProtoKot runtime)
      */
