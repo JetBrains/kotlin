@@ -26,7 +26,7 @@ class IrModuleGenerator(override val context: IrGeneratorContext) : IrDeclaratio
     fun generateModuleContent() {
         for (ktFile in context.inputFiles) {
             val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile) { "no package fragment for file" }
-            val irFileElementFactory = IrFileElementFactory.create(context.irModule, context.sourceManager, ktFile, packageFragmentDescriptor)
+            val irFileElementFactory = IrDeclarationFactory.create(context.irModule, context.sourceManager, ktFile, packageFragmentDescriptor)
             val irFile = irFileElementFactory.irFileImpl
             context.irModule.addFile(irFile)
             val generator = IrFileGenerator(ktFile, context, irFile, this, irFileElementFactory)

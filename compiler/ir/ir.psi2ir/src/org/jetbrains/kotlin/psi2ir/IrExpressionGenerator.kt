@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 
 class IrExpressionGenerator(
         override val context: IrGeneratorContext,
-        val fileElementFactory: IrFileElementFactory
+        val declarationFactory: IrDeclarationFactory
 ) : KtVisitor<IrExpressionBase, Nothing?>(), IrGenerator {
     fun generateExpression(ktExpression: KtExpression) = ktExpression.generate()
 

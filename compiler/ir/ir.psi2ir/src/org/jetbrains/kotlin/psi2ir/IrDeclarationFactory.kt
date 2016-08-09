@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class IrFileElementFactory private constructor(
+class IrDeclarationFactory private constructor(
         val fileEntry: PsiSourceManager.PsiFileEntry,
         val irFileImpl: IrFileImpl,
         val containingDeclaration: IrCompoundDeclaration
 ) {
     fun createChild(containingDeclaration: IrCompoundDeclaration) =
-            IrFileElementFactory(fileEntry, irFileImpl, containingDeclaration)
+            IrDeclarationFactory(fileEntry, irFileImpl, containingDeclaration)
 
     private fun <D : IrMemberDeclaration> D.addToContainer(): D =
             apply { containingDeclaration.addChildDeclaration(this) }
@@ -67,13 +67,13 @@ class IrFileElementFactory private constructor(
                     .addToContainer()
 
     companion object {
-        fun create(irModule: IrModuleImpl, sourceManager: PsiSourceManager, ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrFileElementFactory {
+        fun create(irModule: IrModuleImpl, sourceManager: PsiSourceManager, ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrDeclarationFactory {
             val fileEntry = sourceManager.getOrCreateFileEntry(ktFile)
             val fileName = fileEntry.getRecognizableName()
             val irFile = IrFileImpl(fileEntry, fileName, descriptor)
             sourceManager.putFileEntry(irFile, fileEntry)
             irModule.addFile(irFile)
-            return IrFileElementFactory(fileEntry, irFile, irFile)
+            return IrDeclarationFactory(fileEntry, irFile, irFile)
         }
     }
 }

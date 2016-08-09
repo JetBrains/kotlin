@@ -24,8 +24,8 @@ class IrFileGenerator(
         context: IrGeneratorContext,
         irDeclaration: IrFileImpl,
         parent: IrModuleGenerator,
-        fileFileElementFactory: IrFileElementFactory
-) : IrDeclarationGeneratorBase(context, irDeclaration, parent, fileFileElementFactory) {
+        declarationFactory: IrDeclarationFactory
+) : IrDeclarationGeneratorBase(context, irDeclaration, parent, declarationFactory) {
     fun generateFileContent() {
         generateAnnotationEntries(ktFile.annotationEntries)
 

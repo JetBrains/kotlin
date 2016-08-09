@@ -38,11 +38,11 @@ abstract class IrDeclarationGeneratorBase(
         override val context: IrGeneratorContext,
         override val irDeclaration: IrDeclaration,
         override val parent: IrDeclarationGenerator,
-        val fileElementFactory: IrFileElementFactory
+        val declarationFactory: IrDeclarationFactory
 ) : IrDeclarationGenerator {
-    val irExpressionGenerator = IrExpressionGenerator(context, fileElementFactory)
+    val irExpressionGenerator = IrExpressionGenerator(context, declarationFactory)
 
-    val containingDeclaration: IrCompoundDeclaration get() = fileElementFactory.containingDeclaration
+    val containingDeclaration: IrCompoundDeclaration get() = declarationFactory.containingDeclaration
 
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
         // TODO create IrAnnotation's for each KtAnnotationEntry
@@ -65,25 +65,25 @@ abstract class IrDeclarationGeneratorBase(
     fun generateFunctionDeclaration(ktNamedFunction: KtNamedFunction) {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktNamedFunction) { "unresolved fun" }
         val body = generateExpressionBody(ktNamedFunction.bodyExpression ?: TODO("function without body expression"))
-        fileElementFactory.createFunction(ktNamedFunction, functionDescriptor, body)
+        declarationFactory.createFunction(ktNamedFunction, functionDescriptor, body)
     }
 
     fun generatePropertyDeclaration(ktProperty: KtProperty) {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         if (ktProperty.hasDelegate()) TODO("handle delegated property")
         val initializer = ktProperty.initializer?.let { generateExpressionBody(it) }
-        val irProperty = fileElementFactory.createSimpleProperty(ktProperty, propertyDescriptor, initializer)
+        val irProperty = declarationFactory.createSimpleProperty(ktProperty, propertyDescriptor, initializer)
         ktProperty.getter?.let { ktGetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktGetter) { "unresolved getter" }
             val getterDescriptor = accessorDescriptor as? PropertyGetterDescriptor ?: TODO("not a getter?")
             val getterBody = generateExpressionBody(ktGetter.bodyExpression ?: TODO("default getter"))
-            fileElementFactory.createPropertyGetter(ktGetter, irProperty, getterDescriptor, getterBody)
+            declarationFactory.createPropertyGetter(ktGetter, irProperty, getterDescriptor, getterBody)
         }
         ktProperty.setter?.let { ktSetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktSetter) { "unresolved setter" }
             val setterDescriptor = accessorDescriptor as? PropertySetterDescriptor ?: TODO("not a setter?")
             val setterBody = generateExpressionBody(ktSetter.bodyExpression ?: TODO("default setter"))
-            fileElementFactory.createPropertySetter(ktSetter, irProperty, setterDescriptor, setterBody)
+            declarationFactory.createPropertySetter(ktSetter, irProperty, setterDescriptor, setterBody)
         }
     }
 
