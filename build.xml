@@ -723,8 +723,6 @@
                 <pathelement path="compiler/daemon/daemon-client/src"/>
             </src>
             <classpath>
-                <pathelement path="${bootstrap.runtime}"/>
-                <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement path="${dependencies.dir}/native-platform-uberjar.jar"/>
             </classpath>
@@ -758,8 +756,6 @@
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${bootstrap.runtime}"/>
-                <pathelement path="${bootstrap.reflect}"/>
             </classpath>
         </javac2>
 
@@ -785,8 +781,6 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <file file="${bootstrap.runtime}"/>
-                <file file="${bootstrap.reflect}"/>
                 <pathelement location="${dependencies.dir}/ant-1.8/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>

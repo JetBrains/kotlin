@@ -1,0 +1,4 @@
+-no-stdlib
+$TESTDATA_DIR$/noStdlib.kt
+-d
+$TEMP_DIR$

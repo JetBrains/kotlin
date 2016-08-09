@@ -107,6 +107,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noReflectForJavac")
+    public void testNoReflectForJavac() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noReflectForJavac/");
+        doTest(fileName);
+    }
+
     @TestMetadata("noStdlibForJavac")
     public void testNoStdlibForJavac() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noStdlibForJavac/");

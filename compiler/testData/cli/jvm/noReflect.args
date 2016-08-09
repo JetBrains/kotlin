@@ -1,0 +1,4 @@
+-no-reflect
+$TESTDATA_DIR$/noReflect.kt
+-d
+$TEMP_DIR$
