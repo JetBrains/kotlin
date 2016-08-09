@@ -46,7 +46,7 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
         override fun hasErrors(): Boolean = hasError
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-            System.err.println("[report] $message")
+        System.err.println("[${severity.toString()}] $message")
             hasError = severity.isError || hasError
         }
     }
