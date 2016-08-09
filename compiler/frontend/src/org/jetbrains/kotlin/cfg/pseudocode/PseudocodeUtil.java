@@ -91,7 +91,12 @@ public class PseudocodeUtil {
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull Instruction instruction, boolean onlyReference, @NotNull BindingContext bindingContext) {
         KtElement element = null;
         if (instruction instanceof ReadValueInstruction) {
-            element = ((ReadValueInstruction) instruction).getElement();
+            ReadValueInstruction readValueInstruction = (ReadValueInstruction) instruction;
+            AccessTarget target = readValueInstruction.getTarget();
+            if (target instanceof AccessTarget.Declaration) {
+                return ((AccessTarget.Declaration) target).getDescriptor();
+            }
+            element = readValueInstruction.getElement();
         }
         else if (instruction instanceof WriteValueInstruction) {
             element = ((WriteValueInstruction) instruction).getLValue();

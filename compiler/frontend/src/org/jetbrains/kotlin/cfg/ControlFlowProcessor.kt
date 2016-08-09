@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -1481,6 +1478,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
             when (receiver) {
                 is ImplicitReceiver -> {
+                    if (callElement is KtCallExpression) {
+                        val declaration = receiver.declarationDescriptor
+                        if (declaration is ClassDescriptor) {
+                            val fakeDescriptor = getFakeDescriptorForObject(declaration)
+                            val calleeExpression = callElement.calleeExpression
+                            if (fakeDescriptor != null && calleeExpression != null) {
+                                builder.read(calleeExpression, AccessTarget.Declaration(fakeDescriptor), emptyMap())
+                            }
+                        }
+                    }
                     receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver)
                 }
                 is ExpressionReceiver -> {

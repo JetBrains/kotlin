@@ -26,18 +26,19 @@ L0:
     v(ANOTHER(foo());)
     magic[FAKE_INITIALIZER](ANOTHER(foo());) -> <v5>
     w(ANOTHER|<v5>)
-    magic[IMPLICIT_RECEIVER](foo()) -> <v6>
+    r(foo, Companion) -> <v6>
+    magic[IMPLICIT_RECEIVER](foo()) -> <v7>
     mark(foo())
-    call(foo(), foo|<v6>) -> <v7>
+    call(foo(), foo|<v7>) -> <v8>
     mark((foo()))
-    call((foo()), <init>|<v7>) -> <v8>
+    call((foo()), <init>|<v8>) -> <v9>
     v(companion object { fun foo() = 42 })
-    magic[FAKE_INITIALIZER](companion object { fun foo() = 42 }) -> <v9>
-    w(Companion|<v9>)
+    magic[FAKE_INITIALIZER](companion object { fun foo() = 42 }) -> <v10>
+    w(Companion|<v10>)
 L1:
-    <END>                                                                   NEXT:[<SINK>]
+    <END>                                                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                                                 PREV:[]
+    <ERROR>                                                                  PREV:[]
 sink:
-    <SINK>                                                                  PREV:[<ERROR>, <END>]
+    <SINK>                                                                   PREV:[<ERROR>, <END>]
 =====================
