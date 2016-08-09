@@ -15,7 +15,7 @@ $(EXE): $(BINDIR) $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(EXE) $(LDFLAGS)
 	
 $(BINDIR)/%.o: $(SRCDIR)/%.cc
-	$(CXX) $(CXXFLAGS) -c -MMD -o $@ $< -lprotoc
+	$(CXX) $(CXXFLAGS) -c -MMD -o $@ $<
 
 include $(wildcard $(BINDIR)/*.d)
 
@@ -24,6 +24,7 @@ $(BINDIR):
 
 clean:
 	rm -rf $(BINDIR)
+	rm $(EXE)
 
 generate:
 	./protoc --kotlin_out=$$HOME/Downloads/carkot/proto/compiler/protoc-artifacts ./test/connect.proto
