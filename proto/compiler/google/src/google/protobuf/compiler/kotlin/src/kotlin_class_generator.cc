@@ -31,7 +31,10 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     // Generate field for errors code
     printer->Print("var errorCode: Int = 0\n\n");
 
+    // Generate construction routines
     generateInitSection(printer);
+    printer->Print("\n");
+    generateConstructor(printer, isBuilder);
     printer->Print("\n");
 
 
@@ -218,24 +221,45 @@ void ClassGenerator::generateWriteToMethod(io::Printer *printer) const {
     printer->Print("}\n");
 }
 
-
-
-void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const {
+void ClassGenerator::generateConstructor(io::Printer * printer, bool isBuilder) const {
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + ": " + properties[i]->getFullType() + " = " + properties[i]->getInitValue();
+        argumentList += properties[i]->simpleName + ": " + properties[i]->getFullType();
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }
     }
 
+    map <string, string> vars;
+    vars["name"] = isBuilder ? getBuidlerSimpleType() : getSimpleType();
+    vars["private"] = isBuilder ? "" : "private ";
+    vars["arguments"] = argumentList;
+    printer->Print(vars, "$private$constructor ($arguments$) : this() {\n");
+    printer->Indent();
+
+    for (int i = 0; i < properties.size(); ++i) {
+        map <string, string> vars;
+        vars["name"] = properties[i]->simpleName;
+        vars["initVal"] = properties[i]->getInitValue();
+        printer->Print(vars,
+                       "this.$name$ = $name$"
+                       "\n"
+        );
+    }
+
+    printer->Outdent();
+    printer->Print("}\n");
+}
+
+void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const {
+
+
     map<string, string> vars;
     vars["name"] = isBuilder? getBuidlerSimpleType() : getSimpleType();
-    vars["argumentList"] = argumentList;
     vars["maybePrivate"] = isBuilder? "" : " private";
     printer->Print(vars,
-                   "class $name$$maybePrivate$ constructor ($argumentList$) {"
+                   "class $name$$maybePrivate$ constructor () {"
                            "\n"
     );
 }
@@ -268,8 +292,9 @@ void ClassGenerator::generateInitSection(io::Printer * printer) const {
     for (int i = 0; i < properties.size(); ++i) {
         map <string, string> vars;
         vars["name"] = properties[i]->simpleName;
+        vars["initVal"] = properties[i]->getInitValue();
         printer->Print(vars,
-                       "this.$name$ = $name$"
+                       "this.$name$ = $initVal$"
                                "\n"
         );
     }

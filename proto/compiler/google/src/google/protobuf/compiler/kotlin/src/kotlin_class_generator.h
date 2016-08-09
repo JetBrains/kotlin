@@ -37,23 +37,23 @@ public:
 
     void generateCode (io::Printer * printer, bool isBuilder = false) const;
 private:
-    Descriptor const * descriptor;
-    NameResolver * nameResolver;
-    void generateBuilder (io::Printer * printer) const;
-    void generateBuildMethod (io::Printer * printer) const;
-    void generateInitSection (io::Printer * printer) const;
-
     /**
      * Flag isBuilder used for reducing code repeating, as code for class itself
      * and for its inner builder are structurally very alike and can be generated
      * with very little differences (like changing 'val's to 'var's and etc.)
      */
-    void generateHeader(io::Printer * printer, bool isBuilder = false) const;
+    Descriptor const * descriptor;
+    NameResolver * nameResolver;
 
-    void generateWriteToMethod(io::Printer *printer) const;
-    void generateMergeMethods(io::Printer *printer) const;
-    void generateParseMethods(io::Printer * printer) const;
-    void generateGetSizeMethod(io::Printer * printer) const;
+    void generateHeader         (io::Printer * printer, bool isBuilder = false) const;
+    void generateConstructor    (io::Printer * printer, bool isBuilder = false) const;
+    void generateBuilder        (io::Printer * printer) const;
+    void generateBuildMethod    (io::Printer * printer) const;
+    void generateInitSection    (io::Printer * printer) const;
+    void generateWriteToMethod  (io::Printer * printer) const;
+    void generateMergeMethods   (io::Printer * printer) const;
+    void generateParseMethods   (io::Printer * printer) const;
+    void generateGetSizeMethod  (io::Printer * printer) const;
 };
 
 } // namespace kotlin
