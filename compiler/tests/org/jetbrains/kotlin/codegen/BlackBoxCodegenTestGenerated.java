@@ -4557,6 +4557,75 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class IntLikeVarSpilling extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInIntLikeVarSpilling() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("complicatedMerge.kt")
+            public void testComplicatedMerge() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/complicatedMerge.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("i2bResult.kt")
+            public void testI2bResult() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("loadFromBooleanArray.kt")
+            public void testLoadFromBooleanArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("loadFromByteArray.kt")
+            public void testLoadFromByteArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromByteArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noVariableInTable.kt")
+            public void testNoVariableInTable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/noVariableInTable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sameIconst1ManyVars.kt")
+            public void testSameIconst1ManyVars() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usedInArrayStore.kt")
+            public void testUsedInArrayStore() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usedInMethodCall.kt")
+            public void testUsedInMethodCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInMethodCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usedInPutfield.kt")
+            public void testUsedInPutfield() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInPutfield.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usedInVarStore.kt")
+            public void testUsedInVarStore() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInVarStore.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/dataClasses")

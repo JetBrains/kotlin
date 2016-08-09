@@ -20,13 +20,12 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.analyzeLiveness
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -191,7 +190,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode) {
         val instructions = methodNode.instructions
-        val frames = MethodTransformer.analyze(classBuilder.thisName, methodNode, OptimizationBasicInterpreter())
+        val frames = performRefinedTypeAnalysis(methodNode, classBuilder.thisName)
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         // We postpone these actions because they change instruction indices that we use when obtaining frames
@@ -202,11 +201,11 @@ class CoroutineTransformerMethodVisitor(
         for (suspension in suspensionPoints) {
             val suspensionCallBegin = suspension.suspensionCallBegin
             val suspensionCallEnd = suspension.suspensionCallEnd
-            assert(frames[suspensionCallEnd.next.index()].stackSize == (if (suspension.returnType.sort == Type.VOID) 0 else 1)) {
+            assert(frames[suspensionCallEnd.next.index()]?.stackSize == (if (suspension.returnType.sort == Type.VOID) 0 else 1)) {
                 "Stack should be spilled before suspension call"
             }
 
-            val frame = frames[suspensionCallBegin.index()]
+            val frame = frames[suspensionCallBegin.index()].sure { "Suspension points containing in dead code must be removed" }
             val localsCount = frame.locals
             val varsCountByType = mutableMapOf<Type, Int>()
 
