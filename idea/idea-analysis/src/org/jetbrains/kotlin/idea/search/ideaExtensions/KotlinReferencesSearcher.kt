@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.effectiveSearchScope
+import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
@@ -80,7 +81,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val effectiveSearchScope = runReadAction {
             val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
-            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.union(queryParameters.effectiveSearchScope(e)) }
+            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.unionSafe(queryParameters.effectiveSearchScope(e)) }
         }
 
         val refFilter: (PsiReference) -> Boolean = when {
