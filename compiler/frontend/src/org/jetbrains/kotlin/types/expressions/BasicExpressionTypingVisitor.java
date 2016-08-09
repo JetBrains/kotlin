@@ -320,7 +320,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (KotlinType possibleType : possibleTypes) {
             boolean castIsUseless = checkExactType
                                     ? possibleType.equals(targetType)
-                                    : typeChecker.isSubtypeOf(possibleType, targetType);
+                                    : (!KotlinBuiltIns.isNullableNothing(possibleType) &&
+                                       typeChecker.isSubtypeOf(possibleType, targetType));
             if (castIsUseless) {
                 context.trace.report(USELESS_CAST.on(expression));
                 return;
