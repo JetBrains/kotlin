@@ -19,3 +19,16 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+# Google Protobuf sources
+google/*
+!google/src
+
+google/src/*
+!google/src/google
+
+google/src/google/protobuf/*
+!google/src/google/protobuf/compiler
+
+google/src/google/protobuf/compiler/*
+!google/src/google/protobuf/compiler/kotlin
+
