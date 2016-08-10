@@ -131,6 +131,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("automaticVariableRenamerWithQuotation/automaticVariableRenamerWithQuotation.test")
+    public void testAutomaticVariableRenamerWithQuotation_AutomaticVariableRenamerWithQuotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticVariableRenamerWithQuotation/automaticVariableRenamerWithQuotation.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("clashOfNestedWithOuterClass/clashOfNestedWithOuterClass.test")
     public void testClashOfNestedWithOuterClass_ClashOfNestedWithOuterClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/clashOfNestedWithOuterClass/clashOfNestedWithOuterClass.test");
