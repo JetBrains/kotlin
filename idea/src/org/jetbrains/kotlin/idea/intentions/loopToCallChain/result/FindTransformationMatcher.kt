@@ -330,29 +330,26 @@ object FindTransformationMatcher : TransformationMatcher {
             filter: KtExpression?,
             negated: Boolean
     ): FindOperationGenerator {
-        if (filter != null) {
-            val containsArgument = filter.isFilterForContainsOperation(inputVariable, loop)
-            if (containsArgument != null) {
-                val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
-                if (negated) {
-                    return object : FindOperationGenerator(generator) {
-                        override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-                            return generator.generate(chainedCallGenerator).negate()
-                        }
+        if (filter == null) {
+            return SimpleGenerator(if (negated) "none" else "any", inputVariable, filter)
+        }
+
+        val containsArgument = filter.isFilterForContainsOperation(inputVariable, loop)
+        if (containsArgument != null) {
+            val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
+            if (negated) {
+                return object : FindOperationGenerator(generator) {
+                    override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+                        return generator.generate(chainedCallGenerator).negate()
                     }
                 }
-                else {
-                    return generator
-                }
+            }
+            else {
+                return generator
             }
         }
 
-        if (negated) {
-            return SimpleGenerator("none", inputVariable, filter)
-        }
-        else {
-            return SimpleGenerator("any", inputVariable, filter)
-        }
+        return SimpleGenerator(if (negated) "none" else "any", inputVariable, filter)
     }
 
     private fun KtExpression.isFilterForContainsOperation(inputVariable: KtCallableDeclaration, loop: KtForExpression): KtExpression? {
