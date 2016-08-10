@@ -291,11 +291,9 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
         return true
     }
     finally {
-        if (smartCastCount > 0) {
-            loop.forEachDescendantOfType<KtExpression> {
-                it.putCopyableUserData(SMARTCAST_KEY, null)
-                it.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, null)
-            }
+        loop.forEachDescendantOfType<KtExpression> {
+            it.putCopyableUserData(SMARTCAST_KEY, null)
+            it.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, null)
         }
     }
 }
