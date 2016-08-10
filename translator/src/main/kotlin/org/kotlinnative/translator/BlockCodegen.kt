@@ -729,7 +729,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 }
 
                 val result = firstOp as LLVMVariable
-                codeBuilder.storeVariable(result, secondNativeOp)
+                val sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
+                codeBuilder.storeVariable(result, sourceArgument)
                 return result
             }
             else -> addPrimitiveReferenceOperation(referenceName!!, firstOp, secondNativeOp)
