@@ -25,7 +25,6 @@ import kotlin.jvm.functions.Function1;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.compiler.CompilationFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.compiler.CompilerMessage;
@@ -138,33 +137,32 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog(), true);
+        MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
         ExitCode exitCode = compiler.exec(messageCollector, Services.EMPTY, arguments);
 
-        switch (exitCode) {
-            case COMPILATION_ERROR:
-            case INTERNAL_ERROR:
-                throw new KotlinCompilationFailureException(
-                        CollectionsKt.map(messageCollector.getCollectedErrors(), new Function1<Pair<CompilerMessageLocation, String>, CompilerMessage>() {
-                            @Override
-                            public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
-                                String lineContent = pair.getFirst().getLineContent();
-                                int lineContentLength = lineContent == null ? 0 : lineContent.length();
+        if (exitCode != ExitCode.OK) {
+            throw new KotlinCompilationFailureException(
+                    CollectionsKt.map(messageCollector.getCollectedErrors(), new Function1<Pair<CompilerMessageLocation, String>, CompilerMessage>() {
+                        @Override
+                        public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
+                            CompilerMessageLocation location = pair.getFirst();
+                            String message = pair.getSecond();
+                            String lineContent = location.getLineContent();
+                            int lineContentLength = lineContent == null ? 0 : lineContent.length();
 
-                                return new CompilerMessage(
-                                        pair.getFirst().getPath(),
-                                        CompilerMessage.Kind.ERROR,
-                                        pair.getFirst().getLine(),
-                                        pair.getFirst().getColumn(),
-                                        pair.getFirst().getLine(),
-                                        Math.min(pair.getFirst().getColumn(), lineContentLength),
-                                        pair.getSecond()
-                                );
-                            }
-                        })
-                );
-            default:
+                            return new CompilerMessage(
+                                    location.getPath(),
+                                    CompilerMessage.Kind.ERROR,
+                                    fixLocation(location.getLine()),
+                                    fixLocation(location.getColumn()),
+                                    fixLocation(location.getLine()),
+                                    Math.min(fixLocation(location.getColumn()), lineContentLength),
+                                    message
+                            );
+                        }
+                    })
+            );
         }
     }
 
@@ -261,5 +259,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (arguments.noInline) {
             getLog().info("Method inlining is turned off");
         }
+    }
+
+    private static int fixLocation(int n) {
+        if (n < 0) {
+            return 0;
+        }
+        return n;
     }
 }
