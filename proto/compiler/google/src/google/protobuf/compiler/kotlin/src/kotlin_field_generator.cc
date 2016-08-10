@@ -81,7 +81,8 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
 
     bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
                        descriptor->type() != FieldDescriptor::TYPE_MESSAGE &&
-                       descriptor->type() != FieldDescriptor::TYPE_STRING;
+                       descriptor->type() != FieldDescriptor::TYPE_STRING &&
+                       descriptor->type() != FieldDescriptor::TYPE_ENUM;
     if (isRead) {
         if (!noTag) {
             printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");

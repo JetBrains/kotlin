@@ -104,15 +104,16 @@ ClassGenerator::ClassGenerator(Descriptor const *descriptor, NameResolver * name
     int nested_types_count = descriptor->nested_type_count();
     for (int i = 0; i < nested_types_count; ++i) {
         Descriptor const * nestedClassDescriptor = descriptor->nested_type(i);
+        nameResolver->addClass(nestedClassDescriptor->name(), getFullType());
         classesDeclarations.push_back(new ClassGenerator(nestedClassDescriptor, nameResolver));
-        nameResolver->addClass(nestedClassDescriptor->name(), getFullType(), classesDeclarations.back());
+        nameResolver->addGeneratorForClass(nestedClassDescriptor->name(), classesDeclarations.back());
     }
 
     int enums_declarations_count = descriptor->enum_type_count();
     for (int i = 0; i < enums_declarations_count; ++i) {
         EnumDescriptor const * nestedEnumDescriptor = descriptor->enum_type(i);
+        nameResolver->addClass(nestedEnumDescriptor->name(), getFullType());
         enumsDeclaraions.push_back(new EnumGenerator(nestedEnumDescriptor, nameResolver));
-        nameResolver->addClass(nestedEnumDescriptor->name(), getFullType(), /* classGenerator = */ nullptr);
     }
 
     /**

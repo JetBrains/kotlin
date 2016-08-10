@@ -23,7 +23,8 @@ class NameResolver {
 public:
     NameResolver();
 
-    void addClass (string simpleName, string parentName, ClassGenerator * classGenerator);
+    void addClass (string simpleName, string parentName);
+    void addGeneratorForClass (string simpleName, ClassGenerator * classGenerator);
     string getClassName (string simpleName);
     string getBuilderName (string classSimpleName);
     ClassGenerator * getClassGenerator (string simpleName);

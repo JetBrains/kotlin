@@ -7,7 +7,6 @@
 #include <google/protobuf/descriptor.h>
 #include "UnreachableStateException.h"
 #include <string>
-
 namespace google {
 namespace protobuf {
 namespace compiler {
@@ -202,9 +201,7 @@ NameResolver::NameResolver() {
     generators = map<string, ClassGenerator *>();
 }
 
-void NameResolver::addClass(string simpleName, string parentName, ClassGenerator * classGenerator) {
-    generators[simpleName] = classGenerator;
-
+void NameResolver::addClass(string simpleName, string parentName) {
     if (parentName == "") {
         names[simpleName] = simpleName;
         builders[simpleName] = simpleName + ".Builder" + simpleName;
@@ -216,6 +213,9 @@ void NameResolver::addClass(string simpleName, string parentName, ClassGenerator
     }
 }
 
+void NameResolver::addGeneratorForClass(string simpleName, ClassGenerator *classGenerator) {
+    generators[simpleName] = classGenerator;
+}
 string NameResolver::getClassName(string simpleName) {
     return names[simpleName];
 }
