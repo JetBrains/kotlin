@@ -529,7 +529,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     private fun evaluatePrefixExpression(expr: KtPrefixExpression, scopeDepth: Int): LLVMSingleValue? {
         val operator = expr.operationToken
         val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
-        return executePrefixExpression(operator, expr.operationReference, left as LLVMSingleValue)
+        return executePrefixExpression(operator, expr.operationReference, left)
     }
 
     private fun executePostfixExpression(operator: IElementType?, operationReference: KtSimpleNameExpression, left: LLVMVariable): LLVMSingleValue?

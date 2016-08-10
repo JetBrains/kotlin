@@ -1,7 +1,6 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.llvm.LLVMExpression
-import org.kotlinnative.translator.llvm.LLVMNode
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 
@@ -64,4 +63,10 @@ class LLVMBooleanType() : LLVMType() {
     override fun isPrimitive() = true
 
     override fun toString() = "i1"
+    override fun hashCode(): Int{
+        var result = align
+        result = 31 * result + size
+        result = 31 * result + defaultValue.hashCode()
+        return result
+    }
 }

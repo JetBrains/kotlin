@@ -3,7 +3,6 @@ package org.kotlinnative.translator.llvm.types
 import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
-import org.kotlinnative.translator.llvm.LLVMVariable
 
 
 class LLVMIntType() : LLVMType() {
@@ -82,4 +81,10 @@ class LLVMIntType() : LLVMType() {
 
     override fun toString() = "i32"
     override fun isPrimitive() = true
+    override fun hashCode(): Int{
+        var result = align
+        result = 31 * result + size
+        result = 31 * result + defaultValue.hashCode()
+        return result
+    }
 }
