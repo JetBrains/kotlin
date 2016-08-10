@@ -64,6 +64,7 @@ import java.awt.Insets
 import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
@@ -313,10 +314,10 @@ class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
 
     override fun getFamilyName() = "Safe delete"
 
-    fun startInWriteAction(): Boolean = false
-
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
-        SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
+        SwingUtilities.invokeLater {
+            SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
+        }
     }
 }

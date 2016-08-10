@@ -1,0 +1,4 @@
+package
+
+public val x: kotlin.String? = null
+public fun foo(/*0*/ a: kotlin.String?): kotlin.Int?

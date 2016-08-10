@@ -66,7 +66,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         if (leaf2 != null) {
             elementsToCheck += leaf2.parentsWithSelf.takeWhile { it != commonParent }
         }
-        if (commonParent != null) {
+        if (commonParent != null && commonParent !is PsiFile) {
             elementsToCheck += commonParent.parentsWithSelf
         }
 
