@@ -225,7 +225,7 @@ object FindTransformationMatcher : TransformationMatcher {
         val filter = filterTransformation?.effectiveCondition()
 
         if (indexVariable != null) {
-            if (filterTransformation == null) return null // makes no sense, indexVariable must be always 0
+            if (filterTransformation == null) return null // makes no sense, indexVariable must be always null
             if (filterTransformation.indexVariable != null) return null // cannot use index in condition for indexOfFirst/indexOfLast
 
             //TODO: what if value when not found is not "-1"?
