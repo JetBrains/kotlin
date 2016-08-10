@@ -27,11 +27,12 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.ExtractFunctionParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -87,7 +88,7 @@ class KotlinIntroduceParameterDialog private constructor(
     private var replaceAllCheckBox: JCheckBox? = null
     private var defaultValueCheckBox: JCheckBox? = null
     private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, KtElement>(descriptor.parametersToRemove.size)
-    private var parameterTablePanel: KotlinParameterTablePanel? = null
+    private var parameterTablePanel: ExtractFunctionParameterTablePanel? = null
     private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
     init {
@@ -152,7 +153,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
         if (lambdaExtractionDescriptor != null
             && (lambdaExtractionDescriptor.parameters.isNotEmpty() || lambdaExtractionDescriptor.receiverParameter != null)) {
-            val parameterTablePanel = object : KotlinParameterTablePanel() {
+            val parameterTablePanel = object : ExtractFunctionParameterTablePanel() {
                 override fun onEnterAction() {
                     doOKAction()
                 }
@@ -230,7 +231,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createSimpleName(nameField.enteredName).validateElement("Invalid parameter name")
+        psiFactory.createSimpleName(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
         psiFactory.createType(typeField.enteredName).validateElement("Invalid parameter type")
     }
 
@@ -256,7 +257,7 @@ class KotlinIntroduceParameterDialog private constructor(
                             return KtPsiFactory(myProject).createExpression(text)
                         }
 
-                        val chosenName = nameField.enteredName
+                        val chosenName = nameField.enteredName.quoteIfNeeded()
                         var chosenType = typeField.enteredName
                         var newArgumentValue = descriptor.newArgumentValue
                         var newReplacer = descriptor.occurrenceReplacer
@@ -268,8 +269,8 @@ class KotlinIntroduceParameterDialog private constructor(
                                     oldDescriptor,
                                     chosenName,
                                     "",
-                                    parameterTablePanel?.receiverInfo,
-                                    parameterTablePanel?.parameterInfos ?: listOf(),
+                                    parameterTablePanel?.selectedReceiverInfo,
+                                    parameterTablePanel?.selectedParameterInfos ?: listOf(),
                                     null
                             )
                             val options = ExtractionGeneratorOptions.DEFAULT.copy(

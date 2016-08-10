@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
-import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+
+import java.util.Collections;
 
 public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {
 
@@ -31,13 +34,18 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil.selectExpression(getEditor(), (KtFile) getFile(), new KotlinRefactoringUtil.SelectExpressionCallback() {
-                @Override
-                public void run(@Nullable KtExpression expression) {
-                    assertNotNull("Selected expression mustn't be null", expression);
-                    assertEquals(expectedExpression, expression.getText());
-                }
-            });
+            KotlinRefactoringUtil.selectElement(
+                    getEditor(),
+                    (KtFile) getFile(),
+                    Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
+                    new KotlinRefactoringUtil.SelectElementCallback() {
+                        @Override
+                        public void run(@Nullable PsiElement element) {
+                            assertNotNull("Selected expression mustn't be null", element);
+                            assertEquals(expectedExpression, element.getText());
+                        }
+                    }
+            );
         }
         catch (KotlinRefactoringUtil.IntroduceRefactoringException e) {
             assertEquals(expectedExpression, "");

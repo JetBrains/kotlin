@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.gradle.plugin
 import groovy.lang.Closure
 import org.gradle.api.Project
 
-public open class KaptExtension {
+open class KaptExtension {
 
-    public open var generateStubs: Boolean = false
+    open var generateStubs: Boolean = false
 
-    public open var inheritedAnnotations: Boolean = true
+    open var inheritedAnnotations: Boolean = true
 
     private var closure: Closure<*>? = null
 
-    public open fun arguments(closure: Closure<*>) {
+    open fun arguments(closure: Closure<*>) {
         this.closure = closure
     }
 
@@ -40,15 +40,15 @@ public open class KaptExtension {
     }
 }
 
-public open class KaptAdditionalArgumentsDelegate(
-        public open val project: Project,
-        public open val variant: Any?,
-        public open val android: Any?
+open class KaptAdditionalArgumentsDelegate(
+        open val project: Project,
+        open val variant: Any?,
+        open val android: Any?
 ) {
 
     val additionalCompilerArgs = arrayListOf<String>()
 
-    public open fun arg(name: Any, vararg values: Any) {
+    open fun arg(name: Any, vararg values: Any) {
         val valuesString = if (values.isNotEmpty()) values.joinToString(" ", prefix = "=") else ""
         additionalCompilerArgs.add("-A$name$valuesString")
     }

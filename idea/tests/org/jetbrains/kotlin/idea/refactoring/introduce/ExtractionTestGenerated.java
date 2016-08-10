@@ -61,6 +61,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("commentSkipping.kt")
+        public void testCommentSkipping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/commentSkipping.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ComplexCallee.kt")
         public void testComplexCallee() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ComplexCallee.kt");
@@ -370,6 +376,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("SimpleCreateValue.kt")
         public void testSimpleCreateValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/SimpleCreateValue.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("skipClassReference.kt")
+        public void testSkipClassReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/skipClassReference.kt");
             doIntroduceVariableTest(fileName);
         }
 
@@ -729,6 +741,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doIntroduceVariableTest(fileName);
             }
 
+            @TestMetadata("extractTrueWithSpaces.kt")
+            public void testExtractTrueWithSpaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/stringTemplates/extractTrueWithSpaces.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
             @TestMetadata("fullContent.kt")
             public void testFullContent() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/stringTemplates/fullContent.kt");
@@ -810,6 +828,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             @TestMetadata("callWithPlatformTypeReceiver.kt")
             public void testCallWithPlatformTypeReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/callWithPlatformTypeReceiver.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("callableReferenceSelector.kt")
+            public void testCallableReferenceSelector() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/callableReferenceSelector.kt");
                 doExtractFunctionTest(fileName);
             }
 

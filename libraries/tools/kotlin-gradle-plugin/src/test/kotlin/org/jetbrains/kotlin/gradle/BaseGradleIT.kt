@@ -91,6 +91,25 @@ abstract class BaseGradleIT {
             val subprojectSir = File(projectDir, subproject)
             return files.map { it.relativeTo(subprojectSir).path }
         }
+
+        fun performModifications() {
+            for (file in projectDir.walk()) {
+                if (!file.isFile) continue
+
+                val fileWithoutExt = File(file.parentFile, file.nameWithoutExtension)
+
+                when (file.extension) {
+                    "new" -> {
+                        file.copyTo(fileWithoutExt, overwrite = true)
+                        file.delete()
+                    }
+                    "delete" -> {
+                        fileWithoutExt.delete()
+                        file.delete()
+                    }
+                }
+            }
+        }
     }
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int) {

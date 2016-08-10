@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui
+package org.jetbrains.kotlin.idea.refactoring.introduce.ui
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.refactoring.ui.MethodSignatureComponent
 
-class KotlinFunctionSignatureComponent(
+class KotlinSignatureComponent(
         signature: String, project: Project
 ) : MethodSignatureComponent(signature, project, KotlinFileType.INSTANCE) {
     private val myFileName = "dummy." + KotlinFileType.EXTENSION

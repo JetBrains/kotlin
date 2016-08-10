@@ -121,7 +121,7 @@ private fun Project.createKotlinAfterJavaTask(
     return kotlinAfterJavaTask
 }
 
-public class AnnotationProcessingManager(
+class AnnotationProcessingManager(
         private val task: AbstractCompile,
         private val javaTask: JavaCompile,
         private val taskQualifier: String,
@@ -298,7 +298,7 @@ public class AnnotationProcessingManager(
 
     private inline fun JavaCompile.modifyCompilerArguments(modifier: (MutableList<String>) -> Unit) {
         val compilerArgs: List<Any> = this.options.compilerArgs
-        val newCompilerArgs = compilerArgs.mapTo(arrayListOf<String>()) { it.toString() }
+        val newCompilerArgs = compilerArgs.mapTo(arrayListOf<String>(), Any::toString)
         modifier(newCompilerArgs)
         options.compilerArgs = newCompilerArgs
     }
@@ -337,9 +337,7 @@ public class AnnotationProcessingManager(
             withZipFile(file) { zipFile ->
                 val entry = zipFile.getEntry("META-INF/services/javax.annotation.processing.Processor")
                 if (entry != null) {
-                    zipFile.getInputStream(entry).reader().useLines { lines ->
-                        processLines(lines)
-                    }
+                    zipFile.getInputStream(entry).reader().useLines(::processLines)
                 }
             }
         }
