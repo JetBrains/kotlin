@@ -149,7 +149,7 @@ class CodedInputStream(val buffer: ByteArray) {
         var done: Boolean = false
         var result: Int = 0
         var step: Int = 0
-        while (done == false) {
+        while (!done) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
@@ -170,7 +170,7 @@ class CodedInputStream(val buffer: ByteArray) {
         var done: Boolean = false
         var result: Long = 0
         var step: Int = 0
-        while (done == false) {
+        while (!done) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
