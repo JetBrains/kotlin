@@ -14,13 +14,13 @@ class ByteArray(var size: Int) {
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    fun get(index: Int): Byte {
+    operator fun get(index: Int): Byte {
         return kotlinclib_get_byte(this.data, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    fun set(index: Int, value: Byte) {
+    operator fun set(index: Int, value: Byte) {
         kotlinclib_set_byte(this.data, index, value)
     }
 
@@ -38,4 +38,3 @@ class ByteArray(var size: Int) {
     }
 
 }
-

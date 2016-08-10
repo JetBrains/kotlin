@@ -13,13 +13,13 @@ class ShortArray(var size: Int) {
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    fun get(index: Int): Short {
+    operator fun get(index: Int): Short {
         return kotlinclib_get_short(this.data, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    fun set(index: Int, value: Short) {
+    operator fun set(index: Int, value: Short) {
         kotlinclib_set_short(this.data, index, value)
     }
 
@@ -37,4 +37,3 @@ class ShortArray(var size: Int) {
     }
 
 }
-

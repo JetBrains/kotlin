@@ -13,13 +13,13 @@ class IntArray(var size: Int) {
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    fun get(index: Int): Int {
+    operator fun get(index: Int): Int {
         return kotlinclib_get_int(this.data, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    fun set(index: Int, value: Int) {
+    operator fun set(index: Int, value: Int) {
         kotlinclib_set_int(this.data, index, value)
     }
 
@@ -37,4 +37,3 @@ class IntArray(var size: Int) {
     }
 
 }
-
