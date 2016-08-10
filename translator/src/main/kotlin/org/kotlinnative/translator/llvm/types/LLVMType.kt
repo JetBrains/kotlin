@@ -3,6 +3,7 @@ package org.kotlinnative.translator.llvm.types
 import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
+import org.kotlinnative.translator.llvm.LLVMVariable
 
 abstract class LLVMType() : Cloneable {
 
@@ -27,6 +28,7 @@ abstract class LLVMType() : Cloneable {
 
     fun makeClone() = clone()
 
+    open fun convertFrom(source: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     abstract fun mangle(): String
 
     abstract val align: Int

@@ -594,9 +594,34 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
             "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
             "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
-            "shl" -> firstNativeOp.type!!.operatorShl(firstNativeOp, secondNativeOp)
-            "shr" -> firstNativeOp.type!!.operatorShr(firstNativeOp, secondNativeOp)
-            "ushr" -> firstNativeOp.type!!.operatorUshr(firstNativeOp, secondNativeOp)
+            "shl" -> {
+                var secondNativeOpWithRequiredType = secondNativeOp
+                if (firstNativeOp.type != secondNativeOp.type) {
+                    val convertedExpression = firstNativeOp.type!!.convertFrom(secondNativeOp)
+                    secondNativeOpWithRequiredType = codeBuilder.getNewVariable(convertedExpression.variableType)
+                    codeBuilder.addAssignment(secondNativeOpWithRequiredType, convertedExpression)
+                }
+                firstNativeOp.type!!.operatorShl(firstNativeOp, secondNativeOpWithRequiredType)
+            }
+            "shr" -> {
+                var secondNativeOpWithRequiredType = secondNativeOp
+                if (firstNativeOp.type != secondNativeOp.type) {
+                    val convertedExpression = firstNativeOp.type!!.convertFrom(secondNativeOp)
+                    secondNativeOpWithRequiredType = codeBuilder.getNewVariable(convertedExpression.variableType)
+                    codeBuilder.addAssignment(secondNativeOpWithRequiredType, convertedExpression)
+                }
+                firstNativeOp.type!!.operatorShr(firstNativeOp, secondNativeOpWithRequiredType)
+            }
+            "ushr" -> {
+                var secondNativeOpWithRequiredType = secondNativeOp
+                if (firstNativeOp.type != secondNativeOp.type) {
+                    val convertedExpression = firstNativeOp.type!!.convertFrom(secondNativeOp)
+                    secondNativeOpWithRequiredType = codeBuilder.getNewVariable(convertedExpression.variableType)
+                    codeBuilder.addAssignment(secondNativeOpWithRequiredType, convertedExpression)
+                }
+
+                firstNativeOp.type!!.operatorUshr(firstNativeOp, secondNativeOpWithRequiredType)
+            }
             "+=" -> {
                 val llvmExpression = firstNativeOp.type!!.operatorPlus(firstNativeOp, secondNativeOp)
                 val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType)

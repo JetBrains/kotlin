@@ -1,7 +1,9 @@
 package org.kotlinnative.translator.llvm.types
 
+import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
+import org.kotlinnative.translator.llvm.LLVMVariable
 
 
 class LLVMIntType() : LLVMType() {
@@ -59,6 +61,14 @@ class LLVMIntType() : LLVMType() {
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i32 $firstOp, $secondOp")
+
+    override fun convertFrom(source: LLVMSingleValue): LLVMExpression = when (source.type!!) {
+        is LLVMBooleanType,
+        is LLVMByteType,
+        is LLVMCharType,
+        is LLVMShortType -> LLVMExpression(LLVMBooleanType(), "  sext ${source.type} $source to i32")
+        else -> throw UnimplementedException()
+    }
 
     override fun mangle() = "Int"
 

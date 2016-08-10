@@ -1,5 +1,6 @@
 package org.kotlinnative.translator.llvm.types
 
+import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
@@ -54,6 +55,15 @@ class LLVMLongType() : LLVMType() {
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i64 $firstOp, $secondOp")
+
+    override fun convertFrom(source: LLVMSingleValue): LLVMExpression = when (source.type!!) {
+        is LLVMBooleanType,
+        is LLVMByteType,
+        is LLVMCharType,
+        is LLVMShortType,
+        is LLVMIntType -> LLVMExpression(LLVMBooleanType(), "  sext ${source.type} $source to i64")
+        else -> throw UnimplementedException()
+    }
 
     override val align = 4
     override var size: Int = 8
