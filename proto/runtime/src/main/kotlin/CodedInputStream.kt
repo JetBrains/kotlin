@@ -1,7 +1,3 @@
-import WireFormat.VARINT_INFO_BITS_COUNT
-import WireFormat.VARINT_INFO_BITS_MASK
-import WireFormat.VARINT_UTIL_BIT_MASK
-
 /**
  * Created by Dmitry Savvinov on 7/6/16.
  *
@@ -14,7 +10,6 @@ import WireFormat.VARINT_UTIL_BIT_MASK
 
 // TODO: refactor correctness checks into readTag
 class CodedInputStream(val buffer: ByteArray) {
-    var errorMessage: String = ""
     val inputStream: KotlinInputStream
     init {
         inputStream = KotlinInputStream(buffer)  // TODO: Java's realization uses hand-written buffers. Why?
@@ -66,7 +61,6 @@ class CodedInputStream(val buffer: ByteArray) {
             0 -> false
             1 -> true
             else -> {
-                errorMessage = "Expected boolean-encoding (1 or 0), got $readValue"
                 false
             }
         }
@@ -143,7 +137,6 @@ class CodedInputStream(val buffer: ByteArray) {
         }
         val tag = readInt32NoTag()
         if (tag == 0) {     // if we somehow had read 0-tag, then message is corrupted
-            errorMessage = "Invalid tag 0"
             return 0
         }
 
@@ -158,16 +151,16 @@ class CodedInputStream(val buffer: ByteArray) {
         var done: Boolean = false
         var result: Int = 0
         var step: Int = 0
-        while (!done) {
+        while (done == false) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
-                        (byte and VARINT_INFO_BITS_MASK)
+                        (byte and WireFormat.VARINT_INFO_BITS_MASK)
                         shl
-                        (VARINT_INFO_BITS_COUNT * step)
+                        (WireFormat.VARINT_INFO_BITS_COUNT * step)
                     )
             step++
-            if ((byte and VARINT_UTIL_BIT_MASK) == 0) {
+            if ((byte and WireFormat.VARINT_UTIL_BIT_MASK) == 0) {
                 done = true
             }
         }
@@ -179,16 +172,16 @@ class CodedInputStream(val buffer: ByteArray) {
         var done: Boolean = false
         var result: Long = 0
         var step: Int = 0
-        while (!done) {
+        while (done == false) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
-                        (byte and VARINT_INFO_BITS_MASK).toLong()
+                        (byte and WireFormat.VARINT_INFO_BITS_MASK).toLong()
                         shl
-                        (VARINT_INFO_BITS_COUNT * step)
+                        (WireFormat.VARINT_INFO_BITS_COUNT * step)
                     )
             step++
-            if ((byte and VARINT_UTIL_BIT_MASK) == 0 /* || byte == -1 ???? */) {
+            if ((byte and WireFormat.VARINT_UTIL_BIT_MASK) == 0 /* || byte == -1 ???? */) {
                 done = true
             }
         }
