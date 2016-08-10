@@ -37,6 +37,15 @@ class LLVMBooleanType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i1 $firstOp, $secondOp")
 
+    override fun operatorOr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "or i1 $firstOp, $secondOp")
+
+    override fun operatorAnd(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "and i1 $firstOp, $secondOp")
+
+    override fun operatorXor(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "xor i1 $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMBooleanType
     }
