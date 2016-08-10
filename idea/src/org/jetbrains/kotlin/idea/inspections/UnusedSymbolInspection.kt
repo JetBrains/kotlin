@@ -244,15 +244,15 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             val import = ref.element.getParentOfType<KtImportDirective>(false)
             if (import != null) {
+                if (import.aliasName != null && import.aliasName != declaration.name) {
+                    return false
+                }
                 // check if we import member(s) from object or enum and search for their usages
                 if (declaration is KtObjectDeclaration || (declaration is KtClass && declaration.isEnum())) {
                     if (import.isAllUnder) {
                         val importedFrom = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve()
                                                    as? KtClassOrObject ?: return true
                         return importedFrom.declarations.none { it is KtNamedDeclaration && hasNonTrivialUsages(it) }
-                    }
-                    else if (import.aliasName != null && import.aliasName != declaration.name) {
-                        return false
                     }
                     else {
                         if (import.importedFqName != declaration.fqName) {
