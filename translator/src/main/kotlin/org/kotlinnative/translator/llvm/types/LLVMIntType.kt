@@ -62,6 +62,10 @@ class LLVMIntType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i32 $firstOp, $secondOp")
 
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMIntType
+    }
+
     override fun convertFrom(source: LLVMSingleValue): LLVMExpression = when (source.type!!) {
         is LLVMBooleanType,
         is LLVMByteType,

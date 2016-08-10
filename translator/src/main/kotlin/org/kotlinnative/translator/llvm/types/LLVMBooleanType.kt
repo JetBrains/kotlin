@@ -1,6 +1,7 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.llvm.LLVMExpression
+import org.kotlinnative.translator.llvm.LLVMNode
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 
@@ -35,6 +36,10 @@ class LLVMBooleanType() : LLVMType() {
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i1 $firstOp, $secondOp")
+
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMBooleanType
+    }
 
     override fun parseArg(inputArg: String) = when (inputArg.toLowerCase()) {
         "true" -> "1"

@@ -65,6 +65,10 @@ class LLVMLongType() : LLVMType() {
         else -> throw UnimplementedException()
     }
 
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMLongType
+    }
+
     override val align = 4
     override var size: Int = 8
     override val defaultValue = "0"

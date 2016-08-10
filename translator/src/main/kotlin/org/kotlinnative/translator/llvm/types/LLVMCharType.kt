@@ -22,6 +22,10 @@ class LLVMCharType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i8 $firstOp, $secondOp")
 
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMCharType
+    }
+
     override fun mangle() = "Char"
 
     override val align = 1

@@ -22,6 +22,10 @@ class LLVMByteType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i8 $firstOp, $secondOp")
 
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMByteType
+    }
+
     override fun mangle() = "Byte"
 
     override val align = 1

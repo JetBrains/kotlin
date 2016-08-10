@@ -18,6 +18,10 @@ class LLVMDoubleType() : LLVMType() {
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, $secondOp")
 
+    override fun equals(other: Any?): Boolean {
+        return other is LLVMDoubleType
+    }
+
     override fun mangle() = "Double"
 
     override val align = 8
