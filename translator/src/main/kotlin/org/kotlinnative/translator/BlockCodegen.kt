@@ -83,6 +83,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return when (expr) {
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
+            is KtPrefixExpression -> evaluatePrefixExpression(expr, scopeDepth)
             is KtConstantExpression -> evaluateConstantExpression(expr)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
@@ -175,7 +176,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         var receiver = when (receiverExpr) {
             is KtCallExpression,
             is KtBinaryExpression,
-            is KtDotQualifiedExpression-> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            is KtDotQualifiedExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             is KtNameReferenceExpression -> {
                 val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
                 variableManager[receiverName]
@@ -528,8 +529,17 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return executePostfixExpression(operator, expr.operationReference, left as LLVMVariable)
     }
 
+    private fun evaluatePrefixExpression(expr: KtPrefixExpression, scopeDepth: Int): LLVMSingleValue? {
+        val operator = expr.operationToken
+        val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
+        return executePrefixExpression(operator, expr.operationReference, left as LLVMSingleValue)
+    }
+
     private fun executePostfixExpression(operator: IElementType?, operationReference: KtSimpleNameExpression, left: LLVMVariable): LLVMSingleValue?
             = addPrimitivePostfixOperation(operator, operationReference, left)
+
+    private fun executePrefixExpression(operator: IElementType?, operationReference: KtSimpleNameExpression, left: LLVMSingleValue): LLVMSingleValue?
+            = addPrimitivePrefixOperation(operator, operationReference, left)
 
     private fun addPrimitivePostfixOperation(operator: IElementType?, operationReference: KtSimpleNameExpression, firstOp: LLVMVariable): LLVMSingleValue? {
         val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
@@ -550,6 +560,16 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
                 codeBuilder.storeVariable(firstOp, resultOp)
                 return oldValue
+            }
+            else -> throw UnsupportedOperationException()
+        }
+    }
+
+    private fun addPrimitivePrefixOperation(operator: IElementType?, operationReference: KtSimpleNameExpression, firstOp: LLVMSingleValue): LLVMSingleValue? {
+        when (operator) {
+            KtTokens.MINUS,
+            KtTokens.PLUS -> {
+                return addPrimitiveBinaryOperation(operator!!, operationReference, LLVMConstant("0", firstOp.type), firstOp)
             }
             else -> throw UnsupportedOperationException()
         }

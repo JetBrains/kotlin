@@ -1,0 +1,4 @@
+unary_operator_1_minus_Int(-5) == 5
+unary_operator_1_minus_Int(5) == -5
+unary_operator_1_plus_Int(-5) == -5
+unary_operator_1_plus_Int(5) == 5
