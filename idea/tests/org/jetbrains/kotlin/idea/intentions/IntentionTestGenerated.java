@@ -4960,6 +4960,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("whenWhenNonExhaustive.kt")
+        public void testWhenWhenNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/whenWhenNonExhaustive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/while.kt");
