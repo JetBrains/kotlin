@@ -164,6 +164,8 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
 
 fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
+fun String.unquote(): String = KtPsiUtil.unquoteIdentifier(this)
+
 fun FqName.quoteSegmentsIfNeeded(): String {
     return pathSegments().map { it.asString().quoteIfNeeded() }.joinToString(".")
 }
