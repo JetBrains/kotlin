@@ -207,6 +207,9 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
     }
 }
 
+private val EXPRESSION = Key<Unit>("EXPRESSION")
+private val SCOPE_TO_EXCLUDE = Key<Unit>("SCOPE_TO_EXCLUDE")
+
 fun <TExpression : KtExpression> tryChangeAndCheckErrors(
         expressionToChange: TExpression,
         scopeToExclude: KtElement,
@@ -220,8 +223,6 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
                         .firstOrNull { bindingContext[BindingContext.USED_AS_EXPRESSION, it] != true }
                 ?: return true
 
-    val EXPRESSION = Key<Unit>("EXPRESSION")
-    val SCOPE_TO_EXCLUDE = Key<Unit>("SCOPE_TO_EXCLUDE")
     expressionToChange.putCopyableUserData(EXPRESSION, Unit)
     scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
 
