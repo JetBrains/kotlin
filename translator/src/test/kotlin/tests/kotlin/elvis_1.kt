@@ -13,4 +13,8 @@ fun elvis_test_1(x: Int): Int {
     return 1
 }
 
-
+fun elvis_test_2(): Int {
+    val i: elvis_1_MyClass? = null
+    i ?: return 1
+    return 0
+}
