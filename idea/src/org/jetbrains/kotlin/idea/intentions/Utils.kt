@@ -141,6 +141,15 @@ fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
     else -> listOf()
 }
 
+fun KtExpression?.hasResultingIfWithoutElse(): Boolean = when (this) {
+    is KtIfExpression -> `else` == null || then.hasResultingIfWithoutElse() || `else`.hasResultingIfWithoutElse()
+    is KtWhenExpression -> entries.any { it.expression.hasResultingIfWithoutElse() }
+    is KtBinaryExpression -> left.hasResultingIfWithoutElse() || right.hasResultingIfWithoutElse()
+    is KtUnaryExpression -> baseExpression.hasResultingIfWithoutElse()
+    is KtBlockExpression -> statements.lastOrNull().hasResultingIfWithoutElse()
+    else -> false
+}
+
 private fun KtExpression.specialNegation(): KtExpression? {
     val factory = KtPsiFactory(this)
     when (this) {
