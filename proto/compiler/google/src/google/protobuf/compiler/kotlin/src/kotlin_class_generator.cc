@@ -224,7 +224,7 @@ void ClassGenerator::generateHeader(io::Printer * printer, bool isBuilder) const
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + ": " + properties[i]->getFullType();
+        argumentList += "var " + properties[i]->simpleName + ": " + properties[i]->getFullType();
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }
@@ -315,7 +315,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
         // check that wire type of that field is equal to expected
         printer->Print(vars, "if (wireType != $kotlinWireType$) { errorCode = 1; return false } \n");
 
-        properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true);
+        properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true, /* isField = */ false);
 
         printer->Outdent();
         printer->Print("}\n");

@@ -16,10 +16,10 @@ if [ ! -e "$lprotobuf" ]; then
 fi
 
 if [ "$ok" == 0 ]; then
-	echo "$missing, required for building, is not found"
-	echo "You have to build and install latest Protobuf version from https://github.com/google/protobuf"
-	echo "Do you want to do it automatically?  [y/n]"
-	echo "(Caution: this will take decent amount of time and internet traffic)"
+	echo "$missing, required for building, is not found" \
+"You have to build and install latest Protobuf version from https://github.com/google/protobuf" \
+"Do you want to do it automatically?  [y/n]" \
+"(Caution: this will take decent amount of time and internet traffic)"
 	response="n"
 	read response
 	if [ $response = "y" ]; then
@@ -42,9 +42,10 @@ if [ "$ok" == 0 ]; then
 		make
 
 		echo "Installing"
-		sudo make install
+		#sudo make install
 
 		echo "Cleaning"
+		cd ../..
 		rm -rf protobuf_sources
 	fi
 else

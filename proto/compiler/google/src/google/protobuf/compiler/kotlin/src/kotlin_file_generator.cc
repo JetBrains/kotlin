@@ -17,13 +17,14 @@ namespace protobuf {
 namespace compiler {
 namespace kotlin {
 
-void FileGenerator::generateCode(io::Printer *printer, std::vector<ClassGenerator *> & classes) const {
+void FileGenerator::generateCode(io::Printer *printer, std::vector<ClassGenerator *> & classes) {
     for (int i = 0; i < classes.size(); ++i) {
         classes[i]->generateCode(printer);
         printer->Print("\n\n");
     }
 }
 
+// Extract more methods or inline generateCode() to have common style in this method
 bool FileGenerator::Generate(const FileDescriptor *file, const string &parameter, GeneratorContext *context,
                              string *error) const {
     std::vector<ClassGenerator *> classes;

@@ -21,7 +21,7 @@ class FieldGenerator;   // declared in "kotlin_file_generator.h"
 class NameResolver;     // declared in "kotlin_name_resolver.h"
 class EnumGenerator;    // declared in "kotlin_enum_generator.h"
 
-class ClassGenerator {
+class ClassGenerator { // TODO ProtoClass
 public:
     string getSimpleType() const;
     string getFullType() const;
@@ -30,12 +30,12 @@ public:
     string getBuilderInitValue() const;
 
     vector <FieldGenerator *>   properties;
-    vector <ClassGenerator *>   classesDeclarations;
-    vector <EnumGenerator  *>   enumsDeclaraions;
+    vector <ClassGenerator *>   classesDeclarations; // TODO nestedClasses
+    vector <EnumGenerator  *>   enumsDeclaraions; // TODO ProtoEnum
     ClassGenerator          (Descriptor const * descriptor, NameResolver * nameResolver);
     ~ClassGenerator         ();
 
-
+	// KtClassGenerator(ProtoClass)::generate()
     void generateCode (io::Printer * printer, bool isBuilder = false) const;
 private:
     /**

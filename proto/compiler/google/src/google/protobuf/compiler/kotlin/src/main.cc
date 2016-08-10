@@ -10,6 +10,8 @@
 #include "kotlin_file_generator.h"
 #include <iostream>
 
+// TODO attacch Kotlin generator to protoc as plugin.
+// Don't rewrite protoc main.
 int main(int argc, const char* const * argv) {
   google::protobuf::compiler::CommandLineInterface cli;
   cli.AllowPlugins("protoc-");
@@ -65,7 +67,7 @@ int main(int argc, const char* const * argv) {
   google::protobuf::compiler::kotlin::FileGenerator kotlinGenerator;
   cli.RegisterGenerator("--kotlin_out", &kotlinGenerator,
                         "Generate Kotlin source file.");
-  
+
   return cli.Run(argc, argv);
 
 }

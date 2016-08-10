@@ -21,13 +21,14 @@ public:
     FileGenerator();
     ~FileGenerator();
 
-    void generateCode(io::Printer *, std::vector<ClassGenerator *> &) const;
-
     // implements CodeGenerator ----------------------------------------
     bool Generate(const FileDescriptor* file,
                   const string& parameter,
                   GeneratorContext* context,
                   string* error) const;
+private:
+	// TODO check code style
+    static void generateCode(io::Printer *, std::vector<ClassGenerator *> &);
 };
 
 } // namespace kotlin

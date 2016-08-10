@@ -50,7 +50,7 @@ void FieldGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
 
     generateComment(printer);
 
-    printer->Print(vars, "var $name$ : $field$\n");
+//    printer->Print(vars, "var $name$ : $field$\n");
 
     // generate setter for builder
     if (isBuilder) {
@@ -81,19 +81,12 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
 
     bool isPrimitive = descriptor->type() != FieldDescriptor::TYPE_BYTES &&
                        descriptor->type() != FieldDescriptor::TYPE_MESSAGE &&
-                       descriptor->type() != FieldDescriptor::TYPE_STRING &&
-                       descriptor->type() != FieldDescriptor::TYPE_ENUM;
-
+                       descriptor->type() != FieldDescriptor::TYPE_STRING;
     if (isRead) {
         if (!noTag) {
             printer->Print(vars, "val tag = input.readTag($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
         }
         printer->Print(vars, "val expectedByteSize = input.readInt32NoTag()\n");
-
-        /* Now we want to compute element size of array. For this, we are estimating byte size of a single element,
-         * and then divide byte size of whole array by byte size of single element.
-         */
-        printer->Print(vars, "var singleElemSize = 0\n");
 
         /* hack: copy current FieldGenerator and change label to OPTIONAL. Also change name to
            name of iterator in for-loop.
@@ -105,38 +98,36 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
            (then writing CodedOutputStream.writeMessage will be possible).
          */
         FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
-        singleFieldGen.simpleName = "singleElemSize";
 
-        printer->Print("\n");
-        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
-        printer->Print("\n");
-
-        printer->Print(vars, "val arraySize = expectedByteSize / singleElemSize\n");
-
-        // Allocate new array of estimated size
-        printer->Print(vars, "val newArray = $arrayType$(arraySize)\n");
+        // Allocate new array and current size
+        printer->Print(vars, "var newArray = $arrayType$(0)\n");
+        printer->Print(vars, "var readSize = 0\n");
 
         // place declaration of new variable in anonymous scope for hygiene
-        printer->Print("run {\n");
+        printer->Print("do {\n");
         printer->Indent();
         printer->Print("var i = 0\n");
-        printer->Print(vars, "while(i < arraySize) {\n");
+        printer->Print(vars, "while(readSize < expectedByteSize) {\n");
         printer->Indent();
 
-        printer->Print(vars, "var tmp: $underlyingType$ = $initValue$\n");
-        singleFieldGen.simpleName = "tmp";
+        printer->Print(vars, "var tmp = $arrayType$(1)\n");
+        singleFieldGen.simpleName = "tmp[0]";
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
 
-        printer->Print(vars, "$fieldName$[i] = tmp\n");
-        printer->Print("i += 1\n");
+        printer->Print(vars, "newArray = newArray.plus(tmp)\n");
 
+        // add size of read element to readSize
+        singleFieldGen.generateSizeEstimationCode(printer, "readSize", /* noTag = */ true, /* isField = */ false);
         printer->Outdent();     // while-loop
         printer->Print("}\n");
 
+        // finaly, assign new array to our field
+        printer->Print(vars, "$fieldName$ = newArray\n");
+
         printer->Outdent();     // anonymous scope
-        printer->Print("}\n");
+        printer->Print("} while (false)\n");
     }
     else {
         /**
@@ -159,7 +150,7 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
 
         // all elements
         // place declaration of new variable in anonymous scope for hygiene
-        printer->Print("run {\n");
+        printer->Print("do {\n");
         printer->Indent();
 
         printer->Print("var i = 0\n");
@@ -179,7 +170,7 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         printer->Print("}\n");
 
         printer->Outdent();         // anonymous scope
-        printer->Print("}\n");
+        printer->Print("} while(false)\n");
     }
 }
 
@@ -219,7 +210,7 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
     if (isRead) {
         // We will create some temporary variables
         // So we place following code into separate block for the sake of hygiene
-        printer->Print("run {\n");
+        printer->Print("do {\n");
         printer->Indent();
 
         // read tag
@@ -239,8 +230,9 @@ void FieldGenerator::generateSerializationForMessages(io::Printer * printer, boo
 
         // check that actual size equal to expected size
         printer->Print(vars, "if (expectedSize != $fieldName$.getSizeNoTag()) { errorCode = 3; return false }\n");
+
         printer->Outdent();
-        printer->Print("}\n");
+        printer->Print("} while(false) \n");
     }
     else {
         // write tag
@@ -394,7 +386,7 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         // We will need total byte size of array, because that size is itself a part of the message and
         // adds to total message size.
         // For the sake of hygiene, temporary variables are created in anonymous scope
-        printer->Print("run {\n");
+        printer->Print("do {\n");
         printer->Indent();
 
         // Create a temporary variable that will collect array byte size
@@ -414,14 +406,14 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
         printer->Print(vars, "i += 1\n");
 
         printer->Outdent();     // for-loop
-        printer->Print("}\n");
+        printer->Print("} \n");
 
         // now add size of array to total message size:
         printer->Print(vars,
                        "$varName$ += arraySize"); // actual array size
         printer->Print("\n");
         printer->Outdent();     // anonymous scope
-        printer->Print("}\n");
+        printer->Print("} while(false)\n");
 
         printer->Outdent();     // if-clause
         printer->Print("}\n");
