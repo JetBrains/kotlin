@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message MessageZigZag {
+  repeated sint32 int = 1;
+  repeated sint64 long = 2;
+}

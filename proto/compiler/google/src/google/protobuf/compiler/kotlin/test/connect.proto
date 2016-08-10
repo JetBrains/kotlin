@@ -13,5 +13,4 @@ message ConnectionResponse {
     int32 uid = 1;
     int32 code = 2;
     int32 errorMsg = 3;
-    
 }

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message MessageRepeateFixed {
+  repeated fixed32 fix32 = 1;
+  repeated fixed64 fix64 = 2;
+  repeated sfixed32 sfix32 = 3;
+  repeated sfixed64 sfix64 = 4;
+}

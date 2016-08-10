@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message Extended {
+  repeated int64 arr = 1;
+  int64 long = 6;
+  bool flag = 5;
+  repeated int64 arr_longs = 2;
+  int32 int = 7;
+}
