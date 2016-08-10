@@ -193,6 +193,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.jvmTarget = kotlinOptions.jvmTarget
         args.allowKotlinPackage = kotlinOptions.allowKotlinPackage
         args.reportPerf = kotlinOptions.reportPerf
+        args.inheritMultifileParts = kotlinOptions.inheritMultifileParts
+        args.declarationsOutputPath = kotlinOptions.declarationsOutputPath
 
         args.scriptTemplates = kotlinOptions.scriptTemplates
 
