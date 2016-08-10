@@ -1,0 +1,2 @@
+if_boolean_argument_1_Boolean(1) == 11
+if_boolean_argument_1_Boolean(0) == 411

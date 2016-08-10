@@ -294,7 +294,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                         val expression = explicitReceiver.expression as KtReferenceExpression
 
                         val receiver = evaluateReferenceExpression(expression, scope)!! as LLVMVariable
-                        val pureReceiver = loadArgumentIfRequired(receiver, LLVMVariable("", receiver.type, pointer = 1))
+                        val pureReceiver = downLoadArgument(receiver, 1)
 
                         val targetClassName = (receiver.type as LLVMReferenceType).type
 
@@ -465,6 +465,9 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
         return result
     }
+
+    private fun downLoadArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue =
+            loadArgumentIfRequired(value, LLVMVariable("", value.type!!, pointer = pointer))
 
     private fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
             names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
@@ -778,11 +781,12 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
 
     private fun evaluateIfOperator(element: KtIfExpression, scopeDepth: Int, isExpression: Boolean = true): LLVMVariable? {
         val conditionResult = evaluateExpression(element.condition, scopeDepth)!!
+        val conditionNativeResult = downLoadArgument(conditionResult, 0)
 
         return if (isExpression)
-            executeIfExpression(conditionResult, element.then!!, element.`else`, element, scopeDepth + 1)
+            executeIfExpression(conditionNativeResult, element.then!!, element.`else`, element, scopeDepth + 1)
         else
-            executeIfBlock(conditionResult, element.then!!, element.`else`, scopeDepth + 1)
+            executeIfBlock(conditionNativeResult, element.then!!, element.`else`, scopeDepth + 1)
     }
 
     private fun executeIfExpression(conditionResult: LLVMSingleValue, thenExpression: KtExpression, elseExpression: PsiElement?, ifExpression: KtIfExpression, scopeDepth: Int): LLVMVariable? {
