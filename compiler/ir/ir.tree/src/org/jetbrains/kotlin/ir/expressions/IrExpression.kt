@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -52,5 +53,15 @@ abstract class IrExpressionBase(
     override fun setTreeLocation(parent: IrExpressionOwner?, index: Int) {
         this.parent = parent
         this.index = index
+    }
+}
+
+abstract class IrTerminalExpressionBase(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType
+) : IrExpressionBase(startOffset, endOffset, type) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children
     }
 }

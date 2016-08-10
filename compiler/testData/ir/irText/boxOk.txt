@@ -1,5 +1,5 @@
 IrFile /boxOk.kt
   IrFunction public fun box(): kotlin.String
     IrExpressionBody
-      IrReturnExpression type=kotlin.String
-        IrLiteral String type=kotlin.String value='OK'
+      RETURN type=kotlin.String
+        LITERAL String type=kotlin.String value='OK'

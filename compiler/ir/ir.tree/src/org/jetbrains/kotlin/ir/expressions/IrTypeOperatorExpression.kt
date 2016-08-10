@@ -19,16 +19,26 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrDummyExpression(
+enum class IrTypeOperator {
+    SMART_AS,
+    AS,
+    AS_SAFE,
+    IS;
+}
+
+interface IrTypeOperatorExpression : IrExpression, IrCompoundExpression1 {
+    val operator: IrTypeOperator
+    val typeOperand: KotlinType
+}
+
+class IrTypeOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        val description: String
-) : IrExpressionBase(startOffset, endOffset, type) {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitDummyExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // No children
+        override val operator: IrTypeOperator,
+        override val typeOperand: KotlinType
+) : IrCompoundExpression1Base(startOffset, endOffset, type), IrTypeOperatorExpression {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitTypeOperatorExpression(this, data)
     }
 }

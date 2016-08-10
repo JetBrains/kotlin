@@ -16,19 +16,21 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrDummyExpression(
+interface IrThisExpression : IrExpression {
+    val classDescriptor: ClassDescriptor
+}
+
+class IrThisExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        val description: String
-) : IrExpressionBase(startOffset, endOffset, type) {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitDummyExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // No children
+        override val classDescriptor: ClassDescriptor
+) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisExpression {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitThisExpression(this, data)
     }
 }

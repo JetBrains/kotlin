@@ -43,4 +43,18 @@ interface IrElementVisitor<out R, in D> {
     fun visitReturnExpression(expression: IrReturnExpression, data: D): R = visitExpression(expression, data)
     fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
     fun visitStringTemplate(expression: IrStringConcatenationExpression, data: D) = visitExpression(expression, data)
+    fun visitThisExpression(expression: IrThisExpression, data: D) = visitExpression(expression, data)
+    fun visitDeclarationReference(expression: IrDeclarationReference, data: D) = visitExpression(expression, data)
+    fun visitVariableReference(expression: IrVariableReference, data: D) = visitDeclarationReference(expression, data)
+    fun visitSingletonReference(expression: IrSingletonReference, data: D) = visitDeclarationReference(expression, data)
+    fun visitExtensionReceiverReference(expression: IrExtensionReceiverReference, data: D) = visitDeclarationReference(expression, data)
+
+
+    fun visitCallExpression(expression: IrCallExpression, data: D) = visitExpression(expression, data)
+    fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: D) = visitExpression(expression, data)
+
+    // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
+    fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
+
+
 }

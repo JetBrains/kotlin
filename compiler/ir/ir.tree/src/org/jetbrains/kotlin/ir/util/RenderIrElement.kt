@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,40 +28,58 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 
 class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitElement(element: IrElement, data: Nothing?): String =
-            "??? ${element.javaClass.simpleName}"
+            "? ${element.javaClass.simpleName}"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-            "??? ${declaration.javaClass.simpleName} ${declaration.descriptor?.name}"
+            "? ${declaration.javaClass.simpleName} ${declaration.descriptor?.name}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
             "IrFile ${declaration.name}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-            "IrFunction ${declaration.renderDescriptor()}"
+            "IrFunction ${declaration.descriptor.render()}"
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-            "IrProperty ${declaration.renderDescriptor()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
+            "IrProperty ${declaration.descriptor.render()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
 
     override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?): String =
-            "IrPropertyGetter ${declaration.renderDescriptor()} property=${declaration.property?.name()}"
+            "IrPropertyGetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
-            "IrPropertySetter ${declaration.renderDescriptor()} property=${declaration.property?.name()}"
+            "IrPropertySetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "IrExpressionBody"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
-            "??? ${expression.javaClass.simpleName} type=${expression.renderType()}"
+            "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
 
     override fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: Nothing?): String =
-            "IrLiteral ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
+            "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
-            "IrBlockExpression type=${expression.renderType()}"
+            "BLOCK type=${expression.renderType()}"
 
     override fun visitReturnExpression(expression: IrReturnExpression, data: Nothing?): String =
-            "IrReturnExpression type=${expression.renderType()}"
+            "RETURN type=${expression.renderType()}"
+
+    override fun visitVariableReference(expression: IrVariableReference, data: Nothing?): String =
+            "VAR ${expression.descriptor.name}"
+
+    override fun visitSingletonReference(expression: IrSingletonReference, data: Nothing?): String =
+            "SINGLETON ${expression.descriptor.name}"
+
+    override fun visitExtensionReceiverReference(expression: IrExtensionReceiverReference, data: Nothing?): String =
+            "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name}"
+
+    override fun visitThisExpression(expression: IrThisExpression, data: Nothing?): String =
+            "THIS ${expression.classDescriptor.render()}"
+
+    override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
+            "CALL ${expression.callee.name} ${expression.operator ?: ""}"
+
+    override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
+            "DUMMY ${expression.description}"
 
     companion object {
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
@@ -72,8 +91,13 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        private fun IrDeclaration.name(): String = descriptor?.let { it.name.toString() } ?: "<none>"
-        private fun IrDeclaration.renderDescriptor(): String = descriptor?.let { DESCRIPTOR_RENDERER.render(it) } ?: "<none>"
-        private fun IrExpression.renderType(): String = DESCRIPTOR_RENDERER.renderType(type)
+        internal fun IrDeclaration.name(): String =
+                descriptor?.let { it.name.toString() } ?: "<none>"
+
+        internal fun DeclarationDescriptor.render(): String =
+                DESCRIPTOR_RENDERER.render(this)
+
+        internal fun IrExpression.renderType(): String =
+                DESCRIPTOR_RENDERER.renderType(type)
     }
 }

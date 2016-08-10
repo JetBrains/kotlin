@@ -1,0 +1,42 @@
+IrFile /references.kt
+  IrProperty public val ok: kotlin.String = "OK" getter=null setter=null
+    IrExpressionBody
+      RETURN type=kotlin.String
+        LITERAL String type=kotlin.String value='OK'
+  IrProperty public val ok2: kotlin.String = "OK" getter=null setter=null
+    IrExpressionBody
+      RETURN type=kotlin.String
+        CALL ok PROPERTY_GET
+  IrProperty public val ok3: kotlin.String getter=<get-ok3> setter=null
+  IrPropertyGetter public fun <get-ok3>(): kotlin.String property=ok3
+    IrExpressionBody
+      RETURN type=kotlin.String
+        LITERAL String type=kotlin.String value='OK'
+  IrFunction public fun test1(): kotlin.String
+    IrExpressionBody
+      RETURN type=kotlin.String
+        CALL ok PROPERTY_GET
+  IrFunction public fun test2(/*0*/ x: kotlin.String): kotlin.String
+    IrExpressionBody
+      RETURN type=kotlin.String
+        VAR x
+  IrFunction public fun test3(): kotlin.String
+    IrExpressionBody
+      BLOCK type=kotlin.Nothing
+        DUMMY KtProperty
+        RETURN type=kotlin.Nothing
+          VAR x
+  IrFunction public fun test4(): kotlin.String
+    IrExpressionBody
+      RETURN type=kotlin.String
+        CALL ok3 PROPERTY_GET
+  IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
+  IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
+    IrExpressionBody
+      RETURN type=kotlin.String
+        LITERAL String type=kotlin.String value='OK'
+  IrFunction public fun kotlin.String.test5(): kotlin.String
+    IrExpressionBody
+      RETURN type=kotlin.String
+        CALL okext PROPERTY_GET
+          $receiver: $RECEIVER of: test5

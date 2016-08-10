@@ -1,0 +1,29 @@
+IrFile /calls.kt
+  IrFunction public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Int
+    IrExpressionBody
+      RETURN type=kotlin.Int
+        VAR x
+  IrFunction public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    IrExpressionBody
+      RETURN type=kotlin.Int
+        CALL foo
+          x: VAR x
+          y: LITERAL Int type=kotlin.Int value='1'
+  IrFunction public fun qux(/*0*/ x: kotlin.Int): kotlin.Int
+    IrExpressionBody
+      RETURN type=kotlin.Int
+        CALL foo
+          x: CALL foo
+            x: VAR x
+            y: VAR x
+          y: VAR x
+  IrFunction public fun kotlin.Int.ext1(): kotlin.Int
+    IrExpressionBody
+      RETURN type=kotlin.Int
+        DUMMY KtThisExpression
+  IrFunction public fun kotlin.Int.ext2(/*0*/ x: kotlin.Int): kotlin.Int
+    IrExpressionBody
+      RETURN type=kotlin.Int
+        CALL foo
+          x: DUMMY KtThisExpression
+          y: VAR x

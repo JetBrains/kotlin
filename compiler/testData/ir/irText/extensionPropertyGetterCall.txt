@@ -1,0 +1,11 @@
+IrFile /extensionPropertyGetterCall.kt
+  IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
+  IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
+    IrExpressionBody
+      RETURN type=kotlin.String
+        LITERAL String type=kotlin.String value='OK'
+  IrFunction public fun kotlin.String.test5(): kotlin.String
+    IrExpressionBody
+      RETURN type=kotlin.String
+        CALL okext PROPERTY_GET
+          $receiver: $RECEIVER of: test5

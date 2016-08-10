@@ -41,6 +41,24 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("calls.kt")
+    public void testCalls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/calls.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("extensionPropertyGetterCall.kt")
+    public void testExtensionPropertyGetterCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/extensionPropertyGetterCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("references.kt")
+    public void testReferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/references.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("smoke.kt")
     public void testSmoke() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smoke.kt");

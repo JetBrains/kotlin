@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
@@ -35,3 +38,6 @@ inline fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K
 
 inline fun <K, V : Any> IrGenerator.getOrElse(slice: ReadOnlySlice<K, V>, key: K, otherwise: (K) -> V): V =
         context.bindingContext[slice, key] ?: otherwise(key)
+
+fun IrGenerator.getResolvedCall(key: KtExpression): ResolvedCall<out CallableDescriptor>? =
+        key.getResolvedCall(context.bindingContext)

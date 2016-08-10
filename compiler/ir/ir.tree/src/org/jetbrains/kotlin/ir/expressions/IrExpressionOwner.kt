@@ -33,16 +33,6 @@ interface IrExpressionOwner1 : IrExpressionOwner {
     }
 }
 
-interface IrExpressionOwner2 : IrExpressionOwner {
-    var childExpression1: IrExpression?
-    var childExpression2: IrExpression?
-
-    companion object {
-        const val EXPRESSION1_INDEX = 1
-        const val EXPRESSION2_INDEX = 2
-    }
-}
-
 interface IrExpressionOwnerN : IrExpressionOwner {
     val childExpressions: List<IrExpression>
     fun addChildExpression(child: IrExpression)

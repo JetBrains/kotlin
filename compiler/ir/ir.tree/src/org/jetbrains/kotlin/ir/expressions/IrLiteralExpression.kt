@@ -48,13 +48,9 @@ class IrLiteralExpressionImpl<out T> (
         type: KotlinType,
         override val kind: IrLiteralKind<T>,
         override val value: T
-) : IrExpressionBase(startOffset, endOffset, type), IrLiteralExpression<T> {
+) : IrTerminalExpressionBase(startOffset, endOffset, type), IrLiteralExpression<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitLiteral(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // No children
-    }
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrLiteralExpressionImpl<String> =
