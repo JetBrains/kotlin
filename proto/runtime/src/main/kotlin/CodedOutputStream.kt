@@ -26,6 +26,10 @@ class CodedOutputStream(val buffer: ByteArray) {
         writeInt32(fieldNumber, value)
     }
 
+    fun writeUInt32NoTag(value: Int) {
+        writeInt32NoTag(value)
+    }
+
     fun writeInt64(fieldNumber: Int, value: Long) {
         writeTag(fieldNumber, WireType.VARINT)
         writeInt64NoTag(value)
@@ -34,6 +38,10 @@ class CodedOutputStream(val buffer: ByteArray) {
     // See notes on unsigned integers implementation above
     fun writeUInt64(fieldNumber: Int, value: Long) {
         writeInt64(fieldNumber, value)
+    }
+
+    fun writeUInt64NoTag(value: Long) {
+        writeInt64NoTag(value)
     }
 
     fun writeBool(fieldNumber: Int, value: Boolean) {

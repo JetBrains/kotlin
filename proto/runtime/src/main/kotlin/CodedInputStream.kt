@@ -86,9 +86,12 @@ class CodedInputStream(val buffer: ByteArray) {
 
     fun readSInt64(expectedFieldNumber: Int): Long {
         val tag = readTag(expectedFieldNumber, WireType.VARINT)
-        return readZigZag64NoTag()
+        return readSInt64NoTag()
     }
 
+    fun readSInt64NoTag(): Long {
+        return readZigZag64NoTag()
+    }
     fun readBytes(expectedFieldNumber: Int): ByteArray {
         val tag = readTag(expectedFieldNumber, WireType.LENGTH_DELIMITED)
         return readBytesNoTag()
