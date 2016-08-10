@@ -85,8 +85,10 @@ object FindTransformationMatcher : TransformationMatcher {
         // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
         if (!initialization.initializer.isConstant()) return null
 
-        val generator = buildFindOperationGenerator(state.outerLoop, right, initialization.initializer, state.inputVariable,
-                                                    state.indexVariable, filterTransformation, findFirst)
+        val generator = buildFindOperationGenerator(state.outerLoop, state.inputVariable, state.indexVariable, filterTransformation,
+                                                    valueIfFound = right,
+                                                    valueIfNotFound = initialization.initializer,
+                                                    findFirst = findFirst)
                         ?: return null
 
         val transformation = FindAndAssignTransformation(state.outerLoop, generator, initialization)
@@ -101,8 +103,11 @@ object FindTransformationMatcher : TransformationMatcher {
         val returnValueInLoop = returnInLoop.returnedExpression ?: return null
         val returnValueAfterLoop = returnAfterLoop.returnedExpression ?: return null
 
-        val generator = buildFindOperationGenerator(state.outerLoop, returnValueInLoop, returnValueAfterLoop,
-                                                    state.inputVariable, state.indexVariable, filterTransformation, findFirst = true)
+        val generator = buildFindOperationGenerator(state.outerLoop, state.inputVariable, state.indexVariable,
+                                                    filterTransformation,
+                                                    valueIfFound = returnValueInLoop,
+                                                    valueIfNotFound = returnValueAfterLoop,
+                                                    findFirst = true)
                         ?: return null
 
         val transformation = FindAndReturnTransformation(state.outerLoop, generator, returnAfterLoop)
@@ -212,11 +217,11 @@ object FindTransformationMatcher : TransformationMatcher {
 
     private fun buildFindOperationGenerator(
             loop: KtForExpression,
-            valueIfFound: KtExpression,
-            valueIfNotFound: KtExpression,
             inputVariable: KtCallableDeclaration,
             indexVariable: KtCallableDeclaration?,
             filterTransformation: FilterTransformation?,
+            valueIfFound: KtExpression,
+            valueIfNotFound: KtExpression,
             findFirst: Boolean
     ): FindOperationGenerator?  {
         assert(valueIfFound.isPhysical)
