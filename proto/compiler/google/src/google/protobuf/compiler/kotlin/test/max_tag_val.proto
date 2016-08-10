@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-message Msg {
+message MaxTagVal {
   int32 int = 536870911;
 
-  repeated Enum enum_array = 536870910;
+  repeated sint64 slong_array = 536870910;
 
   sint32 sint = 536870909;
 

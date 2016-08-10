@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-message MessageFixed {
-  fixed32 fix32 = 1;
-  fixed64 fix64 = 2;
-  sfixed32 sfix32 = 3;
-  sfixed64 sfix64 = 4;
-}

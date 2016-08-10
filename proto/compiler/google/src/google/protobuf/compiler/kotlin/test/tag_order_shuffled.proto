@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-message Msg {
+message TagOrderShuffled {
   sint32 sint = 8;
   Enum enum_field = 938423;
 
-  repeated Enum enum_array = 12321;
+  repeated sint64 slong_array = 12321;
   int32 int = 3423;
   enum Enum {
     first_val = 0;

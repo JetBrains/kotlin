@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-message Msg {
+message TagOrder {
   int32 int = 3423;
-  repeated Enum enum_array = 12321;
+  repeated sint64 slong_array = 12321;
   sint32 sint = 8;
 
   enum Enum {
