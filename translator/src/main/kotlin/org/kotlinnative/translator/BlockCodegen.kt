@@ -867,13 +867,15 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         codeBuilder.addCondition(conditionResult, thenLabel, elseLabel)
         codeBuilder.markWithLabel(thenLabel)
-        val thenResultExpression = evaluateExpression(thenExpression, scopeDepth + 1)
-        codeBuilder.storeVariable(resultVariable, thenResultExpression ?: return null)
+        val thenResultExpression = evaluateExpression(thenExpression, scopeDepth + 1) ?: return null
+        val thenResultNativeExpression = codeBuilder.receiveNativeValue(thenResultExpression)
+        codeBuilder.storeVariable(resultVariable, thenResultNativeExpression)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(elseLabel)
 
-        val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1)
-        codeBuilder.storeVariable(resultVariable, elseResultExpression ?: return null)
+        val elseResultExpression = evaluateExpression(elseExpression, scopeDepth + 1) ?: return null
+        val elseResultNativeExpression = codeBuilder.receiveNativeValue(elseResultExpression)
+        codeBuilder.storeVariable(resultVariable, elseResultNativeExpression)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(endLabel)
         return resultVariable
