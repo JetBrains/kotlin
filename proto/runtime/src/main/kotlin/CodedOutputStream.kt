@@ -1,9 +1,3 @@
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import WireFormat.VARINT_INFO_BITS_COUNT
-import WireFormat.VARINT_INFO_BITS_MASK
-import WireFormat.VARINT_UTIL_BIT_MASK
-
 /**
  * Created by user on 7/6/16.
  */
@@ -16,12 +10,11 @@ class CodedOutputStream(val buffer: ByteArray) {
     }
 
     fun writeTag(fieldNumber: Int, type: WireType) {
-        val tag = (fieldNumber shl 3) or type.ordinal
+        val tag = (fieldNumber shl 3) or type.id
         writeInt32NoTag(tag)
     }
 
-    fun writeInt32(fieldNumber: Int, value: Int?) {
-        value ?: return
+    fun writeInt32(fieldNumber: Int, value: Int) {
         writeTag(fieldNumber, WireType.VARINT)
         writeInt32NoTag(value)
     }
@@ -29,25 +22,21 @@ class CodedOutputStream(val buffer: ByteArray) {
     // Note that unsigned integer types are stored as their signed counterparts with top bit
     // simply stored in the sign bit - similar to Java's protobuf implementation. Hence, all
     // methods, writing unsigned ints simply redirect call to corresponding signed-writing method
-    fun writeUInt32(fieldNumber: Int, value: Int?) {
-        value ?: return
+    fun writeUInt32(fieldNumber: Int, value: Int) {
         writeInt32(fieldNumber, value)
     }
 
-    fun writeInt64(fieldNumber: Int, value: Long?) {
-        value ?: return
+    fun writeInt64(fieldNumber: Int, value: Long) {
         writeTag(fieldNumber, WireType.VARINT)
         writeInt64NoTag(value)
     }
 
     // See notes on unsigned integers implementation above
-    fun writeUInt64(fieldNumber: Int, value: Long?) {
-        value ?: return
+    fun writeUInt64(fieldNumber: Int, value: Long) {
         writeInt64(fieldNumber, value)
     }
 
-    fun writeBool(fieldNumber: Int, value: Boolean?) {
-        value ?: return
+    fun writeBool(fieldNumber: Int, value: Boolean) {
         writeTag(fieldNumber, WireType.VARINT)
         writeBoolNoTag(value)
     }
@@ -57,8 +46,7 @@ class CodedOutputStream(val buffer: ByteArray) {
     }
 
     // Writing enums is like writing one int32 number. Caller is responsible for converting enum-object to ordinal
-    fun writeEnum(fieldNumber: Int, value: Int?) {
-        value ?: return
+    fun writeEnum(fieldNumber: Int, value: Int) {
         writeTag(fieldNumber, WireType.VARINT)
         writeEnumNoTag(value)
     }
@@ -67,8 +55,7 @@ class CodedOutputStream(val buffer: ByteArray) {
         writeInt32NoTag(value)
     }
 
-    fun writeSInt32(fieldNumber: Int, value: Int?) {
-        value ?: return
+    fun writeSInt32(fieldNumber: Int, value: Int) {
         writeTag(fieldNumber, WireType.VARINT)
         writeSInt32NoTag(value)
     }
@@ -77,8 +64,7 @@ class CodedOutputStream(val buffer: ByteArray) {
         writeInt32NoTag((value shl 1) xor (value shr 31))
     }
 
-    fun writeSInt64(fieldNumber: Int, value: Long?) {
-        value ?: return
+    fun writeSInt64(fieldNumber: Int, value: Long) {
         writeTag(fieldNumber, WireType.VARINT)
         writeSInt64NoTag(value)
     }
@@ -87,19 +73,7 @@ class CodedOutputStream(val buffer: ByteArray) {
         writeInt64NoTag((value shl 1) xor (value shr 63))
     }
 
-    fun writeString(fieldNumber: Int, value: String?) {
-        value ?: return
-        writeTag(fieldNumber, WireType.LENGTH_DELIMITED)
-        writeStringNoTag(value)
-    }
-
-    fun writeStringNoTag(value: String) {
-        writeInt32NoTag(value.length)
-        output.write(value.toByteArray(Charsets.UTF_8))
-    }
-
-    fun writeBytes(fieldNumber: Int, value: ByteArray?) {
-        value ?: return
+    fun writeBytes(fieldNumber: Int, value: ByteArray) {
         if (value.size == 0) {
             return
         }
@@ -117,8 +91,7 @@ class CodedOutputStream(val buffer: ByteArray) {
      *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
      */
 
-     fun writeInt32NoTag(value: Int?) {
-        value ?: return
+     fun writeInt32NoTag(value: Int) {
         var curValue: Int = value
 
         // we have at most 32 information bits. With overhead of 1 bit per 7 bits we need at most 5 bytes for encoding
@@ -130,11 +103,11 @@ class CodedOutputStream(val buffer: ByteArray) {
             var curByte = (curValue and WireFormat.VARINT_INFO_BITS_MASK)
 
             // discard encoded bits. Note that unsigned shift is needed for cases with negative numbers
-            curValue = curValue ushr VARINT_INFO_BITS_COUNT
+            curValue = curValue ushr WireFormat.VARINT_INFO_BITS_COUNT
 
             // check if there will be next byte in encoding and set util bit if needed
             if (curValue != 0) {
-                curByte = curByte or VARINT_UTIL_BIT_MASK
+                curByte = curByte or WireFormat.VARINT_UTIL_BIT_MASK
             }
 
             res[resSize] = curByte.toByte()
@@ -143,8 +116,7 @@ class CodedOutputStream(val buffer: ByteArray) {
         output.write(res, 0, resSize)
     }
 
-    fun writeInt64NoTag(value: Long?) {
-        value ?: return
+    fun writeInt64NoTag(value: Long) {
         var curValue: Long = value
 
         // we have at most 64 information bits. With overhead of 1 bit per 7 bits we need at most 10 bytes for encoding
@@ -153,14 +125,14 @@ class CodedOutputStream(val buffer: ByteArray) {
         var resSize = 0
         while(curValue != 0L) {
             // encode current 7 bits
-            var curByte = (curValue and VARINT_INFO_BITS_MASK.toLong())
+            var curByte = (curValue and WireFormat.VARINT_INFO_BITS_MASK.toLong())
 
             // discard encoded bits. Note that unsigned shift is needed for cases with negative numbers
-            curValue = curValue ushr VARINT_INFO_BITS_COUNT
+            curValue = curValue ushr WireFormat.VARINT_INFO_BITS_COUNT
 
             // check if there will be next byte and set util bit if needed
             if (curValue != 0L) {
-                curByte = curByte or VARINT_UTIL_BIT_MASK.toLong()
+                curByte = curByte or WireFormat.VARINT_UTIL_BIT_MASK.toLong()
             }
 
             res[resSize] = curByte.toByte()
