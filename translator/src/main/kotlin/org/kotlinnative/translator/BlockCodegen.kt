@@ -240,7 +240,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return result
     }
 
-    fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement?): LLVMSingleValue? {
+    fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement? = null): LLVMSingleValue? {
         val type = receiver.type as LLVMReferenceType
         val clazz = resolveClassOrObjectLocation(type)
         val field = clazz.fieldsIndex[selectorName]
@@ -324,23 +324,14 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 indexVariable
             }
         }
-
     }
 
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: ClassCodegen? = null): LLVMSingleValue? = when {
         expr is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
         isEnumClassField(expr) -> resolveEnumClassField(expr)
         (expr is KtNameReferenceExpression) && (classScope != null) -> evaluateNameReferenceExpression(expr, classScope)
-        else -> {
-            val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)
-            when (referenceContext) {
-                is PropertyDescriptorImpl -> {
-                    val receiverThis = variableManager["this"]!!
-                    evaluateMemberMethodOrField(receiverThis, expr.firstChild.text, topLevel, call = null)!!
-                }
-                else -> variableManager[expr.firstChild.text]
-            }
-        }
+        resolveContainingClass(expr) != null -> evaluateMemberMethodOrField(variableManager["this"]!!, expr.firstChild.text, topLevel)
+        else -> variableManager[expr.firstChild.text]
     }
 
     private fun resolveEnumClassField(expr: KtReferenceExpression): LLVMSingleValue {
@@ -417,7 +408,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return null
     }
 
-    private fun resolveContainingClass(expr: KtCallExpression): StructCodegen? {
+    private fun resolveContainingClass(expr: KtElement): StructCodegen? {
         val name = expr.getResolvedCallWithAssert(state.bindingContext).dispatchReceiver?.type?.toString() ?: return null
         return state.classes[name] ?: state.objects[name]
     }
