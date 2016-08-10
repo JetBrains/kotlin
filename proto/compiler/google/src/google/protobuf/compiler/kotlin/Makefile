@@ -8,6 +8,7 @@ BINDIR = bin
 TESTDIR = test
 KTPROJECT = protoc-test-project
 KTOUT = $(KTPROJECT)/src
+JAVAOUT = $(KTPROJECT)/src/java
 
 OBJECTS = $(patsubst $(SRCDIR)/%.cc,$(BINDIR)/%.o,$(wildcard $(SRCDIR)/*.cc))
 KTARTIFACTS = $(patsubst $(TESTDIR)/%.proto,$(KTOUT)/%.kt,$(wildcard $(TESTDIR)/*.proto))
@@ -28,6 +29,9 @@ $(BINDIR):
 $(KTOUT):
 	mkdir -p $(KTOUT)
 
+$(JAVAOUT):
+	mkdir -p $(JAVAOUT)
+
 clean:
 	rm -rf $(BINDIR)
 	rm $(EXE)
@@ -36,7 +40,10 @@ clean:
 $(KTOUT)/%.kt: $(TESTDIR)/%.proto $(EXE)
 	./protoc --kotlin_out=$(KTOUT) $<
 
-generate: $(KTOUT) $(KTARTIFACTS)
+java: $(TESTDIR)/*.proto
+	protoc --java_out=$(JAVAOUT) $^
+
+generate: $(KTOUT) $(JAVAOUT) $(KTARTIFACTS) java 
 
 
-.PHONY: clean all generate
+.PHONY: clean all generate java
