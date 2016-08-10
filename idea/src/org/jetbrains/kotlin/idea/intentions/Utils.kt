@@ -133,7 +133,7 @@ fun KtExpression.negate(): KtExpression {
 }
 
 fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
-    is KtWhenExpression -> listOf(this)
+    is KtWhenExpression -> listOf(this) + entries.map { it.expression?.resultingWhens() ?: listOf() }.flatten()
     is KtIfExpression -> (then?.resultingWhens() ?: listOf()) + (`else`?.resultingWhens() ?: listOf())
     is KtBinaryExpression -> (left?.resultingWhens() ?: listOf()) + (right?.resultingWhens() ?: listOf())
     is KtUnaryExpression -> this.baseExpression?.resultingWhens() ?: listOf()
