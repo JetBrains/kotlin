@@ -62,8 +62,8 @@ class LLVMBooleanType() : LLVMType() {
     override val defaultValue = "0"
     override fun isPrimitive() = true
 
-    override fun toString() = "i1"
-    override fun hashCode(): Int{
+    override val typename = "i1"
+    override fun hashCode(): Int {
         var result = align
         result = 31 * result + size
         result = 31 * result + defaultValue.hashCode()

@@ -44,7 +44,7 @@ class FunctionCodegen(state: TranslationState,
         if (isExtensionDeclaration) {
             val receiverType = descriptor.extensionReceiverParameter!!.type
             val translatorType = LLVMMapStandardType(receiverType)
-            functionNamePrefix += translatorType.toString() + "."
+            functionNamePrefix += translatorType.typename + "."
 
             val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
             extensionFunctionsOfThisType.put(name, this)
@@ -105,7 +105,11 @@ class FunctionCodegen(state: TranslationState,
             val receiverType = receiverParameter.type
             val translatorType = LLVMMapStandardType(receiverType)
 
-            val classVal = LLVMVariable("classvariable.this", translatorType, pointer = 0)
+            val classVal = when (translatorType) {
+                is LLVMReferenceType -> LLVMVariable("classvariable.this", translatorType, pointer = 1)
+                else -> LLVMVariable("type", translatorType, pointer = 0)
+            }
+
             variableManager.addVariable("this", classVal, 0)
             actualArgs.add(classVal)
         }

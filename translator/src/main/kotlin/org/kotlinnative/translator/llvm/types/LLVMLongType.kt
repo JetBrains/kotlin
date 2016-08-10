@@ -74,9 +74,9 @@ class LLVMLongType() : LLVMType() {
     override val defaultValue = "0"
 
     override fun mangle() = "Long"
-    override fun toString() = "i64"
+    override val typename = "i64"
     override fun isPrimitive() = true
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result = align
         result = 31 * result + size
         result = 31 * result + defaultValue.hashCode()

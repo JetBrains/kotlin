@@ -9,6 +9,6 @@ class LLVMStringType(override val length: Int) : LLVMArray, LLVMType() {
     override fun mangle() = "String"
 
     override fun basicType() = LLVMCharType()
-    override fun toString(): String = "i8*"
+    override val typename = "i8*"
     override fun fullType() = "[${length + 1} x i8]"
 }

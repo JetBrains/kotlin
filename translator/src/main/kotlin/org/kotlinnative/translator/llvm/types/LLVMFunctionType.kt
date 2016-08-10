@@ -28,4 +28,5 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
     override fun toString(): String =
             "${returnType.type} (${arguments.map { it.getType() }.joinToString()})"
 
+    override val typename = "FunctionType"
 }

@@ -26,10 +26,10 @@ class LLVMDoubleType() : LLVMType() {
 
     override val align = 8
     override var size: Int = 8
-    override fun toString() = "double"
+    override val typename = "double"
     override val defaultValue = "0.0"
     override fun isPrimitive() = true
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         var result = align
         result = 31 * result + size
         result = 31 * result + defaultValue.hashCode()

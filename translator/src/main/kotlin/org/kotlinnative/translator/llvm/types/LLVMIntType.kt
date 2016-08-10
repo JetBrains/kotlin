@@ -79,7 +79,7 @@ class LLVMIntType() : LLVMType() {
     override var size: Int = 4
     override val defaultValue = "0"
 
-    override fun toString() = "i32"
+    override val typename = "i32"
     override fun isPrimitive() = true
     override fun hashCode(): Int{
         var result = align

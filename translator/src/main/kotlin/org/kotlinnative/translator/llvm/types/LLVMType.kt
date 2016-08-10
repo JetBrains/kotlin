@@ -32,6 +32,8 @@ abstract class LLVMType() : Cloneable {
     abstract fun mangle(): String
 
     abstract val align: Int
+    abstract val typename: String
+    override fun toString() = typename
     abstract var size: Int
     abstract val defaultValue: String
     open fun isPrimitive(): Boolean = false

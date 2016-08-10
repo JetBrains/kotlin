@@ -6,4 +6,6 @@ class LLVMNullType() : LLVMType() {
     override val defaultValue: String = "0"
 
     override fun mangle() = ""
+
+    override val typename = ""
 }

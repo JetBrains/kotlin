@@ -9,9 +9,12 @@ class LLVMReferenceType(val type: String, var prefix: String = "", override val 
     override val defaultValue: String = ""
 
     override var size: Int = 4
-    override fun toString() = "%$prefix${if (prefix.length > 0) "." else ""}${
-    if (location.size > 0) "${location.joinToString(".")}." else ""
-    }$type"
+    override val typename: String
+        get() = "$prefix${if (prefix.length > 0) "." else ""}${
+        if (location.size > 0) "${location.joinToString(".")}." else ""
+        }$type"
+
+    override fun toString() = "%$typename"
 
     private val params = ArrayList<String>()
 

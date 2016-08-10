@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFunctionResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -189,6 +190,12 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             else -> variableManager[receiverName]
         }
 
+        val isExtension = selectorExpr is KtCallExpression && selectorExpr.getFunctionResolvedCallWithAssert(state.bindingContext).extensionReceiver != null
+
+        if (isExtension) {
+            return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+        }
+
         if (receiver != null) {
             if (receiver.pointer == 2) {
                 receiver = codeBuilder.loadAndGetVariable(receiver)
@@ -259,7 +266,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val names = parseArgList(call!! as KtCallExpression, scopeDepth)
         val typePath = type.location.joinToString(".")
         val types = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
-        val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(')}$types"
+        val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(').trim()}$types"
 
         val method = clazz.methods[methodName] ?: throw UnexpectedException(methodName)
         val returnType = clazz.methods[methodName]!!.returnType!!.type
