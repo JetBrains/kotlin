@@ -88,11 +88,16 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         return isSubtypeOf(a, b) && isSubtypeOf(b, a)
     }
 
-    fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType) =
-        isSubtypeOf(subType.lowerIfFlexible(), superType.upperIfFlexible())
+    fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
+        val newSubType = transformToNewType(subType)
+        val newSuperType = transformToNewType(superType)
 
-    fun TypeCheckerContext.isSubtypeOf(subType: SimpleType, superType: SimpleType): Boolean {
-        return isSubtypeOfForNewTypes(transformToNewType(subType), transformToNewType(superType))
+        checkSubtypeForSpecialCases(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())?.let { return it }
+
+        // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
+        addSubtypeConstraint(newSubType, newSuperType)?.let { return it }
+
+        return isSubtypeOfForSingleClassifierType(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())
     }
 
     fun transformToNewType(type: SimpleType): SimpleType {
@@ -137,9 +142,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
                 }
             }
 
-    private fun TypeCheckerContext.isSubtypeOfForNewTypes(subType: SimpleType, superType: SimpleType): Boolean {
-        if (isSubtypeByExternalRule(subType, superType)) return true // todo: do not call this for T? <: String?
-
+    private fun TypeCheckerContext.checkSubtypeForSpecialCases(subType: SimpleType, superType: SimpleType): Boolean? {
         if (subType.isError || superType.isError) {
             if (errorTypeEqualsToAnything) return true
 
@@ -155,7 +158,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             return it.supertypes.all { isSubtypeOf(subType, it.unwrap()) }
         }
 
-        return isSubtypeOfForSingleClassifierType(subType, superType)
+        return null
     }
 
     private fun TypeCheckerContext.hasNothingSupertype(type: SimpleType) = // todo add tests
