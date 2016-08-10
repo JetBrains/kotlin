@@ -160,29 +160,25 @@ object FindTransformationMatcher : TransformationMatcher {
         }
     }
 
-    private interface FindOperationGenerator {
-        val functionName: String
-
-        val hasFilter: Boolean
+    private abstract class FindOperationGenerator(
+            val functionName: String,
+            val hasFilter: Boolean,
+            val chainCallCount: Int = 1
+    ) {
+        constructor(other: FindOperationGenerator) : this(other.functionName, other.hasFilter, other.chainCallCount)
 
         val presentation: String
             get() = functionName + (if (hasFilter) "{}" else "()")
 
-        fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression
-
-        val chainCallCount: Int
-            get() = 1
+        abstract fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression
     }
 
     private class SimpleGenerator(
-            override val functionName: String,
+            functionName: String,
             private val inputVariable: KtCallableDeclaration,
             private val filter: KtExpression?,
             private val argument: KtExpression? = null
-    ) : FindOperationGenerator {
-        override val hasFilter: Boolean
-            get() = filter != null
-
+    ) : FindOperationGenerator(functionName, filter != null) {
         override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
             return generateChainedCall(functionName, chainedCallGenerator, inputVariable, filter, argument)
         }
@@ -257,7 +253,7 @@ object FindTransformationMatcher : TransformationMatcher {
                 // we cannot use ?: if found value can be null
                 if (inputVariableCanHoldNull) return null
 
-                return object: FindOperationGenerator by this {
+                return object : FindOperationGenerator(this) {
                     override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                         val generated = this@useElvisOperatorIfNeeded.generate(chainedCallGenerator)
                         return KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
@@ -289,16 +285,7 @@ object FindTransformationMatcher : TransformationMatcher {
                         val receiver = qualifiedExpression.receiverExpression
                         val selector = qualifiedExpression.selectorExpression
                         if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector)) {
-                            return object: FindOperationGenerator {
-                                override val functionName: String
-                                    get() = "firstOrNull"
-
-                                override val hasFilter: Boolean
-                                    get() = filter != null
-
-                                override val chainCallCount: Int
-                                    get() = 2
-
+                            return object: FindOperationGenerator("firstOrNull", filter != null, chainCallCount = 2) {
                                 override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                                     val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, inputVariable, filter)
                                     return chainedCallGenerator.generate("$0", selector, receiver = findFirstCall, safeCall = true)
@@ -310,16 +297,7 @@ object FindTransformationMatcher : TransformationMatcher {
                     // in case of nullable input variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
                     if (inputVariableCanHoldNull) return null
 
-                    return object: FindOperationGenerator {
-                        override val functionName: String
-                            get() = "firstOrNull"
-
-                        override val hasFilter: Boolean
-                            get() = filter != null
-
-                        override val chainCallCount: Int
-                            get() = 2 // also includes "let"
-
+                    return object : FindOperationGenerator("firstOrNull", filter != null, chainCallCount = 2 /* also includes "let" */) {
                         override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                             val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, inputVariable, filter)
                             val letBody = generateLambda(inputVariable, valueIfFound)
@@ -330,7 +308,7 @@ object FindTransformationMatcher : TransformationMatcher {
 
                 else -> {
                     val generator = buildFoundFlagGenerator(loop, inputVariable, filter, negated = false)
-                    return object: FindOperationGenerator by generator {
+                    return object : FindOperationGenerator(generator) {
                         override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                             val chainedCall = generator.generate(chainedCallGenerator)
                             return KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
@@ -352,7 +330,7 @@ object FindTransformationMatcher : TransformationMatcher {
             if (containsArgument != null) {
                 val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
                 if (negated) {
-                    return object: FindOperationGenerator by generator{
+                    return object : FindOperationGenerator(generator) {
                         override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                             return generator.generate(chainedCallGenerator).negate()
                         }
