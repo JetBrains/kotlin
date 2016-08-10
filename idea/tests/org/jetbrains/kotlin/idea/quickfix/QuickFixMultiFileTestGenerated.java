@@ -1529,6 +1529,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     }
 
+    @TestMetadata("idea/testData/quickfix/removeUnused")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveUnused extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInRemoveUnused() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnused"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+        @TestMetadata("usedObjectAsAliasMulti.before.Main.kt")
+        public void testUsedObjectAsAliasMulti() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAliasMulti.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/suppress")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -6856,9 +6856,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("usedClassAsAlias.kt")
+        public void testUsedClassAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedClassAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedFunAsAlias.kt")
+        public void testUsedFunAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedFunAsAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("usedObjectAsAlias.kt")
         public void testUsedObjectAsAlias() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedVarAsAlias.kt")
+        public void testUsedVarAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedVarAsAlias.kt");
             doTest(fileName);
         }
     }
