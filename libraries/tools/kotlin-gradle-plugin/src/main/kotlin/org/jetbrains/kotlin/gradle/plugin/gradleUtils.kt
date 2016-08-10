@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.HasConvention
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -33,12 +34,15 @@ fun AbstractCompile.mapClasspath(fn: ()->FileCollection) {
     conventionMapping.map("classpath", fn)
 }
 
+internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
+    (this as HasConvention).convention.plugins[name] = plugin
+}
+
 internal inline fun <reified T : Any> Any.addExtension(name: String, extension: T) =
         (this as ExtensionAware).extensions.add(name, extension)
 
-internal fun Any.findExtension(name: String): Any? =
-        (this as ExtensionAware).extensions.findByName(name)
-
+internal fun Any.getConvention(name: String): Any? =
+        (this as HasConvention).convention.plugins[name]
 
 internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
