@@ -10,6 +10,7 @@ open class KotlinTasksProvider {
         return project.tasks.create(name, KotlinCompile::class.java).apply {
             friendTaskName = taskToFriendTaskMapper[this]
             mapKotlinTaskProperties(project, this)
+            outputs.upToDateWhen { isCacheFormatUpToDate }
         }
     }
 

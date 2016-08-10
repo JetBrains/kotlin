@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertNotEquals
@@ -43,25 +41,19 @@ class CacheVersionChangedIT : BaseGradleIT() {
         val modifiedVersion = "777"
         versionFile.writeText(modifiedVersion)
 
-        // gradle won't call kotlin task if no file is changed
-        val dummyKtFile = project.projectDir.getFileByName("Dummy.kt")
-        dummyKtFile.modify { it + " " }
-
         project.build("build", options = options) {
             assertSuccessful()
             assertNotEquals(modifiedVersion, versionFile.readText(), "${versionFile.projectPath()} was not rewritten by build")
 
             val mainDir = File(project.projectDir, "src/main")
             val mainKotlinFiles = mainDir.walk().filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }
-            val mainKotlinRelativePaths = mainKotlinFiles.map { it.projectPath() }.toList()
+            val mainKotlinRelativePaths = mainKotlinFiles.map(File::projectPath).toList()
             assertCompiledKotlinSources(mainKotlinRelativePaths)
         }
 
-        dummyKtFile.modify { it + " " }
-
         project.build("build", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(listOf(dummyKtFile.projectPath()))
+            assertCompiledKotlinSources(listOf(), weakTesting = false)
         }
     }
 }

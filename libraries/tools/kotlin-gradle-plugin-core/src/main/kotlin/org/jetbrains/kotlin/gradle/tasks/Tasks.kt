@@ -66,6 +66,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
     var incremental: Boolean = false
+        get() = field
+        set(value) {
+            field = value
+            logger.kotlinDebug { "Set $this.incremental=$value" }
+            System.setProperty("kotlin.incremental.compilation", value.toString())
+            System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
+        }
+
     var kotlinOptions: T = createBlankArgs()
     var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
@@ -151,6 +159,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                experimentalCacheVersion(taskBuildDirectory),
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
+    }
+    val isCacheFormatUpToDate: Boolean by lazy {
+        cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
     }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
@@ -291,7 +302,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
                 || removed.any { it.isJavaFile() || it.hasClassFileExtension() }
                 || modified.any { it.hasClassFileExtension() }
-                || cacheVersions.any { it.checkVersion() != CacheVersion.Action.DO_NOTHING }
             ) {
                 logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
                 targets.forEach { getIncrementalCache(it).clean() }
@@ -333,7 +343,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
                 ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
                 ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
-                ExitCode.OK -> logger.kotlinInfo("Compilation succeeded")
+                ExitCode.OK -> {
+                    cacheVersions.forEach { it.saveIfNeeded() }
+                    logger.kotlinInfo("Compilation succeeded")
+                }
             }
         }
 
@@ -395,7 +408,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                                                             getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
-            cacheVersions.forEach { it.saveIfNeeded() }
 
             if (!isIncrementalDecided) break
 
