@@ -62,10 +62,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     }
 
     private fun createKotlinSourceSet(): KotlinSourceSet {
-        logger.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
+        logger.kotlinDebug("Creating KotlinSourceSet for $sourceSet")
         val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
         kotlinSourceSet.kotlin.srcDir(project.file(sourceRootDir))
-        sourceSet.addExtension(dslExtensionName, kotlinSourceSet)
+        sourceSet.addConvention(dslExtensionName, kotlinSourceSet)
         return kotlinSourceSet
     }
 
@@ -272,7 +272,7 @@ open class KotlinAndroidPlugin(
             log.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
             val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
             kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-            sourceSet.addExtension(KOTLIN_DSL_NAME, kotlinSourceSet)
+            sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
             aptConfigurations.put(sourceSet.name,
                     project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
@@ -367,7 +367,7 @@ open class KotlinAndroidPlugin(
         val logger = kotlinTask.project.logger
 
         for (provider in variantData.sourceProviders) {
-            val kotlinSourceSet = provider.findExtension(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
+            val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
             kotlinTask.source(kotlinSourceSet.kotlin)
         }
 
