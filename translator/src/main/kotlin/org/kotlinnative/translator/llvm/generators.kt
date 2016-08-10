@@ -26,7 +26,7 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
     type.nameIfStandardType.toString() == "Nothing" -> LLVMVariable(name, LLVMNullType(), name, scope)
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
     type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1)), name, scope, pointer = 1)
-    else -> LLVMVariable(name, LLVMReferenceType(type.toString()), name, scope, pointer = 1)
+    else -> LLVMVariable(name, LLVMReferenceType(type.toString(), prefix = "class"), name, scope, pointer = 1)
 }
 
 fun LLVMMapStandardType(type: KotlinType): LLVMType =

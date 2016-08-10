@@ -20,7 +20,7 @@ import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 
-abstract class BlockCodegen(open val state: TranslationState, open val variableManager: VariableManager, open val codeBuilder: LLVMBuilder) {
+abstract class BlockCodegen(val state: TranslationState, val variableManager: VariableManager, val codeBuilder: LLVMBuilder) {
 
     val topLevel = 2
     var returnType: LLVMVariable? = null
@@ -103,7 +103,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun evaluateThisExpression(): LLVMSingleValue? {
-        return variableManager.get("this")
+        return variableManager["this"]
     }
 
     fun evaluateStringTemplateExpression(expr: KtStringTemplateExpression): LLVMSingleValue? {
@@ -177,16 +177,16 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             is KtNameReferenceExpression -> {
                 val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
-                variableManager.get(receiverName)
+                variableManager[receiverName]
                 when (referenceContext) {
                     is PropertyDescriptorImpl -> {
-                        val receiverThis = variableManager.get("this")!!
+                        val receiverThis = variableManager["this"]!!
                         evaluateMemberMethodOrField(receiverThis, receiverName, topLevel, call = null)!! as LLVMVariable
                     }
-                    else -> variableManager.get(receiverName)
+                    else -> variableManager[receiverName]
                 }
             }
-            else -> variableManager.get(receiverName)
+            else -> variableManager[receiverName]
         }
 
         if (receiver != null) {
@@ -233,7 +233,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
         val fieldName = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)!!.name.toString()
         val field = classScope!!.companionFieldsIndex[fieldName]
         val companionObject = classScope.companionFieldsSource[fieldName]
-        val receiver = variableManager.get(companionObject!!.fullName)!!
+        val receiver = variableManager[companionObject!!.fullName]!!
         val result = codeBuilder.getNewVariable(field!!.type, pointer = 1)
 
         codeBuilder.loadClassField(result, receiver, field.offset)
@@ -307,7 +307,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                         val returnType = clazz.methods[methodName]!!.returnType!!.type
 
                         val loadedArgs = loadArgsIfRequired(names, method.args)
-                        val callArgs = mutableListOf<LLVMSingleValue>(pureReceiver)
+                        val callArgs = mutableListOf(pureReceiver)
                         callArgs.addAll(loadedArgs)
 
                         return evaluateFunctionCallExpression(LLVMVariable(methodName, returnType, scope = LLVMVariableScope()), callArgs)
@@ -344,8 +344,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
     }
 
     private fun resolveEnumClassField(expr: KtReferenceExpression): LLVMSingleValue {
-        val field = state.classes[expr.getType(state.bindingContext).toString()]!!.enumFields[expr.text]!!
-        return codeBuilder.loadAndGetVariable(codeBuilder.loadAndGetVariable(field))
+        return state.classes[expr.getType(state.bindingContext).toString()]!!.enumFields[expr.text]!!
     }
 
     private fun isEnumClassField(expr: KtReferenceExpression): Boolean {
@@ -858,7 +857,7 @@ abstract class BlockCodegen(open val state: TranslationState, open val variableM
                     }
 
                     codeBuilder.allocStackVar(reference)
-                    reference.pointer += 1
+                    reference.pointer++
 
                     codeBuilder.storeNull(reference)
                     variableManager.addVariable(identifier, reference, scopeDepth)

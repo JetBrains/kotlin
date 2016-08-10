@@ -1,7 +1,6 @@
 package org.kotlinnative.translator
 
 import com.intellij.psi.PsiElement
-import jdk.nashorn.internal.ir.Block
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -75,7 +74,7 @@ abstract class StructCodegen(val state: TranslationState,
                     field.offset = offset
                     offset++
 
-                    if ((declaration.initializer != null) && !(this is ObjectCodegen)) {
+                    if ((declaration.initializer != null) && this !is ObjectCodegen) {
                         initializedFields.put(field, declaration.initializer!!)
                     }
                     fields.add(field)
