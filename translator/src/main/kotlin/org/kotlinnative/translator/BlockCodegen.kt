@@ -174,7 +174,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         var receiver = when (receiverExpr) {
             is KtCallExpression,
-            is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            is KtBinaryExpression,
+            is KtDotQualifiedExpression-> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             is KtNameReferenceExpression -> {
                 val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
                 variableManager[receiverName]
@@ -731,7 +732,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         codeBuilder.addUnconditionalJump(if (isElse) successConditionsLabel else elseLabel)
         codeBuilder.markWithLabel(successConditionsLabel)
 
-        val successExpression = evaluateExpression(item.expression, scopeDepth + 1)
+        var successExpression = evaluateExpression(item.expression, scopeDepth + 1)
+        while (successExpression is LLVMVariable && successExpression.pointer > 0) {
+            successExpression = codeBuilder.loadAndGetVariable(successExpression)
+        }
+
         codeBuilder.storeVariable(resultVariable, successExpression ?: return)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.addComment("end last condition item")
