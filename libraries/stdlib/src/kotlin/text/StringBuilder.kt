@@ -4,16 +4,20 @@
 package kotlin.text
 
 /**
- * Builds new string by populating newly created [StringBuilder] using provided [builderAction] and then converting it to [String].
+ * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
+ * and then converting it to [String].
  */
 @kotlin.internal.InlineOnly
-public inline fun buildString(builderAction: StringBuilder.() -> Unit): String = StringBuilder().apply(builderAction).toString()
+public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
+        StringBuilder().apply(builderAction).toString()
 
 /**
- * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity] using provided [builderAction] and then converting it to [String].
+ * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity]
+ * using provided [builderAction] and then converting it to [String].
  */
 @kotlin.internal.InlineOnly
-inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String = StringBuilder(capacity).apply(builderAction).toString()
+public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String =
+        StringBuilder(capacity).apply(builderAction).toString()
 
 /**
  * Appends all arguments to the given [Appendable].
