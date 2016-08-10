@@ -1,5 +1,6 @@
 package org.kotlinnative.translator
 
+import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
@@ -34,6 +35,9 @@ class FunctionCodegen(state: TranslationState,
         })
 
         returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
+        if (returnType!!.type is LLVMReferenceType) {
+            (returnType!!.type as LLVMReferenceType).location.addAll(descriptor.returnType!!.getSubtypesPredicate().toString().split(".").dropLast(1))
+        }
         external = isExternal()
         name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
 

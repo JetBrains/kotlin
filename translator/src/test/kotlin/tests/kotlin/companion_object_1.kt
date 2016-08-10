@@ -8,7 +8,6 @@ class companion_object_1 {
     }
 }
 
-
 fun companion_object_1_test(): Int {
     return companion_object_1.create()
 }
