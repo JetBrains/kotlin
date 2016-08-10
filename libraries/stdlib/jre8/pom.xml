@@ -40,6 +40,7 @@
 
                  <configuration>
                      <jdkHome>${env.JDK_18}</jdkHome>
+                     <jvmTarget>1.8</jvmTarget>
                      <args>
                          <arg>-Xallow-kotlin-package</arg>
                      </args>
