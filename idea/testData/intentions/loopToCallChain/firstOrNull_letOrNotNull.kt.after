@@ -3,7 +3,8 @@
 fun foo(list: List<String>) {
     val <caret>result = list
             .firstOrNull { it.length > 0 }
-            ?.let { bar(it) } ?: ""
+            ?.let { bar(it) }
+            ?: ""
 }
 
 fun bar(s: String): String = s

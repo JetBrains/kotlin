@@ -256,7 +256,7 @@ object FindTransformationMatcher : TransformationMatcher {
                 return object : FindOperationGenerator(this) {
                     override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                         val generated = this@useElvisOperatorIfNeeded.generate(chainedCallGenerator)
-                        return KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
+                        return KtPsiFactory(generated).createExpressionByPattern("$0\n ?: $1", generated, valueIfNotFound)
                     }
                 }
             }

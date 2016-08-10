@@ -3,5 +3,6 @@
 fun foo(list: List<String>): Int {
     <caret>return list
             .firstOrNull { it.isNotEmpty() }
-            ?.length ?: -1
+            ?.length
+            ?: -1
 }
