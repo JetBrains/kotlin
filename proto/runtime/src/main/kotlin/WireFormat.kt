@@ -23,7 +23,7 @@ object WireFormat {
 
     // TODO: refactor casts into function overloading as soon as translator will support it
     fun getTagSize(fieldNumber: Int, wireType: WireType): Int {
-        return getVarint32Size((fieldNumber shl 3) or wireType.ordinal)
+        return getVarint32Size((fieldNumber shl 3) or wireType.id)
     }
 
     fun getVarint32Size(value: Int): Int {
@@ -101,13 +101,6 @@ object WireFormat {
 
     fun getFloatSize(fieldNumber: Int, value: Float): Int {
         return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
-    }
-
-    fun getStringSize(fieldNumber: Int, value: String): Int {
-        if (value.length == 0)
-            return 0
-        val encodedStringSize = value.toByteArray(Charsets.UTF_8).size  //TODO: not sure if it's the best way to do it
-        return encodedStringSize + getTagSize(fieldNumber, WireType.LENGTH_DELIMITED) + getVarint32Size(encodedStringSize)
     }
 
     fun getBytesSize(fieldNumber: Int, value: ByteArray): Int {

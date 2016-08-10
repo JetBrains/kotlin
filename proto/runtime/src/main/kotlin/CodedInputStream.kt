@@ -1,5 +1,3 @@
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import WireFormat.VARINT_INFO_BITS_COUNT
 import WireFormat.VARINT_INFO_BITS_MASK
 import WireFormat.VARINT_UTIL_BIT_MASK
@@ -15,7 +13,7 @@ import WireFormat.VARINT_UTIL_BIT_MASK
  */
 
 // TODO: refactor correctness checks into readTag
-class CodedInputStream(buffer: ByteArray) {
+class CodedInputStream(val buffer: ByteArray) {
     var errorMessage: String = ""
     val inputStream: KotlinInputStream
     init {
@@ -120,17 +118,10 @@ class CodedInputStream(buffer: ByteArray) {
             expectedWireType: WireType,
             actualWireType: WireType) {
         if (expectedFieldNumber != actualFieldNumber) {
-            errorMessage =
-                    "Error in protocol format: \n " +
-                            "Expected field number ${expectedFieldNumber}, got ${actualFieldNumber}"
-            println(errorMessage)
             return
         }
 
-        if (expectedWireType != actualWireType) {
-            errorMessage = "Error in protocol format: \n " +
-                    "Expected ${expectedWireType.name} type, got ${actualWireType.name}"
-            println(errorMessage)
+        if (expectedWireType.id != actualWireType.id) {
             return
         }
     }
@@ -207,13 +198,13 @@ class CodedInputStream(buffer: ByteArray) {
     // reads zig-zag encoded integer not larger than 32-bit long
     fun readZigZag32NoTag(): Int {
         val value = readInt32NoTag()
-        return (value shr 1) xor (-(value and 1))   // bit magic for decoding zig-zag number
+        return (value shr 1) xor (0 - (value and 1))   // bit magic for decoding zig-zag number
     }
 
     // reads zig-zag encoded integer not larger than 64-bit long
     fun readZigZag64NoTag(): Long {
         val value = readInt64NoTag()
-        return (value shr 1) xor (-(value and 1L))  // bit magic for decoding zig-zag number
+        return (value shr 1) xor (0 - (value and 1L))  // bit magic for decoding zig-zag number
     }
 
     // checks if at least one more byte can be read from underlying input stream
@@ -221,4 +212,3 @@ class CodedInputStream(buffer: ByteArray) {
         return inputStream.isAtEnd()
     }
 }
-

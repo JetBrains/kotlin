@@ -517,14 +517,14 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             left ?: throw UnsupportedOperationException("Wrong binary exception")
         }
 
-        val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
+        val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
 
         return executeBinaryExpression(operator, expr.operationReference, left, right)
     }
 
     private fun evaluatePostfixExpression(expr: KtPostfixExpression, scopeDepth: Int): LLVMSingleValue? {
         val operator = expr.operationToken
-        val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception")
+        val left = evaluateExpression(expr.baseExpression, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
         return executePostfixExpression(operator, expr.operationReference, left as LLVMVariable)
     }
 
