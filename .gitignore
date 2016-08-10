@@ -12,6 +12,9 @@ workspace.xml
 build
 translator/.gradle/2.9/taskArtifacts
 
+kotstd/kotstd.iml
+
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
