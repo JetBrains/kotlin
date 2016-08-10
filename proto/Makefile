@@ -25,11 +25,11 @@ $(PROTOC_EXE):
 	$(MAKE) -C $(PROTOC_DIR)
 
 # Place ProtoKot Runtime JAR into build directory
-$(JAR): $(BUILDDIR) $(RUNTIME_JAR)
+$(JAR): $(BUILDDIR) gradle_invoke
 	cp $(RUNTIME_JAR) $(JAR)
 
 # Build ProtoKot Runtime via delegating call to Gradle Script
-$(RUNTIME_JAR):
+gradle_invoke:
 	cd $(RUNTIME_DIR); gradle build
 
 # Create auxillary directories
@@ -44,4 +44,4 @@ clean:
 	cd $(RUNTIME_DIR); gradle clean
 	rm -rf $(BUILDDIR)
 
-.PHONY: clean all generate test
+.PHONY: clean all generate test gradle_invoke
