@@ -3,7 +3,7 @@ target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: nounwind uwtable
-define i32 @malloc_array(i32 %x) #0 {
+define weak i32 @malloc_array(i32 %x) #0 {
   %1 = alloca i32, align 4
   store i32 %x, i32* %1, align 4
   %2 = load i32* %1, align 4
@@ -15,7 +15,7 @@ define i32 @malloc_array(i32 %x) #0 {
 declare i8* @malloc(i32) #1
 
 ; Function Attrs: nounwind uwtable
-define signext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {
+define weak signext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   store i32 %data, i32* %1, align 4
@@ -31,7 +31,7 @@ define signext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define void @kotlinclib_set_byte(i32 %data, i32 %index, i8 signext %value) #0 {
+define weak void @kotlinclib_set_byte(i32 %data, i32 %index, i8 signext %value) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i8, align 1
@@ -53,7 +53,7 @@ define void @kotlinclib_set_byte(i32 %data, i32 %index, i8 signext %value) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define i32 @kotlinclib_get_int(i32 %data, i32 %index) #0 {
+define weak i32 @kotlinclib_get_int(i32 %data, i32 %index) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   store i32 %data, i32* %1, align 4
@@ -69,7 +69,7 @@ define i32 @kotlinclib_get_int(i32 %data, i32 %index) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define void @kotlinclib_set_int(i32 %data, i32 %index, i32 %value) #0 {
+define weak void @kotlinclib_set_int(i32 %data, i32 %index, i32 %value) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
@@ -91,7 +91,7 @@ define void @kotlinclib_set_int(i32 %data, i32 %index, i32 %value) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define signext i16 @kotlinclib_get_short(i32 %data, i32 %index) #0 {
+define weak signext i16 @kotlinclib_get_short(i32 %data, i32 %index) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   store i32 %data, i32* %1, align 4
@@ -107,7 +107,7 @@ define signext i16 @kotlinclib_get_short(i32 %data, i32 %index) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define void @kotlinclib_set_short(i32 %data, i32 %index, i16 signext %value) #0 {
+define weak void @kotlinclib_set_short(i32 %data, i32 %index, i16 signext %value) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i16, align 2
@@ -129,7 +129,7 @@ define void @kotlinclib_set_short(i32 %data, i32 %index, i16 signext %value) #0 
 }
 
 ; Function Attrs: nounwind uwtable
-define i64 @kotlinclib_get_long(i32 %data, i32 %index) #0 {
+define weak i64 @kotlinclib_get_long(i32 %data, i32 %index) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   store i32 %data, i32* %1, align 4
@@ -145,7 +145,7 @@ define i64 @kotlinclib_get_long(i32 %data, i32 %index) #0 {
 }
 
 ; Function Attrs: nounwind uwtable
-define void @kotlinclib_set_long(i32 %data, i32 %index, i64 %value) #0 {
+define weak void @kotlinclib_set_long(i32 %data, i32 %index, i64 %value) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i64, align 8

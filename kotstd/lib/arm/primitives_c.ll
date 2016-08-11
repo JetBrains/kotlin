@@ -260,7 +260,7 @@ define weak float @kotlinclib_longToFloat(i32 %value) #0 {
 }
 
 ; Function Attrs: nounwind
-define double @kotlinclib_longToDouble(i32 %value) #0 {
+define weak double @kotlinclib_longToDouble(i32 %value) #0 {
   %1 = alloca i32, align 4
   store i32 %value, i32* %1, align 4
   %2 = load i32* %1, align 4
@@ -376,4 +376,46 @@ define weak float @kotlinclib_doubleToFloat(double %value) #0 {
   ret float %3
 }
 
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_int_size() #0 {
+  ret i32 4
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_long_size() #0 {
+  ret i32 8
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_boolean_size() #0 {
+  ret i32 1
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_short_size() #0 {
+  ret i32 2
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_double_size() #0 {
+  ret i32 8
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_float_size() #0 {
+  ret i32 4
+}
+
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_char_size() #0 {
+  ret i32 1
+}
+
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+
+!llvm.module.flags = !{!0, !1}
+!llvm.ident = !{!2}
+
+!0 = !{i32 1, !"wchar_size", i32 4}
+!1 = !{i32 1, !"min_enum_size", i32 4}
+!2 = !{!"Ubuntu clang version 3.6.2-3ubuntu2 (tags/RELEASE_362/final) (based on LLVM 3.6.2)"}
