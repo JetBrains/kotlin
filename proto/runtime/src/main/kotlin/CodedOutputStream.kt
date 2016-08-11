@@ -99,7 +99,12 @@ class CodedOutputStream(val buffer: ByteArray) {
      *  Then she/he can re-use low-level methods for operating with raw values, that are not annotated with Protobuf tags.
      */
 
-     fun writeInt32NoTag(value: Int) {
+    fun writeInt32NoTag(value: Int) {
+        if (value < 0) {
+            writeInt64NoTag(value.toLong())
+            return
+        }
+
         var curValue: Int = value
 
         // we have at most 32 information bits. With overhead of 1 bit per 7 bits we need at most 5 bytes for encoding

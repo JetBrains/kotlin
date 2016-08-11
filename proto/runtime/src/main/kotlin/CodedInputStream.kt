@@ -150,22 +150,22 @@ class CodedInputStream(val buffer: ByteArray) {
     // reads varint not larger than 32-bit integer according to protobuf varint-encoding
     fun readInt32NoTag(): Int {
         var done: Boolean = false
-        var result: Int = 0
+        var result: Long = 0
         var step: Int = 0
         while (!done) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
-                        (byte and WireFormat.VARINT_INFO_BITS_MASK)
-                        shl
-                        (WireFormat.VARINT_INFO_BITS_COUNT * step)
-                    )
+                            (byte and WireFormat.VARINT_INFO_BITS_MASK).toLong()
+                                    shl
+                                    (WireFormat.VARINT_INFO_BITS_COUNT * step)
+                            ).toLong()
             step++
             if ((byte and WireFormat.VARINT_UTIL_BIT_MASK) == 0) {
                 done = true
             }
         }
-        return result
+        return result.toInt()
     }
 
     // reads varint not larger than 64-bit integer according to protobuf varint-encoding
@@ -177,10 +177,10 @@ class CodedInputStream(val buffer: ByteArray) {
             val byte: Int = inputStream.read().toInt()
             result = result or
                     (
-                        (byte and WireFormat.VARINT_INFO_BITS_MASK).toLong()
-                        shl
-                        (WireFormat.VARINT_INFO_BITS_COUNT * step)
-                    )
+                            (byte and WireFormat.VARINT_INFO_BITS_MASK).toLong()
+                                    shl
+                                    (WireFormat.VARINT_INFO_BITS_COUNT * step)
+                            )
             step++
             if ((byte and WireFormat.VARINT_UTIL_BIT_MASK) == 0 /* || byte == -1 ???? */) {
                 done = true

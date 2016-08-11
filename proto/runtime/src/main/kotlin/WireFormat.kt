@@ -23,6 +23,9 @@ object WireFormat {
     }
 
     fun getVarint32Size(value: Int): Int {
+        if (value < 0) {
+            return getVarint64Size(value.toLong())
+        }
         var curValue = value
         var size = 0
         while (curValue != 0) {
