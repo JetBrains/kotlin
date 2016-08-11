@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/test.kt",
+  "newName": "namedFunB",
+  "withRuntime": "true",
+  "hint": "Function 'namedFunB' is already declared in package 'test'"
+}
