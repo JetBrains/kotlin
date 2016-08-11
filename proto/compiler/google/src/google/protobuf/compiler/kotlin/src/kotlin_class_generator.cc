@@ -32,10 +32,6 @@ void ClassGenerator::generateCode(io::Printer *printer, bool isBuilder) const {
     // Generate field for errors code
     printer->Print("var errorCode: Int = 0\n\n");
 
-    // Generate construction routines
-    generateInitSection(printer);
-    printer->Print("\n");
-
     // enum declarations and nested classes declarations only for fair classes
     if (!isBuilder) {
         if (enumsDeclaraions.size() > 0) {
@@ -422,7 +418,7 @@ string ClassGenerator::getBuilderInitValue() const {
     // build list of arguments like 'field1: Type1, field2: Type2, ... '
     string argumentList = "";
     for (int i = 0; i < properties.size(); ++i) {
-        argumentList += properties[i]->simpleName + " = " + properties[i]->getInitValue();
+        argumentList += properties[i]->getInitValue();
         if (i + 1 != properties.size()) {
             argumentList += ", ";
         }

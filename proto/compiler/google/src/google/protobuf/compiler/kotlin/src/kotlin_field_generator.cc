@@ -25,7 +25,7 @@ string FieldGenerator::getInitValue() const {
         // build list of arguments like 'field1: Type1, field2: Type2, ... '
         string argumentList = "";
         for (int i = 0; i < cg->properties.size(); ++i) {
-            argumentList += cg->properties[i]->simpleName + " = " + cg->properties[i]->getInitValue();
+            argumentList += cg->properties[i]->getInitValue();
             if (i + 1 != cg->properties.size()) {
                 argumentList += ", ";
             }
