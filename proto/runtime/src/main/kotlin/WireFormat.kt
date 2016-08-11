@@ -120,19 +120,25 @@ object WireFormat {
         return getTagSize(fieldNumber, WireType.FIX_32) + FIXED_32_BYTE_SIZE
     }
 
-    fun getFixed32SizeNoTag(value: Int): Int = FIXED_32_BYTE_SIZE
+    fun getFixed32SizeNoTag(value: Int): Int {
+        return FIXED_32_BYTE_SIZE
+    }
 
     fun getFixed64Size(fieldNumber: Int, value: Long): Int {
         return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
     }
 
-    fun getFixed64SizeNoTag(value: Long): Int = FIXED_64_BYTE_SIZE
+    fun getFixed64SizeNoTag(value: Long): Int  {
+        return FIXED_64_BYTE_SIZE
+    }
 
     fun getDoubleSize(fieldNumber: Int, value: Double): Int {
         return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
     }
 
-    fun getDoubleSizeNoTag(value: Double): Int = FIXED_64_BYTE_SIZE
+    fun getDoubleSizeNoTag(value: Double): Int {
+        return FIXED_64_BYTE_SIZE
+    }
 
     fun getFloatSize(fieldNumber: Int, value: Float): Int {
         return getTagSize(fieldNumber, WireType.FIX_32) + FIXED_32_BYTE_SIZE

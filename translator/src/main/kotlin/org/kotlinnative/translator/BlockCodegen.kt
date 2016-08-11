@@ -35,7 +35,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         if (isBlock) {
             expressionWalker(expr, scopeDepth)
         } else {
-            var result = evaluateExpression(expr, scopeDepth)!!
+            var result = evaluateExpression(expr, scopeDepth) ?: throw UnexpectedException(expr!!.text)
             when (result) {
                 is LLVMVariable -> {
                     if (result.pointer == 1 && result.type !is LLVMReferenceType) {
@@ -176,8 +176,18 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val receiverName = receiverExpr.text
         var receiver = when (receiverExpr) {
             is KtCallExpression,
-            is KtBinaryExpression,
-            is KtDotQualifiedExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            is KtDotQualifiedExpression -> {
+                val location = receiverName.split(".")
+                var codegen: StructCodegen? = state.classes[location[0]]
+                var i = 1
+                while (i < location.size && codegen != null) {
+                    codegen = codegen.nestedClasses[location[i]]
+                    i++
+                }
+
+                if (codegen != null) null else evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
+            }
             is KtNameReferenceExpression -> {
                 val referenceContext = state.bindingContext.get(BindingContext.REFERENCE_TARGET, receiverExpr)
                 when (referenceContext) {
@@ -331,13 +341,13 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     private fun evaluateReferenceExpression(expr: KtReferenceExpression, scopeDepth: Int, classScope: StructCodegen? = null): LLVMSingleValue? = when {
         expr is KtArrayAccessExpression -> evaluateArrayAccessExpression(expr, scopeDepth + 1)
         isEnumClassField(expr, classScope) -> resolveEnumClassField(expr, classScope)
-        resolveContainingClass(expr) != null -> {
-            val clazz = resolveContainingClass(expr)
-            val receiver = if (clazz != null) variableManager[clazz.fullName] ?: variableManager["this"]  else variableManager["this"]
+        variableManager[expr.firstChild.text] != null -> variableManager[expr.firstChild.text]
+        (expr is KtNameReferenceExpression) && (classScope != null) -> evaluateNameReferenceExpression(expr, classScope.parentCodegen!!)
+        else -> {
+            val clazz = resolveCodegen(expr)
+            val receiver = if (clazz != null) variableManager[clazz.fullName] ?: variableManager["this"] else variableManager["this"]
             evaluateMemberMethodOrField(receiver!!, expr.firstChild.text, topLevel)
         }
-        (expr is KtNameReferenceExpression) && (classScope != null) -> evaluateNameReferenceExpression(expr, classScope.parentCodegen!!)
-        else -> variableManager[expr.firstChild.text]
     }
 
     private fun evaluateNameReferenceExpression(expr: KtNameReferenceExpression, classScope: StructCodegen): LLVMSingleValue? {
@@ -345,6 +355,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val companionObject = (classScope as ClassCodegen).companionObjectCodegen ?: throw UnexpectedException(expr.text)
         val field = companionObject.fieldsIndex[fieldName]
         val receiver = variableManager[companionObject.fullName]!!
+        if (field == null) {
+            throw UnexpectedException("")
+        }
         val result = codeBuilder.getNewVariable(field!!.type, pointer = 1)
 
         codeBuilder.loadClassField(result, receiver, field.offset)
@@ -405,11 +418,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             if (classScope.methods.containsKey(methodShortName)) {
                 val descriptor = classScope.methods[methodShortName]!!
                 val parentDescriptor = descriptor.parentCodegen!!
-                val receiver = variableManager[parentDescriptor.fullName]!!
+                val receiver = variableManager[parentDescriptor.fullName] ?: throw UnexpectedException(parentDescriptor.fullName)
                 val methodFullName = descriptor.name
-
                 val returnType = descriptor.returnType!!.type
-
                 val loadedArgs = loadArgsIfRequired(names, descriptor.args)
                 val callArgs = mutableListOf<LLVMSingleValue>(receiver)
                 callArgs.addAll(loadedArgs)
@@ -567,8 +578,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
 
         left ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
-
-
         val right = evaluateExpression(expr.right, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
         return executeBinaryExpression(operator, expr.operationReference, left, right)
     }
