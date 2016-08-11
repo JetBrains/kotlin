@@ -25,10 +25,8 @@ import org.jetbrains.kotlin.gradle.internal.Kapt2GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -98,18 +96,14 @@ class Kotlin2JvmSourceSetProcessor(
         sourceSet: SourceSet,
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
-        private val kotlinPluginVersion: String
+        private val kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
 ) : KotlinSourceSetProcessor<KotlinCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         dslExtensionName = KOTLIN_DSL_NAME,
         compileTaskNameSuffix = "kotlin",
         taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
-
-    private companion object {
-        private var cachedKotlinAnnotationProcessingDep: String? = null
-    }
-
     override val defaultKotlinDestinationDir: File
         get() = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
@@ -147,6 +141,7 @@ class Kotlin2JvmSourceSetProcessor(
                 kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
                 configureJavaTask(kotlinTask, javaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask, artifactDifferenceRegistry)
             }
         }
     }
@@ -222,10 +217,11 @@ abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val 
 open class KotlinPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
-        kotlinPluginVersion: String
+        kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
-            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
+            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, artifactDifferenceRegistry)
 
     override fun apply(project: Project) {
         project.createKaptExtension()

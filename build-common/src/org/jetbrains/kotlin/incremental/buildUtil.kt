@@ -175,8 +175,8 @@ fun<Target> OutputItemsCollectorImpl.generatedFiles(
 }
 
 data class DirtyData(
-        val dirtyLookupSymbols: Iterable<LookupSymbol>,
-        val dirtyClassesFqNames: Iterable<FqName>
+        val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
+        val dirtyClassesFqNames: Collection<FqName> = emptyList()
 )
 
 fun <Target> CompilationResult.getDirtyData(
@@ -261,7 +261,7 @@ private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultEx
 private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? =
         roots.firstOrNull { FileUtil.isAncestor(it, file, false) }
 
-private fun <Target> withSubtypes(
+fun <Target> withSubtypes(
         typeFqName: FqName,
         caches: Iterable<IncrementalCacheImpl<Target>>
 ): Set<FqName> {

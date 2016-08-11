@@ -5,6 +5,9 @@ import java.io.File
 fun File.getFileByName(name: String): File =
         findFileByName(name) ?: throw AssertionError("Could not find file with name '$name' in $this")
 
+fun File.getFilesByNames(vararg names: String): List<File> =
+        names.map { getFileByName(it) }
+
 fun File.findFileByName(name: String): File? =
         walk().filter { it.isFile && it.name.equals(name, ignoreCase = true) }.firstOrNull()
 

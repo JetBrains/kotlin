@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.gradle.tasks.incremental.BuildCacheStorage
+import java.io.File
 
 private fun comparableVersionStr(version: String) =
         "(\\d+)\\.(\\d+).*"
@@ -37,31 +40,44 @@ private fun comparableVersionStr(version: String) =
                 ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
-class KotlinGradleBuildServices private constructor(): BuildAdapter() {
+class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
     companion object {
+        private val CLASS_NAME = KotlinGradleBuildServices::class.java.simpleName
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
-        const val INIT_MESSAGE = "Initialized KotlinGradleBuildServices"
-        const val DISPOSE_MESSAGE = "Disposed KotlinGradleBuildServices"
-        private var initialized = false
+        val INIT_MESSAGE = "Initialized $CLASS_NAME"
+        val DISPOSE_MESSAGE = "Disposed $CLASS_NAME"
+        val ALREADY_INITIALIZED_MESSAGE = "$CLASS_NAME is already initialized"
+        @field:Volatile
+        private var instance: KotlinGradleBuildServices? = null
 
         @JvmStatic
         @Synchronized
-        fun init(gradle: Gradle) {
-            if (initialized) return
-
-            val listener = KotlinGradleBuildServices()
-            gradle.addBuildListener(listener)
-            initialized = true
+        fun getInstance(gradle: Gradle): KotlinGradleBuildServices {
             val log = Logging.getLogger(KotlinGradleBuildServices::class.java)
+
+            if (instance != null) {
+                log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
+                return instance!!
+            }
+
+            val services = KotlinGradleBuildServices(gradle)
+            gradle.addBuildListener(services)
+            instance = services
             log.kotlinDebug(INIT_MESSAGE)
 
-            listener.buildStarted()
+            services.buildStarted()
+            return services
         }
     }
 
     private val log = Logging.getLogger(this.javaClass)
     private val cleanup = CompilerServicesCleanup()
     private var startMemory: Long? = null
+    private val workingDir = File(gradle.rootProject.buildDir, "kotlin-build").apply { mkdirs() }
+    private val buildCacheStorage = BuildCacheStorage(workingDir)
+
+    internal val artifactDifferenceRegistry: ArtifactDifferenceRegistry
+            get() = buildCacheStorage.artifactDifferenceRegistry
 
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
@@ -93,8 +109,11 @@ class KotlinGradleBuildServices private constructor(): BuildAdapter() {
             }
         }
 
+        buildCacheStorage.flush(memoryCachesOnly = false)
+        buildCacheStorage.close()
+
         gradle.removeListener(this)
-        initialized = false
+        instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
     }
 

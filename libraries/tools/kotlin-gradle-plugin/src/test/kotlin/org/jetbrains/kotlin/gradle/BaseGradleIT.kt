@@ -95,11 +95,6 @@ abstract class BaseGradleIT {
         fun relativize(vararg files: File): List<String> =
                 files.map { it.relativeTo(projectDir).path }
 
-        fun relativizeToSubproject(subproject: String, vararg files: File): List<String> {
-            val subprojectSir = File(projectDir, subproject)
-            return files.map { it.relativeTo(subprojectSir).path }
-        }
-
         fun performModifications() {
             for (file in projectDir.walk()) {
                 if (!file.isFile) continue
