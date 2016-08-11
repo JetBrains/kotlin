@@ -1,8 +1,3 @@
-package main.kotlin
-/**
- * Created by user on 7/6/16.
- */
-
 
 object WireFormat {
     // couple of constants for magic numbers
