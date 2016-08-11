@@ -480,7 +480,7 @@ public class KtPsiUtil {
 
             PsiElement current = parentElement;
 
-            while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression)) {
+            while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression || current instanceof KtFile)) {
                 if (current.getTextRange().getEndOffset() != currentInner.getTextRange().getEndOffset()) {
                     return !(current instanceof KtParenthesizedExpression) && !(current instanceof KtValueArgumentList); // if current expression is "guarded" by parenthesis, no extra parenthesis is necessary
                 }
