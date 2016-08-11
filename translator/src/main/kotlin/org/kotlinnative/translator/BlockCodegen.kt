@@ -401,9 +401,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
 
         if (classScope != null) {
-            val methodShortName = classScope.structName + "." + function
-            if (classScope != null && classScope.methods.containsKey(methodShortName)) {
-                val descriptor = classScope.methods[methodShortName] ?: return null
+            val methodShortName = "${classScope.fullName}.$function"
+            if (classScope.methods.containsKey(methodShortName)) {
+                val descriptor = classScope.methods[methodShortName]!!
                 val parentDescriptor = descriptor.parentCodegen!!
                 val receiver = variableManager[parentDescriptor.fullName]!!
                 val methodFullName = descriptor.name
@@ -828,9 +828,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val whenExpression = expr.subjectExpression
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
         val expressionType = LLVMMapStandardType(kotlinType)
-        if (state.classes.containsKey(kotlinType.toString())) {
-            (expressionType as LLVMReferenceType).prefix = "class"
-        }
 
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)

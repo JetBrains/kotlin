@@ -26,6 +26,11 @@ class ClassCodegen(state: TranslationState,
 
     init {
         type = LLVMReferenceType(structName, "class", byRef = true)
+        if (parentCodegen != null) {
+            type.location.addAll(parentCodegen.type.location)
+            type.location.add(parentCodegen.structName)
+        }
+
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
 
@@ -34,11 +39,6 @@ class ClassCodegen(state: TranslationState,
 
         indexFields(parameterList)
         generateInnerFields(clazz.declarations)
-
-        if (parentCodegen != null) {
-            type.location.addAll(parentCodegen.type.location)
-            type.location.add(parentCodegen.structName)
-        }
 
         type.size = size
     }

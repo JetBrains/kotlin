@@ -30,12 +30,13 @@ class ObjectCodegen(state: TranslationState,
 
     override fun prepareForGenerate() {
         super.prepareForGenerate()
+
+        val classInstance = LLVMVariable("object.instance.$fullName", type, objectDeclaration.name, LLVMVariableScope(), pointer = 1)
+        codeBuilder.addGlobalInitialize(classInstance, type)
+        variableManager.addGlobalVariable(fullName, classInstance)
     }
 
     override fun generate() {
         super.generate()
-        val classInstance = LLVMVariable("object.instance.$fullName", type, objectDeclaration.name, LLVMVariableScope(), pointer = 1)
-        codeBuilder.addGlobalInitialize(classInstance, type)
-        variableManager.addGlobalVariable(fullName, classInstance)
     }
 }
