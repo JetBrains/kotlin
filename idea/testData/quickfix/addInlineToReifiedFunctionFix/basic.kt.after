@@ -1,0 +1,5 @@
+// "Add 'inline' modifier" "true"
+
+inline fun <reified T> fn() {
+
+}
