@@ -1,6 +1,7 @@
 external fun malloc_array(size: Int): Int
 external fun kotlinclib_get_byte(src: Int, index: Int): Byte
 external fun kotlinclib_set_byte(src: Int, index: Int, value: Byte)
+external fun kotlinclib_byte_size(): Int
 
 
 class ByteArray(var size: Int) {
@@ -10,7 +11,7 @@ class ByteArray(var size: Int) {
     //size: Int
 
     init {
-        this.data = malloc_array(this.size)
+        this.data = malloc_array(kotlinclib_byte_size() * this.size)
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */

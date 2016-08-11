@@ -1,5 +1,6 @@
 external fun kotlinclib_get_int(src: Int, index: Int): Int
 external fun kotlinclib_set_int(src: Int, index: Int, value: Int)
+external fun kotlinclib_int_size(): Int
 
 
 class IntArray(var size: Int) {
@@ -9,7 +10,7 @@ class IntArray(var size: Int) {
     //size: Int
 
     init {
-        this.data = malloc_array(4 * this.size)
+        this.data = malloc_array(kotlinclib_int_size() * this.size)
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
