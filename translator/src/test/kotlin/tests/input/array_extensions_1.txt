@@ -1,0 +1,2 @@
+array_extensions_1_copyOf() == 22
+array_extensions_1_copyOfRange() == 779

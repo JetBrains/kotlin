@@ -38,7 +38,7 @@ class IntArray(var size: Int) {
 
 }
 
-public fun IntArray.copyOf(newSize: Int): IntArray {
+fun IntArray.copyOf(newSize: Int): IntArray {
     val newInstance = IntArray(newSize)
     var index = 0
     val end = if (newSize > this.size) this.size else newSize
@@ -56,10 +56,10 @@ public fun IntArray.copyOf(newSize: Int): IntArray {
     return newInstance
 }
 
-public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    val newInstance = IntArray(toIndex - fromIndex + 1)
+fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    val newInstance = IntArray(toIndex - fromIndex)
     var index = fromIndex
-    while (index <= toIndex) {
+    while (index < toIndex) {
         val value = this.get(index)
         newInstance.set(index - fromIndex, value)
         index = index + 1
@@ -68,14 +68,14 @@ public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     return newInstance
 }
 
-public operator fun IntArray.plus(element: Int): IntArray {
+operator fun IntArray.plus(element: Int): IntArray {
     val index = size
     val result = this.copyOf(index + 1)
     result[index] = element
     return result
 }
 
-public operator fun IntArray.plus(elements: IntArray): IntArray {
+operator fun IntArray.plus(elements: IntArray): IntArray {
     val thisSize = size
     val arraySize = elements.size
     val resultSize = thisSize + arraySize
