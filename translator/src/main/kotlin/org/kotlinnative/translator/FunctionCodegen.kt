@@ -37,6 +37,7 @@ class FunctionCodegen(state: TranslationState,
         returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
         if (returnType!!.type is LLVMReferenceType) {
             (returnType!!.type as LLVMReferenceType).location.addAll(descriptor.returnType!!.getSubtypesPredicate().toString().split(".").dropLast(1))
+            returnType!!.pointer = 2
         }
         external = isExternal()
         name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"

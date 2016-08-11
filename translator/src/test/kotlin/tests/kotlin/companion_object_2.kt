@@ -1,5 +1,5 @@
 class companion_object_2 {
-    companion object Factory {
+    companion object {
         var fieldCompanion: Int = 5790
 
         fun create(): Int {

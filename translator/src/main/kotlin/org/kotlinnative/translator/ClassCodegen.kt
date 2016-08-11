@@ -84,19 +84,7 @@ class ClassCodegen(state: TranslationState,
         nestedClasses.forEach { x, classCodegen -> classCodegen.generate() }
 
         if (companionObjectCodegen != null) {
-            val companionObject = clazz.getCompanionObjects().first()
-            val companionObjectName = structName + "." + companionObject.name
             companionObjectCodegen!!.generate()
-
-            for ((key, value) in companionObjectCodegen!!.methods) {
-                val methodName = key.removePrefix(companionObjectName + ".")
-                companionMethods.put(structName + "." + methodName, value)
-            }
-            companionFields.addAll(companionObjectCodegen!!.fields)
-            for (field in companionObjectCodegen!!.fields) {
-                companionFieldsSource.put(field.label, companionObjectCodegen!!)
-            }
-            companionFieldsIndex.putAll(companionObjectCodegen!!.fieldsIndex)
         }
     }
 

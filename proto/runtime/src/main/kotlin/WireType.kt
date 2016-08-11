@@ -15,7 +15,7 @@ enum class WireType(val id: Int) {
     UNDEFINED(6);           // indicates error when parsing from Int
 
     companion object {
-        fun from (value: Byte): WireType {
+        fun from(value: Byte): WireType {
             return when (value) {
                 0.toByte() -> VARINT
                 1.toByte() -> FIX_64

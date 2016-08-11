@@ -23,10 +23,6 @@ abstract class StructCodegen(val state: TranslationState,
     val fields = ArrayList<LLVMVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
     val nestedClasses = HashMap<String, ClassCodegen>()
-    val companionMethods = HashMap<String, FunctionCodegen>()
-    val companionFields = ArrayList<LLVMVariable>()
-    val companionFieldsIndex = HashMap<String, LLVMClassVariable>()
-    val companionFieldsSource = HashMap<String, ObjectCodegen>()
     val enumFields = HashMap<String, LLVMVariable>()
 
     val constructorFields = ArrayList<LLVMVariable>()
