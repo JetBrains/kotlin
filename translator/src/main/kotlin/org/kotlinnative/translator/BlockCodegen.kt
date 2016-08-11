@@ -535,14 +535,18 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             return evaluateElvisOperator(expr, scopeDepth)
         }
 
-        val left = evaluateExpression(expr.firstChild, scopeDepth)
-        if (expr.firstChild is KtArrayAccessExpression) {
-            return null
-        } else {
-            left ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
+        val left = evaluateExpression(expr.left, scopeDepth)
+        if (expr.left is KtArrayAccessExpression) {
+            val callMaker = state.bindingContext.get(BindingContext.CALL, expr.left)
+            if (callMaker!!.callType == Call.CallType.ARRAY_SET_METHOD) {
+                return left as LLVMVariable?
+            }
         }
 
-        val right = evaluateExpression(expr.lastChild, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
+        left ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
+
+
+        val right = evaluateExpression(expr.right, scopeDepth) ?: throw UnsupportedOperationException("Wrong binary exception: ${expr.text}")
         return executeBinaryExpression(operator, expr.operationReference, left, right)
     }
 
