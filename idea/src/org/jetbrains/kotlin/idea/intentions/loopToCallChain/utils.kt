@@ -66,7 +66,11 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
     return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!) as KtLambdaExpression
 }
 
-fun generateLambda(expression: KtExpression, indexVariable: KtCallableDeclaration, inputVariable: KtCallableDeclaration): KtLambdaExpression {
+fun generateLambda(inputVariable: KtCallableDeclaration, indexVariable: KtCallableDeclaration?, expression: KtExpression): KtLambdaExpression {
+    if (indexVariable == null) {
+        return generateLambda(inputVariable, expression)
+    }
+
     val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable, inputVariable))
 
     // replace "index++" with "index" or "index + 1" (see IntroduceIndexMatcher)

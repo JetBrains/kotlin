@@ -34,10 +34,7 @@ class ForEachTransformation(
         get() = functionName + "{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = if (indexVariable != null)
-            generateLambda(statement, indexVariable, inputVariable)
-        else
-            generateLambda(inputVariable, statement)
+        val lambda = generateLambda(inputVariable, indexVariable, statement)
         return chainedCallGenerator.generate("$functionName $0:'{}'", lambda)
     }
 

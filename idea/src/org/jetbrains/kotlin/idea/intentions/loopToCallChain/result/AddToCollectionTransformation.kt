@@ -215,7 +215,7 @@ class FilterToTransformation private constructor(
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = if (indexVariable != null)
-            generateLambda(effectiveCondition(), indexVariable, inputVariable)
+            generateLambda(inputVariable, indexVariable, effectiveCondition())
         else
             generateLambda(inputVariable, condition)
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
@@ -289,10 +289,7 @@ class MapToTransformation private constructor(
         get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = if (indexVariable != null)
-            generateLambda(mapping, indexVariable, inputVariable)
-        else
-            generateLambda(inputVariable, mapping)
+        val lambda = generateLambda(inputVariable, indexVariable, mapping)
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
