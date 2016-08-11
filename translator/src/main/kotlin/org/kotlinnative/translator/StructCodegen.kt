@@ -1,6 +1,7 @@
 package org.kotlinnative.translator
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -201,6 +202,9 @@ abstract class StructCodegen(val state: TranslationState,
             val type = result.type as LLVMReferenceType
             type.prefix = "class"
             type.byRef = true
+
+            val location = ktType.getSubtypesPredicate().toString().split(".").dropLast(1)
+            type.location.addAll(location)
         }
 
         if (annotations.contains("Plain")) {

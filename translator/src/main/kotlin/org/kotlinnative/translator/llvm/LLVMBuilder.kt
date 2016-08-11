@@ -81,7 +81,7 @@ class LLVMBuilder(val arm: Boolean = false) {
         globalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"$value\\00\", align 1")
     }
 
-    fun addGlobalIntialize(target: LLVMVariable, classType: LLVMType) {
+    fun addGlobalInitialize(target: LLVMVariable, classType: LLVMType) {
         val code = "$target = internal global $classType zeroinitializer, align ${classType.align}"
         globalCode.appendln(code)
     }
