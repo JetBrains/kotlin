@@ -185,6 +185,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("memberFunctionRedeclaration/memberFunctionRedeclaration.test")
+    public void testMemberFunctionRedeclaration_MemberFunctionRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/memberFunctionRedeclaration/memberFunctionRedeclaration.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("memberPropertyRedeclaration/memberPropertyRedeclaration.test")
     public void testMemberPropertyRedeclaration_MemberPropertyRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/memberPropertyRedeclaration/memberPropertyRedeclaration.test");
@@ -1004,6 +1010,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("topLevelClassRedeclaration/topLevelClassRedeclaration.test")
     public void testTopLevelClassRedeclaration_TopLevelClassRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/topLevelClassRedeclaration/topLevelClassRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("topLevelFunctionRedeclaration/topLevelFunctionRedeclaration.test")
+    public void testTopLevelFunctionRedeclaration_TopLevelFunctionRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/topLevelFunctionRedeclaration/topLevelFunctionRedeclaration.test");
         doTest(fileName);
     }
 

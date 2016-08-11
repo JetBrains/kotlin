@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
@@ -81,6 +82,16 @@ internal fun checkRedeclarations(
         newName: String,
         result: MutableList<UsageInfo>
 ) {
+    fun MemberScope.findSiblingByName(): DeclarationDescriptor? {
+        val descriptorKindFilter = when (descriptor) {
+            is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
+            is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
+            is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
+            else -> return null
+        }
+        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull { it != descriptor }
+    }
+
     fun getSiblingWithNewName(): DeclarationDescriptor? {
         val containingDescriptor = descriptor.containingDeclaration
 
@@ -104,17 +115,23 @@ internal fun checkRedeclarations(
             return context[BindingContext.VARIABLE, dummyVar]?.type?.constructor?.declarationDescriptor
         }
 
-        val containingScope = when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
-            else -> return null
+        return when (containingDescriptor) {
+            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingByName()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingByName()
+            else -> {
+                val block = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()?.parent as? KtBlockExpression
+                            ?: return null
+                (block.statements.firstOrNull {
+                    if (it.name != newName) return@firstOrNull false
+                    when (descriptor) {
+                        is ClassDescriptor -> it is KtClassOrObject
+                        is PropertyDescriptor -> it is KtProperty
+                        is FunctionDescriptor -> it is KtNamedFunction
+                        else -> false
+                    }
+                } as? KtDeclaration)?.resolveToDescriptor()
+            }
         }
-        val descriptorKindFilter = when (descriptor) {
-            is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
-            is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
-            else -> return null
-        }
-        return containingScope.getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull()
     }
 
     val candidateDescriptor = getSiblingWithNewName() ?: return
