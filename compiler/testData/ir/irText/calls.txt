@@ -6,14 +6,14 @@ IrFile /calls.kt
   IrFunction public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
-        CALL foo
+        CALL .foo
           x: VAR x
           y: LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun qux(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
-        CALL foo
-          x: CALL foo
+        CALL .foo
+          x: CALL .foo
             x: VAR x
             y: VAR x
           y: VAR x
@@ -24,6 +24,6 @@ IrFile /calls.kt
   IrFunction public fun kotlin.Int.ext2(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
-        CALL foo
+        CALL .foo
           x: $RECEIVER of: <root>
           y: VAR x

@@ -39,19 +39,21 @@ class IrExpressionGenerator(
     fun generateExpression(ktExpression: KtExpression) = ktExpression.generate()
 
     private fun KtElement.generate(): IrExpression =
-            accept(this@IrExpressionGenerator, null).applySmartCast(this)
+            deparenthesize()
+                    .accept(this@IrExpressionGenerator, null)
+                    .smartCastIfNeeded(this)
 
     private fun KtExpression.type() =
             getType(this) ?: TODO("no type for expression")
 
-    private fun IrExpression.applySmartCast(ktElement: KtElement): IrExpression {
+    private fun IrExpression.smartCastIfNeeded(ktElement: KtElement): IrExpression {
         if (ktElement is KtExpression) {
             val smartCastType = get(BindingContext.SMARTCAST, ktElement)
             if (smartCastType != null) {
                 return IrTypeOperatorExpressionImpl(
                         ktElement.startOffset, ktElement.endOffset, smartCastType,
                         IrTypeOperator.SMART_AS, smartCastType
-                ).apply { childExpression = this@applySmartCast }
+                ).apply { childExpression = this@smartCastIfNeeded }
             }
         }
         return this
@@ -138,6 +140,24 @@ class IrExpressionGenerator(
         return generateCall(expression, resolvedCall, null, null)
     }
 
+    override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrExpression =
+            expression.selectorExpression!!.accept(this, data)
+
+    override fun visitSafeQualifiedExpression(expression: KtSafeQualifiedExpression, data: Nothing?): IrExpression =
+            expression.selectorExpression!!.accept(this, data)
+
+    override fun visitThisExpression(expression: KtThisExpression, data: Nothing?): IrExpression {
+        val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
+        return when (referenceTarget) {
+            is ClassDescriptor ->
+                    IrThisExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), referenceTarget)
+            is CallableDescriptor ->
+                    IrExtensionReceiverReferenceImpl(expression.startOffset, expression.endOffset, expression.type(), referenceTarget)
+            else ->
+                    error("Expected this or receiver: $referenceTarget")
+        }
+    }
+
     private fun generateCall(
             ktExpression: KtExpression,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
@@ -179,8 +199,7 @@ class IrExpressionGenerator(
                 null ->
                     null
                 else ->
-                    IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, receiver.type,
-                                      "Receiver: ${receiver.javaClass.simpleName}")
+                    TODO("Receiver: ${receiver.javaClass.simpleName}")
             }
 
     private fun generateValueArgument(valueParameter: ValueParameterDescriptor, valueArgument: ResolvedValueArgument): IrExpression? {

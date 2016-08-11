@@ -76,7 +76,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "THIS ${expression.classDescriptor.render()}"
 
     override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
-            "CALL ${expression.callee.name} ${expression.operator ?: ""}"
+            "CALL ${if (expression.isSafe) "?." else "."}${expression.callee.name} ${expression.operator ?: ""}"
 
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
             "DUMMY ${expression.description}"
