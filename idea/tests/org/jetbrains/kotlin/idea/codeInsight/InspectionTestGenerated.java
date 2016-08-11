@@ -102,12 +102,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inspections extends AbstractInspectionTest {
-        @TestMetadata("addInlineToReifiedFunction/inspectionData/inspections.test")
-        public void testAddInlineToReifiedFunction_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/addInlineToReifiedFunction/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("addVarianceModifier/inspectionData/inspections.test")
         public void testAddVarianceModifier_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/addVarianceModifier/inspectionData/inspections.test");

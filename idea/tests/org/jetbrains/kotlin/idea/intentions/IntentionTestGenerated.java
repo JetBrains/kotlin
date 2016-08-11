@@ -224,21 +224,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/addInlineToReifiedFunction")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AddInlineToReifiedFunction extends AbstractIntentionTest {
-        @TestMetadata("addInlineToReifiedFunction.kt")
-        public void testAddInlineToReifiedFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addInlineToReifiedFunction/addInlineToReifiedFunction.kt");
-            doTest(fileName);
-        }
-
-        public void testAllFilesPresentInAddInlineToReifiedFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addInlineToReifiedFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/addJvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
