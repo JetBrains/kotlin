@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
 import org.junit.AfterClass
+import org.junit.Assert
 import org.junit.Before
 import java.io.File
 import kotlin.test.*
@@ -216,10 +217,10 @@ abstract class BaseGradleIT {
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 
-    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        val expectedSet = expected.toSortedSet()
-        val actualSet = actual.toSortedSet()
-        assertTrue(actualSet == expectedSet, messagePrefix + "expected files: ${expectedSet.joinToString()}\n  != actual files: ${actualSet.joinToString()}")
+    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String): CompiledProject {
+        val expectedSet = expected.toSortedSet().joinToString("\n")
+        val actualSet = actual.toSortedSet().joinToString("\n")
+        Assert.assertEquals(messagePrefix, expectedSet, actualSet)
         return this
     }
 
