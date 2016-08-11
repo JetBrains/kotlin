@@ -23,6 +23,7 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
     type.toString() == "Long" -> LLVMVariable(name, LLVMLongType(), name, scope)
     type.toString() == "Float" -> LLVMVariable(name, LLVMFloatType(), name, scope)
     type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope)
+    type.toString() == "String" -> LLVMVariable(name, LLVMStringType(0), name, scope)
     type.nameIfStandardType.toString() == "Nothing" -> LLVMVariable(name, LLVMNullType(), name, scope)
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
     type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1)), name, scope, pointer = 1)
