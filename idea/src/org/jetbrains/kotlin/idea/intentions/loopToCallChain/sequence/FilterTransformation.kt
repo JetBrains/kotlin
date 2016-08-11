@@ -48,7 +48,7 @@ class FilterTransformation(
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = if (indexVariable != null)
-            generateLambda(effectiveCondition(), indexVariable, inputVariable)
+            generateLambda(inputVariable, indexVariable, effectiveCondition())
         else
             generateLambda(inputVariable, condition)
         return chainedCallGenerator.generate("$0$1:'{}'", functionName, lambda)
