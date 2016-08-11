@@ -49,6 +49,7 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 
 interface ModuleParameters {
     val defaultImports: List<ImportPath>
+    val excludedImports: List<FqName> get() = emptyList()
     val platformToKotlinClassMap: PlatformToKotlinClassMap
 
     object Empty: ModuleParameters {
@@ -57,8 +58,9 @@ interface ModuleParameters {
     }
 }
 
-fun ModuleParameters(defaultImports: List<ImportPath>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
+fun ModuleParameters(defaultImports: List<ImportPath>, excludedImports: List<FqName>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
         object : ModuleParameters {
             override val defaultImports: List<ImportPath> = defaultImports
+            override val excludedImports: List<FqName> get() = excludedImports
             override val platformToKotlinClassMap: PlatformToKotlinClassMap = platformToKotlinClassMap
         }

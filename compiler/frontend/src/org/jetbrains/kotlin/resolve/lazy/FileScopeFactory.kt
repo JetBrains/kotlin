@@ -58,26 +58,19 @@ class FileScopeFactory(
         val debugName = "LazyFileScope for file " + file.name
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
 
+        infix fun <T> Collection<T>.concat(other: Collection<T>?) =
+                if (other == null || other.isEmpty()) this else this + other
+
         val imports = file.importDirectives
 
         val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
-
-        val packageView = moduleDescriptor.getPackage(file.packageFqName)
-        val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
-                              ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
-
-        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
-                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames, trace, packageFragment)
-
-        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
-        val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
 
         val extraImports = file.originalFile.virtualFile?.let {  vFile ->
             val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
             ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath(it) }.orEmpty())
         }
 
-        val allImplicitImports = defaultImports + extraImports.orEmpty()
+        val allImplicitImports = defaultImports concat extraImports
 
         val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
             allImplicitImports
@@ -85,8 +78,19 @@ class FileScopeFactory(
         else {
             allImplicitImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
         }
+
+        val packageView = moduleDescriptor.getPackage(file.packageFqName)
+        val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
+                              ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
+
+        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null)
+                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames concat excludedImports, trace, packageFragment)
+
+        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
+        val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace) // TODO: should we count excludedImports here also?
+
         val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
-        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace)
+        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace, moduleDescriptor.excludedImports)
 
         val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 

@@ -75,14 +75,14 @@ class LazyImportResolver(
         val qualifiedExpressionResolver: QualifiedExpressionResolver,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
-        aliasImportNames: Collection<FqName>,
+        excludedImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
         private val packageFragment: PackageFragmentDescriptor
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
         directive: KtImportDirective ->
             val directiveImportScope = qualifiedExpressionResolver.processImportReference(
-                    directive, moduleDescriptor, traceForImportResolve, aliasImportNames, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
+                    directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
 
             if (!directive.isAllUnder) {
                 PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(

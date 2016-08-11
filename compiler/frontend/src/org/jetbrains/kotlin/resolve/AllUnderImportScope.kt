@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 class AllUnderImportScope(
         descriptor: DeclarationDescriptor,
-        aliasImportNames: Collection<FqName>
+        excludedImportNames: Collection<FqName>
 ) : BaseImportingScope(null) {
 
     private val scopes: List<ResolutionScope> = if (descriptor is ClassDescriptor) {
@@ -40,12 +40,13 @@ class AllUnderImportScope(
         listOf((descriptor as PackageViewDescriptor).memberScope)
     }
 
-    private val excludedNames = if (aliasImportNames.isEmpty()) { // optimization
-        emptyList<Name>()
+    private val excludedNames: Set<Name> = if (excludedImportNames.isEmpty()) { // optimization
+        emptySet<Name>()
     }
     else {
         val fqName = DescriptorUtils.getFqNameSafe(descriptor)
-        aliasImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }
+        // toSet() is used here instead mapNotNullTo(hashSetOf()) because it results in not keeping empty sets as separate instances
+        excludedImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }.toSet()
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {

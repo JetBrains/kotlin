@@ -158,7 +158,7 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
             importDirective: KtImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            aliasImportNames: Collection<FqName>,
+            excludedImportNames: Collection<FqName>,
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): ImportingScope? { // null if some error happened
         val importedReference = importDirective.importedReference ?: return null
@@ -182,7 +182,7 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
                 return null
             }
 
-            return AllUnderImportScope(packageOrClassDescriptor, aliasImportNames)
+            return AllUnderImportScope(packageOrClassDescriptor, excludedImportNames)
         }
         else {
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)

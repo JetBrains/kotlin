@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
+import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.frontend.di.InjectionKt;
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
@@ -239,10 +240,12 @@ public class SourceNavigationHelper {
     ) {
 
         TargetPlatform platform = TargetPlatform.Default.INSTANCE;
+        ModuleParameters defaultJvmModuleParameters = JvmPlatform.INSTANCE.getDefaultModuleParameters();
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 project, Name.special("<library module>"),
                 ModuleDescriptorKt.ModuleParameters(
-                        JvmPlatform.INSTANCE.getDefaultModuleParameters().getDefaultImports(),
+                        defaultJvmModuleParameters.getDefaultImports(),
+                        defaultJvmModuleParameters.getExcludedImports(),
                         PlatformToKotlinClassMap.EMPTY
                 ),
                 DefaultBuiltIns.getInstance()
