@@ -18,6 +18,30 @@ class LLVMFloatType() : LLVMType() {
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMFloatType(), "fadd float $firstOp, $secondOp")
 
+    override fun operatorInc(firstOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMDoubleType(), "fadd float $firstOp, 1.0")
+
+    override fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMDoubleType(), "fsub float $firstOp, 1.0")
+
+    override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp olt float $firstOp, $secondOp")
+
+    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp ogt float $firstOp, $secondOp")
+
+    override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp ole float i32 $firstOp, $secondOp")
+
+    override fun operatorGeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp oge float i32 $firstOp, $secondOp")
+
+    override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp oeq float $firstOp, $secondOp")
+
+    override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMBooleanType(), "fcmp one float $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMFloatType
     }

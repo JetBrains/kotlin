@@ -1,32 +1,32 @@
-external fun kotlinclib_get_int(src: Int, index: Int): Int
-external fun kotlinclib_set_int(src: Int, index: Int, value: Int)
-external fun kotlinclib_int_size(): Int
+external fun kotlinclib_get_long(src: Int, index: Int): Long
+external fun kotlinclib_set_long(src: Int, index: Int, value: Long)
+external fun kotlinclib_long_size(): Int
 
 
-class IntArray(var size: Int) {
+class LongArray(var size: Int) {
     val data: Int
 
     /** Returns the number of elements in the array. */
     //size: Int
 
     init {
-        this.data = malloc_array(kotlinclib_int_size() * this.size)
+        this.data = malloc_array(kotlinclib_long_size() * this.size)
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
-    operator fun get(index: Int): Int {
-        return kotlinclib_get_int(this.data, index)
+    operator fun get(index: Int): Long {
+        return kotlinclib_get_long(this.data, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
-    operator fun set(index: Int, value: Int) {
-        kotlinclib_set_int(this.data, index, value)
+    operator fun set(index: Int, value: Long) {
+        kotlinclib_set_long(this.data, index, value)
     }
 
 
-    fun clone(): IntArray {
-        val newInstance = IntArray(this.size)
+    fun clone(): LongArray {
+        val newInstance = LongArray(this.size)
         var index = 0
         while (index < this.size) {
             val value = this.get(index)
@@ -36,11 +36,10 @@ class IntArray(var size: Int) {
 
         return newInstance
     }
-
 }
 
-fun IntArray.copyOf(newSize: Int): IntArray {
-    val newInstance = IntArray(newSize)
+fun LongArray.copyOf(newSize: Int): LongArray {
+    val newInstance = LongArray(newSize)
     var index = 0
     val end = if (newSize > this.size) this.size else newSize
     while (index < end) {
@@ -57,8 +56,8 @@ fun IntArray.copyOf(newSize: Int): IntArray {
     return newInstance
 }
 
-fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    val newInstance = IntArray(toIndex - fromIndex)
+fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    val newInstance = LongArray(toIndex - fromIndex)
     var index = fromIndex
     while (index < toIndex) {
         val value = this.get(index)
@@ -69,14 +68,14 @@ fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     return newInstance
 }
 
-operator fun IntArray.plus(element: Int): IntArray {
+operator fun LongArray.plus(element: Long): LongArray {
     val index = size
     val result = this.copyOf(index + 1)
     result[index] = element
     return result
 }
 
-operator fun IntArray.plus(elements: IntArray): IntArray {
+operator fun LongArray.plus(elements: LongArray): LongArray {
     val thisSize = size
     val arraySize = elements.size
     val resultSize = thisSize + arraySize

@@ -1,5 +1,6 @@
 external fun kotlinclib_get_short(src: Int, index: Int): Short
 external fun kotlinclib_set_short(src: Int, index: Int, value: Short)
+external fun kotlinclib_short_size(): Int
 
 
 class ShortArray(var size: Int) {
@@ -9,7 +10,7 @@ class ShortArray(var size: Int) {
     //size: Int
 
     init {
-        this.data = malloc_array(this.size)
+        this.data = malloc_array(kotlinclib_short_size() * this.size)
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */

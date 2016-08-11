@@ -1,3 +1,5 @@
+external fun kotlinclib_boolean_size(): Int
+
 class BooleanArray(var size: Int) {
     val data: Int
 
@@ -5,7 +7,7 @@ class BooleanArray(var size: Int) {
     //size: Int
 
     init {
-        this.data = malloc_array(this.size)
+        this.data = malloc_array(kotlinclib_boolean_size() * this.size)
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -19,8 +21,7 @@ class BooleanArray(var size: Int) {
     operator fun set(index: Int, value: Boolean) {
         if (value == true) {
             kotlinclib_set_byte(this.data, index, 1.toByte())
-        }
-        else{
+        } else {
             kotlinclib_set_byte(this.data, index, 0.toByte())
         }
     }

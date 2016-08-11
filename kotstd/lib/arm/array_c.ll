@@ -2,18 +2,17 @@
 target datalayout = "e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64"
 target triple = "thumbv7m-none--eabi"
 
-declare i8* @malloc_static(i32) #0
-
 ; Function Attrs: nounwind
 define weak i32 @malloc_array(i32 %x) #0 {
   %1 = alloca i32, align 4
   store i32 %x, i32* %1, align 4
   %2 = load i32* %1, align 4
-  %3 = call i8* @malloc_static(i32 %2)
+  %3 = call i8* @malloc(i32 %2) #2
   %4 = ptrtoint i8* %3 to i32
   ret i32 %4
 }
 
+declare i8* @malloc(i32) #1
 
 ; Function Attrs: nounwind
 define weak zeroext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {
@@ -117,4 +116,47 @@ define weak void @kotlinclib_set_short(i32 %data, i32 %index, i16 signext %value
   ret void
 }
 
+; Function Attrs: nounwind
+define weak i32 @kotlinclib_get_long(i32 %data, i32 %index) #0 {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  store i32 %data, i32* %1, align 4
+  store i32 %index, i32* %2, align 4
+  %3 = load i32* %1, align 4
+  %4 = inttoptr i32 %3 to i32*
+  %5 = load i32* %2, align 4
+  %6 = getelementptr inbounds i32* %4, i32 %5
+  %7 = load i32* %6, align 4
+  ret i32 %7
+}
+
+; Function Attrs: nounwind
+define weak void @kotlinclib_set_long(i32 %data, i32 %index, i32 %value) #0 {
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %3 = alloca i32, align 4
+  %ptr = alloca i32*, align 4
+  store i32 %data, i32* %1, align 4
+  store i32 %index, i32* %2, align 4
+  store i32 %value, i32* %3, align 4
+  %4 = load i32* %1, align 4
+  %5 = inttoptr i32 %4 to i32*
+  store i32* %5, i32** %ptr, align 4
+  %6 = load i32* %3, align 4
+  %7 = load i32** %ptr, align 4
+  %8 = load i32* %2, align 4
+  %9 = getelementptr inbounds i32* %7, i32 %8
+  store i32 %6, i32* %9, align 4
+  ret void
+}
+
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #2 = { nobuiltin }
+
+!llvm.module.flags = !{!0, !1}
+!llvm.ident = !{!2}
+
+!0 = !{i32 1, !"wchar_size", i32 4}
+!1 = !{i32 1, !"min_enum_size", i32 4}
+!2 = !{!"Ubuntu clang version 3.6.2-3ubuntu2 (tags/RELEASE_362/final) (based on LLVM 3.6.2)"}
