@@ -30,5 +30,7 @@ public typealias NullPointerException = java.lang.NullPointerException
 public typealias ClassCastException = java.lang.ClassCastException
 public typealias AssertionError = java.lang.AssertionError
 
-// kotlin or kotlin.collections?
 public typealias NoSuchElementException = java.util.NoSuchElementException
+
+// NOTE: If you're adding type aliases to types from java.lang, do not forget to exclude aliased types from
+// imported by default java.lang package. See JvmPlatform.defaultModuleParameters.excludedImports property.

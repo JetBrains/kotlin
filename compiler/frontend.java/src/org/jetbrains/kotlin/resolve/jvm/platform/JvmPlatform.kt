@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -34,6 +35,8 @@ object JvmPlatform : TargetPlatform("JVM") {
             get() = JavaToKotlinClassMap.INSTANCE
         override val defaultImports: List<ImportPath>
             get() = DEFAULT_IMPORTS_FOR_JVM
+        override val excludedImports: List<FqName>
+            get() = EXCLUDED_IMPORTS_FOR_JVM
     }
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
@@ -62,3 +65,17 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
         addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
     }
 }
+
+private val EXCLUDED_IMPORTS_FOR_JVM: List<FqName> = listOf(
+        "Error",
+        "Exception",
+        "RuntimeException",
+        "IllegalArgumentException",
+        "IllegalStateException",
+        "IndexOutOfBoundsException",
+        "UnsupportedOperationException",
+        "NumberFormatException",
+        "NullPointerException",
+        "ClassCastException",
+        "AssertionError"
+).map { FqName("java.lang.$it") }
