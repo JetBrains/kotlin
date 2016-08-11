@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.apache.commons.io.FilenameUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
@@ -52,6 +54,7 @@ const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val CACHES_DIR_NAME = "caches"
 const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
+const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
@@ -154,6 +157,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     private val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name) }
     private val cacheDirectory: File by lazy { File(taskBuildDirectory, CACHES_DIR_NAME) }
     private val dirtySourcesSinceLastTimeFile: File by lazy { File(taskBuildDirectory, DIRTY_SOURCES_FILE_NAME) }
+    private val lastBuildInfoFile: File by lazy { File(taskBuildDirectory, LAST_BUILD_INFO_FILE_NAME) }
     private val cacheVersions by lazy {
         listOf(normalCacheVersion(taskBuildDirectory),
                experimentalCacheVersion(taskBuildDirectory),
@@ -172,6 +176,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     val kaptOptions = KaptOptions()
     val pluginOptions = CompilerPluginOptions()
+    var artifactDifferenceRegistry: ArtifactDifferenceRegistry? = null
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
@@ -222,15 +227,11 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
+        val rootProjectDir = project.rootProject.projectDir
 
-        fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
-
-        if (incremental) {
-            // TODO: consider other ways to pass incremental flag to compiler/builder
-            System.setProperty("kotlin.incremental.compilation", "true")
-            // TODO: experimental should be removed as soon as it becomes standard
-            System.setProperty("kotlin.incremental.compilation.experimental", "true")
-        }
+        fun projectRelativePath(f: File) = f.toRelativeString(rootProjectDir)
+        fun filesToString(files: Iterable<File>) =
+                "[" + files.map(::projectRelativePath).sorted().joinToString(separator = ", \n") + "]"
 
         val targetType = "java-production"
         val moduleName = args.moduleName
@@ -242,6 +243,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         var currentRemoved = removed.filter { it.isKotlinFile() }
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
 
         fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
             val cacheDir = File(cacheDirectory, "increCache.${target.name}")
@@ -251,68 +254,117 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
         fun getIncrementalCache(it: TargetId) = caches.getOrPut(it, { getOrCreateIncrementalCache(it) })
 
-        fun PsiClass.findLookupSymbols(): Iterable<LookupSymbol> {
+        fun PsiClass.addLookupSymbols(symbols: MutableSet<LookupSymbol>) {
             val fqn = qualifiedName.orEmpty()
-            return listOf(LookupSymbol(name.orEmpty(), if (fqn == name) "" else fqn.removeSuffix("." + name!!))) +
-                    methods.map { LookupSymbol(it.name, fqn) } +
-                    fields.map { LookupSymbol(it.name.orEmpty(), fqn) } +
-                    innerClasses.flatMap { it.findLookupSymbols() }
+
+            symbols.add(LookupSymbol(name.orEmpty(), if (fqn == name) "" else fqn.removeSuffix("." + name!!)))
+            methods.forEach { symbols.add(LookupSymbol(it.name, fqn)) }
+            fields.forEach { symbols.add(LookupSymbol(it.name.orEmpty(), fqn)) }
+            innerClasses.forEach { it.addLookupSymbols(symbols) }
         }
 
-        fun dirtyLookupSymbolsFromModifiedJavaFiles(): List<LookupSymbol> {
+        val dirtyJavaLookupSymbols: Lazy<Collection<LookupSymbol>> = lazy {
+            val symbols = HashSet<LookupSymbol>()
             val modifiedJavaFiles = modified.filter { it.isJavaFile() }
-            return (if (modifiedJavaFiles.any()) {
-                val rootDisposable = Disposer.newDisposable()
-                val configuration = CompilerConfiguration()
-                val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-                val project = environment.project
-                val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-                modifiedJavaFiles.flatMap {
-                    val javaFile = psiFileFactory.createFileFromText(it.nameWithoutExtension, Language.findLanguageByID("JAVA")!!, it.readText())
-                    if (javaFile is PsiJavaFile)
-                        javaFile.classes.flatMap { it.findLookupSymbols() }
-                    else listOf()
+            if (modifiedJavaFiles.isEmpty()) return@lazy symbols
+
+            val rootDisposable = Disposer.newDisposable()
+            val configuration = CompilerConfiguration()
+            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val project = environment.project
+            val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+
+            modifiedJavaFiles.forEach {
+                val javaFile = psiFileFactory.createFileFromText(it.nameWithoutExtension, Language.findLanguageByID("JAVA")!!, it.readText())
+                if (javaFile is PsiJavaFile) {
+                    javaFile.classes.forEach { it.addLookupSymbols(symbols) }
                 }
-            } else listOf())
+            }
+            symbols
         }
 
-        fun dirtyKotlinSourcesFromGradle(): MutableSet<File> {
-            // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
-            val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
-            val lookupSymbols = dirtyLookupSymbolsFromModifiedJavaFiles()
-                    // TODO: add dirty lookups from modified kotlin files to reduce number of steps needed
-
-            if (lookupSymbols.any()) {
-                val kotlinModifiedFilesSet = modifiedKotlinFiles.toHashSet()
-                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, ::projectRelativePath, excludes = kotlinModifiedFilesSet)
-                modifiedKotlinFiles.addAll(dirtyFilesFromLookups)
+        fun getClasspathChanges(modifiedClasspath: List<File>): DirtyData? {
+            if (modifiedClasspath.isEmpty()) {
+                logger.kotlinDebug { "No classpath changes" }
+                return DirtyData()
+            }
+            if (artifactDifferenceRegistry == null) {
+                logger.kotlinDebug { "No artifact history provider" }
+                return null
             }
 
-            return modifiedKotlinFiles
+            val lastBuildTS = lastBuildInfo?.startTS
+            if (lastBuildTS == null) {
+                logger.kotlinDebug { "Could not determine last build timestamp" }
+                return null
+            }
+
+            val symbols = HashSet<LookupSymbol>()
+            val fqNames = HashSet<FqName>()
+            for (file in modifiedClasspath) {
+                val diffs = artifactDifferenceRegistry!![file]
+                if (diffs == null) {
+                    logger.kotlinDebug { "Could not get changes for file: $file" }
+                    return null
+                }
+
+                val (beforeLastBuild, afterLastBuild) = diffs.partition { it.buildTS < lastBuildTS }
+                if (beforeLastBuild.isEmpty()) {
+                    logger.kotlinDebug { "No known build preceding timestamp $lastBuildTS for file $file" }
+                    return null
+                }
+
+                afterLastBuild.forEach {
+                    symbols.addAll(it.dirtyData.dirtyLookupSymbols)
+                    fqNames.addAll(it.dirtyData.dirtyClassesFqNames)
+                }
+            }
+
+            return DirtyData(symbols, fqNames)
         }
 
-        fun isClassPathChanged(): Boolean =
-                modified.any { classpath.contains(it) }
-
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
-            if (!incremental
-                || !isIncrementalRequested
-                // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
-                || isClassPathChanged()
-                // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
-                || removed.any { it.isJavaFile() || it.hasClassFileExtension() }
-                || modified.any { it.hasClassFileExtension() }
-            ) {
-                logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
+            fun rebuild(reason: String): Pair<Set<File>, Boolean> {
+                logger.kotlinInfo("Non-incremental compilation will be performed: $reason")
                 targets.forEach { getIncrementalCache(it).clean() }
                 lookupStorage.clean()
                 dirtySourcesSinceLastTimeFile.delete()
                 return Pair(sources.toSet(), false)
             }
 
-            val dirtyFiles = dirtyKotlinSourcesFromGradle()
+            if (!incremental) return rebuild("incremental compilation is not enabled")
+            if (!isIncrementalRequested) return rebuild("inputs' changes are unknown (first or clean build)")
+
+            // TODO: store java files in the cache and extract removed symbols from it here
+            val illegalRemovedFiles = removed.filter { it.isJavaFile() || it.hasClassFileExtension() }
+            if (illegalRemovedFiles.any()) return rebuild("unsupported removed files: ${filesToString(illegalRemovedFiles)}")
+
+            val illegalModifiedFiles = modified.filter(File::hasClassFileExtension)
+            if (illegalModifiedFiles.any()) return rebuild("unsupported modified files: ${filesToString(illegalModifiedFiles)}")
+
+            val modifiedClasspathEntries = modified.filter { it in classpath }
+            val classpathChanges = getClasspathChanges(modifiedClasspathEntries)
+                    ?: return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
+
+            val dirtyFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
+            val lookupSymbols = HashSet<LookupSymbol>()
+            lookupSymbols.addAll(dirtyJavaLookupSymbols.value)
+            lookupSymbols.addAll(classpathChanges.dirtyLookupSymbols)
+
+            if (lookupSymbols.any()) {
+                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, ::projectRelativePath)
+                dirtyFiles.addAll(dirtyFilesFromLookups)
+            }
+
+            val allCaches = targets.map(::getIncrementalCache)
+            val dirtyClassesFqNames = classpathChanges.dirtyClassesFqNames.flatMap { withSubtypes(it, allCaches) }
+            if (dirtyClassesFqNames.any()) {
+                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(allCaches, dirtyClassesFqNames, logAction, ::projectRelativePath)
+                dirtyFiles.addAll(dirtyFilesFromFqNames)
+            }
+
             if (dirtySourcesSinceLastTimeFile.exists()) {
-                val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter { it.exists() }
+                val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter(File::exists)
                 if (files.isNotEmpty()) {
                     logger.kotlinDebug { "Source files added since last compilation: $files" }
                 }
@@ -324,9 +376,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         fun cleanupOnError() {
-            val filesToDelete = allGeneratedFiles.map { it.outputFile }
-            logger.kotlinInfo("deleting output on error: ${filesToDelete.joinToString()}")
-            filesToDelete.forEach { it.delete() }
+            logger.kotlinInfo("deleting $destinationDir on error")
+            destinationDir.deleteRecursively()
         }
 
         fun processCompilerExitCode(exitCode: ExitCode) {
@@ -369,6 +420,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             kaptAnnotationsFileUpdater = null
         }
 
+        val artifactFile = project.tryGetSingleArtifact()
+        logger.kotlinDebug { "Artifact to register difference for task $path: $artifactFile" }
+        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
+        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+        val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
+        val buildDirtyFqNames = HashSet<FqName>()
+
         var exitCode = ExitCode.OK
         while (sourcesToCompile.any() || currentRemoved.any()) {
             val removedAndModified = (sourcesToCompile + currentRemoved).toList()
@@ -409,15 +467,35 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
 
-            if (!isIncrementalDecided) break
+            if (!isIncrementalDecided) {
+                artifactFile?.let { artifactDifferenceRegistry?.remove(it) }
+                break
+            }
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
             sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile) +
                                mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath, excludes = sourcesToCompile)
 
+            buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
+            buildDirtyFqNames.addAll(dirtyClassFqNames)
+
             if (currentRemoved.any()) {
                 anyClassesCompiled = true
                 currentRemoved = listOf()
+            }
+        }
+
+        if (exitCode == ExitCode.OK) {
+            buildDirtyLookupSymbols.addAll(dirtyJavaLookupSymbols.value)
+        }
+        if (artifactFile != null && artifactDifferenceRegistry != null) {
+            val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
+            val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
+            artifactDifferenceRegistry!!.add(artifactFile, artifactDifference)
+            logger.kotlinDebug {
+                val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
+                "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
+                        "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
             }
         }
 
@@ -707,6 +785,22 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
             }
         }
     }
+}
+
+fun Project.tryGetSingleArtifact(): File? {
+    val log = logger
+    log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+    val archives = configurations.findByName("archives")
+    if (archives == null) {
+        log.kotlinDebug { "Could not find 'archives' configuration for project $path" }
+        return null
+    }
+
+    val artifacts = archives.artifacts.files.files
+    log.kotlinDebug { "All artifacts for project $path: [${artifacts.joinToString()}]" }
+
+    return if (artifacts.size == 1) artifacts.first() else null
 }
 
 internal fun Logger.kotlinInfo(message: String) {
