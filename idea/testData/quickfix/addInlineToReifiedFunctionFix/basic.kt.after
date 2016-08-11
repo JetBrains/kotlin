@@ -1,0 +1,5 @@
+// "Add Inline to reified function" "true"
+
+inline fun <reified T> fn() {
+
+}
