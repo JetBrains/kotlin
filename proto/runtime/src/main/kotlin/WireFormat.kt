@@ -1,3 +1,4 @@
+package main.kotlin
 /**
  * Created by user on 7/6/16.
  */
@@ -58,16 +59,32 @@ object WireFormat {
         return getTagSize(fieldNumber, WireType.VARINT) + getVarint32Size(value)
     }
 
+    fun getInt32SizeNoTag(value: Int): Int {
+        return getVarint32Size(value)
+    }
+
     fun getUInt32Size(fieldNumber: Int, value: Int): Int {
         return getInt32Size(fieldNumber, value)
+    }
+
+    fun getUIn32SizeNoTag(value: Int): Int {
+        return getVarint32Size(value)
     }
 
     fun getInt64Size(fieldNumber: Int, value: Long): Int {
         return getTagSize(fieldNumber, WireType.VARINT) + getVarint64Size(value)
     }
 
+    fun getInt64SizeNoTag(value: Long): Int {
+        return getVarint64Size(value)
+    }
+
     fun getUInt64Size(fieldNumber: Int, value: Long): Int {
         return getInt64Size(fieldNumber, value)
+    }
+
+    fun getUInt64SizeNoTag(value: Long): Int {
+        return getVarint64Size(value)
     }
 
     fun getBoolSize(fieldNumber: Int, value: Boolean): Int {
@@ -75,37 +92,69 @@ object WireFormat {
         return getInt32Size(fieldNumber, intValue)
     }
 
+    fun getBoolSizeNoTag(value: Boolean): Int {
+        val intValue = if (value) 1 else 0
+        return getInt32SizeNoTag(intValue)
+    }
+
     fun getEnumSize(fieldNumber: Int, value: Int): Int {
         return getInt32Size(fieldNumber, value)
+    }
+
+    fun getEnumSizeNoTag(value: Int): Int {
+        return getInt32SizeNoTag(value)
     }
 
     fun getSInt32Size(fieldNumber: Int, value: Int): Int {
         return getTagSize(fieldNumber, WireType.VARINT) + getZigZag32Size(value)
     }
 
+    fun getSInt32SizeNoTag(value: Int): Int {
+        return getZigZag32Size(value)
+    }
+
     fun getSInt64Size(fieldNumber: Int, value: Long): Int {
         return getTagSize(fieldNumber, WireType.VARINT) + getZigZag64Size(value)
     }
 
-    fun getFixed32Size(fieldNumber: Int, value: Long): Int {
+    fun getSInt64SizeNoTag(value: Long): Int {
+        return getZigZag64Size(value)
+    }
+
+    fun getFixed32Size(fieldNumber: Int, value: Int): Int {
         return getTagSize(fieldNumber, WireType.FIX_32) + FIXED_32_BYTE_SIZE
     }
+
+    fun getFixed32SizeNoTag(value: Int): Int = FIXED_32_BYTE_SIZE
 
     fun getFixed64Size(fieldNumber: Int, value: Long): Int {
         return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
     }
 
+    fun getFixed64SizeNoTag(value: Long): Int = FIXED_64_BYTE_SIZE
+
     fun getDoubleSize(fieldNumber: Int, value: Double): Int {
+        return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
+    }
+
+    fun getDoubleSizeNoTag(value: Double): Int = FIXED_64_BYTE_SIZE
+
+    fun getFloatSize(fieldNumber: Int, value: Float): Int {
         return getTagSize(fieldNumber, WireType.FIX_32) + FIXED_32_BYTE_SIZE
     }
 
-    fun getFloatSize(fieldNumber: Int, value: Float): Int {
-        return getTagSize(fieldNumber, WireType.FIX_64) + FIXED_64_BYTE_SIZE
+    fun getFloatSizeNoTag(value: Float): Int {
+        return FIXED_32_BYTE_SIZE
     }
 
     fun getBytesSize(fieldNumber: Int, value: ByteArray): Int {
         if (value.size == 0)
             return 0
+        var size = 0
         return value.size + getTagSize(fieldNumber, WireType.LENGTH_DELIMITED) + getVarint32Size(value.size)
+    }
+
+    fun getBytesSizeNoTag(value: ByteArray): Int {
+        return value.size + getVarint32Size(value.size)
     }
 }

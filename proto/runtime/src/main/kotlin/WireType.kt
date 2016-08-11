@@ -1,3 +1,4 @@
+package main.kotlin
 /**
  * Created by Dmitry Savvinov on 7/6/16.
  * Enum for possible WireTypes.

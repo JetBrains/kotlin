@@ -44,6 +44,10 @@ bool FileGenerator::Generate(const FileDescriptor *file, const string &parameter
         classes.push_back(cgen);
     }
 
+    // generate package directive
+    // XXX: stub here, resolve options properly!
+    printer.Print("package main.kotlin\n");
+
     // Generate code and clean up
     generateCode(&printer, classes);
 

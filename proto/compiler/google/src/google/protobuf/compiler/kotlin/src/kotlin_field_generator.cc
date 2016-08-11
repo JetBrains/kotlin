@@ -447,7 +447,9 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
     // Finally, get size of all primitive types trivially via call to WireFormat in runtime
     else {
         vars["kotlinSuffix"] = getKotlinFunctionSuffix();
-        printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size($fieldNumber$, $fieldName$)\n");
+        vars["noTag"] = noTag ? "NoTag" : "";
+        vars["fn"] = noTag ? "" : std::to_string(getFieldNumber()) + ", ";
+        printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size$noTag$($fn$$fieldName$)\n");
     }
 
     if (isField) {
