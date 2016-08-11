@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -26,27 +27,39 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class LoopToCallChainInspection : IntentionBasedInspection<KtForExpression>(
-        LoopToCallChainIntention(),
-        problemText = "Loop can be replaced with stdlib operations")
+        listOf(IntentionData(LoopToCallChainIntention()), IntentionData(LoopToLazyCallChainIntention())),
+        problemText = "Loop can be replaced with stdlib operations",
+        elementType = KtForExpression::class.java)
 
-class LoopToCallChainIntention : SelfTargetingRangeIntention<KtForExpression>(
+class LoopToCallChainIntention : AbstractLoopToCallChainIntention(lazy = false, text = "Replace with stdlib operations")
+
+class LoopToLazyCallChainIntention : AbstractLoopToCallChainIntention(lazy = true, text = "Replace with stdlib operations with use of 'asSequence()'"), LowPriorityAction
+
+abstract class AbstractLoopToCallChainIntention(private val lazy: Boolean, text: String) : SelfTargetingRangeIntention<KtForExpression>(
         KtForExpression::class.java,
-        "Replace with stdlib operations"
+        text
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
-        val match = match(element)
+        val match = match(element, lazy)
         text = if (match != null) "Replace with '${match.transformationMatch.buildPresentation()}'" else defaultText
         return if (match != null) element.forKeyword.textRange else null
     }
 
     private fun TransformationMatch.Result.buildPresentation(): String {
-        var transformations = sequenceTransformations + resultTransformation
+        return buildPresentation(sequenceTransformations + resultTransformation, null)
+    }
+
+    private fun buildPresentation(transformations: List<Transformation>, prevPresentation: String?): String {
         val MAX = 3
-        var result: String? = null
         if (transformations.size > MAX) {
-            transformations = transformations.drop(transformations.size - MAX)
-            result = ".."
+            if (transformations[0] is AsSequenceTransformation) {
+                return buildPresentation(transformations.drop(1), transformations[0].presentation)
+            }
+
+            return buildPresentation(transformations.drop(transformations.size - MAX), prevPresentation?.let { it + ".." } ?: "..")
         }
+
+        var result: String? = prevPresentation
         for (transformation in transformations) {
             result = transformation.buildPresentation(result)
         }
@@ -54,7 +67,7 @@ class LoopToCallChainIntention : SelfTargetingRangeIntention<KtForExpression>(
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val match = match(element)!!
+        val match = match(element, lazy)!!
         val result = convertLoop(element, match)
 
         val offset = when (result) {

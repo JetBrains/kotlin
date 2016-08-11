@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'indexOfLast{}'"
+// IS_APPLICABLE_2: false
 fun foo(list: List<String>) {
     var result = -1
     <caret>for ((index, s) in list.withIndex()) {

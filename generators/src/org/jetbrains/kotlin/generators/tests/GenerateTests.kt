@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
+import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
 import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
@@ -506,6 +507,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIntentionTest>() {
             model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractIntentionTest2>() {
+            model("intentions/loopToCallChain", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractInspectionTest>() {

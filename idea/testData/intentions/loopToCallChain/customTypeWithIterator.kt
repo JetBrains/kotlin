@@ -1,5 +1,6 @@
-// IS_APPLICABLE: false
 // WITH_RUNTIME
+// IS_APPLICABLE: false
+// IS_APPLICABLE_2: false
 class X {
     operator fun iterator(): Iterator<String>{
         return emptyList<String>().iterator()

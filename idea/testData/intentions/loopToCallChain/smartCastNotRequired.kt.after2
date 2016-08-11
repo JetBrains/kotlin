@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '...filter{}.map{}.firstOrNull()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence()...filter{}.map{}.firstOrNull()'"
+fun foo(list: List<String>, o: Any): Int? {
+    <caret>return list
+            .asSequence()
+            .map { it.length + (o as Int) }
+            .filter { it > 0 }
+            .map { it * o.hashCode() }
+            .firstOrNull()
+}

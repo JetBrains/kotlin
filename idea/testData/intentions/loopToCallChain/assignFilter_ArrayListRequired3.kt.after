@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'filterTo(){}'"
+// IS_APPLICABLE_2: false
 import java.util.*
 
 fun foo(list: List<String>): ArrayList<String> {

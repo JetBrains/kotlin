@@ -1,0 +1,7 @@
+fun foo(list: List<String>) {
+    val sum = <spot>list
+            .asSequence()
+            .map { it.calcSomething() }
+            .filter { it > 0 }
+            .sumBy { it }</spot>
+}

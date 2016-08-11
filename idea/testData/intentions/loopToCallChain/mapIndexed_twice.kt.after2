@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'mapIndexed{}.mapIndexed{}.firstOrNull{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().mapIndexed{}.mapIndexed{}.firstOrNull{}'"
+fun foo(list: List<String>): Int? {
+    <caret>return list
+            .asSequence()
+            .mapIndexed { index, s -> s.length * index }
+            .mapIndexed { index, x -> x + index }
+            .firstOrNull { it > 0 }
+}

@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
+// IS_APPLICABLE_2: false
 fun foo(): String? {
     Loop@
     while (x()) {

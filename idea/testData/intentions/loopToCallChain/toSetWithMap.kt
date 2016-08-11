@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'map{}.toSet()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.toSet()'"
 import java.util.HashSet
 
 fun foo(map: Map<Int, String>): Collection<Int> {

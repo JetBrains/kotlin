@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'filterIndexed{}.map{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filterIndexed{}.map{}.toList()'"
 import java.util.*
 
 fun foo(list: List<String>): List<Int> {

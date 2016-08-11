@@ -129,14 +129,21 @@ class AddToCollectionTransformation(
                 CollectionKind.LIST -> {
                     when {
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.list, state.outerLoop) -> {
-                            val transformation = if (argumentIsInputVariable) {
-                                AssignToListTransformation(state.outerLoop, collectionInitialization)
+                            if (argumentIsInputVariable) {
+                                val assignToList = AssignToListTransformation(state.outerLoop, collectionInitialization, state.lazySequence)
+                                return TransformationMatch.Result(assignToList)
                             }
                             else {
                                 val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
-                                AssignSequenceResultTransformation(mapTransformation, collectionInitialization)
+                                if (state.lazySequence) {
+                                    val assignToList = AssignToListTransformation(state.outerLoop, collectionInitialization, lazySequence = true)
+                                    return TransformationMatch.Result(assignToList, mapTransformation)
+                                }
+                                else {
+                                    val assignSequence = AssignSequenceResultTransformation(mapTransformation, collectionInitialization)
+                                    return TransformationMatch.Result(assignSequence)
+                                }
                             }
-                            return TransformationMatch.Result(transformation)
                         }
 
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableList, state.outerLoop) -> {
@@ -325,6 +332,11 @@ class FlatMapToTransformation private constructor(
         return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", targetCollection, lambda)
     }
 
+    // asSequence().flatMapTo(){} makes real difference (because expression inside lambda is evaluated lazily)
+    //TODO: return false if expression is input variable
+    override val lazyMakesSense: Boolean
+        get() = true
+
     companion object {
         fun create(
                 loop: KtForExpression,
@@ -346,14 +358,16 @@ class FlatMapToTransformation private constructor(
 
 class AssignToListTransformation(
         loop: KtForExpression,
-        initialization: VariableInitialization
+        initialization: VariableInitialization,
+        private val lazySequence: Boolean
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
         get() = "toList()"
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
-        //TODO: can be any SequenceTransformation's that return not List<T>? Also this code needs to be changed when .asSequence() used
+        if (lazySequence) return null // toList() is necessary if the result is Sequence
+        //TODO: can be any SequenceTransformation's that return not List<T>?
         return AssignSequenceResultTransformation(previousTransformation, initialization)
     }
 
