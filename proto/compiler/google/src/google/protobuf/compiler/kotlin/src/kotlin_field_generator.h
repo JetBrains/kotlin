@@ -31,6 +31,11 @@ private:
     void generateSerializationForEnums      (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
     void generateSerializationForMessages   (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
     void generateSerializationForPrimitives (io::Printer * printer, bool isRead, bool noTag, bool isField) const;
+
+    void generateSizeForPacked      (io::Printer * printer, string varName, bool noTag, bool isField) const;
+    void generateSizeForEnums       (io::Printer * printer, string varName, bool noTag, bool isField) const;
+    void generateSizeForMessages    (io::Printer * printer, string varName, bool noTag, bool isField) const;
+    void generateSizeForPrimitives  (io::Printer * printer, string varName, bool noTag, bool isField) const;
 public:
     ClassGenerator const * enclosingClass;    // class, in which that field is defined
     NameResolver * nameResolver;

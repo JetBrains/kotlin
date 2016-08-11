@@ -176,7 +176,6 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
 }
 
 void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool isRead, bool noTag, bool isField) const {
-
     map <string, string> vars;
     vars["converter"] = getEnumFromIntConverter();
     vars["fieldName"] = simpleName;
@@ -372,53 +371,97 @@ string FieldGenerator::getKotlinFunctionSuffix() const {
     return name_resolving::protobufTypeToKotlinFunctionSuffix(descriptor->type());
 }
 
-void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag, bool isField) const {
+
+void FieldGenerator::generateSizeForPacked(io::Printer * printer, string varName, bool noTag, bool isField) const {
     map<string, string> vars;
     vars["varName"] = varName;
     vars["fieldName"] = simpleName;
     vars["fieldNumber"] = std::to_string(getFieldNumber());
+    printer->Print(vars, "if ($fieldName$.size != 0) {\n");
+    printer->Indent();
+
+    // We will need total byte size of array, because that size is itself a part of the message and
+    // adds to total message size.
+    // For the sake of hygiene, temporary variables are created in anonymous scope
+    printer->Print("do {\n");
+    printer->Indent();
+
+    // Create a temporary variable that will collect array byte size
+    printer->Print("var arraySize = 0\n");
+
+    // Add tag size, if necessary
+    if (!noTag) {
+        printer->Print(vars, "arraySize += WireFormat.getTagSize($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+    }
+
+    // iterate over all elements of array
+    printer->Print("var i = 0\n");
+    printer->Print(vars, "while (i < $fieldName$.size) {\n");
+    printer->Indent();
+
+    // hack: reuse generateSizeEstimationCode in the same manner as in generateSerializationCode
+    FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
+    singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
+    singleFieldGen.simpleName = simpleName + "[i]";
+    singleFieldGen.generateSizeEstimationCode(printer, "arraySize", /* noTag = */ true, /* isField = */ false);
+
+    printer->Print(vars, "i += 1\n");
+
+    printer->Outdent();     // for-loop
+    printer->Print("} \n");
+
+    // now add size of array to total message size:
+    printer->Print(vars,
+                   "$varName$ += arraySize\n"); // actual array size
+
+    // add size of size annotation:
+    if (!noTag) {
+        printer->Print(vars, "$varName$ += WireFormat.getInt32SizeNoTag(arraySize)\n");
+    }
+
+    printer->Outdent();     // anonymous scope
+    printer->Print("} while(false)\n");
+
+    printer->Outdent();     // if-clause
+    printer->Print("}\n");
+}
+
+void FieldGenerator::generateSizeForEnums(io::Printer *printer, string varName, bool noTag, bool isField) const {
+    map<string, string> vars;
+    vars["varName"] = varName;
+    vars["fieldName"] = simpleName;
+    vars["fieldNumber"] = std::to_string(getFieldNumber());
+    printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
+}
+
+void FieldGenerator::generateSizeForMessages(io::Printer * printer, string varName, bool noTag, bool isField) const {
+    map<string, string> vars;
+    vars["varName"] = varName;
+    vars["fieldName"] = simpleName;
+    vars["maybeNoTag"] = noTag ? "NoTag" : "";
+    vars["maybeFieldNumber"] = noTag ? "" : std::to_string(getFieldNumber());
+    printer->Print(vars, "$varName$ += $fieldName$.getSize$maybeNoTag$($maybeFieldNumber$)"
+            "\n");
+}
+
+void FieldGenerator::generateSizeForPrimitives(io::Printer * printer, string varName, bool noTag, bool isField) const {
+    map<string, string> vars;
+    vars["varName"] = varName;
+    vars["fieldName"] = simpleName;
+    vars["kotlinSuffix"] = getKotlinFunctionSuffix();
+    vars["noTag"] = noTag ? "NoTag" : "";
+    vars["fn"] = noTag ? "" : std::to_string(getFieldNumber()) + ", ";
+    printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size$noTag$($fn$$fieldName$)\n");
+}
+
+void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string varName, bool noTag, bool isField) const {
+    map<string, string> vars;
+    vars["fieldName"] = simpleName;
     vars["initValue"] = getInitValue();
 
     // First of all, generate code for repeated fields
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
-        printer->Print(vars, "if ($fieldName$.size != 0) {\n");
-        printer->Indent();
-
-        // We will need total byte size of array, because that size is itself a part of the message and
-        // adds to total message size.
-        // For the sake of hygiene, temporary variables are created in anonymous scope
-        printer->Print("do {\n");
-        printer->Indent();
-
-        // Create a temporary variable that will collect array byte size
-        printer->Print("var arraySize = 0\n");
-
-        // iterate over all elements of array
-        printer->Print("var i = 0\n");
-        printer->Print(vars, "while (i < $fieldName$.size) {\n");
-        printer->Indent();
-
-        // hack: reuse generateSizeEstimationCode in the same manner as in generateSerializationCode
-        FieldGenerator singleFieldGen = FieldGenerator(descriptor, enclosingClass, nameResolver);
-        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
-        singleFieldGen.simpleName = simpleName + "[i]";
-        singleFieldGen.generateSizeEstimationCode(printer, "arraySize", noTag, /* isField = */ false);
-
-        printer->Print(vars, "i += 1\n");
-
-        printer->Outdent();     // for-loop
-        printer->Print("} \n");
-
-        // now add size of array to total message size:
-        printer->Print(vars,
-                       "$varName$ += arraySize"); // actual array size
-        printer->Print("\n");
-        printer->Outdent();     // anonymous scope
-        printer->Print("} while(false)\n");
-
-        printer->Outdent();     // if-clause
-        printer->Print("}\n");
-
+        generateSizeForPacked(printer, varName, noTag, isField);
         return;
     }
 
@@ -430,26 +473,16 @@ void FieldGenerator::generateSizeEstimationCode(io::Printer *printer, string var
     }
 
     // Then, call getSize recursively for nested messages
-    // TODO: currently suboptimal repeatative calls getSize() are being made. We can optimize it later via caching calls to getSize()
     if (getProtoType() == FieldDescriptor::TYPE_MESSAGE) {
-        vars["maybeNoTag"] = noTag ? "NoTag" : "";
-        vars["maybeFieldNumber"] = noTag ? "" : std::to_string(getFieldNumber());
-        printer->Print(vars, "$varName$ += $fieldName$.getSize$maybeNoTag$($maybeFieldNumber$)"
-                "\n");
+        generateSizeForMessages(printer, varName, noTag, isField);
     }
-
-
     // Next, process enums as they should be casted to ints manually
     else if (getProtoType() == FieldDescriptor::TYPE_ENUM) {
-        printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
+        generateSizeForEnums(printer, varName, noTag, isField);
     }
-
     // Finally, get size of all primitive types trivially via call to WireFormat in runtime
     else {
-        vars["kotlinSuffix"] = getKotlinFunctionSuffix();
-        vars["noTag"] = noTag ? "NoTag" : "";
-        vars["fn"] = noTag ? "" : std::to_string(getFieldNumber()) + ", ";
-        printer->Print(vars, "$varName$ += WireFormat.get$kotlinSuffix$Size$noTag$($fn$$fieldName$)\n");
+        generateSizeForPrimitives(printer, varName, noTag, isField);
     }
 
     if (isField) {
@@ -462,6 +495,7 @@ FieldDescriptor::Label FieldGenerator::getProtoLabel() const {
     return protoLabel;
 }
 
+
 FieldDescriptor::Type FieldGenerator::getProtoType() const {
     return descriptor->type();
 }
@@ -469,7 +503,6 @@ FieldDescriptor::Type FieldGenerator::getProtoType() const {
 int FieldGenerator::getFieldNumber() const {
     return descriptor->number();
 }
-
 
 string FieldGenerator::getSimpleType() const {
     if (getProtoLabel() == FieldDescriptor::LABEL_REPEATED) {
