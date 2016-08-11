@@ -7,5 +7,5 @@ IrFile /extensionPropertyGetterCall.kt
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
       RETURN type=kotlin.String
-        CALL .okext PROPERTY_GET
+        GET_PROPERTY .okext
           $receiver: $RECEIVER of: test5

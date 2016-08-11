@@ -106,6 +106,6 @@ abstract class IrDeclarationGeneratorBase(
                     IrReturnExpressionImpl(startOffset, endOffset, irExpression.type)
                             .apply { returnedExpression = irExpression }
 
-        return IrExpressionBodyImpl(startOffset, endOffset, containingDeclaration).apply { childExpression = bodyExpression }
+        return IrExpressionBodyImpl(startOffset, endOffset, containingDeclaration).apply { argument = bodyExpression }
     }
 }

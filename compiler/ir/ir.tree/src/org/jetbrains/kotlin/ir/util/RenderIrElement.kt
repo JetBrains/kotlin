@@ -63,20 +63,29 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitReturnExpression(expression: IrReturnExpression, data: Nothing?): String =
             "RETURN type=${expression.renderType()}"
 
-    override fun visitVariableReference(expression: IrVariableReference, data: Nothing?): String =
-            "VAR ${expression.descriptor.name}"
-
-    override fun visitSingletonReference(expression: IrSingletonReference, data: Nothing?): String =
-            "SINGLETON ${expression.descriptor.name}"
-
-    override fun visitExtensionReceiverReference(expression: IrExtensionReceiverReference, data: Nothing?): String =
+    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiverExpression, data: Nothing?): String =
             "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name}"
 
     override fun visitThisExpression(expression: IrThisExpression, data: Nothing?): String =
             "THIS ${expression.classDescriptor.render()}"
 
     override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
-            "CALL ${if (expression.isSafe) "?." else "."}${expression.callee.name} ${expression.operator ?: ""}"
+            "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} ${expression.operator ?: ""}"
+
+    override fun visitGetProperty(expression: IrGetPropertyExpression, data: Nothing?): String =
+            "GET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}"
+
+    override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
+            "GET_VAR ${expression.descriptor.name}"
+
+    override fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: Nothing?): String =
+            "GET_OBJECT ${expression.descriptor.name}"
+
+    override fun visitGetEnumValue(expression: IrGetEnumValueExpression, data: Nothing?): String =
+            "GET_ENUM_VALUE ${expression.descriptor.name}"
+
+    override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
+            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}"
 
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
             "DUMMY ${expression.description}"

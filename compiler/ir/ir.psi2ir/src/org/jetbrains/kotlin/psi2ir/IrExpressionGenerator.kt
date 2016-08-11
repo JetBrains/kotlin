@@ -53,7 +53,7 @@ class IrExpressionGenerator(
                 return IrTypeOperatorExpressionImpl(
                         ktElement.startOffset, ktElement.endOffset, smartCastType,
                         IrTypeOperator.SMART_AS, smartCastType
-                ).apply { childExpression = this@smartCastIfNeeded }
+                ).apply { argument = this@smartCastIfNeeded }
             }
         }
         return this
@@ -70,7 +70,7 @@ class IrExpressionGenerator(
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrExpression =
             IrReturnExpressionImpl(expression.startOffset, expression.endOffset, expression.type())
-                    .apply { this.childExpression = expression.returnedExpression?.generate() }
+                    .apply { this.argument = expression.returnedExpression?.generate() }
 
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
@@ -112,21 +112,22 @@ class IrExpressionGenerator(
 
         return when (descriptor) {
             is ClassDescriptor ->
-                IrSingletonReferenceImpl(expression.startOffset, expression.endOffset, expression.type(),
-                                         descriptor.singletonDescriptor() ?: TODO("Unsupported class as value: ${descriptor.name}"))
+                if (DescriptorUtils.isObject(descriptor))
+                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), descriptor)
+                else if (DescriptorUtils.isEnumEntry(descriptor))
+                    IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), descriptor)
+                else
+                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, expression.type(),
+                                          descriptor.companionObjectDescriptor ?: error("Class value without companion object: $descriptor"))
             is PropertyDescriptor -> {
-                generateCall(
-                        expression,
-                        resolvedCall ?: TODO("Property, no resolved call: ${descriptor.name}"),
-                        IrCallableOperator.PROPERTY_GET
-                )
+                generateCall(expression, resolvedCall ?: TODO("Property, no resolved call: ${descriptor.name}"), null)
             }
             is VariableDescriptor ->
-                IrVariableReferenceImpl(expression.startOffset, expression.endOffset, expression.type(), descriptor)
+                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), descriptor)
             else ->
                 IrDummyExpression(expression.startOffset, expression.endOffset, expression.type(),
-                                         expression.getReferencedName() +
-                                         ": ${descriptor?.name} ${descriptor?.javaClass?.simpleName}")
+                                  expression.getReferencedName() +
+                                  ": ${descriptor?.name} ${descriptor?.javaClass?.simpleName}")
         }
     }
 
@@ -150,35 +151,47 @@ class IrExpressionGenerator(
         val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
         return when (referenceTarget) {
             is ClassDescriptor ->
-                    IrThisExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), referenceTarget)
+                IrThisExpressionImpl(expression.startOffset, expression.endOffset, expression.type(), referenceTarget)
             is CallableDescriptor ->
-                    IrExtensionReceiverReferenceImpl(expression.startOffset, expression.endOffset, expression.type(), referenceTarget)
+                IrGetExtensionReceiverExpressionImpl(expression.startOffset, expression.endOffset, expression.type(),
+                                                     referenceTarget.extensionReceiverParameter!!)
             else ->
-                    error("Expected this or receiver: $referenceTarget")
+                error("Expected this or receiver: $referenceTarget")
         }
     }
 
     private fun generateCall(
             ktExpression: KtExpression,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
-            operator: IrCallableOperator?,
+            operator: IrOperator? = null,
             superQualifier: ClassDescriptor? = null
-    ): IrExpression =
-            IrCallExpressionImpl(
-                    ktExpression.startOffset, ktExpression.endOffset, ktExpression.type(),
-                    resolvedCall.resultingDescriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
-            ).apply {
-                dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver)
-                extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver)
-
-                val valueParameters = resolvedCall.resultingDescriptor.valueParameters
-                val valueArguments = resolvedCall.valueArgumentsByIndex ?: TODO("null for value arguments: ${ktExpression.text}")
-                for (index in valueArguments.indices) {
-                    val valueArgument = valueArguments[index]
-                    val valueParameter = valueParameters[index]
-                    putValueArgument(valueParameter, generateValueArgument(valueParameter, valueArgument))
+    ): IrExpression {
+        val descriptor = resolvedCall.resultingDescriptor
+        return when (descriptor) {
+            is PropertyDescriptor ->
+                IrGetPropertyExpressionImpl(
+                        ktExpression.startOffset, ktExpression.endOffset, ktExpression.type(),
+                        resolvedCall.call.isSafeCall(), descriptor
+                )
+            else ->
+                IrCallExpressionImpl(
+                        ktExpression.startOffset, ktExpression.endOffset, ktExpression.type(),
+                        resolvedCall.resultingDescriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
+                ).apply {
+                    val valueParameters = resolvedCall.resultingDescriptor.valueParameters
+                    val valueArguments = resolvedCall.valueArgumentsByIndex ?: TODO("null for value arguments: ${ktExpression.text}")
+                    for (index in valueArguments.indices) {
+                        val valueArgument = valueArguments[index]
+                        val valueParameter = valueParameters[index]
+                        putValueArgument(valueParameter, generateValueArgument(valueParameter, valueArgument))
+                    }
                 }
-            }
+
+        }.apply {
+            dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver)
+            extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver)
+        }
+    }
 
     private fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
             when (receiver) {
@@ -191,11 +204,11 @@ class IrExpressionGenerator(
                 is ExpressionReceiver ->
                     receiver.expression.generate()
                 is ClassValueReceiver ->
-                    IrSingletonReferenceImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
-                                             receiver.classQualifier.descriptor)
+                    IrGetObjectValueExpressionImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
+                                                   receiver.classQualifier.descriptor)
                 is ExtensionReceiver ->
-                    IrExtensionReceiverReferenceImpl(ktExpression.startOffset, ktExpression.startOffset, receiver.type,
-                                                     receiver.declarationDescriptor.extensionReceiverParameter!!)
+                    IrGetExtensionReceiverExpressionImpl(ktExpression.startOffset, ktExpression.startOffset, receiver.type,
+                                                         receiver.declarationDescriptor.extensionReceiverParameter!!)
                 null ->
                     null
                 else ->
@@ -210,15 +223,5 @@ class IrExpressionGenerator(
         else {
             TODO("vararg")
         }
-    }
-
-    companion object {
-        fun ClassDescriptor.singletonDescriptor(): ClassDescriptor? =
-                if (DescriptorUtils.isObject(this) || DescriptorUtils.isEnumEntry(this))
-                    this
-                else
-                    companionObjectDescriptor
-
-
     }
 }

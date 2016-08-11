@@ -24,6 +24,8 @@ interface IrCompoundExpression : IrExpression, IrExpressionOwner
 
 interface IrCompoundExpression1 : IrCompoundExpression, IrExpressionOwner1
 
+interface IrCompoundExpression2 : IrCompoundExpression, IrExpressionOwner2
+
 interface IrCompoundExpressionN : IrCompoundExpression, IrExpressionOwnerN
 
 abstract class IrCompoundExpressionNBase(
@@ -72,19 +74,19 @@ abstract class IrCompoundExpression1Base(
         endOffset: Int,
         override val type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpression1 {
-    override var childExpression: IrExpression? = null
+    override var argument: IrExpression? = null
         set(newExpression) {
             field?.detach()
             field = newExpression
-            newExpression?.setTreeLocation(this, IrExpressionOwner1.EXPRESSION_INDEX)
+            newExpression?.setTreeLocation(this, ARGUMENT0_INDEX)
         }
 
     override fun getChildExpression(index: Int): IrExpression? =
-            if (index == IrExpressionOwner1.EXPRESSION_INDEX) childExpression else null
+            if (index == ARGUMENT0_INDEX) argument else null
 
     override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
         validateChild(oldChild)
-        childExpression = newChild
+        argument = newChild
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -92,6 +94,50 @@ abstract class IrCompoundExpression1Base(
     }
 
     override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        childExpression?.accept(visitor, data)
+        argument?.accept(visitor, data)
+    }
+}
+
+abstract class IrCompoundExpression2Base(
+        startOffset: Int,
+        endOffset: Int,
+        override val type: KotlinType
+) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpression2 {
+    override var argument0: IrExpression? = null
+        set(newExpression) {
+            field?.detach()
+            field = newExpression
+            newExpression?.setTreeLocation(this, ARGUMENT0_INDEX)
+        }
+
+    override var argument1: IrExpression? = null
+        set(newExpression) {
+            field?.detach()
+            field = newExpression
+            newExpression?.setTreeLocation(this, ARGUMENT1_INDEX)
+        }
+
+    override fun getChildExpression(index: Int): IrExpression? =
+            when (index) {
+                ARGUMENT0_INDEX -> argument0
+                ARGUMENT1_INDEX -> argument1
+                else -> null
+            }
+
+    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
+        validateChild(oldChild)
+        when (oldChild.index) {
+            ARGUMENT0_INDEX -> argument0 = newChild
+            ARGUMENT1_INDEX -> argument1 = newChild
+        }
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        acceptChildExpressions(visitor, data)
+    }
+
+    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument0?.accept(visitor, data)
+        argument1?.accept(visitor, data)
     }
 }

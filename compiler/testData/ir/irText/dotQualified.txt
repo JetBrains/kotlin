@@ -2,10 +2,10 @@ IrFile /dotQualified.kt
   IrFunction public fun length(/*0*/ s: kotlin.String): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
-        CALL .length PROPERTY_GET
-          $this: VAR s
+        GET_PROPERTY .length
+          $this: GET_VAR s
   IrFunction public fun lengthN(/*0*/ s: kotlin.String?): kotlin.Int?
     IrExpressionBody
       RETURN type=kotlin.Int?
-        CALL ?.length PROPERTY_GET
-          $this: VAR s
+        GET_PROPERTY ?.length
+          $this: GET_VAR s

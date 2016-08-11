@@ -16,23 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
-
-
-interface IrReturnExpression : IrCompoundExpression1
-
-var IrReturnExpression.returnedExpression: IrExpression?
-    get() = argument
-    set(newReturnedExpression) {
-        argument = newReturnedExpression
-    }
-
-class IrReturnExpressionImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType
-) : IrCompoundExpression1Base(startOffset, endOffset, type), IrReturnExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitReturnExpression(this, data)
-}
+const val DETACHED_INDEX = Int.MIN_VALUE
+const val CHILD_EXPRESSION_INDEX = 0
+const val ARGUMENT0_INDEX = 0
+const val ARGUMENT1_INDEX = 1
+const val DISPATCH_RECEIVER_INDEX = -1
+const val EXTENSION_RECEIVER_INDEX = -2

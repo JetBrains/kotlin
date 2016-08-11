@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.util
+package org.jetbrains.kotlin.ir
 
-import java.util.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
-class PairListImpl<T>(val first: T, val second: T) : AbstractList<T>() {
-    override val size: Int get() = 2
+class IrBuiltIns(val builtIns: KotlinBuiltIns) {
 
-    override fun get(index: Int): T =
-            when (index) {
-                0 -> first
-                1 -> second
-                else -> throw IndexOutOfBoundsException(index.toString())
-            }
 }
-
-fun <T> pairList(first: T, second: T): List<T> =
-        PairListImpl(first, second)

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -25,17 +26,13 @@ interface IrDeclarationReference : IrExpression {
     val descriptor: DeclarationDescriptor
 }
 
-interface IrVariableReference : IrDeclarationReference {
-    override val descriptor: VariableDescriptor
-}
-
-interface IrSingletonReference : IrDeclarationReference {
+interface IrGetSingletonValueExpression : IrDeclarationReference {
     override val descriptor: ClassDescriptor
 }
 
-interface IrExtensionReceiverReference : IrDeclarationReference {
-    override val descriptor: CallableDescriptor
-}
+interface IrGetObjectValueExpression : IrGetSingletonValueExpression
+
+interface IrGetEnumValueExpression : IrGetSingletonValueExpression
 
 abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
         startOffset: Int,
@@ -44,34 +41,23 @@ abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
         override val descriptor: D
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrDeclarationReference
 
-class IrVariableReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        descriptor: VariableDescriptor
-) : IrDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, type, descriptor), IrVariableReference {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitVariableReference(this, data)
-}
-
-class IrSingletonReferenceImpl(
+class IrGetObjectValueExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
         descriptor: ClassDescriptor
-) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrSingletonReference {
+) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitSingletonReference(this, data)
+            visitor.visitGetObjectValue(this, data)
 }
 
-
-class IrExtensionReceiverReferenceImpl(
+class IrGetEnumValueExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val descriptor: CallableDescriptor
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrExtensionReceiverReference {
+        descriptor: ClassDescriptor
+) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitExtensionReceiverReference(this, data)
+        return visitor.visitGetEnumValue(this, data)
     }
 }

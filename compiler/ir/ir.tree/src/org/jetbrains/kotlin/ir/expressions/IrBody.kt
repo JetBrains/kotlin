@@ -34,19 +34,19 @@ class IrExpressionBodyImpl(
         endOffset: Int,
         override val parent: IrDeclaration
 ) : IrDeclarationOwnerBase(startOffset, endOffset), IrExpressionBody {
-    override var childExpression: IrExpression? = null
+    override var argument: IrExpression? = null
         set(newExpression) {
             field?.detach()
             field = newExpression
-            newExpression?.setTreeLocation(this, IrExpressionOwner1.EXPRESSION_INDEX)
+            newExpression?.setTreeLocation(this, CHILD_EXPRESSION_INDEX)
         }
 
     override fun getChildExpression(index: Int): IrExpression? =
-            if (index == IrExpressionOwner1.EXPRESSION_INDEX) childExpression else null
+            if (index == CHILD_EXPRESSION_INDEX) argument else null
 
     override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
         validateChild(oldChild)
-        childExpression = newChild
+        argument = newChild
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -57,6 +57,6 @@ class IrExpressionBodyImpl(
     }
 
     override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        childExpression?.accept(visitor, data)
+        argument?.accept(visitor, data)
     }
 }

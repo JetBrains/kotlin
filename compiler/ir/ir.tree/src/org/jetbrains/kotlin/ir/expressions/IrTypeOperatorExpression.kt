@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 enum class IrTypeOperator {
-    SMART_AS,
     AS,
-    AS_SAFE,
-    IS;
+    SMART_AS,
+    SAFE_AS,
+    IS,
+    NOT_IS;
 }
 
 interface IrTypeOperatorExpression : IrExpression, IrCompoundExpression1 {

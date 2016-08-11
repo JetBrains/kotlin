@@ -28,14 +28,10 @@ interface IrExpression : IrElement {
     val type: KotlinType
 
     fun setTreeLocation(parent: IrExpressionOwner?, index: Int)
-
-    companion object {
-        const val DETACHED_INDEX = Int.MIN_VALUE
-    }
 }
 
 fun IrExpression.detach() {
-    setTreeLocation(null, IrExpression.DETACHED_INDEX)
+    setTreeLocation(null, DETACHED_INDEX)
 }
 
 fun IrExpressionOwner.validateChild(child: IrExpression) {
@@ -48,7 +44,7 @@ abstract class IrExpressionBase(
         override val type: KotlinType
 ) : IrElementBase(startOffset, endOffset), IrExpression {
     override var parent: IrExpressionOwner? = null
-    override var index: Int = IrExpression.DETACHED_INDEX
+    override var index: Int = DETACHED_INDEX
 
     override fun setTreeLocation(parent: IrExpressionOwner?, index: Int) {
         this.parent = parent

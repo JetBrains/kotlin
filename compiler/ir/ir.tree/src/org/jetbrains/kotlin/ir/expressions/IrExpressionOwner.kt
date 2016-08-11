@@ -26,11 +26,12 @@ interface IrExpressionOwner : IrElement {
 }
 
 interface IrExpressionOwner1 : IrExpressionOwner {
-    var childExpression: IrExpression?
+    var argument: IrExpression?
+}
 
-    companion object {
-        const val EXPRESSION_INDEX = 0
-    }
+interface IrExpressionOwner2 : IrExpressionOwner {
+    var argument0: IrExpression?
+    var argument1: IrExpression?
 }
 
 interface IrExpressionOwnerN : IrExpressionOwner {

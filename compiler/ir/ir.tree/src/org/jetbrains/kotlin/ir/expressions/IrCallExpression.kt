@@ -22,13 +22,10 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrCallExpression : IrCompoundExpression {
+interface IrCallExpression : IrMemberAccessExpression, IrCompoundExpression {
     val superQualifier: ClassDescriptor?
-    val operator: IrCallableOperator?
-    val isSafe: Boolean
-    val callee: CallableDescriptor
-    var dispatchReceiver: IrExpression?
-    var extensionReceiver: IrExpression?
+    val operator: IrOperator?
+    override val descriptor: CallableDescriptor
 
     fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor): IrExpression?
     fun putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?)
@@ -38,33 +35,19 @@ interface IrCallExpression : IrCompoundExpression {
 }
 
 fun IrCallExpression.getMappedValueArguments(): List<IrExpression?> =
-        callee.valueParameters.mapNotNull { getValueArgument(it) }
+        descriptor.valueParameters.mapNotNull { getValueArgument(it) }
 
-abstract class IrCallExpressionBase(
+class IrCallExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override final val callee: CallableDescriptor,
-        override val isSafe: Boolean,
-        override val operator: IrCallableOperator?,
+        override val descriptor: CallableDescriptor,
+        isSafe: Boolean,
+        override val operator: IrOperator?,
         override val superQualifier: ClassDescriptor?
-) : IrExpressionBase(startOffset, endOffset, type), IrCallExpression {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCallExpression {
     private val argumentsByParameterIndex =
-            kotlin.arrayOfNulls<IrExpression>(callee.valueParameters.size)
-
-    override var dispatchReceiver: IrExpression? = null
-        set(newReceiver) {
-            field?.detach()
-            field = newReceiver
-            newReceiver?.setTreeLocation(this, DISPATCH_RECEIVER_INDEX)
-        }
-
-    override var extensionReceiver: IrExpression? = null
-        set(newReceiver) {
-            field?.detach()
-            field = newReceiver
-            newReceiver?.setTreeLocation(this, EXTENSION_RECEIVER_INDEX)
-        }
+            kotlin.arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
     override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
             argumentsByParameterIndex[valueParameterDescriptor.index]
@@ -122,21 +105,6 @@ abstract class IrCallExpressionBase(
         acceptChildExpressions(visitor, data)
     }
 
-    companion object {
-        const val DISPATCH_RECEIVER_INDEX = -1
-        const val EXTENSION_RECEIVER_INDEX = -2
-    }
-}
-
-class IrCallExpressionImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        callee: CallableDescriptor,
-        isSafe: Boolean,
-        operator: IrCallableOperator? = null,
-        superQualifier: ClassDescriptor? = null
-) : IrCallExpressionBase(startOffset, endOffset, type, callee, isSafe, operator, superQualifier), IrCallExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitCallExpression(this, data)
 }
