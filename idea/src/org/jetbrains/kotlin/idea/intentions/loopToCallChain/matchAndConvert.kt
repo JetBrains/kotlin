@@ -93,8 +93,6 @@ fun match(loop: KtForExpression, useLazySequence: Boolean): MatchResult? {
             if (match != null) {
                 if (!inputVariableUsed && match.allTransformations.any { it.shouldUseInputVariable }) return null
 
-                state.previousTransformations += match.sequenceTransformations
-
                 when (match) {
                     is TransformationMatch.Sequence -> {
                         // check that old input variable is not needed anymore
@@ -113,12 +111,15 @@ fun match(loop: KtForExpression, useLazySequence: Boolean): MatchResult? {
                             if (countAfter != countBefore) continue@MatchersLoop // some embedded break or continue in the matched part
                         }
 
+                        state.previousTransformations += match.sequenceTransformations
                         state = newState
                         continue@MatchLoop
                     }
 
                     is TransformationMatch.Result -> {
                         if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue@MatchersLoop
+
+                        state.previousTransformations += match.sequenceTransformations
 
                         var result = TransformationMatch.Result(match.resultTransformation, state.previousTransformations)
                         result = mergeTransformations(result)
