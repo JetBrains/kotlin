@@ -60,7 +60,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
+        return createEnvironmentWithJdk(ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.MOCK_JDK);
     }
 
     public void testBuiltIns() throws Exception {

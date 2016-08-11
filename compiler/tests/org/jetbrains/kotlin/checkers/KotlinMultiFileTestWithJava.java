@@ -79,7 +79,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
 
     @NotNull
     protected ConfigurationKind getConfigurationKind() {
-        return ConfigurationKind.MOCK_RUNTIME;
+        return ConfigurationKind.JDK_ONLY;
     }
 
     @NotNull

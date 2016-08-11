@@ -179,7 +179,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
 
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.MOCK_RUNTIME, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir!!)
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir!!)
         )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
