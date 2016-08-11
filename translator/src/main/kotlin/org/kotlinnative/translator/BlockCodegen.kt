@@ -911,7 +911,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         when (assignExpression) {
             is LLVMVariable -> {
-                if (assignExpression.pointer == 0) {
+                if (assignExpression.pointer < 2) {
                     val allocVar = variableManager.receiveVariable(identifier, assignExpression.type, LLVMRegisterScope(), pointer = 0)
                     codeBuilder.allocStackVar(allocVar)
                     allocVar.pointer++
