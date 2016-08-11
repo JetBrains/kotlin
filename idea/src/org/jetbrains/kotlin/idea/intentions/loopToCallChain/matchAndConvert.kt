@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -32,13 +31,13 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.IntroduceIn
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubtypeOfClass
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -232,17 +231,12 @@ private fun isExpressionTypeSupported(expression: KtExpression): Boolean {
 
     val builtIns = expression.builtIns
     return when {
-        type.isSubtypeOf(builtIns.iterable) -> true
-        type.isSubtypeOf(builtIns.array) -> true
+        isSubtypeOfClass(type, builtIns.iterable) -> true
+        isSubtypeOfClass(type, builtIns.array) -> true
         KotlinBuiltIns.isPrimitiveArray(type) -> true
         // TODO: support Sequence<T>
         else -> false
     }
-}
-
-private fun KotlinType.isSubtypeOf(classDescriptor: ClassDescriptor): Boolean {
-    val fuzzyType = FuzzyType(classDescriptor.defaultType, classDescriptor.declaredTypeParameters)
-    return fuzzyType.checkIsSuperTypeOf(this) != null
 }
 
 private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchResult): Boolean {
