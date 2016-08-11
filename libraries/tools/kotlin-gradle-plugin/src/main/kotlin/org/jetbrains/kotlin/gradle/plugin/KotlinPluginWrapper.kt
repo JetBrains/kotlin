@@ -19,28 +19,28 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
     override fun apply(project: Project) {
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+        val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
 
-        val plugin = getPlugin()
+        val plugin = getPlugin(kotlinGradleBuildServices)
         plugin.apply(project)
-
-        KotlinGradleBuildServices.init(project.gradle)
     }
 
-    protected abstract fun getPlugin(): Plugin<Project>
+    protected abstract fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project>
 }
 
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin() =
-            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+    override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
+            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion,
+                    kotlinGradleBuildServices.artifactDifferenceRegistry)
 }
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin() =
+    override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
             KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin() =
+    override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
             Kotlin2JsPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
