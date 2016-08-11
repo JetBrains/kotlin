@@ -1278,6 +1278,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddInlineToReifiedFunctionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -1654,6 +1659,14 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.AddInlineToReifiedFunctionInspection"
+                     displayName="Remove redundant string template"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="ERROR"
                      language="kotlin"
     />
 

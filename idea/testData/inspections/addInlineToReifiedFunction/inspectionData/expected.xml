@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt"/>
+        <problem_class severity="ERROR" attribute_key="WARNING_ATTRIBUTES">Add Inline to reified function</problem_class>
+        <description>Add Inline to reified function</description>
+    </problem>
+</problems>
