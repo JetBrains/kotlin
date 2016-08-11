@@ -20,6 +20,7 @@ external fun kotlinclib_println_boolean(message: Boolean)
 external fun kotlinclib_println_float(message: Float)
 external fun kotlinclib_println_double(message: Double)
 external fun kotlinclib_println_string(message: String)
+external fun kotlinclib_println()
 
 /** Prints the given message to the standard output stream. */
 fun print(message: Int) {
@@ -110,4 +111,9 @@ fun println(message: Double) {
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: String) {
     kotlinclib_println_string(message)
+}
+
+/** Prints newline to the standard output stream. */
+fun println() {
+    kotlinclib_println()
 }
