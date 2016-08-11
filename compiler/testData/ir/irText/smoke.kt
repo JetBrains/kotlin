@@ -1,5 +1,5 @@
 fun testFun(): String { return "OK" }
-val testSimpleVal = 1
+val testSimpleVal = 1 // <<< smoke.testSimpleVal.txt
 val testValWithGetter: Int get() = 42
 var testSimpleVar = 2
 var testVarWithAccessors: Int

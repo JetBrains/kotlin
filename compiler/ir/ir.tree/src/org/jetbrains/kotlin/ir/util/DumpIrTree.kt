@@ -17,14 +17,22 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCallExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrDeclaration.dump(): String {
+fun IrElement.dump(): String {
     val sb = StringBuilder()
     accept(DumpIrTreeVisitor(sb), "")
+    return sb.toString()
+}
+
+fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
+    val sb = StringBuilder()
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb), null)
     return sb.toString()
 }
 
@@ -66,4 +74,21 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     private fun String.withLabel(label: String) =
             if (label.isEmpty()) this else "$label: $this"
+}
+
+class DumpTreeFromSourceLineVisitor(
+        val fileEntry: SourceLocationManager.FileEntry,
+        val lineNumber: Int,
+        out: Appendable
+): IrElementVisitor<Unit, Nothing?> {
+    val dumper = DumpIrTreeVisitor(out)
+
+    override fun visitElement(element: IrElement, data: Nothing?) {
+        if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {
+            element.accept(dumper, "")
+            return
+        }
+
+        element.acceptChildren(this, data)
+    }
 }

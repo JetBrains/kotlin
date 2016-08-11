@@ -20,10 +20,10 @@ IrFile /calls.kt
   IrFunction public fun kotlin.Int.ext1(): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
-        DUMMY KtThisExpression
+        $RECEIVER of: <root>
   IrFunction public fun kotlin.Int.ext2(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
       RETURN type=kotlin.Int
         CALL foo
-          x: DUMMY KtThisExpression
+          x: $RECEIVER of: <root>
           y: VAR x

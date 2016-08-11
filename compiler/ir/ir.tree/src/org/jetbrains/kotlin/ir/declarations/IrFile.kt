@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrFile : IrCompoundDeclaration {
     val name: String
+    val fileEntry: SourceLocationManager.FileEntry
     val module: IrModule
     override val descriptor: PackageFragmentDescriptor
 
@@ -32,7 +33,7 @@ interface IrFile : IrCompoundDeclaration {
 }
 
 class IrFileImpl(
-        val fileEntry: SourceLocationManager.FileEntry,
+        override val fileEntry: SourceLocationManager.FileEntry,
         override val name: String,
         override val descriptor: PackageFragmentDescriptor
 ) : IrCompoundDeclarationBase(0, fileEntry.maxOffset, IrDeclarationOriginKind.DEFINED), IrFile {

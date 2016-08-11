@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
@@ -52,6 +53,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             actual.append(actualCount).append(" ").append(expectation.needle).append("\n")
         }
 
+        for (irTreeFileLabel in expectations.irTreeFileLabels) {
+            val actualTrees = irFile.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
+            KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, actualTrees)
+        }
+
         try {
             TestCase.assertEquals(irFileDump, expected.toString(), actual.toString())
         }
@@ -61,40 +67,52 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         }
     }
 
-    protected class Expectations(val irExpectedTextFile: File?, val regexps: List<RegexpInText>)
+    internal class Expectations(val irExpectedTextFile: File?, val regexps: List<RegexpInText>, val irTreeFileLabels: List<IrTreeFileLabel>)
 
-    protected class RegexpInText(val numberOfOccurrences: Int, val needle: String) {
+    internal class RegexpInText(val numberOfOccurrences: Int, val needle: String) {
         constructor(countStr: String, needle: String) : this(Integer.valueOf(countStr), needle)
     }
 
+    internal class IrTreeFileLabel(val expectedTextFile: File, val lineNumber: Int)
+
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
-        private val EXPECT_TXT_PATTERN = Regex("""^\s*//\s*IR_FILE_TXT\s+(.*)$""")
+        private val IR_FILE_TXT_PATTERN = Regex("""^\s*//\s*IR_FILE_TXT\s+(.*)$""")
+        private val IR_TREES_TXT_PATTERN = Regex("""// \s*<<<\s+(.*)$""")
 
-        private fun parseExpectations(dir: File, testFile: TestFile): Expectations {
+        internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
             var expectedTextFileName: String? = null
             val regexps = ArrayList<RegexpInText>()
-            for (line in testFile.content.split("\n")) {
+            val treeFiles = ArrayList<IrTreeFileLabel>()
+
+            for ((lineNumber, line) in testFile.content.split("\n").withIndex()) {
                 EXPECTED_OCCURRENCES_PATTERN.matchEntire(line)?.let { matchResult ->
-                    regexps.add(RegexpInText(matchResult.groupValues[1], matchResult.groupValues[2]))
+                    regexps.add(RegexpInText(matchResult.groupValues[1], matchResult.groupValues[2].trim()))
                 }
-                EXPECT_TXT_PATTERN.matchEntire(line)?.let { matchResult ->
-                    expectedTextFileName = matchResult.groupValues[1]
+                ?: IR_FILE_TXT_PATTERN.matchEntire(line)?.let { matchResult ->
+                    expectedTextFileName = matchResult.groupValues[1].trim()
+                }
+                ?: IR_TREES_TXT_PATTERN.find(line)?.let { matchResult ->
+                    val fileName = matchResult.groupValues[1].trim()
+                    val file = createExpectedTextFile(testFile, dir, fileName)
+                    treeFiles.add(IrTreeFileLabel(file, lineNumber))
                 }
             }
 
-            val expectedTextFile: File? = expectedTextFileName?.let {
-                val textFile = File(dir, expectedTextFileName)
-                if (!textFile.exists()) {
-                    TestCase.assertTrue("Can't create an IR expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
-                    PrintWriter(FileWriter(textFile)).use {
-                        it.println("$expectedTextFileName: new IR expected text containingFile for ${testFile.name}")
-                    }
-                }
-                textFile
-            }
+            val expectedTextFile: File? = expectedTextFileName?.let { createExpectedTextFile(testFile, dir, it) }
 
-            return Expectations(expectedTextFile, regexps)
+            return Expectations(expectedTextFile, regexps, treeFiles)
+        }
+
+        internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
+            val textFile = File(dir, fileName)
+            if (!textFile.exists()) {
+                TestCase.assertTrue("Can't create an IR expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
+                PrintWriter(FileWriter(textFile)).use {
+                    it.println("$fileName: new IR expected text containingFile for ${testFile.name}")
+                }
+            }
+            return textFile
         }
     }
 
