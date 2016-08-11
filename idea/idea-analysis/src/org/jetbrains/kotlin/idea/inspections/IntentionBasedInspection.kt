@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -100,7 +102,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                         if (fixes == null) {
                             fixes = SmartList<LocalQuickFix>()
                         }
-                        fixes.add(IntentionBasedQuickFix(intention, intention.text, additionalChecker, targetElement))
+                        fixes.add(createQuickFix(intention, additionalChecker, targetElement))
                     }
                 }
 
@@ -120,13 +122,26 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
     protected open val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
+    private fun createQuickFix(
+            intention: SelfTargetingRangeIntention<TElement>,
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+            targetElement: TElement
+    ): IntentionBasedQuickFix {
+        return when (intention) {
+            is LowPriorityAction -> LowPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
+            is HighPriorityAction -> HighPriorityIntentionBasedQuickFix(intention, additionalChecker, targetElement)
+            else -> IntentionBasedQuickFix(intention, additionalChecker, targetElement)
+        }
+    }
+
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
-    private inner class IntentionBasedQuickFix(
+    private open inner class IntentionBasedQuickFix(
             private val intention: SelfTargetingRangeIntention<TElement>,
-            private val text: String,
             private val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
             targetElement: TElement
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
+
+        private val text = intention.text
 
         // store text into variable because intention instance is shared and may change its text later
         override fun getFamilyName() = intention.familyName
@@ -156,6 +171,18 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
             intention.applyTo(startElement as TElement, editor)
         }
     }
+
+    private inner class LowPriorityIntentionBasedQuickFix(
+            intention: SelfTargetingRangeIntention<TElement>,
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+            targetElement: TElement
+    ) : IntentionBasedQuickFix(intention, additionalChecker, targetElement), LowPriorityAction
+
+    private inner class HighPriorityIntentionBasedQuickFix(
+            intention: SelfTargetingRangeIntention<TElement>,
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+            targetElement: TElement
+    ) : IntentionBasedQuickFix(intention, additionalChecker, targetElement), HighPriorityAction
 }
 
 fun PsiElement.findExistingEditor(): Editor? {

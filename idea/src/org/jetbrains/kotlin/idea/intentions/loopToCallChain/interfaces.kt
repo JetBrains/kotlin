@@ -89,6 +89,9 @@ interface ResultTransformation : Transformation {
      * except for the loop itself and the result element returned from this method
      */
     fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression
+
+    val lazyMakesSense: Boolean
+        get() = false
 }
 
 /**
@@ -103,6 +106,7 @@ data class MatchingState(
          * Matchers can assume that indexVariable is null if it's not used in the rest of the loop
          */
         val indexVariable: KtCallableDeclaration?,
+        val lazySequence: Boolean,
         val pseudocodeProvider: () -> Pseudocode,
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
         val previousTransformations: MutableList<SequenceTransformation> = arrayListOf(),
@@ -209,4 +213,16 @@ class CommentSavingRangeHolder(range: PsiChildRange) {
     }
 
     private fun PsiElement.siblingsBefore() = if (prevSibling != null) PsiChildRange(parent.firstChild, prevSibling) else PsiChildRange.EMPTY
+}
+
+class AsSequenceTransformation(override val loop: KtForExpression) : SequenceTransformation {
+    override val presentation: String
+        get() = "asSequence()"
+
+    override val affectsIndex: Boolean
+        get() = false
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("asSequence()")
+    }
 }

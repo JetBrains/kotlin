@@ -1,0 +1,9 @@
+fun foo(list: List<String>) {
+    val sum = 0
+    <spot>for (s in list) {
+        val x = s.calcSomething()
+        if (x > 0) {
+            sum += x
+        }
+    }</spot>
+}

@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'flatMapTo(){}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().flatMapTo(){}'"
+import java.util.ArrayList
+
+fun foo(list: List<String>): List<String> {
+    val <caret>target = list
+            .asSequence()
+            .flatMapTo(ArrayList<String>(100)) { it.lines().asSequence() }
+    return target
+}

@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
+// IS_APPLICABLE_2: false
 fun foo(list: List<Any>): String? {
     var v: String? = null
     <caret>for (o in list) {

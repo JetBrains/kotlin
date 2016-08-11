@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 //TODO: should not be available without "asSequence()"!
+// INTENTION_TEXT: "Replace with 'filterNot{}.map{}.firstOrNull{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filterNot{}.map{}.firstOrNull{}'"
 fun foo(list: List<String>): Int? {
     var index = 0
     <caret>for (s in list) {

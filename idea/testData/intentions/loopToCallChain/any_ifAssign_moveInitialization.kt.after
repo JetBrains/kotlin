@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'any{}'"
+// IS_APPLICABLE_2: false
 fun foo(list: List<String>, p: Int) {
     var found: Boolean
     if (p > 0) {

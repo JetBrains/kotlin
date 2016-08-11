@@ -89,6 +89,9 @@ abstract class AssignToVariableResultTransformation(
                 override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                     return delegate.generateCode(chainedCallGenerator)
                 }
+
+                override val lazyMakesSense: Boolean
+                    get() = delegate.lazyMakesSense
             }
         }
     }

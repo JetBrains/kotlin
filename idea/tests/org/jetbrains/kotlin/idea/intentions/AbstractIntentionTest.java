@@ -51,12 +51,32 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
-    private static IntentionAction createIntention(File testDataFile) throws Exception {
+    @NotNull
+    protected String intentionFileName() {
+        return ".intention";
+    }
+
+    @NotNull
+    protected String afterFileNameSuffix() {
+        return ".after";
+    }
+
+    @NotNull
+    protected String isApplicableDirectiveName() {
+        return "IS_APPLICABLE";
+    }
+
+    @NotNull
+    protected String intentionTextDirectiveName() {
+        return "INTENTION_TEXT";
+    }
+
+    private IntentionAction createIntention(File testDataFile) throws Exception {
         List<File> candidateFiles = Lists.newArrayList();
 
         File current = testDataFile.getParentFile();
         while (current != null) {
-            File candidate = new File(current, ".intention");
+            File candidate = new File(current, intentionFileName());
             if (candidate.exists()) {
                 candidateFiles.add(candidate);
             }
@@ -147,7 +167,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
     }
 
     private void doTestFor(String mainFilePath, Map<String, PsiFile> pathToFiles, final IntentionAction intentionAction, String fileText) throws Exception {
-        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
+        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + isApplicableDirectiveName() + ": ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
         boolean isApplicableOnPooled = ApplicationManager.getApplication().executeOnPooledThread(new java.util.concurrent.Callable<Boolean>() {
@@ -170,7 +190,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
                 isApplicableExpected == isApplicableOnEdt);
 
-        String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// INTENTION_TEXT: ");
+        String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + intentionTextDirectiveName() + ": ");
 
         if (intentionTextString != null) {
             assertEquals("Intention text mismatch.", intentionTextString, intentionAction.getText());
@@ -196,7 +216,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 if (shouldFailString.isEmpty()) {
                     for (Map.Entry<String, PsiFile> entry: pathToFiles.entrySet()) {
                         String filePath = entry.getKey();
-                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + ".after");
+                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + afterFileNameSuffix());
                         if (filePath.equals(mainFilePath)) {
                             try {
                                 checkResultByFile(canonicalPathToExpectedFile);
@@ -234,3 +254,4 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         return "";
     }
 }
+

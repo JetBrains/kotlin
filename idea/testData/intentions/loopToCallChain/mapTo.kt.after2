@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}.mapTo(){}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.mapTo(){}'"
+fun foo(list: List<String>, target: MutableList<Int>) {
+    <caret>list
+            .asSequence()
+            .filter { it.length > 0 }
+            .mapTo(target) { it.hashCode() }
+}
