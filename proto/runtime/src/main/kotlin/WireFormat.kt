@@ -62,7 +62,7 @@ object WireFormat {
         return getInt32Size(fieldNumber, value)
     }
 
-    fun getUIn32SizeNoTag(value: Int): Int {
+    fun getUInt32SizeNoTag(value: Int): Int {
         return getVarint32Size(value)
     }
 
