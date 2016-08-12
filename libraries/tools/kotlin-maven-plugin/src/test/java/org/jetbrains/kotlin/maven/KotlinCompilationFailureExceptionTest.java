@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class KotlinCompilationFailureExceptionTest {
 
@@ -16,6 +17,7 @@ public class KotlinCompilationFailureExceptionTest {
 
         try {
             collector.throwKotlinCompilerException();
+            fail();
         } catch (KotlinCompilationFailureException e) {
             assertEquals("Something went wrong", e.getLongMessage().trim());
         }
@@ -28,6 +30,7 @@ public class KotlinCompilationFailureExceptionTest {
 
         try {
             collector.throwKotlinCompilerException();
+            fail();
         } catch (KotlinCompilationFailureException e) {
             assertEquals("myfile.txt: Error in file", e.getLongMessage().trim());
         }
@@ -40,6 +43,7 @@ public class KotlinCompilationFailureExceptionTest {
 
         try {
             collector.throwKotlinCompilerException();
+            fail();
         } catch (KotlinCompilationFailureException e) {
             assertEquals("myfile.txt:[777] Error in file", e.getLongMessage().trim());
         }
@@ -52,6 +56,7 @@ public class KotlinCompilationFailureExceptionTest {
 
         try {
             collector.throwKotlinCompilerException();
+            fail();
         } catch (KotlinCompilationFailureException e) {
             assertEquals("myfile.txt:[777,9] Error in file", e.getLongMessage().trim());
         }
