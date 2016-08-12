@@ -125,7 +125,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         if (instruction !is WriteValueInstruction && instruction !is VariableDeclarationInstruction) {
             return enterInstructionData
         }
-        val variable = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext) ?: return enterInstructionData
+        val variable = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, bindingContext) ?: return enterInstructionData
         val exitInstructionData = enterInstructionData.copy()
         if (instruction is WriteValueInstruction) {
             // if writing to already initialized object
@@ -172,7 +172,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                     }
                 }
             }
-            val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, bindingContext)
+            val variableDescriptor = PseudocodeUtil.extractVariableDescriptorFromReference(instruction, bindingContext)
             if (variableDescriptor == null || instruction !is ReadValueInstruction && instruction !is WriteValueInstruction) {
                 Edges(enterResult, enterResult)
             }

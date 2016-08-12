@@ -919,7 +919,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return info.getType() != null;
         }
 
-        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
+        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorFromReference(trace.getBindingContext(), expression);
 
         boolean result = true;
         KtExpression reportOn = expression != null ? expression : expressionWithParenthesis;

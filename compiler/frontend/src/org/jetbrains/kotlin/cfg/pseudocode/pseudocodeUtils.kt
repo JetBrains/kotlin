@@ -240,7 +240,7 @@ fun getExpectedTypePredicate(
 fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is CallInstruction -> return resolvedCall.resultingDescriptor
-        else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
+        else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, bindingContext)
     }
 }
 

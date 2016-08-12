@@ -70,7 +70,7 @@ class KotlinSourcePositionProvider: SourcePositionProvider() {
         val expression = codeFragment.getContentElement()
         if (expression is KtSimpleNameExpression) {
             val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-            val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
+            val declarationDescriptor = BindingContextUtils.extractVariableDescriptorFromReference(bindingContext, expression)
             val sourceElement = declarationDescriptor?.source
             if (sourceElement is KotlinSourceElement) {
                 val element = sourceElement.getPsi() ?: return null

@@ -133,7 +133,7 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
 
 fun KtExpression.isStableVariable(): Boolean {
     val context = this.analyze()
-    val descriptor = BindingContextUtils.extractVariableDescriptorIfAny(context, this, false)
+    val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
     return descriptor is VariableDescriptor &&
            DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
 }
