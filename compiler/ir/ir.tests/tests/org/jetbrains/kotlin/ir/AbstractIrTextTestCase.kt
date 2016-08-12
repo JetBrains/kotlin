@@ -41,10 +41,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val expectations = parseExpectations(dir, testFile)
         val irFileDump = irFile.dump()
 
-        expectations.irExpectedTextFile?.let { expectFile ->
-            KotlinTestUtils.assertEqualsToFile(expectFile, irFileDump)
-        }
-
         val expected = StringBuilder()
         val actual = StringBuilder()
         for (expectation in expectations.regexps) {
@@ -67,7 +63,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         }
     }
 
-    internal class Expectations(val irExpectedTextFile: File?, val regexps: List<RegexpInText>, val irTreeFileLabels: List<IrTreeFileLabel>)
+    internal class Expectations(val regexps: List<RegexpInText>, val irTreeFileLabels: List<IrTreeFileLabel>)
 
     internal class RegexpInText(val numberOfOccurrences: Int, val needle: String) {
         constructor(countStr: String, needle: String) : this(Integer.valueOf(countStr), needle)
@@ -77,20 +73,15 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
-        private val IR_FILE_TXT_PATTERN = Regex("""^\s*//\s*IR_FILE_TXT\s+(.*)$""")
         private val IR_TREES_TXT_PATTERN = Regex("""// \s*<<<\s+(.*)$""")
 
         internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
-            var expectedTextFileName: String? = null
             val regexps = ArrayList<RegexpInText>()
             val treeFiles = ArrayList<IrTreeFileLabel>()
 
             for ((lineNumber, line) in testFile.content.split("\n").withIndex()) {
                 EXPECTED_OCCURRENCES_PATTERN.matchEntire(line)?.let { matchResult ->
                     regexps.add(RegexpInText(matchResult.groupValues[1], matchResult.groupValues[2].trim()))
-                }
-                ?: IR_FILE_TXT_PATTERN.matchEntire(line)?.let { matchResult ->
-                    expectedTextFileName = matchResult.groupValues[1].trim()
                 }
                 ?: IR_TREES_TXT_PATTERN.find(line)?.let { matchResult ->
                     val fileName = matchResult.groupValues[1].trim()
@@ -99,9 +90,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 }
             }
 
-            val expectedTextFile: File? = expectedTextFileName?.let { createExpectedTextFile(testFile, dir, it) }
-
-            return Expectations(expectedTextFile, regexps, treeFiles)
+            return Expectations(regexps, treeFiles)
         }
 
         internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {

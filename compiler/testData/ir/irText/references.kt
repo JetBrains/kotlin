@@ -1,3 +1,4 @@
+// <<< references.txt
 val ok = "OK"
 val ok2 = ok
 val ok3: String get() = "OK"
@@ -15,5 +16,3 @@ fun test4() = ok3
 
 val String.okext: String get() = "OK"
 fun String.test5() = okext
-
-// IR_FILE_TXT references.txt

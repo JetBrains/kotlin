@@ -1,3 +1,4 @@
+// <<< smoke.txt
 fun testFun(): String { return "OK" }
 val testSimpleVal = 1 // <<< smoke.testSimpleVal.txt
 val testValWithGetter: Int get() = 42
@@ -13,5 +14,3 @@ var testVarWithAccessors: Int
 // 1 IrPropertySetter
 // 1 IrProperty public var testSimpleVar
 // 1 IrProperty public var testVarWithAccessors
-
-// IR_FILE_TXT smoke.txt
