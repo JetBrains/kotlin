@@ -131,10 +131,8 @@ class Kotlin2JvmSourceSetProcessor(
 
                 val subpluginEnvironment = loadSubplugins(project)
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask, 
-                        javaTask as? AbstractCompile, null, sourceSet)
+                        javaTask as JavaCompile, null, sourceSet)
                 
-                if (javaTask !is JavaCompile) return@afterEvaluate
-
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
                 if (aptConfiguration.dependencies.size > 1 && !Kapt2GradleSubplugin.isEnabled(project)) {
@@ -490,7 +488,7 @@ class SubpluginEnvironment(
     fun addSubpluginArguments(
             project: Project, 
             kotlinTask: KotlinCompile, 
-            javaTask: AbstractCompile?,
+            javaTask: AbstractCompile,
             variantData: Any?,
             javaSourceSet: SourceSet?) {
         val pluginOptions = kotlinTask.pluginOptions
