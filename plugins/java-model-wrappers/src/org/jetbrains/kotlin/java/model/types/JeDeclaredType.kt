@@ -52,15 +52,7 @@ class JeDeclaredType(
         if (psiType.isRaw) return emptyList()
         
         return when (psiType) {
-            is PsiClassReferenceType -> {
-                val substitutor = psiType.resolveGenerics().substitutor
-                if (substitutor.isValid) {
-                    substitutor.substitutionMap.map { it.value.toJeType(psiManager) }
-                }
-                else {
-                    emptyList()
-                }
-            }
+            is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
             else -> emptyList()
         }
     }
