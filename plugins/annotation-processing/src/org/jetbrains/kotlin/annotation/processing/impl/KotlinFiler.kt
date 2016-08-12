@@ -33,11 +33,15 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
         val name = nameCharSequence.toString()
         val isPackageInfo = name.endsWith(PACKAGE_INFO_SUFFIX)
         val fqName = if (isPackageInfo) name.substring(0, PACKAGE_INFO_SUFFIX.length) else name
+
+        val packageName = fqName.substringBeforeLast('.', "")
         
-        val packageName = fqName.substringBeforeLast('.')
-        
-        val packageDir = File(generatedSourceDir, packageName.replace('.', '/'))
-        packageDir.mkdirs()
+        val packageDir = if (packageName.isNotEmpty()) {
+            File(generatedSourceDir, packageName.replace('.', '/')).apply { mkdirs() }
+        } 
+        else {
+            generatedSourceDir
+        }
         
         val fileName = fqName.substringAfterLast('.') + (if (isPackageInfo) PACKAGE_INFO_SUFFIX else extension)
         return File(packageDir, fileName)
