@@ -92,7 +92,7 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
     val result = HashMap<VariableDescriptor, MutableList<KtExpression>>()
     for (instruction in filterIsInstance<WriteValueInstruction>()) {
         val expression = instruction.element as? KtExpression
-        val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+        val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, bindingContext)
         if (expression != null && descriptor != null) {
             result.getOrPut(descriptor) { ArrayList() }.add(expression)
         }
@@ -109,7 +109,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
         traverseFollowingInstructions(instruction, visitedInstructions, TraversalOrder.FORWARD) {
             when {
                 it is AccessValueInstruction && it !in this ->
-                    PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext)?.let { accessedAfterwards.add(it) }
+                    PseudocodeUtil.extractVariableDescriptorIfAny(it, bindingContext)?.let { accessedAfterwards.add(it) }
 
                 it is LocalFunctionDeclarationInstruction ->
                     doTraversal(it.body.enterInstruction)

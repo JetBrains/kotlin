@@ -541,7 +541,7 @@ class ControlFlowInformationProvider private constructor(
             val ctxt = VariableUseContext(instruction, reportedDiagnosticMap)
             val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.owner, false)
             val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                    instruction, false, trace.bindingContext)
+                    instruction, trace.bindingContext)
             if (variableDescriptor == null
                 || !declaredVariables.contains(variableDescriptor)
                 || !ExpressionTypingUtils.isLocal(variableDescriptor.containingDeclaration, variableDescriptor)) {
@@ -884,7 +884,7 @@ class ControlFlowInformationProvider private constructor(
             internal val instruction: Instruction,
             internal val reportedDiagnosticMap: MutableMap<Instruction, DiagnosticFactory<*>>
     ) {
-        internal val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, trace.bindingContext)
+        internal val variableDescriptor = PseudocodeUtil.extractVariableDescriptorFromReference(instruction, trace.bindingContext)
     }
 
     private inner class VariableInitContext(

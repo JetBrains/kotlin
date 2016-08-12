@@ -68,20 +68,17 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable KtElement element, boolean onlyReference) {
-        DeclarationDescriptor descriptor = null;
-        if (!onlyReference &&
-            (element instanceof KtVariableDeclaration || element instanceof KtParameter ||
-             element instanceof KtEnumEntry || element instanceof KtObjectDeclaration)) {
-            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        }
-        else if (element instanceof KtSimpleNameExpression) {
-            descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (KtSimpleNameExpression) element);
+    public static VariableDescriptor extractVariableDescriptorFromReference(
+            @NotNull BindingContext bindingContext,
+            @Nullable KtElement element
+    ) {
+        if (element instanceof KtSimpleNameExpression) {
+            return variableDescriptorForDeclaration(bindingContext.get(BindingContext.REFERENCE_TARGET, (KtSimpleNameExpression) element));
         }
         else if (element instanceof KtQualifiedExpression) {
-            descriptor = extractVariableDescriptorIfAny(bindingContext, ((KtQualifiedExpression) element).getSelectorExpression(), onlyReference);
+            return extractVariableDescriptorFromReference(bindingContext, ((KtQualifiedExpression) element).getSelectorExpression());
         }
-        return variableDescriptorForDeclaration(descriptor);
+        return null;
     }
 
     public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,
