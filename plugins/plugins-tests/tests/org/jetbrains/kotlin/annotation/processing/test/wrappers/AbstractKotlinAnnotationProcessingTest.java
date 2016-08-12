@@ -19,7 +19,12 @@ package org.jetbrains.kotlin.annotation.processing.test.wrappers;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -29,8 +34,19 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractKotlinAnnotationProcessingTest extends AbstractCompilerLightClassTest {
+public abstract class AbstractKotlinAnnotationProcessingTest extends KotlinMultiFileTestWithJava<Void, Void> {
     private final static Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
+
+    @NotNull
+    @Override
+    protected ConfigurationKind getConfigurationKind() {
+        return ConfigurationKind.ALL;
+    }
+
+    @Override
+    protected boolean isKotlinSourceRootNeeded() {
+        return true;
+    }
     
     @Override
     protected void doMultiFileTest(File testDataFile, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
@@ -52,5 +68,23 @@ public abstract class AbstractKotlinAnnotationProcessingTest extends AbstractCom
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
+    }
+
+    @Override
+    protected Void createTestModule(@NotNull String name) {
+        return null;
+    }
+
+    @Override
+    protected Void createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
+        return null;
+    }
+
+    @NotNull
+    private static JavaElementFinder createFinder(@NotNull KotlinCoreEnvironment environment) throws IOException {
+        // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
+        KotlinTestUtils.resolveAllKotlinFiles(environment);
+
+        return JavaElementFinder.getInstance(environment.getProject());
     }
 }
