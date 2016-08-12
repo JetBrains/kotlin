@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -1262,6 +1259,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
+        private fun processEntryOrObject(entryOrObject: KtClassOrObject) {
+            val classDescriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, entryOrObject]
+            if (classDescriptor is ClassDescriptor) {
+                builder.declareEntryOrObject(entryOrObject)
+                builder.write(entryOrObject, entryOrObject, createSyntheticValue(entryOrObject, MagicKind.FAKE_INITIALIZER),
+                              AccessTarget.Declaration(FakeCallableDescriptorForObject(classDescriptor)), emptyMap())
+                generateInstructions(entryOrObject)
+            }
+        }
+
         override fun visitClass(klass: KtClass) {
             if (klass.hasPrimaryConstructor()) {
                 processParameters(klass.getPrimaryConstructorParameters())
@@ -1277,16 +1284,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 klass.declarations.forEach {
                     when (it) {
                         is KtEnumEntry -> {
-                            val classDescriptor = trace[BindingContext.DECLARATION_TO_DESCRIPTOR, it]
-                            if (classDescriptor is ClassDescriptor) {
-                                builder.declareEnumEntry(it)
-                                builder.write(it, it, createSyntheticValue(it, MagicKind.FAKE_INITIALIZER),
-                                              AccessTarget.Declaration(FakeCallableDescriptorForObject(classDescriptor)), emptyMap())
-                                generateInstructions(it)
-                            }
+                            processEntryOrObject(it)
                         }
                         is KtObjectDeclaration -> if (it.isCompanion()) {
-                            generateInstructions(it)
+                            processEntryOrObject(it)
                         }
                     }
                 }
@@ -1464,6 +1465,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
             when (receiver) {
                 is ImplicitReceiver -> {
+                    if (callElement is KtCallExpression) {
+                        val declaration = receiver.declarationDescriptor
+                        if (declaration is ClassDescriptor) {
+                            val fakeDescriptor = getFakeDescriptorForObject(declaration)
+                            val calleeExpression = callElement.calleeExpression
+                            if (fakeDescriptor != null && calleeExpression != null) {
+                                builder.read(calleeExpression, AccessTarget.Declaration(fakeDescriptor), emptyMap())
+                            }
+                        }
+                    }
                     receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver)
                 }
                 is ExpressionReceiver -> {

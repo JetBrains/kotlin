@@ -1,0 +1,44 @@
+== EE ==
+enum class EE(val x: Int) {
+    INSTANCE(Companion.foo()),
+    ANOTHER(foo());
+
+    companion object {
+        fun foo() = 42
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(val x: Int)
+    magic[FAKE_INITIALIZER](val x: Int) -> <v0>
+    w(x|<v0>)
+    v(INSTANCE(Companion.foo()),)
+    magic[FAKE_INITIALIZER](INSTANCE(Companion.foo()),) -> <v1>
+    w(INSTANCE|<v1>)
+    mark(Companion.foo())
+    mark(Companion)
+    r(Companion) -> <v2>
+    mark(foo())
+    call(foo(), foo|<v2>) -> <v3>
+    mark((Companion.foo()))
+    call((Companion.foo()), <init>|<v3>) -> <v4>
+    v(ANOTHER(foo());)
+    magic[FAKE_INITIALIZER](ANOTHER(foo());) -> <v5>
+    w(ANOTHER|<v5>)
+    r(foo, Companion) -> <v6>
+    magic[IMPLICIT_RECEIVER](foo()) -> <v7>
+    mark(foo())
+    call(foo(), foo|<v7>) -> <v8>
+    mark((foo()))
+    call((foo()), <init>|<v8>) -> <v9>
+    v(companion object { fun foo() = 42 })
+    magic[FAKE_INITIALIZER](companion object { fun foo() = 42 }) -> <v10>
+    w(Companion|<v10>)
+L1:
+    <END>                                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                                  PREV:[]
+sink:
+    <SINK>                                                                   PREV:[<ERROR>, <END>]
+=====================

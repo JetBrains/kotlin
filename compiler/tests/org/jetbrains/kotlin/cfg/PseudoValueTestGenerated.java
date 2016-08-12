@@ -377,6 +377,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("EnumEntryRefersCompanion.kt")
+                public void testEnumEntryRefersCompanion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/EnumEntryRefersCompanion.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ObjectEnumQualifiers.kt")
                 public void testObjectEnumQualifiers() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/classesAndObjects/ObjectEnumQualifiers.kt");

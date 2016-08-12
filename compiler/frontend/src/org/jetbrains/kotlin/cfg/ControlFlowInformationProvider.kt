@@ -328,8 +328,20 @@ class ControlFlowInformationProvider private constructor(
             when (variableDescriptor) {
                 is ValueParameterDescriptor ->
                     report(Errors.UNINITIALIZED_PARAMETER.on(element, variableDescriptor), ctxt)
-                is FakeCallableDescriptorForObject ->
-                    report(Errors.UNINITIALIZED_ENUM_ENTRY.on(element, variableDescriptor.classDescriptor), ctxt)
+                is FakeCallableDescriptorForObject -> {
+                    val classDescriptor = variableDescriptor.classDescriptor
+                    when (classDescriptor.kind) {
+                        ClassKind.ENUM_ENTRY ->
+                            report(Errors.UNINITIALIZED_ENUM_ENTRY.on(element, classDescriptor), ctxt)
+                        ClassKind.OBJECT -> if (classDescriptor.isCompanionObject) {
+                            val container = classDescriptor.containingDeclaration
+                            if (container is ClassDescriptor && container.kind == ClassKind.ENUM_CLASS) {
+                                report(Errors.UNINITIALIZED_ENUM_COMPANION.on(element, container), ctxt)
+                            }
+                        }
+                        else -> {}
+                    }
+                }
                 is VariableDescriptor ->
                     report(Errors.UNINITIALIZED_VARIABLE.on(element, variableDescriptor), ctxt)
             }

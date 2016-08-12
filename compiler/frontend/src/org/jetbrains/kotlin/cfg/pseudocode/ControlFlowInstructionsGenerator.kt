@@ -274,8 +274,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
         }
 
-        override fun declareEnumEntry(enumEntry: KtEnumEntry) {
-            add(VariableDeclarationInstruction(enumEntry, currentScope))
+        override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {
+            add(VariableDeclarationInstruction(entryOrObject, currentScope))
         }
 
         override fun loadUnit(expression: KtExpression) {

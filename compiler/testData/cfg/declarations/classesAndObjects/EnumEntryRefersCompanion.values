@@ -1,0 +1,23 @@
+== EE ==
+enum class EE(val x: Int) {
+    INSTANCE(Companion.foo()),
+    ANOTHER(foo());
+
+    companion object {
+        fun foo() = 42
+    }
+}
+---------------------
+                    <v0>: Int             NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v0>
+                    <v10>: EE.Companion   NEW: magic[FAKE_INITIALIZER](companion object { fun foo() = 42 }) -> <v10>
+                    <v1>: EE              NEW: magic[FAKE_INITIALIZER](INSTANCE(Companion.foo()),) -> <v1>
+                    <v5>: EE              NEW: magic[FAKE_INITIALIZER](ANOTHER(foo());) -> <v5>
+                    <v7>: EE.Companion    NEW: magic[IMPLICIT_RECEIVER](foo()) -> <v7>
+Companion           <v2>: EE.Companion    NEW: r(Companion) -> <v2>
+foo()               <v3>: Int             NEW: call(foo(), foo|<v2>) -> <v3>
+Companion.foo()     <v3>: Int             COPY
+(Companion.foo())   <v4>: *               NEW: call((Companion.foo()), <init>|<v3>) -> <v4>
+foo                 <v6>: *               NEW: r(foo, Companion) -> <v6>
+foo()               <v8>: Int             NEW: call(foo(), foo|<v7>) -> <v8>
+(foo())             <v9>: *               NEW: call((foo()), <init>|<v8>) -> <v9>
+=====================

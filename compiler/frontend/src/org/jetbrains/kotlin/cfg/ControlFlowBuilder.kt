@@ -48,7 +48,7 @@ interface ControlFlowBuilder {
     fun declareVariable(property: KtVariableDeclaration)
     fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode)
 
-    fun declareEnumEntry(enumEntry: KtEnumEntry)
+    fun declareEntryOrObject(entryOrObject: KtClassOrObject)
 
     // Labels
     fun createUnboundLabel(): Label
