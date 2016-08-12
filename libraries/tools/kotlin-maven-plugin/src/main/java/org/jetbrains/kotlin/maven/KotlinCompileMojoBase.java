@@ -16,24 +16,19 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
@@ -142,27 +137,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         ExitCode exitCode = compiler.exec(messageCollector, Services.EMPTY, arguments);
 
         if (exitCode != ExitCode.OK) {
-            throw new KotlinCompilationFailureException(
-                    CollectionsKt.map(messageCollector.getCollectedErrors(), new Function1<Pair<CompilerMessageLocation, String>, CompilerMessage>() {
-                        @Override
-                        public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
-                            CompilerMessageLocation location = pair.getFirst();
-                            String message = pair.getSecond();
-                            String lineContent = location.getLineContent();
-                            int lineContentLength = lineContent == null ? 0 : lineContent.length();
-
-                            return new CompilerMessage(
-                                    location.getPath(),
-                                    CompilerMessage.Kind.ERROR,
-                                    fixLocation(location.getLine()),
-                                    fixLocation(location.getColumn()),
-                                    fixLocation(location.getLine()),
-                                    Math.min(fixLocation(location.getColumn()), lineContentLength),
-                                    message
-                            );
-                        }
-                    })
-            );
+            messageCollector.throwKotlinCompilerException();
         }
     }
 
@@ -259,12 +234,5 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (arguments.noInline) {
             getLog().info("Method inlining is turned off");
         }
-    }
-
-    private static int fixLocation(int n) {
-        if (n < 0) {
-            return 0;
-        }
-        return n;
     }
 }

@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.Pair;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
@@ -64,5 +67,36 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
         } else {
             log.warn(text);
         }
+    }
+
+    public void throwKotlinCompilerException() throws KotlinCompilationFailureException {
+        throw new KotlinCompilationFailureException(
+                CollectionsKt.map(getCollectedErrors(), new Function1<Pair<CompilerMessageLocation, String>, CompilerMessage>() {
+                    @Override
+                    public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
+                        CompilerMessageLocation location = pair.getFirst();
+                        String message = pair.getSecond();
+                        String lineContent = location.getLineContent();
+                        int lineContentLength = lineContent == null ? 0 : lineContent.length();
+
+                        return new CompilerMessage(
+                                location.getPath(),
+                                CompilerMessage.Kind.ERROR,
+                                fixLocation(location.getLine()),
+                                fixLocation(location.getColumn()),
+                                fixLocation(location.getLine()),
+                                Math.min(fixLocation(location.getColumn()), lineContentLength),
+                                message
+                        );
+                    }
+                })
+        );
+    }
+
+    private static int fixLocation(int n) {
+        if (n < 0) {
+            return 0;
+        }
+        return n;
     }
 }
