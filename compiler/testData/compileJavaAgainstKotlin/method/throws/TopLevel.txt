@@ -4,7 +4,7 @@ public fun none(): kotlin.Unit
 public fun one(): kotlin.Unit
 public fun two(): kotlin.Unit
 
-public final class E1 : java.lang.Exception {
+public final class E1 : kotlin.Exception /* = java.lang.Exception */ {
     public constructor E1()
     public open /*fake_override*/ val cause: kotlin.Throwable?
     public open /*fake_override*/ val message: kotlin.String?
@@ -20,7 +20,7 @@ public final class E1 : java.lang.Exception {
     public open /*fake_override*/ fun setStackTrace(/*0*/ kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
 }
 
-public final class E2 : java.lang.Exception {
+public final class E2 : kotlin.Exception /* = java.lang.Exception */ {
     public constructor E2()
     public open /*fake_override*/ val cause: kotlin.Throwable?
     public open /*fake_override*/ val message: kotlin.String?

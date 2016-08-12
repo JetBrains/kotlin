@@ -2,7 +2,7 @@ package
 
 public fun </*0*/ T : kotlin.Any> T.getJavaClass(): java.lang.Class<T>
 
-public final class IdUnavailableException : java.lang.Exception {
+public final class IdUnavailableException : kotlin.Exception /* = java.lang.Exception */ {
     public constructor IdUnavailableException()
     public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
     public open override /*1*/ /*fake_override*/ val message: kotlin.String?
