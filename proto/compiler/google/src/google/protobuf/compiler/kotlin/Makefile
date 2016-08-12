@@ -7,8 +7,8 @@ SRCDIR = src
 BINDIR = bin
 TESTDIR = test
 KTPROJECT = protoc-test-project
-KTOUT = $(KTPROJECT)/src
-JAVAOUT = $(KTPROJECT)/src/java
+KTOUT = $(KTPROJECT)/src/kotlin
+JAVAOUT = $(KTPROJECT)/src
 
 OBJECTS = $(patsubst $(SRCDIR)/%.cc,$(BINDIR)/%.o,$(wildcard $(SRCDIR)/*.cc))
 KTARTIFACTS = $(patsubst $(TESTDIR)/%.proto,$(KTOUT)/%.kt,$(wildcard $(TESTDIR)/*.proto))
