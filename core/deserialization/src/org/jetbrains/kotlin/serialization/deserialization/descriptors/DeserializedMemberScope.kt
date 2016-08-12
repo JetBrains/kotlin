@@ -99,15 +99,12 @@ abstract class DeserializedMemberScope protected constructor(
     }
 
     private fun computeTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
-        val protos = typeAliasProtos[name].orEmpty()
+        val protos = typeAliasProtos[name] ?: return emptyList()
         val descriptors = protos.mapTo(linkedSetOf()) {
             c.memberDeserializer.loadTypeAlias(it)
         }
-        computeNonDeclaredTypeAliases(name, descriptors)
-        return descriptors.toReadOnlyList()
-    }
 
-    protected open fun computeNonDeclaredTypeAliases(name: Name, descriptors: MutableCollection<TypeAliasDescriptor>) {
+        return descriptors.toReadOnlyList()
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
