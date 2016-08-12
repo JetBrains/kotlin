@@ -3,6 +3,6 @@ package a
 
 class M {
     interface A {
-        abstract val e = <caret>Exception("")
+        abstract val e = <caret>Thread()
     }
 }

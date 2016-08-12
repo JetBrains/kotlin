@@ -3,6 +3,6 @@ package a
 
 class M {
     interface A {
-        abstract val e: Exception<caret>
+        abstract val e: Thread<caret>
     }
 }
