@@ -93,6 +93,8 @@ object IntroduceIndexMatcher : TransformationMatcher {
         val visited = HashSet<Instruction>()
         return traverseFollowingInstructions(from, visited) { instruction ->
             val nextInstructionScope = instruction.blockScope.block
+            // we should either reach the target instruction or exit the outer loop on every branch
+            // (if we won't do this on some branch we will finally exit the inner loop and return false from traverseFollowingInstructions)
             when {
                 instruction == to -> TraverseInstructionResult.SKIP
                 !outerLoop.isAncestor(nextInstructionScope, strict = false) -> TraverseInstructionResult.SKIP // we are out of the outer loop - it's ok
