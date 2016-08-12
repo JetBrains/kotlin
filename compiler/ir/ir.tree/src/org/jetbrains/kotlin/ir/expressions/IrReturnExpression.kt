@@ -22,16 +22,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrReturnExpression : IrCompoundExpression1
 
-var IrReturnExpression.returnedExpression: IrExpression?
-    get() = argument
-    set(newReturnedExpression) {
-        argument = newReturnedExpression
-    }
-
 class IrReturnExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType
+        type: KotlinType?
 ) : IrCompoundExpression1Base(startOffset, endOffset, type), IrReturnExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturnExpression(this, data)

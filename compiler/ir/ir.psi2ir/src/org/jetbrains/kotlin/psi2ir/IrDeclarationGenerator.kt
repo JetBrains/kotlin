@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrReturnExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.returnedExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset

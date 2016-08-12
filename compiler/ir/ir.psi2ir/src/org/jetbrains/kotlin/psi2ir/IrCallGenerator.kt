@@ -17,15 +17,10 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginKind
-import org.jetbrains.kotlin.ir.declarations.IrLocalVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -117,7 +112,7 @@ class IrCallGenerator(
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val irArgument = generateValueArgument(valueArgument) ?: continue
             val irTemporary = irExpressionGenerator.declarationFactory.createTemporaryVariable(irArgument)
-            val irTemporaryDeclaration = IrLocalVariableDeclarationExpressionImpl(irArgument.startOffset, irArgument.endOffset, irArgument.type)
+            val irTemporaryDeclaration = IrLocalVariableDeclarationExpressionImpl(irArgument.startOffset, irArgument.endOffset)
             irTemporaryDeclaration.childDeclaration = irTemporary
 
             irBlock.addChildExpression(irTemporaryDeclaration)
@@ -137,6 +132,7 @@ class IrCallGenerator(
         return irBlock
     }
 
+    // TODO smart casts on implicit receivers
     private fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
             when (receiver) {
                 is ImplicitClassReceiver ->

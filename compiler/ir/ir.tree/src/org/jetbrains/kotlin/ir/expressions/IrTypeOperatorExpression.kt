@@ -35,7 +35,7 @@ interface IrTypeOperatorExpression : IrExpression, IrCompoundExpression1 {
 class IrTypeOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val operator: IrTypeOperator,
         override val typeOperand: KotlinType
 ) : IrCompoundExpression1Base(startOffset, endOffset, type), IrTypeOperatorExpression {

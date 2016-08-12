@@ -33,7 +33,7 @@ interface IrCompoundExpressionN : IrCompoundExpression, IrExpressionOwnerN
 abstract class IrCompoundExpressionNBase(
         startOffset: Int,
         endOffset: Int,
-        override val type: KotlinType
+        override val type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpressionN {
     override val childExpressions: MutableList<IrExpression> = ArrayList()
 
@@ -74,7 +74,7 @@ abstract class IrCompoundExpressionNBase(
 abstract class IrCompoundExpression1Base(
         startOffset: Int,
         endOffset: Int,
-        override val type: KotlinType
+        override val type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpression1 {
     override var argument: IrExpression? = null
         set(newExpression) {
@@ -103,7 +103,7 @@ abstract class IrCompoundExpression1Base(
 abstract class IrCompoundExpression2Base(
         startOffset: Int,
         endOffset: Int,
-        override val type: KotlinType
+        override val type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type), IrCompoundExpression2 {
     override var argument0: IrExpression? = null
         set(newExpression) {

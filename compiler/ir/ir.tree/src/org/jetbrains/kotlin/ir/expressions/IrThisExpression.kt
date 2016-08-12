@@ -27,7 +27,7 @@ interface IrThisExpression : IrExpression {
 class IrThisExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val classDescriptor: ClassDescriptor
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

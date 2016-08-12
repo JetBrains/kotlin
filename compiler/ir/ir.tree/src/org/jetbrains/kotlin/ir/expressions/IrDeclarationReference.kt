@@ -37,14 +37,14 @@ interface IrGetEnumValueExpression : IrGetSingletonValueExpression
 abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val descriptor: D
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrDeclarationReference
 
 class IrGetObjectValueExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         descriptor: ClassDescriptor
 ) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -54,7 +54,7 @@ class IrGetObjectValueExpressionImpl(
 class IrGetEnumValueExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         descriptor: ClassDescriptor
 ) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

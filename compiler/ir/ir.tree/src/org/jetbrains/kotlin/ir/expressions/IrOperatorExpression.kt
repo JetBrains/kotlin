@@ -32,7 +32,7 @@ interface IrBinaryOperatorExpression : IrOperatorExpression, IrCompoundExpressio
 class IrUnaryOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val operator: IrOperator,
         override val relatedDescriptor: FunctionDescriptor?
 ) : IrCompoundExpression1Base(startOffset, endOffset, type), IrUnaryOperatorExpression {
@@ -44,7 +44,7 @@ class IrUnaryOperatorExpressionImpl(
 class IrBinaryOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val operator: IrOperator,
         override val relatedDescriptor: FunctionDescriptor?
 ) : IrCompoundExpression2Base(startOffset, endOffset, type), IrBinaryOperatorExpression {

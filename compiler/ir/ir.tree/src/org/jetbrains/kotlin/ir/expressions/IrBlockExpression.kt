@@ -30,7 +30,7 @@ fun IrBlockExpression.getResultExpression() =
 class IrBlockExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val hasResult: Boolean
 ) : IrCompoundExpressionNBase(startOffset, endOffset, type), IrBlockExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

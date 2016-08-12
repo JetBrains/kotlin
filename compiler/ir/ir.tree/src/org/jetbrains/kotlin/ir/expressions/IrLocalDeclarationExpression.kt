@@ -32,7 +32,7 @@ interface IrLocalVariableDeclarationExpression : IrLocalDeclarationExpression<Ir
 abstract class IrLocalDeclarationExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType
+        type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type), IrLocalVariableDeclarationExpression {
     private var childDeclarationImpl: IrLocalVariable? = null
     override var childDeclaration: IrLocalVariable
@@ -59,9 +59,12 @@ abstract class IrLocalDeclarationExpressionBase(
 
 class IrLocalVariableDeclarationExpressionImpl(
         startOffset: Int,
-        endOffset: Int,
-        type: KotlinType
-) : IrLocalDeclarationExpressionBase(startOffset, endOffset, type), IrLocalVariableDeclarationExpression {
+        endOffset: Int
+) : IrLocalDeclarationExpressionBase(startOffset, endOffset, null), IrLocalVariableDeclarationExpression {
+    constructor(startOffset: Int, endOffset: Int, childDeclaration: IrLocalVariable) : this(startOffset, endOffset) {
+        this.childDeclaration = childDeclaration
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitLocalVariableDeclarationExpression(this, data)
 }

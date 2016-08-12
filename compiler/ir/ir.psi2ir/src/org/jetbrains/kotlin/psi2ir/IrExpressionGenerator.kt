@@ -60,6 +60,17 @@ class IrExpressionGenerator(
     override fun visitExpression(expression: KtExpression, data: Nothing?): IrExpression =
             IrDummyExpression(expression.startOffset, expression.endOffset, getTypeOrFail(expression), expression.javaClass.simpleName)
 
+    override fun visitProperty(property: KtProperty, data: Nothing?): IrExpression {
+        if (property.delegateExpression != null) TODO("Local delegated property")
+
+        val variableDescriptor = getOrFail(BindingContext.VARIABLE, property) { "No descriptor for local variable ${property.name}" }
+
+        val irLocalVariable = declarationFactory.createLocalVariable(property, variableDescriptor)
+        irLocalVariable.initializerExpression = property.initializer?.generate()
+
+        return IrLocalVariableDeclarationExpressionImpl(property.startOffset, property.endOffset, irLocalVariable)
+    }
+
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrExpression {
         val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), false)
         expression.statements.forEach { irBlock.addChildExpression(it.generate()) }
@@ -159,6 +170,4 @@ class IrExpressionGenerator(
                 error("Expected this or receiver: $referenceTarget")
         }
     }
-
-
 }

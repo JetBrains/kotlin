@@ -29,7 +29,7 @@ interface IrMemberAccessExpression : IrDeclarationReference, IrExpressionOwner {
 abstract class IrMemberAccessExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val isSafe: Boolean
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null

@@ -45,7 +45,7 @@ sealed class IrLiteralKind<out T>(val asString: kotlin.String)  {
 class IrLiteralExpressionImpl<out T> (
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val kind: IrLiteralKind<T>,
         override val value: T
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrLiteralExpression<T> {

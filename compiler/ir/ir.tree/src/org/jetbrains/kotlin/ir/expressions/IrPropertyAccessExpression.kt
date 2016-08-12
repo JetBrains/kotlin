@@ -34,7 +34,7 @@ interface IrSetPropertyExpression : IrPropertyAccessExpression, IrCompoundExpres
 class IrGetPropertyExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         isSafe: Boolean,
         override val descriptor: PropertyDescriptor
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrGetPropertyExpression {
@@ -70,7 +70,7 @@ class IrGetPropertyExpressionImpl(
 class IrSetPropertyExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         isSafe: Boolean,
         override val descriptor: PropertyDescriptor
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrSetPropertyExpression {

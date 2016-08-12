@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 interface IrExpression : IrElement {
     override val parent: IrExpressionOwner?
     val index: Int
-    val type: KotlinType
+    val type: KotlinType?
 
     fun setTreeLocation(parent: IrExpressionOwner?, index: Int)
 }
@@ -42,7 +42,7 @@ fun IrExpressionOwner.validateChild(child: IrExpression) {
 abstract class IrExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        override val type: KotlinType
+        override val type: KotlinType?
 ) : IrElementBase(startOffset, endOffset), IrExpression {
     override var parent: IrExpressionOwner? = null
     override var index: Int = DETACHED_INDEX
@@ -56,7 +56,7 @@ abstract class IrExpressionBase(
 abstract class IrTerminalExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType
+        type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type) {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children

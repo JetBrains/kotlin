@@ -32,7 +32,7 @@ interface IrGetExtensionReceiverExpression : IrDeclarationReference {
 class IrGetVariableExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         descriptor: VariableDescriptor
 ) : IrDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, type, descriptor), IrGetVariableExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -42,7 +42,7 @@ class IrGetVariableExpressionImpl(
 class IrGetExtensionReceiverExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val descriptor: CallableDescriptor
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrGetExtensionReceiverExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

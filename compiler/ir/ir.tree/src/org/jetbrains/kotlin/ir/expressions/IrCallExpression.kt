@@ -38,7 +38,7 @@ interface IrCallExpression : IrMemberAccessExpression, IrCompoundExpression {
 class IrCallExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: KotlinType?,
         override val descriptor: CallableDescriptor,
         isSafe: Boolean,
         override val operator: IrOperator?,

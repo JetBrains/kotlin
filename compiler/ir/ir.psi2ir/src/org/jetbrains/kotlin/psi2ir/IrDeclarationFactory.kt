@@ -78,10 +78,11 @@ class IrLocalDeclarationsFactory(val scopeOwner: DeclarationDescriptor) : IrDecl
     fun createTemporaryVariable(irExpression: IrExpression): IrLocalVariable =
             IrLocalVariableImpl(irExpression.startOffset, irExpression.endOffset,
                                 IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
-                                createDescriptorForTemporaryVariable(irExpression.type)
+                                createDescriptorForTemporaryVariable(irExpression.type
+                                                                     ?: throw AssertionError("No type for $irExpression"))
             ).apply { initializerExpression = irExpression }
 
-    fun createLocalVariable(ktElement: KtElement, type: KotlinType, descriptor: VariableDescriptor): IrLocalVariable =
+    fun createLocalVariable(ktElement: KtElement, descriptor: VariableDescriptor): IrLocalVariable =
             IrLocalVariableImpl(ktElement.startOffset, ktElement.endOffset,
                                 IrDeclarationOriginKind.DEFINED,
                                 descriptor)

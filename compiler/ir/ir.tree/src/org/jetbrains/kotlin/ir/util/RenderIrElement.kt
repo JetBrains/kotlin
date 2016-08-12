@@ -70,31 +70,34 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "RETURN type=${expression.renderType()}"
 
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiverExpression, data: Nothing?): String =
-            "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name}"
+            "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name} type=${expression.renderType()}"
 
     override fun visitThisExpression(expression: IrThisExpression, data: Nothing?): String =
-            "THIS ${expression.classDescriptor.render()}"
+            "THIS ${expression.classDescriptor.render()} type=${expression.renderType()}"
 
     override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
-            "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} ${expression.operator ?: ""}"
+            "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
+            "type=${expression.renderType()} operator=${expression.operator ?: ""}"
 
     override fun visitGetProperty(expression: IrGetPropertyExpression, data: Nothing?): String =
-            "GET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}"
+            "GET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
+            "type=${expression.renderType()}"
 
     override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
-            "GET_VAR ${expression.descriptor.name}"
+            "GET_VAR ${expression.descriptor.name} type=${expression.renderType()}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: Nothing?): String =
-            "GET_OBJECT ${expression.descriptor.name}"
+            "GET_OBJECT ${expression.descriptor.name} type=${expression.renderType()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValueExpression, data: Nothing?): String =
-            "GET_ENUM_VALUE ${expression.descriptor.name}"
+            "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.renderType()}"
 
     override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
-            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}"
+            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
+            "type=${expression.renderType()}"
 
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
-            "DUMMY ${expression.description}"
+            "DUMMY ${expression.description} type=${expression.renderType()}"
 
     companion object {
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
@@ -113,6 +116,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 DESCRIPTOR_RENDERER.render(this)
 
         internal fun IrExpression.renderType(): String =
-                DESCRIPTOR_RENDERER.renderType(type)
+                type?.let { DESCRIPTOR_RENDERER.renderType(it) } ?: "<no-type>"
     }
 }

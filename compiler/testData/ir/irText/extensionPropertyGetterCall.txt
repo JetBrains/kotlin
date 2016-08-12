@@ -5,5 +5,5 @@ IrFile /extensionPropertyGetterCall.kt
       LITERAL String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
-      GET_PROPERTY .okext
-        $receiver: $RECEIVER of: test5
+      GET_PROPERTY .okext type=kotlin.String
+        $receiver: $RECEIVER of: test5 type=kotlin.String
