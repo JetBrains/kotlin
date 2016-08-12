@@ -3,7 +3,7 @@
 lprotoc="/usr/local/lib/libprotoc.so"
 lprotobuf="/usr/local/lib/libprotobuf.so"
 srcdir='google_protobuf'
-ok=0
+ok=1
 missing=""
 red='\033[0;31m'
 nc='\033[0m'
