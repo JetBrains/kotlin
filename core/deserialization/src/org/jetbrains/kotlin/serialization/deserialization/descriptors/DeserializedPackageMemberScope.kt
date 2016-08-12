@@ -65,7 +65,7 @@ open class DeserializedPackageMemberScope(
                 result.addIfNotNull(getClassDescriptor(className))
             }
         }
-        for (typeAliasName in typeAliasNames()) {
+        for (typeAliasName in typeAliasNames) {
             if (nameFilter(typeAliasName)) {
                 result.addAll(getContributedTypeAliases(typeAliasName))
             }
