@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message CrossBranch {
   message Grandfather {
     message LeftFather {
@@ -20,6 +22,11 @@ message CrossBranch {
       message RightRightSon {
         Grandfather.LeftFather.LeftRightSon son_field = 1;
       }
+
+      RightLeftSon rls = 1;
+      RightRightSon rrs = 2;
     }
+
+    RightFather rf = 1;
   }
 }

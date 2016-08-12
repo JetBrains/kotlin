@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message TagOrderShuffled {
   sint32 sint = 8;
   Enum enum_field = 938423;

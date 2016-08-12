@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message MessageVarints {
   int32 int = 1;
   int64 long = 2;

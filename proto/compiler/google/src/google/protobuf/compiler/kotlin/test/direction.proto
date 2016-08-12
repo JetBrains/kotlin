@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message DirectionRequest {
     enum Command {
         stop = 0;

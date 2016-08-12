@@ -1,6 +1,0 @@
-syntax = "proto3";
-
-message RouteDoneResponse {
-    int32 code = 1;
-    int32 errorMsg = 2;
-}

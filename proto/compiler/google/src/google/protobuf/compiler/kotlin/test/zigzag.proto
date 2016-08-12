@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message MessageZigZag {
   sint32 int = 1;
   sint64 long = 2;

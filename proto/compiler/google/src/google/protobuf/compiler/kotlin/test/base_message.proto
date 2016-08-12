@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "java_msg";
+
 message Base {
   repeated int64 arr = 1;
   bool flag = 5;
