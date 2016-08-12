@@ -196,7 +196,7 @@ void FieldGenerator::generateSerializationForEnums(io::Printer * printer, bool i
             printer->Print(vars, "output.write$suffix$NoTag ()\n");
         }
         else {
-            printer->Print(vars, "output.write$suffix$ ($fieldNumber$, $fieldName$.ord)\n");
+            printer->Print(vars, "output.write$suffix$ ($fieldNumber$, $fieldName$.id)\n");
         }
     }
 }
@@ -297,19 +297,27 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
         else {
             throw UnreachableStateException("Arrays of non-primitive types are not supported");
         }
+        if (!isRead && isField) {
+            printer->Outdent();
+            printer->Print("}\n");
+        }
     }
 
     else {
-        // we shouldn't write fair fields with default values
-        if (!isRead && isField) {
-            printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
-            printer->Indent();
-        }
-
         /* Then check is current field is enum. We have to handle it separately too, because
          * we have to pass enums as Int's to CodedStreams as per protobuf-format */
         if (descriptor->type() == FieldDescriptor::TYPE_ENUM) {
+            // we shouldn't write fair fields with default values
+            // compare enums as their ids
+            if (!isRead && isField) {
+                printer->Print(vars, "if ($fieldName$.id != $initValue$.id) {\n");
+                printer->Indent();
+            }
             generateSerializationForEnums(printer, isRead, noTag, isField);
+            if (!isRead && isField) {
+                printer->Outdent();
+                printer->Print("}\n");
+            }
         }
 
         /* Then check for nested messages. Here we re-use writeTo method, that should be defined in
@@ -317,19 +325,27 @@ void FieldGenerator::generateSerializationCode(io::Printer *printer, bool isRead
          * Note that readFrom/writeTo methods write message as it's top-level message, i.e. without
          * any tags. Therefore, we have to prepend tags and size manually. */
         else if (descriptor->type() == FieldDescriptor::TYPE_MESSAGE) {
+            // note that we don't check message-type fields for default values
             generateSerializationForMessages(printer, isRead, noTag, isField);
         }
 
         /* Finally, serialize trivial cases */
         else {
+            // we shouldn't write fair fields with default values
+            // compare enums as their ids
+            if (!isRead && isField) {
+                printer->Print(vars, "if ($fieldName$ != $initValue$) {\n");
+                printer->Indent();
+            }
             generateSerializationForPrimitives(printer, isRead, noTag, isField);
+            if (!isRead && isField) {
+                printer->Outdent();
+                printer->Print("}\n");
+            }
         }
     }
 
-    if (!isRead && isField) {
-        printer->Outdent();
-        printer->Print("}\n");
-    }
+
 }
 
 
@@ -391,7 +407,7 @@ void FieldGenerator::generateSizeForPacked(io::Printer * printer, string varName
 
     // Add tag size, if necessary
     if (!noTag) {
-        printer->Print(vars, "arraySize += WireFormat.getTagSize($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
+        printer->Print(vars, "$varName$ += WireFormat.getTagSize($fieldNumber$, WireType.LENGTH_DELIMITED)\n");
     }
 
     // iterate over all elements of array
@@ -431,7 +447,7 @@ void FieldGenerator::generateSizeForEnums(io::Printer *printer, string varName, 
     vars["varName"] = varName;
     vars["fieldName"] = simpleName;
     vars["fieldNumber"] = std::to_string(getFieldNumber());
-    printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.ord)\n");
+    printer->Print(vars, "$varName$ += WireFormat.getEnumSize($fieldNumber$, $fieldName$.id)\n");
 }
 
 void FieldGenerator::generateSizeForMessages(io::Printer * printer, string varName, bool noTag, bool isField) const {
