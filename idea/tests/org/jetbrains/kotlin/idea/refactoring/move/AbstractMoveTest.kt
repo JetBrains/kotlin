@@ -273,6 +273,24 @@ enum class MoveAction {
         }
     },
 
+    MOVE_FILES_WITH_DECLARATIONS {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.project
+
+            val targetDirPath = config.getString("targetDirectory")
+            val targetDir = rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
+            MoveFilesWithDeclarationsProcessor(
+                    project,
+                    listOf(mainFile as KtFile),
+                    targetDir,
+                    mainFile.name,
+                    searchInComments = true,
+                    searchInNonJavaFiles = true,
+                    moveCallback = null
+            ).run()
+        }
+    },
+
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.project

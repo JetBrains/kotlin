@@ -97,6 +97,8 @@ class MoveDeclarationsDescriptor(
         val openInEditor: Boolean = false
 )
 
+class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
+
 class MoveKotlinDeclarationsProcessor(
         val project: Project,
         val descriptor: MoveDeclarationsDescriptor,
@@ -127,6 +129,8 @@ class MoveKotlinDeclarationsProcessor(
     private val usagesToProcessBeforeMove = SmartList<UsageInfo>()
 
     private val fakeFile = KtPsiFactory(project).createFile("")
+
+    fun getConflictsAsUsages(): List<UsageInfo> = conflicts.entrySet().map { ConflictUsageInfo(it.key, it.value) }
 
     public override fun findUsages(): Array<UsageInfo> {
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
