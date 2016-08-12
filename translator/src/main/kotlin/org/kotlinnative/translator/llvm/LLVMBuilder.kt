@@ -4,6 +4,7 @@ import org.kotlinnative.translator.llvm.types.LLVMCharType
 import org.kotlinnative.translator.llvm.types.LLVMIntType
 import org.kotlinnative.translator.llvm.types.LLVMStringType
 import org.kotlinnative.translator.llvm.types.LLVMType
+import java.util.*
 
 class LLVMBuilder(val arm: Boolean = false) {
     private val POINTER_SIZE = 4
@@ -81,8 +82,10 @@ class LLVMBuilder(val arm: Boolean = false) {
         globalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"$value\\00\", align 1")
     }
 
-    fun addGlobalInitialize(target: LLVMVariable, classType: LLVMType) {
-        val code = "$target = internal global $classType zeroinitializer, align ${classType.align}"
+    fun addGlobalInitialize(target: LLVMVariable, fields: ArrayList<LLVMVariable>, initializers: Map<LLVMVariable, String>, classType: LLVMType) {
+        val code = "$target = internal global $classType { ${
+            fields.map { it.getType() + " " + if (initializers.containsKey(it)) initializers[it] else "0"}.joinToString()
+        } }, align ${classType.align}"
         globalCode.appendln(code)
     }
 

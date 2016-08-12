@@ -1,1 +1,2 @@
 singleton_test_Int(5) == 40
+singleton_test2() == 123456789

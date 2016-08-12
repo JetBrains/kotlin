@@ -35,6 +35,8 @@ abstract class StructCodegen(val state: TranslationState,
         get() = "${if (type.location.size > 0) "${type.location.joinToString(".")}." else ""}$structName"
 
     open fun prepareForGenerate() {
+        generateStruct()
+
         for (declaration in classOrObject.declarations) {
             when (declaration) {
                 is KtNamedFunction -> {
@@ -46,7 +48,6 @@ abstract class StructCodegen(val state: TranslationState,
     }
 
     open fun generate() {
-        generateStruct()
         generateEnumFields()
         generatePrimaryConstructor()
 
@@ -70,7 +71,7 @@ abstract class StructCodegen(val state: TranslationState,
                     field.offset = offset
                     offset++
 
-                    if ((declaration.initializer != null) && this !is ObjectCodegen) {
+                    if (declaration.initializer != null) {
                         initializedFields.put(field, declaration.initializer!!)
                     }
                     fields.add(field)
