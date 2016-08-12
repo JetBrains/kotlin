@@ -22,20 +22,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveMultipleElementsViewDescriptor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.refactoring.rename.RenameUtil
-import com.intellij.refactoring.util.MoveRenameUsageInfo
-import com.intellij.refactoring.util.NonCodeUsageInfo
-import com.intellij.refactoring.util.RefactoringUIUtil
-import com.intellij.refactoring.util.TextOccurrencesUtil
+import com.intellij.refactoring.util.*
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
@@ -48,6 +44,7 @@ import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
@@ -64,13 +61,11 @@ import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
@@ -253,6 +248,39 @@ class MoveKotlinDeclarationsProcessor(
 
         fun render(declaration: PsiElement) = RefactoringUIUtil.getDescription(declaration, false)
 
+        fun checkModuleConflictsInUsages(usages: List<UsageInfo>) {
+            val sourceRoot = descriptor.moveTarget.targetFile ?: return
+            RefactoringConflictsUtil.analyzeModuleConflicts(project, elementsToMove, usages.toTypedArray(), sourceRoot, conflicts)
+        }
+
+        fun checkModuleConflictsInDeclarations() {
+            val sourceRoot = descriptor.moveTarget.targetFile ?: return
+            val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+            val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
+            for (declaration in elementsToMove) {
+                declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
+                    refExpr.references
+                            .forEach { ref ->
+                                val target = ref.resolve() ?: return@forEach
+                                if (target.isInsideOf(elementsToMove)) return@forEach
+                                if (target in resolveScope) return@forEach
+
+                                val superMethods = SmartSet.create<PsiMethod>()
+                                target.toLightMethods().forEach { superMethods += it.findDeepestSuperMethods() }
+                                if (superMethods.any { it in resolveScope }) return@forEach
+
+                                val refContainer = ref.element.getStrictParentOfType<KtNamedDeclaration>() ?: return@forEach
+                                val scopeDescription = RefactoringUIUtil.getDescription(refContainer, true)
+                                val message = RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.in.module.2",
+                                                                        RefactoringUIUtil.getDescription(target, true),
+                                                                        scopeDescription,
+                                                                        CommonRefactoringUtil.htmlEmphasize(targetModule.name))
+                                conflicts.putValue(target, CommonRefactoringUtil.capitalize(message))
+                            }
+                }
+            }
+        }
+
         fun checkVisibilityInUsages(usages: List<UsageInfo>) {
             val declarationToContainers = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()
             for (usage in usages) {
@@ -319,6 +347,8 @@ class MoveKotlinDeclarationsProcessor(
 
             usages += descriptor.delegate.findUsages(descriptor)
             collectUsages(kotlinToLightElements, usages)
+            checkModuleConflictsInUsages(usages)
+            checkModuleConflictsInDeclarations()
             checkVisibilityInUsages(usages)
             checkVisibilityInDeclarations()
             descriptor.delegate.collectConflicts(descriptor, usages, conflicts)
