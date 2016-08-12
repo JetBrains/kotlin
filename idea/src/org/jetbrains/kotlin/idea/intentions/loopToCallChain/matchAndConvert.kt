@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubtypeOfClass
@@ -273,40 +272,37 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
         val dataFlowInfo = bindingContext.getDataFlowInfo(loop)
         val newBindingContext = callChain.analyzeInContext(resolutionScope, loop, dataFlowInfo = dataFlowInfo)
 
-        val smartCastBroken = callChain.anyDescendantOfType<KtExpression> { expression ->
+        var preservedSmartCastCount = 0
+        callChain.forEachDescendantOfType<KtExpression> { expression ->
             val smartCastType = expression.getCopyableUserData(SMARTCAST_KEY)
             if (smartCastType != null) {
-                if (newBindingContext[BindingContext.SMARTCAST, expression] != smartCastType && newBindingContext.getType(expression) != smartCastType) {
-                    return@anyDescendantOfType true
+                if (newBindingContext[BindingContext.SMARTCAST, expression] == smartCastType || newBindingContext.getType(expression) == smartCastType) {
+                    preservedSmartCastCount++
                 }
-                smartCastCount--
             }
 
             val implicitReceiverSmartCastType = expression.getCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY)
             if (implicitReceiverSmartCastType != null) {
-                if (newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] != implicitReceiverSmartCastType) {
-                    return@anyDescendantOfType true
+                if (newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] == implicitReceiverSmartCastType) {
+                    preservedSmartCastCount++
                 }
-                smartCastCount--
             }
-
-            false
         }
 
-        if (smartCastBroken) return false
+        if (preservedSmartCastCount == smartCastCount) return true
 
-        assert(smartCastCount >= 0)
-        if (smartCastCount > 0) { // not all smart cast expressions has been found in the result, perform more expensive check
-            val expressionToBeReplaced = matchResult.transformationMatch.resultTransformation.expressionToBeReplacedByResultCallChain
-            if (!tryChangeAndCheckErrors(expressionToBeReplaced, loop) { it.replace(callChain) }) return false
-        }
+        // not all smart cast expressions has been found in the result or have the same type after conversion, perform more expensive check
+        val expressionToBeReplaced = matchResult.transformationMatch.resultTransformation.expressionToBeReplacedByResultCallChain
+        if (!tryChangeAndCheckErrors(expressionToBeReplaced, loop) { it.replace(callChain) }) return false
 
         return true
     }
     finally {
-        loop.forEachDescendantOfType<KtExpression> {
-            it.putCopyableUserData(SMARTCAST_KEY, null)
-            it.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, null)
+        if (smartCastCount > 0) {
+            loop.forEachDescendantOfType<KtExpression> {
+                it.putCopyableUserData(SMARTCAST_KEY, null)
+                it.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, null)
+            }
         }
     }
 }
