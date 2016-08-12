@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -215,7 +216,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     private List<File> getDependenciesForScript() throws MojoExecutionException {
         List<File> deps = new ArrayList<File>();
 
-        deps.add(getKotlinStdlibDependency());
+        deps.addAll(getKotlinRuntimeDependencies());
         deps.add(getThisPluginAsDependency());
 
         deps.addAll(getThisPluginDependencies());
@@ -226,13 +227,16 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     private File getDependencyFile(ComponentDependency dep) {
         ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(dep.getType());
         Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), null, dep.getType(), null, artifactHandler);
-        localRepository.find(artifact);
-        return artifact.getFile();
+        return getArtifactFile(artifact);
     }
 
     private File getDependencyFile(Dependency dep) {
         ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(dep.getType());
         Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), null, dep.getType(), null, artifactHandler);
+        return getArtifactFile(artifact);
+    }
+
+    private File getArtifactFile(Artifact artifact) {
         localRepository.find(artifact);
         return artifact.getFile();
     }
@@ -257,21 +261,25 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
         return getDependencyFile(dep);
     }
 
-    private File getKotlinStdlibDependency() throws MojoExecutionException {
-        Dependency result = null;
+    private List<File> getKotlinRuntimeDependencies() throws MojoExecutionException {
+        Artifact stdlibDep = null;
+        Artifact runtimeDep = null;
 
-        for (Dependency dep: project.getDependencies()) {
+        for (Artifact dep: project.getArtifacts()) {
             if (dep.getArtifactId().equals("kotlin-stdlib")) {
-                result = dep;
-                break;
+                stdlibDep = dep;
             }
+            if (dep.getArtifactId().equals("kotlin-runtime")) {
+                runtimeDep = dep;
+            }
+            if (stdlibDep != null && runtimeDep != null) break;
         }
 
-        if (result == null) {
-            throw new MojoExecutionException("Unable to find Kotlin standard library among project dependencies");
+        if (stdlibDep == null || runtimeDep == null) {
+            throw new MojoExecutionException("Unable to find kotlin-stdlib and kotlin-runtime artifacts among project dependencies");
         }
 
-        return getDependencyFile(result);
+        return Arrays.asList(getArtifactFile(stdlibDep), getArtifactFile(runtimeDep));
     }
 
     private void initCompiler() {
