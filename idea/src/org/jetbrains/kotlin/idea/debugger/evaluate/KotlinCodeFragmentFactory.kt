@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -127,33 +128,36 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     return@putCopyableUserData emptyFile
                 }
 
-                // TODO: 'this' is unavailable
-                val visibleVariables = getVisibleLocalVariables(contextElement, debuggerContext)
-                if (visibleVariables == null) {
-                    LOG.warn("Couldn't get a list of local variables for ${debuggerContext.sourcePosition.file.name}:${debuggerContext.sourcePosition.line}")
+                val frameDescriptor = getFrameInfo(contextElement, debuggerContext)
+                if (frameDescriptor == null) {
+                    LOG.warn("Couldn't get info about 'this' and local variables for ${debuggerContext.sourcePosition.file.name}:${debuggerContext.sourcePosition.line}")
                     return@putCopyableUserData emptyFile
                 }
 
-                val fakeFunctionText = "fun _java_locals_debug_fun_() {\n" +
-                                       visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project) +
-                                       "}"
+                val receiverTypeReference = frameDescriptor.thisObject?.let { createKotlinProperty(project, "this_0", it.type().name(), it) }?.typeReference
+                val receiverTypeText = receiverTypeReference?.let { "${it.text}." } ?: ""
+
+                val kotlinVariablesText = frameDescriptor.visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project)
+
+                val fakeFunctionText = "fun ${receiverTypeText}_java_locals_debug_fun_() {\n$kotlinVariablesText\n}"
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
                 val fakeFunction = fakeFile.declarations.firstOrNull() as? KtFunction
                 val fakeContext = (fakeFunction?.bodyExpression as? KtBlockExpression)?.statements?.lastOrNull()
 
                 return@putCopyableUserData wrapContextIfNeeded(project, contextElement, fakeContext) ?: emptyFile
+
             })
         }
 
         return codeFragment
     }
 
-    private fun getVisibleLocalVariables(contextElement: PsiElement?, debuggerContext: DebuggerContextImpl): Map<LocalVariable, Value>? {
+    private fun getFrameInfo(contextElement: PsiElement?, debuggerContext: DebuggerContextImpl): FrameInfo? {
         val semaphore = Semaphore()
         semaphore.down()
 
-        var visibleVariables: Map<LocalVariable, Value>? = null
+        var frameInfo: FrameInfo? = null
 
         val worker = object : DebuggerCommandImpl() {
             override fun action() {
@@ -163,7 +167,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     else
                         debuggerContext.frameProxy?.stackFrame
 
-                    visibleVariables = frame?.let { it.getValues(it.visibleVariables()) } ?: emptyMap<LocalVariable, Value>()
+                    frameInfo = FrameInfo(frame?.thisObject(), frame?.let { it.getValues(it.visibleVariables()) } ?: emptyMap())
                 }
                 catch(ignored: AbsentInformationException) {
                     // Debug info unavailable
@@ -180,8 +184,10 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             if (semaphore.waitFor(20)) break
         }
 
-        return visibleVariables
+        return frameInfo
     }
+
+    private class FrameInfo(val thisObject: Value?, val visibleVariables: Map<LocalVariable, Value>)
 
     private fun initImports(imports: String?): String? {
         if (imports != null && !imports.isEmpty()) {
@@ -334,7 +340,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
                 val kotlinProperty = createKotlinProperty(project, variableName, variableValue.type().name(), variableValue)
                                      ?: continue
-                sb.append("$kotlinProperty\n")
+                sb.append("${kotlinProperty.text}\n")
             }
 
             sb.append("val _debug_context_val = 1\n")
@@ -342,11 +348,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             return sb.toString()
         }
 
-        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): String? {
+        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): KtProperty? {
             val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(GlobalSearchScope.allScope(project))
             if (actualClassDescriptor != null && actualClassDescriptor.defaultType.arguments.isEmpty()) {
                 val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(actualClassDescriptor.defaultType.makeNullable())
-                return "val ${variableName.quoteIfNeeded()}: $renderedType = null"
+                return KtPsiFactory(project).createProperty(variableName.quoteIfNeeded(), renderedType, false)
             }
 
             fun String.addArraySuffix() = if (value is ArrayReference) this + "[]" else this
@@ -359,7 +365,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 className).addArraySuffix()
 
             val field = PsiElementFactory.SERVICE.getInstance(project).createField(variableName, PsiType.getTypeByName(type, project, GlobalSearchScope.allScope(project)))
-            return field.j2kText()?.substringAfter("private ")
+            val ktField = field.j2k() as? KtProperty
+            ktField?.modifierList?.delete()
+            return ktField
         }
     }
 
