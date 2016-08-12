@@ -8302,6 +8302,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCastNotBroken2.kt")
+        public void testSmartCastNotBroken2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastNotBroken2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastNotNullRequired.kt")
         public void testSmartCastNotNullRequired() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastNotNullRequired.kt");
