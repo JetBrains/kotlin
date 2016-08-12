@@ -11591,9 +11591,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("indexIncrementTwice.kt")
+        public void testIndexIncrementTwice() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/indexIncrementTwice.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("indexPlusPlusInsideExpression.kt")
         public void testIndexPlusPlusInsideExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/indexPlusPlusInsideExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexUsedAfterLoop.kt")
+        public void testIndexUsedAfterLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/indexUsedAfterLoop.kt");
             doTest(fileName);
         }
 
