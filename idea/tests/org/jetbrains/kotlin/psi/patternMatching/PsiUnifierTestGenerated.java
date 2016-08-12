@@ -93,9 +93,9 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("throw.kt")
-            public void testThrow() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/throw.kt");
+            @TestMetadata("throwRuntime.kt")
+            public void testThrowRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/throwRuntime.kt");
                 doTest(fileName);
             }
 

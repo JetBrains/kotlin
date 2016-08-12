@@ -2,6 +2,7 @@
 // ERROR: Unresolved reference: BeforeMethod
 // ERROR: Unresolved reference: testng
 // UNCONFIGURE_LIBRARY: testng
+// WITH_RUNTIME
 package some
 
 abstract class KBase {

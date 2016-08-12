@@ -1,3 +1,4 @@
+// RUNTIME
 package a
 
 class A() {
