@@ -790,7 +790,8 @@
     
     <target name="annotation-processing">
         <cleandir dir="${output}/classes/annotation-processing"/>
-        <javac2 destdir="${output}/classes/annotation-processing" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/annotation-processing" debug="true" debuglevel="lines,vars,source" 
+                includeAntRuntime="false" source="${java.target}" target="${java.target}">
             <withKotlin modulename="annotation-processing">
                 <compilerarg value="-version"/>
             </withKotlin>
