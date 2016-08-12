@@ -17,4 +17,7 @@ class LLVMStringType(override val length: Int) : LLVMArray, LLVMType() {
     override fun basicType() = LLVMCharType()
     override val typename = "i8*"
     override fun fullType() = "[${length + 1} x i8]"
+    override fun hashCode(): Int {
+        return length
+    }
 }

@@ -353,12 +353,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     private fun evaluateNameReferenceExpression(expr: KtNameReferenceExpression, classScope: StructCodegen): LLVMSingleValue? {
         val fieldName = state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr)!!.name.toString()
         val companionObject = (classScope as ClassCodegen).companionObjectCodegen ?: throw UnexpectedException(expr.text)
-        val field = companionObject.fieldsIndex[fieldName]
+        val field = companionObject.fieldsIndex[fieldName] ?: throw UnexpectedException(expr.text)
         val receiver = variableManager[companionObject.fullName]!!
-        if (field == null) {
-            throw UnexpectedException("")
-        }
-        val result = codeBuilder.getNewVariable(field!!.type, pointer = 1)
+        val result = codeBuilder.getNewVariable(field.type, pointer = 1)
 
         codeBuilder.loadClassField(result, receiver, field.offset)
         return result
