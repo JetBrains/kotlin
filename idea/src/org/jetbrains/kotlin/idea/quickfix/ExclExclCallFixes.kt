@@ -98,6 +98,13 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
         else if (psiElement is KtArrayAccessExpression) {
             return psiElement.arrayExpression
         }
+        else if (psiElement is KtOperationReferenceExpression) {
+            val parent = psiElement.parent
+            return when (parent) {
+                is KtUnaryExpression -> parent.baseExpression
+                else -> null
+            }
+        }
         else if (psiElement is KtExpression) {
             return psiElement
         }
