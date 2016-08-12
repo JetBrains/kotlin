@@ -116,6 +116,10 @@ data class MatchingState(
 interface TransformationMatcher {
     fun match(state: MatchingState): TransformationMatch?
 
+    /**
+     * If false then this matcher won't be run when there is an index variable and it's used in the rest part of loop.
+     * Matchers that return true should be able to handle code using the index variable properly.
+     */
     val indexVariableAllowed: Boolean
 
     /**
