@@ -35,7 +35,8 @@ $(JAVAOUT):
 clean:
 	rm -rf $(BINDIR)
 	rm $(EXE)
-	rm -rf $(KTPROJECT)
+	rm -rf $(KTOUT)
+	rm -rf $(JAVAOUT)/java_msg
 
 $(KTOUT)/%.kt: $(TESTDIR)/%.proto $(EXE)
 	./protoc --kotlin_out=$(KTOUT) $<
