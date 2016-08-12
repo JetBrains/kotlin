@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
@@ -190,18 +191,34 @@ enum class CollectionKind {
 }
 
 fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
-    //TODO: support mutableListOf() etc
     val callExpression = this as? KtCallExpression ?: return null //TODO: it can be qualified too
     if (callExpression.valueArguments.isNotEmpty()) return null
+
     val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
     val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
-    val constructorDescriptor = resolvedCall.resultingDescriptor as? ConstructorDescriptor ?: return null
-    val classDescriptor = constructorDescriptor.containingDeclaration
-    val classFqName = classDescriptor.importableFqName?.asString()
-    return when (classFqName) {
-        "java.util.ArrayList" -> CollectionKind.LIST
-        "java.util.HashSet", "java.util.LinkedHashSet" -> CollectionKind.SET
-        else -> null
+    val descriptor = resolvedCall.resultingDescriptor
+
+    when (descriptor) {
+        is ConstructorDescriptor -> {
+            val classDescriptor = descriptor.containingDeclaration
+            val classFqName = classDescriptor.importableFqName?.asString()
+            return when (classFqName) {
+                "java.util.ArrayList" -> CollectionKind.LIST
+                "java.util.HashSet", "java.util.LinkedHashSet" -> CollectionKind.SET
+                else -> null
+            }
+        }
+
+        is FunctionDescriptor -> {
+            val fqName = descriptor.importableFqName?.asString()
+            return when (fqName) {
+                "kotlin.collections.arrayListOf", "kotlin.collections.mutableListOf" -> CollectionKind.LIST
+                "kotlin.collections.hashSetOf", "kotlin.collections.mutableSetOf" -> CollectionKind.SET
+                else -> null
+            }
+        }
+
+        else -> return null
     }
 }
 
