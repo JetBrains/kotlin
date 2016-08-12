@@ -53,9 +53,10 @@ class JDIEval(
     fun loadClass(classType: Type, classLoader: ClassLoaderReference?): Value {
         val loadedClasses = vm.classesByName(classType.internalName)
         if (!loadedClasses.isEmpty()) {
-            val loadedClass = loadedClasses[0]
-            if (classType.descriptor in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader) {
-                return loadedClass.classObject().asValue()
+            for (loadedClass in loadedClasses) {
+                if (loadedClass.isPrepared && (classType.descriptor in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader)) {
+                    return loadedClass.classObject().asValue()
+                }
             }
         }
         if (classLoader == null) {
