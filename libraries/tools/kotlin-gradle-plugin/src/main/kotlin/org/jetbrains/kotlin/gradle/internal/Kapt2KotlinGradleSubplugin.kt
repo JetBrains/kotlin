@@ -61,8 +61,8 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
 
     override fun apply(
             project: Project, 
-            kotlinCompile: AbstractCompile, 
-            javaCompile: AbstractCompile?, 
+            kotlinCompile: AbstractCompile,
+            javaCompile: AbstractCompile,
             variantData: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {

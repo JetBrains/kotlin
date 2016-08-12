@@ -62,7 +62,7 @@ class AndroidSubplugin : KotlinGradleSubplugin {
     override fun apply(
             project: Project,
             kotlinCompile: AbstractCompile, 
-            javaCompile: AbstractCompile?, 
+            javaCompile: AbstractCompile, 
             variantData: Any?, 
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
