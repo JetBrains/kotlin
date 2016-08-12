@@ -734,6 +734,14 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
     }
 
+    private fun receivePointedArgument(variable: LLVMSingleValue, pointer: Int): LLVMSingleValue {
+        var currentVariable = variable
+        while (currentVariable.pointer > pointer) {
+            currentVariable = codeBuilder.receiveNativeValue(variable)
+        }
+        return currentVariable
+    }
+
     private fun addPrimitiveBinaryOperation(operator: IElementType, referenceName: KtSimpleNameExpression?, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMVariable {
         val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
         val secondNativeOp = codeBuilder.receiveNativeValue(secondOp)
@@ -746,14 +754,36 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
             KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
             KtTokens.EQEQ ->
-                if ((firstOp.type is LLVMReferenceType) && (secondOp.type !is LLVMReferenceType))
-                    firstOp.type!!.operatorEq(firstNativeOp, secondOp)
+                if (firstOp.type is LLVMReferenceType)
+                    if (secondOp.type is LLVMReferenceType) {
+                        val firstPointedArgument = receivePointedArgument(firstOp, 1)
+                        val secondPointedArgument = receivePointedArgument(secondOp, 1)
+                        firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
+                    } else
+                        firstOp.type!!.operatorEq(firstNativeOp, secondOp)
                 else
                     firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
-            KtTokens.EQEQEQ ->
-                firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
-            KtTokens.EXCLEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
-            KtTokens.EXCLEQEQEQ -> firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
+            KtTokens.EQEQEQ -> {
+                val firstPointedArgument = receivePointedArgument(firstOp, 1)
+                val secondPointedArgument = receivePointedArgument(secondOp, 1)
+                firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
+            }
+            KtTokens.EXCLEQ -> {
+                if (firstOp.type is LLVMReferenceType)
+                    if (secondOp.type is LLVMReferenceType) {
+                        val firstPointedArgument = receivePointedArgument(firstOp, 1)
+                        val secondPointedArgument = receivePointedArgument(secondOp, 1)
+                        firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)
+                    } else
+                        firstOp.type!!.operatorNeq(firstNativeOp, secondOp)
+                else
+                    firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
+            }
+            KtTokens.EXCLEQEQEQ -> {
+                val firstPointedArgument = receivePointedArgument(firstOp, 1)
+                val secondPointedArgument = receivePointedArgument(secondOp, 1)
+                firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)
+            }
             KtTokens.EQ -> {
                 if (secondOp.type is LLVMNullType) {
                     val result = codeBuilder.getNewVariable(firstOp.type!!, firstOp.pointer)
