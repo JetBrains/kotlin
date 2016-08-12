@@ -8380,9 +8380,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("toList2.kt")
+        public void testToList2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toList2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toList3.kt")
+        public void testToList3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toList3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("toMutableSet.kt")
         public void testToMutableSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toMutableSet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toMutableSet2.kt")
+        public void testToMutableSet2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toMutableSet2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toMutableSet3.kt")
+        public void testToMutableSet3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toMutableSet3.kt");
             doTest(fileName);
         }
 
