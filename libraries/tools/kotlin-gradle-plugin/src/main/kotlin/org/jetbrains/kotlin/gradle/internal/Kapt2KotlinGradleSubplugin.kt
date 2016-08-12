@@ -16,63 +16,47 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.internal.HasConvention
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import java.io.File
 
 // apply plugin: 'kotlin-kapt2'
 class Kapt2GradleSubplugin : Plugin<Project> {
-    private val kapt2Configurations = mutableMapOf<Project, MutableMap<String, Configuration>>()
-    
-    fun getConfigurations(project: Project): Map<String, Configuration> = kapt2Configurations[project] ?: emptyMap()
+    companion object {
+        fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt2GradleSubplugin::class.java) != null
+    }
 
-    override fun apply(project: Project) {
-        val androidExt = project.extensions.findByName("android") as? BaseExtension
-        if (androidExt != null) {
-            androidExt.sourceSets.all { sourceSet ->
-                addKapt2Configuration(project, sourceSet.name)
-            }
-        } 
-        else {
-            val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
-            javaPluginConvention.sourceSets.all { sourceSet ->
-                addKapt2Configuration(project, sourceSet.name)
-            }
-        }
-    }
-    
-    private fun addKapt2Configuration(project: Project, sourceSetName: String) {
-        val aptConfigurationName = if (sourceSetName != "main") "kapt2${sourceSetName.capitalize()}" else "kapt2"
-        val configuration = project.configurations.create(aptConfigurationName)
-        kapt2Configurations.getOrPut(project, { mutableMapOf() }).put(sourceSetName, configuration)
-    }
+    override fun apply(project: Project) {}
 }
 
 // Subplugin for the Kotlin Gradle plugin
 class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
-    private companion object {
-        val VERBOSE_OPTION_NAME = "kapt2.verbose"
+    companion object {
+        private val VERBOSE_OPTION_NAME = "kapt.verbose"
+
+        fun getKaptConfigurationName(sourceSetName: String): String {
+            return if (sourceSetName != "main") "kapt${sourceSetName.capitalize()}" else "kapt"
+        }
     }
     
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
-        return project.plugins.findPlugin(Kapt2GradleSubplugin::class.java) != null
-    }
+    override fun isApplicable(project: Project, task: AbstractCompile) = Kapt2GradleSubplugin.isEnabled(project)
 
     fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {
         return File(project.project.buildDir, "generated/source/kapt2/$sourceSetName")
+    }
+
+    private fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
+        return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
     }
 
     override fun apply(
@@ -82,41 +66,31 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
             variantData: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
-        //assertion only one variantData / javaSourceSet
-
-        // delete
-        if (javaCompile == null) error("Java compile task should exist")
-        
-        val kapt2Configurations = project.plugins.findPlugin(Kapt2GradleSubplugin::class.java).getConfigurations(project)
+        assert((variantData != null) xor (javaSourceSet != null))
 
         val pluginOptions = mutableListOf<SubpluginOption>()
         val kaptClasspath = arrayListOf<File>()
-        
-        val generatedFilesDir = if (variantData != null) {
-            variantData as BaseVariantData<*>
-            
-            for (provider in variantData.sourceProviders) {
-                val kapt2Configuration = kapt2Configurations[(provider as AndroidSourceSet).name]
-                // extract & java
-                if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 0) {
-                    javaCompile.dependsOn(kapt2Configuration.buildDependencies)
-                    kaptClasspath.addAll(kapt2Configuration.resolve())
-                }
-            }
 
-            getKaptGeneratedDir(project, variantData.name).apply { variantData.addJavaSourceFoldersToModel(this) }
-        }
-        else if (javaSourceSet != null) {
-            val kapt2Configuration = kapt2Configurations[javaSourceSet.name]
+        fun handleSourceSet(sourceSetName: String) {
+            val kapt2Configuration = project.findKaptConfiguration(sourceSetName)
             if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 0) {
                 javaCompile.dependsOn(kapt2Configuration.buildDependencies)
                 kaptClasspath.addAll(kapt2Configuration.resolve())
             }
+        }
 
-            getKaptGeneratedDir(project, javaSourceSet.name)
-        } 
+        val generatedFilesDir = if (variantData != null) {
+            for (provider in (variantData as BaseVariantData<*>).sourceProviders) {
+                handleSourceSet((provider as AndroidSourceSet).name)
+            }
+
+            getKaptGeneratedDir(project, variantData.name).apply { variantData.addJavaSourceFoldersToModel(this) }
+        }
         else {
-            throw IllegalArgumentException("variantData or javaSourceSet should be provided")
+            if (javaSourceSet == null) error("Java source set should not be null")
+
+            handleSourceSet(javaSourceSet.name)
+            getKaptGeneratedDir(project, javaSourceSet.name)
         }
 
         // Skip annotation processing in kotlinc if no kapt dependencies were provided
@@ -133,6 +107,11 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
 
         pluginOptions += SubpluginOption("generated", generatedFilesDir.canonicalPath)
         pluginOptions += SubpluginOption("classes", kotlinCompile.destinationDir.canonicalPath)
+
+        val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
+        if (kaptExtension.generateStubs) {
+            project.logger.warn("'kapt.generateStubs' is not used by the 'kotlin-kapt' plugin")
+        }
         
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
