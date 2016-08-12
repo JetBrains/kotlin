@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
@@ -26,10 +27,10 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -59,7 +60,8 @@ class MoveKotlinFileHandler : MoveFileHandler() {
                                                                                ContainerInfo.UnknownPackage)
 
         val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
-        if (oldPackageName.asString() == newPackageName.asString()) return null
+        if (oldPackageName.asString() == newPackageName.asString()
+            && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent)) return null
         if (!newPackageName.hasIdentifiersOnly()) return null
 
         return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName.toSafe()))
@@ -114,7 +116,10 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         if (psiFile !is KtFile) return emptyList()
 
         val usages = ArrayList<UsageInfo>()
-        initMoveProcessor(psiFile, newParent)?.findUsages()?.let { usages += it }
+        initMoveProcessor(psiFile, newParent)?.let {
+            usages += it.findUsages()
+            usages += it.getConflictsAsUsages()
+        }
         newParent?.let { usages += findInternalUsages(psiFile, it) }
         return usages
     }

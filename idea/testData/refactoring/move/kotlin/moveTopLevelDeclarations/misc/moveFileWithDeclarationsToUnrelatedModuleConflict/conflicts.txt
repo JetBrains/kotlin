@@ -1,0 +1,3 @@
+Property a1.internalTargetVal, referenced in file internalSource.kt, will not be accessible from module A
+Property a1.internalTargetVal, referenced in file internalSource.kt, will not be accessible from module A
+Property sourceVal uses property internalTargetVal which will be inaccessible after move

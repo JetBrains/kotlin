@@ -27,7 +27,6 @@ import com.intellij.openapi.roots.JavaProjectRootsUtil;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,19 +45,15 @@ import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSou
 import com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination;
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
 import com.intellij.refactoring.ui.PackageNameReferenceEditorCombo;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.RecentsManager;
 import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
-import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.text.UniqueNameGenerator;
 import com.intellij.util.ui.UIUtil;
-import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -714,7 +709,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         saveRefactoringSettings();
 
         List<KtNamedDeclaration> elementsToMove = getSelectedElementsToMove();
-        final List<KtFile> sourceFiles = getSourceFiles(elementsToMove);
+        List<KtFile> sourceFiles = getSourceFiles(elementsToMove);
         final PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         for (PsiElement element : elementsToMove) {
@@ -735,7 +730,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     final MoveDestination moveDestination = sourceRootWithMoveDestination.getSecond();
 
                     PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceDirectory);
-                    final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
+                    String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
                     List<PsiFile> filesExistingInTargetDir = getFilesExistingInTargetDir(sourceFiles, targetFileName, targetDir);
                     if (filesExistingInTargetDir.isEmpty()) {
                         PsiDirectory targetDirectory = ApplicationUtilsKt.runWriteAction(
@@ -752,60 +747,13 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         }
 
                         invokeRefactoring(
-                                new MoveFilesOrDirectoriesProcessor(
-                                        myProject,
-                                        sourceFiles.toArray(new PsiElement[sourceFiles.size()]),
-                                        targetDirectory,
-                                        true,
-                                        isSearchInComments(),
-                                        isSearchInNonJavaFiles(),
-                                        new MoveCallback() {
-                                            @Override
-                                            public void refactoringCompleted() {
-                                                try {
-                                                    if (targetFileName != null) {
-                                                        CollectionsKt.single(sourceFiles).setName(targetFileName);
-                                                    }
-                                                }
-                                                finally {
-                                                    if (moveCallback != null) {
-                                                        moveCallback.refactoringCompleted();
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        EmptyRunnable.INSTANCE
-                                ) {
-                                    @Override
-                                    protected String getCommandName() {
-                                        return targetFileName != null ? "Move " + CollectionsKt.single(sourceFiles).getName() : "Move";
-                                    }
-
-                                    @Override
-                                    protected void performRefactoring(@NotNull UsageInfo[] usages) {
-                                        if (targetFileName != null) {
-                                            KtFile sourceFile = CollectionsKt.single(sourceFiles);
-                                            //noinspection ConstantConditions
-                                            String temporaryName = UniqueNameGenerator.generateUniqueName(
-                                                    "temp",
-                                                    "",
-                                                    ".kt",
-                                                    ArraysKt.map(
-                                                            sourceFile.getContainingDirectory().getFiles(),
-                                                            new Function1<PsiFile, String>() {
-                                                                @Override
-                                                                public String invoke(PsiFile file) {
-                                                                    return file.getName();
-                                                                }
-                                                            }
-                                                    )
-                                            );
-                                            sourceFile.setName(temporaryName);
-                                        }
-
-                                        super.performRefactoring(usages);
-                                    }
-                                }
+                                new MoveFilesWithDeclarationsProcessor(myProject,
+                                                                       sourceFiles,
+                                                                       targetDirectory,
+                                                                       targetFileName,
+                                                                       isSearchInComments(),
+                                                                       isSearchInNonJavaFiles(),
+                                                                       moveCallback)
                         );
 
                         return;
