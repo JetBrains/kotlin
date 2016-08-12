@@ -4821,6 +4821,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("fixNullableUnaryWithExclExcl.kt")
+        public void testFixNullableUnaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableUnaryWithExclExcl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fixNullableWithExclExclAbsentWithBadIterator.kt")
         public void testFixNullableWithExclExclAbsentWithBadIterator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableWithExclExclAbsentWithBadIterator.kt");
