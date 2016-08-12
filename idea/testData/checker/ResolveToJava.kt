@@ -34,7 +34,7 @@ fun test(<warning>l</warning> : List<Int>) {
   try {
     // ...
   }
-  catch(e: Exception) {
+  catch(e: Throwable) {
     System.out.println(e.message)
   }
 

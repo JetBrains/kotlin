@@ -4,7 +4,7 @@ class MyClass {
 
 @Deprecated("Use A instead") operator fun MyClass.rangeTo(i: MyClass): Iterable<Int> {
     i.i
-    throw Exception()
+    throw Throwable()
 }
 
 fun test() {
