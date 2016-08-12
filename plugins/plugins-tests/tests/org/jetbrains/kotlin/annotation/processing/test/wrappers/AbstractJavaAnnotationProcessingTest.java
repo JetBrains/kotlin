@@ -22,8 +22,10 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.TestCase;
-import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -34,9 +36,20 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractJavaAnnotationProcessingTest extends AbstractCompilerLightClassTest {
+public abstract class AbstractJavaAnnotationProcessingTest extends KotlinMultiFileTestWithJava<Void, Void> {
     private final static Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
 
+    @NotNull
+    @Override
+    protected ConfigurationKind getConfigurationKind() {
+        return ConfigurationKind.ALL;
+    }
+
+    @Override
+    protected boolean isKotlinSourceRootNeeded() {
+        return true;
+    }
+    
     @Override
     protected void doTest(String testDirPath) throws Exception {
         File testDir = new File(testDirPath);
@@ -63,4 +76,14 @@ public abstract class AbstractJavaAnnotationProcessingTest extends AbstractCompi
     protected void doMultiFileTest(File testDataFile, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {}
     
     protected abstract void doTest(File testDataFile, PsiClass lightClass);
+
+    @Override
+    protected Void createTestModule(@NotNull String name) {
+        return null;
+    }
+
+    @Override
+    protected Void createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
+        return null;
+    }
 }
