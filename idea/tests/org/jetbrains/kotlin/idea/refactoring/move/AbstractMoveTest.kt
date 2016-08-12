@@ -19,11 +19,15 @@ package org.jetbrains.kotlin.idea.refactoring.move
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.ide.highlighter.ModuleFileType
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.*
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.PackageWrapper
@@ -36,6 +40,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
+import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
@@ -59,6 +64,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
+    private var isMultiModule = false
+
     protected fun doTest(path: String) {
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
 
@@ -73,6 +80,7 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
         if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
+        isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
@@ -110,6 +118,27 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
             }
         },
         getTestDirName(true))
+    }
+
+    override fun prepareProject(rootDir: VirtualFile) {
+        if (isMultiModule) {
+            VfsUtilCore.visitChildrenRecursively(
+                    rootDir,
+                    object : VirtualFileVisitor<Any>() {
+                        override fun visitFile(file: VirtualFile): Boolean {
+                            if (!file.isDirectory && file.name.endsWith(ModuleFileType.DOT_DEFAULT_EXTENSION)) {
+                                createModule(File(file.path), StdModuleTypes.JAVA)
+                                return false
+                            }
+
+                            return true
+                        }
+                    }
+            )
+        }
+        else {
+            PsiTestUtil.addSourceContentToRoots(myModule, rootDir)
+        }
     }
 
     protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
@@ -250,8 +279,16 @@ enum class MoveAction {
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
+                val targetSourceRootPath = config["targetSourceRoot"]?.asString
                 val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
-                KotlinMoveTargetForDeferredFile(FqName(packageName), moveDestination.getTargetIfExists(mainFile)) {
+                val targetDir = moveDestination.getTargetIfExists(mainFile)
+                val targetSourceRoot = if (targetSourceRootPath != null) {
+                    rootDir.findFileByRelativePath(targetSourceRootPath)!!
+                } else {
+                    targetDir?.virtualFile
+                }
+
+                KotlinMoveTargetForDeferredFile(FqName(packageName), targetDir, targetSourceRoot) {
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
@@ -298,7 +335,7 @@ enum class MoveAction {
                         val fileName = (delegate.newClassName ?: elementToMove.name!!) + ".kt"
                         val targetPackageFqName = (mainFile as KtFile).packageFqName
                         val targetDir = mainFile.containingDirectory!!
-                        KotlinMoveTargetForDeferredFile(targetPackageFqName, targetDir) {
+                        KotlinMoveTargetForDeferredFile(targetPackageFqName, targetDir, null) {
                             createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                         }
                     }
