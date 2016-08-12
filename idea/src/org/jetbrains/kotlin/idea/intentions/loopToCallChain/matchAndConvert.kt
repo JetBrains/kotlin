@@ -87,16 +87,22 @@ fun match(loop: KtForExpression, useLazySequence: Boolean): MatchResult? {
         MatchersLoop@
         for (matcher in MatcherRegistrar.matchers) {
             if (state.indexVariable != null && !matcher.indexVariableAllowed) continue
+            if (matcher.shouldUseInputVariables && !inputVariableUsed && state.indexVariable == null) continue
 
             val match = matcher.match(state)
             if (match != null) {
-                if (!inputVariableUsed && match.allTransformations.any { it.shouldUseInputVariable }) return null
-
                 when (match) {
                     is TransformationMatch.Sequence -> {
                         // check that old input variable is not needed anymore
                         var newState = match.newState
                         if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
+
+                        if (matcher.shouldUseInputVariables
+                            && !state.inputVariable.hasDifferentSetsOfUsages(state.statements, newState.statements)
+                            && !(state.indexVariable?.hasDifferentSetsOfUsages(state.statements, newState.statements) ?: false)) {
+                            // matched part of the loop uses neither input variable nor index variable
+                            continue@MatchersLoop
+                        }
 
                         if (state.indexVariable != null && match.sequenceTransformations.any { it.affectsIndex }) {
                             // index variable is still needed but index in the new sequence is different

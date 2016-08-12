@@ -473,6 +473,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
         doTest(fileName);
     }
 
+    @TestMetadata("filter_inputVariableNotUsed.kt")
+    public void testFilter_inputVariableNotUsed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter_inputVariableNotUsed.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("filter_mergeMultiple.kt")
     public void testFilter_mergeMultiple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter_mergeMultiple.kt");

@@ -37,6 +37,9 @@ object IntroduceIndexMatcher : TransformationMatcher {
     override val indexVariableAllowed: Boolean
         get() = false // old index variable is still needed - cannot introduce another one
 
+    override val shouldUseInputVariables: Boolean
+        get() = false
+
     override fun match(state: MatchingState): TransformationMatch.Sequence? {
         for (statement in state.statements) {
             val unaryExpressions = statement.collectDescendantsOfType<KtUnaryExpression>(
