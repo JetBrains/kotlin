@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
-    inner class JpsTestProject(val buildLogFinder: BuildLogFinder, val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, minLogLevel) {
+    inner class JpsTestProject(val buildLogFinder: BuildLogFinder, val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, null, minLogLevel) {
         override val resourcesRoot = File(resourcesBase, relPath)
         val mapWorkingToOriginalFile = hashMapOf<File, File>()
 
