@@ -23,25 +23,22 @@ object WireFormat {
     }
 
     fun getVarint32Size(value: Int): Int {
-        if (value < 0) {
-            return getVarint64Size(value.toLong())
-        }
         var curValue = value
         var size = 0
-        while (curValue != 0) {
+        do {
             size += 1
             curValue = curValue ushr VARINT_INFO_BITS_COUNT
-        }
+        } while (curValue != 0)
         return size
     }
 
     fun getVarint64Size(value: Long): Int {
         var curValue = value
         var size = 0
-        while (curValue != 0L) {
+        do {
             size += 1
             curValue = curValue ushr VARINT_INFO_BITS_COUNT
-        }
+        }while (curValue != 0L)
         return size
     }
 
@@ -54,15 +51,18 @@ object WireFormat {
     }
 
     fun getInt32Size(fieldNumber: Int, value: Int): Int {
-        return getTagSize(fieldNumber, WireType.VARINT) + getVarint32Size(value)
+        return getTagSize(fieldNumber, WireType.VARINT) + getInt32SizeNoTag(value)
     }
 
     fun getInt32SizeNoTag(value: Int): Int {
+        if (value < 0) {
+            return getVarint64Size(value.toLong())
+        }
         return getVarint32Size(value)
     }
 
     fun getUInt32Size(fieldNumber: Int, value: Int): Int {
-        return getInt32Size(fieldNumber, value)
+        return getTagSize(fieldNumber, WireType.VARINT) + getUInt32SizeNoTag(value)
     }
 
     fun getUInt32SizeNoTag(value: Int): Int {
@@ -70,7 +70,7 @@ object WireFormat {
     }
 
     fun getInt64Size(fieldNumber: Int, value: Long): Int {
-        return getTagSize(fieldNumber, WireType.VARINT) + getVarint64Size(value)
+        return getTagSize(fieldNumber, WireType.VARINT) + getUInt64SizeNoTag(value)
     }
 
     fun getInt64SizeNoTag(value: Long): Int {

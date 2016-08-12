@@ -192,13 +192,13 @@ class CodedInputStream(val buffer: ByteArray) {
     // reads zig-zag encoded integer not larger than 32-bit long
     fun readZigZag32NoTag(): Int {
         val value = readInt32NoTag()
-        return (value shr 1) xor (-(value and 1))   // bit magic for decoding zig-zag number
+        return (value ushr 1) xor (-(value and 1))   // bit magic for decoding zig-zag number
     }
 
     // reads zig-zag encoded integer not larger than 64-bit long
     fun readZigZag64NoTag(): Long {
         val value = readInt64NoTag()
-        return (value shr 1) xor (-(value and 1L))  // bit magic for decoding zig-zag number
+        return (value ushr 1) xor (-(value and 1L))  // bit magic for decoding zig-zag number
     }
 
     // checks if at least one more byte can be read from underlying input stream
