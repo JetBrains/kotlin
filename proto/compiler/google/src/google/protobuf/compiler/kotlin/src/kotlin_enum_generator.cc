@@ -36,7 +36,7 @@ void EnumGenerator::generateCode(io::Printer * printer) const {
     map <string, string> vars;
     vars["name"] = simpleName;
     printer->Print(vars,
-                   "enum class $name$(val ord: Int) {"
+                   "enum class $name$(val id: Int) {"
                            "\n"
     );
     printer->Indent();
