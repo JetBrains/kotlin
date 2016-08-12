@@ -54,6 +54,9 @@ object FindTransformationMatcher : TransformationMatcher {
     override val indexVariableAllowed: Boolean
         get() = false
 
+    override val shouldUseInputVariables: Boolean
+        get() = false
+
     override fun match(state: MatchingState): TransformationMatch.Result? {
         return matchWithFilterBefore(state, null)
     }
@@ -128,9 +131,6 @@ object FindTransformationMatcher : TransformationMatcher {
         override val chainCallCount: Int
             get() = generator.chainCallCount
 
-        override val shouldUseInputVariable: Boolean
-            get() = false
-
         override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
             return generator.generate(chainedCallGenerator)
         }
@@ -156,9 +156,6 @@ object FindTransformationMatcher : TransformationMatcher {
 
         override val chainCallCount: Int
             get() = generator.chainCallCount
-
-        override val shouldUseInputVariable: Boolean
-            get() = false
 
         override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
             return generator.generate(chainedCallGenerator)

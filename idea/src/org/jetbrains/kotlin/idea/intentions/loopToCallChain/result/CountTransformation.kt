@@ -40,9 +40,6 @@ class CountTransformation(
     override val presentation: String
         get() = "count" + (if (filter != null) "{}" else "()")
 
-    override val shouldUseInputVariable: Boolean
-        get() = false
-
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val call = if (filter != null) {
             val lambda = generateLambda(inputVariable, filter)
@@ -70,6 +67,9 @@ class CountTransformation(
      */
     object Matcher : TransformationMatcher {
         override val indexVariableAllowed: Boolean
+            get() = false
+
+        override val shouldUseInputVariables: Boolean
             get() = false
 
         override fun match(state: MatchingState): TransformationMatch.Result? {

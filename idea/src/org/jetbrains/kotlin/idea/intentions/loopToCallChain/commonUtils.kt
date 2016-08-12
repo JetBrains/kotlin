@@ -116,6 +116,10 @@ fun KtVariableDeclaration.hasWriteUsages(inElement: KtElement): Boolean {
     }
 }
 
+fun KtCallableDeclaration.hasDifferentSetsOfUsages(elements1: Collection<KtElement>, elements2: Collection<KtElement>): Boolean {
+    return countUsages(elements1 - elements2) != countUsages(elements2 - elements1)
+}
+
 fun KtExpressionWithLabel.targetLoop(): KtLoopExpression? {
     val label = getTargetLabel()
     if (label == null) {

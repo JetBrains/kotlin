@@ -60,9 +60,6 @@ interface Transformation {
 
     val chainCallCount: Int
         get() = 1
-
-    val shouldUseInputVariable: Boolean
-        get() = true
 }
 
 /**
@@ -121,6 +118,12 @@ interface TransformationMatcher {
      * Matchers that return true should be able to handle code using the index variable properly.
      */
     val indexVariableAllowed: Boolean
+
+    /**
+     * Override with false value if the result of the match should be rejected if the matched part uses neither the input variable nor the index variable.
+     */
+    val shouldUseInputVariables: Boolean
+        get() = true
 
     /**
      * Implementors should return true if they match some constructs with expression-embedded break or continue.
