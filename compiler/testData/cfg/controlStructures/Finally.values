@@ -376,18 +376,18 @@ fun t13() : Int {
     }
 }
 ---------------------
-                                                                                                    <v4>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>                                                       
-1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
-return 1                                                                                            !<v3>: *                                                                                                                                                                
-{ return 1 }                                                                                        !<v3>: *                                   COPY                                                                                                                         
-2                                                                                                   <v5>: Int                                  NEW: r(2) -> <v5>                                                                                                            
-doSmth(2)                                                                                           <v6>: *                                    NEW: call(doSmth(2), doSmth|<v5>) -> <v6>                                                                                    
-{ doSmth(2) }                                                                                       <v6>: *                                    COPY                                                                                                                         
-3                                                                                                   <v1>: Int                                  NEW: r(3) -> <v1>                                                                                                            
-doSmth(3)                                                                                           <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                                                                                    
-{ doSmth(3) }                                                                                       <v2>: *                                    COPY                                                                                                                         
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }|!<v3>, <v6>) -> <v7>
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
+                                                                                                    <v4>: {<: UnsupportedOperationException /* = UnsupportedOperationException */}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>
+1                                                                                                   <v0>: Int                                                                        NEW: r(1) -> <v0>
+return 1                                                                                            !<v3>: *
+{ return 1 }                                                                                        !<v3>: *                                                                         COPY
+2                                                                                                   <v5>: Int                                                                        NEW: r(2) -> <v5>
+doSmth(2)                                                                                           <v6>: *                                                                          NEW: call(doSmth(2), doSmth|<v5>) -> <v6>
+{ doSmth(2) }                                                                                       <v6>: *                                                                          COPY
+3                                                                                                   <v1>: Int                                                                        NEW: r(3) -> <v1>
+doSmth(3)                                                                                           <v2>: *                                                                          NEW: call(doSmth(3), doSmth|<v1>) -> <v2>
+{ doSmth(3) }                                                                                       <v2>: *                                                                          COPY
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v7>: *                                                                          NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }|!<v3>, <v6>) -> <v7>
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v7>: *                                                                          COPY
 =====================
 == t14 ==
 fun t14() : Int {
@@ -399,15 +399,15 @@ fun t14() : Int {
     }
 }
 ---------------------
-                                                                              <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>                                 
-1                                                                             <v0>: Int                                  NEW: r(1) -> <v0>                                                                                      
-return 1                                                                      !<v1>: *                                                                                                                                          
-{ return 1 }                                                                  !<v1>: *                                   COPY                                                                                                   
-2                                                                             <v3>: Int                                  NEW: r(2) -> <v3>                                                                                      
-doSmth(2)                                                                     <v4>: *                                    NEW: call(doSmth(2), doSmth|<v3>) -> <v4>                                                              
-{ doSmth(2) }                                                                 <v4>: *                                    COPY                                                                                                   
-try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v5>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>
-{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v5>: *                                    COPY                                                                                                   
+                                                                              <v2>: {<: UnsupportedOperationException /* = UnsupportedOperationException */}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
+1                                                                             <v0>: Int                                                                        NEW: r(1) -> <v0>
+return 1                                                                      !<v1>: *
+{ return 1 }                                                                  !<v1>: *                                                                         COPY
+2                                                                             <v3>: Int                                                                        NEW: r(2) -> <v3>
+doSmth(2)                                                                     <v4>: *                                                                          NEW: call(doSmth(2), doSmth|<v3>) -> <v4>
+{ doSmth(2) }                                                                 <v4>: *                                                                          COPY
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v5>: *                                                                          NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v5>: *                                                                          COPY
 =====================
 == t15 ==
 fun t15() : Int {
@@ -422,18 +422,18 @@ fun t15() : Int {
     }
 }
 ---------------------
-                                                                                                   <v4>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>                                                       
-1                                                                                                  <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
-return 1                                                                                           !<v3>: *                                                                                                                                                                
-{ return 1 }                                                                                       !<v3>: *                                   COPY                                                                                                                         
-2                                                                                                  <v5>: Int                                  NEW: r(2) -> <v5>                                                                                                            
-return 2                                                                                           !<v6>: *                                                                                                                                                                
-{ return 2 }                                                                                       !<v6>: *                                   COPY                                                                                                                         
-3                                                                                                  <v1>: Int                                  NEW: r(3) -> <v1>                                                                                                            
-doSmth(3)                                                                                          <v2>: *                                    NEW: call(doSmth(3), doSmth|<v1>) -> <v2>                                                                                    
-{ doSmth(3) }                                                                                      <v2>: *                                    COPY                                                                                                                         
-try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|!<v3>, !<v6>) -> <v7>
-{ try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
+                                                                                                   <v4>: {<: UnsupportedOperationException /* = UnsupportedOperationException */}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>
+1                                                                                                  <v0>: Int                                                                        NEW: r(1) -> <v0>
+return 1                                                                                           !<v3>: *
+{ return 1 }                                                                                       !<v3>: *                                                                         COPY
+2                                                                                                  <v5>: Int                                                                        NEW: r(2) -> <v5>
+return 2                                                                                           !<v6>: *
+{ return 2 }                                                                                       !<v6>: *                                                                         COPY
+3                                                                                                  <v1>: Int                                                                        NEW: r(3) -> <v1>
+doSmth(3)                                                                                          <v2>: *                                                                          NEW: call(doSmth(3), doSmth|<v1>) -> <v2>
+{ doSmth(3) }                                                                                      <v2>: *                                                                          COPY
+try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                                                          NEW: merge(try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|!<v3>, !<v6>) -> <v7>
+{ try { return 1 } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                                                          COPY
 =====================
 == t16 ==
 fun t16() : Int {
@@ -448,18 +448,18 @@ fun t16() : Int {
     }
 }
 ---------------------
-                                                                                                    <v2>: {<: UnsupportedOperationException}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>                                                       
-1                                                                                                   <v0>: Int                                  NEW: r(1) -> <v0>                                                                                                            
-doSmth(1)                                                                                           <v1>: *                                    NEW: call(doSmth(1), doSmth|<v0>) -> <v1>                                                                                    
-{ doSmth(1) }                                                                                       <v1>: *                                    COPY                                                                                                                         
-2                                                                                                   <v3>: Int                                  NEW: r(2) -> <v3>                                                                                                            
-return 2                                                                                            !<v6>: *                                                                                                                                                                
-{ return 2 }                                                                                        !<v6>: *                                   COPY                                                                                                                         
-3                                                                                                   <v4>: Int                                  NEW: r(3) -> <v4>                                                                                                            
-doSmth(3)                                                                                           <v5>: *                                    NEW: call(doSmth(3), doSmth|<v4>) -> <v5>                                                                                    
-{ doSmth(3) }                                                                                       <v5>: *                                    COPY                                                                                                                         
-try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                    NEW: merge(try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|<v1>, !<v6>) -> <v7>
-{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                    COPY                                                                                                                         
+                                                                                                    <v2>: {<: UnsupportedOperationException /* = UnsupportedOperationException */}   NEW: magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
+1                                                                                                   <v0>: Int                                                                        NEW: r(1) -> <v0>
+doSmth(1)                                                                                           <v1>: *                                                                          NEW: call(doSmth(1), doSmth|<v0>) -> <v1>
+{ doSmth(1) }                                                                                       <v1>: *                                                                          COPY
+2                                                                                                   <v3>: Int                                                                        NEW: r(2) -> <v3>
+return 2                                                                                            !<v6>: *
+{ return 2 }                                                                                        !<v6>: *                                                                         COPY
+3                                                                                                   <v4>: Int                                                                        NEW: r(3) -> <v4>
+doSmth(3)                                                                                           <v5>: *                                                                          NEW: call(doSmth(3), doSmth|<v4>) -> <v5>
+{ doSmth(3) }                                                                                       <v5>: *                                                                          COPY
+try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v7>: *                                                                          NEW: merge(try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }|<v1>, !<v6>) -> <v7>
+{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v7>: *                                                                          COPY
 =====================
 == doSmth ==
 fun doSmth(i: Int) {
