@@ -29,3 +29,6 @@ lib/
 .idea/
 proto/compiler/protoc-artifacts
 proto/compiler/tests
+
+proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
+proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc

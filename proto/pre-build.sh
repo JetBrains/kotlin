@@ -42,11 +42,11 @@ if [ "$ok" == 0 ]; then
 		make
 
 		echo "Installing"
-		#sudo make install
+		sudo make install
 
 		echo "Cleaning"
-		cd ../..
-		rm -rf protobuf_sources
+		# cd ../..
+		# rm -rf protobuf_sources
 	fi
 else
 	echo "Prerequisites met, you can build library now via Makefile"
