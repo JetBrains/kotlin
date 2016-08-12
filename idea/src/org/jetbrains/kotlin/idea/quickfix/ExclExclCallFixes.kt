@@ -102,6 +102,7 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
             val parent = psiElement.parent
             return when (parent) {
                 is KtUnaryExpression -> parent.baseExpression
+                is KtBinaryExpression -> parent.left
                 else -> null
             }
         }
