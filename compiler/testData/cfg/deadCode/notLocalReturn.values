@@ -43,14 +43,13 @@ fun test2() {
     doSomething()
 }
 ---------------------
-null                                                                                     <v1>: *    NEW: r(null) -> <v1>
-let                                                                                      !<v2>: *
-{ return }                                                                               <v0>: *    NEW: r({ return }) -> <v0>
-let { return }                                                                           <v3>: *    NEW: magic[UNRESOLVED_CALL](let { return }|<v0>, !<v2>, <v1>) -> <v3>
-null?.let { return }                                                                     <v3>: *    COPY
-f(null?.let { return })                                                                  <v4>: *    NEW: call(f(null?.let { return }), f|<v3>) -> <v4>
-doSomething()                                                                            <v5>: *    NEW: call(doSomething(), doSomething) -> <v5>
-{ fun f(x: Any?) = x f(null?.let { return }) // false unreachable here doSomething() }   <v5>: *    COPY
+null                                                                                     <v0>: Nothing                     NEW: r(null) -> <v0>
+{ return }                                                                               <v1>: {<: (Nothing) -> Nothing}   NEW: r({ return }) -> <v1>
+let { return }                                                                           !<v2>: *
+null?.let { return }                                                                     !<v2>: *                          COPY
+f(null?.let { return })                                                                  <v3>: *                           NEW: call(f(null?.let { return }), f|!<v2>) -> <v3>
+doSomething()                                                                            <v4>: *                           NEW: call(doSomething(), doSomething) -> <v4>
+{ fun f(x: Any?) = x f(null?.let { return }) // false unreachable here doSomething() }   <v4>: *                           COPY
 =====================
 == f ==
 fun f(x: Any?) = x
@@ -70,14 +69,13 @@ fun test3(x: Any?): Boolean =
         return true
     } ?: false
 ---------------------
-                                  <v0>: *         NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
-x                                 <v2>: *         NEW: r(x) -> <v2>
-let                               !<v3>: *
-{ return true }                   <v1>: *         NEW: r({ return true }) -> <v1>
-let { return true }               <v4>: Boolean   NEW: magic[UNRESOLVED_CALL](let { return true }|<v1>, !<v3>, <v2>) -> <v4>
-x?.let { return true }            <v4>: Boolean   COPY
-false                             <v5>: Boolean   NEW: r(false) -> <v5>
-x?.let { return true } ?: false   <v6>: Boolean   NEW: merge(x?.let { return true } ?: false|<v4>, <v5>) -> <v6>
+                                  <v0>: *                       NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+x                                 <v1>: {<: Any}                NEW: r(x) -> <v1>
+{ return true }                   <v2>: {<: (Any) -> Nothing}   NEW: r({ return true }) -> <v2>
+let { return true }               !<v3>: *
+x?.let { return true }            !<v3>: *                      COPY
+false                             <v4>: Boolean                 NEW: r(false) -> <v4>
+x?.let { return true } ?: false   <v5>: Boolean                 NEW: merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>
 =====================
 == anonymous_2 ==
 {
