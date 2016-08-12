@@ -11,7 +11,7 @@ PROTOC_DIR = compiler/google/src/google/protobuf/compiler/kotlin
 PROTOC_EXE = $(PROTOC_DIR)/protoc
 
 # Kotlin part
-RUNTIME_DIR = runtime
+RUNTIME_DIR = compiler/runtime
 RUNTIME_JAR = $(RUNTIME_DIR)/build/libs/protokot-runtime.jar
 
 all: $(EXE) $(JAR)
