@@ -118,52 +118,62 @@ internal class DescriptorRendererImpl(
     }
 
     /* TYPES RENDERING */
-    override fun renderType(type: KotlinType): String {
-        return renderNormalizedType(typeNormalizer(type))
+    override fun renderType(type: KotlinType): String = buildString {
+        renderNormalizedType(typeNormalizer(type))
     }
 
-    private fun renderNormalizedType(type: KotlinType): String {
-        val abbreviated = (type.unwrap() as? AbbreviatedType)
-
+    private fun StringBuilder.renderNormalizedType(type: KotlinType) {
+        val abbreviated = type.unwrap() as? AbbreviatedType
         if (abbreviated != null) {
             // TODO nullability is lost for abbreviated type?
-            val abbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.abbreviation)
-            if (!renderUnabbreviatedType) return abbreviatedRendered
-            val unabbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.expandedType)
-            return "$abbreviatedRendered /* = $unabbreviatedRendered */"
+            renderNormalizedTypeAsIs(abbreviated.abbreviation)
+            if (renderUnabbreviatedType) {
+                append(" /* = ")
+                renderNormalizedTypeAsIs(abbreviated.expandedType)
+                append(" */")
+            }
+            return
         }
 
-        return renderNormalizedTypeAsIs(type)
+        renderNormalizedTypeAsIs(type)
     }
 
-    private fun renderNormalizedTypeAsIs(type: KotlinType): String {
+    private fun StringBuilder.renderNormalizedTypeAsIs(type: KotlinType) {
         if (type is WrappedType && debugMode && !type.isComputed()) {
-            return "<Not computed yet>"
+            append("<Not computed yet>")
+            return
         }
         val unwrappedType = type.unwrap()
-        return when (unwrappedType) {
-            is FlexibleType -> unwrappedType.render(this, this)
+        when (unwrappedType) {
+            is FlexibleType -> append(unwrappedType.render(this@DescriptorRendererImpl, this@DescriptorRendererImpl))
             is SimpleType -> renderSimpleType(unwrappedType)
         }
     }
 
-    private fun renderSimpleType(type: SimpleType): String {
+    private fun StringBuilder.renderSimpleType(type: SimpleType) {
         if (type == CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
-            return "???"
+            append("???")
+            return
         }
         if (ErrorUtils.isUninferredParameter(type)) {
             if (uninferredTypeParameterAsName) {
-                return renderError((type.constructor as UninferredParameterTypeConstructor).typeParameterDescriptor.name.toString())
+                append(renderError((type.constructor as UninferredParameterTypeConstructor).typeParameterDescriptor.name.toString()))
             }
-            return "???"
+            else {
+                append("???")
+            }
+            return
         }
         if (type.isError) {
-            return renderDefaultType(type)
+            renderDefaultType(type)
+            return
         }
         if (shouldRenderAsPrettyFunctionType(type)) {
-            return renderFunctionType(type)
+            renderFunctionType(type)
         }
-        return renderDefaultType(type)
+        else {
+            renderDefaultType(type)
+        }
     }
 
     private fun shouldRenderAsPrettyFunctionType(type: KotlinType): Boolean {
@@ -200,58 +210,50 @@ internal class DescriptorRendererImpl(
         if (typeArguments.isEmpty()) return ""
         return buildString {
             append(lt())
-            appendTypeProjections(typeArguments, this)
+            this.appendTypeProjections(typeArguments)
             append(gt())
         }
     }
 
-    private fun renderDefaultType(type: KotlinType): String {
-        val sb = StringBuilder()
-
-        renderAnnotations(type, sb)
+    private fun StringBuilder.renderDefaultType(type: KotlinType) {
+        renderAnnotations(type, this)
 
         if (type.isError) {
-            sb.append(type.constructor.toString()) // Debug name of an error type is more informative
-            sb.append(renderTypeArguments(type.arguments))
+            append(type.constructor.toString()) // Debug name of an error type is more informative
+            append(renderTypeArguments(type.arguments))
         }
         else {
-            sb.append(renderTypeConstructorAndArguments(type))
+            renderTypeConstructorAndArguments(type)
         }
 
         if (type.isMarkedNullable) {
-            sb.append("?")
+            append("?")
         }
-        return sb.toString()
     }
 
-    private fun renderTypeConstructorAndArguments(
+    private fun StringBuilder.renderTypeConstructorAndArguments(
             type: KotlinType,
             typeConstructor: TypeConstructor = type.constructor
-    ): String =
-        buildString {
-
-            val possiblyInnerType = type.buildPossiblyInnerType()
-            if (possiblyInnerType == null) {
-                append(renderTypeConstructor(typeConstructor))
-                append(renderTypeArguments(type.arguments))
-                return@buildString
-            }
-
-            append(renderPossiblyInnerType(possiblyInnerType))
+    ) {
+        val possiblyInnerType = type.buildPossiblyInnerType()
+        if (possiblyInnerType == null) {
+            append(renderTypeConstructor(typeConstructor))
+            append(renderTypeArguments(type.arguments))
+            return
         }
 
-    private fun renderPossiblyInnerType(possiblyInnerType: PossiblyInnerType): String =
-        buildString {
-            possiblyInnerType.outerType?.let {
-                append(renderPossiblyInnerType(it))
-                append('.')
-                append(renderName(possiblyInnerType.classifierDescriptor.name))
-            } ?: append(renderTypeConstructor(possiblyInnerType.classifierDescriptor.typeConstructor))
+        renderPossiblyInnerType(possiblyInnerType)
+    }
 
-            append(renderTypeArguments(possiblyInnerType.arguments))
-        }
+    private fun StringBuilder.renderPossiblyInnerType(possiblyInnerType: PossiblyInnerType) {
+        possiblyInnerType.outerType?.let {
+            renderPossiblyInnerType(it)
+            append('.')
+            append(renderName(possiblyInnerType.classifierDescriptor.name))
+        } ?: append(renderTypeConstructor(possiblyInnerType.classifierDescriptor.typeConstructor))
 
-
+        append(renderTypeArguments(possiblyInnerType.arguments))
+    }
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.declarationDescriptor
@@ -263,10 +265,10 @@ internal class DescriptorRendererImpl(
     }
 
     override fun renderTypeProjection(typeProjection: TypeProjection) = buildString {
-        appendTypeProjections(listOf(typeProjection), this)
+        appendTypeProjections(listOf(typeProjection))
     }
 
-    private fun appendTypeProjections(typeProjections: List<TypeProjection>, builder: StringBuilder) {
+    private fun StringBuilder.appendTypeProjections(typeProjections: List<TypeProjection>) {
         typeProjections.map {
             if (it.isStarProjection) {
                 "*"
@@ -275,52 +277,50 @@ internal class DescriptorRendererImpl(
                 val type = renderType(it.type)
                 if (it.projectionKind == Variance.INVARIANT) type else "${it.projectionKind} $type"
             }
-        }.joinTo(builder, ", ")
+        }.joinTo(this, ", ")
     }
 
-    private fun renderFunctionType(type: KotlinType): String {
-        return buildString {
-            val isNullable = type.isMarkedNullable
-            if (isNullable) append("(")
+    private fun StringBuilder.renderFunctionType(type: KotlinType) {
+        val isNullable = type.isMarkedNullable
+        if (isNullable) append("(")
 
-            val receiverType = getReceiverTypeFromFunctionType(type)
-            if (receiverType != null) {
-                val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
-                if (surroundReceiver) {
-                    append("(")
-                }
-                append(renderNormalizedType(receiverType))
-                if (surroundReceiver) {
-                    append(")")
-                }
-                append(".")
+        val receiverType = getReceiverTypeFromFunctionType(type)
+        if (receiverType != null) {
+            val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
+            if (surroundReceiver) {
+                append("(")
             }
-
-            append("(")
-            appendTypeProjections(getValueParameterTypesFromFunctionType(type), this)
-            append(") ").append(arrow()).append(" ")
-            append(renderNormalizedType(getReturnTypeFromFunctionType(type)))
-
-            if (isNullable) append(")?")
+            renderNormalizedType(receiverType)
+            if (surroundReceiver) {
+                append(")")
+            }
+            append(".")
         }
+
+        append("(")
+        appendTypeProjections(getValueParameterTypesFromFunctionType(type))
+        append(") ").append(arrow()).append(" ")
+        renderNormalizedType(getReturnTypeFromFunctionType(type))
+
+        if (isNullable) append(")?")
     }
 
 
     /* METHODS FOR ALL KINDS OF DESCRIPTORS */
-    private fun appendDefinedIn(descriptor: DeclarationDescriptor, builder: StringBuilder) {
+    private fun StringBuilder.appendDefinedIn(descriptor: DeclarationDescriptor) {
         if (descriptor is PackageFragmentDescriptor || descriptor is PackageViewDescriptor) {
             return
         }
         if (descriptor is ModuleDescriptor) {
-            builder.append(" is a module")
+            append(" is a module")
             return
         }
 
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration != null && containingDeclaration !is ModuleDescriptor) {
-            builder.append(" ").append(renderMessage("defined in")).append(" ")
+            append(" ").append(renderMessage("defined in")).append(" ")
             val fqName = DescriptorUtils.getFqName(containingDeclaration)
-            builder.append(if (fqName.isRoot) "root package" else renderFqName(fqName))
+            append(if (fqName.isRoot) "root package" else renderFqName(fqName))
         }
     }
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder) {
@@ -479,7 +479,7 @@ internal class DescriptorRendererImpl(
             declarationDescriptor.accept(RenderDeclarationDescriptorVisitor(), this)
 
             if (withDefinedIn) {
-                appendDefinedIn(declarationDescriptor, this)
+                appendDefinedIn(declarationDescriptor)
             }
         }
     }

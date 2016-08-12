@@ -65,10 +65,10 @@ private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
  * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
+    if (!fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
+
     val segments = fqName.pathSegments()
     if (segments.size != 2) return false
-
-    if (KotlinBuiltIns.BUILT_INS_PACKAGE_NAME != segments.first()) return false
 
     val shortName = segments.last().asString()
     return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
