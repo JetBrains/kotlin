@@ -38,3 +38,56 @@ class ShortArray(var size: Int) {
     }
 
 }
+
+fun ShortArray.copyOf(newSize: Int): ShortArray {
+    val newInstance = ShortArray(newSize)
+    var index = 0
+    val end = if (newSize > this.size) this.size else newSize
+    while (index < end) {
+        val value = this.get(index)
+        newInstance.set(index, value)
+        index = index + 1
+    }
+
+    while (index < newSize) {
+        newInstance.set(index, 0)
+        index = index + 1
+    }
+
+    return newInstance
+}
+
+fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    val newInstance = ShortArray(toIndex - fromIndex)
+    var index = fromIndex
+    while (index < toIndex) {
+        val value = this.get(index)
+        newInstance.set(index - fromIndex, value)
+        index = index + 1
+    }
+
+    return newInstance
+}
+
+operator fun ShortArray.plus(element: Short): ShortArray {
+    val index = size
+    val result = this.copyOf(index + 1)
+    result[index] = element
+    return result
+}
+
+operator fun ShortArray.plus(elements: ShortArray): ShortArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val resultSize = thisSize + arraySize
+    val newInstance = this.copyOf(resultSize)
+    var index = thisSize
+
+    while (index < resultSize) {
+        val value = elements.get(index - thisSize)
+        newInstance.set(index, value)
+        index = index + 1
+    }
+
+    return newInstance
+}
