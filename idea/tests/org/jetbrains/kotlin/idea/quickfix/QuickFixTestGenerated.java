@@ -4770,6 +4770,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("fixNullableBinaryWithExclExcl.kt")
+        public void testFixNullableBinaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableBinaryWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableInfixWithExclExcl.kt")
+        public void testFixNullableInfixWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableInfixWithExclExcl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fixNullableIterableGenericWithExclExcl.kt")
         public void testFixNullableIterableGenericWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableGenericWithExclExcl.kt");
