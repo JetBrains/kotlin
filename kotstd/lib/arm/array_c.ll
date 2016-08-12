@@ -7,12 +7,12 @@ define weak i32 @malloc_array(i32 %x) #0 {
   %1 = alloca i32, align 4
   store i32 %x, i32* %1, align 4
   %2 = load i32* %1, align 4
-  %3 = call i8* @malloc(i32 %2) #2
+  %3 = call i8* @malloc_static(i32 %2) #2
   %4 = ptrtoint i8* %3 to i32
   ret i32 %4
 }
 
-declare i8* @malloc(i32) #1
+declare i8* @malloc_static(i32) #1
 
 ; Function Attrs: nounwind
 define weak zeroext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {
@@ -153,10 +153,3 @@ define weak void @kotlinclib_set_long(i32 %data, i32 %index, i32 %value) #0 {
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #2 = { nobuiltin }
-
-!llvm.module.flags = !{!0, !1}
-!llvm.ident = !{!2}
-
-!0 = !{i32 1, !"wchar_size", i32 4}
-!1 = !{i32 1, !"min_enum_size", i32 4}
-!2 = !{!"Ubuntu clang version 3.6.2-3ubuntu2 (tags/RELEASE_362/final) (based on LLVM 3.6.2)"}

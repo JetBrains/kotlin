@@ -16,5 +16,5 @@ class Holder() {
 
 fun enum_complex_test1(): Int {
     val h = Holder()
-    return 0
+    return Holder.nested.functor(0)
 }
