@@ -13,4 +13,4 @@ typedef enum
 
 void leds_init(void);
 void leds_clear_all(void);
-void led_set(led_t led, bool on);
+void led_set(int led, bool on);

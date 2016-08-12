@@ -3,10 +3,11 @@
 
 #include "car_leds.h"
 #include "car_engine.h"
-#include "time.h"
 #include "car_prog.h"
+#include "time.h"
 
-const uint32_t PROGRAM_DURATION_MS = 3000; 
+const uint32_t PROGRAM_DURATION_MS = 3000;
+
 static void program_stop(void)
 {
     wait(PROGRAM_DURATION_MS);

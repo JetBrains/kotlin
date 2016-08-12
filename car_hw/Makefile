@@ -36,7 +36,9 @@ INCLUDES=-I$(LIB_CMSIS_DIR) \
 		 -I$(LIB_USB_OTG_DIR) \
 		 -I$(LIB_USB_VCP_DIR) \
 		 -I$(USB_CONF_DIR) \
-		 -I$(SRC_DIR)
+		 -I$(SRC_DIR) \
+		 -I$(SRC_DIR)/include
+
 DEFINES=-DUSE_STM32_DISCOVERY=1 -DUSE_STDPERIPH_DRIVER=1 -DSTM32F4XX=1 -DHSE_VALUE=8000000
 CFLAGS=-g -nostdlib -ffreestanding -O0 \
        -mcpu=cortex-m3 -mfloat-abi=soft -mthumb \

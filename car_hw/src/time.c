@@ -1,4 +1,5 @@
 #include <stm32f4xx.h>
+
 #include "time.h"
 
 static volatile uint32_t pending_timer_ticks, ticks_since_boot;

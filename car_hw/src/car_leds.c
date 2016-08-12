@@ -1,6 +1,7 @@
 #include <stdbool.h>
 
 #include "car_leds.h"
+
 #include "stm32f4_discovery.h"
 #include "stm32f4xx_conf.h"
 
@@ -12,7 +13,7 @@ void leds_init(void)
     STM_EVAL_LEDInit(LED_BLUE);
 }
 
-void led_set(led_t led, bool on)
+void led_set(int led, bool on)
 {
     if (on)
         STM_EVAL_LEDOn(led);

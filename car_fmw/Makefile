@@ -5,12 +5,12 @@ TRANSLATOR_DIR=$(PWD)/../translator
 KOTSTD_DIR=$(PWD)/../kotstd
 CAR_HW_DIR=$(PWD)/../car_hw
 
-OS_ARCH=linux-arm
+OS_ARCH=linux-x86_64
 
 CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
 CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
-ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
+ST_DIR=$(PWD)/../mcu_utils/$(OS_ARCH)
 
 LIB_KOT=$(BIN_DIR)/kotlib.o
 LIB_KOTSTD=$(KOTSTD_DIR)/build/stdlib_arm.ll
@@ -67,7 +67,7 @@ $(BIN_DIR)/kotlib.ll: $(LIB_DIR)/app.ll $(LIB_KOTSTD)
 $(LIB_KOTSTD):
 	cd $(KOTSTD_DIR) && make
 
-$(LIB_DIR)/app.ll: $(SRC_DIR)/*.kt
+$(LIB_DIR)/app.ll: $(SRC_DIR)/**/*.kt $(SRC_DIR)/*.kt
 	$(KT_ALL_DEPS)
 
 $(KT):
