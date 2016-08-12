@@ -170,6 +170,7 @@ void ClassGenerator::generateMergeMethods(io::Printer *printer) const {
         }
     }
 
+    printer->Print("this.errorCode = other.errorCode\n");
     printer->Outdent();
     printer->Print("}\n");
 
@@ -246,14 +247,18 @@ void ClassGenerator::generateBuildMethod(io::Printer * printer) const {
 
     // pass all fields to constructor of enclosing class
     printer->Print(vars,
-                    "return $returnType$(");
+                    "val res = $returnType$(");
     for (int i = 0; i < properties.size(); ++i) {
         printer->Print(properties[i]->simpleName.c_str());
         if (i + 1 != properties.size()) {
             printer->Print(", ");
         }
     }
+
     printer->Print(")\n");
+    printer->Print("res.errorCode = errorCode\n");
+    printer->Print("return res\n");
+
     printer->Outdent();
     printer->Print("}\n");
 }
@@ -318,7 +323,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
         printer->Print("}\n");
     }
 
-    // TODO: add parsing of unknown fields
+    printer->Print(vars, "else -> errorCode = 4\n");
 
     printer->Outdent();
     printer->Print("}\n");  // when-clause

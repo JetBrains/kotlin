@@ -1,3 +1,4 @@
 1 - mismatch of expected and actual WireType in parseFieldFrom method
 2 - read message of size that exceeds expected in parseFromWithSize method
 3 - read message of size that is not equal to expected. Can occur when deserializing nested message (code generated in C++ method generateSerializationMethods)
+4 - unsupported feature: unknown field encountered
