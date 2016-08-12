@@ -50,7 +50,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
             for (valueParameter in expression.descriptor.valueParameters) {
-                expression.getValueArgument(valueParameter)?.accept(this, valueParameter.name.asString())
+                expression.getValueArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
             }
         }
     }

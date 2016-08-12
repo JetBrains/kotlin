@@ -71,6 +71,10 @@ class IrSimplePropertyImpl(
         descriptor: PropertyDescriptor,
         override val valueInitializer: IrBody?
 ) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrSimpleProperty {
+    init {
+        valueInitializer?.parent = this
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitSimpleProperty(this, data)
 

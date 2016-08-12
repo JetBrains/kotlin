@@ -38,15 +38,16 @@ enum class IrDeclarationKind {
     MODULE,
     FILE,
     FUNCTION,
-    PROPERTY,
     PROPERTY_GETTER,
     PROPERTY_SETTER,
+    PROPERTY,
+    LOCAL_VARIABLE,
     CLASS
 }
 
 enum class IrDeclarationOriginKind {
     DEFINED,
-    DEFAULT_PROPERTY_ACCESSOR,
+    IR_TEMPORARY_VARIABLE,
 }
 
 abstract class IrDeclarationBase(

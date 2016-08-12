@@ -16,36 +16,43 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.CHILD_DECLARATION_INDEX
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.DETACHED_INDEX
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
 interface IrDeclarationOwner : IrElement {
-    val childrenCount: Int
     fun getChildDeclaration(index: Int): IrMemberDeclaration?
-    fun addChildDeclaration(child: IrMemberDeclaration)
     fun replaceChildDeclaration(oldChild: IrMemberDeclaration, newChild: IrMemberDeclaration)
-    fun removeAllChildDeclarations()
+}
 
-    // TODO This can be an expensive operation / prohibited for some children.
+interface IrDeclarationOwner1 : IrDeclarationOwner {
+    val childDeclaration: IrMemberDeclaration
+}
+
+interface IrDeclarationOwnerN : IrDeclarationOwner {
+    val childrenCount: Int
+    fun addChildDeclaration(child: IrMemberDeclaration)
     fun removeChildDeclaration(child: IrMemberDeclaration)
+    fun removeAllChildDeclarations()
 
     fun <D> acceptChildDeclarations(visitor: IrElementVisitor<Unit, D>, data: D)
 }
 
-interface IrCompoundDeclaration : IrDeclaration, IrDeclarationOwner
+interface IrCompoundDeclaration : IrDeclaration, IrDeclarationOwnerN
 
 interface IrMemberDeclaration : IrDeclaration {
-    override val parent: IrDeclarationOwner
+    override var parent: IrDeclarationOwner?
 
     fun setTreeLocation(parent: IrDeclarationOwner?, index: Int)
 }
 
-abstract class IrDeclarationOwnerBase(
+abstract class IrDeclarationOwnerNBase(
         startOffset: Int,
         endOffset: Int
-) : IrElementBase(startOffset, endOffset), IrDeclarationOwner {
+) : IrElementBase(startOffset, endOffset), IrDeclarationOwnerN {
     protected val childDeclarations: MutableList<IrMemberDeclaration> = ArrayList()
 
     override val childrenCount: Int
@@ -90,7 +97,7 @@ abstract class IrCompoundDeclarationBase(
         startOffset: Int,
         endOffset: Int,
         override val originKind: IrDeclarationOriginKind
-) : IrDeclarationOwnerBase(startOffset, endOffset), IrCompoundDeclaration {
+) : IrDeclarationOwnerNBase(startOffset, endOffset), IrCompoundDeclaration {
     override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -105,7 +112,7 @@ abstract class IrCompoundMemberDeclarationBase(
 ) : IrCompoundDeclarationBase(startOffset, endOffset, originKind), IrMemberDeclaration {
     private var parentImpl: IrDeclarationOwner? = null
 
-    override var parent: IrDeclarationOwner
+    override var parent: IrDeclarationOwner?
         get() = parentImpl!!
         set(newParent) {
             parentImpl = newParent
@@ -124,7 +131,7 @@ abstract class IrMemberDeclarationBase(
 ) : IrDeclarationBase(startOffset, endOffset, originKind), IrMemberDeclaration {
     private var parentImpl: IrDeclarationOwner? = null
 
-    override var parent: IrDeclarationOwner
+    override var parent: IrDeclarationOwner?
         get() = parentImpl!!
         set(newParent) {
             parentImpl = newParent

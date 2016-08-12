@@ -48,6 +48,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
             "IrPropertySetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
+    override fun visitLocalVariable(declaration: IrLocalVariable, data: Nothing?): String =
+            "IrLocalVariable ${declaration.descriptor.render()}"
+
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "IrExpressionBody"
 
@@ -56,6 +59,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: Nothing?): String =
             "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
+
+    override fun visitLocalVariableDeclarationExpression(expression: IrLocalVariableDeclarationExpression, data: Nothing?): String =
+            "LOCAL ${expression.childDeclaration.descriptor.name}"
 
     override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
             "BLOCK type=${expression.renderType()}"

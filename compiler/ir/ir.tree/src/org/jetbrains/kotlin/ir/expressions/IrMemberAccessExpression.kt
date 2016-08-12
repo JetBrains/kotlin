@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.DISPATCH_RECEIVER_INDEX
+import org.jetbrains.kotlin.ir.EXTENSION_RECEIVER_INDEX
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrDeclarationReference, IrExpressionOwner {

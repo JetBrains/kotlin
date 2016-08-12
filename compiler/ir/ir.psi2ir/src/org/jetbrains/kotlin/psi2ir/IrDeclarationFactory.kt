@@ -18,31 +18,27 @@ package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.types.KotlinType
 
-class IrDeclarationFactory private constructor(
-        val fileEntry: PsiSourceManager.PsiFileEntry,
-        val irFileImpl: IrFileImpl,
-        val containingDeclaration: IrCompoundDeclaration
-) {
-    fun createChild(containingDeclaration: IrCompoundDeclaration) =
-            IrDeclarationFactory(fileEntry, irFileImpl, containingDeclaration)
-
-    private fun <D : IrMemberDeclaration> D.addToContainer(): D =
-            apply { containingDeclaration.addChildDeclaration(this) }
-
+abstract class IrDeclarationFactoryBase {
     fun createFunction(ktFunction: KtFunction, functionDescriptor: FunctionDescriptor, body: IrBody): IrFunction =
             IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset,
                            IrDeclarationOriginKind.DEFINED, functionDescriptor, body)
-                    .addToContainer()
 
     fun createSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor, valueInitializer: IrBody?): IrSimpleProperty =
             IrSimplePropertyImpl(ktProperty.startOffset, ktProperty.endOffset,
                                  IrDeclarationOriginKind.DEFINED, propertyDescriptor, valueInitializer)
-                    .addToContainer()
 
     fun createPropertyGetter(
             ktPropertyAccessor: KtPropertyAccessor,
@@ -53,7 +49,6 @@ class IrDeclarationFactory private constructor(
             IrPropertyGetterImpl(ktPropertyAccessor.startOffset, ktPropertyAccessor.endOffset,
                                  IrDeclarationOriginKind.DEFINED, getterDescriptor, getterBody)
                     .apply { irProperty.getter = this }
-                    .addToContainer()
 
     fun createPropertySetter(
             ktPropertyAccessor: KtPropertyAccessor,
@@ -64,16 +59,30 @@ class IrDeclarationFactory private constructor(
             IrPropertySetterImpl(ktPropertyAccessor.startOffset, ktPropertyAccessor.endOffset,
                                  IrDeclarationOriginKind.DEFINED, setterDescriptor, setterBody)
                     .apply { irProperty.setter = this }
-                    .addToContainer()
+}
 
-    companion object {
-        fun create(irModule: IrModuleImpl, sourceManager: PsiSourceManager, ktFile: KtFile, descriptor: PackageFragmentDescriptor): IrDeclarationFactory {
-            val fileEntry = sourceManager.getOrCreateFileEntry(ktFile)
-            val fileName = fileEntry.getRecognizableName()
-            val irFile = IrFileImpl(fileEntry, fileName, descriptor)
-            sourceManager.putFileEntry(irFile, fileEntry)
-            irModule.addFile(irFile)
-            return IrDeclarationFactory(fileEntry, irFile, irFile)
-        }
-    }
+class IrDeclarationFactory() : IrDeclarationFactoryBase()
+
+class IrLocalDeclarationsFactory(val scopeOwner: DeclarationDescriptor) : IrDeclarationFactoryBase() {
+    private var lastTemporaryIndex = 0
+    private fun nextTemporaryIndex() = lastTemporaryIndex++
+
+    fun createDescriptorForTemporaryVariable(type: KotlinType): IrTemporaryVariableDescriptor =
+            IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier("tmp${nextTemporaryIndex()}"), type)
+
+    fun createTemporaryVariable(ktElement: KtElement, type: KotlinType): IrLocalVariable =
+            IrLocalVariableImpl(ktElement.startOffset, ktElement.endOffset,
+                                IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+                                createDescriptorForTemporaryVariable(type))
+
+    fun createTemporaryVariable(irExpression: IrExpression): IrLocalVariable =
+            IrLocalVariableImpl(irExpression.startOffset, irExpression.endOffset,
+                                IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+                                createDescriptorForTemporaryVariable(irExpression.type)
+            ).apply { initializerExpression = irExpression }
+
+    fun createLocalVariable(ktElement: KtElement, type: KotlinType, descriptor: VariableDescriptor): IrLocalVariable =
+            IrLocalVariableImpl(ktElement.startOffset, ktElement.endOffset,
+                                IrDeclarationOriginKind.DEFINED,
+                                descriptor)
 }

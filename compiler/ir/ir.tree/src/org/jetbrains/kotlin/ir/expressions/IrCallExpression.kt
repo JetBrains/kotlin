@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.DISPATCH_RECEIVER_INDEX
+import org.jetbrains.kotlin.ir.EXTENSION_RECEIVER_INDEX
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -27,15 +28,12 @@ interface IrCallExpression : IrMemberAccessExpression, IrCompoundExpression {
     val operator: IrOperator?
     override val descriptor: CallableDescriptor
 
-    fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor): IrExpression?
-    fun putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?)
-    fun removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor)
+    fun getValueArgument(index: Int): IrExpression?
+    fun putValueArgument(index: Int, valueArgument: IrExpression?)
+    fun removeValueArgument(index: Int)
 
     fun <D> acceptValueArguments(visitor: IrElementVisitor<Unit, D>, data: D)
 }
-
-fun IrCallExpression.getMappedValueArguments(): List<IrExpression?> =
-        descriptor.valueParameters.mapNotNull { getValueArgument(it) }
 
 class IrCallExpressionImpl(
         startOffset: Int,
@@ -49,22 +47,18 @@ class IrCallExpressionImpl(
     private val argumentsByParameterIndex =
             kotlin.arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
-    override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
-            argumentsByParameterIndex[valueParameterDescriptor.index]
+    override fun getValueArgument(index: Int): IrExpression? =
+            argumentsByParameterIndex[index]
 
-    override fun putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
-        putValueArgument(valueParameterDescriptor.index, valueArgument)
-    }
-
-    private fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = valueArgument
         valueArgument?.setTreeLocation(this, index)
     }
 
-    override fun removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
-        argumentsByParameterIndex[valueParameterDescriptor.index]?.detach()
-        argumentsByParameterIndex[valueParameterDescriptor.index] = null
+    override fun removeValueArgument(index: Int) {
+        argumentsByParameterIndex[index]?.detach()
+        argumentsByParameterIndex[index] = null
     }
 
     override fun getChildExpression(index: Int): IrExpression? =

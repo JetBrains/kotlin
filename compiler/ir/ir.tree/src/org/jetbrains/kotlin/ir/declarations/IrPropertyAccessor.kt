@@ -47,6 +47,10 @@ abstract class IrPropertyAccessorBase(
         originKind: IrDeclarationOriginKind,
         override val body: IrBody
 ) : IrFunctionBase(startOffset, endOffset, originKind), IrPropertyAccessor {
+    init {
+        body.parent = this
+    }
+
     override var property: IrProperty? = null
 }
 

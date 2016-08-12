@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.ir.expressions
 
 enum class IrOperator {
-    INVOKE, INVOKE_EXTENSION,
+    INVOKE,
     PREFIX_INCR, PREFIX_DECR, POSTFIX_INCR, POSTFIX_DECR,
     UMINUS,
     EXCL,
     EXCLEXCL,
+    ELVIS,
     LT, GT, LTEQ, GTEQ,
     EQEQ, EQEQEQ, EXCLEQ, EXCLEQEQ,
     IN, NOT_IN,
@@ -32,32 +33,36 @@ enum class IrOperator {
     PLUSEQ, MINUSEQ, MULEQ, DIVEQ, MODEQ;
 }
 
-private val CAO_START = IrOperator.PLUSEQ
-private val CAO_END = IrOperator.MODEQ
-private val DUAL_START = IrOperator.PLUS
-private val DUAL_END = IrOperator.MOD
-private val INCR_DECR_START = IrOperator.PREFIX_INCR
-private val INCR_DECR_END = IrOperator.POSTFIX_DECR
+private val CAO_START = IrOperator.PLUSEQ.ordinal
+private val CAO_END = IrOperator.MODEQ.ordinal
+private val DUAL_START = IrOperator.PLUS.ordinal
+private val DUAL_END = IrOperator.MOD.ordinal
+private val INCR_DECR_START = IrOperator.PREFIX_INCR.ordinal
+private val INCR_DECR_END = IrOperator.POSTFIX_DECR.ordinal
+private val RELATIONAL_START = IrOperator.LT.ordinal
+private val RELATIONAL_END = IrOperator.GTEQ.ordinal
 
 fun IrOperator.isIncrementOrDecrement(): Boolean =
-        this in INCR_DECR_START..INCR_DECR_END
+        this.ordinal in INCR_DECR_START..INCR_DECR_END
 
 fun IrOperator.isCompoundAssignment(): Boolean =
-        this in CAO_START .. CAO_END
+        this.ordinal in CAO_START .. CAO_END
 
 fun IrOperator.isAssignmentOrCompoundAssignment(): Boolean =
         this == IrOperator.EQ || isCompoundAssignment()
 
 fun IrOperator.hasCompoundAssignmentDual(): Boolean =
-        this in DUAL_START .. DUAL_END
+        this.ordinal in DUAL_START .. DUAL_END
 
 fun IrOperator.toDualOperator(): IrOperator =
         when {
             isCompoundAssignment() ->
-                IrOperator.values()[this.ordinal - CAO_START.ordinal + DUAL_START.ordinal]
+                IrOperator.values()[this.ordinal - CAO_START + DUAL_START]
             hasCompoundAssignmentDual() ->
-                IrOperator.values()[this.ordinal - DUAL_START.ordinal + CAO_START.ordinal]
+                IrOperator.values()[this.ordinal - DUAL_START + CAO_START]
             else ->
                 throw UnsupportedOperationException("Operator $this is not a compound assignment")
         }
 
+fun IrOperator.isRelational(): Boolean =
+        this.ordinal in RELATIONAL_START .. RELATIONAL_END

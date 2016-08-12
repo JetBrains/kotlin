@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.ARGUMENT0_INDEX
+import org.jetbrains.kotlin.ir.ARGUMENT1_INDEX
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*

@@ -1,0 +1,32 @@
+IrFile /callWithReorderedArguments.kt
+  IrFunction public fun foo(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=kotlin.Unit
+  IrFunction public fun noReorder1(): kotlin.Int
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='1'
+  IrFunction public fun noReorder2(): kotlin.Int
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='2'
+  IrFunction public fun reordered1(): kotlin.Int
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='1'
+  IrFunction public fun reordered2(): kotlin.Int
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='2'
+  IrFunction public fun test(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=kotlin.Unit
+        CALL .foo
+          a: CALL .noReorder1
+          b: CALL .noReorder2
+        BLOCK type=kotlin.Unit
+          LOCAL tmp0
+            IrLocalVariable val tmp0: kotlin.Int
+              CALL .reordered1
+          LOCAL tmp1
+            IrLocalVariable val tmp1: kotlin.Int
+              CALL .reordered2
+          CALL .foo
+            a: GET_VAR tmp1
+            b: GET_VAR tmp0

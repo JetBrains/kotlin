@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
@@ -29,20 +30,15 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-interface IrDeclarationGenerator : IrGenerator {
-    val irDeclaration: IrDeclaration
-    val parent: IrDeclarationGenerator?
-}
+interface IrDeclarationGenerator : IrGenerator
 
 abstract class IrDeclarationGeneratorBase(
         override val context: IrGeneratorContext,
-        override val irDeclaration: IrDeclaration,
-        override val parent: IrDeclarationGenerator,
-        val declarationFactory: IrDeclarationFactory
+        val container: IrDeclarationOwnerN,
+        val declarationFactory: IrDeclarationFactoryBase
 ) : IrDeclarationGenerator {
-    val irExpressionGenerator = IrExpressionGenerator(context, declarationFactory)
-
-    val containingDeclaration: IrCompoundDeclaration get() = declarationFactory.containingDeclaration
+    private fun <D : IrMemberDeclaration> D.register(): D =
+            apply { container.addChildDeclaration(this) }
 
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
         // TODO create IrAnnotation's for each KtAnnotationEntry
@@ -64,26 +60,26 @@ abstract class IrDeclarationGeneratorBase(
 
     fun generateFunctionDeclaration(ktNamedFunction: KtNamedFunction) {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktNamedFunction) { "unresolved fun" }
-        val body = generateExpressionBody(ktNamedFunction.bodyExpression ?: TODO("function without body expression"))
-        declarationFactory.createFunction(ktNamedFunction, functionDescriptor, body)
+        val body = generateExpressionBody(functionDescriptor, ktNamedFunction.bodyExpression ?: TODO("function without body expression"))
+        declarationFactory.createFunction(ktNamedFunction, functionDescriptor, body).register()
     }
 
     fun generatePropertyDeclaration(ktProperty: KtProperty) {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         if (ktProperty.hasDelegate()) TODO("handle delegated property")
-        val initializer = ktProperty.initializer?.let { generateExpressionBody(it) }
-        val irProperty = declarationFactory.createSimpleProperty(ktProperty, propertyDescriptor, initializer)
+        val initializer = ktProperty.initializer?.let { generateExpressionBody(propertyDescriptor, it) }
+        val irProperty = declarationFactory.createSimpleProperty(ktProperty, propertyDescriptor, initializer).register()
         ktProperty.getter?.let { ktGetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktGetter) { "unresolved getter" }
             val getterDescriptor = accessorDescriptor as? PropertyGetterDescriptor ?: TODO("not a getter?")
-            val getterBody = generateExpressionBody(ktGetter.bodyExpression ?: TODO("default getter"))
-            declarationFactory.createPropertyGetter(ktGetter, irProperty, getterDescriptor, getterBody)
+            val getterBody = generateExpressionBody(getterDescriptor, ktGetter.bodyExpression ?: TODO("default getter"))
+            declarationFactory.createPropertyGetter(ktGetter, irProperty, getterDescriptor, getterBody).register()
         }
         ktProperty.setter?.let { ktSetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktSetter) { "unresolved setter" }
             val setterDescriptor = accessorDescriptor as? PropertySetterDescriptor ?: TODO("not a setter?")
-            val setterBody = generateExpressionBody(ktSetter.bodyExpression ?: TODO("default setter"))
-            declarationFactory.createPropertySetter(ktSetter, irProperty, setterDescriptor, setterBody)
+            val setterBody = generateExpressionBody(setterDescriptor, ktSetter.bodyExpression ?: TODO("default setter"))
+            declarationFactory.createPropertySetter(ktSetter, irProperty, setterDescriptor, setterBody).register()
         }
     }
 
@@ -93,19 +89,8 @@ abstract class IrDeclarationGeneratorBase(
         return propertyDescriptor
     }
 
-    fun generateExpressionBody(ktBody: KtExpression): IrBody {
-        val irExpression = irExpressionGenerator.generateExpression(ktBody)
-
-        val startOffset = ktBody.startOffset
-        val endOffset = ktBody.endOffset
-
-        val bodyExpression =
-                if (ktBody is KtBlockExpression)
-                    irExpression
-                else
-                    IrReturnExpressionImpl(startOffset, endOffset, irExpression.type)
-                            .apply { returnedExpression = irExpression }
-
-        return IrExpressionBodyImpl(startOffset, endOffset, containingDeclaration).apply { argument = bodyExpression }
-    }
+    fun generateExpressionBody(scopeOwner: DeclarationDescriptor, ktBody: KtExpression): IrBody =
+            IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset).apply {
+                argument = IrExpressionGenerator(context, IrLocalDeclarationsFactory(scopeOwner)).generateExpression(ktBody)
+            }
 }

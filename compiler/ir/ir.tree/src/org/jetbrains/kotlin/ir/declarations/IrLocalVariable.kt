@@ -14,52 +14,52 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.expressions
+package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.CHILD_EXPRESSION_INDEX
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwner
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwnerNBase
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrBody : IrElement {
-    override var parent: IrDeclaration
+interface IrLocalVariable : IrMemberDeclaration, IrExpressionOwner {
+    override val descriptor: VariableDescriptor
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.LOCAL_VARIABLE
+
+    var initializerExpression: IrExpression?
 }
 
-interface IrExpressionBody : IrBody, IrExpressionOwner1
-
-// TODO IrExpressionBodyImpl vs IrCompoundExpression1Impl: extract common base class?
-class IrExpressionBodyImpl(
+class IrLocalVariableImpl(
         startOffset: Int,
-        endOffset: Int
-) : IrElementBase(startOffset, endOffset), IrExpressionBody {
-    override lateinit var parent: IrDeclaration
-
-    override var argument: IrExpression? = null
-        set(newExpression) {
+        endOffset: Int,
+        originKind: IrDeclarationOriginKind,
+        override val descriptor: VariableDescriptor
+) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrLocalVariable {
+    override var initializerExpression: IrExpression? = null
+        set(value) {
             field?.detach()
-            field = newExpression
-            newExpression?.setTreeLocation(this, CHILD_EXPRESSION_INDEX)
+            field = value
+            value?.setTreeLocation(this, CHILD_EXPRESSION_INDEX)
         }
 
     override fun getChildExpression(index: Int): IrExpression? =
-            if (index == CHILD_EXPRESSION_INDEX) argument else null
+            if (index == CHILD_EXPRESSION_INDEX) initializerExpression else null
 
     override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
         validateChild(oldChild)
-        argument = newChild
+        initializerExpression = newChild
     }
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExpressionBody(this, data)
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitLocalVariable(this, data)
+    }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         acceptChildExpressions(visitor, data)
     }
 
     override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument?.accept(visitor, data)
+        initializerExpression?.accept(visitor, data)
     }
 }

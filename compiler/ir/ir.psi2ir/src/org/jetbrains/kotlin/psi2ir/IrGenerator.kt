@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -30,11 +31,17 @@ interface IrGenerator {
 fun IrGenerator.getType(key: KtExpression): KotlinType? =
         context.bindingContext.getType(key)
 
+fun IrGenerator.getTypeOrFail(key: KtExpression): KotlinType =
+        getType(key) ?: TODO("No type for expression: ${key.text}")
+
 fun <K, V : Any> IrGenerator.get(slice: ReadOnlySlice<K, V>, key: K): V? =
         context.bindingContext[slice, key]
 
 inline fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
         context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
+
+fun IrGenerator.isUsedAsExpression(ktExpression: KtExpression) =
+        get(BindingContext.USED_AS_EXPRESSION, ktExpression) ?: false
 
 inline fun <K, V : Any> IrGenerator.getOrElse(slice: ReadOnlySlice<K, V>, key: K, otherwise: (K) -> V): V =
         context.bindingContext[slice, key] ?: otherwise(key)

@@ -45,6 +45,10 @@ class IrFunctionImpl(
         override val descriptor: FunctionDescriptor,
         override val body: IrBody
 ) : IrFunctionBase(startOffset, endOffset, originKind) {
+    init {
+        body.parent = this
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }

@@ -34,6 +34,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitProperty(declaration: IrProperty, data: D): R = visitDeclaration(declaration, data)
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
+    fun visitLocalVariable(declaration: IrLocalVariable, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
@@ -44,6 +45,11 @@ interface IrElementVisitor<out R, in D> {
     fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
     fun visitStringTemplate(expression: IrStringConcatenationExpression, data: D) = visitExpression(expression, data)
     fun visitThisExpression(expression: IrThisExpression, data: D) = visitExpression(expression, data)
+
+    fun <T : IrMemberDeclaration> visitLocalDeclarationExpression(expression: IrLocalDeclarationExpression<T>, data: D) =
+            visitExpression(expression, data)
+    fun visitLocalVariableDeclarationExpression(expression: IrLocalVariableDeclarationExpression, data: D) =
+            visitLocalDeclarationExpression(expression, data)
 
     fun visitDeclarationReference(expression: IrDeclarationReference, data: D) = visitExpression(expression, data)
     fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: D) = visitDeclarationReference(expression, data)
@@ -63,8 +69,6 @@ interface IrElementVisitor<out R, in D> {
 
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
-
-
 
 
 }

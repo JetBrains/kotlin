@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.expressions
+package org.jetbrains.kotlin.ir
 
+const val CHILD_DECLARATION_INDEX = 0
 const val DETACHED_INDEX = Int.MIN_VALUE
 const val CHILD_EXPRESSION_INDEX = 0
 const val ARGUMENT0_INDEX = 0
