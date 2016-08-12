@@ -5254,6 +5254,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("longTemplatePlusStringLiteral.kt")
+        public void testLongTemplatePlusStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/longTemplatePlusStringLiteral.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/multilineString.kt");
@@ -5317,6 +5323,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("specialCharsInCharLiteral.kt")
         public void testSpecialCharsInCharLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/specialCharsInCharLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stringPlusStringLiteral.kt")
+        public void testStringPlusStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/stringPlusStringLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("templatePlusStringLiteral.kt")
+        public void testTemplatePlusStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/templatePlusStringLiteral.kt");
             doTest(fileName);
         }
 
