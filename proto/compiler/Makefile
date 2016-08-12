@@ -2,19 +2,22 @@ CXX = g++
 CXXFLAGS = -O2 -std=c++11
 LDFLAGS = -lprotoc -lprotobuf
 
+# Generated artifacts
 BUILDDIR = build
 EXE = $(BUILDDIR)/protoc
 JAR = $(BUILDDIR)/protokot-runtime.jar
+SYMLINK = $(BUILDDIR)/sources
 
 # C++ part
-PROTOC_DIR = compiler/google/src/google/protobuf/compiler/kotlin
+PROTOC_DIR = google/src/google/protobuf/compiler/kotlin
 PROTOC_EXE = $(PROTOC_DIR)/protoc
 
 # Kotlin part
-RUNTIME_DIR = compiler/runtime
+RUNTIME_DIR = runtime
+RUNTIME_SRC = $(RUNTIME_DIR)/src/main/kotlin
 RUNTIME_JAR = $(RUNTIME_DIR)/build/libs/protokot-runtime.jar
 
-all: $(EXE) $(JAR)
+all: $(EXE) $(JAR) $(SYMLINK)
 
 # Place protoc* into build directory
 $(EXE): $(BUILDDIR) $(PROTOC_EXE)
@@ -31,6 +34,9 @@ $(JAR): $(BUILDDIR) gradle_invoke
 # Build ProtoKot Runtime via delegating call to Gradle Script
 gradle_invoke:
 	cd $(RUNTIME_DIR); gradle build
+
+$(SYMLINK):
+	ln -nsf ../$(RUNTIME_SRC) $(SYMLINK)
 
 # Create auxillary directories
 $(BINDIR):
