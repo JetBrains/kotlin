@@ -81,10 +81,7 @@ class LLVMIntType() : LLVMType() {
 
     override val typename = "i32"
     override fun isPrimitive() = true
-    override fun hashCode(): Int{
-        var result = align
-        result = 31 * result + size
-        result = 31 * result + defaultValue.hashCode()
-        return result
-    }
+    override fun hashCode() =
+            mangle().hashCode()
+
 }

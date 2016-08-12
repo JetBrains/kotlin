@@ -63,10 +63,7 @@ class LLVMBooleanType() : LLVMType() {
     override fun isPrimitive() = true
 
     override val typename = "i1"
-    override fun hashCode(): Int {
-        var result = align
-        result = 31 * result + size
-        result = 31 * result + defaultValue.hashCode()
-        return result
-    }
+    override fun hashCode() =
+            mangle().hashCode()
+
 }

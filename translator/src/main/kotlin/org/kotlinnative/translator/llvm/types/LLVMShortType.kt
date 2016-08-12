@@ -33,10 +33,7 @@ class LLVMShortType() : LLVMType() {
     override fun mangle() = "Short"
     override val typename = "i16"
     override fun isPrimitive() = true
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + align
-        result = 31 * result + defaultValue.hashCode()
-        return result
-    }
+    override fun hashCode() =
+            mangle().hashCode()
+
 }

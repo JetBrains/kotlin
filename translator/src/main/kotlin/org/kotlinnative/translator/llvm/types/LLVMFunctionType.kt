@@ -29,4 +29,12 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
             "${returnType.type} (${arguments.map { it.getType() }.joinToString()})"
 
     override val typename = "FunctionType"
+
+    override fun hashCode() =
+            mangle().hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return (other is LLVMFunctionType) && (mangle() == other.mangle())
+    }
+
 }

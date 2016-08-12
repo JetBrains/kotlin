@@ -8,4 +8,8 @@ class LLVMVoidType() : LLVMType() {
 
     override fun mangle() = ""
     override val typename = "void"
+
+    override fun hashCode() =
+            typename.hashCode()
+
 }

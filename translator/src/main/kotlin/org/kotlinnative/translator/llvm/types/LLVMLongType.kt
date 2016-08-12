@@ -76,10 +76,7 @@ class LLVMLongType() : LLVMType() {
     override fun mangle() = "Long"
     override val typename = "i64"
     override fun isPrimitive() = true
-    override fun hashCode(): Int {
-        var result = align
-        result = 31 * result + size
-        result = 31 * result + defaultValue.hashCode()
-        return result
-    }
+    override fun hashCode() =
+            mangle().hashCode()
+
 }

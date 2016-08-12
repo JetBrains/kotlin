@@ -53,10 +53,7 @@ class LLVMFloatType() : LLVMType() {
     override val typename = "float"
     override val defaultValue = "0.0"
     override fun isPrimitive() = true
-    override fun hashCode(): Int {
-        var result = align
-        result = 31 * result + size
-        result = 31 * result + defaultValue.hashCode()
-        return result
-    }
+    override fun hashCode() =
+            typename.hashCode()
+
 }
