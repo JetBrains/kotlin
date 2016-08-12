@@ -39,4 +39,11 @@ public class JavaClass {
         Integer i = 1;
         int breakpoint = 1;
     }
+
+    public int javaProperty = 1;
+    private int javaPrivateProperty = 1;
+
+    public void property() {
+        int breakpoint = 1;
+    }
 }

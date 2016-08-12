@@ -729,6 +729,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("jcProperty.kt")
+            public void testJcProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcProperty.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("jcSimple.kt")
             public void testJcSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext/jcSimple.kt");
