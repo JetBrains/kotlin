@@ -55,7 +55,7 @@ class ClassCodegen(state: TranslationState,
             constructorFields.add(item)
             fields.add(item)
             fieldsIndex[item.label] = item
-            size += type.size
+            size += item.type.size
         }
     }
 
