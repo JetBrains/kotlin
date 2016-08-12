@@ -123,12 +123,19 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
                 else {
                     StringUtil.unquoteString(expressionText)
                 }
-                if (forceBraces && base.endsWith('$')) {
-                    return base.dropLast(1) + "\\$"
+
+                if (forceBraces) {
+                    if (base.endsWith('$')) {
+                        return base.dropLast(1) + "\\$"
+                    }
+                    else {
+                        val lastPart = expression.children.lastOrNull()
+                        if (lastPart is KtSimpleNameStringTemplateEntry) {
+                            return base.dropLast(lastPart.textLength) + "\${" + lastPart.text.drop(1) + "}"
+                        }
+                    }
                 }
-                else {
-                    return base
-                }
+                return base
             }
 
             is KtNameReferenceExpression ->
