@@ -776,6 +776,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("ifElseIf.kt")
+                public void testIfElseIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/ifElseIf.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseIfElse.kt")
+                public void testIfElseIfElse() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/ifElseIfElse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseifElseInconsistent.kt")
+                public void testIfElseifElseInconsistent() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/ifElseifElseInconsistent.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerIfTransformed.kt")
                 public void testInnerIfTransformed() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToAssignment/innerIfTransformed.kt");
@@ -837,6 +855,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             public static class IfToReturn extends AbstractIntentionTest {
                 public void testAllFilesPresentInIfToReturn() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/folding/ifToReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("ifElseIf.kt")
+                public void testIfElseIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToReturn/ifElseIf.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseIfElse.kt")
+                public void testIfElseIfElse() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToReturn/ifElseIfElse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseIfElseInconsistent.kt")
+                public void testIfElseIfElseInconsistent() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/folding/ifToReturn/ifElseIfElseInconsistent.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("innerIfTransformed.kt")

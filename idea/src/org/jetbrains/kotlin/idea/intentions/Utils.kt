@@ -219,4 +219,10 @@ internal fun KotlinType.isFlexibleRecursive(): Boolean {
     return arguments.any { !it.isStarProjection && it.type.isFlexibleRecursive() }
 }
 
+val KtIfExpression.branches: List<KtExpression?> get() = ifBranchesOrThis()
+
+private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
+    if (this !is KtIfExpression) return listOf(this)
+    return listOf(then) + `else`?.ifBranchesOrThis().orEmpty()
+}
 
