@@ -1,0 +1,6 @@
+// "Suppress 'REDUNDANT_NULLABLE' for secondary constructor of C" "true"
+
+class C {
+    @Suppress("REDUNDANT_NULLABLE")
+    constructor(s: String?<caret>?)
+}

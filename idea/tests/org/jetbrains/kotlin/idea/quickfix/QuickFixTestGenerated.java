@@ -7476,6 +7476,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/declarationKinds/secondaryConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("trait.kt")
             public void testTrait() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/declarationKinds/trait.kt");

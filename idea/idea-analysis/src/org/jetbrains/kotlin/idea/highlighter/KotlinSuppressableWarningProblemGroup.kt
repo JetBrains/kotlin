@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.quickfix.AnnotationHostKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import java.util.Collections
+import java.util.*
 
 class KotlinSuppressableWarningProblemGroup(
         private val diagnosticFactory: DiagnosticFactory<*>
@@ -109,6 +109,8 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
     override fun visitEnumEntry(d: KtEnumEntry, data: Unit?) = detect(d, "enum entry")
 
     override fun visitParameter(d: KtParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?) = detect(constructor, "secondary constructor of")
 
     override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
         if (d.isCompanion()) return detect(d, "companion object", name = "${d.name} of ${d.getStrictParentOfType<KtClass>()?.name}")
