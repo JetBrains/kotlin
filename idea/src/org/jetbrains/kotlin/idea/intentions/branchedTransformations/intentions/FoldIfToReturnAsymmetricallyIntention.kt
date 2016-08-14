@@ -39,7 +39,7 @@ class FoldIfToReturnAsymmetricallyIntention : SelfTargetingRangeIntention<KtIfEx
         val elseBranch = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as KtReturnExpression
 
         val psiFactory = KtPsiFactory(element)
-        var newIfExpression = psiFactory.createIf(condition, thenBranch, elseBranch)
+        val newIfExpression = psiFactory.createIf(condition, thenBranch, elseBranch)
 
         val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.then!!)!!
         val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.`else`!!)!!
