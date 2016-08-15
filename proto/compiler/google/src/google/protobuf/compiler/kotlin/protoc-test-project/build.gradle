@@ -22,7 +22,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.0.0'
-    compile files ('../../../../../../../../build/protokot-runtime.jar')
+    compile files ('../../../../../../../build/protokot-runtime.jar')
     // https://mvnrepository.com/artifact/org.apache.commons/commons-io
 //    compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
 
