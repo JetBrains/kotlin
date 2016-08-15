@@ -59,6 +59,12 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         doTest(fileName);
     }
 
+    @TestMetadata("dropVisibilityOnGeneratedOverride.kt")
+    public void testDropVisibilityOnGeneratedOverride() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/dropVisibilityOnGeneratedOverride.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("finalClass.kt")
     public void testFinalClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/finalClass.kt");
