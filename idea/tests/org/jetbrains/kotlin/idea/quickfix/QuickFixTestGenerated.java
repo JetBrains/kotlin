@@ -4809,6 +4809,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("fixNullableBinaryWithExclExcl.kt")
+        public void testFixNullableBinaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableBinaryWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableInfixWithExclExcl.kt")
+        public void testFixNullableInfixWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableInfixWithExclExcl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fixNullableIterableGenericWithExclExcl.kt")
         public void testFixNullableIterableGenericWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableGenericWithExclExcl.kt");
@@ -4818,6 +4830,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("fixNullableIterableWithExclExcl.kt")
         public void testFixNullableIterableWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableUnaryWithExclExcl.kt")
+        public void testFixNullableUnaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableUnaryWithExclExcl.kt");
             doTest(fileName);
         }
 
@@ -6880,9 +6898,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("usedClassAsAlias.kt")
+        public void testUsedClassAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedClassAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedFunAsAlias.kt")
+        public void testUsedFunAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedFunAsAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("usedObjectAsAlias.kt")
         public void testUsedObjectAsAlias() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedVarAsAlias.kt")
+        public void testUsedVarAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedVarAsAlias.kt");
             doTest(fileName);
         }
     }
