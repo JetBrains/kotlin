@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDummyDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
@@ -51,13 +48,17 @@ abstract class IrDeclarationGeneratorBase(
     }
 
     private fun generateClassOrObjectDeclaration(ktDeclaration: KtClassOrObject) {
-        IrDummyDeclaration(ktDeclaration.startOffset, ktDeclaration.endOffset, getOrFail(BindingContext.CLASS, ktDeclaration))
-                .register()
+        IrDummyDeclaration(
+                ktDeclaration.startOffset, ktDeclaration.endOffset,
+                getOrFail(BindingContext.CLASS, ktDeclaration)
+        ).register()
     }
 
     private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias) {
-        IrDummyDeclaration(ktDeclaration.startOffset, ktDeclaration.endOffset, getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
-                .register()
+        IrDummyDeclaration(
+                ktDeclaration.startOffset, ktDeclaration.endOffset,
+                getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
+        ).register()
     }
 
     fun generateFunctionDeclaration(ktNamedFunction: KtNamedFunction) {
@@ -92,16 +93,17 @@ abstract class IrDeclarationGeneratorBase(
     }
 
     private fun generateExpressionWithinContext(ktExpression: KtExpression, scopeOwner: DeclarationDescriptor): IrExpression =
-            IrStatementGenerator(context, IrLocalDeclarationsFactory(scopeOwner)).generateExpression(ktExpression)
+            IrStatementGenerator(context, scopeOwner, IrLocalDeclarationsFactory(scopeOwner))
+                    .generateExpression(ktExpression, getExpectedTypeForLastInferredCall(ktExpression))
 
-    private fun generateFunctionBody(scopeOwner: DeclarationDescriptor, ktBody: KtExpression): IrBody {
+    private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody {
         val irRhs = generateExpressionWithinContext(ktBody, scopeOwner)
         val irExpressionBody =
                 if (ktBody is KtBlockExpression)
                     irRhs
                 else
                     IrBlockExpressionImpl(ktBody.startOffset, ktBody.endOffset, null, hasResult = false, isDesugared = true).apply {
-                        addStatement(IrReturnExpressionImpl(ktBody.startOffset, ktBody.endOffset, null, irRhs))
+                        addStatement(IrReturnExpressionImpl(ktBody.startOffset, ktBody.endOffset, scopeOwner, irRhs))
                     }
         return IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset, irExpressionBody)
     }

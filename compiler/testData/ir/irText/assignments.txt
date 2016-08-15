@@ -1,0 +1,17 @@
+IrFile /assignments.kt
+  DUMMY Ref
+  IrFunction public fun test1(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR var x: kotlin.Int
+          LITERAL Int type=kotlin.Int value='0'
+        SET_VAR x type=<no-type>
+          LITERAL Int type=kotlin.Int value='1'
+        SET_VAR x type=<no-type>
+          DUMMY PLUS type=kotlin.Int
+  IrFunction public fun test2(/*0*/ r: Ref): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        SET_PROPERTY .xtype=<no-type>
+          $this: GET_VAR r type=Ref
+          $value: LITERAL Int type=kotlin.Int value='0'

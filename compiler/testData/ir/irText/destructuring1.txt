@@ -1,6 +1,6 @@
 IrFunction public fun B.test(): kotlin.Unit
   IrExpressionBody
-    BLOCK type=kotlin.Unit hasResult=false isDesugared=false
+    BLOCK type=<no-type> hasResult=false isDesugared=false
       VAR val tmp0: A
         GET_VAR A type=A
       VAR val x: kotlin.Int

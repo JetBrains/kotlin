@@ -46,8 +46,8 @@ class IrTypeOperatorExpressionImpl(
             endOffset: Int,
             type: KotlinType?,
             operator: IrTypeOperator,
-            argument: IrExpression,
-            typeOperand: KotlinType
+            typeOperand: KotlinType,
+            argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, typeOperand) {
         this.argument = argument
     }

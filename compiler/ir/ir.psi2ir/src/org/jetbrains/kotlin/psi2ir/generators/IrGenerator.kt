@@ -17,22 +17,24 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
 interface IrGenerator {
     val context: IrGeneratorContext
 }
-
-fun IrGenerator.getType(key: KtExpression): KotlinType? =
-        context.bindingContext.getType(key)
-
-fun IrGenerator.getTypeOrFail(key: KtExpression): KotlinType =
-        getType(key) ?: TODO("No type for expression: ${key.text}")
 
 fun <K, V : Any> IrGenerator.get(slice: ReadOnlySlice<K, V>, key: K): V? =
         context.bindingContext[slice, key]
@@ -43,11 +45,54 @@ fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K): V =
 inline fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
         context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
 
-fun IrGenerator.isUsedAsExpression(ktExpression: KtExpression) =
-        get(BindingContext.USED_AS_EXPRESSION, ktExpression) ?: false
-
 inline fun <K, V : Any> IrGenerator.getOrElse(slice: ReadOnlySlice<K, V>, key: K, otherwise: (K) -> V): V =
         context.bindingContext[slice, key] ?: otherwise(key)
 
+fun IrGenerator.getInferredTypeWithSmartcasts(key: KtExpression): KotlinType? =
+        context.bindingContext.getType(key)
+
+fun IrGenerator.getExpectedTypeForLastInferredCall(key: KtExpression): KotlinType? =
+        get(BindingContext.EXPECTED_EXPRESSION_TYPE, key)
+
+fun IrGenerator.getInferredTypeWithSmarcastsOrFail(key: KtExpression): KotlinType =
+        getInferredTypeWithSmartcasts(key) ?: TODO("No type for expression: ${key.text}")
+
+fun IrGenerator.isUsedAsExpression(ktExpression: KtExpression) =
+        get(BindingContext.USED_AS_EXPRESSION, ktExpression) ?: false
+
 fun IrGenerator.getResolvedCall(key: KtExpression): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)
+
+fun IrGenerator.getReturnType(key: KtExpression): KotlinType? {
+    val resolvedCall = getResolvedCall(key)
+    if (resolvedCall != null) {
+        return getReturnType(resolvedCall)
+    }
+
+    if (key is KtBlockExpression) {
+        if (!isUsedAsExpression(key)) return null
+        return getReturnType(key.statements.last())
+    }
+
+    throw AssertionError("Unexpected expression: $key")
+}
+
+fun getReturnType(resolvedCall: ResolvedCall<*>): KotlinType {
+    val descriptor = resolvedCall.resultingDescriptor
+    return when (descriptor) {
+        is ClassDescriptor ->
+            descriptor.classValueType ?: throw AssertionError("Class descriptor without companion object: $descriptor")
+        is CallableDescriptor -> {
+            val returnType = descriptor.returnType ?: throw AssertionError("Callable descriptor without return type: $descriptor")
+            if (resolvedCall.call.isSafeCall())
+                returnType.makeNullable()
+            else
+                returnType
+        }
+        else ->
+            throw AssertionError("Unexpected desciptor in resolved call: $descriptor")
+    }
+}
+
+fun IrGenerator.createDummyExpression(ktExpression: KtExpression, description: String): IrDummyExpression =
+        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithSmartcasts(ktExpression), description)

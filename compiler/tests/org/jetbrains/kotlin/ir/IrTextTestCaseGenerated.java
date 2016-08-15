@@ -35,6 +35,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("assignments.kt")
+    public void testAssignments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/assignments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("boxOk.kt")
     public void testBoxOk() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/boxOk.kt");
@@ -74,6 +80,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
     @TestMetadata("references.kt")
     public void testReferences() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/references.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("smartCasts.kt")
+    public void testSmartCasts() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smartCasts.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("smartCastsWithDestructuring.kt")
+    public void testSmartCastsWithDestructuring() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smartCastsWithDestructuring.kt");
         doTest(fileName);
     }
 

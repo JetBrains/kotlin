@@ -1,8 +1,8 @@
 IrFile /smoke.kt
   IrFunction public fun testFun(): kotlin.String
     IrExpressionBody
-      BLOCK type=kotlin.Nothing hasResult=false isDesugared=false
-        RETURN type=kotlin.Nothing
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        RETURN type=<no-type>
           LITERAL String type=kotlin.String value='OK'
   IrProperty public val testSimpleVal: kotlin.Int = 1 getter=null setter=null
     IrExpressionBody
@@ -24,4 +24,4 @@ IrFile /smoke.kt
           LITERAL Int type=kotlin.Int value='42'
   IrPropertySetter public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit property=testVarWithAccessors
     IrExpressionBody
-      BLOCK type=kotlin.Unit hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false isDesugared=false

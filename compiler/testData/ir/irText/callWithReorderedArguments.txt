@@ -1,7 +1,7 @@
 IrFile /callWithReorderedArguments.kt
   IrFunction public fun foo(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Unit hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false isDesugared=false
   IrFunction public fun noReorder1(): kotlin.Int
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false isDesugared=true
@@ -24,7 +24,7 @@ IrFile /callWithReorderedArguments.kt
           LITERAL Int type=kotlin.Int value='2'
   IrFunction public fun test(): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Unit hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false isDesugared=false
         CALL .foo type=kotlin.Unit operator=
           a: CALL .noReorder1 type=kotlin.Int operator=
           b: CALL .noReorder2 type=kotlin.Int operator=

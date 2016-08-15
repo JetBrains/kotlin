@@ -1,0 +1,51 @@
+IrFile /smartCasts.kt
+  IrFunction public fun expectsString(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public fun expectsInt(/*0*/ i: kotlin.Int): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public fun overloaded(/*0*/ s: kotlin.String): kotlin.String
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_VAR s type=kotlin.String
+  IrFunction public fun overloaded(/*0*/ x: kotlin.Any): kotlin.Any
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_VAR x type=kotlin.Any
+  IrFunction public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        DUMMY KtIfExpression type=kotlin.Unit
+        CALL .println type=kotlin.Unit operator=
+          message: GET_PROPERTY .length type=kotlin.Int
+            $this: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+              GET_VAR x type=kotlin.Any
+        CALL .expectsString type=kotlin.Unit operator=
+          s: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any
+        CALL .expectsInt type=kotlin.Unit operator=
+          i: GET_PROPERTY .length type=kotlin.Int
+            $this: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+              GET_VAR x type=kotlin.Any
+        CALL .expectsString type=kotlin.Unit operator=
+          s: CALL .overloaded type=kotlin.String operator=
+            s: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+              GET_VAR x type=kotlin.Any
+  IrFunction public fun test2(/*0*/ x: kotlin.Any): kotlin.String
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        DUMMY KtIfExpression type=kotlin.Unit
+        RETURN type=<no-type>
+          CALL .overloaded type=kotlin.String operator=
+            s: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+              GET_VAR x type=kotlin.Any
+  IrFunction public fun test3(/*0*/ x: kotlin.Any): kotlin.String
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        DUMMY KtIfExpression type=kotlin.Unit
+        RETURN type=<no-type>
+          TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any

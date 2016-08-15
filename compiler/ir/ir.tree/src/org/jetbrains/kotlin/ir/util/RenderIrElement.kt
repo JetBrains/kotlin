@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.types.KotlinType
 
 class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitElement(element: IrElement, data: Nothing?): String =
@@ -83,6 +84,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.renderType()}"
 
+    override fun visitSetVariable(expression: IrSetVariableExpression, data: Nothing?): String =
+            "SET_VAR ${expression.descriptor.name} type=${expression.renderType()}"
+
     override fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: Nothing?): String =
             "GET_OBJECT ${expression.descriptor.name} type=${expression.renderType()}"
 
@@ -92,6 +96,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
             "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
             "type=${expression.renderType()}"
+
+    override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String {
+        return "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+    }
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"
@@ -116,6 +124,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 DESCRIPTOR_RENDERER.render(this)
 
         internal fun IrExpression.renderType(): String =
-                type?.let { DESCRIPTOR_RENDERER.renderType(it) } ?: "<no-type>"
+                type.render()
+
+        internal fun KotlinType?.render(): String =
+                this?.let { DESCRIPTOR_RENDERER.renderType(it) } ?: "<no-type>"
     }
 }

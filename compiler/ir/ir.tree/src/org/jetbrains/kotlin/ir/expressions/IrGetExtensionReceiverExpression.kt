@@ -17,26 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrGetVariableExpression : IrDeclarationReference {
-    override val descriptor: VariableDescriptor
-}
-
 interface IrGetExtensionReceiverExpression : IrDeclarationReference {
     override val descriptor: CallableDescriptor
-}
-
-class IrGetVariableExpressionImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType?,
-        descriptor: VariableDescriptor
-) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, type, descriptor), IrGetVariableExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitGetVariable(this, data)
 }
 
 class IrGetExtensionReceiverExpressionImpl(

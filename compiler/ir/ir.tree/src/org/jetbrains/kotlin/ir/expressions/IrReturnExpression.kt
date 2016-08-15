@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
@@ -23,19 +24,20 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrReturnExpression : IrExpression {
     var value: IrExpression?
+    val returnTarget: CallableDescriptor
 }
 
 class IrReturnExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?
-) : IrExpressionBase(startOffset, endOffset, type), IrReturnExpression {
+        override val returnTarget: CallableDescriptor
+) : IrExpressionBase(startOffset, endOffset, null), IrReturnExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
+            returnTarget: CallableDescriptor,
             value: IrExpression?
-    ) : this(startOffset, endOffset, type) {
+    ) : this(startOffset, endOffset, returnTarget) {
         this.value = value
     }
 

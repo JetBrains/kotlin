@@ -50,6 +50,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitGetEnumValue(expression: IrGetEnumValueExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitGetVariable(expression: IrGetVariableExpression, data: D) = visitDeclarationReference(expression, data)
+    fun visitSetVariable(expression: IrSetVariableExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiverExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitMemberAccess(expression: IrMemberAccessExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitCallExpression(expression: IrCallExpression, data: D) = visitMemberAccess(expression, data)
@@ -65,4 +66,5 @@ interface IrElementVisitor<out R, in D> {
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
+
 }

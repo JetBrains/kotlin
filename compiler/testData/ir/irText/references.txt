@@ -23,10 +23,10 @@ IrFile /references.kt
           GET_VAR x type=kotlin.String
   IrFunction public fun test3(): kotlin.String
     IrExpressionBody
-      BLOCK type=kotlin.Nothing hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false isDesugared=false
         VAR val x: kotlin.String = "OK"
           LITERAL String type=kotlin.String value='OK'
-        RETURN type=kotlin.Nothing
+        RETURN type=<no-type>
           GET_VAR x type=kotlin.String
   IrFunction public fun test4(): kotlin.String
     IrExpressionBody

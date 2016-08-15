@@ -16,48 +16,46 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrPropertyAccessExpression : IrMemberAccessExpression {
-    override val descriptor: PropertyDescriptor
+interface IrVariableAccessExpression : IrDeclarationReference {
+    override val descriptor: VariableDescriptor
 }
 
-interface IrGetPropertyExpression : IrPropertyAccessExpression
+interface IrGetVariableExpression : IrVariableAccessExpression
 
-interface IrSetPropertyExpression : IrPropertyAccessExpression {
-    var value: IrExpression
-    val operator: IrOperator
+interface IrSetVariableExpression : IrVariableAccessExpression {
+    val value: IrExpression
+    val operator: IrOperator?
 }
 
-class IrGetPropertyExpressionImpl(
+class IrGetVariableExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        isSafe: Boolean,
-        override val descriptor: PropertyDescriptor
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrGetPropertyExpression {
+        descriptor: VariableDescriptor
+) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, type, descriptor), IrGetVariableExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitGetProperty(this, data)
+            visitor.visitGetVariable(this, data)
 }
 
-class IrSetPropertyExpressionImpl(
+class IrSetVariableExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        isSafe: Boolean,
-        override val descriptor: PropertyDescriptor,
+        override val descriptor: VariableDescriptor,
         override val operator: IrOperator = IrOperator.EQ
-) : IrMemberAccessExpressionBase(startOffset, endOffset, null, isSafe), IrSetPropertyExpression {
+) : IrExpressionBase(startOffset, endOffset, null), IrSetVariableExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            isSafe: Boolean,
-            descriptor: PropertyDescriptor,
+            descriptor: VariableDescriptor,
             value: IrExpression,
             operator: IrOperator = IrOperator.EQ
-    ) : this(startOffset, endOffset, isSafe, descriptor, operator) {
+    ) : this(startOffset, endOffset, descriptor, operator) {
         this.value = value
     }
 
@@ -74,22 +72,21 @@ class IrSetPropertyExpressionImpl(
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
                 ARGUMENT0_SLOT -> value
-                else -> super.getChild(slot)
+                else -> null
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             ARGUMENT0_SLOT -> value = newChild.assertCast()
-            else -> super.replaceChild(slot, newChild)
+            else -> throwNoSuchSlot(slot)
         }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitSetProperty(this, data)
+        return visitor.visitSetVariable(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        super.acceptChildren(visitor, data)
         value.accept(visitor, data)
     }
 }

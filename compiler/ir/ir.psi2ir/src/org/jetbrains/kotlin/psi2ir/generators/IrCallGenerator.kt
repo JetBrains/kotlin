@@ -37,12 +37,15 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         temporaries[ktExpression] = temporaryVariableDescriptor
     }
 
-    private fun generateExpressionOrTemporary(ktExpression: KtExpression): IrExpression {
+    private fun generateExpressionOrTemporary(ktExpression: KtExpression, expectedType: KotlinType?): IrExpression {
         val temporary = temporaries[ktExpression]
         return if (temporary != null)
-            IrGetVariableExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, getType(ktExpression), temporary)
+            irStatementGenerator.smartCastTo(
+                    IrGetVariableExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, temporary.type, temporary),
+                    expectedType
+            )
         else
-            irStatementGenerator.generateExpression(ktExpression)
+            irStatementGenerator.generateExpression(ktExpression, expectedType)
     }
 
     fun generateCall(
@@ -50,27 +53,24 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             operator: IrOperator? = null,
             superQualifier: ClassDescriptor? = null
-    ) = generateCall(ktExpression, getTypeOrFail(ktExpression), resolvedCall, operator, superQualifier)
-
-    fun generateCall(
-            ktExpression: KtExpression,
-            resultType: KotlinType?,
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            operator: IrOperator? = null,
-            superQualifier: ClassDescriptor? = null
     ): IrExpression {
         val descriptor = resolvedCall.resultingDescriptor
+        val returnType = getReturnType(resolvedCall)
+
         return when (descriptor) {
             is PropertyDescriptor ->
                 IrGetPropertyExpressionImpl(
-                        ktExpression.startOffset, ktExpression.endOffset, resultType,
+                        ktExpression.startOffset, ktExpression.endOffset,
+                        returnType,
                         resolvedCall.call.isSafeCall(), descriptor
                 ).apply {
-                    dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver)
-                    extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver)
+                    dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver,
+                                                        descriptor.dispatchReceiverParameter?.type)
+                    extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver,
+                                                         descriptor.extensionReceiverParameter?.type)
                 }
             is FunctionDescriptor ->
-                generateFunctionCall(descriptor, ktExpression, resultType, operator, resolvedCall, superQualifier)
+                generateFunctionCall(descriptor, ktExpression, returnType, operator, resolvedCall, superQualifier)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
@@ -102,8 +102,10 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
                 ktExpression.startOffset, ktExpression.endOffset, resultType,
                 descriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
         )
-        irCall.dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver)
-        irCall.extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver)
+        irCall.dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver,
+                                                   descriptor.dispatchReceiverParameter?.type)
+        irCall.extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver,
+                                                    descriptor.extensionReceiverParameter?.type)
 
         return if (resolvedCall.requiresArgumentReordering()) {
             generateCallWithArgumentReordering(irCall, ktExpression, resolvedCall, resultType)
@@ -113,7 +115,11 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
                 val valueArguments = resolvedCall.valueArgumentsByIndex
                 for (index in valueArguments!!.indices) {
                     val valueArgument = valueArguments[index]
-                    val irArgument = generateValueArgument(valueArgument) ?: continue
+                    val valueParameter = descriptor.valueParameters[index]
+                    val irArgument = generateValueArgument(
+                            valueArgument,
+                            valueParameter.varargElementType ?: valueParameter.type
+                    ) ?: continue
                     irCall.putArgument(index, irArgument)
                 }
             }
@@ -136,7 +142,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
 
         val temporaryVariablesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
-            val irArgument = generateValueArgument(valueArgument) ?: continue
+            val irArgument = generateValueArgument(valueArgument, null) ?: continue
             val irTemporary = irStatementGenerator.declarationFactory.createTemporaryVariable(irArgument)
             irBlock.addStatement(irTemporary)
 
@@ -145,9 +151,10 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
 
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
             val (temporaryDescriptor, irArgument) = temporaryVariablesForValueArguments[valueArgument]!!
-            val irGetTemporary = IrGetVariableExpressionImpl(irArgument.startOffset, irArgument.endOffset,
-                                                             irArgument.type, temporaryDescriptor)
-            irCall.putArgument(index, irGetTemporary)
+            val valueParameter = resolvedCall.resultingDescriptor.valueParameters[index]
+            val irGetTemporary = IrGetVariableExpressionImpl(irArgument.startOffset, irArgument.endOffset, irArgument.type,
+                                                             temporaryDescriptor)
+            irCall.putArgument(index, irStatementGenerator.smartCastTo(irGetTemporary, valueParameter.type))
         }
 
         irBlock.addStatement(irCall)
@@ -156,7 +163,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
     }
 
     // TODO smart casts on implicit receivers
-    fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
+    fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?, expectedType: KotlinType?): IrExpression? =
             when (receiver) {
                 is ImplicitClassReceiver ->
                     IrThisExpressionImpl(ktExpression.startOffset, ktExpression.startOffset, receiver.type, receiver.classDescriptor)
@@ -165,7 +172,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
                         IrThisExpressionImpl(receiverExpression.startOffset, receiverExpression.endOffset, receiver.type, receiver.classDescriptor)
                     } ?: TODO("Non-implicit ThisClassReceiver should be an expression receiver")
                 is ExpressionReceiver ->
-                    generateExpressionOrTemporary(receiver.expression)
+                    generateExpressionOrTemporary(receiver.expression, expectedType)
                 is ClassValueReceiver ->
                     IrGetObjectValueExpressionImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                                    receiver.classQualifier.descriptor)
@@ -178,16 +185,15 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
                     TODO("Receiver: ${receiver.javaClass.simpleName}")
             }
 
-    fun generateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? {
-        when (valueArgument) {
-            is DefaultValueArgument ->
-                return null
-            is ExpressionValueArgument ->
-                return generateExpressionOrTemporary(valueArgument.valueArgument!!.getArgumentExpression()!!)
-            is VarargValueArgument ->
-                TODO("vararg")
-            else ->
-                TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
-        }
-    }
+    fun generateValueArgument(valueArgument: ResolvedValueArgument, expectedType: KotlinType?) =
+            when (valueArgument) {
+                is DefaultValueArgument ->
+                    null
+                is ExpressionValueArgument ->
+                    generateExpressionOrTemporary(valueArgument.valueArgument!!.getArgumentExpression()!!, expectedType)
+                is VarargValueArgument ->
+                    TODO("vararg")
+                else ->
+                    TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
+            }
 }
