@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -100,8 +99,8 @@ internal fun computeAnnotations(lightElement: PsiModifierList,
         val descriptor = declaration?.let { LightClassGenerationSupport.getInstance(lightElement.project).resolveToDescriptor(it) }
         val annotatedDescriptor = when {
             descriptor !is PropertyDescriptor || lightOwner !is KtLightMethod -> descriptor
-            JvmAbi.isGetterName(lightOwner.name) -> descriptor.getter
-            JvmAbi.isSetterName(lightOwner.name) -> descriptor.setter
+            lightOwner.isGetter -> descriptor.getter
+            lightOwner.isSetter -> descriptor.setter
             else -> descriptor
         }
         val ktAnnotations = annotatedDescriptor?.annotations?.getAllAnnotations() ?: emptyList()
