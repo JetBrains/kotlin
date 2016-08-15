@@ -26,7 +26,7 @@ class ClassCodegen(state: TranslationState,
     override val type: LLVMReferenceType
 
     init {
-        type = LLVMReferenceType(structName, "class", byRef = true)
+        type = LLVMReferenceType(structName, "class", align = state.pointerAllign, size = state.pointerSize, byRef = true)
         if (parentCodegen != null) {
             type.location.addAll(parentCodegen.type.location)
             type.location.add(parentCodegen.structName)
@@ -41,15 +41,15 @@ class ClassCodegen(state: TranslationState,
         indexFields(parameterList)
         generateInnerFields(clazz.declarations)
 
+        calculateTypeSize()
         type.size = size
+        type.align = state.pointerAllign
     }
 
     private fun indexFields(parameters: MutableList<KtParameter>) {
         if (annotation) {
             return
         }
-
-
 
         for (field in parameters) {
             val item = resolveType(field, state.bindingContext.get(BindingContext.TYPE, field.typeReference)!!)
@@ -58,18 +58,6 @@ class ClassCodegen(state: TranslationState,
             constructorFields.add(item)
             fields.add(item)
             fieldsIndex[item.label] = item
-        }
-        val classAlignment = fields.map { it.type.size }.max()?.toInt() ?: 0
-        var alignmentRemainder = 0
-
-        for (item in fields) {
-            alignmentRemainder = alignmentRemainder - (alignmentRemainder % item.type.size)
-            if (alignmentRemainder < item.type.size) {
-                size += classAlignment
-                alignmentRemainder = classAlignment - item.type.size
-            } else {
-                alignmentRemainder -= item.type.size
-            }
         }
     }
 

@@ -1,10 +1,11 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.jetbrains.kotlin.types.KotlinType
+import org.kotlinnative.translator.TranslationState
 import org.kotlinnative.translator.llvm.LLVMInstanceOfStandardType
 import org.kotlinnative.translator.llvm.LLVMVariable
 
-class LLVMFunctionType(type: KotlinType) : LLVMType() {
+class LLVMFunctionType(type: KotlinType, state: TranslationState) : LLVMType() {
 
     override val defaultValue = ""
     override val align: Int = 4
@@ -14,7 +15,7 @@ class LLVMFunctionType(type: KotlinType) : LLVMType() {
     val returnType: LLVMVariable
 
     init {
-        val types = type.arguments.map { LLVMInstanceOfStandardType("", it.type) }.toList()
+        val types = type.arguments.map { LLVMInstanceOfStandardType("", it.type, state = state) }.toList()
         returnType = types.last()
         arguments = types.dropLast(1)
     }

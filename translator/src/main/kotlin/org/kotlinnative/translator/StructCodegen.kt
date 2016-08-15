@@ -47,6 +47,23 @@ abstract class StructCodegen(val state: TranslationState,
         }
     }
 
+    fun calculateTypeSize() {
+        val classAlignment = fields.map { it.type.align }.max()?.toInt() ?: 0
+        var alignmentRemainder = 0
+        size = 0
+
+        for (item in fields) {
+            val currentFieldType = if (item.pointer > 0) state.pointerSize else item.type.size
+            alignmentRemainder -= (alignmentRemainder % currentFieldType)
+            if (alignmentRemainder < currentFieldType) {
+                size += classAlignment
+                alignmentRemainder = classAlignment - currentFieldType
+            } else {
+                alignmentRemainder -= currentFieldType
+            }
+        }
+    }
+
     open fun generate() {
         generateEnumFields()
         generatePrimaryConstructor()
@@ -76,7 +93,6 @@ abstract class StructCodegen(val state: TranslationState,
                     }
                     fields.add(field)
                     fieldsIndex[field.label] = field
-                    size += field.type.size
                 }
                 is KtEnumEntry -> {
                     val name = declaration.name!!
@@ -192,13 +208,18 @@ abstract class StructCodegen(val state: TranslationState,
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
 
-        val result = LLVMInstanceOfStandardType(field.name!!, ktType, LLVMRegisterScope())
+        val result = LLVMInstanceOfStandardType(field.name!!, ktType, LLVMRegisterScope(), state = state)
 
         if (result.type is LLVMReferenceType) {
             val type = result.type as LLVMReferenceType
             type.prefix = "class"
             type.byRef = true
         }
+
+        if (state.classes.containsKey(field.name!!)) {
+            return LLVMClassVariable(result.label, state.classes[field.name!!]!!.type, result.pointer)
+        }
+
 
         if (annotations.contains("Plain")) {
             result.pointer = 0

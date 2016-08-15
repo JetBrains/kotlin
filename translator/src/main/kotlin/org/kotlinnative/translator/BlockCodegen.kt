@@ -121,7 +121,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateCallableReferenceExpression(expr: KtCallableReferenceExpression): LLVMSingleValue? {
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
-        val result = LLVMInstanceOfStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope())
+        val result = LLVMInstanceOfStandardType(expr.text.substring(2), kotlinType, LLVMVariableScope(), state)
         return LLVMVariable("${result.label}${(result.type as LLVMFunctionType).mangleArgs()}", result.type, result.kotlinName, result.scope, result.pointer)
     }
 
@@ -131,7 +131,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         val left = evaluateExpression(receiver, scopeDepth)!!
         val loadedLeft = codeBuilder.receiveNativeValue(left)
-        val expectedType = LLVMMapStandardType(state.bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expr)!!) as LLVMReferenceType
+        val expectedType = LLVMMapStandardType(state.bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expr)!!, state) as LLVMReferenceType
 
         if (state.classes.containsKey(expectedType.type)) {
             expectedType.prefix = "class"
@@ -223,7 +223,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
-        val standardType = LLVMMapStandardType(receiverType!!.type!!)
+        val standardType = LLVMMapStandardType(receiverType!!.type!!, state)
 
         val function = selector.firstChild.firstChild.text
         val names = parseArgList(selector, scopeDepth)
@@ -809,7 +809,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
         val expressionKotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
         val expressionValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)?.getValue(expressionKotlinType)
-        val type = LLVMMapStandardType(expressionKotlinType)
+        val type = LLVMMapStandardType(expressionKotlinType, state)
         return LLVMConstant(expressionValue?.toString() ?: "", type, pointer = 0)
     }
 
@@ -866,7 +866,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         codeBuilder.addComment("start when expression")
         val whenExpression = expr.subjectExpression
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expr)!!.type!!
-        val expressionType = LLVMMapStandardType(kotlinType)
+        val expressionType = LLVMMapStandardType(kotlinType, state)
 
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
@@ -925,7 +925,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun executeIfExpression(conditionResult: LLVMSingleValue, thenExpression: KtExpression, elseExpression: PsiElement?, ifExpression: KtIfExpression, scopeDepth: Int): LLVMVariable? {
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, ifExpression)!!.type!!
-        val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope()).type
+        val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope(), state).type
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
         codeBuilder.allocStackPointedVarAsValue(resultVariable)
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
@@ -988,7 +988,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
             is LLVMConstant -> {
                 if (assignExpression.type is LLVMNullType) {
-                    val reference = LLVMInstanceOfStandardType(identifier, variable.type)
+                    val reference = LLVMInstanceOfStandardType(identifier, variable.type, state = state)
                     if (state.classes.containsKey(variable.type.toString().dropLast(1))) {
                         (reference.type as LLVMReferenceType).prefix = "class"
                     }

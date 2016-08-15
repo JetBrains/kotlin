@@ -30,10 +30,10 @@ class FunctionCodegen(state: TranslationState,
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
         args.addAll(descriptor.valueParameters.map {
-            LLVMInstanceOfStandardType(it.name.toString(), it.type)
+            LLVMInstanceOfStandardType(it.name.toString(), it.type, state = state)
         })
 
-        returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!)
+        returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!, state = state)
         if (returnType!!.type is LLVMReferenceType) {
             returnType!!.pointer = 2
         }
@@ -42,7 +42,7 @@ class FunctionCodegen(state: TranslationState,
 
         if (isExtensionDeclaration) {
             val receiverType = descriptor.extensionReceiverParameter!!.type
-            val translatorType = LLVMMapStandardType(receiverType)
+            val translatorType = LLVMMapStandardType(receiverType, state)
             functionNamePrefix += translatorType.typename + "."
 
             val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
@@ -95,7 +95,7 @@ class FunctionCodegen(state: TranslationState,
         if (isExtensionDeclaration) {
             val receiverParameter = state.bindingContext.get(BindingContext.FUNCTION, function)!!.extensionReceiverParameter!!
             val receiverType = receiverParameter.type
-            val translatorType = LLVMMapStandardType(receiverType)
+            val translatorType = LLVMMapStandardType(receiverType, state)
 
             val classVal = when (translatorType) {
                 is LLVMReferenceType -> LLVMVariable("classvariable.this", translatorType, pointer = 1)

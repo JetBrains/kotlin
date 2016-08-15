@@ -34,6 +34,8 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
+    val pointerAllign = if (arm) 4 else 8
+    val pointerSize = if (arm) 4 else 8
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 }
 
