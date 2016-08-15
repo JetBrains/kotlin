@@ -21,10 +21,47 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 interface IrElement {
     val startOffset: Int
     val endOffset: Int
+
     val parent: IrElement?
+    val slot: Int
+    fun setTreeLocation(newParent: IrElement?, newSlot: Int)
+    fun getChild(slot: Int): IrElement?
+    fun replaceChild(slot: Int, newChild: IrElement)
 
     fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
     fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D): Unit
 }
 
-abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement
+interface IrStatement : IrElement
+
+abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement {
+    override var parent: IrElement? = null
+    override var slot: Int = DETACHED_SLOT
+
+    override fun setTreeLocation(newParent: IrElement?, newSlot: Int) {
+        parent = newParent
+        slot = newSlot
+    }
+}
+
+fun IrElement?.detach() {
+    this?.setTreeLocation(null, DETACHED_SLOT)
+}
+
+fun IrElement.replaceWith(otherElement: IrElement) {
+    parent?.replaceChild(slot, otherElement)
+}
+
+fun IrElement.assertChild(child: IrElement) {
+    assert(getChild(child.slot) == child) { "$this: Invalid child: $child" }
+}
+
+fun IrElement.assertDetached() {
+    assert(parent == null && slot == DETACHED_SLOT) { "$this: should be detached" }
+}
+
+fun IrElement.throwNoSuchSlot(slot: Int): Nothing =
+        throw AssertionError("$this: no such slot $slot")
+
+inline fun <reified T : IrElement> IrElement.assertCast(): T =
+        if (this is T) this else throw AssertionError("Expected ${T::class.simpleName}: $this")

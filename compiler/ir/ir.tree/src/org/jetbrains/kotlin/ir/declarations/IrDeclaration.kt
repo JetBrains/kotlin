@@ -17,21 +17,13 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.IrStatement
 
-interface IrDeclaration : IrElement {
-    override val parent: IrDeclarationOwner?
-    val indexInParent: Int
-
+interface IrDeclaration : IrStatement, IrClassElement {
     val descriptor: DeclarationDescriptor?
-
     val declarationKind: IrDeclarationKind
     val originKind: IrDeclarationOriginKind
-
-    companion object {
-        const val DETACHED_INDEX = Int.MIN_VALUE
-    }
 }
 
 enum class IrDeclarationKind {
@@ -41,7 +33,7 @@ enum class IrDeclarationKind {
     PROPERTY_GETTER,
     PROPERTY_SETTER,
     PROPERTY,
-    LOCAL_VARIABLE,
+    VARIABLE,
     CLASS
 }
 
@@ -54,6 +46,4 @@ abstract class IrDeclarationBase(
         startOffset: Int,
         endOffset: Int,
         override val originKind: IrDeclarationOriginKind
-) : IrElementBase(startOffset, endOffset), IrDeclaration {
-    override var indexInParent: Int = IrDeclaration.DETACHED_INDEX
-}
+) : IrElementBase(startOffset, endOffset), IrDeclaration

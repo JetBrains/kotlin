@@ -53,6 +53,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("destructuring1.kt")
+    public void testDestructuring1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/destructuring1.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dotQualified.kt")
     public void testDotQualified() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/dotQualified.kt");

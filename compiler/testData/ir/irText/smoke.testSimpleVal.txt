@@ -1,3 +1,0 @@
-IrProperty public val testSimpleVal: kotlin.Int = 1 getter=null setter=null
-  IrExpressionBody
-    LITERAL Int type=kotlin.Int value='1'

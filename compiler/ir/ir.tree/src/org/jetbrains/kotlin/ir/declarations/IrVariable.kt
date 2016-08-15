@@ -17,38 +17,44 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.CHILD_EXPRESSION_INDEX
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrLocalVariable : IrMemberDeclaration, IrExpressionOwner {
+interface IrVariable : IrDeclaration {
     override val descriptor: VariableDescriptor
 
     override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.LOCAL_VARIABLE
+        get() = IrDeclarationKind.VARIABLE
 
-    var initializerExpression: IrExpression?
+    var initializer: IrExpression?
 }
 
-class IrLocalVariableImpl(
+class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: VariableDescriptor
-) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrLocalVariable {
-    override var initializerExpression: IrExpression? = null
+) : IrDeclarationBase(startOffset, endOffset, originKind), IrVariable {
+    override var initializer: IrExpression? = null
         set(value) {
+            value?.assertDetached()
             field?.detach()
             field = value
-            value?.setTreeLocation(this, CHILD_EXPRESSION_INDEX)
+            value?.setTreeLocation(this, INITIALIZER_SLOT)
         }
 
-    override fun getChildExpression(index: Int): IrExpression? =
-            if (index == CHILD_EXPRESSION_INDEX) initializerExpression else null
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                INITIALIZER_SLOT -> initializer
+                else -> null
+            }
 
-    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
-        validateChild(oldChild)
-        initializerExpression = newChild
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            INITIALIZER_SLOT -> initializer = newChild.assertCast<IrExpression>()
+            else -> throwNoSuchSlot(slot)
+        }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -56,10 +62,6 @@ class IrLocalVariableImpl(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildExpressions(visitor, data)
-    }
-
-    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializerExpression?.accept(visitor, data)
+        initializer?.accept(visitor, data)
     }
 }

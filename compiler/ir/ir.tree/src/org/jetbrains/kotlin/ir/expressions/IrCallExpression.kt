@@ -18,21 +18,18 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.DISPATCH_RECEIVER_INDEX
-import org.jetbrains.kotlin.ir.EXTENSION_RECEIVER_INDEX
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrCallExpression : IrMemberAccessExpression, IrCompoundExpression {
+interface IrCallExpression : IrMemberAccessExpression {
     val superQualifier: ClassDescriptor?
     val operator: IrOperator?
     override val descriptor: CallableDescriptor
 
-    fun getValueArgument(index: Int): IrExpression?
-    fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    fun removeValueArgument(index: Int)
-
-    fun <D> acceptValueArguments(visitor: IrElementVisitor<Unit, D>, data: D)
+    fun getArgument(index: Int): IrExpression?
+    fun putArgument(index: Int, valueArgument: IrExpression?)
+    fun removeArgument(index: Int)
 }
 
 class IrCallExpressionImpl(
@@ -42,63 +39,45 @@ class IrCallExpressionImpl(
         override val descriptor: CallableDescriptor,
         isSafe: Boolean,
         override val operator: IrOperator?,
-        override val superQualifier: ClassDescriptor?
+        override val superQualifier: ClassDescriptor? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCallExpression {
     private val argumentsByParameterIndex =
-            kotlin.arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
+            arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
-    override fun getValueArgument(index: Int): IrExpression? =
+    override fun getArgument(index: Int): IrExpression? =
             argumentsByParameterIndex[index]
 
-    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+        if (index >= argumentsByParameterIndex.size) throw AssertionError("$this: No such argument slot: $index")
+        valueArgument?.assertDetached()
         argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = valueArgument
         valueArgument?.setTreeLocation(this, index)
     }
 
-    override fun removeValueArgument(index: Int) {
+    override fun removeArgument(index: Int) {
         argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = null
     }
 
-    override fun getChildExpression(index: Int): IrExpression? =
-            when (index) {
-                DISPATCH_RECEIVER_INDEX ->
-                    dispatchReceiver
-                EXTENSION_RECEIVER_INDEX ->
-                    extensionReceiver
-                else ->
-                    argumentsByParameterIndex.getOrNull(index)
-            }
+    override fun getChild(slot: Int): IrElement? =
+            if (0 <= slot)
+                argumentsByParameterIndex.getOrNull(slot)
+            else
+                super.getChild(slot)
 
-    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
-        validateChild(oldChild)
-        when (oldChild.index) {
-            DISPATCH_RECEIVER_INDEX ->
-                dispatchReceiver = newChild
-            EXTENSION_RECEIVER_INDEX ->
-                extensionReceiver = newChild
-            else ->
-                putValueArgument(oldChild.index, newChild)
-        }
-    }
-
-    override fun <D> acceptValueArguments(visitor: IrElementVisitor<Unit, D>, data: D) {
-        for (valueArgument in argumentsByParameterIndex) {
-            valueArgument?.let { it.accept(visitor, data) }
-        }
-    }
-
-    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-        acceptValueArguments(visitor, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildExpressions(visitor, data)
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        if (0 <= slot)
+            putArgument(slot, newChild.assertCast())
+        else
+            super.replaceChild(slot, newChild)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitCallExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        super.acceptChildren(visitor, data)
+        argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+    }
 }

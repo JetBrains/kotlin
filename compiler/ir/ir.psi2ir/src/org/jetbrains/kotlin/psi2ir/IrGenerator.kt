@@ -37,6 +37,9 @@ fun IrGenerator.getTypeOrFail(key: KtExpression): KotlinType =
 fun <K, V : Any> IrGenerator.get(slice: ReadOnlySlice<K, V>, key: K): V? =
         context.bindingContext[slice, key]
 
+fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K): V =
+        context.bindingContext[slice, key] ?: throw RuntimeException("No $slice for $key")
+
 inline fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
         context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
 

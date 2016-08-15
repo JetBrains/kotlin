@@ -22,19 +22,18 @@ import org.jetbrains.kotlin.ir.expressions.*
 
 interface IrElementVisitor<out R, in D> {
     fun visitElement(element: IrElement, data: D): R
+    fun visitModule(declaration: IrModule, data: D): R = visitElement(declaration, data)
+    fun visitFile(declaration: IrFile, data: D): R = visitElement(declaration, data)
 
     fun visitDeclaration(declaration: IrDeclaration, data: D): R = visitElement(declaration, data)
-    fun visitModule(declaration: IrModule, data: D): R = visitDeclaration(declaration, data)
-    fun visitCompoundDeclaration(declaration: IrCompoundDeclaration, data: D): R = visitDeclaration(declaration, data)
-    fun visitFile(declaration: IrFile, data: D): R = visitCompoundDeclaration(declaration, data)
-    fun visitClass(declaration: IrClass, data: D): R = visitCompoundDeclaration(declaration, data)
+    fun visitClass(declaration: IrClass, data: D): R = visitDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D): R = visitDeclaration(declaration, data)
     fun visitPropertyGetter(declaration: IrPropertyGetter, data: D): R = visitFunction(declaration, data)
     fun visitPropertySetter(declaration: IrPropertySetter, data: D): R = visitFunction(declaration, data)
     fun visitProperty(declaration: IrProperty, data: D): R = visitDeclaration(declaration, data)
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
-    fun visitLocalVariable(declaration: IrLocalVariable, data: D) = visitDeclaration(declaration, data)
+    fun visitLocalVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
@@ -45,11 +44,6 @@ interface IrElementVisitor<out R, in D> {
     fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
     fun visitStringTemplate(expression: IrStringConcatenationExpression, data: D) = visitExpression(expression, data)
     fun visitThisExpression(expression: IrThisExpression, data: D) = visitExpression(expression, data)
-
-    fun <T : IrMemberDeclaration> visitLocalDeclarationExpression(expression: IrLocalDeclarationExpression<T>, data: D) =
-            visitExpression(expression, data)
-    fun visitLocalVariableDeclarationExpression(expression: IrLocalVariableDeclarationExpression, data: D) =
-            visitLocalDeclarationExpression(expression, data)
 
     fun visitDeclarationReference(expression: IrDeclarationReference, data: D) = visitExpression(expression, data)
     fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: D) = visitDeclarationReference(expression, data)

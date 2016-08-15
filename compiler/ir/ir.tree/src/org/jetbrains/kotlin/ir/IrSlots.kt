@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.ir
 
-const val CHILD_DECLARATION_INDEX = 0
-const val DETACHED_INDEX = Int.MIN_VALUE
-const val CHILD_EXPRESSION_INDEX = 0
-const val ARGUMENT0_INDEX = 0
-const val ARGUMENT1_INDEX = 1
-const val DISPATCH_RECEIVER_INDEX = -1
-const val EXTENSION_RECEIVER_INDEX = -2
+const val CHILD_DECLARATION_SLOT = 0
+const val DETACHED_SLOT = Int.MIN_VALUE
+const val CHILD_EXPRESSION_SLOT = 0
+const val ARGUMENT0_SLOT = 0
+const val ARGUMENT1_SLOT = 1
+const val DISPATCH_RECEIVER_SLOT = -1
+const val EXTENSION_RECEIVER_SLOT = -2
+const val FUNCTION_BODY_SLOT = 0
+const val MODULE_SLOT = 0
+const val INITIALIZER_SLOT = 0

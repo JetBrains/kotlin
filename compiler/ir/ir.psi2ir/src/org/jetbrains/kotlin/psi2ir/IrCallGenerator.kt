@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -29,7 +30,7 @@ import java.util.*
 
 class IrCallGenerator(
         override val context: IrGeneratorContext,
-        val irExpressionGenerator: IrExpressionGenerator
+        val irStatementGenerator: IrStatementGenerator
 ) : IrGenerator {
     fun generateCall(
             ktExpression: KtExpression,
@@ -92,7 +93,7 @@ class IrCallGenerator(
                 for (index in valueArguments!!.indices) {
                     val valueArgument = valueArguments[index]
                     val irArgument = generateValueArgument(valueArgument) ?: continue
-                    irCall.putValueArgument(index, irArgument)
+                    irCall.putArgument(index, irArgument)
                 }
             }
         }
@@ -105,17 +106,16 @@ class IrCallGenerator(
             resultType: KotlinType
     ): IrExpression {
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
-        val hasResult = isUsedAsExpression(ktExpression)
-        val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType, hasResult)
+
+        val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType,
+                                            hasResult = isUsedAsExpression(ktExpression),
+                                            isDesugared = true)
 
         val temporaryVariablesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val irArgument = generateValueArgument(valueArgument) ?: continue
-            val irTemporary = irExpressionGenerator.declarationFactory.createTemporaryVariable(irArgument)
-            val irTemporaryDeclaration = IrLocalVariableDeclarationExpressionImpl(irArgument.startOffset, irArgument.endOffset)
-            irTemporaryDeclaration.childDeclaration = irTemporary
-
-            irBlock.addChildExpression(irTemporaryDeclaration)
+            val irTemporary = irStatementGenerator.declarationFactory.createTemporaryVariable(irArgument)
+            irBlock.addStatement(irTemporary)
 
             temporaryVariablesForValueArguments[valueArgument] = Pair(irTemporary.descriptor, irArgument)
         }
@@ -124,16 +124,16 @@ class IrCallGenerator(
             val (temporaryDescriptor, irArgument) = temporaryVariablesForValueArguments[valueArgument]!!
             val irGetTemporary = IrGetVariableExpressionImpl(irArgument.startOffset, irArgument.endOffset,
                                                              irArgument.type, temporaryDescriptor)
-            irCall.putValueArgument(index, irGetTemporary)
+            irCall.putArgument(index, irGetTemporary)
         }
 
-        irBlock.addChildExpression(irCall)
+        irBlock.addStatement(irCall)
 
         return irBlock
     }
 
     // TODO smart casts on implicit receivers
-    private fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
+    fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
             when (receiver) {
                 is ImplicitClassReceiver ->
                     IrThisExpressionImpl(ktExpression.startOffset, ktExpression.startOffset, receiver.type, receiver.classDescriptor)
@@ -142,7 +142,7 @@ class IrCallGenerator(
                         IrThisExpressionImpl(receiverExpression.startOffset, receiverExpression.endOffset, receiver.type, receiver.classDescriptor)
                     } ?: TODO("Non-implicit ThisClassReceiver should be an expression receiver")
                 is ExpressionReceiver ->
-                    irExpressionGenerator.generateExpression(receiver.expression)
+                    irStatementGenerator.generateStatement(receiver.expression).assertCast()
                 is ClassValueReceiver ->
                     IrGetObjectValueExpressionImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                                    receiver.classQualifier.descriptor)
@@ -155,12 +155,12 @@ class IrCallGenerator(
                     TODO("Receiver: ${receiver.javaClass.simpleName}")
             }
 
-    private fun generateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? {
+    fun generateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? {
         when (valueArgument) {
             is DefaultValueArgument ->
                 return null
             is ExpressionValueArgument ->
-                return irExpressionGenerator.generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
+                return irStatementGenerator.generateStatement(valueArgument.valueArgument!!.getArgumentExpression()!!).assertCast()
             is VarargValueArgument ->
                 TODO("vararg")
             else ->

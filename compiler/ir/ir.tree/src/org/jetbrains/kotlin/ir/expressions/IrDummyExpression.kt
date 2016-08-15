@@ -24,7 +24,7 @@ class IrDummyExpression(
         endOffset: Int,
         type: KotlinType?,
         val description: String
-) : IrExpressionBase(startOffset, endOffset, type) {
+) : IrTerminalExpressionBase(startOffset, endOffset, type) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDummyExpression(this, data)
 

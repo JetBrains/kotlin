@@ -17,28 +17,48 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.SourceLocationManager
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.*
 
-interface IrFile : IrCompoundDeclaration {
+interface IrFile : IrElement {
     val name: String
     val fileEntry: SourceLocationManager.FileEntry
-    val module: IrModule
-    override val descriptor: PackageFragmentDescriptor
+    val packageFragmentDescriptor: PackageFragmentDescriptor
+    val declarations: List<IrDeclaration>
 
-    override val parent: Nothing? get() = null
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FILE
+    fun addDeclaration(declaration: IrDeclaration)
 }
 
 class IrFileImpl(
         override val fileEntry: SourceLocationManager.FileEntry,
         override val name: String,
-        override val descriptor: PackageFragmentDescriptor
-) : IrCompoundDeclarationBase(0, fileEntry.maxOffset, IrDeclarationOriginKind.DEFINED), IrFile {
-    override lateinit var module: IrModule
+        override val packageFragmentDescriptor: PackageFragmentDescriptor
+) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+    override val declarations: MutableList<IrDeclaration> = ArrayList()
+
+    override fun addDeclaration(declaration: IrDeclaration) {
+        declaration.assertDetached()
+        declaration.setTreeLocation(this, declarations.size)
+        declarations.add(declaration)
+    }
+
+    override fun getChild(slot: Int): IrElement? =
+            declarations.getOrNull(slot)
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        newChild.assertDetached()
+        declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
+        declarations[slot] = newChild.assertCast()
+        newChild.setTreeLocation(this, slot)
+    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFile(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        declarations.forEach { it.accept(visitor, data) }
+    }
+
+
 }

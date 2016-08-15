@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -25,9 +26,14 @@ interface IrOperatorExpression : IrExpression {
     val relatedDescriptor: FunctionDescriptor?
 }
 
-interface IrUnaryOperatorExpression : IrOperatorExpression, IrCompoundExpression1
+interface IrUnaryOperatorExpression : IrOperatorExpression {
+    var argument: IrExpression
+}
 
-interface IrBinaryOperatorExpression : IrOperatorExpression, IrCompoundExpression2
+interface IrBinaryOperatorExpression : IrOperatorExpression {
+    var argument0: IrExpression
+    var argument1: IrExpression
+}
 
 class IrUnaryOperatorExpressionImpl(
         startOffset: Int,
@@ -35,9 +41,47 @@ class IrUnaryOperatorExpressionImpl(
         type: KotlinType?,
         override val operator: IrOperator,
         override val relatedDescriptor: FunctionDescriptor?
-) : IrCompoundExpression1Base(startOffset, endOffset, type), IrUnaryOperatorExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrUnaryOperatorExpression {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType?,
+            operator: IrOperator,
+            relatedDescriptor: FunctionDescriptor?,
+            argument: IrExpression
+    ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
+        this.argument = argument
+    }
+
+    private var argumentImpl: IrExpression? = null
+    override var argument: IrExpression
+        get() = argumentImpl!!
+        set(value) {
+            value.assertDetached()
+            argumentImpl?.detach()
+            argumentImpl = value
+            value.setTreeLocation(this, ARGUMENT0_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                ARGUMENT0_SLOT -> argument
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            ARGUMENT0_SLOT -> argument = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitUnaryOperator(this, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument.accept(visitor, data)
     }
 }
 
@@ -47,7 +91,60 @@ class IrBinaryOperatorExpressionImpl(
         type: KotlinType?,
         override val operator: IrOperator,
         override val relatedDescriptor: FunctionDescriptor?
-) : IrCompoundExpression2Base(startOffset, endOffset, type), IrBinaryOperatorExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrBinaryOperatorExpression {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType?,
+            operator: IrOperator,
+            relatedDescriptor: FunctionDescriptor?,
+            argument0: IrExpression,
+            argument1: IrExpression
+    ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
+        this.argument0 = argument0
+        this.argument1 = argument1
+    }
+
+    private var argument0Impl: IrExpression? = null
+    override var argument0: IrExpression
+        get() = argument0Impl!!
+        set(value) {
+            value.assertDetached()
+            argument0Impl?.detach()
+            argument0Impl = value
+            value.setTreeLocation(this, ARGUMENT0_SLOT)
+        }
+
+    private var argument1Impl: IrExpression? = null
+    override var argument1: IrExpression
+        get() = argument1Impl!!
+        set(value) {
+            value.assertDetached()
+            argument1Impl?.detach()
+            argument1Impl = value
+            value.setTreeLocation(this, ARGUMENT1_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                ARGUMENT0_SLOT -> argument0
+                ARGUMENT1_SLOT -> argument1
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            ARGUMENT0_SLOT -> argument0 = newChild.assertCast()
+            ARGUMENT1_SLOT -> argument1 = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitBinaryOperator(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument0.acceptChildren(visitor, data)
+        argument1.acceptChildren(visitor, data)
+    }
 }

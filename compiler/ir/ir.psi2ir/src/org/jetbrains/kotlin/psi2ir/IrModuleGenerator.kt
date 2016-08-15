@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class IrModuleGenerator(override val context: IrGeneratorContext) : IrDeclarationGenerator {
     fun generateModuleContent() {
         for (ktFile in context.inputFiles) {
-            val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile) { "no package fragment for file" }
+            val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
             val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
             val fileName = fileEntry.getRecognizableName()
             val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
             context.sourceManager.putFileEntry(irFile, fileEntry)
             context.irModule.addFile(irFile)
             val irFileElementFactory = IrDeclarationFactory()
-            val generator = IrFileGenerator(ktFile, context, irFile, this, irFileElementFactory)
+            val generator = IrFileGenerator(ktFile, irFile, context, irFileElementFactory)
             generator.generateFileContent()
         }
     }

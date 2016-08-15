@@ -50,7 +50,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
             for (valueParameter in expression.descriptor.valueParameters) {
-                expression.getValueArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
+                expression.getArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
             }
         }
     }
@@ -66,7 +66,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         expression.dumpLabeledElementWith(data) {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            expression.argument?.accept(this, "\$value")
+            expression.value.accept(this, "\$value")
         }
     }
 

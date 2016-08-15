@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -27,8 +28,9 @@ enum class IrTypeOperator {
     NOT_IS;
 }
 
-interface IrTypeOperatorExpression : IrExpression, IrCompoundExpression1 {
+interface IrTypeOperatorExpression : IrExpression {
     val operator: IrTypeOperator
+    var argument: IrExpression
     val typeOperand: KotlinType
 }
 
@@ -38,8 +40,47 @@ class IrTypeOperatorExpressionImpl(
         type: KotlinType?,
         override val operator: IrTypeOperator,
         override val typeOperand: KotlinType
-) : IrCompoundExpression1Base(startOffset, endOffset, type), IrTypeOperatorExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitTypeOperatorExpression(this, data)
+) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorExpression {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType?,
+            operator: IrTypeOperator,
+            argument: IrExpression,
+            typeOperand: KotlinType
+    ) : this(startOffset, endOffset, type, operator, typeOperand) {
+        this.argument = argument
     }
+
+    private var argumentImpl: IrExpression? = null
+    override var argument: IrExpression
+        get() = argumentImpl!!
+        set(value) {
+            value.assertDetached()
+            argumentImpl?.detach()
+            argumentImpl = value
+            value.setTreeLocation(this, ARGUMENT0_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                ARGUMENT0_SLOT -> argument
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            ARGUMENT0_SLOT -> argument = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitTypeOperatorExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument.accept(visitor, data)
+    }
+
+
 }

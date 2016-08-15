@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrFunction : IrMemberDeclaration {
+interface IrFunction : IrDeclaration {
     override val descriptor: FunctionDescriptor
     val body: IrBody
 
@@ -31,8 +32,36 @@ interface IrFunction : IrMemberDeclaration {
 abstract class IrFunctionBase(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind
-) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrFunction {
+        originKind: IrDeclarationOriginKind,
+        body: IrBody? = null
+) : IrDeclarationBase(startOffset, endOffset, originKind), IrFunction {
+    init {
+        body?.setTreeLocation(this, FUNCTION_BODY_SLOT)
+    }
+
+    private var bodyImpl: IrBody? = body
+    override var body: IrBody
+        get() = bodyImpl!!
+        set(newValue) {
+            newValue.assertDetached()
+            bodyImpl?.detach()
+            bodyImpl = newValue
+            newValue.setTreeLocation(this, FUNCTION_BODY_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                FUNCTION_BODY_SLOT -> body
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            FUNCTION_BODY_SLOT -> body = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         body.accept(visitor, data)
     }
@@ -43,12 +72,8 @@ class IrFunctionImpl(
         endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: FunctionDescriptor,
-        override val body: IrBody
-) : IrFunctionBase(startOffset, endOffset, originKind) {
-    init {
-        body.parent = this
-    }
-
+        body: IrBody
+) : IrFunctionBase(startOffset, endOffset, originKind, body) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }

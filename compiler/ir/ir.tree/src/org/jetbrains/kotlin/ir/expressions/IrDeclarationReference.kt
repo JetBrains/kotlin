@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -39,14 +41,31 @@ abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
         endOffset: Int,
         type: KotlinType?,
         override val descriptor: D
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrDeclarationReference
+) : IrExpressionBase(startOffset, endOffset, type), IrDeclarationReference
+
+abstract class IrTerminalDeclarationReferenceBase<out D : DeclarationDescriptor>(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType?,
+        descriptor: D
+) : IrDeclarationReferenceBase<D>(startOffset, endOffset, type, descriptor) {
+    override fun getChild(slot: Int): IrElement? = null
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        throwNoSuchSlot(slot)
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children
+    }
+}
 
 class IrGetObjectValueExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         descriptor: ClassDescriptor
-) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValueExpression {
+) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetObjectValue(this, data)
 }
@@ -56,7 +75,7 @@ class IrGetEnumValueExpressionImpl(
         endOffset: Int,
         type: KotlinType?,
         descriptor: ClassDescriptor
-) : IrDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValueExpression {
+) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValueExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetEnumValue(this, data)
     }

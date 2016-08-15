@@ -30,7 +30,8 @@ enum class IrOperator {
     RANGE,
     PLUS, MINUS, MUL, DIV, MOD,
     EQ,
-    PLUSEQ, MINUSEQ, MULEQ, DIVEQ, MODEQ;
+    PLUSEQ, MINUSEQ, MULEQ, DIVEQ, MODEQ,
+    DESTRUCTURING;
 }
 
 private val CAO_START = IrOperator.PLUSEQ.ordinal

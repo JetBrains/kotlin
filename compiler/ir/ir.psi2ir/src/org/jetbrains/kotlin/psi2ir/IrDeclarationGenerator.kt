@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
@@ -33,11 +34,9 @@ interface IrDeclarationGenerator : IrGenerator
 
 abstract class IrDeclarationGeneratorBase(
         override val context: IrGeneratorContext,
-        val container: IrDeclarationOwnerN,
         val declarationFactory: IrDeclarationFactoryBase
 ) : IrDeclarationGenerator {
-    private fun <D : IrMemberDeclaration> D.register(): D =
-            apply { container.addChildDeclaration(this) }
+    protected abstract fun <D : IrDeclaration> D.register(): D
 
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
         // TODO create IrAnnotation's for each KtAnnotationEntry
@@ -50,10 +49,10 @@ abstract class IrDeclarationGeneratorBase(
                 generateFunctionDeclaration(ktDeclaration)
             is KtProperty ->
                 generatePropertyDeclaration(ktDeclaration)
-            is KtClassOrObject ->
-                TODO("classOrObject")
-            is KtTypeAlias ->
-                TODO("typealias")
+            is KtClassOrObject -> {}
+//                TODO("classOrObject")
+            is KtTypeAlias -> {}
+//                TODO("typealias")
         }
     }
 
@@ -90,6 +89,6 @@ abstract class IrDeclarationGeneratorBase(
 
     fun generateExpressionBody(scopeOwner: DeclarationDescriptor, ktBody: KtExpression): IrBody =
             IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset).apply {
-                argument = IrExpressionGenerator(context, IrLocalDeclarationsFactory(scopeOwner)).generateExpression(ktBody)
+                expression = IrStatementGenerator(context, IrLocalDeclarationsFactory(scopeOwner)).generateStatement(ktBody).assertCast()
             }
 }

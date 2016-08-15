@@ -16,50 +16,53 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.CHILD_EXPRESSION_INDEX
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwner
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOwnerNBase
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrBody : IrElement {
-    override var parent: IrDeclaration
+interface IrBody : IrElement
+
+interface IrExpressionBody : IrBody {
+    var expression: IrExpression
 }
 
-interface IrExpressionBody : IrBody, IrExpressionOwner1
-
-// TODO IrExpressionBodyImpl vs IrCompoundExpression1Impl: extract common base class?
 class IrExpressionBodyImpl(
         startOffset: Int,
         endOffset: Int
 ) : IrElementBase(startOffset, endOffset), IrExpressionBody {
-    override lateinit var parent: IrDeclaration
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            expression: IrExpression
+    ) : this(startOffset, endOffset) {
+        this.expression = expression
+    }
 
-    override var argument: IrExpression? = null
-        set(newExpression) {
-            field?.detach()
-            field = newExpression
-            newExpression?.setTreeLocation(this, CHILD_EXPRESSION_INDEX)
+    private var expressionImpl: IrExpression? = null
+    override var expression: IrExpression
+        get() = expressionImpl!!
+        set(newValue) {
+            newValue.assertDetached()
+            expressionImpl?.detach()
+            expressionImpl = newValue
+            newValue.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
         }
 
-    override fun getChildExpression(index: Int): IrExpression? =
-            if (index == CHILD_EXPRESSION_INDEX) argument else null
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                CHILD_EXPRESSION_SLOT -> expression
+                else -> null
+            }
 
-    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
-        validateChild(oldChild)
-        argument = newChild
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            CHILD_EXPRESSION_SLOT -> expression = newChild.assertCast()
+        }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitExpressionBody(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildExpressions(visitor, data)
-    }
-
-    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument?.accept(visitor, data)
+        expression.accept(visitor, data)
     }
 }

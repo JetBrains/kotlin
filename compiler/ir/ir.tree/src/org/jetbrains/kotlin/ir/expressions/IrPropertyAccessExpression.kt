@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ARGUMENT0_INDEX
-import org.jetbrains.kotlin.ir.DISPATCH_RECEIVER_INDEX
-import org.jetbrains.kotlin.ir.EXTENSION_RECEIVER_INDEX
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -29,7 +27,9 @@ interface IrPropertyAccessExpression : IrMemberAccessExpression {
 
 interface IrGetPropertyExpression : IrPropertyAccessExpression
 
-interface IrSetPropertyExpression : IrPropertyAccessExpression, IrCompoundExpression1
+interface IrSetPropertyExpression : IrPropertyAccessExpression {
+    var value: IrExpression
+}
 
 class IrGetPropertyExpressionImpl(
         startOffset: Int,
@@ -38,33 +38,8 @@ class IrGetPropertyExpressionImpl(
         isSafe: Boolean,
         override val descriptor: PropertyDescriptor
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrGetPropertyExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitGetProperty(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildExpressions(visitor, data)
-    }
-
-    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-    }
-
-    override fun getChildExpression(index: Int): IrExpression? =
-            when (index) {
-                DISPATCH_RECEIVER_INDEX -> dispatchReceiver
-                EXTENSION_RECEIVER_INDEX -> extensionReceiver
-                else -> null
-            }
-
-    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
-        validateChild(oldChild)
-        when (oldChild.index) {
-            DISPATCH_RECEIVER_INDEX -> dispatchReceiver = newChild
-            EXTENSION_RECEIVER_INDEX -> extensionReceiver = newChild
-        }
-    }
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitGetProperty(this, data)
 }
 
 class IrSetPropertyExpressionImpl(
@@ -74,11 +49,25 @@ class IrSetPropertyExpressionImpl(
         isSafe: Boolean,
         override val descriptor: PropertyDescriptor
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrSetPropertyExpression {
-    override var argument: IrExpression? = null
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType?,
+            isSafe: Boolean,
+            descriptor: PropertyDescriptor,
+            value: IrExpression
+    ) : this(startOffset, endOffset, type, isSafe, descriptor) {
+        this.value = value
+    }
+
+    private var valueImpl: IrExpression? = null
+    override var value: IrExpression
+        get() = valueImpl!!
         set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, ARGUMENT0_INDEX)
+            value.assertDetached()
+            valueImpl?.detach()
+            valueImpl = value
+            value.setTreeLocation(this, ARGUMENT0_SLOT)
         }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -86,29 +75,20 @@ class IrSetPropertyExpressionImpl(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        acceptChildExpressions(visitor, data)
+        super.acceptChildren(visitor, data)
+        value.accept(visitor, data)
     }
 
-    override fun <D> acceptChildExpressions(visitor: IrElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-        argument?.accept(visitor, data)
-    }
-
-    override fun getChildExpression(index: Int): IrExpression? =
-            when (index) {
-                DISPATCH_RECEIVER_INDEX -> dispatchReceiver
-                EXTENSION_RECEIVER_INDEX -> extensionReceiver
-                ARGUMENT0_INDEX -> argument
-                else -> null
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                ARGUMENT0_SLOT -> value
+                else -> super.getChild(slot)
             }
 
-    override fun replaceChildExpression(oldChild: IrExpression, newChild: IrExpression) {
-        validateChild(oldChild)
-        when (oldChild.index) {
-            DISPATCH_RECEIVER_INDEX -> dispatchReceiver = newChild
-            EXTENSION_RECEIVER_INDEX -> extensionReceiver = newChild
-            ARGUMENT0_INDEX -> argument = newChild
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            ARGUMENT0_SLOT -> value = newChild.assertCast()
+            else -> super.replaceChild(slot, newChild)
         }
     }
 }

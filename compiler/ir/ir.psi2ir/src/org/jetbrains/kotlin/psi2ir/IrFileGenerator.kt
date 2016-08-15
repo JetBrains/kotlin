@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFileImpl
 import org.jetbrains.kotlin.psi.KtFile
 
 class IrFileGenerator(
         private val ktFile: KtFile,
+        private val irFile: IrFile,
         context: IrGeneratorContext,
-        irFile: IrFile,
-        parent: IrModuleGenerator,
         declarationFactory: IrDeclarationFactory
-) : IrDeclarationGeneratorBase(context, irFile, declarationFactory) {
+) : IrDeclarationGeneratorBase(context, declarationFactory) {
+    override fun <D : IrDeclaration> D.register(): D =
+            apply { irFile.addDeclaration(this) }
+
     fun generateFileContent() {
         generateAnnotationEntries(ktFile.annotationEntries)
 

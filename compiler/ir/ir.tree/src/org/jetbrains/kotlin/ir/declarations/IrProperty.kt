@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrProperty : IrMemberDeclaration {
+interface IrProperty : IrDeclaration {
     override val descriptor: PropertyDescriptor
     var getter: IrPropertyGetter?
     var setter: IrPropertySetter?
@@ -32,11 +33,11 @@ interface IrProperty : IrMemberDeclaration {
 }
 
 interface IrSimpleProperty : IrProperty {
-    val valueInitializer: IrBody?
+    var valueInitializer: IrBody?
 }
 
 interface IrDelegatedProperty : IrProperty {
-    val delegateInitializer: IrBody
+    var delegateInitializer: IrBody
 }
 
 // TODO synchronization?
@@ -45,15 +46,17 @@ abstract class IrPropertyBase(
         endOffset: Int,
         originKind: IrDeclarationOriginKind,
         override val descriptor: PropertyDescriptor
-) : IrMemberDeclarationBase(startOffset, endOffset, originKind), IrProperty {
+) : IrDeclarationBase(startOffset, endOffset, originKind), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
+            newGetter?.run { assert(property == null) { "$newGetter: should not have a property" } }
             newGetter?.property = this
             field = newGetter
         }
 
     override var setter: IrPropertySetter? = null
         set(newSetter) {
+            newSetter?.run { assert(property == null) { "$newSetter: should not have a property" } }
             newSetter?.property = this
             field = newSetter
         }
@@ -69,10 +72,27 @@ class IrSimplePropertyImpl(
         endOffset: Int,
         originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
-        override val valueInitializer: IrBody?
+        valueInitializer: IrBody? = null
 ) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrSimpleProperty {
-    init {
-        valueInitializer?.parent = this
+    override var valueInitializer: IrBody? = valueInitializer
+        set(value) {
+            value?.assertDetached()
+            field?.detach()
+            field = value
+            value?.setTreeLocation(this, INITIALIZER_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                INITIALIZER_SLOT -> valueInitializer
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            INITIALIZER_SLOT -> valueInitializer = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -88,8 +108,29 @@ class IrDelegatedPropertyImpl(
         endOffset: Int,
         originKind: IrDeclarationOriginKind,
         descriptor: PropertyDescriptor,
-        override val delegateInitializer: IrBody
+        delegateInitializer: IrBody
 ) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrDelegatedProperty {
+    override var delegateInitializer: IrBody = delegateInitializer
+        set(value) {
+            value.assertDetached()
+            field.detach()
+            field = value
+            value.setTreeLocation(this, INITIALIZER_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                INITIALIZER_SLOT -> delegateInitializer
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            INITIALIZER_SLOT -> delegateInitializer = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDelegatedProperty(this, data)
 

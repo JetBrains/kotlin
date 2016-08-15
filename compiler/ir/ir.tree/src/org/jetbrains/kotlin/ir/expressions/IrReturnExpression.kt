@@ -16,17 +16,56 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 
-interface IrReturnExpression : IrCompoundExpression1
+interface IrReturnExpression : IrExpression {
+    var value: IrExpression?
+}
 
 class IrReturnExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?
-) : IrCompoundExpression1Base(startOffset, endOffset, type), IrReturnExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrReturnExpression {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType?,
+            value: IrExpression?
+    ) : this(startOffset, endOffset, type) {
+        this.value = value
+    }
+
+    override var value: IrExpression? = null
+        set(newValue) {
+            newValue?.assertDetached()
+            field?.detach()
+            field = newValue
+            newValue?.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
+        }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                CHILD_EXPRESSION_SLOT -> value
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            CHILD_EXPRESSION_SLOT -> value = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturnExpression(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        value?.accept(visitor, data)
+    }
+
+
 }

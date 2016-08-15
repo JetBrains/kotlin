@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -31,55 +33,59 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
-class IrExpressionGenerator(
+class IrStatementGenerator(
         override val context: IrGeneratorContext,
         val declarationFactory: IrLocalDeclarationsFactory
-) : KtVisitor<IrExpression, Nothing?>(), IrGenerator {
+) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
     private val irCallGenerator = IrCallGenerator(context, this)
 
-    fun generateExpression(ktExpression: KtExpression) = ktExpression.generate()
+    fun generateStatement(ktExpression: KtExpression) = ktExpression.generate()
 
-    private fun KtElement.generate(): IrExpression =
+    private fun KtElement.generate(): IrStatement =
             deparenthesize()
-            .accept(this@IrExpressionGenerator, null)
+            .accept(this@IrStatementGenerator, null)
             .applySmartCastIfNeeded(this)
 
-    private fun IrExpression.applySmartCastIfNeeded(ktElement: KtElement): IrExpression {
-        if (ktElement is KtExpression) {
+    private fun KtElement.generateExpression(): IrExpression =
+            generate().assertCast()
+
+    private fun IrStatement.applySmartCastIfNeeded(ktElement: KtElement): IrStatement {
+        if (this is IrExpression && ktElement is KtExpression) {
             val smartCastType = get(BindingContext.SMARTCAST, ktElement)
             if (smartCastType != null) {
                 return IrTypeOperatorExpressionImpl(
                         ktElement.startOffset, ktElement.endOffset, smartCastType,
-                        IrTypeOperator.SMART_AS, smartCastType
-                ).apply { argument = this@applySmartCastIfNeeded }
+                        IrTypeOperator.SMART_AS, this@applySmartCastIfNeeded, smartCastType
+                        )
             }
         }
         return this
     }
 
-    override fun visitExpression(expression: KtExpression, data: Nothing?): IrExpression =
-            IrDummyExpression(expression.startOffset, expression.endOffset, getTypeOrFail(expression), expression.javaClass.simpleName)
+    override fun visitExpression(expression: KtExpression, data: Nothing?): IrStatement =
+            IrDummyExpression(expression.startOffset, expression.endOffset, getType(expression), expression.javaClass.simpleName)
 
-    override fun visitProperty(property: KtProperty, data: Nothing?): IrExpression {
+    override fun visitProperty(property: KtProperty, data: Nothing?): IrStatement {
         if (property.delegateExpression != null) TODO("Local delegated property")
 
-        val variableDescriptor = getOrFail(BindingContext.VARIABLE, property) { "No descriptor for local variable ${property.name}" }
+        val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
         val irLocalVariable = declarationFactory.createLocalVariable(property, variableDescriptor)
-        irLocalVariable.initializerExpression = property.initializer?.generate()
+        irLocalVariable.initializer = property.initializer?.generateExpression()
 
-        return IrLocalVariableDeclarationExpressionImpl(property.startOffset, property.endOffset, irLocalVariable)
+        return irLocalVariable
     }
 
-    override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrExpression {
-        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), false)
-        expression.statements.forEach { irBlock.addChildExpression(it.generate()) }
+    override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
+        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, getType(expression),
+                                            hasResult = isUsedAsExpression(expression), isDesugared = false)
+        expression.statements.forEach { irBlock.addStatement(it.generate()) }
         return irBlock
     }
 
-    override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrExpression =
-            IrReturnExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression))
-                    .apply { this.argument = expression.returnedExpression?.generate() }
+    override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement =
+            IrReturnExpressionImpl(expression.startOffset, expression.endOffset, getType(expression),
+                                   expression.returnedExpression?.generateExpression())
 
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
@@ -97,17 +103,17 @@ class IrExpressionGenerator(
         }
     }
 
-    override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrExpression {
+    override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
         if (expression.entries.size == 1 && expression.entries[0] is KtLiteralStringTemplateEntry) {
             return expression.entries[0].generate()
         }
 
-        val irStringTemplate = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression))
-        expression.entries.forEach { irStringTemplate.addChildExpression(it.generate()) }
+        val irStringTemplate = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, getType(expression))
+        expression.entries.forEach { irStringTemplate.addArgument(it.generateExpression()) }
         return irStringTemplate
     }
 
-    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrExpression =
+    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrStatement =
             IrLiteralExpressionImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
@@ -122,25 +128,25 @@ class IrExpressionGenerator(
         return when (descriptor) {
             is ClassDescriptor ->
                 if (DescriptorUtils.isObject(descriptor))
-                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), descriptor)
+                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), descriptor)
                 else if (DescriptorUtils.isEnumEntry(descriptor))
-                    IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), descriptor)
+                    IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), descriptor)
                 else
-                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression),
+                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, getType(expression),
                                           descriptor.companionObjectDescriptor ?: error("Class value without companion object: $descriptor"))
             is PropertyDescriptor -> {
                 irCallGenerator.generateCall(expression, resolvedCall)
             }
             is VariableDescriptor ->
-                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), descriptor)
+                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), descriptor)
             else ->
-                IrDummyExpression(expression.startOffset, expression.endOffset, getTypeOrFail(expression),
+                IrDummyExpression(expression.startOffset, expression.endOffset, getType(expression),
                                   expression.getReferencedName() +
                                   ": ${descriptor?.name} ${descriptor?.javaClass?.simpleName}")
         }
     }
 
-    override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrExpression {
+    override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrStatement {
         val resolvedCall = getResolvedCall(expression) ?: TODO("No resolved call for call expression")
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
@@ -150,20 +156,20 @@ class IrExpressionGenerator(
         return irCallGenerator.generateCall(expression, resolvedCall)
     }
 
-    override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrExpression =
+    override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
             expression.selectorExpression!!.accept(this, data)
 
-    override fun visitSafeQualifiedExpression(expression: KtSafeQualifiedExpression, data: Nothing?): IrExpression =
+    override fun visitSafeQualifiedExpression(expression: KtSafeQualifiedExpression, data: Nothing?): IrStatement =
             expression.selectorExpression!!.accept(this, data)
 
     override fun visitThisExpression(expression: KtThisExpression, data: Nothing?): IrExpression {
         val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
         return when (referenceTarget) {
             is ClassDescriptor ->
-                IrThisExpressionImpl(expression.startOffset, expression.endOffset, getTypeOrFail(expression), referenceTarget)
+                IrThisExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), referenceTarget)
             is CallableDescriptor ->
                 IrGetExtensionReceiverExpressionImpl(
-                        expression.startOffset, expression.endOffset, getTypeOrFail(expression),
+                        expression.startOffset, expression.endOffset, getType(expression),
                         referenceTarget.extensionReceiverParameter!!
                 )
             else ->

@@ -30,7 +30,6 @@ class IrThisExpressionImpl(
         type: KotlinType?,
         override val classDescriptor: ClassDescriptor
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitThisExpression(this, data)
-    }
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitThisExpression(this, data)
 }

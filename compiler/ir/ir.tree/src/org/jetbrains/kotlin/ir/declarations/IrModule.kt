@@ -17,41 +17,44 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-interface IrModule : IrDeclaration {
-    override val descriptor: ModuleDescriptor
-
+interface IrModule : IrElement {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
 
-    override val parent: Nothing? get() = null
-    override val indexInParent: Int get() = MODULE_INDEX
+    override val parent: IrElement? get() = null
+    override val slot: Int get() = MODULE_SLOT
+    override fun setTreeLocation(newParent: IrElement?, newSlot: Int) {
+        throw AssertionError("IrModule can't have a parent element")
+    }
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.MODULE
+    val descriptor: ModuleDescriptor
 
     val files: List<IrFile>
 
-    companion object {
-        const val MODULE_INDEX = -1
-    }
+    fun addFile(file: IrFile)
 }
 
 class IrModuleImpl(
         override val descriptor: ModuleDescriptor
 ) : IrModule {
-
-    override val originKind: IrDeclarationOriginKind
-        get() = IrDeclarationOriginKind.DEFINED
-
     override val files: MutableList<IrFile> = ArrayList()
 
-    fun addFile(file: IrFileImpl) {
+    override fun addFile(file: IrFile) {
+        file.assertDetached()
+        file.setTreeLocation(this, files.size)
         files.add(file)
-        file.module = this
+    }
+
+    override fun getChild(slot: Int): IrElement? =
+            files.getOrNull(slot)
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        newChild.assertDetached()
+        files.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
