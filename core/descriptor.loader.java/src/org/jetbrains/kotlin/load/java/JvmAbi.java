@@ -43,6 +43,7 @@ public final class JvmAbi {
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
     public static final String DELEGATED_PROPERTIES_ARRAY_NAME = "$$delegatedProperties";
+    public static final String DELEGATE_SUPER_FIELD_PREFIX = "$$delegate_";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
     public static final String INSTANCE_FIELD = "INSTANCE";

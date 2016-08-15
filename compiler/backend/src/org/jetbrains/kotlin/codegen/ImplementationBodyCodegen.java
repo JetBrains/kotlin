@@ -1166,7 +1166,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     KotlinType expressionType = expression != null ? bindingContext.getType(expression) : null;
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
-                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, "$delegate_" + n);
+                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, JvmAbi.DELEGATE_SUPER_FIELD_PREFIX + n);
                 }
                 n++;
             }
