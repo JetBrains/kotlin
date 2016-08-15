@@ -7,8 +7,8 @@ message LocationResponse {
     int32 code = 2;
 
     message LocationData {
-        double x = 1;
-        double y = 2;
-        double angle = 3;
+        int32 x = 1;
+        int32 y = 2;
+        int32 angle = 3;
     }
 }
