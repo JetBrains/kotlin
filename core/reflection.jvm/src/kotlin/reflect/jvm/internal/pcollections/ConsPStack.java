@@ -32,8 +32,8 @@ final class ConsPStack<E> implements Iterable<E> {
         return (ConsPStack<E>) EMPTY;
     }
 
-    private final E first;
-    private final ConsPStack<E> rest;
+    final E first;
+    final ConsPStack<E> rest;
     private final int size;
 
     private ConsPStack() { // EMPTY constructor

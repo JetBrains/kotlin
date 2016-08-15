@@ -28,7 +28,7 @@ public final class HashPMap<K, V> {
     @SuppressWarnings("unchecked")
     @NotNull
     public static <K, V> HashPMap<K, V> empty() {
-        return (HashPMap<K, V>) HashPMap.EMPTY;
+        return (HashPMap<K, V>) EMPTY;
     }
 
     private final IntTreePMap<ConsPStack<MapEntry<K, V>>> intMap;
@@ -49,9 +49,12 @@ public final class HashPMap<K, V> {
 
     public V get(Object key) {
         ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
-        for (MapEntry<K, V> entry : entries)
+        while (entries != null && entries.size() > 0) {
+            MapEntry<K, V> entry = entries.first;
             if (entry.key.equals(key))
                 return entry.value;
+            entries = entries.rest;
+        }
         return null;
     }
 
@@ -86,9 +89,11 @@ public final class HashPMap<K, V> {
 
     private static <K, V> int keyIndexIn(ConsPStack<MapEntry<K, V>> entries, Object key) {
         int i = 0;
-        for (MapEntry<K, V> entry : entries) {
+        while (entries != null && entries.size() > 0) {
+            MapEntry<K, V> entry = entries.first;
             if (entry.key.equals(key))
                 return i;
+            entries = entries.rest;
             i++;
         }
         return -1;
