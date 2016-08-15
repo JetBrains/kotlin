@@ -174,7 +174,7 @@ class BasicCompletionSession(
         override fun doComplete() {
             val declaration = isStartOfExtensionReceiverFor()
             if (declaration != null) {
-                completeDeclarationNameFromUnresolved(declaration)
+                completeDeclarationNameFromUnresolvedOrOverride(declaration)
 
                 // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
                 if (parameters.invocationCount == 0) {
@@ -379,7 +379,7 @@ class BasicCompletionSession(
                     "override" -> {
                         collector.addElement(lookupElement)
 
-                        OverridesCompletion(collector, basicLookupElementFactory).complete(position)
+                        OverridesCompletion(collector, basicLookupElementFactory).complete(position, declaration = null)
                     }
 
                     "class" -> {
@@ -436,7 +436,7 @@ class BasicCompletionSession(
 
             KEYWORDS_ONLY.doComplete()
 
-            completeDeclarationNameFromUnresolved(declaration)
+            completeDeclarationNameFromUnresolvedOrOverride(declaration)
 
             when (declaration) {
                 is KtParameter ->
@@ -536,12 +536,17 @@ class BasicCompletionSession(
         }
     }
 
-    private fun completeDeclarationNameFromUnresolved(declaration: KtNamedDeclaration) {
-        val referenceScope = referenceScope(declaration) ?: return
-        val originalScope = toFromOriginalFileMapper.toOriginalFile(referenceScope) ?: return
-        val afterOffset = if (referenceScope is KtBlockExpression) parameters.offset else null
-        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-        FromUnresolvedNamesCompletion(collector, prefixMatcher).addNameSuggestions(originalScope, afterOffset, descriptor)
+    private fun completeDeclarationNameFromUnresolvedOrOverride(declaration: KtNamedDeclaration) {
+        if (declaration is KtCallableDeclaration && declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+            OverridesCompletion(collector, basicLookupElementFactory).complete(position, declaration)
+        }
+        else {
+            val referenceScope = referenceScope(declaration) ?: return
+            val originalScope = toFromOriginalFileMapper.toOriginalFile(referenceScope) ?: return
+            val afterOffset = if (referenceScope is KtBlockExpression) parameters.offset else null
+            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            FromUnresolvedNamesCompletion(collector, prefixMatcher).addNameSuggestions(originalScope, afterOffset, descriptor)
+        }
     }
 
     private fun referenceScope(declaration: KtNamedDeclaration): KtElement? {

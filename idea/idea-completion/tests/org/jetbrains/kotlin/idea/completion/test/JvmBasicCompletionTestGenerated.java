@@ -1901,6 +1901,30 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Override extends AbstractJvmBasicCompletionTest {
+            @TestMetadata("AfterFunKeyword.kt")
+            public void testAfterFunKeyword() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/AfterFunKeyword.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AfterValKeyword.kt")
+            public void testAfterValKeyword() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/AfterValKeyword.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AfterValKeywordInConstructorParameter.kt")
+            public void testAfterValKeywordInConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/AfterValKeywordInConstructorParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AfterVarKeyword.kt")
+            public void testAfterVarKeyword() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/AfterVarKeyword.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInOverride() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/override"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -1920,6 +1944,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("InConstructorParameters2.kt")
             public void testInConstructorParameters2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/InConstructorParameters2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoOverrideAfterFunKeyword.kt")
+            public void testNoOverrideAfterFunKeyword() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/NoOverrideAfterFunKeyword.kt");
                 doTest(fileName);
             }
 
