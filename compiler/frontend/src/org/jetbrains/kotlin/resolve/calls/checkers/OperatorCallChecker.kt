@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
@@ -42,9 +43,10 @@ class OperatorCallChecker : CallChecker {
         if (resolvedCall is VariableAsFunctionResolvedCall &&
             call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
             val outerCall = call.outerCall
-            if (isConventionCall(outerCall) || outerCall.typeArguments.isNotEmpty()) {
+            if (isConventionCall(outerCall) || isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
                 throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. " +
-                                     "Variable: ${resolvedCall.variableCall.resultingDescriptor}")
+                                     "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
+                                     "Invoke: ${resolvedCall.functionCall.resultingDescriptor}")
             }
         }
 
@@ -74,6 +76,15 @@ class OperatorCallChecker : CallChecker {
 
         private fun checkNotErrorOrDynamic(functionDescriptor: FunctionDescriptor): Boolean {
             return !functionDescriptor.isDynamic() && !ErrorUtils.isError(functionDescriptor)
+        }
+
+        private fun isWrongCallWithExplicitTypeArguments(
+                resolvedCall: VariableAsFunctionResolvedCall,
+                outerCall: Call
+        ): Boolean {
+            val passedTypeArgumentsToInvoke = outerCall.typeArguments.isNotEmpty() &&
+                                              resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
+            return passedTypeArgumentsToInvoke && resolvedCall.variableCall.candidateDescriptor.typeParameters.isNotEmpty()
         }
     }
 }

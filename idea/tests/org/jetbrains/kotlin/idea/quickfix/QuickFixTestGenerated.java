@@ -6192,6 +6192,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unsafeComparisonInCondition.kt")
+            public void testUnsafeComparisonInCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInLogic.kt")
+            public void testUnsafeComparisonInLogic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInLogic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInWhen.kt")
+            public void testUnsafeComparisonInWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhen.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInWhile.kt")
+            public void testUnsafeComparisonInWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsafeGet.kt")
             public void testUnsafeGet() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeGet.kt");
@@ -6850,6 +6874,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/redundantVisibilityModifier/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/removeToStringInStringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveToStringInStringTemplate extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRemoveToStringInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeToStringInStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("call.kt")
+        public void testCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/call.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("name.kt")
+        public void testName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/name.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameWithPostfix.kt")
+        public void testNameWithPostfix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/nameWithPostfix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/simple.kt");
             doTest(fileName);
         }
     }
