@@ -24,8 +24,11 @@ import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
 import com.intellij.codeInspection.InspectionEP;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.LocalInspectionEP;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -73,6 +76,11 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         return texts;
     }
 
+    @NotNull
+    private static String extraFileNamePrefix(@NotNull String mainFileName) {
+        return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".");
+    }
+
     protected void doTestWithoutExtraFile(String beforeFileName) throws Exception {
         doTest(beforeFileName, false);
     }
@@ -116,13 +124,25 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
+        CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[] {"excludedPackage", "somePackage.ExcludedClass"};
     }
 
     @Override
     protected void tearDown() throws Exception {
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
         super.tearDown();
+    }
+
+    protected FileType guessFileType(TestFile file) {
+        if (file.name.contains("." + KotlinFileType.EXTENSION)) {
+            return KotlinFileType.INSTANCE;
+        }
+        else if (file.name.contains("." + JavaFileType.DEFAULT_EXTENSION)) {
+            return JavaFileType.INSTANCE;
+        }
+        else {
+            return PlainTextFileType.INSTANCE;
+        }
     }
 
     protected void doMultiFileTest(final String beforeFileName) throws Exception {
@@ -165,10 +185,10 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         subFiles.remove(beforeFile);
 
         for (TestFile file : subFiles) {
-            configureByText(KotlinFileType.INSTANCE, file.content);
+            configureByText(guessFileType(file), file.content);
         }
 
-        configureByText(KotlinFileType.INSTANCE, beforeFile.content);
+        configureByText(guessFileType(beforeFile), beforeFile.content);
 
         CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
             @Override
@@ -380,8 +400,9 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     @NotNull
-    private static String extraFileNamePrefix(@NotNull  String mainFileName) {
-        return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".");
+    private VirtualFile findVirtualFile(@NotNull String filePath) {
+        String absolutePath = getTestDataPath() + filePath;
+        return VfsTestUtil.findFileByCaseSensitivePath(absolutePath);
     }
 
     private static class TestFile {
@@ -392,11 +413,5 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             this.name = name;
             this.content = content;
         }
-    }
-
-    @NotNull
-    private VirtualFile findVirtualFile(@NotNull String filePath) {
-        String absolutePath = getTestDataPath() + filePath;
-        return VfsTestUtil.findFileByCaseSensitivePath(absolutePath);
     }
 }
