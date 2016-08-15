@@ -426,6 +426,30 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Override extends AbstractBasicCompletionHandlerTest {
+        @TestMetadata("AfterFunKeyword.kt")
+        public void testAfterFunKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/AfterFunKeyword.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterFunKeywordKeepModifiersBefore.kt")
+        public void testAfterFunKeywordKeepModifiersBefore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/AfterFunKeywordKeepModifiersBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterValKeyword.kt")
+        public void testAfterValKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/AfterValKeyword.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterValKeywordInConstructorParameter.kt")
+        public void testAfterValKeywordInConstructorParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/AfterValKeywordInConstructorParameter.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInOverride() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/override"), Pattern.compile("^(.+)\\.kt$"), true);
         }
