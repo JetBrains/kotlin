@@ -30,7 +30,8 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
     type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
     type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1), prefix = "class"), name, scope, pointer = 1)
     else -> {
-        val refType = state.classes[type.toString()]!!.type
+        val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(type.toString(), align = state.pointerAllign, prefix = "class")
+
         val result = LLVMVariable(name, refType, name, scope, pointer = 1)
         refType.location.addAll(type.getSubtypesPredicate().toString().split(".").dropLast(1))
         result
