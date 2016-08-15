@@ -64,7 +64,11 @@ import java.util.*
 
 internal fun ResolvedCall<*>.noReceivers() = dispatchReceiver == null && extensionReceiver == null
 
-internal fun PsiNamedElement.renderDescription() = "${UsageViewUtil.getType(this)} '$name'".trim()
+internal fun PsiNamedElement.renderDescription(): String {
+    val type = UsageViewUtil.getType(this)
+    if (name == null || name!!.startsWith("<")) return type
+    return "$type '$name'".trim()
+}
 
 internal fun PsiElement.representativeContainer(): PsiNamedElement? =
         when (this) {
