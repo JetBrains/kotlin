@@ -24,16 +24,16 @@ class Test3() : Test2() {
 
 fun box(): String {
     try {
-        Test::class.java.getDeclaredField("\$delegate_0")
-        return "\$delegate_0 field generated for class Test but should not"
+        Test::class.java.getDeclaredField("\$\$delegate_0")
+        return "\$\$delegate_0 field generated for class Test but should not"
     }
     catch (e: NoSuchFieldException) {
         // ok
     }
 
     try {
-        Test2::class.java.getDeclaredField("\$delegate_0")
-        return "\$delegate_0 field generated for class Test but should not"
+        Test2::class.java.getDeclaredField("\$\$delegate_0")
+        return "\$\$delegate_0 field generated for class Test but should not"
     }
     catch (e: NoSuchFieldException) {
         // ok
