@@ -1095,12 +1095,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                 // the type of the right (and sometimes left) expression isn't 'Any?' actually
                 if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
-
-                // a hack due to KT-678
-                // without this line an smartcast is reported on the receiver (if it was previously checked for not-null)
-                // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
-                if (key == left && slice == SMARTCAST) return false;
-
                 return true;
             }
         }, true);
