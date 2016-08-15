@@ -11,3 +11,13 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx_it.h"
 
+int state = 0;
+
+void set_state(int i) {
+    state = i;
+}
+
+int get_state() {
+    return state;
+}
+

@@ -48,7 +48,7 @@ $(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 	$(OBJ_COPY) -O binary $< $@
 
 $(CAR_FMW_ELF): $(LIB_CAR_HW) $(LIB_KOT)
-	$(CC) $(CFLAGS) $^ -T stm32_flash.ld -o $@
+	$(CC) -Os $(CFLAGS) $^ -T stm32_flash.ld -o $@
 
 $(LIB_CAR_HW):
 	cd $(CAR_HW_DIR) && make
@@ -83,7 +83,7 @@ flash: $(CAR_FMW_BIN)
 debug:
 	-killall st-util
 	(setsid $(ST_DIR)/st-util 2>/dev/null 1>&2)&
-	$(GDB) $(CAR_FMW_ELF) -x $(ST_DIR)/../gdb.cmds
+	$(GDB) $(CAR_FMW_ELF) -tui -x $(ST_DIR)/../gdb.cmds
 
 clean:
 	rm -rf bin/*

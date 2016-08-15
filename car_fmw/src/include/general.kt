@@ -4,4 +4,5 @@ fun init() {
     engine_init()
     leds_init()
     VCP_init()
+    clear_buffer()
 }
