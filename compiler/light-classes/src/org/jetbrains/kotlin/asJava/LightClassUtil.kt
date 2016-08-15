@@ -198,7 +198,9 @@ object LightClassUtil {
         val additionalAccessors = arrayListOf<PsiMethod>()
 
         for (wrapper in getPsiMethodWrappers(ktDeclaration, true)) {
-            if (JvmAbi.isSetterName(wrapper.name)) {
+            if (wrapper !is KtLightMethod) continue
+
+            if (wrapper.isSetter) {
                 if (setterWrapper == null || setterWrapper === specialSetter) {
                     setterWrapper = wrapper
                 }

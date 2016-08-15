@@ -785,6 +785,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef/renameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef.test")
+    public void testRenameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef_RenameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef/renameKotlinPropertyWithCustomGetterSetterJvmNameByGetterRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef/renameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef.test")
+    public void testRenameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef_RenameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef/renameKotlinPropertyWithCustomGetterSetterJvmNameBySetterRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinPropertyWithGetterJvmName/renameKotlinPropertyWithGetterJvmName.test")
     public void testRenameKotlinPropertyWithGetterJvmName_RenameKotlinPropertyWithGetterJvmName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPropertyWithGetterJvmName/renameKotlinPropertyWithGetterJvmName.test");

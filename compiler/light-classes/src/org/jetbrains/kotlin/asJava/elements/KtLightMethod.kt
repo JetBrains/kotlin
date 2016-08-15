@@ -232,3 +232,16 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
     // Method was generated from declaration in some other trait
     return (parentOfMethodOrigin != null && thisClassDeclaration !== parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin))
 }
+
+fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
+    val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
+    if (origin !is KtProperty && origin !is KtParameter) return false
+    val expectedParametersCount = (if (getter) 0 else 1) + (if (origin.receiverTypeReference != null) 1 else 0)
+    return parameterList.parametersCount == expectedParametersCount
+}
+
+val KtLightMethod.isGetter: Boolean
+    get() = isAccessor(true)
+
+val KtLightMethod.isSetter: Boolean
+    get() = isAccessor(false)
