@@ -33,7 +33,7 @@ public class FieldInfo {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.hasMappingToObject(classDescriptor)) {
+        if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(classDescriptor)) {
             return createSingletonViaInstance(classDescriptor, typeMapper);
         }
 

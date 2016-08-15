@@ -128,7 +128,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         val descriptor = descriptor
         if (descriptor.kind != ClassKind.OBJECT) return@lazy null
 
-        val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.hasMappingToObject(descriptor)) {
+        val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
             jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
         }
         else {
