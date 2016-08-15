@@ -4,16 +4,24 @@ IrFile /callWithReorderedArguments.kt
       BLOCK type=kotlin.Unit hasResult=false isDesugared=false
   IrFunction public fun noReorder1(): kotlin.Int
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='1'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun noReorder2(): kotlin.Int
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='2'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL Int type=kotlin.Int value='2'
   IrFunction public fun reordered1(): kotlin.Int
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='1'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun reordered2(): kotlin.Int
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='2'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL Int type=kotlin.Int value='2'
   IrFunction public fun test(): kotlin.Unit
     IrExpressionBody
       BLOCK type=kotlin.Unit hasResult=false isDesugared=false

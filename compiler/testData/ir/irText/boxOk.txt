@@ -1,4 +1,6 @@
 IrFile /boxOk.kt
   IrFunction public fun box(): kotlin.String
     IrExpressionBody
-      LITERAL String type=kotlin.String value='OK'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL String type=kotlin.String value='OK'

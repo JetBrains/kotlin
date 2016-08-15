@@ -1,24 +1,42 @@
 IrFile /calls.kt
   IrFunction public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Int
     IrExpressionBody
-      GET_VAR x type=kotlin.Int
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_VAR x type=kotlin.Int
   IrFunction public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
-      CALL .foo type=kotlin.Int operator=
-        x: GET_VAR x type=kotlin.Int
-        y: LITERAL Int type=kotlin.Int value='1'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          CALL .foo type=kotlin.Int operator=
+            x: GET_VAR x type=kotlin.Int
+            y: LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun qux(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
-      CALL .foo type=kotlin.Int operator=
-        x: CALL .foo type=kotlin.Int operator=
-          x: GET_VAR x type=kotlin.Int
-          y: GET_VAR x type=kotlin.Int
-        y: GET_VAR x type=kotlin.Int
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          CALL .foo type=kotlin.Int operator=
+            x: CALL .foo type=kotlin.Int operator=
+              x: GET_VAR x type=kotlin.Int
+              y: GET_VAR x type=kotlin.Int
+            y: GET_VAR x type=kotlin.Int
   IrFunction public fun kotlin.Int.ext1(): kotlin.Int
     IrExpressionBody
-      $RECEIVER of: ext1 type=kotlin.Int
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          $RECEIVER of: ext1 type=kotlin.Int
   IrFunction public fun kotlin.Int.ext2(/*0*/ x: kotlin.Int): kotlin.Int
     IrExpressionBody
-      CALL .foo type=kotlin.Int operator=
-        x: $RECEIVER of: ext2 type=kotlin.Int
-        y: GET_VAR x type=kotlin.Int
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          CALL .foo type=kotlin.Int operator=
+            x: $RECEIVER of: ext2 type=kotlin.Int
+            y: GET_VAR x type=kotlin.Int
+  IrFunction public fun kotlin.Int.ext3(/*0*/ x: kotlin.Int): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          CALL .foo type=kotlin.Int operator=
+            x: CALL .ext1 type=kotlin.Int operator=
+              $receiver: $RECEIVER of: ext3 type=kotlin.Int
+            y: GET_VAR x type=kotlin.Int

@@ -1,9 +1,13 @@
 IrFile /dotQualified.kt
   IrFunction public fun length(/*0*/ s: kotlin.String): kotlin.Int
     IrExpressionBody
-      GET_PROPERTY .length type=kotlin.Int
-        $this: GET_VAR s type=kotlin.String
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_PROPERTY .length type=kotlin.Int
+            $this: GET_VAR s type=kotlin.String
   IrFunction public fun lengthN(/*0*/ s: kotlin.String?): kotlin.Int?
     IrExpressionBody
-      GET_PROPERTY ?.length type=kotlin.Int?
-        $this: GET_VAR s type=kotlin.String?
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_PROPERTY ?.length type=kotlin.Int?
+            $this: GET_VAR s type=kotlin.String?

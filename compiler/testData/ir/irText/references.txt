@@ -8,13 +8,19 @@ IrFile /references.kt
   IrProperty public val ok3: kotlin.String getter=<get-ok3> setter=null
   IrPropertyGetter public fun <get-ok3>(): kotlin.String property=ok3
     IrExpressionBody
-      LITERAL String type=kotlin.String value='OK'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL String type=kotlin.String value='OK'
   IrFunction public fun test1(): kotlin.String
     IrExpressionBody
-      GET_PROPERTY .ok type=kotlin.String
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_PROPERTY .ok type=kotlin.String
   IrFunction public fun test2(/*0*/ x: kotlin.String): kotlin.String
     IrExpressionBody
-      GET_VAR x type=kotlin.String
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_VAR x type=kotlin.String
   IrFunction public fun test3(): kotlin.String
     IrExpressionBody
       BLOCK type=kotlin.Nothing hasResult=false isDesugared=false
@@ -24,12 +30,18 @@ IrFile /references.kt
           GET_VAR x type=kotlin.String
   IrFunction public fun test4(): kotlin.String
     IrExpressionBody
-      GET_PROPERTY .ok3 type=kotlin.String
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_PROPERTY .ok3 type=kotlin.String
   IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
   IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
     IrExpressionBody
-      LITERAL String type=kotlin.String value='OK'
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          LITERAL String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
-      GET_PROPERTY .okext type=kotlin.String
-        $receiver: $RECEIVER of: test5 type=kotlin.String
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          GET_PROPERTY .okext type=kotlin.String
+            $receiver: $RECEIVER of: test5 type=kotlin.String
