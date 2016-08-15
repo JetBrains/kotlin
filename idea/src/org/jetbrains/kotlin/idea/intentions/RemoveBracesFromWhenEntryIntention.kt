@@ -26,7 +26,8 @@ class RemoveBracesFromWhenEntryIntention : SelfTargetingIntention<KtWhenEntry>(K
     override fun isApplicableTo(element: KtWhenEntry, caretOffset: Int): Boolean {
         val expression = element.expression
         if (expression !is KtBlockExpression) return false
-        return expression.statements.singleOrNull() !is KtNamedDeclaration
+        val singleExpression = expression.statements.singleOrNull() ?: return false
+        return singleExpression !is KtNamedDeclaration
     }
 
     override fun applyTo(element: KtWhenEntry, editor: Editor?) {
