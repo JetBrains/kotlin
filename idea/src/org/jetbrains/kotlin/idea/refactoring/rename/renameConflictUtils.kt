@@ -162,6 +162,7 @@ fun reportShadowing(
         result: MutableList<UsageInfo>
 ) {
     val candidate = DescriptorToSourceUtilsIde.getAnyDeclaration(declaration.project, candidateDescriptor) as? PsiNamedElement ?: return
+    if (declaration.parent == candidate.parent) return
     val message = "${declaration.renderDescription().capitalize()} will be shadowed by ${candidate.renderDescription()}"
     result += BasicUnresolvableCollisionUsageInfo(refElement, elementToBindUsageInfoTo, message)
 }
