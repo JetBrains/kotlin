@@ -93,6 +93,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
             "type=${expression.renderType()}"
 
+    override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
+            "DUMMY ${declaration.descriptor.name}"
+
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
             "DUMMY ${expression.description} type=${expression.renderType()}"
 

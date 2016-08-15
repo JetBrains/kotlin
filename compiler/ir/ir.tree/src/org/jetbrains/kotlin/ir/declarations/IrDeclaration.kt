@@ -34,7 +34,8 @@ enum class IrDeclarationKind {
     PROPERTY_SETTER,
     PROPERTY,
     VARIABLE,
-    CLASS
+    CLASS,
+    DUMMY;
 }
 
 enum class IrDeclarationOriginKind {
