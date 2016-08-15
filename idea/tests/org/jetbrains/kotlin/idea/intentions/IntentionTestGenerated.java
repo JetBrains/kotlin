@@ -5122,6 +5122,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("appendsLiteralToVariableOmittingBraces.kt")
+        public void testAppendsLiteralToVariableOmittingBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/appendsLiteralToVariableOmittingBraces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("backslashNMultilineString.kt")
         public void testBackslashNMultilineString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/backslashNMultilineString.kt");
