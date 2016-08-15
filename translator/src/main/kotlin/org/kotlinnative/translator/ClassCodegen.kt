@@ -1,5 +1,6 @@
 package org.kotlinnative.translator
 
+import com.jshmrsn.karg.defaultPrintHelpCallback
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtParameter
@@ -48,6 +49,8 @@ class ClassCodegen(state: TranslationState,
             return
         }
 
+
+
         for (field in parameters) {
             val item = resolveType(field, state.bindingContext.get(BindingContext.TYPE, field.typeReference)!!)
             item.offset = fields.size
@@ -55,7 +58,18 @@ class ClassCodegen(state: TranslationState,
             constructorFields.add(item)
             fields.add(item)
             fieldsIndex[item.label] = item
-            size += item.type.size
+        }
+        val classAlignment = fields.map { it.type.size }.max()?.toInt() ?: 0
+        var alignmentRemainder = 0
+
+        for (item in fields) {
+            alignmentRemainder = alignmentRemainder - (alignmentRemainder % item.type.size)
+            if (alignmentRemainder < item.type.size) {
+                size += classAlignment
+                alignmentRemainder = classAlignment - item.type.size
+            } else {
+                alignmentRemainder -= item.type.size
+            }
         }
     }
 
