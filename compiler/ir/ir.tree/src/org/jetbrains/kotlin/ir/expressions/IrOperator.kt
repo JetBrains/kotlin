@@ -16,54 +16,54 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-enum class IrOperator {
-    INVOKE,
-    PREFIX_INCR, PREFIX_DECR, POSTFIX_INCR, POSTFIX_DECR,
-    UMINUS,
-    EXCL,
-    EXCLEXCL,
-    ELVIS,
-    LT, GT, LTEQ, GTEQ,
-    EQEQ, EQEQEQ, EXCLEQ, EXCLEQEQ,
-    IN, NOT_IN,
-    ANDAND, OROR,
-    RANGE,
-    PLUS, MINUS, MUL, DIV, MOD,
-    EQ,
-    PLUSEQ, MINUSEQ, MULEQ, DIVEQ, MODEQ,
-    DESTRUCTURING;
-}
+sealed class IrOperator {
+    object INVOKE : IrOperator()
+    object PREFIX_INCR : IrOperator()
+    object PREFIX_DECR : IrOperator()
+    object POSTFIX_INCR : IrOperator()
+    object POSTFIX_DECR : IrOperator()
+    object UMINUS : IrOperator()
+    object EXCL : IrOperator()
+    object EXCLEXCL : IrOperator()
+    object ELVIS : IrOperator()
+    
+    object LT : IrOperator() 
+    object GT : IrOperator()
+    object LTEQ : IrOperator()
+    object GTEQ : IrOperator()
+    
+    object EQEQ : IrOperator()
+    object EQEQEQ : IrOperator()
+    object EXCLEQ : IrOperator()
+    object EXCLEQEQ : IrOperator()
+    object IN : IrOperator()
+    object NOT_IN : IrOperator()
+    object ANDAND : IrOperator() 
+    object OROR : IrOperator()
+    object RANGE : IrOperator()
 
-private val CAO_START = IrOperator.PLUSEQ.ordinal
-private val CAO_END = IrOperator.MODEQ.ordinal
-private val DUAL_START = IrOperator.PLUS.ordinal
-private val DUAL_END = IrOperator.MOD.ordinal
-private val INCR_DECR_START = IrOperator.PREFIX_INCR.ordinal
-private val INCR_DECR_END = IrOperator.POSTFIX_DECR.ordinal
-private val RELATIONAL_START = IrOperator.LT.ordinal
-private val RELATIONAL_END = IrOperator.GTEQ.ordinal
+    object PLUS : IrOperator()
+    object MINUS : IrOperator() 
+    object MUL : IrOperator()
+    object DIV : IrOperator()
+    object MOD : IrOperator()
 
-fun IrOperator.isIncrementOrDecrement(): Boolean =
-        this.ordinal in INCR_DECR_START..INCR_DECR_END
+    object EQ : IrOperator()
+    object PLUSEQ : IrOperator()
+    object MINUSEQ : IrOperator()
+    object MULEQ : IrOperator()
+    object DIVEQ : IrOperator()
+    object MODEQ : IrOperator()
 
-fun IrOperator.isCompoundAssignment(): Boolean =
-        this.ordinal in CAO_START .. CAO_END
+    data class COMPONENT_N private constructor(val index: Int) : IrOperator() {
+        companion object {
+            private val precreatedComponents = Array(32, ::COMPONENT_N)
 
-fun IrOperator.isAssignmentOrCompoundAssignment(): Boolean =
-        this == IrOperator.EQ || isCompoundAssignment()
-
-fun IrOperator.hasCompoundAssignmentDual(): Boolean =
-        this.ordinal in DUAL_START .. DUAL_END
-
-fun IrOperator.toDualOperator(): IrOperator =
-        when {
-            isCompoundAssignment() ->
-                IrOperator.values()[this.ordinal - CAO_START + DUAL_START]
-            hasCompoundAssignmentDual() ->
-                IrOperator.values()[this.ordinal - DUAL_START + CAO_START]
-            else ->
-                throw UnsupportedOperationException("Operator $this is not a compound assignment")
+            fun withIndex(index: Int) =
+                    if (index < precreatedComponents.size)
+                        precreatedComponents[index]
+                    else
+                        COMPONENT_N(index)
         }
-
-fun IrOperator.isRelational(): Boolean =
-        this.ordinal in RELATIONAL_START .. RELATIONAL_END
+    }
+}

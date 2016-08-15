@@ -1,4 +1,14 @@
 IrFunction public fun B.test(): kotlin.Unit
   IrExpressionBody
     BLOCK type=kotlin.Unit hasResult=false isDesugared=false
-      DUMMY KtDestructuringDeclaration type=kotlin.Unit
+      BLOCK type=kotlin.Unit hasResult=false isDesugared=true
+        VAR val tmp0: A
+          GET_VAR A type=A
+        VAR val x: kotlin.Int
+          CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
+            $this: $RECEIVER of: test type=B
+            $receiver: GET_VAR tmp0 type=A
+        VAR val y: kotlin.Int
+          CALL .component2 type=kotlin.Int operator=COMPONENT_N(index=2)
+            $this: $RECEIVER of: test type=B
+            $receiver: GET_VAR tmp0 type=A

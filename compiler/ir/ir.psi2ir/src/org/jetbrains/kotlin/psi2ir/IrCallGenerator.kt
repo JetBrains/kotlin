@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -26,14 +25,36 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.util.*
 
-class IrCallGenerator(
-        override val context: IrGeneratorContext,
-        val irStatementGenerator: IrStatementGenerator
-) : IrGenerator {
+class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenerator {
+    override val context: IrGeneratorContext get() = irStatementGenerator.context
+
+    private val temporaries = newHashMapWithExpectedSize<KtExpression, VariableDescriptor>(3)
+
+    fun putTemporary(ktExpression: KtExpression, temporaryVariableDescriptor: VariableDescriptor) {
+        temporaries[ktExpression] = temporaryVariableDescriptor
+    }
+
+    private fun generateExpressionOrTemporary(ktExpression: KtExpression): IrExpression {
+        val temporary = temporaries[ktExpression]
+        return if (temporary != null)
+            IrGetVariableExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, getType(ktExpression), temporary)
+        else
+            irStatementGenerator.generateExpression(ktExpression)
+    }
+
     fun generateCall(
             ktExpression: KtExpression,
+            resolvedCall: ResolvedCall<out CallableDescriptor>,
+            operator: IrOperator? = null,
+            superQualifier: ClassDescriptor? = null
+    ) = generateCall(ktExpression, getTypeOrFail(ktExpression), resolvedCall, operator, superQualifier)
+
+    fun generateCall(
+            ktExpression: KtExpression,
+            resultType: KotlinType?,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             operator: IrOperator? = null,
             superQualifier: ClassDescriptor? = null
@@ -42,14 +63,14 @@ class IrCallGenerator(
         return when (descriptor) {
             is PropertyDescriptor ->
                 IrGetPropertyExpressionImpl(
-                        ktExpression.startOffset, ktExpression.endOffset, getTypeOrFail(ktExpression),
+                        ktExpression.startOffset, ktExpression.endOffset, resultType,
                         resolvedCall.call.isSafeCall(), descriptor
                 ).apply {
                     dispatchReceiver = generateReceiver(ktExpression, resolvedCall.dispatchReceiver)
                     extensionReceiver = generateReceiver(ktExpression, resolvedCall.extensionReceiver)
                 }
             is FunctionDescriptor ->
-                generateFunctionCall(descriptor, ktExpression, operator, resolvedCall, superQualifier)
+                generateFunctionCall(descriptor, ktExpression, resultType, operator, resolvedCall, superQualifier)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
@@ -72,11 +93,11 @@ class IrCallGenerator(
     private fun generateFunctionCall(
             descriptor: FunctionDescriptor,
             ktExpression: KtExpression,
+            resultType: KotlinType?,
             operator: IrOperator?,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             superQualifier: ClassDescriptor?
     ): IrExpression {
-        val resultType = getTypeOrFail(ktExpression)
         val irCall = IrCallExpressionImpl(
                 ktExpression.startOffset, ktExpression.endOffset, resultType,
                 descriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
@@ -103,8 +124,10 @@ class IrCallGenerator(
             irCall: IrCallExpression,
             ktExpression: KtExpression,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
-            resultType: KotlinType
+            resultType: KotlinType?
     ): IrExpression {
+        // TODO use IrLetExpression?
+
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
 
         val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType,
@@ -142,7 +165,7 @@ class IrCallGenerator(
                         IrThisExpressionImpl(receiverExpression.startOffset, receiverExpression.endOffset, receiver.type, receiver.classDescriptor)
                     } ?: TODO("Non-implicit ThisClassReceiver should be an expression receiver")
                 is ExpressionReceiver ->
-                    irStatementGenerator.generateStatement(receiver.expression).assertCast()
+                    generateExpressionOrTemporary(receiver.expression)
                 is ClassValueReceiver ->
                     IrGetObjectValueExpressionImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                                    receiver.classQualifier.descriptor)
@@ -160,7 +183,7 @@ class IrCallGenerator(
             is DefaultValueArgument ->
                 return null
             is ExpressionValueArgument ->
-                return irStatementGenerator.generateStatement(valueArgument.valueArgument!!.getArgumentExpression()!!).assertCast()
+                return generateExpressionOrTemporary(valueArgument.valueArgument!!.getArgumentExpression()!!)
             is VarargValueArgument ->
                 TODO("vararg")
             else ->

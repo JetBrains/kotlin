@@ -36,6 +36,16 @@ class IrVariableImpl(
         originKind: IrDeclarationOriginKind,
         override val descriptor: VariableDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, originKind), IrVariable {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            originKind: IrDeclarationOriginKind,
+            descriptor: VariableDescriptor,
+            initializer: IrExpression
+    ) : this(startOffset, endOffset, originKind, descriptor) {
+        this.initializer = initializer
+    }
+
     override var initializer: IrExpression? = null
         set(value) {
             value?.assertDetached()

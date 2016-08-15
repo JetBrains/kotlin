@@ -71,21 +71,22 @@ class IrLocalDeclarationsFactory(val scopeOwner: DeclarationDescriptor) : IrDecl
             IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier("tmp${nextTemporaryIndex()}"), type)
 
     fun createTemporaryVariable(ktElement: KtElement, type: KotlinType): IrVariable =
-            IrVariableImpl(ktElement.startOffset, ktElement.endOffset,
-                           IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+            IrVariableImpl(ktElement.startOffset, ktElement.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
                            createDescriptorForTemporaryVariable(type))
 
     fun createTemporaryVariable(irExpression: IrExpression): IrVariable =
-            IrVariableImpl(irExpression.startOffset, irExpression.endOffset,
-                           IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+            IrVariableImpl(irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
                            createDescriptorForTemporaryVariable(
-                                        irExpression.type
-                                        ?: throw AssertionError("No type for $irExpression")
-                                )
-            ).apply { initializer = irExpression }
+                                   irExpression.type
+                                   ?: throw AssertionError("No type for $irExpression")
+                           ),
+                           irExpression)
 
     fun createLocalVariable(ktElement: KtElement, descriptor: VariableDescriptor): IrVariable =
-            IrVariableImpl(ktElement.startOffset, ktElement.endOffset,
-                           IrDeclarationOriginKind.DEFINED,
+            IrVariableImpl(ktElement.startOffset, ktElement.endOffset, IrDeclarationOriginKind.DEFINED,
                            descriptor)
+
+    fun createLocalVariable(ktElement: KtElement, descriptor: VariableDescriptor, initializer: IrExpression): IrVariable =
+            IrVariableImpl(ktElement.startOffset, ktElement.endOffset, IrDeclarationOriginKind.DEFINED,
+                           descriptor, initializer)
 }

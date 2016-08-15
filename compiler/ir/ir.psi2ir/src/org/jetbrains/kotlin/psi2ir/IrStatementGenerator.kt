@@ -37,14 +37,14 @@ class IrStatementGenerator(
         override val context: IrGeneratorContext,
         val declarationFactory: IrLocalDeclarationsFactory
 ) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
-    private val irCallGenerator = IrCallGenerator(context, this)
 
     fun generateStatement(ktExpression: KtExpression) = ktExpression.generate()
+    fun generateExpression(ktExpression: KtExpression) = ktExpression.generateExpression()
 
     private fun KtElement.generate(): IrStatement =
             deparenthesize()
-            .accept(this@IrStatementGenerator, null)
-            .applySmartCastIfNeeded(this)
+                    .accept(this@IrStatementGenerator, null)
+                    .applySmartCastIfNeeded(this)
 
     private fun KtElement.generateExpression(): IrExpression =
             generate().assertCast()
@@ -56,7 +56,7 @@ class IrStatementGenerator(
                 return IrTypeOperatorExpressionImpl(
                         ktElement.startOffset, ktElement.endOffset, smartCastType,
                         IrTypeOperator.SMART_AS, this@applySmartCastIfNeeded, smartCastType
-                        )
+                )
             }
         }
         return this
@@ -74,6 +74,29 @@ class IrStatementGenerator(
         irLocalVariable.initializer = property.initializer?.generateExpression()
 
         return irLocalVariable
+    }
+
+    override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
+        // TODO use some special form that introduces multiple declarations into surrounding scope?
+
+        val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, getType(multiDeclaration),
+                                            hasResult = false, isDesugared = true)
+        val ktInitializer = multiDeclaration.initializer!!
+        val irInitializer = declarationFactory.createTemporaryVariable(ktInitializer.generateExpression())
+        irBlock.addStatement(irInitializer)
+
+        val irCallGenerator = IrCallGenerator(this).apply { putTemporary(ktInitializer, irInitializer.descriptor) }
+
+        for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
+            val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
+            val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
+            val irComponentCall = irCallGenerator.generateCall(ktEntry, componentVariable.type, componentResolvedCall,
+                                                               IrOperator.COMPONENT_N.withIndex(index + 1))
+            val irComponentVar = declarationFactory.createLocalVariable(ktEntry, componentVariable, irComponentCall)
+            irBlock.addStatement(irComponentVar)
+        }
+
+        return irBlock
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
@@ -133,9 +156,9 @@ class IrStatementGenerator(
                     IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), descriptor)
                 else
                     IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, getType(expression),
-                                          descriptor.companionObjectDescriptor ?: error("Class value without companion object: $descriptor"))
+                                                   descriptor.companionObjectDescriptor ?: error("Class value without companion object: $descriptor"))
             is PropertyDescriptor -> {
-                irCallGenerator.generateCall(expression, resolvedCall)
+                IrCallGenerator(this).generateCall(expression, resolvedCall)
             }
             is VariableDescriptor ->
                 IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, getType(expression), descriptor)
@@ -153,7 +176,7 @@ class IrStatementGenerator(
             TODO("VariableAsFunctionResolvedCall = variable call + invoke call")
         }
 
-        return irCallGenerator.generateCall(expression, resolvedCall)
+        return IrCallGenerator(this).generateCall(expression, resolvedCall)
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
