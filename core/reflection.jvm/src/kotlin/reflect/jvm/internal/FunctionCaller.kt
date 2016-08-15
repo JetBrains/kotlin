@@ -95,7 +95,7 @@ internal abstract class FunctionCaller<out M : Member>(
     class InstanceMethod(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return callMethod(args[0], args.asList().subList(1, args.size).toTypedArray())
+            return callMethod(args[0], args.copyOfRange(1, args.size))
         }
     }
 
@@ -103,7 +103,7 @@ internal abstract class FunctionCaller<out M : Member>(
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             checkObjectInstance(args.firstOrNull())
-            return callMethod(null, args.asList().subList(1, args.size).toTypedArray())
+            return callMethod(null, args.copyOfRange(1, args.size))
         }
     }
 
