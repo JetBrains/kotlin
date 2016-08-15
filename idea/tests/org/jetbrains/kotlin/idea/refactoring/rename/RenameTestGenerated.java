@@ -185,6 +185,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("lambdaParameterRedeclaration/lambdaParameterRedeclaration.test")
+    public void testLambdaParameterRedeclaration_LambdaParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/lambdaParameterRedeclaration/lambdaParameterRedeclaration.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("memberFunctionRedeclaration/memberFunctionRedeclaration.test")
     public void testMemberFunctionRedeclaration_MemberFunctionRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/memberFunctionRedeclaration/memberFunctionRedeclaration.test");
@@ -236,6 +242,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("parameterRedeclaration/parameterRedeclaration.test")
     public void testParameterRedeclaration_ParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterRedeclaration/parameterRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test")
+    public void testPrimaryConstructorParameterRedeclaration_PrimaryConstructorParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test");
         doTest(fileName);
     }
 
@@ -992,6 +1004,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameUnaryMinus/unaryMinus.test")
     public void testRenameUnaryMinus_UnaryMinus() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameUnaryMinus/unaryMinus.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("secondaryCnstructorParameterRedeclaration/secondaryConstructorParameterRedeclaration.test")
+    public void testSecondaryCnstructorParameterRedeclaration_SecondaryConstructorParameterRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/secondaryCnstructorParameterRedeclaration/secondaryConstructorParameterRedeclaration.test");
         doTest(fileName);
     }
 
