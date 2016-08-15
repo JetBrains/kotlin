@@ -1,19 +1,14 @@
 syntax = "proto3";
 package carkot;
 
-option java_package = "proto.car";
-option java_outer_classname = "RcSession";
-
 //session up request is empty. only URL
 message SessionUpResponse {
     int32 code = 1;
-    string errorMsg = 2;
     int32 sid = 3;
 }
 
 message SessionDownResponse {
     int32 code = 1;
-    string errorMsg = 2;
 }
 
 message SessionDownRequest {
@@ -26,5 +21,4 @@ message HeartBeatRequest {
 
 message HeartBeatResponse {
     int32 code = 1;
-    string errorMsg = 2;
 }

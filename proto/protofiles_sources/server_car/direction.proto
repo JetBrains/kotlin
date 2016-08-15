@@ -1,9 +1,6 @@
 syntax = "proto3";
 package carkot;
 
-option java_package = "proto.car";
-option java_outer_classname = "Direction";
-
 message DirectionRequest {
     enum Command {
         stop = 0;
@@ -18,5 +15,4 @@ message DirectionRequest {
 
 message DirectionResponse {
     int32 code = 1;
-    string errorMsg = 2;
 }
