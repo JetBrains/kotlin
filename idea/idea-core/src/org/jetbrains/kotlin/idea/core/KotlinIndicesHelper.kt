@@ -217,15 +217,15 @@ class KotlinIndicesHelper(
 
     fun getKotlinStatics(name: String): Collection<DeclarationDescriptor> {
         return sequenceOf(KotlinFunctionShortNameIndex.getInstance().get(name, project, scope),
-                          KotlinPropertyShortNameIndex.getInstance().get(name, project, scope)).
-                flatMap { it.asSequence() }
+                          KotlinPropertyShortNameIndex.getInstance().get(name, project, scope))
+                .flatMap { it.asSequence() }
                 .mapNotNull {
                     when (it) {
                         is KtNamedFunction -> it.descriptor
                         is KtProperty -> it.descriptor
                         else -> null
                     }
-                }
+                }.filterNot { it.importableFqName == null }
                 .filter(descriptorFilter)
                 .toSet()
     }
