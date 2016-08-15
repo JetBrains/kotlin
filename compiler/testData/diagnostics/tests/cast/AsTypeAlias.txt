@@ -1,8 +1,5 @@
 package
 
-public typealias IBase = Base
-public typealias IOther = Other
-public typealias MyString = kotlin.String
 public val d: Derived
 public val ib: IBase /* = Base */
 public val io: IOther /* = Other */
@@ -30,3 +27,6 @@ public interface Other : Base {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias IBase = Base
+public typealias IOther = Other
+public typealias MyString = kotlin.String

@@ -1,4 +1,4 @@
 package
 
-public typealias Exn = java.lang.Exception
 public fun test(): kotlin.Unit
+public typealias Exn = java.lang.Exception

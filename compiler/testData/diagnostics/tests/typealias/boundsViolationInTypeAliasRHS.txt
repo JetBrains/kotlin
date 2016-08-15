@@ -1,5 +1,11 @@
 package
 
+public final class TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
+    public constructor TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 public typealias TCAlias</*0*/ T, /*1*/ C>  = TC<T, C>
 public typealias TCAliasC</*0*/ C>  = TC<kotlin.Any, C>
 public typealias TCAliasC1</*0*/ C>  = TCAlias<kotlin.Any, C>
@@ -15,10 +21,3 @@ public typealias Test6 = TCAliasC<kotlin.Any>
 public typealias Test7 = TCAliasC<kotlin.collections.Collection<kotlin.Any>>
 public typealias Test8 = TCAliasT1<kotlin.Any>
 public typealias Test9 = TCAliasC1<kotlin.Any>
-
-public final class TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
-    public constructor TC</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}

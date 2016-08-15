@@ -1,8 +1,5 @@
 package
 
-public typealias TestCWC = ClassWithCompanion
-public typealias TestObject = AnObject
-public typealias TestObject2 = TestObject
 public val test11: AnObject
 public val test12: TestObject /* = AnObject */
 public val test13: kotlin.String = "OK"
@@ -40,3 +37,6 @@ public final class ClassWithCompanion {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+public typealias TestCWC = ClassWithCompanion
+public typealias TestObject = AnObject
+public typealias TestObject2 = TestObject

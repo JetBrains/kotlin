@@ -1,9 +1,6 @@
 package
 
 package a {
-    public typealias A1 = a.B
-    private typealias A2 = a.B
-    private typealias A3 = a.B
     public fun A3(/*0*/ x: kotlin.Any): kotlin.String
     public fun bar(): kotlin.Unit
 
@@ -13,6 +10,9 @@ package a {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+    public typealias A1 = a.B
+    private typealias A2 = a.B
+    private typealias A3 = a.B
 }
 
 package usage {

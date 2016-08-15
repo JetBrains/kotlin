@@ -1,8 +1,5 @@
 package test
 
-public typealias S = kotlin.String
-public typealias SS = test.S
-public typealias SSS = test.SS
 public val x1: test.S /* = kotlin.String */ = ""
     public fun <get-x1>(): test.S /* = kotlin.String */
 public val x2: test.SS /* = kotlin.String */ = ""
@@ -15,3 +12,6 @@ public val x5: test.SS? /* = kotlin.String? */ = ""
     public fun <get-x5>(): test.SS? /* = kotlin.String? */
 public val x6: test.SSS? /* = kotlin.String? */ = ""
     public fun <get-x6>(): test.SSS? /* = kotlin.String? */
+public typealias S = kotlin.String
+public typealias SS = test.S
+public typealias SSS = test.SS

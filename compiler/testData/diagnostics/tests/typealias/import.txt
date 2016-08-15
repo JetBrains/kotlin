@@ -5,15 +5,15 @@ package package1 {
 }
 
 package package2 {
-    public typealias I = kotlin.Int
 
     public final class Outer {
-        public typealias A = kotlin.Any
         public constructor Outer()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public typealias A = kotlin.Any
     }
+    public typealias I = kotlin.Int
 }
 
 package package3 {

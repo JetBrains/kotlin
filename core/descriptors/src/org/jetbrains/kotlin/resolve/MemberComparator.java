@@ -48,32 +48,32 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
     }
 
     private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof TypeAliasDescriptor) {
+        if (isEnumEntry(descriptor)) {
             return 8;
         }
-        else if (isEnumEntry(descriptor)) {
-            return 7;
-        }
         else if (descriptor instanceof ConstructorDescriptor) {
-            return 6;
+            return 7;
         }
         else if (descriptor instanceof PropertyDescriptor) {
             if (((PropertyDescriptor)descriptor).getExtensionReceiverParameter() == null) {
-                return 5;
+                return 6;
             }
             else {
-                return 4;
+                return 5;
             }
         }
         else if (descriptor instanceof FunctionDescriptor) {
             if (((FunctionDescriptor)descriptor).getExtensionReceiverParameter() == null) {
-                return 3;
+                return 4;
             }
             else {
-                return 2;
+                return 3;
             }
         }
         else if (descriptor instanceof ClassDescriptor) {
+            return 2;
+        }
+        else if (descriptor instanceof TypeAliasDescriptor) {
             return 1;
         }
         return 0;
