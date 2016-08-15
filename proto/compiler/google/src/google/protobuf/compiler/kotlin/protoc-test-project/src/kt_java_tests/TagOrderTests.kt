@@ -1,11 +1,10 @@
-package tests
+package kt_java_tests
 
-import java_msg.RepeatedZigzag
 import java_msg.TagOrderOuterClass
 import java_msg.TagOrderShuffledOuterClass
-import main.kotlin.CodedInputStream
-import main.kotlin.TagOrder
-import main.kotlin.TagOrderShuffled
+import CodedInputStream
+import TagOrder
+import TagOrderShuffled
 import java.io.ByteArrayOutputStream
 
 object TagOrderTests {

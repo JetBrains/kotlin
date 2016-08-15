@@ -1,8 +1,8 @@
-package tests
+package kt_java_tests
 
 import java_msg.Zigzag
-import main.kotlin.CodedInputStream
-import main.kotlin.MessageZigZag
+import CodedInputStream
+import MessageZigZag
 import java.io.ByteArrayOutputStream
 
 object ZigZagTests {

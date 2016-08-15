@@ -1,13 +1,9 @@
-package tests
+package kt_java_tests
 
 import java_msg.Location
-import main.kotlin.CodedInputStream
-import main.kotlin.LocationResponse
+import CodedInputStream
+import LocationResponse
 import java.io.ByteArrayOutputStream
-
-/**
- * Created by user on 8/11/16.
- */
 
 object Location {
     fun generateKtLocationResponse(): LocationResponse {

@@ -1,4 +1,4 @@
-package tests
+package kt_java_tests
 
 import java_msg.Varints
 

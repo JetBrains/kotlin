@@ -1,16 +1,12 @@
-package tests
+package kt_java_tests
 
 import java_msg.BaseMessage
 import java_msg.ExtendedMessage
-import main.kotlin.Base
-import main.kotlin.CodedInputStream
-import main.kotlin.Extended
+import Base
+import CodedInputStream
+import Extended
 import java.io.ByteArrayOutputStream
 
-
-/**
- * Created by user on 8/11/16.
- */
 
 object BaseExtendedTest {
     fun generateKtBaseMessage(): Base {
@@ -95,13 +91,13 @@ object BaseExtendedTest {
                 .build()
     }
 
-    fun compareBases(kt: main.kotlin.Base, jv: BaseMessage.Base): Boolean {
+    fun compareBases(kt: Base, jv: BaseMessage.Base): Boolean {
         return kt.flag == jv.flag &&
                 kt.int == jv.int &&
                 Util.compareArrays(kt.arr.asIterable(), jv.arrList)
     }
 
-    fun compareExtended(kt: main.kotlin.Extended, jv: ExtendedMessage.Extended): Boolean {
+    fun compareExtended(kt: Extended, jv: ExtendedMessage.Extended): Boolean {
         return kt.flag == jv.flag &&
                 kt.int == jv.int &&
                 Util.compareArrays(kt.arr.asIterable(), jv.arrList) &&
@@ -109,13 +105,13 @@ object BaseExtendedTest {
                 kt.long == jv.long
     }
 
-    fun compareBaseKtToJavaExtended(kt: main.kotlin.Base, jv: ExtendedMessage.Extended): Boolean {
+    fun compareBaseKtToJavaExtended(kt: Base, jv: ExtendedMessage.Extended): Boolean {
         return kt.flag == jv.flag &&
                 kt.int == jv.int &&
                 Util.compareArrays(kt.arr.asIterable(), jv.arrList)
     }
 
-    fun compareExtendedKtToJavaBase(kt: main.kotlin.Extended, jv: BaseMessage.Base): Boolean {
+    fun compareExtendedKtToJavaBase(kt: Extended, jv: BaseMessage.Base): Boolean {
         return kt.flag == jv.flag &&
                 kt.int == jv.int &&
                 Util.compareArrays(kt.arr.asIterable(), jv.arrList)

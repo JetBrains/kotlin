@@ -1,19 +1,15 @@
-package tests
+package kt_java_tests
 
 import java_msg.CrossBranchOuterClass
-import main.kotlin.CodedInputStream
-import main.kotlin.CrossBranch
+import CodedInputStream
+import CrossBranch
 import java.io.ByteArrayOutputStream
 
-/**
- * Created by user on 8/11/16.
- */
-
 object CrossBranchTest {
-    fun generateKtGrandFather(): main.kotlin.CrossBranch.Grandfather {
-        fun generateKtRightFather(): main.kotlin.CrossBranch.Grandfather.RightFather {
-            fun generateKtRightLeftSon(): main.kotlin.CrossBranch.Grandfather.RightFather.RightLeftSon {
-                fun generateKtLeftLeftSon(): main.kotlin.CrossBranch.Grandfather.LeftFather.LeftLeftSon {
+    fun generateKtGrandFather(): CrossBranch.Grandfather {
+        fun generateKtRightFather(): CrossBranch.Grandfather.RightFather {
+            fun generateKtRightLeftSon(): CrossBranch.Grandfather.RightFather.RightLeftSon {
+                fun generateKtLeftLeftSon(): CrossBranch.Grandfather.LeftFather.LeftLeftSon {
                     return CrossBranch.Grandfather.LeftFather.LeftLeftSon.BuilderLeftLeftSon(RandomGen.rnd.nextInt()).build()
                 }
 
@@ -24,7 +20,7 @@ object CrossBranchTest {
             }
 
             fun generateKtRightRightSon(): CrossBranch.Grandfather.RightFather.RightRightSon {
-                fun generateKtLeftRightSon(): main.kotlin.CrossBranch.Grandfather.LeftFather.LeftRightSon {
+                fun generateKtLeftRightSon(): CrossBranch.Grandfather.LeftFather.LeftRightSon {
                     return CrossBranch.Grandfather.LeftFather.LeftRightSon.BuilderLeftRightSon(RandomGen.rnd.nextInt()).build()
                 }
 
@@ -33,7 +29,7 @@ object CrossBranchTest {
                 ).build()
             }
 
-            val msg = main.kotlin.CrossBranch.Grandfather.RightFather.BuilderRightFather(
+            val msg = CrossBranch.Grandfather.RightFather.BuilderRightFather(
                     generateKtRightLeftSon(),
                     generateKtRightRightSon()
             ).build()

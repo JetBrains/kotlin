@@ -1,13 +1,9 @@
-package tests
+package kt_java_tests
 
 import java_msg.RepeatedVarints
-import main.kotlin.CodedInputStream
-import main.kotlin.MessageRepeatedVarints
+import CodedInputStream
+import MessageRepeatedVarints
 import java.io.ByteArrayOutputStream
-
-/**
- * Created by user on 8/12/16.
- */
 
 object RepeatedVarintsTest {
     fun generateKtRepeatedVarints(): MessageRepeatedVarints {

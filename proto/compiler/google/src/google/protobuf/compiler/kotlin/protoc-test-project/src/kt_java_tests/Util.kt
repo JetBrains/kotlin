@@ -1,11 +1,8 @@
-package tests
+package kt_java_tests
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.io.OutputStream
-import java.util.concurrent.locks.Condition
 import kotlin.system.exitProcess
+import CodedOutputStream
 
 object Util {
     var ARRAY_MAX_SIZE = 1000
@@ -21,25 +18,14 @@ object Util {
         return lhs.count() == rhs.count() && lhs.filter { !rhs.contains(it) }.isEmpty()
     }
 
-    fun getKtInputStream(): main.kotlin.CodedInputStream {
-        val ba = ByteArray(100000)
-        val ins = main.kotlin.CodedInputStream(ba)
-        return ins
-    }
-
-    fun getKtOutputStream(size: Int): main.kotlin.CodedOutputStream {
+    fun getKtOutputStream(size: Int): CodedOutputStream {
         val ba = ByteArray(size)
-        val outs = main.kotlin.CodedOutputStream(ba)
+        val outs = CodedOutputStream(ba)
         return outs
     }
 
-    fun KtOutputStreamToInputStream(kt: main.kotlin.CodedOutputStream): InputStream {
+    fun KtOutputStreamToInputStream(kt: CodedOutputStream): InputStream {
         return kt.buffer.inputStream()
-    }
-
-    fun KtInputStreamToOutputStream(kt: main.kotlin.CodedInputStream): OutputStream {
-        val baos = ByteArrayOutputStream(kt.buffer.size)
-        return baos
     }
 
     fun generateIntArray(): IntArray {

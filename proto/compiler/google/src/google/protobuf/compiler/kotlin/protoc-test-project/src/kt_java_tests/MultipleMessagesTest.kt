@@ -1,15 +1,11 @@
-package tests
+package kt_java_tests
 
 import java_msg.MultipleMessages
-import main.kotlin.CodedInputStream
-import main.kotlin.FirstMessage
-import main.kotlin.SecondMessage
-import main.kotlin.ThirdMessage
+import CodedInputStream
+import FirstMessage
+import SecondMessage
+import ThirdMessage
 import java.io.ByteArrayOutputStream
-
-/**
- * Created by user on 8/11/16.
- */
 
 object MultipleMessagesTest {
     fun generateKtFirstMessage(): FirstMessage {

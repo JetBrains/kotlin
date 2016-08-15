@@ -1,13 +1,9 @@
-package tests
+package kt_java_tests
 
 import java_msg.RepeatedZigzag
-import main.kotlin.CodedInputStream
-import main.kotlin.MessageRepeatedZigZag
+import CodedInputStream
+import MessageRepeatedZigZag
 import java.io.ByteArrayOutputStream
-
-/**
- * Created by user on 8/12/16.
- */
 
 object RepeatedZigZag {
     fun generateKtRepeatedZigZag(): MessageRepeatedZigZag {
@@ -27,7 +23,7 @@ object RepeatedZigZag {
 
     fun compareRepeatedZigZags(kt: MessageRepeatedZigZag, jv: RepeatedZigzag.MessageRepeatedZigZag): Boolean {
         return Util.compareArrays(kt.int.asIterable(), jv.intList) &&
-                Util.compareArrays(kt.long.asIterable(), jv.longList);
+                Util.compareArrays(kt.long.asIterable(), jv.longList)
     }
 
     fun ktToJavaOnce() {

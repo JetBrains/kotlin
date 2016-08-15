@@ -1,11 +1,12 @@
-package tests
+package kt_java_tests
 
 import java_msg.Connect
-import main.kotlin.CodedInputStream
+import CodedInputStream
+import ConnectionRequest
 import java.io.ByteArrayOutputStream
 
 object ConnectTest {
-    fun generateKotlinConnectionRequestMessage(): main.kotlin.ConnectionRequest {
+    fun generateKotlinConnectionRequestMessage(): ConnectionRequest {
         val arrSize = RandomGen.rnd.nextInt(1000)
         val arr = IntArray(arrSize)
         for (i in 0..(arrSize - 1)) {
@@ -14,7 +15,7 @@ object ConnectTest {
 
         val port = RandomGen.rnd.nextInt()
 
-        val msg = main.kotlin.ConnectionRequest.BuilderConnectionRequest(arr, port).build()
+        val msg = ConnectionRequest.BuilderConnectionRequest(arr, port).build()
 
         return msg
     }
@@ -36,7 +37,7 @@ object ConnectTest {
 
 
 
-    fun compareConnectionRequests(kt: main.kotlin.ConnectionRequest, jv: Connect.ConnectionRequest): Boolean {
+    fun compareConnectionRequests(kt: ConnectionRequest, jv: Connect.ConnectionRequest): Boolean {
         return Util.compareArrays(kt.ip.asIterable(), jv.ipList.asIterable())
     }
 
@@ -50,8 +51,7 @@ object ConnectTest {
         val jvConnectionRequest = Connect.ConnectionRequest.parseFrom(ins)
 
         Util.assert(ktConnectionRequest.errorCode == 0)
-        Util.assert(Util.compareArrays(ktConnectionRequest.ip.asIterable(), jvConnectionRequest.ipList))
-        Util.assert(ktConnectionRequest.port == jvConnectionRequest.port)
+        Util.assert(compareConnectionRequests(ktConnectionRequest, jvConnectionRequest))
     }
 
     val testRuns = 10
@@ -68,11 +68,10 @@ object ConnectTest {
         val jvConnectionRequest = generateJavaConnectionRequest()
         jvConnectionRequest.writeTo(outs)
         val ins = CodedInputStream(outs.toByteArray())
-        val ktConnectionRequest = main.kotlin.ConnectionRequest.BuilderConnectionRequest(IntArray(0), 0).parseFrom(ins)
+        val ktConnectionRequest = ConnectionRequest.BuilderConnectionRequest(IntArray(0), 0).parseFrom(ins).build()
 
         Util.assert(ktConnectionRequest.errorCode == 0)
-        Util.assert(Util.compareArrays(ktConnectionRequest.ip.asIterable(), jvConnectionRequest.ipList))
-        Util.assert(ktConnectionRequest.port == jvConnectionRequest.port)
+        Util.assert(compareConnectionRequests(ktConnectionRequest, jvConnectionRequest))
     }
 
     fun JavaToKt() {

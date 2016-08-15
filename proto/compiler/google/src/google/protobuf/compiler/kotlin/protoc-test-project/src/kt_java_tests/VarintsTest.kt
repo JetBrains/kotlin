@@ -1,10 +1,9 @@
-package tests
+package kt_java_tests
 
 import java_msg.Varints
-import main.kotlin.CodedInputStream
-import main.kotlin.MessageVarints
+import CodedInputStream
+import MessageVarints
 import java.io.ByteArrayOutputStream
-import java.util.*
 
 object VarintsTest {
     fun generateKtVarint(): MessageVarints {

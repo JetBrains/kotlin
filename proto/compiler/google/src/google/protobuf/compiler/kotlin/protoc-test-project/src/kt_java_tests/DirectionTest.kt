@@ -1,8 +1,8 @@
-package tests
+package kt_java_tests
 
 import java_msg.Direction
-import main.kotlin.CodedInputStream
-import main.kotlin.DirectionRequest
+import CodedInputStream
+import DirectionRequest
 import java.io.ByteArrayOutputStream
 
 object DirectionTest {
