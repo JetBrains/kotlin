@@ -20,6 +20,7 @@ apply plugin: "kotlin2js"
 
 sourceSets {
     main.kotlin.srcDirs += 'src'
+    main.kotlin.srcDirs += '../../proto/compiler/build/sources'
 }
 
 task copyKotlinLib(type: Copy) {

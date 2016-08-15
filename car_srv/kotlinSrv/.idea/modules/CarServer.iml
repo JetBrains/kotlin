@@ -15,6 +15,9 @@
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../../proto">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../proto/compiler/runtime/src/main/kotlin" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-js-library:1.0.3" level="project" />
