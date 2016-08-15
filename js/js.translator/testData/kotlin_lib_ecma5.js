@@ -376,18 +376,21 @@
         if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
             return false;
         }
-        else {
-            if (typeof klass === "function" && object instanceof klass) {
-                return true;
-            }
-            else if (isNativeClass(klass) || klass.$metadata$.type == Kotlin.TYPE.CLASS) {
-                return false;
-            }
-            else {
-                var metadata = "$metadata$" in object ? object.$metadata$ : object.constructor.$metadata$;
-                return isInheritanceFromTrait(metadata, klass);
-            }
+
+        if (typeof klass === "function") {
+            return object instanceof klass;
         }
+
+        // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
+        if (isNativeClass(klass)) {
+            return object instanceof klass;
+        }
+
+        if (object.constructor != null) {
+            return isInheritanceFromTrait(object.constructor.$metadata$, klass);
+        }
+
+        return false;
     };
 
     // TODO Store callable references for members in class
