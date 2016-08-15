@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -144,7 +145,7 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, KotlinType> SMARTCAST = Slices.createSimpleSlice();
     WritableSlice<KtExpression, Boolean> SMARTCAST_NULL = Slices.createSimpleSlice();
-    WritableSlice<KtExpression, KotlinType> IMPLICIT_RECEIVER_SMARTCAST = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ImplicitSmartCasts> IMPLICIT_RECEIVER_SMARTCAST = new BasicWritableSlice<KtExpression, ImplicitSmartCasts>(DO_NOTHING);
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
     WritableSlice<KtWhenExpression, Boolean> IMPLICIT_EXHAUSTIVE_WHEN = Slices.createSimpleSlice();

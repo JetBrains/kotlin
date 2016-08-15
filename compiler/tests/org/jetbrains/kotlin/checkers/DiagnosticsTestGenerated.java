@@ -17661,6 +17661,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("threeImplicitReceivers.kt")
+            public void testThreeImplicitReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/threeImplicitReceivers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("twoImplicitReceivers.kt")
+            public void testTwoImplicitReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/twoImplicitReceivers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeDegradation.kt")
             public void testTypeDegradation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/typeDegradation.kt");

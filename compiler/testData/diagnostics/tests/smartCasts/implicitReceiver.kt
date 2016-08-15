@@ -3,8 +3,13 @@ open class A {
         val a = "FAIL"
     }
 
+    class C : A() {
+        val a = "FATAL"
+    }
+
     fun foo(): String {
         if (this is B) return <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>a<!>
+        else if (this is C) return <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>a<!>
         return "OK"
     }
 }

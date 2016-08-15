@@ -20,12 +20,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST
-import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
@@ -155,7 +156,14 @@ class SmartCastManager {
                         recordCastOrError(expression, possibleType, c.trace, dataFlowValue, recordExpressionType)
                     }
                     else if (calleeExpression != null && dataFlowValue.isStable) {
-                        c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression, possibleType)
+                        val receiver = (dataFlowValue.identifierInfo as? IdentifierInfo.Receiver)?.value
+                        if (receiver is ImplicitReceiver) {
+                            val oldSmartCasts = c.trace[IMPLICIT_RECEIVER_SMARTCAST, calleeExpression]
+                            val newSmartCasts = ImplicitSmartCasts(receiver, possibleType)
+                            c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression,
+                                           oldSmartCasts?.let { it + newSmartCasts } ?: newSmartCasts)
+
+                        }
                     }
                     return SmartCastResult(possibleType, dataFlowValue.isStable)
                 }

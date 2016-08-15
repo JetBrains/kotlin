@@ -928,6 +928,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("threeImplicitReceivers.kt")
+        public void testThreeImplicitReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/threeImplicitReceivers.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("twoImplicitReceivers.kt")
+        public void testTwoImplicitReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/twoImplicitReceivers.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("Typos.kt")
         public void testTypos() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/Typos.kt");
