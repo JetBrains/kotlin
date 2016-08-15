@@ -28,11 +28,10 @@ IrFile /callWithReorderedArguments.kt
         CALL .foo type=kotlin.Unit operator=
           a: CALL .noReorder1 type=kotlin.Int operator=
           b: CALL .noReorder2 type=kotlin.Int operator=
-        BLOCK type=kotlin.Unit hasResult=false isDesugared=true
-          VAR val tmp0: kotlin.Int
-            CALL .reordered1 type=kotlin.Int operator=
-          VAR val tmp1: kotlin.Int
-            CALL .reordered2 type=kotlin.Int operator=
-          CALL .foo type=kotlin.Unit operator=
-            a: GET_VAR tmp1 type=kotlin.Int
-            b: GET_VAR tmp0 type=kotlin.Int
+        VAR val tmp0: kotlin.Int
+          CALL .reordered1 type=kotlin.Int operator=
+        VAR val tmp1: kotlin.Int
+          CALL .reordered2 type=kotlin.Int operator=
+        CALL .foo type=kotlin.Unit operator=
+          a: GET_VAR tmp1 type=kotlin.Int
+          b: GET_VAR tmp0 type=kotlin.Int

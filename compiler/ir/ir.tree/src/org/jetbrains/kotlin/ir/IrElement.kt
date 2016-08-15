@@ -44,12 +44,13 @@ abstract class IrElementBase(override val startOffset: Int, override val endOffs
     }
 }
 
-fun IrElement?.detach() {
+fun <T : IrElement?> T.detach(): T {
     this?.setTreeLocation(null, DETACHED_SLOT)
+    return this
 }
 
 fun IrElement.replaceWith(otherElement: IrElement) {
-    parent?.replaceChild(slot, otherElement)
+    parent?.run { replaceChild(slot, otherElement.detach()) } ?: throw AssertionError("Can't replace a non-root element $this")
 }
 
 fun IrElement.assertChild(child: IrElement) {
