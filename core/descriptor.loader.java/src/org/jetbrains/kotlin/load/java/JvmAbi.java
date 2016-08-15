@@ -104,6 +104,6 @@ public final class JvmAbi {
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
-               !CompanionObjectMapping.INSTANCE.hasMappingToObject((ClassDescriptor) companionObject);
+               !CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }

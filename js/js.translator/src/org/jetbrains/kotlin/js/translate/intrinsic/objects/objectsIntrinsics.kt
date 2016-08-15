@@ -35,7 +35,7 @@ class DefaultClassObjectIntrinsic(val fqName: FqName): ObjectIntrinsic {
 
 class ObjectIntrinsics {
     fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
-        if (!CompanionObjectMapping.hasMappingToObject(classDescriptor)) return NO_OBJECT_INTRINSIC
+        if (!CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)) return NO_OBJECT_INTRINSIC
 
         val containingDeclaration = classDescriptor.containingDeclaration
         val name = Name.identifier(containingDeclaration.name.asString() + "CompanionObject")
