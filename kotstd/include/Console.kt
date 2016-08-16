@@ -70,6 +70,16 @@ fun print(message: String) {
     kotlinclib_print_string(message)
 }
 
+/** Prints the given message and newline to the standard output stream. */
+fun print(message: ByteArray) {
+    message.print()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun print(message: IntArray) {
+    message.print()
+}
+
 
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: Int) {
@@ -118,7 +128,12 @@ fun println(message: String) {
 
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: ByteArray) {
-    message.print()
+    message.println()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun println(message: IntArray) {
+    message.println()
 }
 
 /** Prints newline to the standard output stream. */

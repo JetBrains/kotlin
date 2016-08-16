@@ -41,12 +41,21 @@ class ByteArray(var size: Int) {
 }
 
 fun ByteArray.print() {
-    println()
     var index = 0
+    print('[')
     while (index < size) {
-        println(get(index))
+        print(get(index))
         index++
+        if (index < size){
+            print(';')
+            print(' ')
+        }
     }
+    print(']')
+}
+
+fun ByteArray.println() {
+    this.print()
     println()
 }
 

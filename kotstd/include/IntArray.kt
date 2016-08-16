@@ -39,6 +39,26 @@ class IntArray(var size: Int) {
 
 }
 
+
+fun IntArray.print() {
+    var index = 0
+    print('[')
+    while (index < size) {
+        print(get(index))
+        index++
+        if (index < size) {
+            print(';')
+            print(' ')
+        }
+    }
+    print(']')
+}
+
+fun IntArray.println() {
+    this.print()
+    println()
+}
+
 fun IntArray.copyOf(newSize: Int): IntArray {
     val newInstance = IntArray(newSize)
     var index = 0
