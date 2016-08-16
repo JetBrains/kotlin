@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
@@ -162,6 +163,16 @@ abstract class BaseGradleIT {
             assertTrue(output.contains(str.normalize()), "Output should contain '$str'")
         }
         return this
+    }
+
+    fun CompiledProject.assertSubstringCount(substring: String, expectedCount: Int) {
+        val actualCount = substring.toRegex().findAll(output).count()
+        assertEquals(expectedCount, actualCount, "Number of occurrences in output for substring '$substring'")
+    }
+
+    fun CompiledProject.checkKotlinGradleBuildServices() {
+        assertSubstringCount(KotlinGradleBuildServices.INIT_MESSAGE, expectedCount = 1)
+        assertSubstringCount(KotlinGradleBuildServices.DISPOSE_MESSAGE, expectedCount = 1)
     }
 
     fun CompiledProject.assertNotContains(vararg expected: String): CompiledProject {
