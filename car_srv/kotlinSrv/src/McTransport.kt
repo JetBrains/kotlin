@@ -10,9 +10,10 @@ class McTransport() {
     private var callback: (bytes: ByteArray) -> Unit = {}
 
     fun writeToFile(bytes: ByteArray) {
+        println("writewrite uiii!")
         val bytesT = bytes
         writeStream.write(js("new Buffer(bytesT)"));
-        writeStream.end();
+//        writeStream.end();
     }
 
     fun writeToFile(byte: Byte) {
@@ -45,6 +46,7 @@ class McTransport() {
     }
 
     fun closeStreams() {
+        writeStream.end()
         writeStream = null
         readStream = null
     }

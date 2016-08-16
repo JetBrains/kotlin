@@ -37,6 +37,9 @@ class MicroController private constructor() {
 
         this.transportFilePath = "./testTtyAcm"//todo need init
         mcTransport.initStreams(transportFilePath)
+        mcTransport.setCallBack { bytes ->
+            println("read: " + bytes.toString())
+        }
 
         setInterval({ this.car.refreshLocation(deltaTimeLocationRefresh) }, deltaTimeLocationRefresh);
         setInterval({
