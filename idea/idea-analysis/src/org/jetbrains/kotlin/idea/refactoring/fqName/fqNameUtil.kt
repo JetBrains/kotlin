@@ -54,4 +54,8 @@ fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
     return if (isAllUnder || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
 }
 
-fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
+private fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
+
+fun ImportPath.isImported(imports: Iterable<ImportPath>, excludedFqNames: Iterable<FqName>): Boolean {
+    return isImported(imports) && (isAllUnder || this.fqnPart() !in excludedFqNames)
+}
