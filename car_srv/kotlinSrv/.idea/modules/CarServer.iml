@@ -15,8 +15,11 @@
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../../proto">
+    <content url="file://$MODULE_DIR$/../../../../proto/compiler">
       <sourceFolder url="file://$MODULE_DIR$/../../../../proto/compiler/runtime/src/main/kotlin" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../../proto/protofiles_sources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../proto/protofiles_sources/out" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
