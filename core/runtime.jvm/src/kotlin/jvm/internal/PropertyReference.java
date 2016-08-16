@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
 public abstract class PropertyReference extends CallableReference implements KProperty {
@@ -57,7 +58,7 @@ public abstract class PropertyReference extends CallableReference implements KPr
 
     @Override
     public String toString() {
-        compute();
+        KCallable reflected = compute();
         if (reflected != this) {
             return reflected.toString();
         }
