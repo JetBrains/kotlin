@@ -8,6 +8,11 @@ class BooleanArray(var size: Int) {
 
     init {
         this.data = malloc_array(kotlinclib_boolean_size() * this.size)
+        var index = 0
+        while (index < this.size) {
+            set(index, false)
+            index = index + 1
+        }
     }
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
