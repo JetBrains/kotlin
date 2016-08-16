@@ -34,7 +34,7 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
-    val pointerAllign = if (arm) 4 else 8
+    val pointerAlign = if (arm) 4 else 8
     val pointerSize = if (arm) 4 else 8
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 }
@@ -48,8 +48,12 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
         override fun hasErrors(): Boolean = hasError
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-        System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
-            hasError = severity.isError || hasError
+            if (!severity.isError) {
+                return
+            }
+
+            System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
+            hasError = true
         }
     }
 
