@@ -6840,6 +6840,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("logicWithNumber.kt")
+            public void testLogicWithNumber() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/logicWithNumber.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("longOverflow.kt")
             public void testLongOverflow() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/longOverflow.kt");
