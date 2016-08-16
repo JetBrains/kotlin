@@ -856,7 +856,10 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             successExpression = codeBuilder.loadAndGetVariable(successExpression)
         }
 
-        codeBuilder.storeVariable(resultVariable, successExpression ?: return)
+        if (successExpression != null) {
+            codeBuilder.storeVariable(resultVariable, successExpression)
+        }
+
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.addComment("end last condition item")
     }
@@ -870,7 +873,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
 
-        if (expressionType !is LLVMVoidType) {
+        if (expressionType !is LLVMVoidType && expressionType !is LLVMNullType) {
             codeBuilder.allocStackPointedVarAsValue(resultVariable)
         }
 
