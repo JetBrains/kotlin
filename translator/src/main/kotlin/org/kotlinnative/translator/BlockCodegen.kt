@@ -30,10 +30,10 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     var returnType: LLVMVariable? = null
     var wasReturnOnTopLevel = false
 
-    protected fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel? = null, finishLabel: LLVMLabel? = null, scopeDepth: Int = 0, isBlock: Boolean = true) {
+    protected fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel? = null, nextIterationLabel: LLVMLabel? = null, breakLabel: LLVMLabel? = null, scopeDepth: Int = 0, isBlock: Boolean = true) {
         codeBuilder.markWithLabel(startLabel)
         if (isBlock) {
-            expressionWalker(expr, scopeDepth)
+            expressionWalker(expr, breakLabel, scopeDepth)
         } else {
             var result = evaluateExpression(expr, scopeDepth) ?: throw UnexpectedException(expr!!.text)
             when (result) {
@@ -53,17 +53,18 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
             wasReturnOnTopLevel = true
         }
-        codeBuilder.addUnconditionalJump(finishLabel ?: return)
+        codeBuilder.addUnconditionalJump(nextIterationLabel ?: return)
     }
 
-    private fun expressionWalker(expr: PsiElement?, scopeDepth: Int) {
+    private fun expressionWalker(expr: PsiElement?, breakLabel: LLVMLabel?, scopeDepth: Int) {
         when (expr) {
-            is KtBlockExpression -> expressionWalker(expr.firstChild, scopeDepth + 1)
+            is KtBlockExpression -> expressionWalker(expr.firstChild, breakLabel, scopeDepth + 1)
             is KtProperty -> evaluateValExpression(expr, scopeDepth)
             is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
+            is KtBreakExpression -> evaluateBreakExpression(expr, breakLabel!!, scopeDepth + 1)
             is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
@@ -74,7 +75,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             else -> UnsupportedOperationException()
         }
 
-        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), scopeDepth)
+        expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), breakLabel, scopeDepth)
+    }
+
+    private fun evaluateBreakExpression(expr: KtBreakExpression, breakLabel: LLVMLabel, scopeDepth: Int) {
+        codeBuilder.addUnconditionalJump(breakLabel)
     }
 
     private fun evaluateDoWhileExpression(element: PsiElement, scopeDepth: Int) {
@@ -85,7 +90,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
             is KtBlockExpression -> {
-                expressionWalker(expr.firstChild, scopeDepth + 1)
+                expressionWalker(expr.firstChild, null, scopeDepth + 1)
                 return null
             }
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
@@ -927,7 +932,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
 
         codeBuilder.addCondition(conditionResult, bodyLabel, exitLabel)
-        evaluateCodeBlock(bodyExpression, bodyLabel, conditionLabel, scopeDepth + 1)
+        evaluateCodeBlock(bodyExpression, bodyLabel, conditionLabel, exitLabel, scopeDepth + 1)
         codeBuilder.markWithLabel(exitLabel)
 
         return null
@@ -975,9 +980,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         codeBuilder.addCondition(conditionResult, thenLabel, if (elseExpression != null) elseLabel else endLabel)
 
-        evaluateCodeBlock(thenExpression, thenLabel, endLabel, scopeDepth + 1)
+        evaluateCodeBlock(thenExpression, thenLabel, endLabel, endLabel, scopeDepth + 1)
         if (elseExpression != null) {
-            evaluateCodeBlock(elseExpression, elseLabel, endLabel, scopeDepth + 1)
+            evaluateCodeBlock(elseExpression, elseLabel, endLabel, endLabel, scopeDepth + 1)
         }
 
         codeBuilder.markWithLabel(endLabel)
