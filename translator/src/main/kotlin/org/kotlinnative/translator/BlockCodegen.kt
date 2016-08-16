@@ -84,6 +84,10 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
+            is KtBlockExpression -> {
+                expressionWalker(expr.firstChild, scopeDepth + 1)
+                return null
+            }
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
             is KtPrefixExpression -> evaluatePrefixExpression(expr, scopeDepth)
