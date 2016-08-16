@@ -70,10 +70,6 @@ class IrLocalDeclarationsFactory(val scopeOwner: DeclarationDescriptor) : IrDecl
     fun createDescriptorForTemporaryVariable(type: KotlinType): IrTemporaryVariableDescriptor =
             IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier("tmp${nextTemporaryIndex()}"), type)
 
-    fun createTemporaryVariable(ktElement: KtElement, type: KotlinType): IrVariable =
-            IrVariableImpl(ktElement.startOffset, ktElement.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
-                           createDescriptorForTemporaryVariable(type))
-
     fun createTemporaryVariable(irExpression: IrExpression): IrVariable =
             IrVariableImpl(irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
                            createDescriptorForTemporaryVariable(

@@ -1,0 +1,12 @@
+IrFile /augmentedAssignment1.kt
+  IrFunction public fun test(): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR var x: kotlin.Int
+          LITERAL Int type=kotlin.Int value='0'
+        SET_VAR x type=<no-type>
+          CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='10'
+        RETURN type=<no-type>
+          GET_VAR x type=kotlin.Int

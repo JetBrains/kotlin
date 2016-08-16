@@ -1,0 +1,8 @@
+IrFunction public fun test(): kotlin.Unit
+  IrExpressionBody
+    BLOCK type=<no-type> hasResult=false isDesugared=false
+      VAR val a: A
+        CALL .<init> type=A operator=
+      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+        $receiver: GET_VAR a type=A
+        s: ? IrStringConcatenationExpressionImpl type=kotlin.String

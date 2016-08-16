@@ -41,6 +41,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("augmentedAssignment1.kt")
+    public void testAugmentedAssignment1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/augmentedAssignment1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("augmentedAssignment2.kt")
+    public void testAugmentedAssignment2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/augmentedAssignment2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("boxOk.kt")
     public void testBoxOk() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/boxOk.kt");

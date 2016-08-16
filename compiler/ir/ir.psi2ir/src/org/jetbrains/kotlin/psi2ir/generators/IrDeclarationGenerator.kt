@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 
 interface IrDeclarationGenerator : IrGenerator
@@ -94,7 +95,8 @@ abstract class IrDeclarationGeneratorBase(
 
     private fun generateExpressionWithinContext(ktExpression: KtExpression, scopeOwner: DeclarationDescriptor): IrExpression =
             IrStatementGenerator(context, scopeOwner, IrLocalDeclarationsFactory(scopeOwner))
-                    .generateExpression(ktExpression, getExpectedTypeForLastInferredCall(ktExpression))
+                    .generateExpression(ktExpression)
+                    .toExpectedType(getExpectedTypeForLastInferredCall(ktExpression))
 
     private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody {
         val irRhs = generateExpressionWithinContext(ktBody, scopeOwner)

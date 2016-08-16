@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrPropertyAccessExpression : IrMemberAccessExpression {
     override val descriptor: PropertyDescriptor
+    val operator: IrOperator?
 }
 
 interface IrGetPropertyExpression : IrPropertyAccessExpression
 
 interface IrSetPropertyExpression : IrPropertyAccessExpression {
     var value: IrExpression
-    val operator: IrOperator
 }
 
 class IrGetPropertyExpressionImpl(
@@ -37,7 +37,8 @@ class IrGetPropertyExpressionImpl(
         endOffset: Int,
         type: KotlinType?,
         isSafe: Boolean,
-        override val descriptor: PropertyDescriptor
+        override val descriptor: PropertyDescriptor,
+        override val operator: IrOperator? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrGetPropertyExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetProperty(this, data)
@@ -48,7 +49,7 @@ class IrSetPropertyExpressionImpl(
         endOffset: Int,
         isSafe: Boolean,
         override val descriptor: PropertyDescriptor,
-        override val operator: IrOperator = IrOperator.EQ
+        override val operator: IrOperator? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, null, isSafe), IrSetPropertyExpression {
     constructor(
             startOffset: Int,
@@ -56,7 +57,7 @@ class IrSetPropertyExpressionImpl(
             isSafe: Boolean,
             descriptor: PropertyDescriptor,
             value: IrExpression,
-            operator: IrOperator = IrOperator.EQ
+            operator: IrOperator? = null
     ) : this(startOffset, endOffset, isSafe, descriptor, operator) {
         this.value = value
     }

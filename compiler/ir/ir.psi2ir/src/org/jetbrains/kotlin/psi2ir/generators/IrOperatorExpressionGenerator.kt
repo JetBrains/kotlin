@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,7 +24,18 @@ import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
+
+val KT_OPERATOR_TO_IR_OPERATOR = hashMapOf(
+        KtTokens.PLUSEQ to IrOperator.PLUSEQ,
+        KtTokens.MINUSEQ to IrOperator.MINUSEQ,
+        KtTokens.MULTEQ to IrOperator.MULTEQ,
+        KtTokens.DIVEQ to IrOperator.DIVEQ,
+        KtTokens.PERCEQ to IrOperator.PERCEQ
+)
 
 class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerator): IrGenerator {
     override val context: IrGeneratorContext get() = irStatementGenerator.context
@@ -33,18 +45,46 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
 
         return when (ktOperator) {
             KtTokens.EQ -> generateAssignment(expression)
+            in KtTokens.AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
+    }
+
+    private fun generateAugmentedAssignment(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
+        val ktLeft = expression.left!!
+
+        val irOperator = getIrOperator(ktOperator)
+        val lhs = generateReferenceForAssignmentLhs(ktLeft, irOperator)
+
+        val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
+
+        val operatorCall = getResolvedCall(expression)!!
+
+        val opCallGenerator = IrCallGenerator(irStatementGenerator).apply { putValue(ktLeft, lhs) }
+        val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
+
+        return if (isSimpleAssignment) {
+            // Set( Op( Get(), RHS ) )
+            lhs.store(irOpCall)
+        }
+        else {
+            // Op( Get(), RHS )
+            irOpCall
+        }
+    }
+
+    private fun getIrOperator(ktOperator: IElementType): IrOperator {
+        return KT_OPERATOR_TO_IR_OPERATOR[ktOperator] ?: TODO("Operator: $ktOperator")
     }
 
     private fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
         val ktRight = expression.right!!
-        val lhs = generateAssignmentLHS(ktLeft)
-        return lhs.generateAssignment(expression, IrOperator.EQ, irStatementGenerator.generateExpression(ktRight, lhs.type))
+        val lhsReference = generateReferenceForAssignmentLhs(ktLeft, IrOperator.EQ)
+        return lhsReference.store(irStatementGenerator.generateExpression(ktRight))
     }
 
-    private fun generateAssignmentLHS(ktLeft: KtExpression): AssignmentLHS {
+    private fun generateReferenceForAssignmentLhs(ktLeft: KtExpression, irOperator: IrOperator?): IrReference {
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
         val descriptor = resolvedCall.candidateDescriptor
 
@@ -53,15 +93,13 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
                 if (descriptor.isDelegated)
                     TODO("Delegated local variable")
                 else
-                    VariableLHS(descriptor)
+                    IrVariableReferenceValue(ktLeft, irOperator, descriptor)
             is PropertyDescriptor ->
                 IrCallGenerator(irStatementGenerator).run {
-                    PropertyLHS(
-                            descriptor,
-                            generateReceiver(ktLeft, resolvedCall.dispatchReceiver,
-                                             descriptor.dispatchReceiverParameter?.type),
-                            generateReceiver(ktLeft, resolvedCall.extensionReceiver,
-                                             descriptor.extensionReceiverParameter?.type),
+                    IrPropertyReferenceValue(
+                            ktLeft, irOperator, descriptor,
+                            generateReceiver(ktLeft, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter),
+                            generateReceiver(ktLeft, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter),
                             resolvedCall.call.isSafeCall()
                     )
                 }

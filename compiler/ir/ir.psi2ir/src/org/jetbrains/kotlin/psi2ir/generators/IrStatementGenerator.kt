@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
+import org.jetbrains.kotlin.psi2ir.implicitGetExpression
+import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -32,8 +34,6 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 class IrStatementGenerator(
@@ -42,32 +42,14 @@ class IrStatementGenerator(
         val declarationFactory: IrLocalDeclarationsFactory
 ) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
 
-    fun generateExpression(ktExpression: KtExpression, expectedType: KotlinType?): IrExpression =
-            ktExpression.genExpr(expectedType)
+    fun generateExpression(ktExpression: KtExpression): IrExpression =
+            ktExpression.genExpr()
 
-    private fun KtElement.genStmt(expectedType: KotlinType?): IrStatement {
-        val irStatement = deparenthesize().accept(this@IrStatementGenerator, null)
-        if (irStatement is IrExpression) {
-            return smartCastTo(irStatement, expectedType)
-        }
-        return irStatement
-    }
+    private fun KtElement.genStmt(): IrStatement =
+            deparenthesize().accept(this@IrStatementGenerator, null)
 
-    private fun KtElement.genExpr(expectedType: KotlinType?): IrExpression =
-            genStmt(expectedType).assertCast()
-
-    fun smartCastTo(irExpression: IrExpression, expectedType: KotlinType?): IrExpression {
-        val actualType = irExpression.type
-        if (expectedType != null && actualType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType)) {
-            return IrTypeOperatorExpressionImpl(
-                    irExpression.startOffset, irExpression.endOffset, expectedType,
-                    IrTypeOperator.SMART_AS, expectedType,
-                    irExpression
-            )
-        }
-        return irExpression
-    }
-
+    private fun KtElement.genExpr(): IrExpression =
+            genStmt().assertCast()
 
     override fun visitExpression(expression: KtExpression, data: Nothing?): IrStatement =
             createDummyExpression(expression, expression.javaClass.simpleName)
@@ -78,7 +60,9 @@ class IrStatementGenerator(
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
         val irLocalVariable = declarationFactory.createLocalVariable(property, variableDescriptor)
-        irLocalVariable.initializer = property.initializer?.genExpr(variableDescriptor.type)
+        irLocalVariable.initializer = property.initializer?.let {
+            it.genExpr().toExpectedType(variableDescriptor.type)
+        }
 
         return irLocalVariable
     }
@@ -89,10 +73,11 @@ class IrStatementGenerator(
         val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null,
                                             hasResult = false, isDesugared = true)
         val ktInitializer = multiDeclaration.initializer!!
-        val irInitializer = declarationFactory.createTemporaryVariable(ktInitializer.genExpr(null))
-        irBlock.addStatement(irInitializer)
+        val irInitializerVal = declarationFactory.createTemporaryVariable(ktInitializer.genExpr())
+        irBlock.addStatement(irInitializerVal)
 
-        val irCallGenerator = IrCallGenerator(this).apply { putTemporary(ktInitializer, irInitializer.descriptor) }
+        val irCallGenerator = IrCallGenerator(this)
+        irCallGenerator.putValue(ktInitializer, justExpressionValue { irInitializerVal.implicitGetExpression() })
 
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
@@ -108,7 +93,7 @@ class IrStatementGenerator(
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
         val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, getReturnType(expression),
                                             hasResult = isUsedAsExpression(expression), isDesugared = false)
-        expression.statements.forEach { irBlock.addStatement(it.genStmt(null)) }
+        expression.statements.forEach { irBlock.addStatement(it.genStmt()) }
         return irBlock
     }
 
@@ -117,7 +102,7 @@ class IrStatementGenerator(
         return IrReturnExpressionImpl(
                 expression.startOffset, expression.endOffset,
                 returnTarget,
-                expression.returnedExpression?.let { it.genExpr(returnTarget.returnType) }
+                expression.returnedExpression?.let { it.genExpr().toExpectedType(returnTarget.returnType) }
         )
     }
 
@@ -160,7 +145,7 @@ class IrStatementGenerator(
         if (expression.entries.size == 1) {
             val entry0 = expression.entries[0]
             if (entry0 is KtLiteralStringTemplateEntry) {
-                return entry0.genExpr(null)
+                return entry0.genExpr()
             }
         }
 
@@ -200,7 +185,7 @@ class IrStatementGenerator(
                 IrCallGenerator(this).generateCall(expression, resolvedCall)
             }
             is VariableDescriptor ->
-                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, descriptor.type, descriptor)
+                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, descriptor)
             else ->
                 IrDummyExpression(
                         expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression),

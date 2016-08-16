@@ -10,5 +10,5 @@ IrFile /dotQualified.kt
       BLOCK type=<no-type> hasResult=false isDesugared=true
         RETURN type=<no-type>
           GET_PROPERTY ?.length type=kotlin.Int?
-            $this: TYPE_OP operator=SMART_AS typeOperand=kotlin.String
+            $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR s type=kotlin.String?

@@ -16,52 +16,54 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-sealed class IrOperator {
-    object INVOKE : IrOperator()
-    object PREFIX_INCR : IrOperator()
-    object PREFIX_DECR : IrOperator()
-    object POSTFIX_INCR : IrOperator()
-    object POSTFIX_DECR : IrOperator()
-    object UMINUS : IrOperator()
-    object EXCL : IrOperator()
-    object EXCLEXCL : IrOperator()
-    object ELVIS : IrOperator()
+sealed class IrOperator(val debugName: String) {
+    override fun toString(): String = debugName
+
+    object INVOKE : IrOperator("INVOKE")
+    object PREFIX_INCR : IrOperator("PREFIX_INCR")
+    object PREFIX_DECR : IrOperator("PREFIX_DECR")
+    object POSTFIX_INCR : IrOperator("POSTFIX_INCR")
+    object POSTFIX_DECR : IrOperator("POSTFIX_DECR")
+    object UMINUS : IrOperator("UMINUS")
+    object EXCL : IrOperator("EXCL")
+    object EXCLEXCL : IrOperator("EXCLEXCL")
+    object ELVIS : IrOperator("ELVIS")
     
-    object LT : IrOperator() 
-    object GT : IrOperator()
-    object LTEQ : IrOperator()
-    object GTEQ : IrOperator()
+    object LT : IrOperator("LT")
+    object GT : IrOperator("GT")
+    object LTEQ : IrOperator("LTEQ")
+    object GTEQ : IrOperator("GTEQ")
     
-    object EQEQ : IrOperator()
-    object EQEQEQ : IrOperator()
-    object EXCLEQ : IrOperator()
-    object EXCLEQEQ : IrOperator()
-    object IN : IrOperator()
-    object NOT_IN : IrOperator()
-    object ANDAND : IrOperator() 
-    object OROR : IrOperator()
-    object RANGE : IrOperator()
+    object EQEQ : IrOperator("EQEQ")
+    object EQEQEQ : IrOperator("EQEQEQ")
+    object EXCLEQ : IrOperator("EXCLEQ")
+    object EXCLEQEQ : IrOperator("EXCLEQEQ")
+    object IN : IrOperator("IN")
+    object NOT_IN : IrOperator("NOT_IN")
+    object ANDAND : IrOperator("ANDAND")
+    object OROR : IrOperator("OROR")
+    object RANGE : IrOperator("RANGE")
 
-    object PLUS : IrOperator()
-    object MINUS : IrOperator() 
-    object MUL : IrOperator()
-    object DIV : IrOperator()
-    object MOD : IrOperator()
+    object PLUS : IrOperator("PLUS")
+    object MINUS : IrOperator("MINUS")
+    object MUL : IrOperator("MUL")
+    object DIV : IrOperator("DIV")
+    object MOD : IrOperator("MOD")
 
-    object EQ : IrOperator()
-    object PLUSEQ : IrOperator()
-    object MINUSEQ : IrOperator()
-    object MULEQ : IrOperator()
-    object DIVEQ : IrOperator()
-    object MODEQ : IrOperator()
+    object EQ : IrOperator("EQ")
+    object PLUSEQ : IrOperator("PLUSEQ")
+    object MINUSEQ : IrOperator("MINUSEQ")
+    object MULTEQ : IrOperator("MULTEQ")
+    object DIVEQ : IrOperator("DIVEQ")
+    object PERCEQ : IrOperator("PERCEQ")
 
-    data class COMPONENT_N private constructor(val index: Int) : IrOperator() {
+    data class COMPONENT_N private constructor(val index: Int) : IrOperator("COMPONENT_$index") {
         companion object {
-            private val precreatedComponents = Array(32, ::COMPONENT_N)
+            private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }
 
             fun withIndex(index: Int) =
                     if (index < precreatedComponents.size)
-                        precreatedComponents[index]
+                        precreatedComponents[index - 1]
                     else
                         COMPONENT_N(index)
         }

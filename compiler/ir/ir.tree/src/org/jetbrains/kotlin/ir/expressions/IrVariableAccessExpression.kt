@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -24,21 +23,22 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrVariableAccessExpression : IrDeclarationReference {
     override val descriptor: VariableDescriptor
+    val operator: IrOperator?
 }
 
 interface IrGetVariableExpression : IrVariableAccessExpression
 
 interface IrSetVariableExpression : IrVariableAccessExpression {
     val value: IrExpression
-    val operator: IrOperator?
+
 }
 
 class IrGetVariableExpressionImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
-        descriptor: VariableDescriptor
-) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, type, descriptor), IrGetVariableExpression {
+        descriptor: VariableDescriptor,
+        override val operator: IrOperator? = null
+) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetVariableExpression {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetVariable(this, data)
 }
@@ -47,14 +47,14 @@ class IrSetVariableExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         override val descriptor: VariableDescriptor,
-        override val operator: IrOperator = IrOperator.EQ
+        override val operator: IrOperator?
 ) : IrExpressionBase(startOffset, endOffset, null), IrSetVariableExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
             descriptor: VariableDescriptor,
             value: IrExpression,
-            operator: IrOperator = IrOperator.EQ
+            operator: IrOperator?
     ) : this(startOffset, endOffset, descriptor, operator) {
         this.value = value
     }

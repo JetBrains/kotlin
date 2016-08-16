@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 enum class IrTypeOperator {
-    AS,
-    SMART_AS,
-    SAFE_AS,
-    IS,
-    NOT_IS;
+    CAST,
+    IMPLICIT_CAST,
+    SAFE_CAST,
+    INSTANCEOF,
+    NOT_INSTANCEOF;
 }
 
 interface IrTypeOperatorExpression : IrExpression {

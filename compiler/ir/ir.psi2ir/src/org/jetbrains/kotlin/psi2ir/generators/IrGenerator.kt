@@ -45,9 +45,6 @@ fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K): V =
 inline fun <K, V : Any> IrGenerator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
         context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
 
-inline fun <K, V : Any> IrGenerator.getOrElse(slice: ReadOnlySlice<K, V>, key: K, otherwise: (K) -> V): V =
-        context.bindingContext[slice, key] ?: otherwise(key)
-
 fun IrGenerator.getInferredTypeWithSmartcasts(key: KtExpression): KotlinType? =
         context.bindingContext.getType(key)
 

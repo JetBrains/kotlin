@@ -22,5 +22,5 @@ IrFile /smartCastsWithDestructuring.kt
             $receiver: GET_VAR tmp0 type=I1
         VAR val c2: kotlin.String
           CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
-            $receiver: TYPE_OP operator=SMART_AS typeOperand=I2
+            $receiver: TYPE_OP operator=IMPLICIT_CAST typeOperand=I2
               GET_VAR tmp0 type=I1
