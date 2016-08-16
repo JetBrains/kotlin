@@ -32,7 +32,7 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
     }
 
     fun stopCar() {
-        move(MoveDirection.STOP, 0.0, {})
+        move(MoveDirection.STOP, 0, {})
     }
 
     fun refreshLocation(delta: Int) {
@@ -59,7 +59,7 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
         controller.stopCar()
     }
 
-    fun move(moveDirection: MoveDirection, value: Double, callBack: () -> Unit) {
+    fun move(moveDirection: MoveDirection, value: Int, callBack: () -> Unit) {
         //value - angle for rotation command and distance for forward/backward command
         val functionAfterStty = { error: dynamic, stdOut: dynamic, stdErr: dynamic ->
             if (error != null) {
@@ -86,7 +86,7 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
     }
 
-    fun getTimeForMoving(value: Double, velocity: Double): Int {
-        return (1000 * Math.abs(value) / velocity).toInt()
+    fun getTimeForMoving(value: Int, velocity: Double): Int {
+        return (1000 * Math.abs(value.toDouble()) / velocity).toInt()
     }
 }

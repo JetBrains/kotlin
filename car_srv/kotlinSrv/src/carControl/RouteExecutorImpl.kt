@@ -1,5 +1,6 @@
 package carControl
 
+import RouteRequest
 
 /**
  * Created by user on 7/27/16.
@@ -14,13 +15,14 @@ class RouteExecutorImpl : RouteExecutor {
         STOP
     }
 
-    override fun executeRoute(route: dynamic) {
-        val wayPoints = route.way_points
-        val commands: MutableList<Pair<MoveDirection, Double>> = mutableListOf()
-        for (wayPoint in wayPoints) {
-            val angle: Double = wayPoint.angle_delta
-            val distance: Double = wayPoint.distance
-            if (angle != 0.0) {
+    override fun executeRoute(route: RouteRequest) {
+        val angles = route.angles
+        val distances = route.distances
+        val commands: MutableList<Pair<MoveDirection, Int>> = mutableListOf()
+        for (i in 0..angles.size - 1) {
+            val angle: Int = angles[i]
+            val distance: Int = distances[i]
+            if (angle != 0) {
                 val command = if (angle > 180) {
                     MoveDirection.RIGHT
                 } else {
@@ -28,7 +30,7 @@ class RouteExecutorImpl : RouteExecutor {
                 }
                 commands.add(Pair(command, angle))
             }
-            if (distance != 0.0) {
+            if (distance != 0) {
                 val command = if (distance > 0) {
                     MoveDirection.FORWARD
                 } else {
@@ -37,11 +39,11 @@ class RouteExecutorImpl : RouteExecutor {
                 commands.add(Pair(command, distance))
             }
         }
-        commands.add(Pair(MoveDirection.STOP, 0.0))
+        commands.add(Pair(MoveDirection.STOP, 0))
         executeCommand(commands, 0)
     }
 
-    fun executeCommand(commands: List<Pair<MoveDirection, Double>>, currentCommandIdx: Int) {
+    fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int) {
         if (currentCommandIdx == commands.size) {
             MicroController.instance.car.routeDone()
         }

@@ -19,12 +19,9 @@ class SetRoute : AbstractHandler {
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
         val car = MicroController.instance.car
-
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
-
         car.routeExecutor.executeRoute(message)
-
         val responseMessage = toServerObjectBuilder.setCode(0).build()
         val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
         responseMessage.writeTo(CodedOutputStream(resultByteArray))

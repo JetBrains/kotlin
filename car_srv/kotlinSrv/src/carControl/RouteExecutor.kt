@@ -1,12 +1,12 @@
 package carControl
 
-import Car
+import RouteRequest
 
 /**
  * Created by user on 7/27/16.
  */
 interface RouteExecutor {
 
-    fun executeRoute(route: dynamic)
+    fun executeRoute(route: RouteRequest)
 
 }

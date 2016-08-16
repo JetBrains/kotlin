@@ -35,7 +35,8 @@ class MicroController private constructor() {
             connectToServer(serverIp, serverPort)
         }
 
-        this.transportFilePath = "./temp"//todo need init
+        this.transportFilePath = "./testTtyAcm"//todo need init
+        mcTransport.initStreams(transportFilePath)
 
         setInterval({ this.car.refreshLocation(deltaTimeLocationRefresh) }, deltaTimeLocationRefresh);
         setInterval({
@@ -61,7 +62,7 @@ class MicroController private constructor() {
         if (sid != this.rcSid) {
             throw RcControlException()
         }
-        car.move(command, 0.0, {})
+        car.move(command, 0, {})
         rcHeartBeat(sid)
     }
 
