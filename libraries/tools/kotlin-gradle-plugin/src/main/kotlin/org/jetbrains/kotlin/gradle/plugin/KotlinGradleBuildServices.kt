@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.apache.commons.lang.SystemUtils
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
-import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 private fun comparableVersionStr(version: String) =
         "(\\d+)\\.(\\d+).*"
@@ -37,9 +37,26 @@ private fun comparableVersionStr(version: String) =
                 ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
-class CleanUpBuildListener(private val project: Project) : BuildAdapter() {
+class KotlinGradleBuildServices private constructor(): BuildAdapter() {
     companion object {
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
+        const val INIT_MESSAGE = "Initialized KotlinGradleBuildServices"
+        const val DISPOSE_MESSAGE = "Disposed KotlinGradleBuildServices"
+        private var initialized = false
+
+        @JvmStatic
+        @Synchronized
+        fun init(gradle: Gradle) {
+            if (initialized) return
+
+            val listener = KotlinGradleBuildServices()
+            gradle.addBuildListener(listener)
+            initialized = true
+            val log = Logging.getLogger(KotlinGradleBuildServices::class.java)
+            log.kotlinDebug(INIT_MESSAGE)
+
+            listener.buildStarted()
+        }
     }
 
     private val log = Logging.getLogger(this.javaClass)
@@ -54,34 +71,31 @@ class CleanUpBuildListener(private val project: Project) : BuildAdapter() {
         }
     }
 
-    override fun buildFinished(result: BuildResult?) {
-        val gradle = result?.gradle
-        if (gradle != null) {
+    override fun buildFinished(result: BuildResult) {
+        val gradle = result.gradle!!
+        val kotlinCompilerCalled = gradle.rootProject.allprojects.flatMap { it.tasks }.any { it is AbstractKotlinCompile<*> && it.compilerCalled }
 
-            val kotlinCompilerCalled = project.tasks.filter { it.name.contains("kotlin", ignoreCase = true) }
-                    .any { task -> task.hasProperty("compilerCalled") && task.property("compilerCalled") as? Boolean ?: false }
+        if (kotlinCompilerCalled) {
+            log.kotlinDebug("Cleanup after kotlin")
+            cleanup(gradle.gradleVersion)
+        }
+        else {
+            log.kotlinDebug("Skipping kotlin cleanup since compiler wasn't called")
+        }
 
-            if (kotlinCompilerCalled) {
-                log.kotlinDebug("Cleanup after kotlin")
-
-                cleanup(gradle.gradleVersion)
-            }
-            else {
-                log.kotlinDebug("Skipping kotlin cleanup since compiler wasn't called")
-            }
-
-            gradle.removeListener(this)
-
-            if (kotlinCompilerCalled) {
-                startMemory?.let { startMemoryCopy ->
-                    getUsedMemoryKb()?.let { endMemory ->
-                        // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
-                        // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-                        log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemoryCopy)} kb)")
-                    }
+        if (kotlinCompilerCalled) {
+            startMemory?.let { startMemoryCopy ->
+                getUsedMemoryKb()?.let { endMemory ->
+                    // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
+                    // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
+                    log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemoryCopy)} kb)")
                 }
             }
         }
+
+        gradle.removeListener(this)
+        initialized = false
+        log.kotlinDebug(DISPOSE_MESSAGE)
     }
 
     private fun getUsedMemoryKb(): Long? {
