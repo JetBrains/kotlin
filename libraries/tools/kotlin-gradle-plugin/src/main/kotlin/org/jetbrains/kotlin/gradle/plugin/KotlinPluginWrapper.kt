@@ -12,8 +12,6 @@ import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
 
-// TODO: simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
-
 abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver): Plugin<Project> {
     private val log = Logging.getLogger(this.javaClass)
     protected val kotlinPluginVersion = loadKotlinVersionFromResource(log)
