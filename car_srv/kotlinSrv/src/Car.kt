@@ -5,9 +5,7 @@ import carControl.RouteExecutorImpl.MoveDirection
 /**
  * Created by user on 7/27/16.
  */
-class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
-
-    val exec: dynamic
+class Car constructor(val routeExecutor: RouteExecutor, val controller: Control) {
 
     val velocityMove = 0.3278
     val velocityRotation = 12.3
@@ -19,16 +17,11 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
     var moveDirection: MoveDirection = MoveDirection.STOP
 
-    val routeExecutor: RouteExecutor
-    val controller: Control
 
     init {
-        this.routeExecutor = routeExecutor
-        this.controller = controller
         this.x = 0.0
         this.y = 0.0
         this.angle = 0.0
-        this.exec = require("child_process").exec
     }
 
     fun stopCar() {
@@ -61,29 +54,21 @@ class Car constructor(routeExecutor: RouteExecutor, controller: Control) {
 
     fun move(moveDirection: MoveDirection, value: Int, callBack: () -> Unit) {
         //value - angle for rotation command and distance for forward/backward command
-        val functionAfterStty = { error: dynamic, stdOut: dynamic, stdErr: dynamic ->
-            if (error != null) {
-                println("error in execute stty\n" + error.toString())
-            }
-            this.moveDirection = moveDirection
-            when (moveDirection) {
-                MoveDirection.STOP -> controller.stopCar()
-                MoveDirection.FORWARD -> controller.moveCarForward()
-                MoveDirection.BACKWARD -> controller.moveCarBackward()
-                MoveDirection.LEFT -> controller.moveCarLeft()
-                MoveDirection.RIGHT -> controller.moveCarRight()
-            }
-            if (moveDirection != MoveDirection.STOP) {
-                if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
-                    controller.delay(getTimeForMoving(value, velocityMove), callBack)
-                } else {
-                    controller.delay(getTimeForMoving(value, velocityRotation), callBack)
-                }
+        this.moveDirection = moveDirection
+        when (moveDirection) {
+            MoveDirection.STOP -> controller.stopCar()
+            MoveDirection.FORWARD -> controller.moveCarForward()
+            MoveDirection.BACKWARD -> controller.moveCarBackward()
+            MoveDirection.LEFT -> controller.moveCarLeft()
+            MoveDirection.RIGHT -> controller.moveCarRight()
+        }
+        if (moveDirection != MoveDirection.STOP) {
+            if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
+                controller.delay(getTimeForMoving(value, velocityMove), callBack)
+            } else {
+                controller.delay(getTimeForMoving(value, velocityRotation), callBack)
             }
         }
-
-        exec("stty -F ${MicroController.instance.transportFilePath} raw -echo -echoe -echok", functionAfterStty)
-
     }
 
     fun getTimeForMoving(value: Int, velocity: Double): Int {

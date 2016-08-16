@@ -4,9 +4,11 @@
 class Udev {
 
     val udev: dynamic
+    val exec: dynamic
 
     init {
         udev = require("udev")
+        exec = require("child_process").execSync
     }
 
     fun start() {
@@ -18,6 +20,7 @@ class Udev {
                 println("mc connected. transport file is " + device.DEVNAME)
                 microController.transportFilePath = device.DEVNAME;
                 mcTransport.initStreams(device.DEVNAME)
+                exec("stty -F ${MicroController.instance.transportFilePath} raw -echo -echoe -echok")
             }
         })
 
