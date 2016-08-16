@@ -26,6 +26,8 @@ fun box(): String {
     assertEquals(3, B.Factory::class.objectInstance!!.foo())
 
     assertEquals(null, C::class.objectInstance)
+    assertEquals(null, String::class.objectInstance)
+    assertEquals(Unit, Unit::class.objectInstance)
 
     return "OK"
 }
