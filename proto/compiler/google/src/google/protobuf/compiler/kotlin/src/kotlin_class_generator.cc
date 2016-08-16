@@ -315,7 +315,12 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
         printer->Indent();
 
         // check that wire type of that field is equal to expected
-        printer->Print(vars, "if (wireType != $kotlinWireType$) { errorCode = 1; return false } \n");
+        printer->Print(vars, "if (wireType.id != $kotlinWireType$.id) {\n");
+        printer->Indent();
+        printer->Print("errorCode = 1\n"
+                       "return false\n");
+        printer->Outdent();
+        printer->Print("}\n");
 
         properties[i]->generateSerializationCode(printer, /* isRead = */ true, /* noTag = */ true, /* isField = */ false);
 
@@ -328,7 +333,7 @@ void ClassGenerator::generateParseMethods(io::Printer *printer) const {
     printer->Outdent();
     printer->Print("}\n");  // when-clause
 
-    printer->Print("return true");
+    printer->Print("return true\n");
     printer->Outdent();
     printer->Print("}\n");  // parseFieldFrom body
     printer->Print("\n");
