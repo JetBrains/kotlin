@@ -84,14 +84,14 @@ class LLVMBuilder(val arm: Boolean = false) {
 
     fun addGlobalInitialize(target: LLVMVariable, fields: ArrayList<LLVMVariable>, initializers: Map<LLVMVariable, String>, classType: LLVMType) {
         val code = "$target = internal global $classType { ${
-            fields.map { it.getType() + " " + if (initializers.containsKey(it)) initializers[it] else "0"}.joinToString()
+        fields.map { it.getType() + " " + if (initializers.containsKey(it)) initializers[it] else "0" }.joinToString()
         } }, align ${classType.align}"
         globalCode.appendln(code)
     }
 
     fun storeString(target: LLVMVariable, source: LLVMVariable, offset: Int) {
         val stringType = source.type as LLVMStringType
-        val code = "store ${target.type} getelementptr inbounds (${stringType.fullType()}, " +
+        val code = "store ${target.type} getelementptr inbounds (" +
                 "${stringType.fullType()}* $source, i32 0, i32 $offset), ${target.getType()} $target, align ${stringType.align}"
         localCode.appendln(code)
     }
