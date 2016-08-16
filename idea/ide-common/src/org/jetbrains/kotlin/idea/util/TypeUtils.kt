@@ -34,12 +34,18 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinType {
+fun KotlinType.approximateFlexibleTypes(
+        preferNotNull: Boolean = false,
+        preferStarForRaw: Boolean = false
+): KotlinType {
     if (isDynamic()) return this
-    return approximateNonDynamicFlexibleTypes(preferNotNull)
+    return approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
 }
 
-private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean = false): SimpleType {
+private fun KotlinType.approximateNonDynamicFlexibleTypes(
+        preferNotNull: Boolean = false,
+        preferStarForRaw: Boolean = false
+): SimpleType {
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
@@ -51,6 +57,8 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean
         var approximation =
                 if (isCollection)
                     (if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound).makeNullableAsSpecified(!preferNotNull)
+                else
+                    if (this is RawType && preferStarForRaw) flexible.upperBound.makeNullableAsSpecified(!preferNotNull)
                 else
                     if (preferNotNull) flexible.lowerBound else flexible.upperBound
 
