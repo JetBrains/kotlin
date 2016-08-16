@@ -65,6 +65,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
             is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
+            is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
             null -> {
                 variableManager.pullUpwardsLevel(scopeDepth)
@@ -868,7 +869,10 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
-        codeBuilder.allocStackPointedVarAsValue(resultVariable)
+
+        if (expressionType !is LLVMVoidType) {
+            codeBuilder.allocStackPointedVarAsValue(resultVariable)
+        }
 
         var nextLabel = codeBuilder.getNewLabel(prefix = "when_start")
         val endLabel = codeBuilder.getNewLabel(prefix = "when_end")
