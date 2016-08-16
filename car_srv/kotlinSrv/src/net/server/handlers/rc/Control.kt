@@ -4,47 +4,56 @@ import MicroController
 import carControl.RouteExecutorImpl.MoveDirection
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
+import DirectionRequest
+import CodedInputStream
+import CodedOutputStream
 
 /**
  * Created by user on 7/27/16.
  */
 class Control : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val fromServerObjectBuilder: DirectionRequest.BuilderDirectionRequest
+    val toServerObjectBuilder: DirectionResponse.BuilderDirectionResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(fromSrv: DirectionRequest.BuilderDirectionRequest, toSrv: DirectionResponse.BuilderDirectionResponse) : super() {
+        this.fromServerObjectBuilder = fromSrv
+        this.toServerObjectBuilder = toSrv
+    }
+
+    override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
+        val message = fromServerObjectBuilder.build()
+        message.mergeFrom(CodedInputStream(data))
         val commandNumber = message.command
         val sid = message.sid
         val command = when (commandNumber) {
-            protoDecoder.Command.stop -> {
+            DirectionRequest.Command.stop -> {
                 MoveDirection.STOP
             }
-            protoDecoder.Command.forward -> {
+            DirectionRequest.Command.forward -> {
                 MoveDirection.FORWARD
             }
-            protoDecoder.Command.backward -> {
+            DirectionRequest.Command.backward -> {
                 MoveDirection.BACKWARD
             }
-            protoDecoder.Command.right -> {
+            DirectionRequest.Command.right -> {
                 MoveDirection.RIGHT
             }
-            protoDecoder.Command.left -> {
+            DirectionRequest.Command.left -> {
                 MoveDirection.LEFT
             }
             else -> MoveDirection.STOP
         }
-        val resultCode:Int
-        val resultMsg:String
+        val resultCode: Int
         try {
             MicroController.instance.RcMove(command, sid)
             resultCode = 0
-            resultMsg = ""
         } catch (e: RcControlException) {
             resultCode = 12
-            resultMsg = "incorrect remote control sid"
         }
-        responseMessage.code = resultCode
-        responseMessage.errorMsg = resultMsg
-        finalCallback.invoke()
+        val resultMessage = toServerObjectBuilder.setCode(resultCode).build()
+        val resultByteArray = ByteArray(resultMessage.getSizeNoTag())
+        resultMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
 }

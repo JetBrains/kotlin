@@ -2,32 +2,34 @@ package net.server.handlers.rc
 
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
+import CodedOutputStream
 
 /**
  * Created by user on 7/27/16.
  */
 class Connect : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val toServerObjectBuilder: SessionUpResponse.BuilderSessionUpResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(toSrv: SessionUpResponse.BuilderSessionUpResponse) : super() {
+        this.toServerObjectBuilder = toSrv
+    }
+
+    override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
         val resultCode: Int
-        val resultMsg: String
         val sid: Int;
         try {
             sid = MicroController.instance.connectRC()
             resultCode = 0
-            resultMsg = ""
         } catch (e: RcControlException) {
             resultCode = 13
-            resultMsg = "car already controlled by RC"
             sid = 0
         }
 
-        responseMessage.sid = sid
-        responseMessage.code = resultCode
-        responseMessage.errorMsg = resultMsg
-
-        finalCallback.invoke()
+        val responseMessage = toServerObjectBuilder.setCode(resultCode).setSid(sid).build()
+        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
+        responseMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
+
 }

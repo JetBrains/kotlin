@@ -19,27 +19,19 @@ val serverIp: String = "127.0.0.1"
 val mainServerAddress = "127.0.0.1"
 val mainServerPort = 7925
 
-val protoBuf = require("protobufjs")
+val fs = require("fs")
 fun main(args: Array<String>) {
 
-    val controlConstructor = protoBuf.loadProtoFile(getRelativePathToProto("direction.proto")).build("carkot")
-    val rcSessionConstructor = protoBuf.loadProtoFile(getRelativePathToProto("rc_session.proto")).build("carkot")
-    val carkotConstructor = protoBuf.loadProtoFile(getRelativePathToProto("carkot.proto")).build("carkot")
-
-    val routeConstructor = protoBuf.loadProtoFile(getRelativePathToProto("route.proto")).build("carkot")
-    val locationConstructor = protoBuf.loadProtoFile(getRelativePathToProto("location.proto")).build("carkot")
-
-
     val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
-    handlers.put("/rc/control", Control(controlConstructor.DirectionRequest, controlConstructor.DirectionResponse))
-    handlers.put("/rc/connect", Connect(null, rcSessionConstructor.SessionUpResponse))
-    handlers.put("/rc/disconnect", Disconnect(rcSessionConstructor.SessionDownRequest, rcSessionConstructor.SessionDownResponse))
-    handlers.put("/rc/heartbeat", Heartbeat(rcSessionConstructor.HeartBeatRequest, rcSessionConstructor.HeartBeatResponse))
+    handlers.put("/rc/control", Control(DirectionRequest.BuilderDirectionRequest(DirectionRequest.Command.fromIntToCommand(0), 0), DirectionResponse.BuilderDirectionResponse(0)))
+    handlers.put("/rc/connect", Connect(SessionUpResponse.BuilderSessionUpResponse(0, 0)))
+    handlers.put("/rc/disconnect", Disconnect(SessionDownRequest.BuilderSessionDownRequest(0), SessionDownResponse.BuilderSessionDownResponse(0)))
+    handlers.put("/rc/heartbeat", Heartbeat(HeartBeatRequest.BuilderHeartBeatRequest(0), HeartBeatResponse.BuilderHeartBeatResponse(0)))
 
-    handlers.put("/loadBin", LoadBin(carkotConstructor.Upload, carkotConstructor.UploadResult))
+    handlers.put("/loadBin", LoadBin(Upload.BuilderUpload(ByteArray(0)), UploadResult.BuilderUploadResult(0)))
 
-    handlers.put("/route", SetRoute(routeConstructor.RouteRequest, routeConstructor.RouteResponse))
-    handlers.put("/getLocation", GetLocation(null, locationConstructor.LocationResponse))
+    handlers.put("/route", SetRoute(RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0)), RouteResponse.BuilderRouteResponse(0)))
+    handlers.put("/getLocation", GetLocation(LocationResponse.BuilderLocationResponse(LocationResponse.LocationData.BuilderLocationData(0, 0, 0).build(), 0)))
 
     net.server.start(handlers, serverPort)
     val udev = Udev()
@@ -47,18 +39,6 @@ fun main(args: Array<String>) {
 
     MicroController.instance.start()
 
-}
-
-fun getRelativePathToProto(fileName: String): String {
-    return "./proto/" + fileName
-}
-
-fun trimBuffer(buffer: dynamic, length: Int): dynamic {
-    val byteArray = ByteArray(length);
-    for (i in 0..length - 1) {
-        byteArray[i] = buffer[i]
-    }
-    return js("new Buffer(byteArray)")
 }
 
 @native

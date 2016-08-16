@@ -2,27 +2,35 @@ package net.server.handlers.rc
 
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
+import CodedInputStream
+import CodedOutputStream
 
 /**
  * Created by user on 7/27/16.
  */
 class Heartbeat : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val fromServerObjectBuilder: HeartBeatRequest.BuilderHeartBeatRequest
+    val toServerObjectBuilder: HeartBeatResponse.BuilderHeartBeatResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(fromSrv: HeartBeatRequest.BuilderHeartBeatRequest, toSrv: HeartBeatResponse.BuilderHeartBeatResponse) : super() {
+        this.fromServerObjectBuilder = fromSrv
+        this.toServerObjectBuilder = toSrv
+    }
+
+    override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
+        val message = fromServerObjectBuilder.build()
+        message.mergeFrom(CodedInputStream(data))
         val resultCode: Int
-        val resultMsg: String
         try {
             MicroController.instance.rcHeartBeat(message.sid)
             resultCode = 0
-            resultMsg = ""
         } catch (e: RcControlException) {
             resultCode = 12
-            resultMsg = "incorrect remote control sid"
         }
-        responseMessage.code = resultCode
-        responseMessage.errorMsg = resultMsg
-        finalCallback.invoke()
+        val responseMessage = toServerObjectBuilder.setCode(resultCode).build()
+        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
+        responseMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
 }

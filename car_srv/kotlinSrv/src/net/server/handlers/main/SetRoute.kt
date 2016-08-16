@@ -1,22 +1,34 @@
 package net.server.handlers.main
 
 import net.server.handlers.AbstractHandler
+import CodedInputStream
+import CodedOutputStream
 
 /**
  * Created by user on 7/28/16.
  */
 class SetRoute : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val fromServerObjectBuilder: RouteRequest.BuilderRouteRequest
+    val toServerObjectBuilder: RouteResponse.BuilderRouteResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(fromSrv: RouteRequest.BuilderRouteRequest, toSrv: RouteResponse.BuilderRouteResponse) : super() {
+        this.fromServerObjectBuilder = fromSrv
+        this.toServerObjectBuilder = toSrv
+    }
+
+    override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
         val car = MicroController.instance.car
+
+        val message = fromServerObjectBuilder.build()
+        message.mergeFrom(CodedInputStream(data))
 
         car.routeExecutor.executeRoute(message)
 
-        responseMessage.code = 0
-        responseMessage.errorMsg = ""
-
-        finalCallback.invoke()
+        val responseMessage = toServerObjectBuilder.setCode(0).build()
+        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
+        responseMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
+
 }

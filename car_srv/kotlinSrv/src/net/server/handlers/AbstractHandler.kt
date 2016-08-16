@@ -5,35 +5,16 @@ import trimBuffer
 /**
  * Created by user on 7/27/16.
  */
-abstract class AbstractHandler(protoDecoder: dynamic, protoEncoder: dynamic) {
-
-    val protoDecoder: dynamic
-    val protoEncoder: dynamic
-
-    init {
-        this.protoDecoder = protoDecoder
-        this.protoEncoder = protoEncoder
-    }
-
+abstract class AbstractHandler {
 
     fun execute(data: List<Byte>, response: dynamic) {
-
-        val message = if (protoDecoder != null) protoDecoder.decode(data.toByteArray()) else null
-        val resultMessage: dynamic = {}
-        js("resultMessage = {}")
-        val afterExecute: () -> Unit = {
-            if (this.protoEncoder != null) {
-                val protoEn = this.protoEncoder//temporarily:)
-                val resultMsg = resultMessage
-                val resultBuffer = js("new protoEn(resultMsg)").encode()
-                val trimBuffer = trimBuffer(resultBuffer.buffer, resultBuffer.limit)
-                response.write(trimBuffer)
-            }
+        getBytesResponse(data.toByteArray(), { resultBytes ->
+            val resultBuffer = js("new Buffer(resultBytes)")
+            response.write(resultBuffer)
             response.end()
-        }
-        makeResponse(message, resultMessage, afterExecute)
+        })
     }
 
-    abstract fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit)
+    abstract fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit)
 
 }

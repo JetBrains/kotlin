@@ -95,16 +95,17 @@ class MicroController private constructor() {
     }
 
     fun connectToServer(thisIp: String, thisPort: Int) {
-        val connectProtobuf = protoBuf.loadProtoFile(getRelativePathToProto("connect.proto")).build("carkot")
-        val requestObject = js("new connectProtobuf.ConnectionRequest({ip:thisIp, port:thisPort})").encode()
-        net.sendRequest(trimBuffer(requestObject.buffer, requestObject.limit), "/connect", { resultData ->
-            val responseObject = connectProtobuf.ConnectionResponse.decode(resultData)
+        val requestObject = ConnectionRequest.BuilderConnectionRequest(serverIp.split(".").map { str -> parseInt(str, 10) }.toIntArray(), serverPort).build()
+        val bytes = ByteArray(requestObject.getSizeNoTag())
+        requestObject.writeTo(CodedOutputStream(bytes))
+        net.sendRequest(js("new Buffer(bytes)"), "/connect", { resultData ->
+            val responseObject = ConnectionResponse.BuilderConnectionResponse(0, 0).build()
+            responseObject.mergeFrom(CodedInputStream(resultData))
             if (responseObject.code == 0) {
                 this.uid = responseObject.uid
             } else {
                 println("server login error\n" +
-                        "code: ${responseObject.code}\n" +
-                        "error message: ${responseObject.errorMsg}")
+                        "code: ${responseObject.code}")
             }
         }, { error ->
             println("connection error (to main server). error message:\n" + error)

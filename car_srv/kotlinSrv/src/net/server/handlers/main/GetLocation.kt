@@ -1,19 +1,25 @@
 package net.server.handlers.main
 
 import net.server.handlers.AbstractHandler
+import CodedOutputStream
 
 /**
  * Created by user on 7/28/16.
  */
 class GetLocation : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val toServerObjectBuilder: LocationResponse.BuilderLocationResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(toSrv: LocationResponse.BuilderLocationResponse) : super() {
+        this.toServerObjectBuilder = toSrv
+    }
+
+    override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
         val car = MicroController.instance.car
-        val locationResponseData = {}
-        js("locationResponseData = {x:car.x, y:car.y, angle:car.angle}")
-        responseMessage.locationResponseData = locationResponseData
-        finalCallback.invoke()
+        val locationData = LocationResponse.LocationData.BuilderLocationData(car.x.toInt(), car.y.toInt(), car.angle.toInt()).build()
+        val resultMessage = toServerObjectBuilder.setLocationResponseData(locationData).build()
+        val resultByteArray = ByteArray(resultMessage.getSizeNoTag())
+        resultMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
 }

@@ -2,29 +2,36 @@ package net.server.handlers.rc
 
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
+import CodedInputStream
+import CodedOutputStream
 
 /**
  * Created by user on 7/27/16.
  */
-class Disconnect : AbstractHandler{
+class Disconnect : AbstractHandler {
 
-    constructor(protoDecoder: dynamic, protoEncoder: dynamic) : super(protoDecoder, protoEncoder)
+    val fromServerObjectBuilder: SessionDownRequest.BuilderSessionDownRequest
+    val toServerObjectBuilder: SessionDownResponse.BuilderSessionDownResponse
 
-    override fun makeResponse(message: dynamic, responseMessage: dynamic, finalCallback: () -> Unit) {
+    constructor(fromSrv: SessionDownRequest.BuilderSessionDownRequest, toSrv: SessionDownResponse.BuilderSessionDownResponse) : super() {
+        this.fromServerObjectBuilder = fromSrv
+        this.toServerObjectBuilder = toSrv
+    }
 
+    override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
+
+        val message = fromServerObjectBuilder.build()
+        message.mergeFrom(CodedInputStream(data))
         val resultCode: Int
-        val resultMsg: String
         try {
             MicroController.instance.disconnectRC(message.sid)
             resultCode = 0
-            resultMsg = ""
         } catch (e: RcControlException) {
             resultCode = 12
-            resultMsg = "incorrect remote control sid"
         }
-        responseMessage.code = resultCode
-        responseMessage.errorMsg = resultMsg
-
-        finalCallback.invoke()
+        val responseMessage = toServerObjectBuilder.setCode(resultCode).build()
+        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
+        responseMessage.writeTo(CodedOutputStream(resultByteArray))
+        callback.invoke(resultByteArray)
     }
 }

@@ -17,6 +17,7 @@ class Udev {
                 //mc connected
                 println("mc connected. transport file is " + device.DEVNAME)
                 microController.transportFilePath = device.DEVNAME;
+                mcTransport.initStreams(device.DEVNAME)
             }
         })
 
@@ -25,8 +26,8 @@ class Udev {
                 //mc disconnected
                 println("mc disconnected")
                 microController.transportFilePath = ""
+                mcTransport.closeStreams()
             }
         })
     }
-
 }
