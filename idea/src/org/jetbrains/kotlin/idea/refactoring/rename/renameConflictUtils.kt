@@ -171,6 +171,7 @@ fun reportShadowing(
     result += BasicUnresolvableCollisionUsageInfo(refElement, elementToBindUsageInfoTo, message)
 }
 
+// todo: break into smaller functions
 private fun checkUsagesRetargeting(
         elementToBindUsageInfosTo: PsiElement,
         declaration: PsiNamedElement,
@@ -287,7 +288,9 @@ private fun checkUsagesRetargeting(
             continue
         }
 
-        usageIterator.set(UsageInfoWithReplacement(fullCallExpression, declaration, qualifiedExpression))
+        if (fullCallExpression !is KtQualifiedExpression) {
+            usageIterator.set(UsageInfoWithReplacement(fullCallExpression, declaration, qualifiedExpression))
+        }
     }
 }
 
