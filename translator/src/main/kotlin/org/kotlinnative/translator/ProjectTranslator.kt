@@ -13,10 +13,11 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
     }
 
     fun addDeclarations(file: KtFile) {
+        val variableManager = VariableManager(state.globalVariableCollection)
         for (declaration in file.declarations) {
             when (declaration) {
                 is KtNamedFunction -> {
-                    val function = FunctionCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
+                    val function = FunctionCodegen(state, variableManager, declaration, codeBuilder)
                     if (function.external) {
                         state.externalFunctions.put(function.fullName, function)
                     } else {
@@ -24,15 +25,15 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
                     }
                 }
                 is KtClass -> {
-                    val codegen = ClassCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
+                    val codegen = ClassCodegen(state, variableManager, declaration, codeBuilder)
                     state.classes.put(declaration.name!!, codegen)
                 }
                 is KtProperty -> {
-                    val property = PropertyCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
+                    val property = PropertyCodegen(state, variableManager, declaration, codeBuilder)
                     state.properties.put(declaration.name!!, property)
                 }
                 is KtObjectDeclaration -> {
-                    val property = ObjectCodegen(state, VariableManager(state.globalVariableCollection), declaration, codeBuilder)
+                    val property = ObjectCodegen(state, variableManager, declaration, codeBuilder)
                     state.objects.put(declaration.name!!, property)
                 }
             }
