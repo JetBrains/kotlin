@@ -871,7 +871,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             successExpression = codeBuilder.loadAndGetVariable(successExpression)
         }
 
-        if (successExpression != null) {
+        if (successExpression != null && resultVariable.type !is LLVMVoidType && resultVariable.type !is LLVMNullType) {
             codeBuilder.storeVariable(resultVariable, successExpression)
         }
 

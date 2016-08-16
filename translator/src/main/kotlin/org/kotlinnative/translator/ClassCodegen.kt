@@ -1,6 +1,5 @@
 package org.kotlinnative.translator
 
-import com.jshmrsn.karg.defaultPrintHelpCallback
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtParameter

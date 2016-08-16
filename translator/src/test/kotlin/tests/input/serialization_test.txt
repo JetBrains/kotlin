@@ -1,2 +1,2 @@
 serialization_test1_Int(1442) == 1442
-serialization_test2_Int(10)
+serialization_test2_Int(5)

@@ -60,3 +60,14 @@ fun array_extensions_1_plus_array(): Int {
     val ans = maximize[2] + maximize[5] + maximize.size
     return ans
 }
+
+fun array_extensions_2_plus_array(): Int {
+    var array = IntArray(0)
+    val nextArray = IntArray(1)
+    nextArray[0] = 10
+
+    array = array.plus(nextArray)
+    println(array[0])
+
+    return array[0]
+}

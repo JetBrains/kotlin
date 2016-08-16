@@ -7,7 +7,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   var errorCode: Int = 0
 
   //========== Nested enums declarations ===========
-  enum class Command(val ord: Int) {
+  enum class Command(val id: Int) {
     stop (0),
     forward (1),
     backward (2),
@@ -31,8 +31,8 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   //========== Serialization methods ===========
   fun writeTo (output: CodedOutputStream) {
     //enum command = 1
-    if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-      output.writeEnum (1, command.ord)
+    if (command.id != DirectionRequest.Command.fromIntToCommand(0).id) {
+      output.writeEnum (1, command.id)
     }
 
     //int32 sid = 2
@@ -45,6 +45,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   fun mergeWith (other: DirectionRequest) {
     command = other.command
     sid = other.sid
+    this.errorCode = other.errorCode
   }
 
   fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {
@@ -61,7 +62,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   fun getSize(fieldNumber: Int): Int {
     var size = 0
     if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-      size += WireFormat.getEnumSize(1, command.ord)
+      size += WireFormat.getEnumSize(1, command.id)
     }
     if (sid != 0) {
       size += WireFormat.getInt32Size(2, sid)
@@ -73,7 +74,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   fun getSizeNoTag(): Int {
     var size = 0
     if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-      size += WireFormat.getEnumSize(1, command.ord)
+      size += WireFormat.getEnumSize(1, command.id)
     }
     if (sid != 0) {
       size += WireFormat.getInt32Size(2, sid)
@@ -101,8 +102,8 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
     //========== Serialization methods ===========
     fun writeTo (output: CodedOutputStream) {
       //enum command = 1
-      if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-        output.writeEnum (1, command.ord)
+      if (command.id != DirectionRequest.Command.fromIntToCommand(0).id) {
+        output.writeEnum (1, command.id)
       }
 
       //int32 sid = 2
@@ -114,7 +115,9 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
 
     //========== Mutating methods ===========
     fun build(): DirectionRequest {
-      return DirectionRequest(command, sid)
+      val res = DirectionRequest(command, sid)
+      res.errorCode = errorCode
+      return res
     }
 
     fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -125,15 +128,23 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
       val wireType = WireFormat.getTagWireType(tag)
       when(fieldNumber) {
         1 -> {
-          if (wireType != WireType.VARINT) { errorCode = 1; return false } 
+          if (wireType.id != WireType.VARINT.id) {
+            errorCode = 1
+            return false
+          }
           command = DirectionRequest.Command.fromIntToCommand(input.readEnumNoTag())
         }
         2 -> {
-          if (wireType != WireType.VARINT) { errorCode = 1; return false } 
+          if (wireType.id != WireType.VARINT.id) {
+            errorCode = 1
+            return false
+          }
           sid = input.readInt32NoTag()
         }
+        else -> errorCode = 4
       }
-      return true}
+      return true
+    }
 
     fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): DirectionRequest.BuilderDirectionRequest {
       while(getSizeNoTag() < expectedSize) {
@@ -152,7 +163,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
     fun getSize(fieldNumber: Int): Int {
       var size = 0
       if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-        size += WireFormat.getEnumSize(1, command.ord)
+        size += WireFormat.getEnumSize(1, command.id)
       }
       if (sid != 0) {
         size += WireFormat.getInt32Size(2, sid)
@@ -164,7 +175,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
     fun getSizeNoTag(): Int {
       var size = 0
       if (command != DirectionRequest.Command.fromIntToCommand(0)) {
-        size += WireFormat.getEnumSize(1, command.ord)
+        size += WireFormat.getEnumSize(1, command.id)
       }
       if (sid != 0) {
         size += WireFormat.getInt32Size(2, sid)
@@ -194,6 +205,7 @@ class DirectionResponse private constructor (var code: Int) {
 
   fun mergeWith (other: DirectionResponse) {
     code = other.code
+    this.errorCode = other.errorCode
   }
 
   fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {
@@ -246,7 +258,9 @@ class DirectionResponse private constructor (var code: Int) {
 
     //========== Mutating methods ===========
     fun build(): DirectionResponse {
-      return DirectionResponse(code)
+      val res = DirectionResponse(code)
+      res.errorCode = errorCode
+      return res
     }
 
     fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -257,11 +271,16 @@ class DirectionResponse private constructor (var code: Int) {
       val wireType = WireFormat.getTagWireType(tag)
       when(fieldNumber) {
         1 -> {
-          if (wireType != WireType.VARINT) { errorCode = 1; return false } 
+          if (wireType.id != WireType.VARINT.id) {
+            errorCode = 1
+            return false
+          }
           code = input.readInt32NoTag()
         }
+        else -> errorCode = 4
       }
-      return true}
+      return true
+    }
 
     fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): DirectionResponse.BuilderDirectionResponse {
       while(getSizeNoTag() < expectedSize) {

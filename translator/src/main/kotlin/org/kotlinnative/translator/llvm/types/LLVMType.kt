@@ -1,10 +1,8 @@
 package org.kotlinnative.translator.llvm.types
 
 import org.kotlinnative.translator.exceptions.UnimplementedException
-import org.kotlinnative.translator.llvm.LLVMConstant
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
-import org.kotlinnative.translator.llvm.LLVMVariable
 
 abstract class LLVMType() : Cloneable {
 

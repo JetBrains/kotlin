@@ -67,6 +67,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
   fun mergeWith (other: RouteRequest) {
     distances = distances.plus((other.distances))
     angles = angles.plus((other.angles))
+    this.errorCode = other.errorCode
   }
 
   fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {
@@ -85,23 +86,27 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
     if (distances.size != 0) {
       do {
         var arraySize = 0
+        size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
         var i = 0
         while (i < distances.size) {
-          arraySize += WireFormat.getInt32Size(1, distances[i])
+          arraySize += WireFormat.getInt32SizeNoTag(distances[i])
           i += 1
         } 
         size += arraySize
+        size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
     if (angles.size != 0) {
       do {
         var arraySize = 0
+        size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
         var i = 0
         while (i < angles.size) {
-          arraySize += WireFormat.getInt32Size(2, angles[i])
+          arraySize += WireFormat.getInt32SizeNoTag(angles[i])
           i += 1
         } 
         size += arraySize
+        size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
     size += WireFormat.getVarint32Size(size) + WireFormat.getTagSize(fieldNumber, WireType.LENGTH_DELIMITED)
@@ -113,23 +118,27 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
     if (distances.size != 0) {
       do {
         var arraySize = 0
+        size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
         var i = 0
         while (i < distances.size) {
-          arraySize += WireFormat.getInt32Size(1, distances[i])
+          arraySize += WireFormat.getInt32SizeNoTag(distances[i])
           i += 1
         } 
         size += arraySize
+        size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
     if (angles.size != 0) {
       do {
         var arraySize = 0
+        size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
         var i = 0
         while (i < angles.size) {
-          arraySize += WireFormat.getInt32Size(2, angles[i])
+          arraySize += WireFormat.getInt32SizeNoTag(angles[i])
           i += 1
         } 
         size += arraySize
+        size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
     return size
@@ -220,7 +229,9 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
     //========== Mutating methods ===========
     fun build(): RouteRequest {
-      return RouteRequest(distances, angles)
+      val res = RouteRequest(distances, angles)
+      res.errorCode = errorCode
+      return res
     }
 
     fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -231,7 +242,10 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
       val wireType = WireFormat.getTagWireType(tag)
       when(fieldNumber) {
         1 -> {
-          if (wireType != WireType.LENGTH_DELIMITED) { errorCode = 1; return false } 
+          if (wireType.id != WireType.LENGTH_DELIMITED.id) {
+            errorCode = 1
+            return false
+          }
           val expectedByteSize = input.readInt32NoTag()
           var newArray = IntArray(0)
           var readSize = 0
@@ -247,7 +261,10 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
           } while (false)
         }
         2 -> {
-          if (wireType != WireType.LENGTH_DELIMITED) { errorCode = 1; return false } 
+          if (wireType.id != WireType.LENGTH_DELIMITED.id) {
+            errorCode = 1
+            return false
+          }
           val expectedByteSize = input.readInt32NoTag()
           var newArray = IntArray(0)
           var readSize = 0
@@ -262,8 +279,10 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
             angles = newArray
           } while (false)
         }
+        else -> errorCode = 4
       }
-      return true}
+      return true
+    }
 
     fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): RouteRequest.BuilderRouteRequest {
       while(getSizeNoTag() < expectedSize) {
@@ -284,23 +303,27 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
       if (distances.size != 0) {
         do {
           var arraySize = 0
+          size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
           var i = 0
           while (i < distances.size) {
-            arraySize += WireFormat.getInt32Size(1, distances[i])
+            arraySize += WireFormat.getInt32SizeNoTag(distances[i])
             i += 1
           } 
           size += arraySize
+          size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
       if (angles.size != 0) {
         do {
           var arraySize = 0
+          size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
           var i = 0
           while (i < angles.size) {
-            arraySize += WireFormat.getInt32Size(2, angles[i])
+            arraySize += WireFormat.getInt32SizeNoTag(angles[i])
             i += 1
           } 
           size += arraySize
+          size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
       size += WireFormat.getVarint32Size(size) + WireFormat.getTagSize(fieldNumber, WireType.LENGTH_DELIMITED)
@@ -312,23 +335,27 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
       if (distances.size != 0) {
         do {
           var arraySize = 0
+          size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
           var i = 0
           while (i < distances.size) {
-            arraySize += WireFormat.getInt32Size(1, distances[i])
+            arraySize += WireFormat.getInt32SizeNoTag(distances[i])
             i += 1
           } 
           size += arraySize
+          size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
       if (angles.size != 0) {
         do {
           var arraySize = 0
+          size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
           var i = 0
           while (i < angles.size) {
-            arraySize += WireFormat.getInt32Size(2, angles[i])
+            arraySize += WireFormat.getInt32SizeNoTag(angles[i])
             i += 1
           } 
           size += arraySize
+          size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
       return size
@@ -337,6 +364,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
   }
 
 }
+
 
 class RouteResponse private constructor (var code: Int) {
   //========== Properties ===========
@@ -355,6 +383,7 @@ class RouteResponse private constructor (var code: Int) {
 
   fun mergeWith (other: RouteResponse) {
     code = other.code
+    this.errorCode = other.errorCode
   }
 
   fun mergeFromWithSize (input: CodedInputStream, expectedSize: Int) {
@@ -407,7 +436,9 @@ class RouteResponse private constructor (var code: Int) {
 
     //========== Mutating methods ===========
     fun build(): RouteResponse {
-      return RouteResponse(code)
+      val res = RouteResponse(code)
+      res.errorCode = errorCode
+      return res
     }
 
     fun parseFieldFrom(input: CodedInputStream): Boolean {
@@ -418,11 +449,16 @@ class RouteResponse private constructor (var code: Int) {
       val wireType = WireFormat.getTagWireType(tag)
       when(fieldNumber) {
         1 -> {
-          if (wireType != WireType.VARINT) { errorCode = 1; return false } 
+          if (wireType.id != WireType.VARINT.id) {
+            errorCode = 1
+            return false
+          }
           code = input.readInt32NoTag()
         }
+        else -> errorCode = 4
       }
-      return true}
+      return true
+    }
 
     fun parseFromWithSize(input: CodedInputStream, expectedSize: Int): RouteResponse.BuilderRouteResponse {
       while(getSizeNoTag() < expectedSize) {
@@ -458,3 +494,5 @@ class RouteResponse private constructor (var code: Int) {
   }
 
 }
+
+

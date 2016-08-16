@@ -22,7 +22,7 @@ KT=$(TRANSLATOR_DIR)/build/libs/translator-1.0.jar
 LD=arm-none-eabi-ld
 OBJ_COPY=arm-none-eabi-objcopy
 GDB=arm-none-eabi-gdb
-PROTOC=$(PWD)/../proto/build/protoc
+PROTOC=$(PWD)/../proto/compiler/build/protoc
 
 LL=llc-3.6
 LLINK=llvm-link-3.6
