@@ -12,16 +12,16 @@ class Car constructor(uid: Int, host: String, port: Int) {
     var free: Boolean
     var lastAction: Long
 
-    var x: Double
-    var y: Double
+    var x: Int
+    var y: Int
 
     init {
         this.uid = uid
         this.host = host
         this.port = port
         this.free = true
-        x = 0.toDouble()
-        y = 0.toDouble()
+        x = 0
+        y = 0
         this.lastAction = System.currentTimeMillis()
     }
 

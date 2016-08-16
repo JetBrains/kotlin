@@ -4,7 +4,6 @@ import CodedInputStream
 import CodedOutputStream
 import ConnectionRequest
 import ConnectionResponse
-import InvalidProtocolBufferException
 import RouteDoneRequest
 import RouteDoneResponse
 import connectUrl
@@ -15,8 +14,6 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.*
 import objects.Environment
 import routeDoneUrl
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
 /**
  * Created by user on 7/6/16.
@@ -30,28 +27,22 @@ class Handler : SimpleChannelInboundHandler<Any>() {
 
         val environment = Environment.instance
         var success = true;
-        val answer: ByteArrayOutputStream = ByteArrayOutputStream()
+        var answer = ByteArray(0)
         when (url) {
             connectUrl -> {
-                val data = ConnectionRequest.BuilderConnectionRequest().build();
-                try {
-                    data.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
-                } catch (e: InvalidProtocolBufferException) {
-                    success = false;
-                    ConnectionResponse.BuilderConnectionResponse().setCode(1).setErrorMsg("invalid protobuf request").build().writeTo(CodedOutputStream(answer))
-                }
+                val data = ConnectionRequest.BuilderConnectionRequest(IntArray(0), 0).build();
+                data.mergeFrom(CodedInputStream(contentBytes))
                 if (success) {
-                    val uid = environment.connectCar(data.ip, data.port)
-                    ConnectionResponse.BuilderConnectionResponse().setUid(uid).build().writeTo(CodedOutputStream(answer))
+                    val ipStr = data.ipValues.map { elem -> elem.toString() }.reduce { elem1, elem2 -> elem1 + "." + elem2 }
+                    val uid = environment.connectCar(ipStr, data.port)
+                    val responseObject = ConnectionResponse.BuilderConnectionResponse(uid, 0).build()
+                    answer = ByteArray(responseObject.getSizeNoTag())
+                    responseObject.writeTo(CodedOutputStream(answer))
                 }
             }
             routeDoneUrl -> {
-                val data = RouteDoneRequest.BuilderRouteDoneRequest().build()
-                try {
-                    data.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
-                } catch (e: InvalidProtocolBufferException) {
-                    success = false;
-                }
+                val data = RouteDoneRequest.BuilderRouteDoneRequest(0).build()
+                data.mergeFrom(CodedInputStream(contentBytes))
                 if (success) {
                     val id = data.uid
                     synchronized(environment.map, {
@@ -59,10 +50,14 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                         if (car != null) {
                             car.free = true
                             car.lastAction = System.currentTimeMillis()
-                            RouteDoneResponse.BuilderRouteDoneResponse().setCode(0).setErrorMsg("").build().writeTo(CodedOutputStream(answer))
+                            val responseObject = RouteDoneResponse.BuilderRouteDoneResponse(0).build()
+                            answer = ByteArray(responseObject.getSizeNoTag())
+                            responseObject.writeTo(CodedOutputStream(answer))
                         } else {
                             success = false
-                            RouteDoneResponse.BuilderRouteDoneResponse().setCode(2).setErrorMsg("car not found by id").build().writeTo(CodedOutputStream(answer))
+                            val responseObject = RouteDoneResponse.BuilderRouteDoneResponse(2).build()
+                            answer = ByteArray(responseObject.getSizeNoTag())
+                            responseObject.writeTo(CodedOutputStream(answer))
                         }
                     })
                 }
@@ -71,7 +66,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 success = false
             }
         }
-        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(answer.toByteArray()))
+        val response = DefaultFullHttpResponse(HttpVersion.HTTP_1_1, if (success) HttpResponseStatus.OK else HttpResponseStatus.BAD_REQUEST, Unpooled.copiedBuffer(answer))
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }

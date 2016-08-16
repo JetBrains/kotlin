@@ -21,13 +21,11 @@ repositories {
     mavenCentral()
 }
 
-task compileProto(type: Exec) {
-    /*
-     * XXX Kotlin proto compiler calling convention will change soon.
-     * It would provide fixed path to protoc in its project directory.
-     */
-    executable "./compileProto.sh"
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/java'
+    main.kotlin.srcDirs += '../proto/protofiles_sources/out'
 }
+
 task buildProtoLib(type: Copy) {
     /*
      * XXX Will need to rework.
@@ -54,8 +52,6 @@ task getDeps(type: Copy) {
 }
 
 build.dependsOn getDeps
-compileKotlin.dependsOn compileProto
-compileProto.dependsOn buildProtoLib
 
 jar {
     manifest {
@@ -70,5 +66,5 @@ jar {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "io.netty:netty-all:4.1.2.Final"
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile files ("../proto/compiler/build/protokot-runtime.jar")
 }

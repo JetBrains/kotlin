@@ -1,7 +1,6 @@
 package car.client
 
 import CodedInputStream
-import InvalidProtocolBufferException
 import LocationResponse
 import getLocationUrl
 import io.netty.channel.ChannelHandlerContext
@@ -9,8 +8,6 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
-import java.io.ByteArrayInputStream
-import java.util.*
 
 /**
  * Created by user on 7/8/16.
@@ -27,22 +24,18 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
         val environment = Environment.instance
         when (url) {
             getLocationUrl -> {
-                try {
-                    val response = LocationResponse.BuilderLocationResponse().build()
-                    response.mergeFrom(CodedInputStream(ByteArrayInputStream(contentBytes)))
+                val response = LocationResponse.BuilderLocationResponse(LocationResponse.LocationData.BuilderLocationData(0, 0, 0).build(), 0).build()
+                response.mergeFrom(CodedInputStream(contentBytes))
 
-                    if (response.code == 0) {
-                        val data = response.locationResponseData
-                        synchronized(environment, {
-                            val car = environment.map.get(carUid)
-                            if (car != null) {
-                                car.x = data.x
-                                car.y = data.y
-                            }
-                        })
-                    }
-                } catch (e: InvalidProtocolBufferException) {
-                    println("invalic proto format!")
+                if (response.code == 0) {
+                    val data = response.locationResponseData
+                    synchronized(environment, {
+                        val car = environment.map.get(carUid)
+                        if (car != null) {
+                            car.x = data.x
+                            car.y = data.y
+                        }
+                    })
                 }
             }
             else -> {
