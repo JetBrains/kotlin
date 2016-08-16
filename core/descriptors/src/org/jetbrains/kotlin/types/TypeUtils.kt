@@ -161,7 +161,7 @@ fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
 }
 
 fun KotlinType.asTypeProjection(): TypeProjection = TypeProjectionImpl(this)
-fun KotlinType.contains(predicate: (KotlinType) -> Boolean) = TypeUtils.contains(this, predicate)
+fun KotlinType.contains(predicate: (UnwrappedType) -> Boolean) = TypeUtils.contains(this, predicate)
 
 fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
     val unwrapped = unwrap()
