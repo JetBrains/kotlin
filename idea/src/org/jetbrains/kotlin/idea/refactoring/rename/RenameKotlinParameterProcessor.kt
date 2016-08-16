@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -84,7 +85,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
                 else -> null
             }
             if (parameter == null) continue
-            allRenames[parameter] = newName
+            allRenames[parameter] = newName.quoteIfNeeded()
         }
     }
 
