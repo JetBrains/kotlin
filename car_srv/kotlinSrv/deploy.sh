@@ -47,6 +47,7 @@ if {$host==""} {
     exit 1
 }
 
+set timeout 3
 
 spawn ./gradlew build
 expect eof
@@ -62,14 +63,15 @@ expect "password:"
 send "$password\r"
 
 expect "%"
-send "killall -9 node"
-
-expect "%"
+send "killall -9 node \r"
+expect " $"
 send "cd server \r"
-expect "%"
+expect " $"
+set timeout 120
 send "npm install \r"
-expect "%"
+expect " $"
 send "node main.js &\r"
-expect "%"
+expect " $"
+
 send "exit\r"
 expect eof
