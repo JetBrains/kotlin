@@ -204,7 +204,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val isExtension = selectorExpr is KtCallExpression && selectorExpr.getFunctionResolvedCallWithAssert(state.bindingContext).extensionReceiver != null
 
         if (isExtension) {
-            return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+            return evaluateExtensionExpression(receiverExpr, receiver, selectorExpr as KtCallExpression, scopeDepth)
         }
 
         if (receiver != null) {
@@ -213,15 +213,15 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
             when (receiver.type) {
                 is LLVMReferenceType -> return evaluateMemberMethodOrField(receiver, selectorExpr.text, scopeDepth, selectorExpr)
-                else -> return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+                else -> return evaluateExtensionExpression(receiverExpr, receiver, selectorExpr as KtCallExpression, scopeDepth)
             }
         }
 
-        val clazz = resolveCodegen(receiverExpr) ?: return evaluateExtensionExpression(receiverExpr, selectorExpr as KtCallExpression, scopeDepth)
+        val clazz = resolveCodegen(receiverExpr) ?: return evaluateExtensionExpression(receiverExpr, receiver, selectorExpr as KtCallExpression, scopeDepth)
         return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth, receiver)
     }
 
-    private fun evaluateExtensionExpression(receiver: KtExpression, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
+    private fun evaluateExtensionExpression(receiver: KtExpression, receiverExpressionArgument: LLVMVariable?, selector: KtCallExpression, scopeDepth: Int): LLVMSingleValue? {
         val receiverType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, receiver)
         val standardType = LLVMMapStandardType(receiverType!!.type!!, state)
 
@@ -229,7 +229,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val names = parseArgList(selector, scopeDepth)
         val type = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
         val extensionCodegen = state.extensionFunctions[standardType.toString()]?.get("$function$type") ?: throw UnexpectedException("$standardType:$function$type")
-        val receiverExpression = evaluateExpression(receiver, scopeDepth + 1)!!
+        val receiverExpression = receiverExpressionArgument ?: evaluateExpression(receiver, scopeDepth + 1)!!
 
         val typeThisArgument = when (standardType) {
             is LLVMReferenceType -> LLVMVariable("type", standardType, pointer = 1)
