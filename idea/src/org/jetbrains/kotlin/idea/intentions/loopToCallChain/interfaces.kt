@@ -222,14 +222,3 @@ class CommentSavingRangeHolder(range: PsiChildRange) {
     private fun PsiElement.siblingsBefore() = if (prevSibling != null) PsiChildRange(parent.firstChild, prevSibling) else PsiChildRange.EMPTY
 }
 
-class AsSequenceTransformation(override val loop: KtForExpression) : SequenceTransformation {
-    override val presentation: String
-        get() = "asSequence()"
-
-    override val affectsIndex: Boolean
-        get() = false
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return chainedCallGenerator.generate("asSequence()")
-    }
-}
