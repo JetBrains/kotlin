@@ -581,7 +581,11 @@ internal class DescriptorRendererImpl(
             renderAnnotations(function, builder)
             renderVisibility(function.visibility, builder)
             renderModalityForCallable(function, builder)
-            renderAdditionalModifiers(function, builder)
+
+            if (includeAdditionalModifiers) {
+                renderAdditionalModifiers(function, builder)
+            }
+
             renderOverride(function, builder)
             renderMemberKind(function, builder)
 
