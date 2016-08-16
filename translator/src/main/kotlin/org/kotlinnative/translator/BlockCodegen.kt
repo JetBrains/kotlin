@@ -294,7 +294,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     }
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
-        val arrayNameVariable = evaluateReferenceExpression(expr.arrayExpression as KtReferenceExpression, scope) as LLVMVariable
+        val arrayNameVariable = evaluateExpression(expr.arrayExpression, scope) as LLVMVariable
         return when (arrayNameVariable.type) {
             is LLVMReferenceType -> {
                 val callMaker = state.bindingContext.get(BindingContext.CALL, expr)
@@ -303,9 +303,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                     Call.CallType.ARRAY_GET_METHOD -> {
                         val arrayActionType = if (callMaker.callType == Call.CallType.ARRAY_SET_METHOD) "set" else "get"
                         val explicitReceiver = callMaker.explicitReceiver as ExpressionReceiver
-                        val expression = explicitReceiver.expression as KtReferenceExpression
-
-                        val receiver = evaluateReferenceExpression(expression, scope)!! as LLVMVariable
+                        val receiver = evaluateExpression(explicitReceiver.expression, scope)!! as LLVMVariable
                         val pureReceiver = downLoadArgument(receiver, 1)
 
                         val targetClassName = (receiver.type as LLVMReferenceType).type
