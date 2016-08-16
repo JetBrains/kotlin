@@ -886,6 +886,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("multipleResolvedCalls.kt")
+        public void testMultipleResolvedCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/multipleResolvedCalls.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/PropertiesWithBackingFields.kt");

@@ -160,7 +160,7 @@ private fun KtCodeFragment.markSmartCasts() {
     val factory = KtPsiFactory(project)
 
     getContentElement()?.forEachDescendantOfType<KtExpression> { expression ->
-        val smartCast = bindingContext.get(SMARTCAST, expression)
+        val smartCast = bindingContext.get(SMARTCAST, expression)?.defaultType
         if (smartCast != null) {
             val smartCastedExpression = factory.createExpressionByPattern(
                     "($0 as ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)})",

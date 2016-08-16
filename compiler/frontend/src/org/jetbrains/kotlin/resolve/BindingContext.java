@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
@@ -143,7 +144,7 @@ public interface BindingContext {
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_GET = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
 
-    WritableSlice<KtExpression, KotlinType> SMARTCAST = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ExplicitSmartCasts> SMARTCAST = new BasicWritableSlice<KtExpression, ExplicitSmartCasts>(DO_NOTHING);
     WritableSlice<KtExpression, Boolean> SMARTCAST_NULL = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ImplicitSmartCasts> IMPLICIT_RECEIVER_SMARTCAST = new BasicWritableSlice<KtExpression, ImplicitSmartCasts>(DO_NOTHING);
 

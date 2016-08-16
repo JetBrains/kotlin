@@ -17577,6 +17577,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("multipleResolvedCalls.kt")
+            public void testMultipleResolvedCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/multipleResolvedCalls.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noErrorCheckForPackageLevelVal.kt")
             public void testNoErrorCheckForPackageLevelVal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/noErrorCheckForPackageLevelVal.kt");

@@ -93,7 +93,7 @@ class AddFunctionParametersFix(
                             validator.addName(parameters[i].name.asString())
                             val argumentType = expression?.let {
                                 val bindingContext = it.analyze()
-                                bindingContext[BindingContext.SMARTCAST, it] ?: bindingContext.getType(it)
+                                bindingContext[BindingContext.SMARTCAST, it]?.defaultType ?: bindingContext.getType(it)
                             }
                             val parameterType = parameters[i].type
 

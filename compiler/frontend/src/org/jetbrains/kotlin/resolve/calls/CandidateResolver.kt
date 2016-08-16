@@ -377,7 +377,8 @@ class CandidateResolver(
                     val spreadElement = argument.getSpreadElement()
                     if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
                         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
-                        val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, expectedType, expression, context, calleeExpression = null, recordExpressionType = false)
+                        val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, expectedType, expression, context,
+                                                                                          call = null, recordExpressionType = false)
                         if (smartCastResult == null || !smartCastResult.isCorrect) {
                             context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement))
                         }
@@ -531,7 +532,7 @@ class CandidateResolver(
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, expectedReceiverParameterType,
                     { possibleSmartCast -> isCandidateVisibleOrExtensionReceiver(receiverArgument, possibleSmartCast, isDispatchReceiver) },
-                    expression, this, candidateCall.call.calleeExpression, recordExpressionType = true
+                    expression, this, candidateCall.call, recordExpressionType = true
             )
 
             if (smartCastResult == null) {

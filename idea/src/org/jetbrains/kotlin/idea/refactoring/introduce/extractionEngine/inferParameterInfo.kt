@@ -308,7 +308,7 @@ private fun suggestParameterType(
                }
 
                parameterExpression != null ->
-                   (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression] else null)
+                   (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression]?.defaultType else null)
                    ?: bindingContext.getType(parameterExpression)
                    ?: (parameterExpression as? KtReferenceExpression)?.let {
                        (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType

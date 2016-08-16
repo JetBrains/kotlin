@@ -297,7 +297,7 @@ object WhenChecker {
     }
 
     private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
-            expression.subjectExpression?.let { context.get(SMARTCAST, it) ?: context.getType(it) } ?: null
+            expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) } ?: null
 
     @JvmStatic
     fun getEnumMissingCases(
