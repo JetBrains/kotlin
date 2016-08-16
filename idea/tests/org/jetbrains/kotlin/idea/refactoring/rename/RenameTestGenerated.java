@@ -245,6 +245,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("parameterWithQuotation/parameterWithQuotation.test")
+    public void testParameterWithQuotation_ParameterWithQuotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterWithQuotation/parameterWithQuotation.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test")
     public void testPrimaryConstructorParameterRedeclaration_PrimaryConstructorParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test");
