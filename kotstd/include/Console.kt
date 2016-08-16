@@ -1,3 +1,6 @@
+import ByteArray
+import IntArray
+
 /*
 * Library for console interaction
 */
@@ -111,6 +114,11 @@ fun println(message: Double) {
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: String) {
     kotlinclib_println_string(message)
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun println(message: ByteArray) {
+    message.print()
 }
 
 /** Prints newline to the standard output stream. */

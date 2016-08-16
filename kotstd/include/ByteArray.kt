@@ -40,6 +40,16 @@ class ByteArray(var size: Int) {
 
 }
 
+fun ByteArray.print() {
+    println()
+    var index = 0
+    while (index < size) {
+        println(get(index))
+        index++
+    }
+    println()
+}
+
 fun ByteArray.copyOf(newSize: Int): ByteArray {
     val newInstance = ByteArray(newSize)
     var index = 0
