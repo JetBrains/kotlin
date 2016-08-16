@@ -83,6 +83,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun notifyRootsChanged() {
+        // TODO: it seems invokeLater leads to inconsistent behaviour (at least in tests)
         ApplicationManager.getApplication().invokeLater {
             runWriteAction { ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true) }
         }
