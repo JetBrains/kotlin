@@ -18,55 +18,74 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.createDefaultGetExpression
 import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 interface IrValue {
     fun load(): IrExpression
 }
 
-inline fun justExpressionValue(crossinline makeExpression: () -> IrExpression) =
+inline fun onDemandExpressionValue(crossinline makeExpression: () -> IrExpression) =
         object : IrValue {
             override fun load() = makeExpression()
         }
 
-interface IrReference : IrValue {
-    fun store(value: IrExpression): IrExpression
+class IrTemporaryVariableValue(val irVariable: IrVariable) : IrValue {
+    override fun load(): IrExpression =
+            irVariable.createDefaultGetExpression()
 }
 
-class IrVariableReferenceValue(
+class IrGenerateExpressionValue(val irStatementGenerator: IrStatementGenerator, val ktExpression: KtExpression) : IrValue {
+    override fun load(): IrExpression =
+            irStatementGenerator.generateExpression(ktExpression)
+}
+
+interface IrLValue : IrValue {
+    fun store(irExpression: IrExpression): IrExpression
+}
+
+interface IrLValueWithAugmentedStore : IrLValue {
+    fun augmentedStore(operatorCall: ResolvedCall<*>, irRhs: IrExpression): IrExpression
+}
+
+class IrVariableLValueValue(
         val ktElement: KtElement,
         val irOperator: IrOperator?,
         val descriptor: VariableDescriptor
-) : IrReference {
+) : IrLValue {
     override fun load(): IrExpression =
             IrGetVariableExpressionImpl(
                     ktElement.startOffset, ktElement.endOffset,
                     descriptor, irOperator
             )
 
-    override fun store(value: IrExpression): IrExpression =
+    override fun store(irExpression: IrExpression): IrExpression =
             IrSetVariableExpressionImpl(
                     ktElement.startOffset, ktElement.endOffset,
-                    descriptor, value.toExpectedType(descriptor.type), irOperator
+                    descriptor, irExpression.toExpectedType(descriptor.type), irOperator
             )
 }
 
-class IrPropertyReferenceValue(
+class IrPropertyLValueValue(
         val ktElement: KtElement,
         val irOperator: IrOperator?,
         val descriptor: PropertyDescriptor,
         val dispatchReceiver: IrExpression?,
         val extensionReceiver: IrExpression?,
         val isSafe: Boolean
-) : IrReference {
+) : IrLValue {
     private fun IrPropertyAccessExpression.setReceivers() =
             apply {
-                dispatchReceiver = this@IrPropertyReferenceValue.dispatchReceiver
-                extensionReceiver = this@IrPropertyReferenceValue.extensionReceiver
+                dispatchReceiver = this@IrPropertyLValueValue.dispatchReceiver
+                extensionReceiver = this@IrPropertyLValueValue.extensionReceiver
             }
 
     override fun load(): IrExpression =
@@ -75,9 +94,88 @@ class IrPropertyReferenceValue(
                     descriptor.type, isSafe, descriptor, irOperator
             ).setReceivers()
 
-    override fun store(value: IrExpression): IrExpression =
+    override fun store(irExpression: IrExpression): IrExpression =
             IrSetPropertyExpressionImpl(
                     ktElement.startOffset, ktElement.endOffset,
-                    isSafe, descriptor, value.toExpectedType(descriptor.type), irOperator
+                    isSafe, descriptor, irExpression.toExpectedType(descriptor.type), irOperator
             ).setReceivers()
+}
+
+class IrIndexedLValue(
+        var irStatementGenerator: IrStatementGenerator,
+        val ktArrayAccessExpression: KtArrayAccessExpression,
+        val irOperator: IrOperator?,
+        val arrayValue: IrValue,
+        val indexValues: List<Pair<KtExpression, IrValue>>,
+        val indexedGetCall: ResolvedCall<*>?,
+        val indexedSetCall: ResolvedCall<*>?
+) : IrLValueWithAugmentedStore {
+    override fun load(): IrExpression {
+        if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
+
+        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
+                                            indexedGetCall.resultingDescriptor.returnType,
+                                            hasResult = true, isDesugared = true)
+
+        val callGenerator = IrCallGenerator(irStatementGenerator)
+
+        defineContextVariables(irBlock, callGenerator)
+
+        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator))
+
+        return irBlock
+    }
+
+    override fun store(irExpression: IrExpression): IrExpression {
+        if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
+
+        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
+                                            indexedSetCall.resultingDescriptor.returnType,
+                                            hasResult = true, isDesugared = true)
+
+        val callGenerator = IrCallGenerator(irStatementGenerator)
+
+        defineContextVariables(irBlock, callGenerator)
+
+        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
+                               onDemandExpressionValue { irExpression })
+
+        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+
+        return irBlock
+    }
+
+    override fun augmentedStore(operatorCall: ResolvedCall<*>, irRhs: IrExpression): IrExpression {
+        if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
+        if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
+
+        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
+                                            indexedSetCall.resultingDescriptor.returnType,
+                                            hasResult = true, isDesugared = true)
+
+        val callGenerator = IrCallGenerator(irStatementGenerator)
+
+        defineContextVariables(irBlock, callGenerator)
+
+        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], onDemandExpressionValue { irRhs })
+
+        val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
+        callGenerator.putValue(operatorCallReceiver!!,
+                               onDemandExpressionValue { callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator) })
+
+        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
+                               onDemandExpressionValue { callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator) })
+
+        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+
+        return irBlock
+    }
+
+    private fun defineContextVariables(irBlock: IrBlockExpression, callGenerator: IrCallGenerator) {
+        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, arrayValue.load()))
+
+        for ((ktIndexExpression, irIndexValue) in indexValues) {
+            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue.load()))
+        }
+    }
 }

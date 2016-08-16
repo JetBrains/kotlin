@@ -48,7 +48,9 @@ class IrCallExpressionImpl(
             argumentsByParameterIndex[index]
 
     override fun putArgument(index: Int, valueArgument: IrExpression?) {
-        if (index >= argumentsByParameterIndex.size) throw AssertionError("$this: No such argument slot: $index")
+        if (index >= argumentsByParameterIndex.size) {
+            throw AssertionError("$this: No such argument slot: $index")
+        }
         valueArgument?.assertDetached()
         argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = valueArgument

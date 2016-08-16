@@ -1,0 +1,36 @@
+IrFile /augmentedAssignmentArray.kt
+  IrFunction public fun foo(): kotlin.IntArray
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          CALL .intArrayOf type=kotlin.IntArray operator=
+            elements: DUMMY vararg type=kotlin.Int
+  IrFunction public fun testVariable(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR var x: kotlin.IntArray
+          CALL .foo type=kotlin.IntArray operator=
+        VAR val tmp0: kotlin.IntArray
+          GET_VAR x type=kotlin.IntArray
+        VAR val tmp1: kotlin.Int
+          LITERAL Int type=kotlin.Int value='0'
+        CALL .set type=kotlin.Unit operator=PLUSEQ
+          $this: GET_VAR tmp0 type=kotlin.IntArray
+          index: GET_VAR tmp1 type=kotlin.Int
+          value: CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: CALL .get type=kotlin.Int operator=PLUSEQ
+              $this: GET_VAR tmp0 type=kotlin.IntArray
+              index: GET_VAR tmp1 type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='1'
+        VAR val tmp2: kotlin.IntArray
+          CALL .foo type=kotlin.IntArray operator=
+        VAR val tmp3: kotlin.Int
+          LITERAL Int type=kotlin.Int value='0'
+        CALL .set type=kotlin.Unit operator=MULTEQ
+          $this: GET_VAR tmp2 type=kotlin.IntArray
+          index: GET_VAR tmp3 type=kotlin.Int
+          value: CALL .times type=kotlin.Int operator=MULTEQ
+            $this: CALL .get type=kotlin.Int operator=MULTEQ
+              $this: GET_VAR tmp2 type=kotlin.IntArray
+              index: GET_VAR tmp3 type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='2'

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.implicitGetExpression
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -73,11 +72,11 @@ class IrStatementGenerator(
         val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null,
                                             hasResult = false, isDesugared = true)
         val ktInitializer = multiDeclaration.initializer!!
-        val irInitializerVal = declarationFactory.createTemporaryVariable(ktInitializer.genExpr())
-        irBlock.addStatement(irInitializerVal)
+        val irTmpInitializer = declarationFactory.createTemporaryVariable(ktInitializer.genExpr())
+        irBlock.addStatement(irTmpInitializer)
 
         val irCallGenerator = IrCallGenerator(this)
-        irCallGenerator.putValue(ktInitializer, justExpressionValue { irInitializerVal.implicitGetExpression() })
+        irCallGenerator.putValue(ktInitializer, IrTemporaryVariableValue(irTmpInitializer))
 
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)

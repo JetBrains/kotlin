@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -35,7 +36,13 @@ class IrCallGenerator(
 
     private val expressionValues = HashMap<KtExpression, IrValue>()
     private val receiverValues = HashMap<ReceiverValue, IrValue>()
-    private val valueArgumentValues = HashMap<ResolvedValueArgument, IrValue>()
+    private val valueArgumentValues = HashMap<ValueParameterDescriptor, IrValue>()
+
+    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression): IrVariable {
+        val irTmpVar = irStatementGenerator.declarationFactory.createTemporaryVariable(irExpression)
+        putValue(ktExpression, IrTemporaryVariableValue(irTmpVar))
+        return irTmpVar
+    }
 
     fun putValue(ktExpression: KtExpression, irValue: IrValue) {
         expressionValues[ktExpression] = irValue
@@ -45,7 +52,7 @@ class IrCallGenerator(
         receiverValues[receiver] = irValue
     }
 
-    fun putValue(valueArgument: ResolvedValueArgument, irValue: IrValue) {
+    fun putValue(valueArgument: ValueParameterDescriptor, irValue: IrValue) {
         valueArgumentValues[valueArgument] = irValue
     }
 
@@ -134,9 +141,15 @@ class IrCallGenerator(
                                             hasResult = isUsedAsExpression(ktExpression),
                                             isDesugared = true)
 
+        val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
+        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
+            val valueParameter = resolvedCall.resultingDescriptor.valueParameters[index]
+            valueArgumentsToValueParameters[valueArgument] = valueParameter
+        }
+
         val temporariesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
-            val irArgument = generateValueArgument(valueArgument) ?: continue
+            val irArgument = generateValueArgument(valueArgument, valueArgumentsToValueParameters[valueArgument]!!) ?: continue
             val irTemporary = irStatementGenerator.declarationFactory.createTemporaryVariable(irArgument)
             temporariesForValueArguments[valueArgument] = Pair(irTemporary.descriptor, irArgument)
             irBlock.addStatement(irTemporary)
@@ -187,17 +200,17 @@ class IrCallGenerator(
 
     fun generateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
             if (valueParameterDescriptor.varargElementType != null) {
-                generateValueArgument(valueArgument)
+                doGenerateValueArgument(valueArgument, valueParameterDescriptor)
             }
             else {
-                generateValueArgument(valueArgument)?.toExpectedType(valueParameterDescriptor.type)
+                doGenerateValueArgument(valueArgument, valueParameterDescriptor)?.toExpectedType(valueParameterDescriptor.type)
             }
 
-    fun generateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? =
+    private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
             if (valueArgument is DefaultValueArgument)
                 null
             else
-                valueArgumentValues[valueArgument]?.load() ?: doGenerateValueArgument(valueArgument)
+                valueArgumentValues[valueParameterDescriptor]?.load() ?: doGenerateValueArgument(valueArgument)
 
 
     private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? =
@@ -205,7 +218,7 @@ class IrCallGenerator(
                 is ExpressionValueArgument ->
                     generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
                 is VarargValueArgument ->
-                    TODO("vararg")
+                    createDummyExpression(valueArgument.arguments[0].getArgumentExpression()!!, "vararg")
                 else ->
                     TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
             }

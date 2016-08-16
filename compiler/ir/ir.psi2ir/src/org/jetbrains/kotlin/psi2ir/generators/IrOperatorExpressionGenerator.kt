@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
 
 val KT_OPERATOR_TO_IR_OPERATOR = hashMapOf(
         KtTokens.PLUSEQ to IrOperator.PLUSEQ,
@@ -54,18 +53,22 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         val ktLeft = expression.left!!
 
         val irOperator = getIrOperator(ktOperator)
-        val lhs = generateReferenceForAssignmentLhs(ktLeft, irOperator)
+        val irLhs = generateLValue(ktLeft, irOperator)
 
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
 
         val operatorCall = getResolvedCall(expression)!!
 
-        val opCallGenerator = IrCallGenerator(irStatementGenerator).apply { putValue(ktLeft, lhs) }
+        if (isSimpleAssignment && irLhs is IrLValueWithAugmentedStore) {
+            return irLhs.augmentedStore(operatorCall, irStatementGenerator.generateExpression(expression.right!!))
+        }
+
+        val opCallGenerator = IrCallGenerator(irStatementGenerator).apply { putValue(ktLeft, irLhs) }
         val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
 
         return if (isSimpleAssignment) {
             // Set( Op( Get(), RHS ) )
-            lhs.store(irOpCall)
+            irLhs.store(irOpCall)
         }
         else {
             // Op( Get(), RHS )
@@ -80,11 +83,22 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
     private fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
         val ktRight = expression.right!!
-        val lhsReference = generateReferenceForAssignmentLhs(ktLeft, IrOperator.EQ)
+        val lhsReference = generateLValue(ktLeft, IrOperator.EQ)
         return lhsReference.store(irStatementGenerator.generateExpression(ktRight))
     }
 
-    private fun generateReferenceForAssignmentLhs(ktLeft: KtExpression, irOperator: IrOperator?): IrReference {
+    private fun generateLValue(ktLeft: KtExpression, irOperator: IrOperator?): IrLValue {
+        if (ktLeft is KtArrayAccessExpression) {
+            val irArrayValue = IrGenerateExpressionValue(irStatementGenerator, ktLeft.arrayExpression!!)
+            val indexExpressions = ktLeft.indexExpressions.map {
+                it to IrGenerateExpressionValue(irStatementGenerator, it)
+            }
+            val indexedGetCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
+            val indexedSetCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
+            return IrIndexedLValue(irStatementGenerator, ktLeft, irOperator,
+                                   irArrayValue, indexExpressions, indexedGetCall, indexedSetCall)
+        }
+
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
         val descriptor = resolvedCall.candidateDescriptor
 
@@ -93,10 +107,10 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
                 if (descriptor.isDelegated)
                     TODO("Delegated local variable")
                 else
-                    IrVariableReferenceValue(ktLeft, irOperator, descriptor)
+                    IrVariableLValueValue(ktLeft, irOperator, descriptor)
             is PropertyDescriptor ->
                 IrCallGenerator(irStatementGenerator).run {
-                    IrPropertyReferenceValue(
+                    IrPropertyLValueValue(
                             ktLeft, irOperator, descriptor,
                             generateReceiver(ktLeft, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter),
                             generateReceiver(ktLeft, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter),
@@ -107,5 +121,4 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
                 TODO("Other cases of LHS")
         }
     }
-
 }

@@ -1,0 +1,15 @@
+IrFile /arrayAssignment.kt
+  IrFunction public fun test(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR val x: kotlin.IntArray
+          CALL .intArrayOf type=kotlin.IntArray operator=
+            elements: DUMMY vararg type=kotlin.Int
+        VAR val tmp0: kotlin.IntArray
+          GET_VAR x type=kotlin.IntArray
+        VAR val tmp1: kotlin.Int
+          LITERAL Int type=kotlin.Int value='1'
+        CALL .set type=kotlin.Unit operator=EQ
+          $this: GET_VAR tmp0 type=kotlin.IntArray
+          index: GET_VAR tmp1 type=kotlin.Int
+          value: LITERAL Int type=kotlin.Int value='0'

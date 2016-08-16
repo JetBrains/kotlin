@@ -1,8 +1,58 @@
-IrFunction public fun test(): kotlin.Unit
-  IrExpressionBody
-    BLOCK type=<no-type> hasResult=false isDesugared=false
-      VAR val a: A
-        CALL .<init> type=A operator=
-      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-        $receiver: GET_VAR a type=A
-        s: ? IrStringConcatenationExpressionImpl type=kotlin.String
+IrFile /augmentedAssignment2.kt
+  DUMMY A
+  IrFunction public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public operator fun A.minusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public operator fun A.timesAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public operator fun A.divAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrFunction public operator fun A.modAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+  IrProperty public val p: A getter=null setter=null
+    IrExpressionBody
+      CALL .<init> type=A operator=
+  IrFunction public fun testVariable(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR val a: A
+          CALL .<init> type=A operator=
+        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+          $receiver: GET_VAR a type=A
+          s: LITERAL String type=kotlin.String value='+='
+        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
+          $receiver: GET_VAR a type=A
+          s: LITERAL String type=kotlin.String value='-='
+        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
+          $receiver: GET_VAR a type=A
+          s: LITERAL String type=kotlin.String value='*='
+        CALL .divAssign type=kotlin.Unit operator=DIVEQ
+          $receiver: GET_VAR a type=A
+          s: LITERAL String type=kotlin.String value='/='
+        CALL .modAssign type=kotlin.Unit operator=PERCEQ
+          $receiver: GET_VAR a type=A
+          s: LITERAL String type=kotlin.String value='*='
+  IrFunction public fun testProperty(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+          $receiver: GET_PROPERTY .p type=A
+          s: LITERAL String type=kotlin.String value='+='
+        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
+          $receiver: GET_PROPERTY .p type=A
+          s: LITERAL String type=kotlin.String value='-='
+        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
+          $receiver: GET_PROPERTY .p type=A
+          s: LITERAL String type=kotlin.String value='*='
+        CALL .divAssign type=kotlin.Unit operator=DIVEQ
+          $receiver: GET_PROPERTY .p type=A
+          s: LITERAL String type=kotlin.String value='/='
+        CALL .modAssign type=kotlin.Unit operator=PERCEQ
+          $receiver: GET_PROPERTY .p type=A
+          s: LITERAL String type=kotlin.String value='*='

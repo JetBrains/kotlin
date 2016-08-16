@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.KotlinType
 
+fun IrElement.render() = accept(RenderIrElementVisitor(), null)
+
 class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitElement(element: IrElement, data: Nothing?): String =
             "? ${element.javaClass.simpleName}"

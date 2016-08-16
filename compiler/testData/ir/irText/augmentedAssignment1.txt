@@ -1,12 +1,52 @@
 IrFile /augmentedAssignment1.kt
-  IrFunction public fun test(): kotlin.Int
+  IrProperty public var p: kotlin.Int getter=null setter=null
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
+      LITERAL Int type=kotlin.Int value='0'
+  IrFunction public fun testVariable(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=kotlin.Int hasResult=true isDesugared=false
         VAR var x: kotlin.Int
           LITERAL Int type=kotlin.Int value='0'
         SET_VAR x type=<no-type>
           CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: GET_VAR x type=kotlin.Int
-            other: LITERAL Int type=kotlin.Int value='10'
-        RETURN type=<no-type>
-          GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='1'
+        SET_VAR x type=<no-type>
+          CALL .minus type=kotlin.Int operator=MINUSEQ
+            $this: GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='2'
+        SET_VAR x type=<no-type>
+          CALL .times type=kotlin.Int operator=MULTEQ
+            $this: GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='3'
+        SET_VAR x type=<no-type>
+          CALL .div type=kotlin.Int operator=DIVEQ
+            $this: GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='4'
+        SET_VAR x type=<no-type>
+          CALL .mod type=kotlin.Int operator=PERCEQ
+            $this: GET_VAR x type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='5'
+  IrFunction public fun testProperty(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=kotlin.Int hasResult=true isDesugared=false
+        SET_PROPERTY .ptype=<no-type>
+          $value: CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: GET_PROPERTY .p type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='1'
+        SET_PROPERTY .ptype=<no-type>
+          $value: CALL .minus type=kotlin.Int operator=MINUSEQ
+            $this: GET_PROPERTY .p type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='2'
+        SET_PROPERTY .ptype=<no-type>
+          $value: CALL .times type=kotlin.Int operator=MULTEQ
+            $this: GET_PROPERTY .p type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='3'
+        SET_PROPERTY .ptype=<no-type>
+          $value: CALL .div type=kotlin.Int operator=DIVEQ
+            $this: GET_PROPERTY .p type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='4'
+        SET_PROPERTY .ptype=<no-type>
+          $value: CALL .mod type=kotlin.Int operator=PERCEQ
+            $this: GET_PROPERTY .p type=kotlin.Int
+            other: LITERAL Int type=kotlin.Int value='5'
