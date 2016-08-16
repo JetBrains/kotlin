@@ -1,13 +1,3 @@
-fun IntArray.print() {
-    var index = 0
-    while (index < size) {
-        println(get(index))
-        index++
-    }
-    println(1111111)
-}
-
-
 fun array_extensions_1_copyOf(): Int {
     val array = IntArray(3)
     array[0] = 1
