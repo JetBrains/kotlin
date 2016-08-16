@@ -118,7 +118,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val receiveValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)
         val type = (receiveValue as TypedCompileTimeConstant).type
         val value = receiveValue.getValue(type) ?: return null
-        val variable = variableManager.receiveVariable(".str", LLVMStringType(value.toString().length), LLVMVariableScope(), pointer = 0)
+        val variable = variableManager.receiveVariable(".str", LLVMStringType(value.toString().length, isLoaded = false), LLVMVariableScope(), pointer = 0)
 
         codeBuilder.addStringConstant(variable, value.toString())
         return variable
@@ -510,6 +510,17 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         while (argument.pointer < result.pointer) {
             result = codeBuilder.getNewVariable(argument.type, pointer = result.pointer - 1)
             codeBuilder.loadVariable(result, value as LLVMVariable)
+        }
+
+        when (value.type) {
+            is LLVMStringType -> if (!(value.type as LLVMStringType).isLoaded) {
+                val newVariable = codeBuilder.getNewVariable(value.type!!, pointer = result.pointer + 1)
+                codeBuilder.allocStackPointedVarAsValue(newVariable)
+                codeBuilder.copyVariable(result as LLVMVariable, newVariable)
+
+                result = codeBuilder.getNewVariable(argument.type, pointer = newVariable.pointer - 1)
+                codeBuilder.loadVariable(result, newVariable as LLVMVariable)
+            }
         }
 
         return result

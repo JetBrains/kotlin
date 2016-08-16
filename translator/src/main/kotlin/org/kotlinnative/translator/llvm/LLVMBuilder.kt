@@ -93,6 +93,7 @@ class LLVMBuilder(val arm: Boolean = false) {
         val stringType = source.type as LLVMStringType
         val code = "store ${target.type} getelementptr inbounds (" +
                 "${stringType.fullType()}* $source, i32 0, i32 $offset), ${target.getType()} $target, align ${stringType.align}"
+        (target.type as LLVMStringType).isLoaded = true
         localCode.appendln(code)
     }
 
@@ -139,7 +140,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     }
 
     fun copyVariable(from: LLVMVariable, to: LLVMVariable) = when (from.type) {
-        is LLVMStringType -> storeString(to, from, 0)
+        is LLVMStringType -> if ((from.type as LLVMStringType).isLoaded) copyVariableValue(to, from) else storeString(to, from, 0)
         else -> copyVariableValue(to, from)
     }
 
