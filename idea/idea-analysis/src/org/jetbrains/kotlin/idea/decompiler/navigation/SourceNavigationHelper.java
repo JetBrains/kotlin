@@ -47,10 +47,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
 import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.frontend.di.InjectionKt;
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex;
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex;
+import org.jetbrains.kotlin.idea.stubindex.*;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.ClassId;
@@ -157,7 +154,7 @@ public class SourceNavigationHelper {
     ) {
         if (declaration instanceof KtPrimaryConstructor) {
             KtClassOrObject sourceClassOrObject =
-                    convertNamedClassOrObject(((KtPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
+                    findClassOrObject(((KtPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
             KtPrimaryConstructor primaryConstructor = sourceClassOrObject != null ? sourceClassOrObject.getPrimaryConstructor() : null;
             return primaryConstructor != null ? primaryConstructor : sourceClassOrObject;
         }
@@ -177,7 +174,7 @@ public class SourceNavigationHelper {
         }
         else if (decompiledContainer instanceof KtClassBody) {
             KtClassOrObject decompiledClassOrObject = (KtClassOrObject) decompiledContainer.getParent();
-            KtClassOrObject sourceClassOrObject = convertNamedClassOrObject(decompiledClassOrObject, navigationKind);
+            KtClassOrObject sourceClassOrObject = findClassOrObject(decompiledClassOrObject, navigationKind);
 
             //noinspection unchecked
             candidates = sourceClassOrObject == null
@@ -224,8 +221,8 @@ public class SourceNavigationHelper {
             //noinspection unchecked
             CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
             if (receiversMatch(declaration, candidateDescriptor)
-                    && valueParametersTypesMatch(declaration, candidateDescriptor)
-                    && typeParametersMatch((KtTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
+                && valueParametersTypesMatch(declaration, candidateDescriptor)
+                && typeParametersMatch((KtTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
         }
@@ -271,23 +268,31 @@ public class SourceNavigationHelper {
     }
 
     @Nullable
-    private static KtClassOrObject convertNamedClassOrObject(
-            @NotNull KtClassOrObject classOrObject,
-            @NotNull NavigationKind navigationKind
+    private static <T extends KtNamedDeclaration> T findFirstMatchingInIndex(
+            @NotNull T entity,
+            @NotNull NavigationKind navigationKind,
+            @NotNull StringStubIndexExtension<T> index
     ) {
-        FqName classFqName = classOrObject.getFqName();
+        FqName classFqName = entity.getFqName();
         assert classFqName != null;
 
-        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(classOrObject, navigationKind);
+        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(entity, navigationKind);
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return null;
         }
-        Collection<KtClassOrObject> classes = KotlinFullClassNameIndex.getInstance()
-                .get(classFqName.asString(), classOrObject.getProject(), librarySourcesScope);
+        Collection<T> classes = index.get(classFqName.asString(), entity.getProject(), librarySourcesScope);
         if (classes.isEmpty()) {
             return null;
         }
-        return classes.iterator().next(); // if there are more than one class with this FQ, find first of them
+        return classes.iterator().next(); // if there are more than one with this FQ, find first of them
+    }
+
+    @Nullable
+    private static KtClassOrObject findClassOrObject(
+            @NotNull KtClassOrObject decompiledClassOrObject,
+            @NotNull NavigationKind navigationKind
+    ) {
+        return findFirstMatchingInIndex(decompiledClassOrObject, navigationKind, KotlinFullClassNameIndex.getInstance());
     }
 
     @NotNull
@@ -439,7 +444,8 @@ public class SourceNavigationHelper {
     @NotNull
     public static KtDeclaration navigateToDeclaration(
             @NotNull KtDeclaration from,
-            @NotNull NavigationKind navigationKind) {
+            @NotNull NavigationKind navigationKind
+    ) {
         if (DumbService.isDumb(from.getProject())) return from;
 
         switch (navigationKind) {
@@ -476,12 +482,17 @@ public class SourceNavigationHelper {
 
         @Override
         public KtDeclaration visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, Void data) {
-            return convertNamedClassOrObject(declaration, navigationKind);
+            return findClassOrObject(declaration, navigationKind);
         }
 
         @Override
         public KtDeclaration visitClass(@NotNull KtClass klass, Void data) {
-            return convertNamedClassOrObject(klass, navigationKind);
+            return findClassOrObject(klass, navigationKind);
+        }
+
+        @Override
+        public KtDeclaration visitTypeAlias(@NotNull KtTypeAlias typeAlias, Void data) {
+            return findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance());
         }
 
         @Override

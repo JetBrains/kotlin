@@ -115,6 +115,12 @@ public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibr
             doTest(fileName);
         }
 
+        @TestMetadata("TypeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeWithSameShortName.kt")
         public void testTypeWithSameShortName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
@@ -205,6 +211,12 @@ public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibr
         @TestMetadata("SameNameInDifferentSources.kt")
         public void testSameNameInDifferentSources() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/SameNameInDifferentSources.kt");
+            doWithJSModuleTest(fileName);
+        }
+
+        @TestMetadata("TypeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeAlias.kt");
             doWithJSModuleTest(fileName);
         }
 

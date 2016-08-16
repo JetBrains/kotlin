@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -84,20 +81,23 @@ private fun findCandidateDeclarationsInIndex(
     }
 
     val topLevelDeclaration = DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false)
-                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false) ?: return emptyList()
+                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
+                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasDescriptor::class.java, false)
+                              ?: return emptyList()
 
     // filter out synthetic descriptors
     if (!DescriptorUtils.isTopLevelDeclaration(topLevelDeclaration)) return emptyList()
 
     val fqName = topLevelDeclaration.fqNameSafe.asString()
     return when (topLevelDeclaration) {
-        is FunctionDescriptor -> {
-            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName, project, scope)
-        }
-        is PropertyDescriptor -> {
-            KotlinTopLevelPropertyFqnNameIndex.getInstance().get(fqName, project, scope)
-        }
-        else -> error("Referenced non local declaration that is not inside top level function, property of class:\n $referencedDescriptor")
+
+        is FunctionDescriptor -> KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName, project, scope)
+
+        is PropertyDescriptor -> KotlinTopLevelPropertyFqnNameIndex.getInstance().get(fqName, project, scope)
+
+        is TypeAliasDescriptor -> KotlinTopLevelTypeAliasFqNameIndex.getInstance().get(fqName, project, scope)
+
+        else -> error("Referenced non local declaration that is not inside top level function, property, class or typealias:\n $referencedDescriptor")
     }
 }
 

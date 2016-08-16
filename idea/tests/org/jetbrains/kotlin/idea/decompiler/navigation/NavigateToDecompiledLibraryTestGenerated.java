@@ -113,6 +113,12 @@ public class NavigateToDecompiledLibraryTestGenerated extends AbstractNavigateTo
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeAlias.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeWithSameShortName.kt")
     public void testTypeWithSameShortName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
