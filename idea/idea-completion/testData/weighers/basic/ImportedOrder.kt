@@ -1,5 +1,6 @@
 import ppp1.*
 import ppp3.MyClass6
+import ppp1.MyClass7 as AnotherClass7
 
 val v = My<caret>
 
@@ -22,3 +23,6 @@ val v = My<caret>
 
 /* not imported */
 // ORDER: MyClass4
+
+/* not imported */
+// ORDER: MyClass7
