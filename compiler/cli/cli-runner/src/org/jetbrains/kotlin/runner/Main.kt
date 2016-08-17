@@ -37,6 +37,7 @@ object Main {
         var runner: Runner? = null
         var collectingArguments = false
         val arguments = arrayListOf<String>()
+        var noReflect = false
 
         classpath.add(".")
 
@@ -69,6 +70,9 @@ object Main {
                 runner = ExpressionRunner(next())
                 collectingArguments = true
             }
+            else if ("-no-reflect" == arg) {
+                noReflect = true
+            }
             else if (arg.startsWith("-")) {
                 throw RunnerException("unsupported argument: $arg")
             }
@@ -89,8 +93,9 @@ object Main {
 
         classpath.add(KOTLIN_HOME.toString() + "/lib/kotlin-runtime.jar")
 
-        // TODO: provide a way to disable including kotlin-reflect.jar to the classpath
-        classpath.add(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
+        if (!noReflect) {
+            classpath.add(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
+        }
 
         if (runner == null) {
             runner = ReplRunner()
@@ -99,7 +104,8 @@ object Main {
         runner.run(classpath, arguments)
     }
 
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         try {
             run(args)
         }
@@ -124,6 +130,7 @@ where command may be one of:
   -classpath (-cp) <path>    Paths where to find user class files
   -Dname=value               Set a system JVM property
   -J<option>                 Pass an option directly to JVM
+  -no-reflect                Don't include Kotlin reflection implementation into classpath
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options
 """)

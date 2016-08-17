@@ -47,7 +47,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             assertEquals(expectedStderr, stderr)
             assertEquals(expectedExitCode.code, exitCode)
         }
-        catch (e: Exception) {
+        catch (e: Throwable) {
             System.err.println("exit code $exitCode")
             System.err.println("<stdout>$stdout</stdout>")
             System.err.println("<stderr>$stderr</stderr>")
@@ -80,6 +80,22 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
                 "$testDataDirectory/emptyMain.kt",
                 "-no-stdlib",
                 "-output", File(tmpdir, "out.js").path
+        )
+    }
+
+    fun testKotlinNoReflect() {
+        runProcess(
+                "kotlinc",
+                "$testDataDirectory/reflectionUsage.kt",
+                "-d", tmpdir.path
+        )
+
+        runProcess(
+                "kotlin",
+                "-cp", tmpdir.path,
+                "-no-reflect",
+                "ReflectionUsageKt",
+                expectedStdout = "no reflection"
         )
     }
 }
