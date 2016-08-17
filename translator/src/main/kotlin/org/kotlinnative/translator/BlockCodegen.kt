@@ -816,6 +816,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)
             }
             KtTokens.EQ -> {
+                codeBuilder.addComment("start variable assignment")
                 if (secondOp.type is LLVMNullType) {
                     val result = codeBuilder.getNewVariable(firstOp.type!!, firstOp.pointer)
                     codeBuilder.allocStaticVar(result)
@@ -828,6 +829,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 val result = firstOp as LLVMVariable
                 val sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
                 codeBuilder.storeVariable(result, sourceArgument)
+                codeBuilder.addComment("end variable assignment")
                 return result
             }
             else -> addPrimitiveReferenceOperation(referenceName!!, firstOp, secondNativeOp)
@@ -1059,13 +1061,20 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateReturnInstruction(element: PsiElement, scopeDepth: Int): LLVMVariable? {
         val next = element.getNextSiblingIgnoringWhitespaceAndComments()
-        val retVar = evaluateExpression(next, scopeDepth)
+        var retVar = evaluateExpression(next, scopeDepth)
         val type = retVar?.type ?: LLVMVoidType()
 
         when (type) {
             is LLVMReferenceType -> genReferenceReturn(retVar!!)
-            is LLVMVoidType,
             is LLVMNullType -> {
+                retVar = when (retVar) {
+                    is LLVMConstant -> LLVMConstant(retVar.value, LLVMNullType(returnType!!.type), returnType!!.pointer - 1)
+                    is LLVMVariable -> LLVMVariable(retVar.label, LLVMNullType(returnType!!.type), retVar.kotlinName, retVar.scope, returnType!!.pointer - 1)
+                    else -> throw IllegalStateException()
+                }
+                genReferenceReturn(retVar)
+            }
+            is LLVMVoidType -> {
                 codeBuilder.addAnyReturn(LLVMVoidType())
             }
             else -> {

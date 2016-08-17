@@ -16,7 +16,10 @@ class LLVMNullType(var basetype: LLVMType? = null) : LLVMReferred, LLVMType() {
         return other is LLVMNullType
     }
 
+    override fun parseArg(inputArg: String) = "null"
+
     override fun hashCode() =
             "null".hashCode()
 
+    override fun toString() = basetype?.toString() ?: ""
 }
