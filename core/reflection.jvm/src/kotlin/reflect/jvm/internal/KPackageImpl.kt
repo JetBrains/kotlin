@@ -16,10 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -31,27 +28,33 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import kotlin.reflect.KCallable
 
 internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
-    private val descriptor = ReflectProperties.lazySoft {
-        with(moduleData) {
-            packageFacadeProvider.registerModule(moduleName)
-            module.getPackage(jClass.classId.packageFqName)
+    private inner class Data : KDeclarationContainerImpl.Data() {
+        val descriptor: PackageViewDescriptor by ReflectProperties.lazySoft {
+            with(moduleData) {
+                packageFacadeProvider.registerModule(moduleName)
+                module.getPackage(jClass.classId.packageFqName)
+            }
+        }
+
+        val methodOwner: Class<*> by ReflectProperties.lazy {
+            val facadeName = ReflectKotlinClass.create(jClass)?.classHeader?.multifileClassName
+            // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
+            // The default value for 'xs' is empty string, as declared in kotlin.Metadata
+            // TODO: do not read ReflectKotlinClass multiple times, obtain facade name from descriptor
+            if (facadeName != null && facadeName.isNotEmpty()) {
+                jClass.classLoader.loadClass(facadeName.replace('/', '.'))
+            }
+            else {
+                jClass
+            }
         }
     }
 
-    override val methodOwner: Class<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val facadeName = ReflectKotlinClass.create(jClass)?.classHeader?.multifileClassName
-        // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
-        // The default value for 'xs' is empty string, as declared in kotlin.Metadata
-        // TODO: do not read ReflectKotlinClass multiple times, obtain facade name from descriptor
-        if (facadeName != null && facadeName.isNotEmpty()) {
-            jClass.classLoader.loadClass(facadeName.replace('/', '.'))
-        }
-        else {
-            jClass
-        }
-    }
+    private val data = ReflectProperties.lazy { Data() }
 
-    internal val scope: MemberScope get() = descriptor().memberScope
+    override val methodOwner: Class<*> get() = data().methodOwner
+
+    private val scope: MemberScope get() = data().descriptor.memberScope
 
     override val members: Collection<KCallable<*>>
         get() = getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = true).filter { member ->

@@ -31,13 +31,12 @@ import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
-    // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
-    private val moduleData_ = ReflectProperties.lazySoft {
-        jClass.getOrCreateModule()
+    protected abstract inner class Data {
+        // This is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
+        val moduleData: RuntimeModuleData by ReflectProperties.lazySoft {
+            jClass.getOrCreateModule()
+        }
     }
-
-    val moduleData: RuntimeModuleData
-        get() = moduleData_()
 
     protected open val methodOwner: Class<*>
         get() = jClass

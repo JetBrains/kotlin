@@ -35,18 +35,36 @@ import kotlin.reflect.*
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KAnnotatedElementImpl {
-    private val descriptor_ = ReflectProperties.lazySoft {
-        val classId = classId
+    private inner class Data : KDeclarationContainerImpl.Data() {
+        val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
+            val classId = classId
+            val moduleData = data().moduleData
 
-        val descriptor =
-                if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
-                else moduleData.module.findClassAcrossModuleDependencies(classId)
+            val descriptor =
+                    if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
+                    else moduleData.module.findClassAcrossModuleDependencies(classId)
 
-        descriptor ?: reportUnresolvedClass()
+            descriptor ?: reportUnresolvedClass()
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val objectInstance: T? by ReflectProperties.lazy {
+            val descriptor = descriptor
+            if (descriptor.kind != ClassKind.OBJECT) return@lazy null
+
+            val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
+                jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
+            }
+            else {
+                jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
+            }
+            field.get(null) as T
+        }
     }
 
-    override val descriptor: ClassDescriptor
-        get() = descriptor_()
+    private val data = ReflectProperties.lazy { Data() }
+
+    override val descriptor: ClassDescriptor get() = data().descriptor
 
     override val annotated: Annotated get() = descriptor
 
@@ -70,7 +88,6 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             return emptyList()
         }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
             (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +
              staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION))
@@ -123,22 +140,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             jClass?.let { KClassImpl(it) }
         }
 
-    @Suppress("UNCHECKED_CAST")
-    private val objectInstance_ = ReflectProperties.lazy {
-        val descriptor = descriptor
-        if (descriptor.kind != ClassKind.OBJECT) return@lazy null
-
-        val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
-            jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
-        }
-        else {
-            jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
-        }
-        field.get(null) as T
-    }
-
-    override val objectInstance: T?
-        get() = objectInstance_()
+    override val objectInstance: T? get() = data().objectInstance
 
     override fun isInstance(value: Any?): Boolean {
         // TODO: use Kotlin semantics for mutable/read-only collections once KT-11754 is supported (see TypeIntrinsics)
