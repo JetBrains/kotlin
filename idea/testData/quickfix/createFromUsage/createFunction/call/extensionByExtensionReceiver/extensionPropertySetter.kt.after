@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized
 class A(val n: Int)
 
-var A.foo: Boolean<caret>
+private var A.foo: Boolean
 
 class B {
     var A.test: Boolean

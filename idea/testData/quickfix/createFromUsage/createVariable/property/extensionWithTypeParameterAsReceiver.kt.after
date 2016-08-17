@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized
 fun consume(n: Int) {}
 
-val <T> T.bar: Int
+private val <T> T.bar: Int
 
 fun <T> foo(t: T) {
     consume(t.bar)
