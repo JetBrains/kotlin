@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrOperatorExpression : IrExpression {
     val operator: IrOperator
-    val relatedDescriptor: FunctionDescriptor?
+    val relatedDescriptor: CallableDescriptor?
 }
 
 interface IrUnaryOperatorExpression : IrOperatorExpression {
@@ -40,14 +40,14 @@ class IrUnaryOperatorExpressionImpl(
         endOffset: Int,
         type: KotlinType?,
         override val operator: IrOperator,
-        override val relatedDescriptor: FunctionDescriptor?
+        override val relatedDescriptor: CallableDescriptor?
 ) : IrExpressionBase(startOffset, endOffset, type), IrUnaryOperatorExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType?,
             operator: IrOperator,
-            relatedDescriptor: FunctionDescriptor?,
+            relatedDescriptor: CallableDescriptor?,
             argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
         this.argument = argument
@@ -90,14 +90,14 @@ class IrBinaryOperatorExpressionImpl(
         endOffset: Int,
         type: KotlinType?,
         override val operator: IrOperator,
-        override val relatedDescriptor: FunctionDescriptor?
+        override val relatedDescriptor: CallableDescriptor?
 ) : IrExpressionBase(startOffset, endOffset, type), IrBinaryOperatorExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType?,
             operator: IrOperator,
-            relatedDescriptor: FunctionDescriptor?,
+            relatedDescriptor: CallableDescriptor?,
             argument0: IrExpression,
             argument1: IrExpression
     ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
@@ -144,7 +144,7 @@ class IrBinaryOperatorExpressionImpl(
             visitor.visitBinaryOperator(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument0.acceptChildren(visitor, data)
-        argument1.acceptChildren(visitor, data)
+        argument0.accept(visitor, data)
+        argument1.accept(visitor, data)
     }
 }

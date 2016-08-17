@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-sealed class IrOperator(val debugName: String) {
+abstract class IrOperator(val debugName: String) {
     override fun toString(): String = debugName
 
     object INVOKE : IrOperator("INVOKE")
@@ -28,16 +28,17 @@ sealed class IrOperator(val debugName: String) {
     object EXCL : IrOperator("EXCL")
     object EXCLEXCL : IrOperator("EXCLEXCL")
     object ELVIS : IrOperator("ELVIS")
-    
+
     object LT : IrOperator("LT")
     object GT : IrOperator("GT")
     object LTEQ : IrOperator("LTEQ")
     object GTEQ : IrOperator("GTEQ")
-    
+
     object EQEQ : IrOperator("EQEQ")
     object EQEQEQ : IrOperator("EQEQEQ")
     object EXCLEQ : IrOperator("EXCLEQ")
     object EXCLEQEQ : IrOperator("EXCLEQEQ")
+
     object IN : IrOperator("IN")
     object NOT_IN : IrOperator("NOT_IN")
     object ANDAND : IrOperator("ANDAND")

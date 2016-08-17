@@ -157,9 +157,7 @@ class IrStatementGenerator(
         }
 
         val irStringTemplate = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression))
-        entries.forEach { it.expression!!.let {
-            irStringTemplate.addArgument(TODO())
-        } }
+        entries.forEach { it.expression!!.let { irStringTemplate.addArgument(it.genExpr()) } }
         return irStringTemplate
     }
 

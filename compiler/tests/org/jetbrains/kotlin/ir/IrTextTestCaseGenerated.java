@@ -89,6 +89,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("conventionComparisons.kt")
+    public void testConventionComparisons() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/conventionComparisons.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("destructuring1.kt")
     public void testDestructuring1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/destructuring1.kt");
@@ -104,6 +110,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
     @TestMetadata("extensionPropertyGetterCall.kt")
     public void testExtensionPropertyGetterCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/extensionPropertyGetterCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("primitiveComparisons.kt")
+    public void testPrimitiveComparisons() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/primitiveComparisons.kt");
         doTest(fileName);
     }
 

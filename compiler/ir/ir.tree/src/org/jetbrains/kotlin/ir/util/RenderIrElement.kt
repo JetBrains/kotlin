@@ -99,6 +99,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
             "type=${expression.renderType()}"
 
+    override fun visitUnaryOperator(expression: IrUnaryOperatorExpression, data: Nothing?): String =
+            "UNARY_OP operator=${expression.operator} " +
+            "type=${expression.renderType()} " +
+            "related=${expression.relatedDescriptor?.render()}"
+
+    override fun visitBinaryOperator(expression: IrBinaryOperatorExpression, data: Nothing?): String =
+            "BINARY_OP operator=${expression.operator} " +
+            "type=${expression.renderType()} " +
+            "related=${expression.relatedDescriptor?.render()}"
+
     override fun visitStringConcatenation(expression: IrStringConcatenationExpression, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.renderType()}"
 
@@ -125,8 +135,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         internal fun IrDeclaration.name(): String =
                 descriptor?.let { it.name.toString() } ?: "<none>"
 
-        internal fun DeclarationDescriptor.render(): String =
-                DESCRIPTOR_RENDERER.render(this)
+        internal fun DeclarationDescriptor?.render(): String =
+                this?.let { DESCRIPTOR_RENDERER.render(it) } ?: "<none>"
 
         internal fun IrExpression.renderType(): String =
                 type.render()

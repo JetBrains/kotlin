@@ -19,34 +19,44 @@ package org.jetbrains.kotlin.psi2ir.generators
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBinaryOperatorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.values.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-val KT_OPERATOR_TO_IR_OPERATOR = hashMapOf(
-        KtTokens.PLUSEQ to IrOperator.PLUSEQ,
-        KtTokens.MINUSEQ to IrOperator.MINUSEQ,
-        KtTokens.MULTEQ to IrOperator.MULTEQ,
-        KtTokens.DIVEQ to IrOperator.DIVEQ,
-        KtTokens.PERCEQ to IrOperator.PERCEQ,
+val KT_OPERATOR_TO_IR_OPERATOR: Map<IElementType, IrOperator> =
+        hashMapOf(
+                KtTokens.PLUSEQ to IrOperator.PLUSEQ,
+                KtTokens.MINUSEQ to IrOperator.MINUSEQ,
+                KtTokens.MULTEQ to IrOperator.MULTEQ,
+                KtTokens.DIVEQ to IrOperator.DIVEQ,
+                KtTokens.PERCEQ to IrOperator.PERCEQ,
 
-        KtTokens.PLUS to IrOperator.PLUS,
-        KtTokens.MINUS to IrOperator.MINUS,
-        KtTokens.MUL to IrOperator.MUL,
-        KtTokens.DIV to IrOperator.DIV,
-        KtTokens.PERC to IrOperator.PERC,
-        KtTokens.RANGE to IrOperator.RANGE
-)
+                KtTokens.PLUS to IrOperator.PLUS,
+                KtTokens.MINUS to IrOperator.MINUS,
+                KtTokens.MUL to IrOperator.MUL,
+                KtTokens.DIV to IrOperator.DIV,
+                KtTokens.PERC to IrOperator.PERC,
+                KtTokens.RANGE to IrOperator.RANGE,
+
+                KtTokens.LT to IrOperator.LT,
+                KtTokens.LTEQ to IrOperator.LTEQ,
+                KtTokens.GT to IrOperator.GT,
+                KtTokens.GTEQ to IrOperator.GTEQ
+        )
 
 val AUGMENTED_ASSIGNMENTS = KtTokens.AUGMENTED_ASSIGNMENTS
 val BINARY_OPERATORS_WITH_CALLS = OperatorConventions.BINARY_OPERATION_NAMES.keys
+val COMPARISON_OPERATORS = OperatorConventions.COMPARISON_OPERATIONS
 
 class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerator): IrGenerator {
     override val context: IrGeneratorContext get() = irStatementGenerator.context
@@ -58,8 +68,22 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
             KtTokens.EQ -> generateAssignment(expression)
             in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
             in BINARY_OPERATORS_WITH_CALLS -> generateBinaryOperatorWithConventionalCall(expression, ktOperator)
+            in COMPARISON_OPERATORS -> generateComparisonOperator(expression, ktOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
+    }
+
+    private fun generateComparisonOperator(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
+        val irOperator = getIrOperator(ktOperator)
+
+        val compareToCall = getResolvedCall(expression)!!
+        val compareToDescriptor = compareToCall.resultingDescriptor
+
+        val irCallGenerator = IrCallGenerator(irStatementGenerator)
+        val irArgument0 = irCallGenerator.generateReceiver(expression.left!!, compareToCall.dispatchReceiver, compareToDescriptor.dispatchReceiverParameter)!!
+        val irArgument1 = irCallGenerator.generateValueArgument(compareToCall.valueArgumentsByIndex!![0], compareToDescriptor.valueParameters[0])!!
+        return IrBinaryOperatorExpressionImpl(expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                                              irOperator, compareToDescriptor, irArgument0, irArgument1)
     }
 
     private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
@@ -95,9 +119,8 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         }
     }
 
-    private fun getIrOperator(ktOperator: IElementType): IrOperator {
-        return KT_OPERATOR_TO_IR_OPERATOR[ktOperator] ?: TODO("Operator: $ktOperator")
-    }
+    private fun getIrOperator(ktOperator: IElementType): IrOperator =
+            KT_OPERATOR_TO_IR_OPERATOR[ktOperator] ?: TODO("Operator: $ktOperator")
 
     private fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
