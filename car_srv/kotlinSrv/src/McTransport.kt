@@ -12,7 +12,7 @@ class McTransport() {
     fun writeToFile(bytes: ByteArray) {
         println("write: " + bytes)
         val bytesTemp = bytes
-        writeStream.write(js("new Buffer(bytesTemp)"));
+        writeStream.write(js("new Buffer(bytesTemp)"))
     }
 
     fun writeToFile(byte: Byte) {

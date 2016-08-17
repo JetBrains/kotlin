@@ -32,12 +32,8 @@ class MicroController private constructor() {
 
     fun start() {
 
-        if (!isConnected()) {
-            connectToServer(config.getCarIp(), serverPort)
-        }
+        connectToServer(config.getCarIp(), serverPort)
 
-//        this.transportFilePath = "./testTtyAcm"//todo need init
-//        mcTransport.initStreams(transportFilePath)
         mcTransport.setCallBack { bytes ->
             println("read: " + bytes.toString())
         }
@@ -89,7 +85,7 @@ class MicroController private constructor() {
     }
 
     fun isConnected(): Boolean {
-        return uid != 0
+        return transportFilePath != ""
     }
 
     fun rcHeartBeat(sid: Int) {
