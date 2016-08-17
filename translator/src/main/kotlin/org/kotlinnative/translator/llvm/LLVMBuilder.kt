@@ -155,22 +155,18 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln(code)
     }
 
-    fun allocStackVar(target: LLVMVariable) {
-        localCode.appendln("$target = alloca ${target.getType()}, align ${target.type.align}")
+    fun allocStackVar(target: LLVMVariable, asValue: Boolean = false) {
+        localCode.appendln("$target = alloca ${if (asValue) target.type else target.getType()}, align ${target.type.align}")
     }
 
-    fun allocStackPointedVarAsValue(target: LLVMVariable) {
-        localCode.appendln("$target = alloca ${target.type}, align ${target.type.align}")
-    }
-
-    fun allocStaticVar(target: LLVMVariable) {
-        val allocedVar = getNewVariable(LLVMCharType(), pointer = 1)
+    fun allocStaticVar(target: LLVMVariable, asValue: Boolean = false) {
+        val allocated = getNewVariable(LLVMCharType(), pointer = 1)
 
         val size = if (target.pointer > 0) POINTER_SIZE else target.type.size
-        val alloc = "$allocedVar = call i8* @malloc_static(i32 $size)"
+        val alloc = "$allocated = call i8* @malloc_static(i32 $size)"
         localCode.appendln(alloc)
 
-        val cast = "$target = bitcast ${allocedVar.getType()} $allocedVar to ${target.getType()}*"
+        val cast = "$target = bitcast ${allocated.getType()} $allocated to ${if (asValue) target.type else target.getType()}*"
         localCode.appendln(cast)
     }
 

@@ -520,11 +520,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         when (value.type) {
             is LLVMStringType -> if (!(value.type as LLVMStringType).isLoaded) {
                 val newVariable = codeBuilder.getNewVariable(value.type!!, pointer = result.pointer + 1)
-                codeBuilder.allocStackPointedVarAsValue(newVariable)
+                codeBuilder.allocStackVar(newVariable, asValue = true)
                 codeBuilder.copyVariable(result as LLVMVariable, newVariable)
 
                 result = codeBuilder.getNewVariable(argument.type, pointer = newVariable.pointer - 1)
-                codeBuilder.loadVariable(result, newVariable as LLVMVariable)
+                codeBuilder.loadVariable(result, newVariable)
             }
         }
 
@@ -621,7 +621,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         when (operator) {
             KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> {
                 val oldValue = codeBuilder.getNewVariable(firstOp.type, firstOp.pointer)
-                codeBuilder.allocStackPointedVarAsValue(oldValue)
+                codeBuilder.allocStackVar(oldValue, asValue = true)
                 codeBuilder.copyVariable(firstOp, oldValue)
 
                 val llvmExpression = when (operator) {
@@ -806,7 +806,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.EQ -> {
                 if (secondOp.type is LLVMNullType) {
                     val result = codeBuilder.getNewVariable(firstOp.type!!, firstOp.pointer)
-                    codeBuilder.allocStackVar(result)
+                    codeBuilder.allocStaticVar(result)
                     result.pointer++
 
                     codeBuilder.storeNull(result)
@@ -893,8 +893,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val targetExpression = evaluateExpression(whenExpression, scopeDepth + 1)!!
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
 
-        if (expressionType !is LLVMVoidType && expressionType !is LLVMNullType) {
-            codeBuilder.allocStackPointedVarAsValue(resultVariable)
+        when (expressionType) {
+            is LLVMVoidType,
+            is LLVMNullType -> {}
+            is LLVMReferenceType -> codeBuilder.allocStaticVar(resultVariable, asValue = true)
+            else -> codeBuilder.allocStackVar(resultVariable, asValue = true)
         }
 
         var nextLabel = codeBuilder.getNewLabel(prefix = "when_start")
@@ -952,7 +955,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val kotlinType = state.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, ifExpression)!!.type!!
         val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope(), state).type
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
-        codeBuilder.allocStackPointedVarAsValue(resultVariable)
+
+        when (resultVariable.type) {
+            is LLVMReferenceType -> codeBuilder.allocStaticVar(resultVariable, asValue = true)
+            else -> codeBuilder.allocStackVar(resultVariable, asValue = true)
+        }
         val thenLabel = codeBuilder.getNewLabel(prefix = "if")
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
         val endLabel = codeBuilder.getNewLabel(prefix = "if")
@@ -1000,7 +1007,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             is LLVMVariable -> {
                 if (assignExpression.pointer < 2) {
                     val allocVar = variableManager.receiveVariable(identifier, assignExpression.type, LLVMRegisterScope(), pointer = 0)
-                    codeBuilder.allocStackVar(allocVar)
+                    codeBuilder.allocStaticVar(allocVar)
                     allocVar.pointer++
                     allocVar.kotlinName = identifier
 
@@ -1018,7 +1025,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                         (reference.type as LLVMReferenceType).prefix = "class"
                     }
 
-                    codeBuilder.allocStackVar(reference)
+                    codeBuilder.allocStaticVar(reference)
                     reference.pointer++
 
                     codeBuilder.storeNull(reference)
