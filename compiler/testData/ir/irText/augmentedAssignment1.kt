@@ -1,4 +1,3 @@
-// <<< augmentedAssignment1.txt
 var p = 0
 
 fun testVariable() {

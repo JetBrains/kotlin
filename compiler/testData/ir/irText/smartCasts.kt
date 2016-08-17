@@ -1,4 +1,3 @@
-// <<< smartCasts.txt
 fun expectsString(s: String) {}
 fun expectsInt(i: Int) {}
 

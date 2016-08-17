@@ -1,4 +1,3 @@
-// <<< assignments.txt
 class Ref(var x: Int)
 
 fun test1() {

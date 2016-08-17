@@ -1,4 +1,3 @@
-// <<< smartCastsWithDestructuring.txt
 interface I1
 interface I2
 

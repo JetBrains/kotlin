@@ -1,5 +1,3 @@
-// <<< augmentedAssignment2.txt
-
 class A
 
 operator fun A.plusAssign(s: String) {}

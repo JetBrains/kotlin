@@ -1,4 +1,3 @@
-// <<< calls.txt
 fun foo(x: Int, y: Int) = x
 fun bar(x: Int) = foo(x, 1)
 fun qux(x: Int) = foo(foo(x, x), x)

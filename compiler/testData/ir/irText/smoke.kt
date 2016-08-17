@@ -1,4 +1,3 @@
-// <<< smoke.txt
 fun testFun(): String { return "OK" }
 val testSimpleVal = 1
 val testValWithGetter: Int get() = 42
