@@ -4,8 +4,16 @@ package test
 
 interface InlineTrait {
 
-    fun finalInline(s: () -> String): String {
+    private inline fun privateInline(s: () -> String): String {
         return s()
+    }
+
+    fun testPrivateInline(): String {
+        return privateInline { "private" }
+    }
+
+    fun testPrivateInline2(): String {
+        return privateInline { "private2" }
     }
 
     companion object {
@@ -15,7 +23,7 @@ interface InlineTrait {
     }
 }
 
-class Z: InlineTrait {
+class Z : InlineTrait {
 
 }
 
@@ -23,21 +31,13 @@ class Z: InlineTrait {
 
 import test.*
 
-fun testFinalInline(): String {
-    return Z().finalInline({"final"})
-}
-
-fun testFinalInline2(instance: InlineTrait): String {
-    return instance.finalInline({"final2"})
-}
-
 fun testClassObject(): String {
-    return InlineTrait.finalInline({"classobject"})
+    return InlineTrait.finalInline({ "classobject" })
 }
 
 fun box(): String {
-    if (testFinalInline() != "final") return "test1: ${testFinalInline()}"
-    if (testFinalInline2(Z()) != "final2") return "test2: ${testFinalInline2(Z())}"
+    if (Z().testPrivateInline() != "private") return "test1: ${Z().testPrivateInline()}"
+    if (Z().testPrivateInline2() != "private2") return "test2: ${Z().testPrivateInline2()}"
     if (testClassObject() != "classobject") return "test3: ${testClassObject()}"
 
     return "OK"

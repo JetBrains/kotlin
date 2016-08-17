@@ -2,8 +2,8 @@
 
 package test
 
-inline fun call(p: String, s: String.() -> Int): Int {
-    return p.s()
+inline fun call(a: String, b: String, s: String.(String) -> String): Int {
+    return a.s(b)
 }
 
 // FILE: 2.kt
@@ -11,5 +11,5 @@ inline fun call(p: String, s: String.() -> Int): Int {
 import test.*
 
 fun box() : String {
-    return if (call("123", String::length) == 3) "OK" else "fail"
+    return return call("O", "K", String::plus)
 }
