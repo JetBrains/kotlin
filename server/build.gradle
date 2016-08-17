@@ -26,26 +26,6 @@ sourceSets {
     main.kotlin.srcDirs += '../proto/protofiles_sources/out'
 }
 
-task buildProtoLib(type: Copy) {
-    /*
-     * XXX Will need to rework.
-     * New Kotlin protobuf compiler will have build.sh script that
-     * generates jar file with Kotlin protobuf runtime classes
-     * and .proto => .kt compiler executable.
-     * Also you copy this files into src of your server and even
-     * commit copied files into git repository.
-     * This is not acceptable. This files shouldn't be part of
-     * your src in any way.
-     * Also Kotlin protoc generated files shouldn't be part of your src too.
-     */
-    //just copy lib src to project
-    def pathToProtoKotSrc = "../proto/compiler/src/"
-    from pathToProtoKotSrc + "CodedInputStream.kt", pathToProtoKotSrc + "CodedOutputStream.kt",
-            pathToProtoKotSrc + "WireFormat.kt", pathToProtoKotSrc + "WireType.kt",
-            pathToProtoKotSrc + "InvalidProtocolBufferException.kt"
-    into "src/main/java"
-}
-
 task getDeps(type: Copy) {
     from sourceSets.main.compileClasspath
     into 'build/libs'
@@ -57,7 +37,7 @@ jar {
     manifest {
         attributes("Implementation-Title": "Gradle",
                 "Implementation-Version": version,
-                "Class-Path": "kotlin-runtime-1.0.3.jar kotlin-stdlib-1.0.3.jar netty-all-4.1.2.Final.jar",
+                "Class-Path": "kotlin-runtime-1.0.3.jar kotlin-stdlib-1.0.3.jar netty-all-4.1.2.Final.jar protokot-runtime.jar",
                 "Main-Class": "ServerMainKt")
     }
 
