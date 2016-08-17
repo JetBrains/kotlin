@@ -8,6 +8,7 @@ import java.util.Random
 class Environment private constructor() {
 
     val map: MutableMap<Int, Car>
+    private var uid = 0
 
     companion object {
 
@@ -20,22 +21,8 @@ class Environment private constructor() {
 
     @Synchronized
     fun connectCar(host: String, port: Int): Int {
-        val uid = getNewUid()
+        uid++
         map.put(uid, Car(uid, host, port))
         return uid
     }
-
-    fun getNewUid(): Int {
-        var unique = false
-        val random = Random()
-        var uid: Int = 0
-        while (!unique) {
-            uid = random.nextInt(1000000)
-            if (map.get(uid) == null) {
-                unique = true;
-            }
-        }
-        return uid;
-    }
-
 }

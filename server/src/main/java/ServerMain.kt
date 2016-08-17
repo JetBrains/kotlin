@@ -34,8 +34,8 @@ fun main(args: Array<String>) {
     val helpString = "available commands:\n" +
             "cars - get list of connected cars\n" +
             "route [car_id] - setting a route for car with car id.\n" +
-            "refloc - refresh all car locations\n" +
-            "stop - exit from this interface and stop all servers\n"
+            "refloc - refresh all car locations\n"
+    //        "stop - exit from this interface and stop all servers\n"//todo sometimes server not completed. some threads dont stop
     println(helpString)
     val routeRegex = Regex("route [0-9]{1,10}")
     val environment = objects.Environment.instance
@@ -202,7 +202,8 @@ fun getCarsDestroyThread(): Thread {
                     }
                 }
                 for (key in keysToRemove) {
-                    environment.map.remove(key)
+                    //todo this car is MAYBE disconnect. need ping this car and if dont have answer - drop
+//                    environment.map.remove(key)
                 }
             })
             try {
