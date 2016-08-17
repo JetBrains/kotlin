@@ -548,9 +548,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         codeBuilder.allocStaticVar(store)
         store.pointer++
 
-        val result = codeBuilder.getNewVariable(function.type)
-        result.pointer++
-        codeBuilder.allocStaticVar(result)
+        val result = codeBuilder.getNewVariable(function.type, pointer = 1)
+        codeBuilder.allocStackVar(result)
         result.pointer++
 
         codeBuilder.storeVariable(result, store)
@@ -823,7 +822,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 codeBuilder.addComment("start variable assignment")
                 if (secondOp.type is LLVMNullType) {
                     val result = codeBuilder.getNewVariable(firstOp.type!!, firstOp.pointer)
-                    codeBuilder.allocStaticVar(result)
+                    codeBuilder.allocStackVar(result)
                     result.pointer++
 
                     codeBuilder.storeNull(result)
@@ -1025,8 +1024,12 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         when (assignExpression) {
             is LLVMVariable -> {
                 if (assignExpression.pointer < 2) {
+                    if (assignExpression.type is LLVMReferenceType) {
+                        throw UnexpectedException(element.text)
+                    }
+
                     val allocVar = variableManager.receiveVariable(identifier, assignExpression.type, LLVMRegisterScope(), pointer = 0)
-                    codeBuilder.allocStaticVar(allocVar)
+                    codeBuilder.allocStackVar(allocVar)
                     allocVar.pointer++
                     allocVar.kotlinName = identifier
 
