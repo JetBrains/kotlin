@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtFunction
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class KDocElementFactory(val project: Project) {
@@ -32,10 +32,11 @@ class KDocElementFactory(val project: Project) {
     }
 
     fun createNameFromText(text: String): KDocName {
-        val kdoc = createKDocFromText("/** @param $text foo*/")
+        val kdocText = "/** @param $text foo*/"
+        val kdoc = createKDocFromText(kdocText)
         val section = kdoc.getDefaultSection()
         val tag = section.findTagByName("param")
-        val link = tag!!.getSubjectLink()!!
+        val link = tag?.getSubjectLink() ?: throw IllegalArgumentException("Cannot find subject link in doc comment '$kdocText'")
         return link.getChildOfType<KDocName>()!!
     }
 }
