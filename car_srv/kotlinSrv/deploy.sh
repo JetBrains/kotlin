@@ -70,8 +70,8 @@ expect " $"
 set timeout 120
 send "npm install \r"
 expect " $"
-send "node main.js &\r"
-expect " $"
+#send "node main.js &\r"
+#expect " $"
 
 send "exit\r"
 expect eof
