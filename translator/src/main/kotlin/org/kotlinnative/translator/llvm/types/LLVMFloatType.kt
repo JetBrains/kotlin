@@ -8,11 +8,11 @@ class LLVMFloatType() : LLVMType() {
 
     //TODO switch by types: int + double = int
     override fun operatorMinus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMFloatType(), "fsub float i32 $firstOp, $secondOp")
+            LLVMExpression(LLVMFloatType(), "fsub float $firstOp, $secondOp")
 
     //TODO switch by types: int + double = int
     override fun operatorTimes(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMFloatType(), "fmul float i32 $firstOp, $secondOp")
+            LLVMExpression(LLVMFloatType(), "fmul float $firstOp, $secondOp")
 
     //TODO switch by types: int + double = int
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =

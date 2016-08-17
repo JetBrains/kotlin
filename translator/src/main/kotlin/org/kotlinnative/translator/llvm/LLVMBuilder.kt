@@ -123,8 +123,12 @@ class LLVMBuilder(val arm: Boolean = false) {
     }
 
     fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
-        val code = "store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}"
-        localCode.appendln(code)
+        if ((source.type is LLVMStringType) && (!(source.type as LLVMStringType).isLoaded)) {
+            storeString(target as LLVMVariable, source as LLVMVariable, 0)
+        } else {
+            val code = "store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}"
+            localCode.appendln(code)
+        }
     }
 
     fun storeNull(result: LLVMVariable) {

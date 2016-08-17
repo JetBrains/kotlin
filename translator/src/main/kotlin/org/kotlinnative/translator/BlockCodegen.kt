@@ -493,7 +493,11 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 args.addAll(names)
 
                 codeBuilder.addLLVMCode(LLVMCall(LLVMVoidType(), function.toString(), args).toString())
-                return codeBuilder.loadAndGetVariable(returnVar)
+                if (returnVar.pointer == 2) {
+                    return returnVar
+                } else {
+                    return codeBuilder.loadAndGetVariable(returnVar)
+                }
             }
             else -> {
                 val result = codeBuilder.getNewVariable(returnType)
@@ -1027,7 +1031,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                     allocVar.kotlinName = identifier
 
                     variableManager.addVariable(identifier, allocVar, scopeDepth)
-                    codeBuilder.copyVariable(assignExpression, allocVar)
+
+                    addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
                 } else {
                     assignExpression.kotlinName = identifier
                     variableManager.addVariable(identifier, assignExpression, scopeDepth)
