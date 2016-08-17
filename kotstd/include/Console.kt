@@ -76,6 +76,11 @@ fun print(message: ByteArray) {
 }
 
 /** Prints the given message and newline to the standard output stream. */
+fun print(message: BooleanArray) {
+    message.print()
+}
+
+/** Prints the given message and newline to the standard output stream. */
 fun print(message: IntArray) {
     message.print()
 }
@@ -128,6 +133,11 @@ fun println(message: String) {
 
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: ByteArray) {
+    message.println()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun println(message: BooleanArray) {
     message.println()
 }
 

@@ -46,6 +46,26 @@ class BooleanArray(var size: Int) {
 
 }
 
+fun BooleanArray.print() {
+    var index = 0
+    print('[')
+    while (index < size) {
+        print(get(index))
+        index++
+        if (index < size){
+            print(';')
+            print(' ')
+        }
+    }
+    print(']')
+}
+
+fun BooleanArray.println() {
+    this.print()
+    println()
+}
+
+
 fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     val newInstance = BooleanArray(newSize)
     var index = 0
