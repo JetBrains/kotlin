@@ -1,0 +1,2 @@
+declaration_test_1_variable() == 85
+declaration_test_1_class() == 96799

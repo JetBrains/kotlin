@@ -12,3 +12,21 @@ fun null_comparison_1(): Int {
     }
     return 945
 }
+
+fun null_comparison_1_reassigned(): Int {
+    var a: null_comparison_1_class? = null_comparison_1_class()
+    a = null_comparison_1_getClass()
+    if (a == null) {
+        return 87
+    }
+    return 945
+}
+
+fun null_comparison_1_declaration(): Int {
+    var a: null_comparison_1_class?
+    a = null_comparison_1_getClass()
+    if (a == null) {
+        return 87
+    }
+    return 945
+}
