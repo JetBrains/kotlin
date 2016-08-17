@@ -122,6 +122,12 @@ class SmartCastManager {
             if (dataFlowValue.isStable) {
                 val oldSmartCasts = trace[SMARTCAST, expression]
                 val newSmartCast = SingleSmartCast(call, type)
+                if (oldSmartCasts != null) {
+                    val oldType = oldSmartCasts.type(call)
+                    if (oldType != null && oldType != type) {
+                        throw AssertionError("Rewriting key $call for smart cast on ${expression.text}")
+                    }
+                }
                 trace.record(SMARTCAST, expression, oldSmartCasts?.let { it + newSmartCast } ?: newSmartCast)
                 if (recordExpressionType) {
                     //TODO
@@ -165,6 +171,13 @@ class SmartCastManager {
                         if (receiver is ImplicitReceiver) {
                             val oldSmartCasts = c.trace[IMPLICIT_RECEIVER_SMARTCAST, calleeExpression]
                             val newSmartCasts = ImplicitSmartCasts(receiver, possibleType)
+                            if (oldSmartCasts != null) {
+                                val oldType = oldSmartCasts.receiverTypes[receiver]
+                                if (oldType != null && oldType != possibleType) {
+                                    throw AssertionError("Rewriting key $receiver for implicit smart cast on ${calleeExpression.text}: " +
+                                                         "was $oldType, now $possibleType")
+                                }
+                            }
                             c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression,
                                            oldSmartCasts?.let { it + newSmartCasts } ?: newSmartCasts)
 
