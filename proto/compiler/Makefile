@@ -17,6 +17,10 @@ RUNTIME_DIR = runtime
 RUNTIME_SRC = $(RUNTIME_DIR)/src/main/kotlin
 RUNTIME_JAR = $(RUNTIME_DIR)/build/libs/protokot-runtime.jar
 
+# Testing project
+TEST_PROJECT = $(PROTOC_DIR)/protoc-tests
+
+# Produce protoc*, .jar-packed runtime and symlink to runtime sources
 all: $(EXE) $(JAR) $(SYMLINK)
 
 # Place protoc* into build directory
@@ -44,6 +48,10 @@ $(BINDIR):
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
+
+# Testing
+test:
+	cd $(TEST_PROJECT); ./run_tests.sh
 
 clean:
 	$(MAKE) -C $(PROTOC_DIR) clean
