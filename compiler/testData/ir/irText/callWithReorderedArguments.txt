@@ -35,3 +35,8 @@ IrFile /callWithReorderedArguments.kt
         CALL .foo type=kotlin.Unit operator=
           a: GET_VAR tmp1_a type=kotlin.Int
           b: GET_VAR tmp0_b type=kotlin.Int
+        VAR val tmp2_a: kotlin.Int
+          CALL .reordered2 type=kotlin.Int operator=
+        CALL .foo type=kotlin.Unit operator=
+          a: GET_VAR tmp2_a type=kotlin.Int
+          b: LITERAL Int type=kotlin.Int value='1'

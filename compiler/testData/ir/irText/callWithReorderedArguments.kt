@@ -9,4 +9,5 @@ fun reordered2() = 2
 fun test() {
     foo(a = noReorder1(), b = noReorder2())
     foo(b = reordered1(), a = reordered2())
+    foo(b = 1, a = reordered2())
 }

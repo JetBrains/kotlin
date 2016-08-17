@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.values.IrTemporaryVariableValue
 import org.jetbrains.kotlin.psi2ir.generators.values.IrValue
+import org.jetbrains.kotlin.psi2ir.generators.values.createRematerializableValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -42,9 +43,27 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
     private val receiverValues = HashMap<ReceiverValue, IrValue>()
     private val valueArgumentValues = HashMap<ValueParameterDescriptor, IrValue>()
 
-    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String? = null): IrVariable {
+    fun introduceTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String? = null): IrVariable? {
+        val rematerializable = createRematerializableValue(irExpression)
+        if (rematerializable != null) {
+            putValue(ktExpression, rematerializable)
+            return null
+        }
+
         val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, nameHint)
         putValue(ktExpression, IrTemporaryVariableValue(irTmpVar))
+        return irTmpVar
+    }
+
+    fun introduceTemporary(valueParameterDescriptor: ValueParameterDescriptor, irExpression: IrExpression): IrVariable? {
+        val rematerializable = createRematerializableValue(irExpression)
+        if (rematerializable != null) {
+            putValue(valueParameterDescriptor, rematerializable)
+            return null
+        }
+
+        val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, valueParameterDescriptor.name.asString())
+        putValue(valueParameterDescriptor, IrTemporaryVariableValue(irTmpVar))
         return irTmpVar
     }
 
@@ -140,30 +159,30 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         // TODO use IrLetExpression?
 
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
+        val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
         val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType,
                                             hasResult = isUsedAsExpression(ktExpression),
                                             isDesugared = true)
 
+
+
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
-            val valueParameter = resolvedCall.resultingDescriptor.valueParameters[index]
+            val valueParameter = valueParameters[index]
             valueArgumentsToValueParameters[valueArgument] = valueParameter
         }
 
-        val temporariesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
             val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
-            val irTemporary = temporaryVariableFactory.createTemporaryVariable(irArgument, valueParameter.name.asString())
-            temporariesForValueArguments[valueArgument] = Pair(irTemporary.descriptor, irArgument)
-            irBlock.addStatement(irTemporary)
+            val irTmpArg = introduceTemporary(valueParameter, irArgument)
+            irBlock.addIfNotNull(irTmpArg)
         }
 
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
-            val (temporaryDescriptor, irArgument) = temporariesForValueArguments[valueArgument]!!
-            val valueParameter = resolvedCall.resultingDescriptor.valueParameters[index]
-            val irGetTemporary = IrGetVariableExpressionImpl(irArgument.startOffset, irArgument.endOffset, temporaryDescriptor)
+            val valueParameter = valueParameters[index]
+            val irGetTemporary = valueArgumentValues[valueParameter]!!.load()
             irCall.putArgument(index, irGetTemporary.toExpectedType(valueParameter.type))
         }
 

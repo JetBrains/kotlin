@@ -28,14 +28,23 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi2ir.generators.values.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 val KT_OPERATOR_TO_IR_OPERATOR = hashMapOf(
         KtTokens.PLUSEQ to IrOperator.PLUSEQ,
         KtTokens.MINUSEQ to IrOperator.MINUSEQ,
         KtTokens.MULTEQ to IrOperator.MULTEQ,
         KtTokens.DIVEQ to IrOperator.DIVEQ,
-        KtTokens.PERCEQ to IrOperator.PERCEQ
+        KtTokens.PERCEQ to IrOperator.PERCEQ,
+
+        KtTokens.PLUS to IrOperator.PLUS,
+        KtTokens.MINUS to IrOperator.MINUS,
+        KtTokens.MUL to IrOperator.MUL,
+        KtTokens.DIV to IrOperator.DIV
 )
+
+val AUGMENTED_ASSIGNMENTS = KtTokens.AUGMENTED_ASSIGNMENTS
+val BINARY_OPERATORS_WITH_CALLS = OperatorConventions.BINARY_OPERATION_NAMES.keys
 
 class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerator): IrGenerator {
     override val context: IrGeneratorContext get() = irStatementGenerator.context
@@ -45,7 +54,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
 
         return when (ktOperator) {
             KtTokens.EQ -> generateAssignment(expression)
-            in KtTokens.AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
+            in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
     }

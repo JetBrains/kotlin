@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.values
 
-import org.jetbrains.kotlin.ir.expressions.IrBlockExpression
-import org.jetbrains.kotlin.ir.expressions.IrBlockExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -98,11 +95,11 @@ class IrIndexedLValue(
     }
 
     private fun defineContextVariables(irBlock: IrBlockExpression, callGenerator: IrCallGenerator) {
-        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
+        irBlock.addIfNotNull(callGenerator.introduceTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
 
         var index = 0
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue, "index${index++}"))
+            irBlock.addIfNotNull(callGenerator.introduceTemporary(ktIndexExpression, irIndexValue, "index${index++}"))
         }
     }
 }

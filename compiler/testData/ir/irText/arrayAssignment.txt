@@ -5,11 +5,7 @@ IrFile /arrayAssignment.kt
         VAR val x: kotlin.IntArray
           CALL .intArrayOf type=kotlin.IntArray operator=
             elements: DUMMY vararg type=kotlin.Int
-        VAR val tmp0_array: kotlin.IntArray
-          GET_VAR x type=kotlin.IntArray
-        VAR val tmp1_index0: kotlin.Int
-          LITERAL Int type=kotlin.Int value='1'
         CALL .set type=kotlin.Unit operator=EQ
-          $this: GET_VAR tmp0_array type=kotlin.IntArray
-          index: GET_VAR tmp1_index0 type=kotlin.Int
+          $this: GET_VAR x type=kotlin.IntArray
+          index: LITERAL Int type=kotlin.Int value='1'
           value: LITERAL Int type=kotlin.Int value='0'

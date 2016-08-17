@@ -33,6 +33,10 @@ interface IrBlockExpression : IrExpression {
     fun addStatement(statement: IrStatement)
 }
 
+fun IrBlockExpression.addIfNotNull(statement: IrStatement?) {
+    if (statement != null) addStatement(statement)
+}
+
 class IrBlockExpressionImpl(
         startOffset: Int,
         endOffset: Int,
