@@ -947,6 +947,30 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
         doTest(fileName);
     }
 
+    @TestMetadata("max1.kt")
+    public void testMax1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/max1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("max2.kt")
+    public void testMax2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/max2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("min1.kt")
+    public void testMin1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/min1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("min2.kt")
+    public void testMin2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/min2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveInitializationsCloserToLoop.kt")
     public void testMoveInitializationsCloserToLoop() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/moveInitializationsCloserToLoop.kt");
