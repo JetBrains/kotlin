@@ -361,15 +361,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @TestMetadata("noStaticImportForJavaNonStaticField.test")
         public void testNoStaticImportForJavaNonStaticField() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticField.test");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticField.test");
             doTestWithExtraFile(fileName);
         }
 
         @TestMetadata("noStaticImportForJavaNonStaticMethod.test")
         public void testNoStaticImportForJavaNonStaticMethod() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticMethod.test");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticMethod.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noStaticImportForTopLevelFunction.test")
+        public void testNoStaticImportForTopLevelFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForTopLevelFunction.test");
             doTestWithExtraFile(fileName);
         }
 

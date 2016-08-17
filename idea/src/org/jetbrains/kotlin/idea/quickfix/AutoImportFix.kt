@@ -29,6 +29,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.name.Name
@@ -147,8 +149,7 @@ internal abstract class AutoImportFixBase<T : KtExpression>(expression: T) :
 
         val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible)
 
-        val result = fillCandidates(callTypeAndReceiver, file, bindingContext,
-                                    indicesHelper, nameStr, filterByCallType = { callTypeAndReceiver.callType.descriptorKindFilter.accepts(it) })
+        val result = fillCandidates(nameStr, callTypeAndReceiver, bindingContext, indicesHelper)
 
         return if (result.size > 1)
             reduceCandidatesBasedOnDependencyRuleViolation(result, file)
@@ -156,9 +157,12 @@ internal abstract class AutoImportFixBase<T : KtExpression>(expression: T) :
             result
     }
 
-    abstract fun fillCandidates(callTypeAndReceiver: CallTypeAndReceiver<*, *>, file: KtFile,
-                                bindingContext: BindingContext, indicesHelper: KotlinIndicesHelper,
-                                nameStr: String, filterByCallType: (descriptor: DeclarationDescriptor) -> (Boolean)): List<DeclarationDescriptor>
+    abstract fun fillCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            bindingContext: BindingContext,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor>
 
     private fun reduceCandidatesBasedOnDependencyRuleViolation(
             candidates: Collection<DeclarationDescriptor>, file: PsiFile): Collection<DeclarationDescriptor> {
@@ -172,25 +176,32 @@ internal abstract class AutoImportFixBase<T : KtExpression>(expression: T) :
 }
 
 internal abstract class AutoImportFixBaseDynamicContext<T : KtExpression>(expression: T) : AutoImportFixBase<T>(expression) {
-    override fun fillCandidates(callTypeAndReceiver: CallTypeAndReceiver<*, *>, file: KtFile, bindingContext: BindingContext, indicesHelper: KotlinIndicesHelper, nameStr: String, filterByCallType: (DeclarationDescriptor) -> Boolean): List<DeclarationDescriptor> {
+    override fun fillCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            bindingContext: BindingContext,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
 
         val expression = element
 
         if (expression is KtSimpleNameExpression) {
             if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
-                if (ProjectStructureUtil.isJsKotlinModule(file)) {
-                    indicesHelper.getKotlinClasses({ it == nameStr }, { true }).filterTo(result, filterByCallType)
+                val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+
+                if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
+                    indicesHelper.getKotlinClasses({ it == name }, { true }).filterTo(result, filterByCallType)
                 }
                 else {
-                    indicesHelper.getJvmClassesByName(nameStr).filterTo(result, filterByCallType)
+                    indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
                 }
 
-                indicesHelper.getTopLevelCallablesByName(nameStr).filterTo(result, filterByCallType)
+                indicesHelper.getTopLevelCallablesByName(name).filterTo(result, filterByCallType)
             }
         }
 
-        result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression, bindingContext) { it == nameStr })
+        result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression, bindingContext) { it == name })
         return result
     }
 
@@ -366,16 +377,28 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
 
 internal class AutoImportStaticFix(expression: KtSimpleNameExpression) : AutoImportFixBase<KtSimpleNameExpression>(expression) {
 
-    override fun getText() = KotlinBundle.message("import.static.fix")
+    override fun getText() = "Static import"
 
-    override fun fillCandidates(callTypeAndReceiver: CallTypeAndReceiver<*, *>, file: KtFile, bindingContext: BindingContext, indicesHelper: KotlinIndicesHelper, nameStr: String, filterByCallType: (DeclarationDescriptor) -> Boolean): List<DeclarationDescriptor> {
+    override fun fillCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            bindingContext: BindingContext,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         val expression = element
         if (expression is KtSimpleNameExpression) {
             if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
-                indicesHelper.getKotlinStatics(nameStr).filterTo(result, filterByCallType)
-                if (!(ProjectStructureUtil.isJsKotlinModule(file))) {
-                    indicesHelper.getJvmStatics(nameStr).filterTo(result, filterByCallType)
+                val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+
+                indicesHelper.getKotlinCallablesByName(name)
+                        .filter { it.canBeReferencedViaImport() && it.containingDeclaration !is PackageFragmentDescriptor }
+                        .filterTo(result, filterByCallType)
+
+                if (!ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
+                    indicesHelper.getJvmCallablesByName(name)
+                            .filter { it.canBeReferencedViaImport() }
+                            .filterTo(result, filterByCallType)
                 }
             }
         }
@@ -385,28 +408,18 @@ internal class AutoImportStaticFix(expression: KtSimpleNameExpression) : AutoImp
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
     override val importNames: Collection<Name> = run {
-        if (element.getIdentifier() == null) {
-            val conventionName = KtPsiUtil.getConventionName(element)
-            if (conventionName != null) {
-                if (element is KtOperationReferenceExpression) {
-                    val elementType = element.firstChild.node.elementType
-                    if (elementType in OperatorConventions.ASSIGNMENT_OPERATIONS) {
-                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[elementType]
-                        val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES[counterpart]
-                        if (counterpartName != null) {
-                            return@run listOf(conventionName, counterpartName)
-                        }
-                    }
-                }
-
-                return@run conventionName.singletonOrEmptyList()
+        if (element.getIdentifier() != null) {
+            val name = element.getReferencedName()
+            if (Name.isValidIdentifier(name)) {
+                Name.identifier(name).singletonList()
+            }
+            else {
+                emptyList<Name>()
             }
         }
-        else if (Name.isValidIdentifier(element.getReferencedName())) {
-            return@run Name.identifier(element.getReferencedName()).singletonOrEmptyList()
+        else {
+            emptyList<Name>()
         }
-
-        emptyList<Name>()
     }
 
     override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS

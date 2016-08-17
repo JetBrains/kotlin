@@ -205,31 +205,28 @@ class KotlinIndicesHelper(
                 .toSet()
     }
 
-
-    fun getJvmStatics(name: String): Collection<DeclarationDescriptor> {
-        return sequenceOf(PsiShortNamesCache.getInstance(project).getFieldsByName(name, scope),
-                          PsiShortNamesCache.getInstance(project).getMethodsByName(name, scope))
-                .flatMap { it.asSequence() }
-                .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) }
+    fun getJvmCallablesByName(name: String): Collection<CallableDescriptor> {
+        val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scope).asSequence() +
+                           PsiShortNamesCache.getInstance(project).getMethodsByName(name, scope).asSequence()
+        return javaDeclarations
+                .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) as? CallableDescriptor }
                 .filter(descriptorFilter)
                 .toSet()
     }
 
-    fun getKotlinStatics(name: String): Collection<DeclarationDescriptor> {
-        return sequenceOf(KotlinFunctionShortNameIndex.getInstance().get(name, project, scope),
-                          KotlinPropertyShortNameIndex.getInstance().get(name, project, scope))
-                .flatMap { it.asSequence() }
-                .mapNotNull {
-                    when (it) {
-                        is KtNamedFunction -> it.descriptor
-                        is KtProperty -> it.descriptor
-                        else -> null
-                    }
-                }.filterNot { it.importableFqName == null }
+    fun getKotlinCallablesByName(name: String): Collection<CallableDescriptor> {
+        val functions = KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .asSequence()
+                .map { it.descriptor as? CallableDescriptor }
+        val properties = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope)
+                .asSequence()
+                .map { it.descriptor as? CallableDescriptor }
+
+        return (functions + properties)
+                .filterNotNull()
                 .filter(descriptorFilter)
                 .toSet()
     }
-
 
     fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
