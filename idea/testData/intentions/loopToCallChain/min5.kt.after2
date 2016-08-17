@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'map{}.min()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.min()'"
+fun getMinLineWidth(lineCount: Int): Double {
+    val <caret>min_width = (0..lineCount - 1)
+            .asSequence()
+            .map { getLineWidth(it) }
+            .min()
+            ?: Double.MAX_VALUE
+    return min_width
+}
+
+fun getLineWidth(i: Int): Double = TODO()

@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class MaxOrMinTransformation(
         loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization,
         private val isMax: Boolean
 ) : AssignToVariableResultTransformation(loop, initialization) {
@@ -58,10 +59,12 @@ class MaxOrMinTransformation(
      */
     object Matcher : TransformationMatcher {
         override val indexVariableAllowed: Boolean
-            get() = false
+            get() = true
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
-            return matchIfAssign(state) ?: matchAssignIf(state)
+            return matchIfAssign(state)
+                   ?: matchAssignIf(state)
+                   ?: matchMathMaxOrMin(state)
         }
 
         private fun matchIfAssign(state: MatchingState): TransformationMatch.Result? {
@@ -82,6 +85,46 @@ class MaxOrMinTransformation(
             val ifExpression = assignment.right as? KtIfExpression ?: return null
 
             return match(ifExpression.condition, assignment.left, ifExpression.then, ifExpression.`else`, state.inputVariable, state.outerLoop)
+        }
+
+        private fun matchMathMaxOrMin(state: MatchingState): TransformationMatch.Result? {
+            val assignment = state.statements.singleOrNull() as? KtBinaryExpression ?: return null
+            if (assignment.operationToken != KtTokens.EQ) return null
+            val assignmentTarget = assignment.left ?: return null
+
+            val variableInitialization = assignmentTarget.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
+                                         ?: return null
+
+            return matchMathMaxOrMin(variableInitialization, assignment, state, isMax = true)
+                   ?: matchMathMaxOrMin(variableInitialization, assignment, state, isMax = false)
+        }
+
+        private fun matchMathMaxOrMin(
+                variableInitialization: VariableInitialization,
+                assignment: KtBinaryExpression,
+                state: MatchingState,
+                isMax: Boolean
+        ): TransformationMatch.Result? {
+            val functionName = if (isMax) "max" else "min"
+            val arguments = assignment.right.extractStaticFunctionCallArguments("java.lang.Math." + functionName) ?: return null
+            if (arguments.size != 2) return null
+            val value = if (arguments[0].isVariableReference(variableInitialization.variable)) {
+                arguments[1] ?: return null
+            }
+            else if (arguments[1].isVariableReference(variableInitialization.variable)) {
+                arguments[0] ?: return null
+            }
+            else {
+                return null
+            }
+
+            val mapTransformation = if (value.isVariableReference(state.inputVariable))
+                null
+            else
+                MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, value, mapNotNull = false)
+
+            val transformation = MaxOrMinTransformation(state.outerLoop, variableInitialization, isMax)
+            return TransformationMatch.Result(transformation, mapTransformation.singletonOrEmptyList())
         }
 
         private fun match(
@@ -124,7 +167,7 @@ class MaxOrMinTransformation(
             if (valueToBeVariable != null && !valueToBeVariable.isVariableReference(variableInitialization.variable)) return null
 
             val isMax = (comparison == KtTokens.GT || comparison == KtTokens.GTEQ) xor (otherHand == left)
-            val transformation = MaxOrMinTransformation(loop, inputVariable, variableInitialization, isMax)
+            val transformation = MaxOrMinTransformation(loop, variableInitialization, isMax)
             return TransformationMatch.Result(transformation)
         }
     }
