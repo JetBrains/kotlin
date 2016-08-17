@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+// IS_APPLICABLE: false
+// INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.forEach{}'"
+fun getMaxLineWidth(lineCount: Int): Float {
+    var max_width = 0.0f
+    <caret>(0..lineCount - 1)
+            .asSequence()
+            .filter { getLineWidth(it) > max_width }
+            .forEach { max_width = getLineWidth(it) }
+    return max_width
+}
+
+fun  getLineWidth(i: Int): Float = TODO()
