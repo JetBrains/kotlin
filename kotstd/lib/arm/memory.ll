@@ -24,7 +24,7 @@ define weak i8* @malloc_static(i32 %size) #0 {
   %3 = load i32* %2, align 4
   %4 = load i32* @static_area_ptr, align 4
   %5 = add nsw i32 %3, %4
-  %6 = icmp sgt i32 %5, 1000
+  %6 = icmp sgt i32 %5, 30000
   br i1 %6, label %7, label %8
 
 ; <label>:7                                       ; preds = %0
