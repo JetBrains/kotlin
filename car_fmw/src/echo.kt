@@ -40,17 +40,3 @@ fun writeRoute(route: RouteRequest) {
     sendByteArray(buffer)
 }
 
-fun go(request: RouteRequest) {
-    val times = request.distances
-    var j = 0
-
-    while (j < times.size) {
-        val time = times[j]
-
-        engine_forward()
-        wait(time)
-        engine_stop()
-        j++
-    }
-
-}
