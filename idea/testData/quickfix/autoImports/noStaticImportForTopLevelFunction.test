@@ -1,0 +1,32 @@
+// FILE: main.before.kt
+// "Static import" "false"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create function 'foobar'
+// ACTION: Import
+// ACTION: Rename reference
+
+//KT-9009
+
+
+fun f() {
+    foobar<caret>()
+}
+
+//FILE: dependency.before.kt
+package bar
+
+fun foobar() {
+}
+
+//FILE: main.after.kt
+// "Static import" "false"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create function 'foobar'
+// ACTION: Rename reference
+
+//KT-9009
+
+
+fun f() {
+    foobar<caret>()
+}
