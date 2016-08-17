@@ -90,14 +90,12 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
 
     private fun generateLValue(ktLeft: KtExpression, irOperator: IrOperator?): IrLValue {
         if (ktLeft is KtArrayAccessExpression) {
-            val irArrayValue = IrSingleExpressionValue(irStatementGenerator.generateExpression(ktLeft.arrayExpression!!))
-            val indexExpressions = ktLeft.indexExpressions.map {
-                it to IrSingleExpressionValue(irStatementGenerator.generateExpression(it))
-            }
+            val irArrayValue = irStatementGenerator.generateExpression(ktLeft.arrayExpression!!)
+            val indexExpressions = ktLeft.indexExpressions.map { it to irStatementGenerator.generateExpression(it) }
             val indexedGetCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
             val indexedSetCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
             return IrIndexedLValue(irStatementGenerator, ktLeft, irOperator,
-                                                                                 irArrayValue, indexExpressions, indexedGetCall, indexedSetCall)
+                                   irArrayValue, indexExpressions, indexedGetCall, indexedSetCall)
         }
 
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")

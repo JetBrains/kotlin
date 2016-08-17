@@ -32,8 +32,8 @@ class IrIndexedLValue(
         var irStatementGenerator: IrStatementGenerator,
         val ktArrayAccessExpression: KtArrayAccessExpression,
         val irOperator: IrOperator?,
-        val arrayValue: IrValue,
-        val indexValues: List<Pair<KtExpression, IrValue>>,
+        val irArray: IrExpression,
+        val indexValues: List<Pair<KtExpression, IrExpression>>,
         val indexedGetCall: ResolvedCall<*>?,
         val indexedSetCall: ResolvedCall<*>?
 ) : IrLValueWithAugmentedStore {
@@ -98,11 +98,11 @@ class IrIndexedLValue(
     }
 
     private fun defineContextVariables(irBlock: IrBlockExpression, callGenerator: IrCallGenerator) {
-        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, arrayValue.load(), "array"))
+        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
 
         var index = 0
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue.load(), "index${index++}"))
+            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue, "index${index++}"))
         }
     }
 }
