@@ -128,7 +128,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
         NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
-        UNRESOLVED_REFERENCE.registerFactory(AutoImportStaticFix)
+        UNRESOLVED_REFERENCE.registerFactory(AutoImportMemberFix)
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
 
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)

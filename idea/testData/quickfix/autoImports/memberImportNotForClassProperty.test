@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create local variable 'foobar'
 // ACTION: Create property 'foobar'
@@ -13,15 +13,15 @@ fun f() {
     foobar<caret> = "barfoo"
 }
 
-//FILE: dependency.before.java
+//FILE: dependency.before.kt
 package bar
 
-public class Foo {
-    public foobar = "foobar"
+class Foo {
+    var foobar = "foobar"
 }
 
 //FILE: main.after.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create local variable 'foobar'
 // ACTION: Create property 'foobar'

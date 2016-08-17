@@ -375,9 +375,9 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
     }
 }
 
-internal class AutoImportStaticFix(expression: KtSimpleNameExpression) : AutoImportFixBase<KtSimpleNameExpression>(expression) {
+internal class AutoImportMemberFix(expression: KtSimpleNameExpression) : AutoImportFixBase<KtSimpleNameExpression>(expression) {
 
-    override fun getText() = "Static import"
+    override fun getText() = "Import member"
 
     override fun fillCandidates(
             name: String,
@@ -426,7 +426,7 @@ internal class AutoImportStaticFix(expression: KtSimpleNameExpression) : AutoImp
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::AutoImportStaticFix)
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::AutoImportMemberFix)
 
         override fun isApplicableForCodeFragment() = true
 
