@@ -1,5 +1,6 @@
 import carControl.ControlImpl
 import carControl.RouteExecutorImpl
+import carControl.RouteExecutorToUsb
 import exceptions.RcControlException
 
 /**
@@ -26,17 +27,17 @@ class MicroController private constructor() {
         this.modelID = "5740"
         this.transportFilePath = ""
 
-        this.car = Car(RouteExecutorImpl(), ControlImpl())
+        this.car = Car(RouteExecutorToUsb(), ControlImpl())
     }
 
     fun start() {
 
         if (!isConnected()) {
-            connectToServer(serverIp, serverPort)
+            connectToServer(config.getCarIp(), serverPort)
         }
 
-        this.transportFilePath = "./testTtyAcm"//todo need init
-        mcTransport.initStreams(transportFilePath)
+//        this.transportFilePath = "./testTtyAcm"//todo need init
+//        mcTransport.initStreams(transportFilePath)
         mcTransport.setCallBack { bytes ->
             println("read: " + bytes.toString())
         }
@@ -99,7 +100,7 @@ class MicroController private constructor() {
     }
 
     fun connectToServer(thisIp: String, thisPort: Int) {
-        val requestObject = ConnectionRequest.BuilderConnectionRequest(serverIp.split(".").map { str -> parseInt(str, 10) }.toIntArray(), serverPort).build()
+        val requestObject = ConnectionRequest.BuilderConnectionRequest(config.getCarIp().split(".").map { str -> parseInt(str, 10) }.toIntArray(), serverPort).build()
         val bytes = ByteArray(requestObject.getSizeNoTag())
         requestObject.writeTo(CodedOutputStream(bytes))
         net.sendRequest(js("new Buffer(bytes)"), "/connect", { resultData ->

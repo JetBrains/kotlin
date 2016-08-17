@@ -1,8 +1,8 @@
 package net
 
 import require
-import mainServerAddress
 import mainServerPort
+import config
 
 /**
  * Created by user on 7/28/16.
@@ -11,7 +11,7 @@ val http = require("http")
 
 fun sendRequest(dataBuffer: dynamic, url: String, successCallback: (responseData: ByteArray) -> Unit, errorCallback: (err: dynamic) -> Unit) {
     val options: dynamic = {}
-    val serverAddress = mainServerAddress
+    val serverAddress = config.getIp()
     val port = mainServerPort
     js("options = {hostname:serverAddress, port:port, path:url, method:'POST'}")
 

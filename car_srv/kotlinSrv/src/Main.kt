@@ -14,10 +14,8 @@ import net.server.handlers.rc.Heartbeat
 val deltaTimeLocationRefresh: Int = 100//ms
 
 val serverPort: Int = 8888
-val serverIp: String = "127.0.0.1"
-
-val mainServerAddress = "127.0.0.1"
 val mainServerPort = 7925
+
 val config = Config("config.cfg")
 val fs = require("fs")
 fun main(args: Array<String>) {
@@ -25,6 +23,7 @@ fun main(args: Array<String>) {
         println("incorrect config format!")
         return
     }
+
     val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
     handlers.put("/rc/control", Control(DirectionRequest.BuilderDirectionRequest(DirectionRequest.Command.fromIntToCommand(0), 0), DirectionResponse.BuilderDirectionResponse(0)))
     handlers.put("/rc/connect", Connect(SessionUpResponse.BuilderSessionUpResponse(0, 0)))
