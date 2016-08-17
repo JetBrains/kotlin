@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockExpressionImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-fun collapseDesugaredBlocks(element: IrElement) {
-    element.accept(CollapseDesugaredBlocks(), null)
+fun inlineDesugaredBlocks(element: IrElement) {
+    element.accept(InlineDesugaredBlocks(), null)
 }
 
-class CollapseDesugaredBlocks : IrElementVisitor<Unit, Nothing?> {
+class InlineDesugaredBlocks : IrElementVisitor<Unit, Nothing?> {
     override fun visitElement(element: IrElement, data: Nothing?) {
         element.acceptChildren(this, data)
     }

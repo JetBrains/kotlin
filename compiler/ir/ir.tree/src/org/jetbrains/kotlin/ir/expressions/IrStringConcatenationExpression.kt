@@ -55,7 +55,7 @@ class IrStringConcatenationExpressionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitStringTemplate(this, data)
+            visitor.visitStringConcatenation(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         arguments.forEach { it.accept(visitor, data) }

@@ -99,6 +99,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
             "type=${expression.renderType()}"
 
+    override fun visitStringConcatenation(expression: IrStringConcatenationExpression, data: Nothing?): String =
+            "STRING_CONCATENATION type=${expression.renderType()}"
+
     override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String {
         return "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
     }

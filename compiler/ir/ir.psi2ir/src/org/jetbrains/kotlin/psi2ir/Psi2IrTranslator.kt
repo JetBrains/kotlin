@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.ir.declarations.IrModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.IrGeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.IrModuleGenerator
-import org.jetbrains.kotlin.psi2ir.transformations.collapseDesugaredBlocks
+import org.jetbrains.kotlin.psi2ir.transformations.foldStringConcatenation
+import org.jetbrains.kotlin.psi2ir.transformations.inlineDesugaredBlocks
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
     class Configuration(
-            val shouldCollapseDesugaredBlocks: Boolean = true
+            val shouldInlineDesugaredBlocks: Boolean = true,
+            val shouldFoldStringConcatenation: Boolean = true
     )
 
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModule {
@@ -38,6 +40,7 @@ class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
     }
 
     private fun postprocess(irElement: IrElement) {
-        if (configuration.shouldCollapseDesugaredBlocks) collapseDesugaredBlocks(irElement)
+        if (configuration.shouldInlineDesugaredBlocks) inlineDesugaredBlocks(irElement)
+        if (configuration.shouldFoldStringConcatenation) foldStringConcatenation(irElement)
     }
 }

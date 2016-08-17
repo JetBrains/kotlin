@@ -48,7 +48,7 @@ sealed class IrOperator(val debugName: String) {
     object MINUS : IrOperator("MINUS")
     object MUL : IrOperator("MUL")
     object DIV : IrOperator("DIV")
-    object MOD : IrOperator("MOD")
+    object PERC : IrOperator("PERC")
 
     object EQ : IrOperator("EQ")
     object PLUSEQ : IrOperator("PLUSEQ")

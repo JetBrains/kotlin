@@ -40,7 +40,9 @@ val KT_OPERATOR_TO_IR_OPERATOR = hashMapOf(
         KtTokens.PLUS to IrOperator.PLUS,
         KtTokens.MINUS to IrOperator.MINUS,
         KtTokens.MUL to IrOperator.MUL,
-        KtTokens.DIV to IrOperator.DIV
+        KtTokens.DIV to IrOperator.DIV,
+        KtTokens.PERC to IrOperator.PERC,
+        KtTokens.RANGE to IrOperator.RANGE
 )
 
 val AUGMENTED_ASSIGNMENTS = KtTokens.AUGMENTED_ASSIGNMENTS
@@ -55,8 +57,15 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         return when (ktOperator) {
             KtTokens.EQ -> generateAssignment(expression)
             in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
+            in BINARY_OPERATORS_WITH_CALLS -> generateBinaryOperatorWithConventionalCall(expression, ktOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
+    }
+
+    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
+        val irOperator = getIrOperator(ktOperator)
+        val operatorCall = getResolvedCall(expression)!!
+        return IrCallGenerator(irStatementGenerator).generateCall(expression, operatorCall, irOperator)
     }
 
     private fun generateAugmentedAssignment(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {

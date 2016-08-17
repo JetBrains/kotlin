@@ -113,6 +113,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("simpleOperators.kt")
+    public void testSimpleOperators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/simpleOperators.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("smartCasts.kt")
     public void testSmartCasts() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smartCasts.kt");
@@ -128,6 +134,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
     @TestMetadata("smoke.kt")
     public void testSmoke() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/smoke.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("stringPlus.kt")
+    public void testStringPlus() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stringPlus.kt");
         doTest(fileName);
     }
 }
