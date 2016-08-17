@@ -4,16 +4,30 @@ red='\033[0;31m'
 nc='\033[0m'
 
 if [ ! -d "src/test/kotlin/tests/linked" ]; then
-	# Create folder if not exists
-	mkdir src/test/kotlin/tests/linked
+	mkdir -p "src/test/kotlin/tests/linked"
+fi
+
+if [ $? -ne 0 ]; then
+	echo -e "${red}Error creating folder \"src/test/kotlin/tests/linked\"${nc}"
+	exit 1
 fi
 
 cd ../kotstd && make clean && make
+if [ $? -ne 0 ]; then
+	echo -e "${red}Error building kotstd lib${nc}"
+	exit 1
+fi
+
 cd ../translator
 
 DIRECTORY="src/test/kotlin/tests"
 MAIN="$DIRECTORY/linked/main.c"
-for i in $( ls "$DIRECTORY/input" $1); do
+TESTS=$( ls $DIRECTORY/input/* $1) # Note that "ls $DIRECTORY/input $1" is wrong. Why? Because it's bash.
+
+if [ "$2" == "--proto" ]; then
+	TESTS=$( ls $DIRECTORY/input/proto* $1)
+fi
+for i in $TESTS; do
 	rm -f $DIRECTORY/linked/*
 	TEST=`basename $i ".txt"`
 	echo -e "${red}test: ${TEST}${nc}"
@@ -22,7 +36,7 @@ for i in $( ls "$DIRECTORY/input" $1); do
 	echo "#include <assert.h>" >> $MAIN
 
 	echo "int main(){" >> $MAIN
-	cat "$DIRECTORY/input/$i" | while read LINE
+	cat "$i" | while read LINE
 	do
 		echo " assert($LINE);" >> $MAIN
 		echo " printf(\"OK: $LINE\n\");" >> $MAIN
@@ -31,17 +45,48 @@ for i in $( ls "$DIRECTORY/input" $1); do
 	echo "printf(\"TEST RESULT: OK\n\");" >> $MAIN
 	echo "return 0;}" >> $MAIN
 
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Error somewhere in main.c generation${nc}"
+		exit 1
+	fi
+
 	clang-3.6 -S -emit-llvm $DIRECTORY/linked/main.c -o $DIRECTORY/linked/main.ll -Wno-implicit-function-declaration
-	rm -f $DIRECTORY/linked/main.c
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Error building main.c${nc}"
+		exit 1
+	fi
+
 
 	cp ../kotstd/build/stdlib_x86.ll $DIRECTORY/linked/
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Error copying ../kotstd/build/stdlib_x86.ll to ${DIRECTORY}/linked/${nc}"
+		exit 1
+	fi
 
 	if [ -f "$DIRECTORY/c/$TEST.c" ]
 	then
 		clang-3.6 -S -emit-llvm "$DIRECTORY/c/$TEST.c" -o $DIRECTORY/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
+		if [ $? -ne 0 ]; then
+			echo -e "${red}Error building: ${DIRECTORY}/linked/${TEST}_c.ll${nc}"
+			exit 1
+		fi
 	fi
 
 	java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
-	llvm-link-3.6 -S $DIRECTORY/linked/* > $DIRECTORY/linked/run.ll
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Translation error: ${DIRECTORY}/kotlin/${TEST}.kt${nc}"
+		exit 1
+	fi
+
+	llvm-link-3.6 -S $DIRECTORY/linked/*.ll > $DIRECTORY/linked/run.ll
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Error linking with llvm${nc}"
+		exit 1
+	fi
+
 	lli-3.6 $DIRECTORY/linked/run.ll
+	if [ $? -ne 0 ]; then
+		echo -e "${red}Error running test${nc}"
+		exit 1
+	fi
 done

@@ -19,6 +19,7 @@ RUNTIME_JAR = $(RUNTIME_DIR)/build/libs/protokot-runtime.jar
 
 # Testing project
 TEST_PROJECT = $(PROTOC_DIR)/protoc-tests
+TRANSLATOR_TEST_DIR = ../../translator
 
 # Produce protoc*, .jar-packed runtime and symlink to runtime sources
 all: $(EXE) $(JAR) $(SYMLINK)
@@ -52,7 +53,7 @@ $(BUILDDIR):
 # Testing
 test:
 	cd $(TEST_PROJECT); ./run_tests.sh
-
+	cd $(TRANSLATOR_TEST_DIR); ./run_tests.sh -t --proto
 clean:
 	$(MAKE) -C $(PROTOC_DIR) clean
 	cd $(RUNTIME_DIR); gradle clean
