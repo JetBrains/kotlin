@@ -145,15 +145,19 @@ class IrStatementGenerator(
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
-        if (expression.entries.size == 1) {
-            val entry0 = expression.entries[0]
-            if (entry0 is KtLiteralStringTemplateEntry) {
-                return entry0.genExpr()
+        val entries = expression.entries
+        when {
+            entries.size == 1 -> {
+                val entry0 = entries[0]
+                if (entry0 is KtLiteralStringTemplateEntry) {
+                    return entry0.genExpr()
+                }
             }
+            entries.size == 0 -> return IrLiteralExpressionImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmarcastsOrFail(expression), "")
         }
 
         val irStringTemplate = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression))
-        expression.entries.forEach { it.expression!!.let {
+        entries.forEach { it.expression!!.let {
             irStringTemplate.addArgument(TODO())
         } }
         return irStringTemplate

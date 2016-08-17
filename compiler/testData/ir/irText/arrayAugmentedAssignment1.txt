@@ -1,4 +1,4 @@
-IrFile /augmentedAssignmentArray.kt
+IrFile /arrayAugmentedAssignment1.kt
   IrFunction public fun foo(): kotlin.IntArray
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false isDesugared=true

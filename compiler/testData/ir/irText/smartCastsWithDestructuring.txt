@@ -10,7 +10,7 @@ IrFile /smartCastsWithDestructuring.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false isDesugared=true
         RETURN type=<no-type>
-          ? IrStringConcatenationExpressionImpl type=kotlin.String
+          LITERAL String type=kotlin.String value=''
   IrFunction public fun test(/*0*/ x: I1): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false isDesugared=false

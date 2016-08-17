@@ -91,7 +91,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
 
             if (treeFiles.isEmpty()) {
-                treeFiles.add(IrTreeFileLabel(File(dir, testFile.name.replace(".kt", ".txt")), 0))
+                val file = createExpectedTextFile(testFile, dir, testFile.name.replace(".kt", ".txt"))
+                treeFiles.add(IrTreeFileLabel(file, 0))
             }
 
             return Expectations(regexps, treeFiles)
