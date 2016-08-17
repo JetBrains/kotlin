@@ -47,10 +47,8 @@ if {$host==""} {
     exit 1
 }
 
-set timeout 3
-
 spawn ./gradlew build
-expect eof
+expect " $"
 
 spawn scp -r ./build/js/main.js ./build/js/kotlin.js ./build/js/package.json ./build/js/proto/ $userName@$host:./server/
 
@@ -61,6 +59,8 @@ expect eof
 spawn ssh $userName@$host
 expect "password:"
 send "$password\r"
+
+set timeout 3
 
 expect "%"
 send "killall -9 node \r"
