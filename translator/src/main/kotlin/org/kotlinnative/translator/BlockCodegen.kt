@@ -1064,7 +1064,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         when (type) {
             is LLVMReferenceType -> genReferenceReturn(retVar!!)
-            is LLVMVoidType -> {
+            is LLVMVoidType,
+            is LLVMNullType -> {
                 codeBuilder.addAnyReturn(LLVMVoidType())
             }
             else -> {

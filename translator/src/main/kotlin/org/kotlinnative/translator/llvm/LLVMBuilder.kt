@@ -22,6 +22,7 @@ class LLVMBuilder(val arm: Boolean = false) {
                 "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
                 "declare i8* @malloc_static(i32)",
                 "declare i32 @printf(i8*, ...)",
+                "%class.Nothing = type { }",
                 "declare void @abort()")
 
         declares.forEach { globalCode.appendln(it) }
@@ -77,8 +78,8 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln("ret ${llvmVariable.type} $llvmVariable")
     }
 
-    fun addAnyReturn(type: LLVMType, value: String = type.defaultValue) {
-        localCode.appendln("ret $type $value")
+    fun addAnyReturn(type: LLVMType, value: String = type.defaultValue, pointer: Int = 0) {
+        localCode.appendln("ret $type${"*".repeat(pointer)} $value")
     }
 
     private fun initializeString(string: String): LLVMVariable {
