@@ -785,8 +785,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
             KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
             KtTokens.EQEQ ->
-                if (firstOp.type is LLVMReferenceType)
-                    if (secondOp.type is LLVMReferenceType) {
+                if (firstOp.type is LLVMReferred)
+                    if (secondOp.type is LLVMReferred) {
                         val firstPointedArgument = receivePointedArgument(firstOp, 1)
                         val secondPointedArgument = receivePointedArgument(secondOp, 1)
                         firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
@@ -800,8 +800,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
             }
             KtTokens.EXCLEQ -> {
-                if (firstOp.type is LLVMReferenceType)
-                    if (secondOp.type is LLVMReferenceType) {
+                if (firstOp.type is LLVMReferred)
+                    if (secondOp.type is LLVMReferred) {
                         val firstPointedArgument = receivePointedArgument(firstOp, 1)
                         val secondPointedArgument = receivePointedArgument(secondOp, 1)
                         firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)

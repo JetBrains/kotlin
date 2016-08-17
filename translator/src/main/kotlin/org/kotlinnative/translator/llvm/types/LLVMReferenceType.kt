@@ -4,9 +4,9 @@ import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 import java.util.*
 
-class LLVMReferenceType(val type: String, var prefix: String = "", override var align: Int = 4, override var size: Int = 4, var byRef: Boolean = true) : LLVMType() {
+class LLVMReferenceType(val type: String, var prefix: String = "", override var align: Int = 4, override var size: Int = 4, var byRef: Boolean = true) : LLVMReferred, LLVMType() {
 
-    override val defaultValue: String = ""
+    override val defaultValue: String = "null"
 
     override val typename: String
         get() = "$prefix${if (prefix.length > 0) "." else ""}${
