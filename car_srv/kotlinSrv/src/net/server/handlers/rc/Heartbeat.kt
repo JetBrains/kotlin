@@ -3,7 +3,7 @@ package net.server.handlers.rc
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
 import CodedInputStream
-import CodedOutputStream
+import encodeProtoBuf
 
 /**
  * Created by user on 7/27/16.
@@ -29,8 +29,6 @@ class Heartbeat : AbstractHandler {
             resultCode = 12
         }
         val responseMessage = toServerObjectBuilder.setCode(resultCode).build()
-        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
-        responseMessage.writeTo(CodedOutputStream(resultByteArray))
-        callback.invoke(resultByteArray)
+        callback.invoke(encodeProtoBuf(responseMessage))
     }
 }

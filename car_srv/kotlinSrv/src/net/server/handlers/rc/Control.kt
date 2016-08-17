@@ -6,7 +6,7 @@ import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
 import DirectionRequest
 import CodedInputStream
-import CodedOutputStream
+import encodeProtoBuf
 
 /**
  * Created by user on 7/27/16.
@@ -52,8 +52,6 @@ class Control : AbstractHandler {
             resultCode = 12
         }
         val resultMessage = toServerObjectBuilder.setCode(resultCode).build()
-        val resultByteArray = ByteArray(resultMessage.getSizeNoTag())
-        resultMessage.writeTo(CodedOutputStream(resultByteArray))
-        callback.invoke(resultByteArray)
+        callback.invoke(encodeProtoBuf(resultMessage))
     }
 }

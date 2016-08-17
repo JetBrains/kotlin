@@ -2,7 +2,7 @@ package net.server.handlers.main
 
 import net.server.handlers.AbstractHandler
 import CodedInputStream
-import CodedOutputStream
+import encodeProtoBuf
 
 /**
  * Created by user on 7/28/16.
@@ -23,9 +23,7 @@ class SetRoute : AbstractHandler {
         message.mergeFrom(CodedInputStream(data))
         car.routeExecutor.executeRoute(message)
         val responseMessage = toServerObjectBuilder.setCode(0).build()
-        val resultByteArray = ByteArray(responseMessage.getSizeNoTag())
-        responseMessage.writeTo(CodedOutputStream(resultByteArray))
-        callback.invoke(resultByteArray)
+        callback.invoke(encodeProtoBuf(responseMessage))
     }
 
 }

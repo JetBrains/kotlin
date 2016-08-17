@@ -43,6 +43,33 @@ fun main(args: Array<String>) {
 
 }
 
+fun encodeInt(i: Int): ByteArray {
+    val result = ByteArray(4)
+    result[0] = i.shr(24).toByte()
+    result[1] = i.shr(16).toByte()
+    result[2] = i.shr(8).toByte()
+    result[3] = i.toByte()
+
+    return result
+}
+
+fun decodeInt(bytes: ByteArray): Int {
+    var result = 0
+    result += bytes[3]
+    result += bytes[2].toInt().shl(8)
+    result += bytes[1].toInt().shl(16)
+    result += bytes[0].toInt().shl(24)
+    return result
+}
+
+fun encodeProtoBuf(protoMessage: dynamic): ByteArray {
+    val protoSize = protoMessage.getSizeNoTag()
+    val routeBytes = ByteArray(protoSize)
+
+    protoMessage.writeTo(CodedOutputStream(routeBytes))
+    return routeBytes
+}
+
 @native
 fun require(name: String): dynamic {
     return null
