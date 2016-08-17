@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
-/* package */ class ReflectProperties {
+public class ReflectProperties {
     public static abstract class Val<T> {
         private static final Object NULL_VALUE = new Object() {};
 

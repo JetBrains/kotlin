@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import kotlin.reflect.KCallable
+import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
 internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
@@ -48,6 +49,15 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
                 jClass
             }
         }
+
+        val members: Collection<KCallableImpl<*>> by ReflectProperties.lazySoft {
+            getMembers(scope, DECLARED).filter { member ->
+                val callableDescriptor = member.descriptor as DeserializedCallableMemberDescriptor
+                val packageFragment = callableDescriptor.containingDeclaration as PackageFragmentDescriptor
+                val source = (packageFragment as? LazyJavaPackageFragment)?.source as? KotlinJvmBinaryPackageSourceElement
+                (source?.getContainingBinaryClass(callableDescriptor) as? ReflectKotlinClass)?.klass == jClass
+            }.toList()
+        }
     }
 
     private val data = ReflectProperties.lazy { Data() }
@@ -56,13 +66,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
 
     private val scope: MemberScope get() = data().descriptor.memberScope
 
-    override val members: Collection<KCallable<*>>
-        get() = getMembers(scope, declaredOnly = false).filter { member ->
-            val callableDescriptor = member.descriptor as DeserializedCallableMemberDescriptor
-            val packageFragment = callableDescriptor.containingDeclaration as PackageFragmentDescriptor
-            val source = (packageFragment as? LazyJavaPackageFragment)?.source as? KotlinJvmBinaryPackageSourceElement
-            (source?.getContainingBinaryClass(callableDescriptor) as? ReflectKotlinClass)?.klass == jClass
-        }.toList()
+    override val members: Collection<KCallable<*>> get() = data().members
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()

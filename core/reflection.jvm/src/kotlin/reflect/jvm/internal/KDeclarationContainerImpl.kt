@@ -31,7 +31,7 @@ import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
-    protected abstract inner class Data {
+    abstract inner class Data {
         // This is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
         val moduleData: RuntimeModuleData by ReflectProperties.lazySoft {
             jClass.getOrCreateModule()
@@ -47,31 +47,35 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    fun getMembers(scope: MemberScope, declaredOnly: Boolean): Sequence<KCallableImpl<*>> {
-        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>?, Unit>() {
-            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean =
-                    declaredOnly && !descriptor.kind.isReal
+    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Sequence<KCallableImpl<*>> {
+        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> =
+                    createProperty(descriptor)
 
-            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*>? {
-                return if (skipCallable(descriptor)) null else createProperty(descriptor)
-            }
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
+                    KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
 
-            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*>? {
-                return if (skipCallable(descriptor)) null else KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
-            }
-
-            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*>? {
-                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
-            }
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*> =
+                    throw IllegalStateException("No constructors should appear in this scope: $descriptor")
         }
 
         return scope.getContributedDescriptors().asSequence()
                 .filter { descriptor ->
-                    descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.INVISIBLE_FAKE
+                    descriptor is CallableMemberDescriptor &&
+                    descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
+                    belonginess.accept(descriptor)
                 }
                 .mapNotNull { descriptor ->
                     descriptor.accept(visitor, Unit)
                 }
+    }
+
+    protected enum class MemberBelonginess {
+        DECLARED,
+        INHERITED;
+
+        fun accept(member: CallableMemberDescriptor): Boolean =
+                member.kind.isReal == (this == DECLARED)
     }
 
     private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {

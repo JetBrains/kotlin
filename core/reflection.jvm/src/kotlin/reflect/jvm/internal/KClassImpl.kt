@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
+import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KAnnotatedElementImpl {
-    private inner class Data : KDeclarationContainerImpl.Data() {
+    inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
             val moduleData = data().moduleData
@@ -60,9 +62,26 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             }
             field.get(null) as T
         }
+
+        val declaredNonStaticMembers: Sequence<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
+        val declaredStaticMembers: Sequence<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
+        val inheritedNonStaticMembers: Sequence<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
+        val inheritedStaticMembers: Sequence<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
+
+        val allNonStaticMembers: Sequence<KCallableImpl<*>> get() = declaredNonStaticMembers + inheritedNonStaticMembers
+        val allStaticMembers: Sequence<KCallableImpl<*>> get() = declaredStaticMembers + inheritedStaticMembers
+        val declaredMembers: Sequence<KCallableImpl<*>> get() = declaredNonStaticMembers + declaredStaticMembers
+
+        val allMembers: Collection<KCallable<*>> by ReflectProperties.lazySoft {
+            (allNonStaticMembers + allStaticMembers).toList()
+        }
     }
 
-    private val data = ReflectProperties.lazy { Data() }
+    val data = ReflectProperties.lazy { Data() }
 
     override val descriptor: ClassDescriptor get() = data().descriptor
 
@@ -74,8 +93,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
 
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
-    override val members: Collection<KCallable<*>>
-        get() = (getMembers(memberScope, declaredOnly = false) + getMembers(staticScope, declaredOnly = false)).toList()
+    override val members: Collection<KCallable<*>> get() = data().allMembers
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
