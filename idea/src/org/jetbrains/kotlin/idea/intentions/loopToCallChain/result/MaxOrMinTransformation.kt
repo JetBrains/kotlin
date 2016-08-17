@@ -45,41 +45,86 @@ class MaxOrMinTransformation(
      *             variable = <input variable>
      *         }
      *     }
+     *
+     *     or
+     *
+     *     val variable = <initial>
+     *     for (...) {
+     *         ...
+     *         // or '<', '<=', '>=' or operands swapped
+     *         variable = if (variable > <input variable>) <input variable> else variable
+     *         }
+     *     }
      */
     object Matcher : TransformationMatcher {
         override val indexVariableAllowed: Boolean
             get() = false
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
+            return matchIfAssign(state) ?: matchAssignIf(state)
+        }
+
+        private fun matchIfAssign(state: MatchingState): TransformationMatch.Result? {
             val ifExpression = state.statements.singleOrNull() as? KtIfExpression ?: return null
             if (ifExpression.`else` != null) return null
 
-            val condition = ifExpression.condition as? KtBinaryExpression ?: return null
+            val then = ifExpression.then ?: return null
+            val statement = then.blockExpressionsOrSingle().singleOrNull() as? KtBinaryExpression ?: return null
+            if (statement.operationToken != KtTokens.EQ) return null
+
+            return match(ifExpression.condition, statement.left, statement.right, null, state.inputVariable, state.outerLoop)
+        }
+
+        private fun matchAssignIf(state: MatchingState): TransformationMatch.Result? {
+            val assignment = state.statements.singleOrNull() as? KtBinaryExpression ?: return null
+            if (assignment.operationToken != KtTokens.EQ) return null
+
+            val ifExpression = assignment.right as? KtIfExpression ?: return null
+
+            return match(ifExpression.condition, assignment.left, ifExpression.then, ifExpression.`else`, state.inputVariable, state.outerLoop)
+        }
+
+        private fun match(
+                condition: KtExpression?,
+                assignmentTarget: KtExpression?,
+                valueAssignedIfTrue: KtExpression?,
+                valueAssignedIfFalse: KtExpression?,
+                inputVariable: KtCallableDeclaration,
+                loop: KtForExpression
+        ): TransformationMatch.Result? {
+            if (condition !is KtBinaryExpression) return null
             val comparison = condition.operationToken
-            if (comparison !in setOf(KtTokens.GT, KtTokens.LT)) return null
+            if (comparison !in setOf(KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ)) return null
             val left = condition.left as? KtNameReferenceExpression ?: return null
             val right = condition.right as? KtNameReferenceExpression ?: return null
-            val otherHand = if (left.isVariableReference(state.inputVariable)) {
+            val otherHand = if (left.isVariableReference(inputVariable)) {
                 right
             }
-            else if (right.isVariableReference(state.inputVariable)) {
+            else if (right.isVariableReference(inputVariable)) {
                 left
             }
             else {
                 return null
             }
 
-            val variableInitialization = (otherHand.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
+            val variableInitialization = (otherHand.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = false)
                                           ?: return null)
 
-            val then = ifExpression.then ?: return null
-            val statement = then.blockExpressionsOrSingle().singleOrNull() as? KtBinaryExpression ?: return null
-            if (statement.operationToken != KtTokens.EQ) return null
-            if (!statement.left.isVariableReference(variableInitialization.variable)) return null
-            if (!statement.right.isVariableReference(state.inputVariable)) return null
+            if (!assignmentTarget.isVariableReference(variableInitialization.variable)) return null
 
-            val isMax = (comparison == KtTokens.GT) xor (otherHand == left)
-            val transformation = MaxOrMinTransformation(state.outerLoop, state.inputVariable, variableInitialization, isMax)
+            val valueToBeVariable = if (valueAssignedIfTrue.isVariableReference(inputVariable)) {
+                valueAssignedIfFalse
+            }
+            else if (valueAssignedIfFalse.isVariableReference(inputVariable)) {
+                valueAssignedIfTrue
+            }
+            else {
+                return null
+            }
+            if (valueToBeVariable != null && !valueToBeVariable.isVariableReference(variableInitialization.variable)) return null
+
+            val isMax = (comparison == KtTokens.GT || comparison == KtTokens.GTEQ) xor (otherHand == left)
+            val transformation = MaxOrMinTransformation(loop, inputVariable, variableInitialization, isMax)
             return TransformationMatch.Result(transformation)
         }
     }
