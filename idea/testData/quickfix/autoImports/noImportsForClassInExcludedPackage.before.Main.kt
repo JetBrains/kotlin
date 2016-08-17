@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
 // ACTION: Convert property initializer to getter
 // ACTION: Create class 'SomeClass'
 // ACTION: Create function 'SomeClass'

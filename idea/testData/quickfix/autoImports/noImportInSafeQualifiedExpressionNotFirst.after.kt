@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
 // ERROR: Unresolved reference: SomeTest
 // ERROR: Expression expected, but a package name found
 // ACTION: Edit intention settings

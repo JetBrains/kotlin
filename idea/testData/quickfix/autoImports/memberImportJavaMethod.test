@@ -9,7 +9,8 @@ fun f() {
 }
 
 
-// FILE: Bar.java
+// FILE: foo/Bar.java
+package foo;
 
 public class Bar {
     public static void foobar()
@@ -19,7 +20,7 @@ public class Bar {
 }
 
 // FILE: first.after.kt
-import Bar.foobar
+import foo.Bar.foobar
 
 // "Import member" "true"
 // ERROR: Unresolved reference: foobar

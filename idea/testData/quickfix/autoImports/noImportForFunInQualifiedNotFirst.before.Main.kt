@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
 // ACTION: Rename reference
 // ERROR: Unresolved reference: externalFun
 
