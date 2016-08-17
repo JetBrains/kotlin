@@ -21,7 +21,7 @@ class Udev {
 
         monitor.on("remove", { device ->
             if (isOurMcDevice(device)) {
-                disconnectDevice(device)
+                disconnectDevice()
             }
         })
 
@@ -33,7 +33,7 @@ class Udev {
         return device.ID_VENDOR_ID == microController.vendorID && device.ID_MODEL_ID == microController.modelID && device.SUBSYSTEM == "tty"
     }
 
-    fun disconnectDevice(device: dynamic) {
+    fun disconnectDevice() {
         println("mc disconnected")
         MicroController.instance.transportFilePath = ""
         mcTransport.closeStreams()
