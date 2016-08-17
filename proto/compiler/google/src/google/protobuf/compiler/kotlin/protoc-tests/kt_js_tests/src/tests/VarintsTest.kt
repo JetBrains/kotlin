@@ -19,14 +19,14 @@ object VarintsTest {
     }
 
     fun compareVarints(kt1: MessageVarints, kt2: MessageVarints): Boolean {
-        return kt1.int == kt2.int //&&
-//                kt1.long.toString() == kt2.long.toString() &&
-//                kt1.sint == kt2.sint &&
-//                kt1.slong.toString() == kt2.slong.toString() &&
-//                kt1.bl == kt2.bl &&
-//                kt1.uint == kt2.uint &&
-//                kt1.ulong.toString() == kt2.ulong.toString() &&
-//                kt1.enumField.id == kt2.enumField.id
+        return kt1.int == kt2.int &&
+                kt1.long.toString() == kt2.long.toString() &&
+                kt1.sint == kt2.sint &&
+                kt1.slong.toString() == kt2.slong.toString() &&
+                kt1.bl == kt2.bl &&
+                kt1.uint == kt2.uint &&
+                kt1.ulong.toString() == kt2.ulong.toString() &&
+                kt1.enumField.id == kt2.enumField.id
     }
 
    fun ktToKtOnce() {
