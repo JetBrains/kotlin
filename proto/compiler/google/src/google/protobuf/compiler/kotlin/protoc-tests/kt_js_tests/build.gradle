@@ -1,0 +1,72 @@
+buildscript {
+    ext.kotlin_version = '1.0.3'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+plugins {
+    id "com.moowork.node" version "0.13"
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+apply plugin: "kotlin2js"
+
+sourceSets {
+    main.kotlin.srcDirs += 'src'
+    main.kotlin.srcDirs += '../../../../../../../../build/sources'
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+}
+
+task copyKotlinLib(type: Copy) {
+    from "${projectDir}/helpers/kotlin.js"
+    into "${projectDir}/build/js"
+}
+
+task copyPackageJSON(type: Copy) {
+	from "${projectDir}/helpers/package.json"
+	into "${projectDir}/build/js"
+}
+
+task copyProtoFiles(type: Copy) {
+	from "${projectDir}/src/js_msg"
+	into "${projectDir}/build/js/js_messages"
+}
+
+task runTests(type: NodeTask) {
+    script = file("${projectDir}/build/js")
+	execOverrides {
+		it.workingDir = "${projectDir}/build/js"
+	}
+}
+
+compileKotlin2Js {
+    kotlinOptions.outputFile = "build/js/js_tests.js"
+    kotlinOptions.outputPrefix = "${projectDir}/helpers/prefix.js"
+    kotlinOptions.main="call"
+}
+
+npmInstall {
+	execOverrides {
+		it.workingDir = "${projectDir}/build/js"
+	}
+}
+
+build.dependsOn copyKotlinLib
+build.dependsOn copyProtoFiles
+build.dependsOn copyPackageJSON
+runTests.dependsOn build
+runTests.dependsOn npmInstall
