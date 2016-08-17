@@ -8,6 +8,14 @@
         </context>
     </template>
 
+    <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
+              name="maino" toReformat="true" toShortenFQNames="true"
+              value="@JvmStatic fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
+        <context>
+            <option name="KOTLIN_OBJECT_DECLARATION" value="true" />
+        </context>
+    </template>
+
     <template resource-bundle="messages.CodeInsightBundle" key="livetemplate.description.sout"
               name="sout" toReformat="true"
               ShortenFQNames="true" value="println($END$)">
@@ -194,6 +202,14 @@
               value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
             <option name="KOTLIN_TOPLEVEL" value="true" />
+        </context>
+    </template>
+
+    <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
+              name="psvmo" toReformat="true" toShortenFQNames="true"
+              value="@JvmStatic fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
+        <context>
+            <option name="KOTLIN_OBJECT_DECLARATION" value="true" />
         </context>
     </template>
 

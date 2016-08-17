@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.liveTemplates
 
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import java.io.File
 
@@ -26,27 +27,43 @@ class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
             File(TEST_DATA_BASE_PATH, "/context").path + File.separator
 
     fun testInDocComment() {
-        myFixture.configureByFile(getTestName(false) + ".kt")
-        assertInContexts(
-                KotlinTemplateContextType.Generic::class.java,
-                KotlinTemplateContextType.Comment::class.java)
+        assertInContexts(Generic::class.java, Comment::class.java)
     }
 
     fun testTopLevel() {
-        myFixture.configureByFile(getTestName(false) + ".kt")
-        assertInContexts(
-                KotlinTemplateContextType.Generic::class.java,
-                KotlinTemplateContextType.TopLevel::class.java)
+        assertInContexts(Generic::class.java, TopLevel::class.java)
     }
 
     fun testInExpression() {
-        myFixture.configureByFile(getTestName(false) + ".kt")
-        assertInContexts(
-                KotlinTemplateContextType.Generic::class.java,
-                KotlinTemplateContextType.Expression::class.java)
+        assertInContexts(Generic::class.java, Expression::class.java)
     }
 
-    private fun assertInContexts(vararg expectedContexts: Class<out KotlinTemplateContextType>) {
+    fun testAnonymousObject() {
+        assertInContexts(Generic::class.java, Class::class.java)
+    }
+
+    fun testCompanionObject() {
+        assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
+    }
+
+    fun testLocalObject() {
+        assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
+    }
+
+    fun testObjectInClass() {
+        assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
+    }
+
+    fun testObjectInObject() {
+        assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
+    }
+
+    fun testTopLevelObject() {
+        assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
+    }
+
+    private fun assertInContexts(vararg expectedContexts: java.lang.Class<out KotlinTemplateContextType>) {
+        myFixture.configureByFile(getTestName(false) + ".kt")
         val allContexts = TemplateContextType.EP_NAME.extensions.filter { it is KotlinTemplateContextType }
         val enabledContexts = allContexts.filter { it.isInContext(myFixture.file, myFixture.caretOffset) }.map { it.javaClass }
         UsefulTestCase.assertSameElements(enabledContexts, *expectedContexts)
