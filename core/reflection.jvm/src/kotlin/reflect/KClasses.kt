@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
+import kotlin.reflect.jvm.internal.KCallableImpl
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
@@ -70,8 +71,8 @@ val KClass<*>.defaultType: KType
  */
 val KClass<*>.declaredMembers: Collection<KCallable<*>>
     get() = with(this as KClassImpl) {
-        (getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = true) +
-         getMembers(staticScope, declaredOnly = true, nonExtensions = true, extensions = true)).toList()
+        (getMembers(memberScope, declaredOnly = true) +
+         getMembers(staticScope, declaredOnly = true)).toList()
     }
 
 /**
@@ -86,7 +87,7 @@ val KClass<*>.functions: Collection<KFunction<*>>
  */
 val KClass<*>.staticFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = true)
+            .getMembers(staticScope, declaredOnly = false)
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -95,7 +96,8 @@ val KClass<*>.staticFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.memberFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = false)
+            .getMembers(memberScope, declaredOnly = false)
+            .filterNotExtensions()
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -104,7 +106,8 @@ val KClass<*>.memberFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = false, extensions = true)
+            .getMembers(memberScope, declaredOnly = false)
+            .filterExtensions()
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -115,8 +118,8 @@ val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.declaredFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = true)
-            .plus(getMembers(staticScope, declaredOnly = true, nonExtensions = true, extensions = true))
+            .getMembers(memberScope, declaredOnly = true)
+            .plus(getMembers(staticScope, declaredOnly = true))
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -125,7 +128,8 @@ val KClass<*>.declaredFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = false)
+            .getMembers(memberScope, declaredOnly = true)
+            .filterNotExtensions()
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -134,7 +138,8 @@ val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
+            .getMembers(memberScope, declaredOnly = true)
+            .filterExtensions()
             .filterIsInstance<KFunction<*>>()
             .toList()
 
@@ -144,7 +149,8 @@ val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
  */
 val KClass<*>.staticProperties: Collection<KProperty0<*>>
     get() = (this as KClassImpl)
-            .getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = false)
+            .getMembers(staticScope, declaredOnly = false)
+            .filterNotExtensions()
             .filterIsInstance<KProperty0<*>>()
             .toList()
 
@@ -153,7 +159,8 @@ val KClass<*>.staticProperties: Collection<KProperty0<*>>
  */
 val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = false)
+            .getMembers(memberScope, declaredOnly = false)
+            .filterNotExtensions()
             .filterIsInstance<KProperty1<T, *>>()
             .toList()
 
@@ -162,7 +169,8 @@ val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
  */
 val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = false, extensions = true)
+            .getMembers(memberScope, declaredOnly = false)
+            .filterExtensions()
             .filterIsInstance<KProperty2<T, *, *>>()
             .toList()
 
@@ -171,7 +179,8 @@ val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *
  */
 val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = false)
+            .getMembers(memberScope, declaredOnly = true)
+            .filterNotExtensions()
             .filterIsInstance<KProperty1<T, *>>()
             .toList()
 
@@ -180,10 +189,17 @@ val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
  */
 val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
+            .getMembers(memberScope, declaredOnly = true)
+            .filterExtensions()
             .filterIsInstance<KProperty2<T, *, *>>()
             .toList()
 
+
+private fun <T : KCallableImpl<*>> Sequence<T>.filterExtensions(): Sequence<T> =
+        filter { it.descriptor.extensionReceiverParameter != null }
+
+private fun <T : KCallableImpl<*>> Sequence<T>.filterNotExtensions(): Sequence<T> =
+        filter { it.descriptor.extensionReceiverParameter == null }
 
 /**
  * Immediate superclasses of this class, in the order they are listed in the source code.

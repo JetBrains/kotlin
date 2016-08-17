@@ -75,9 +75,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
     override val members: Collection<KCallable<*>>
-        get() = getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = true)
-                .plus(getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = true))
-                .toList()
+        get() = (getMembers(memberScope, declaredOnly = false) + getMembers(staticScope, declaredOnly = false)).toList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {

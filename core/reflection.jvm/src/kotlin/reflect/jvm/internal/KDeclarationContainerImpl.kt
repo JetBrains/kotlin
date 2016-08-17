@@ -47,17 +47,10 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    fun getMembers(scope: MemberScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallableImpl<*>> {
+    fun getMembers(scope: MemberScope, declaredOnly: Boolean): Sequence<KCallableImpl<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>?, Unit>() {
-            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
-                if (declaredOnly && !descriptor.kind.isReal) return true
-
-                val isExtension = descriptor.extensionReceiverParameter != null
-                if (isExtension && !extensions) return true
-                if (!isExtension && !nonExtensions) return true
-
-                return false
-            }
+            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean =
+                    declaredOnly && !descriptor.kind.isReal
 
             override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*>? {
                 return if (skipCallable(descriptor)) null else createProperty(descriptor)
