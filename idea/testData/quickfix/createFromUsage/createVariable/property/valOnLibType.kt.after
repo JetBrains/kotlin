@@ -4,7 +4,7 @@
 
 class A<T>(val n: T)
 
-val Int.foo: A<Int>
+private val Int.foo: A<Int>
 
 fun test() {
     val a: A<Int> = 2.foo

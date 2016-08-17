@@ -3,7 +3,7 @@
 
 import package1.A
 
-val package2.A.foo: Any
+private val package2.A.foo: Any<caret>
 
 class X {
     init {

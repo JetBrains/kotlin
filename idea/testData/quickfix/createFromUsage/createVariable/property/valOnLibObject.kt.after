@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized
 // WITH_RUNTIME
 
-val Unit.foo: Int
+private val Unit.foo: Int
 
 fun test() {
     val a: Int = Unit.foo
