@@ -33,19 +33,13 @@ interface IrValue {
     fun load(): IrExpression
 }
 
-inline fun onDemandExpressionValue(crossinline makeExpression: () -> IrExpression) =
-        object : IrValue {
-            override fun load() = makeExpression()
-        }
-
 class IrTemporaryVariableValue(val irVariable: IrVariable) : IrValue {
     override fun load(): IrExpression =
             irVariable.createDefaultGetExpression()
 }
 
-class IrGenerateExpressionValue(val irStatementGenerator: IrStatementGenerator, val ktExpression: KtExpression) : IrValue {
-    override fun load(): IrExpression =
-            irStatementGenerator.generateExpression(ktExpression)
+class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
+    override fun load() = irExpression
 }
 
 interface IrLValue : IrValue {
@@ -137,8 +131,7 @@ class IrIndexedLValue(
 
         defineContextVariables(irBlock, callGenerator)
 
-        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               onDemandExpressionValue { irExpression })
+        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irExpression))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
@@ -157,14 +150,14 @@ class IrIndexedLValue(
 
         defineContextVariables(irBlock, callGenerator)
 
-        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], onDemandExpressionValue { irRhs })
+        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irRhs))
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
         callGenerator.putValue(operatorCallReceiver!!,
-                               onDemandExpressionValue { callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator) })
+                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
 
         callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               onDemandExpressionValue { callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator) })
+                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
