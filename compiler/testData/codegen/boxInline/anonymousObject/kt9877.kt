@@ -1,5 +1,6 @@
-// FILE: 1.kt
+// NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
+// FILE: 1.kt
 package test
 
 fun <T> T.noInline(p: (T) -> Unit) {
