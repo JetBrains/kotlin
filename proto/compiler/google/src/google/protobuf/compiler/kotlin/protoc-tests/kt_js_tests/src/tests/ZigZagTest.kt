@@ -13,58 +13,28 @@ object ZigZagTest {
         return MessageZigZag.BuilderMessageZigZag(int, long.toLong()).build()
     }
 
-    fun generateJsZigZag(): dynamic {
-        val int = Util.nextInt()
-        val long = Util.nextLong()
-        val MessageClass = JSMessageZigZag
-        return js("new MessageClass(int, long)")
+    fun compareZigZags(kt1: MessageZigZag, kt2: MessageZigZag): Boolean {
+        return kt1.int == kt2.int &&
+                kt1.long == kt2.long
     }
 
-    fun compareZigZags(kt: MessageZigZag, jvs: dynamic): Boolean {
-//        println("Kotlin message:")
-//        printMessage(kt)
-//        println()
-//
-//        println("JS Message:")
-//        printMessage(jvs)
-//        println()
+    fun ktToKtOnce() {
+        val msg = generateKtZigZag()
+        val outs = Util.getKtOutputStream(msg.getSizeNoTag())
+        msg.writeTo(outs)
 
-        return kt.int == jvs.int &&
-                kt.long.toString() == jvs.long.toString()
-    }
+        val ins = CodedInputStream(outs.buffer)
+        val readMsg = MessageZigZag.BuilderMessageZigZag(0, 0L).parseFrom(ins).build()
 
-    fun ktToJsOnce() {
-        val kt = generateKtZigZag()
-        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-        kt.writeTo(outs)
-
-        val jvs = JSMessageZigZag.decode(outs.buffer)
-
-        Util.assert(kt.errorCode == 0)
-        Util.assert(compareZigZags(kt, jvs))
-    }
-
-    fun jsToKtOnce() {
-        val jvs = generateJsZigZag()
-        val byteBuffer = jvs.toBuffer()
-
-        val ins = CodedInputStream(Util.JSBufferToByteArray(byteBuffer))
-        val kt = MessageZigZag.BuilderMessageZigZag(0, 0).parseFrom(ins).build()
-
-        Util.assert(kt.errorCode == 0)
-        Util.assert(compareZigZags(kt, jvs))
+        Util.assert(readMsg.errorCode == 0)
+        Util.assert(compareZigZags(msg, readMsg))
     }
 
     val testRuns = 1000
 
     fun runTests() {
         for (i in 0..testRuns) {
-//            println("Kotlin -> JavaScript")
-            ktToJsOnce()
-
-//            println()
-//            println("JavaScript -> Kotlin")
-            jsToKtOnce()
+            ktToKtOnce()
         }
     }
 }

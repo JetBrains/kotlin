@@ -4,9 +4,6 @@ import CodedInputStream
 import MessageRepeatedVarints
 
 object RepeatedVarintsTest {
-    val builder = protoBuf.loadProtoFile("./js_messages/repeated_varints.proto")
-    val JSMessageRepeatedVarints= builder.build("MessageRepeatedVarints")
-
     fun generateKtRepeatedVarints(): MessageRepeatedVarints {
         val int = Util.generateIntArray()
         val long = Util.generateLongArray()
@@ -21,65 +18,35 @@ object RepeatedVarintsTest {
         ).build()
     }
 
-    fun generateJSRepeatedVarints(): dynamic {
-        val int = Util.generateIntArray()
-        val long = Util.generateIntArray()
-        val sint = Util.generateIntArray()
-        val slong = Util.generateIntArray()
-        val bool = Util.generateBoolArray()
-        val uint = Util.generateIntArray()
-        val ulong = Util.generateIntArray()
-
-        val MessageClass = JSMessageRepeatedVarints
-        return js("new MessageClass(int, long, sint, slong, bool, uint, ulong)")
+    fun compareRepeatedVarints(kt1: MessageRepeatedVarints, kt2: MessageRepeatedVarints): Boolean {
+        return Util.compareArrays(kt1.int.asIterable(), kt2.int.asIterable()) &&
+                Util.compareArrays(kt1.long.asIterable(), kt2.long.asIterable()) &&
+                Util.compareArrays(kt1.sint.asIterable(), kt2.sint.asIterable()) &&
+                Util.compareArrays(kt1.slong.asIterable(), kt2.slong.asIterable()) &&
+                Util.compareArrays(kt1.bl.asIterable(), kt2.bl.asIterable()) &&
+                Util.compareArrays(kt1.uint.asIterable(), kt2.uint.asIterable()) &&
+                Util.compareArrays(kt1.ulong.asIterable(), kt2.ulong.asIterable())
     }
 
-    fun compareRepeatedVarints(kt: MessageRepeatedVarints, jvs: dynamic): Boolean {
-        return Util.compareArrays(kt.int, jvs.int) &&
-                Util.compareArrays(kt.long, jvs.long) &&
-                Util.compareArrays(kt.sint, jvs.sint) &&
-                Util.compareArrays(kt.slong, jvs.slong) &&
-                Util.compareArrays(kt.bl, jvs.bl) &&
-                Util.compareUIntArrays(kt.uint, jvs.uint) &&
-                Util.compareULongArrays(kt.ulong, jvs.ulong)
+    fun ktToKtOnce() {
+        val msg = generateKtRepeatedVarints()
+        val outs = Util.getKtOutputStream(msg.getSizeNoTag())
+        msg.writeTo(outs)
+
+        val ins = CodedInputStream(outs.buffer)
+        val readMsg = MessageRepeatedVarints.BuilderMessageRepeatedVarints(
+                IntArray(0), LongArray(0), IntArray(0), LongArray(0), BooleanArray(0), IntArray(0), LongArray(0)
+        ).parseFrom(ins).build()
+
+        Util.assert(readMsg.errorCode == 0)
+        Util.assert(compareRepeatedVarints(msg, readMsg))
     }
 
-    fun ktToJsOnce() {
-        val kt = generateKtRepeatedVarints()
-        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-        kt.writeTo(outs)
-
-        val jvs = JSMessageRepeatedVarints.decode(outs.buffer)
-        Util.assert(kt.errorCode == 0)
-        Util.assert(compareRepeatedVarints(kt, jvs))
-    }
-
-    fun jsToKtOnce() {
-        val jvs = generateJSRepeatedVarints()
-        val byteBuffer = jvs.toBuffer()
-
-        val ins = CodedInputStream(Util.JSBufferToByteArray(byteBuffer))
-        val kt = MessageRepeatedVarints.BuilderMessageRepeatedVarints(
-                    IntArray(0), LongArray(0), IntArray(0), LongArray(0), BooleanArray(0), IntArray(0), LongArray(0)
-                ).parseFrom(ins).build()
-
-        js("debugger")
-        Util.assert(kt.errorCode == 0)
-        Util.assert(compareRepeatedVarints(kt, jvs))
-    }
-
-    val testRuns = 1
+    val testRuns = 1000
 
     fun runTests() {
         for (i in 0..testRuns) {
-            println("JavaScript -> Kotlin")
-            jsToKtOnce()
-
-            println()
-
-            println("Kotlin -> JavaScript")
-            ktToJsOnce()
-
+            ktToKtOnce()
         }
     }
 }

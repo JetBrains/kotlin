@@ -87,42 +87,42 @@
 //                .build()
 //    }
 //
-//    fun compareBases(kt: Base, jv: BaseMessage.Base): Boolean {
-//        return kt.flag == jv.flag &&
-//                kt.int == jv.int &&
-//                Util.compareArrays(kt.arr.asIterable(), jv.arrList)
+//    fun compareBases(kt1: Base, jv: BaseMessage.Base): Boolean {
+//        return kt1.flag == jv.flag &&
+//                kt1.int == jv.int &&
+//                Util.compareArrays(kt1.arr.asIterable(), jv.arrList)
 //    }
 //
-//    fun compareExtended(kt: Extended, jv: ExtendedMessage.Extended): Boolean {
-//        return kt.flag == jv.flag &&
-//                kt.int == jv.int &&
-//                Util.compareArrays(kt.arr.asIterable(), jv.arrList) &&
-//                Util.compareArrays(kt.arr_longs.asIterable(), jv.arrLongsList) &&
-//                kt.long == jv.long
+//    fun compareExtended(kt1: Extended, jv: ExtendedMessage.Extended): Boolean {
+//        return kt1.flag == jv.flag &&
+//                kt1.int == jv.int &&
+//                Util.compareArrays(kt1.arr.asIterable(), jv.arrList) &&
+//                Util.compareArrays(kt1.arr_longs.asIterable(), jv.arrLongsList) &&
+//                kt1.long == jv.long
 //    }
 //
-//    fun compareBaseKtToJavaExtended(kt: Base, jv: ExtendedMessage.Extended): Boolean {
-//        return kt.flag == jv.flag &&
-//                kt.int == jv.int &&
-//                Util.compareArrays(kt.arr.asIterable(), jv.arrList)
+//    fun compareBaseKtToJavaExtended(kt1: Base, jv: ExtendedMessage.Extended): Boolean {
+//        return kt1.flag == jv.flag &&
+//                kt1.int == jv.int &&
+//                Util.compareArrays(kt1.arr.asIterable(), jv.arrList)
 //    }
 //
-//    fun compareExtendedKtToJavaBase(kt: Extended, jv: BaseMessage.Base): Boolean {
-//        return kt.flag == jv.flag &&
-//                kt.int == jv.int &&
-//                Util.compareArrays(kt.arr.asIterable(), jv.arrList)
+//    fun compareExtendedKtToJavaBase(kt1: Extended, jv: BaseMessage.Base): Boolean {
+//        return kt1.flag == jv.flag &&
+//                kt1.int == jv.int &&
+//                Util.compareArrays(kt1.arr.asIterable(), jv.arrList)
 //    }
 //
 //    fun baseKtToBaseJavaOnce() {
-//        val kt = generateKtBaseMessage()
-//        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-//        kt.writeTo(outs)
+//        val kt1 = generateKtBaseMessage()
+//        val outs = Util.getKtOutputStream(kt1.getSizeNoTag())
+//        kt1.writeTo(outs)
 //
 //        val ins = Util.KtOutputStreamToInputStream(outs)
 //        val jv = BaseMessage.Base.parseFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareBases(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareBases(kt1, jv))
 //    }
 //
 //    fun baseJavaToBaseKtOnce() {
@@ -131,23 +131,23 @@
 //        val jv = generateJvBaseMessage()
 //        jv.writeTo(outs)
 //        val ins = CodedInputStream(outs.toByteArray())
-//        val kt = Base.BuilderBase(LongArray(0), false, 0).build()
-//        kt.mergeFrom(ins)
+//        val kt1 = Base.BuilderBase(LongArray(0), false, 0).build()
+//        kt1.mergeFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareBases(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareBases(kt1, jv))
 //    }
 //
 //    fun baseKtToExtendedJavaOnce() {
-//        val kt = generateKtBaseMessage()
-//        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-//        kt.writeTo(outs)
+//        val kt1 = generateKtBaseMessage()
+//        val outs = Util.getKtOutputStream(kt1.getSizeNoTag())
+//        kt1.writeTo(outs)
 //
 //        val ins = Util.KtOutputStreamToInputStream(outs)
 //        val jv = ExtendedMessage.Extended.parseFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareBaseKtToJavaExtended(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareBaseKtToJavaExtended(kt1, jv))
 //    }
 //
 //    fun extendedJavaToBaseKtOnce() {
@@ -158,23 +158,23 @@
 //
 //        val ins = CodedInputStream(outs.toByteArray())
 //
-//        val kt = Base.BuilderBase(LongArray(0), false, 0).build()
-//        kt.mergeFrom(ins)
+//        val kt1 = Base.BuilderBase(LongArray(0), false, 0).build()
+//        kt1.mergeFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareBaseKtToJavaExtended(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareBaseKtToJavaExtended(kt1, jv))
 //    }
 //
 //    fun extendedKtToBaseJavaOnce() {
-//        val kt = generateKtExtendedMessage()
-//        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-//        kt.writeTo(outs)
+//        val kt1 = generateKtExtendedMessage()
+//        val outs = Util.getKtOutputStream(kt1.getSizeNoTag())
+//        kt1.writeTo(outs)
 //
 //        val ins = Util.KtOutputStreamToInputStream(outs)
 //        val jv = BaseMessage.Base.parseFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareExtendedKtToJavaBase(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareExtendedKtToJavaBase(kt1, jv))
 //    }
 //
 //    fun baseJavaToExtendedKtOnce() {
@@ -185,23 +185,23 @@
 //
 //        val ins = CodedInputStream(outs.toByteArray())
 //
-//        val kt = Extended.BuilderExtended(LongArray(0), LongArray(0), false, 0L, 0).build()
-//        kt.mergeFrom(ins)
+//        val kt1 = Extended.BuilderExtended(LongArray(0), LongArray(0), false, 0L, 0).build()
+//        kt1.mergeFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareExtendedKtToJavaBase(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareExtendedKtToJavaBase(kt1, jv))
 //    }
 //
 //    fun extendedKtToExtendedJavaOnce() {
-//        val kt = generateKtExtendedMessage()
-//        val outs = Util.getKtOutputStream(kt.getSizeNoTag())
-//        kt.writeTo(outs)
+//        val kt1 = generateKtExtendedMessage()
+//        val outs = Util.getKtOutputStream(kt1.getSizeNoTag())
+//        kt1.writeTo(outs)
 //
 //        val ins = Util.KtOutputStreamToInputStream(outs)
 //        val jv = ExtendedMessage.Extended.parseFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareExtended(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareExtended(kt1, jv))
 //    }
 //
 //    fun extendedJavaToExtendedKtOnce() {
@@ -210,11 +210,11 @@
 //        val jv = generateJvExtendedMessage()
 //        jv.writeTo(outs)
 //        val ins = CodedInputStream(outs.toByteArray())
-//        val kt = Extended.BuilderExtended(LongArray(0), LongArray(0), false, 0L, 0).build()
-//        kt.mergeFrom(ins)
+//        val kt1 = Extended.BuilderExtended(LongArray(0), LongArray(0), false, 0L, 0).build()
+//        kt1.mergeFrom(ins)
 //
-//        Util.assert(kt.errorCode == 0)
-//        Util.assert(compareExtended(kt, jv))
+//        Util.assert(kt1.errorCode == 0)
+//        Util.assert(compareExtended(kt1, jv))
 //    }
 //
 //    val testRuns = 1000
