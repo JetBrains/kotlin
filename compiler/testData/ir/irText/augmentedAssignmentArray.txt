@@ -10,27 +10,27 @@ IrFile /augmentedAssignmentArray.kt
       BLOCK type=<no-type> hasResult=false isDesugared=false
         VAR var x: kotlin.IntArray
           CALL .foo type=kotlin.IntArray operator=
-        VAR val tmp0: kotlin.IntArray
+        VAR val tmp0_array: kotlin.IntArray
           GET_VAR x type=kotlin.IntArray
-        VAR val tmp1: kotlin.Int
+        VAR val tmp1_index0: kotlin.Int
           LITERAL Int type=kotlin.Int value='0'
         CALL .set type=kotlin.Unit operator=PLUSEQ
-          $this: GET_VAR tmp0 type=kotlin.IntArray
-          index: GET_VAR tmp1 type=kotlin.Int
+          $this: GET_VAR tmp0_array type=kotlin.IntArray
+          index: GET_VAR tmp1_index0 type=kotlin.Int
           value: CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR tmp0 type=kotlin.IntArray
-              index: GET_VAR tmp1 type=kotlin.Int
+              $this: GET_VAR tmp0_array type=kotlin.IntArray
+              index: GET_VAR tmp1_index0 type=kotlin.Int
             other: LITERAL Int type=kotlin.Int value='1'
-        VAR val tmp2: kotlin.IntArray
+        VAR val tmp2_array: kotlin.IntArray
           CALL .foo type=kotlin.IntArray operator=
-        VAR val tmp3: kotlin.Int
+        VAR val tmp3_index0: kotlin.Int
           LITERAL Int type=kotlin.Int value='0'
         CALL .set type=kotlin.Unit operator=MULTEQ
-          $this: GET_VAR tmp2 type=kotlin.IntArray
-          index: GET_VAR tmp3 type=kotlin.Int
+          $this: GET_VAR tmp2_array type=kotlin.IntArray
+          index: GET_VAR tmp3_index0 type=kotlin.Int
           value: CALL .times type=kotlin.Int operator=MULTEQ
             $this: CALL .get type=kotlin.Int operator=MULTEQ
-              $this: GET_VAR tmp2 type=kotlin.IntArray
-              index: GET_VAR tmp3 type=kotlin.Int
+              $this: GET_VAR tmp2_array type=kotlin.IntArray
+              index: GET_VAR tmp3_index0 type=kotlin.Int
             other: LITERAL Int type=kotlin.Int value='2'

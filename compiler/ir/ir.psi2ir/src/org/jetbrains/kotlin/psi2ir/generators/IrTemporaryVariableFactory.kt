@@ -35,7 +35,7 @@ class IrTemporaryVariableFactory(val scopeOwner: DeclarationDescriptor) {
                     scopeOwner,
                     Name.identifier(
                             if (nameHint != null)
-                                "tmp${nextTemporaryIndex()}\$$nameHint"
+                                "tmp${nextTemporaryIndex()}_$nameHint"
                             else
                                 "tmp${nextTemporaryIndex()}"
                     ),

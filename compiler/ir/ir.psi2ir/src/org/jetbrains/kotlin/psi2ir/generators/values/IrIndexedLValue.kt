@@ -14,86 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.psi2ir.generators.values
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockExpression
+import org.jetbrains.kotlin.ir.expressions.IrBlockExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.createDefaultGetExpression
-import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.psi2ir.generators.IrCallGenerator
+import org.jetbrains.kotlin.psi2ir.generators.IrStatementGenerator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-
-interface IrValue {
-    fun load(): IrExpression
-}
-
-class IrTemporaryVariableValue(val irVariable: IrVariable) : IrValue {
-    override fun load(): IrExpression =
-            irVariable.createDefaultGetExpression()
-}
-
-class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
-    override fun load() = irExpression
-}
-
-interface IrLValue : IrValue {
-    fun store(irExpression: IrExpression): IrExpression
-}
-
-interface IrLValueWithAugmentedStore : IrLValue {
-    fun augmentedStore(operatorCall: ResolvedCall<*>, irRhs: IrExpression): IrExpression
-}
-
-class IrVariableLValueValue(
-        val ktElement: KtElement,
-        val irOperator: IrOperator?,
-        val descriptor: VariableDescriptor
-) : IrLValue {
-    override fun load(): IrExpression =
-            IrGetVariableExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor, irOperator
-            )
-
-    override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor, irExpression.toExpectedType(descriptor.type), irOperator
-            )
-}
-
-class IrPropertyLValueValue(
-        val ktElement: KtElement,
-        val irOperator: IrOperator?,
-        val descriptor: PropertyDescriptor,
-        val dispatchReceiver: IrExpression?,
-        val extensionReceiver: IrExpression?,
-        val isSafe: Boolean
-) : IrLValue {
-    private fun IrPropertyAccessExpression.setReceivers() =
-            apply {
-                dispatchReceiver = this@IrPropertyLValueValue.dispatchReceiver
-                extensionReceiver = this@IrPropertyLValueValue.extensionReceiver
-            }
-
-    override fun load(): IrExpression =
-            IrGetPropertyExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor.type, isSafe, descriptor, irOperator
-            ).setReceivers()
-
-    override fun store(irExpression: IrExpression): IrExpression =
-            IrSetPropertyExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    isSafe, descriptor, irExpression.toExpectedType(descriptor.type), irOperator
-            ).setReceivers()
-}
 
 class IrIndexedLValue(
         var irStatementGenerator: IrStatementGenerator,
@@ -165,10 +98,11 @@ class IrIndexedLValue(
     }
 
     private fun defineContextVariables(irBlock: IrBlockExpression, callGenerator: IrCallGenerator) {
-        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, arrayValue.load()))
+        irBlock.addStatement(callGenerator.createTemporary(ktArrayAccessExpression.arrayExpression!!, arrayValue.load(), "array"))
 
+        var index = 0
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue.load()))
+            irBlock.addStatement(callGenerator.createTemporary(ktIndexExpression, irIndexValue.load(), "index${index++}"))
         }
     }
 }

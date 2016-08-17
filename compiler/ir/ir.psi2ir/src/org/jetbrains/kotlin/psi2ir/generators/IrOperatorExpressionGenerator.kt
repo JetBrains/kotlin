@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi2ir.generators.values.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 
@@ -96,7 +97,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
             val indexedGetCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
             val indexedSetCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
             return IrIndexedLValue(irStatementGenerator, ktLeft, irOperator,
-                                   irArrayValue, indexExpressions, indexedGetCall, indexedSetCall)
+                                                                                 irArrayValue, indexExpressions, indexedGetCall, indexedSetCall)
         }
 
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.generators.values.IrTemporaryVariableValue
+import org.jetbrains.kotlin.psi2ir.generators.values.IrValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -151,8 +153,9 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
 
         val temporariesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
-            val irArgument = generateValueArgument(valueArgument, valueArgumentsToValueParameters[valueArgument]!!) ?: continue
-            val irTemporary = temporaryVariableFactory.createTemporaryVariable(irArgument)
+            val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
+            val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
+            val irTemporary = temporaryVariableFactory.createTemporaryVariable(irArgument, valueParameter.name.asString())
             temporariesForValueArguments[valueArgument] = Pair(irTemporary.descriptor, irArgument)
             irBlock.addStatement(irTemporary)
         }
