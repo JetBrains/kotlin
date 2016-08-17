@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class IrGeneratorContext(
-        val inputFiles: List<KtFile>,
-        val irModule: IrModuleImpl,
+        val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext
 ) {
-    val moduleDescriptor: ModuleDescriptor get() = irModule.descriptor
-    val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
-
     val sourceManager = PsiSourceManager()
+
+    val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
 }
 

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginKind
+import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -38,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 class IrStatementGenerator(
         override val context: IrGeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val declarationFactory: IrLocalDeclarationsFactory
+        val temporaryVariableFactory: IrTemporaryVariableFactory
 ) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
 
     fun generateExpression(ktExpression: KtExpression): IrExpression =
@@ -58,7 +60,7 @@ class IrStatementGenerator(
 
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
-        val irLocalVariable = declarationFactory.createLocalVariable(property, variableDescriptor)
+        val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOriginKind.DEFINED, variableDescriptor)
         irLocalVariable.initializer = property.initializer?.let {
             it.genExpr().toExpectedType(variableDescriptor.type)
         }
@@ -72,7 +74,7 @@ class IrStatementGenerator(
         val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null,
                                             hasResult = false, isDesugared = true)
         val ktInitializer = multiDeclaration.initializer!!
-        val irTmpInitializer = declarationFactory.createTemporaryVariable(ktInitializer.genExpr())
+        val irTmpInitializer = temporaryVariableFactory.createTemporaryVariable(ktInitializer.genExpr())
         irBlock.addStatement(irTmpInitializer)
 
         val irCallGenerator = IrCallGenerator(this)
@@ -82,7 +84,8 @@ class IrStatementGenerator(
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
             val irComponentCall = irCallGenerator.generateCall(ktEntry, componentResolvedCall, IrOperator.COMPONENT_N.withIndex(index + 1))
-            val irComponentVar = declarationFactory.createLocalVariable(ktEntry, componentVariable, irComponentCall)
+            val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOriginKind.DEFINED,
+                                                componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
         }
 

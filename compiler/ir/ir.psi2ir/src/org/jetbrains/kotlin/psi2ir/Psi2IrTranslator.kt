@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModule
-import org.jetbrains.kotlin.ir.declarations.IrModuleImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.IrGeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.IrModuleGenerator
@@ -32,9 +31,8 @@ class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
     )
 
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModule {
-        val irModule = IrModuleImpl(moduleDescriptor)
-        val irGeneratorContext = IrGeneratorContext(ktFiles, irModule, bindingContext)
-        IrModuleGenerator(irGeneratorContext).generateModuleContent()
+        val irGeneratorContext = IrGeneratorContext(moduleDescriptor, bindingContext)
+        val irModule = IrModuleGenerator(irGeneratorContext).generateModule(ktFiles)
         postprocess(irModule)
         return irModule
     }

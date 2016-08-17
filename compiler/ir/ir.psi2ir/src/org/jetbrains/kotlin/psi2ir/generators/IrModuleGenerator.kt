@@ -16,21 +16,38 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.ir.declarations.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IrModuleGenerator(override val context: IrGeneratorContext) : IrDeclarationGenerator {
-    fun generateModuleContent() {
-        for (ktFile in context.inputFiles) {
-            val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
+class IrModuleGenerator(override val context: IrGeneratorContext) : IrGenerator {
+    fun generateModule(ktFiles: List<KtFile>): IrModule {
+        val irDeclarationGenerator = IrDeclarationGenerator(context)
+
+        val irModule = IrModuleImpl(context.moduleDescriptor)
+        for (ktFile in ktFiles) {
             val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
+            val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
             val fileName = fileEntry.getRecognizableName()
             val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
             context.sourceManager.putFileEntry(irFile, fileEntry)
-            context.irModule.addFile(irFile)
-            val irFileElementFactory = IrDeclarationFactory()
-            val generator = IrFileGenerator(ktFile, irFile, context, irFileElementFactory)
-            generator.generateFileContent()
+
+            for (ktDeclaration in ktFile.declarations) {
+                val irDeclaration = irDeclarationGenerator.generateMemberDeclaration(ktDeclaration)
+                irFile.addDeclaration(irDeclaration)
+                if (irDeclaration is IrProperty) {
+                    irDeclaration.getter?.let {
+                        irFile.addDeclaration(it)
+                    }
+                    irDeclaration.setter?.let {
+                        irFile.addDeclaration(it)
+                    }
+                }
+            }
+
+            irModule.addFile(irFile)
         }
+        return irModule
     }
+
 }

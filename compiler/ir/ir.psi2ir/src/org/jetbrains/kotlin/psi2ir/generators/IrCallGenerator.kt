@@ -29,17 +29,19 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class IrCallGenerator(
-        private val irStatementGenerator: IrStatementGenerator
-) : IrGenerator {
-    override val context: IrGeneratorContext get() = irStatementGenerator.context
+class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenerator {
+    override val context: IrGeneratorContext get() =
+            irStatementGenerator.context
+
+    private val temporaryVariableFactory: IrTemporaryVariableFactory get() =
+            irStatementGenerator.temporaryVariableFactory
 
     private val expressionValues = HashMap<KtExpression, IrValue>()
     private val receiverValues = HashMap<ReceiverValue, IrValue>()
     private val valueArgumentValues = HashMap<ValueParameterDescriptor, IrValue>()
 
-    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression): IrVariable {
-        val irTmpVar = irStatementGenerator.declarationFactory.createTemporaryVariable(irExpression)
+    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String? = null): IrVariable {
+        val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, nameHint)
         putValue(ktExpression, IrTemporaryVariableValue(irTmpVar))
         return irTmpVar
     }
@@ -150,7 +152,7 @@ class IrCallGenerator(
         val temporariesForValueArguments = HashMap<ResolvedValueArgument, Pair<VariableDescriptor, IrExpression>>()
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val irArgument = generateValueArgument(valueArgument, valueArgumentsToValueParameters[valueArgument]!!) ?: continue
-            val irTemporary = irStatementGenerator.declarationFactory.createTemporaryVariable(irArgument)
+            val irTemporary = temporaryVariableFactory.createTemporaryVariable(irArgument)
             temporariesForValueArguments[valueArgument] = Pair(irTemporary.descriptor, irArgument)
             irBlock.addStatement(irTemporary)
         }
