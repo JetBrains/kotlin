@@ -23,19 +23,20 @@ class McTransport() {
     fun initStreams(pathToFile: String) {
         writeStream = fs.createWriteStream(pathToFile);
         readStream = fs.createReadStream(pathToFile)
-        readStream.on("readable", {
+        readStream.on("readable", fun() {
             val data = readStream.read()
-            if (data != null) {
-                var messageLength = getBodyLength(resultBytes)
-                for (i in 0..data.length - 1) {
-                    resultBytes.add(data[i])
-                    if (messageLength != -1 && messageLength + protoHeaderLength == resultBytes.size) {
+            if (data == null) {
+                return
+            }
+            var messageLength = getBodyLength(resultBytes)
 
-                        callback.invoke(resultBytes.toByteArray())
-                        resultBytes.clear()
-                    } else if (messageLength == -1) {
-                        messageLength = getBodyLength(resultBytes)
-                    }
+            for (i in 0..data.length - 1) {
+                resultBytes.add(data[i])
+                if (messageLength != -1 && messageLength + protoHeaderLength == resultBytes.size) {
+                    callback.invoke(resultBytes.toByteArray())
+                    resultBytes.clear()
+                } else if (messageLength == -1) {
+                    messageLength = getBodyLength(resultBytes)
                 }
             }
         })

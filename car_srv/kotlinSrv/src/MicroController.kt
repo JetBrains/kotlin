@@ -79,7 +79,7 @@ class MicroController private constructor() {
             throw RcControlException()
         }
         val sid = (Math.random() * 100000).toInt()
-        this.rcSid = sid;
+        this.rcSid = sid
         rcHeartBeat(sid)
         return sid
     }
