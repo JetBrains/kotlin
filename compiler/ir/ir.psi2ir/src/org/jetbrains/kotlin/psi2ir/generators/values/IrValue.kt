@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.values
 
+import org.jetbrains.kotlin.ir.assertDetached
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.psi2ir.createDefaultGetExpression
@@ -31,7 +32,19 @@ class IrTemporaryVariableValue(val irVariable: IrVariable) : IrValue {
 }
 
 class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
-    override fun load() = irExpression
+    init {
+        irExpression.assertDetached()
+    }
+
+    private var instantiated = false
+
+    override fun load() =
+            if (!instantiated) {
+                instantiated = true
+                irExpression
+            }
+            else
+                throw AssertionError("Single exprssion value is already instantiated")
 }
 
 interface IrLValue : IrValue {
