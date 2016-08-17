@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'map{}.max()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.max()'"
+import java.lang.Math.max
+
+fun getMaxLineWidth(count: Int): Double {
+    val <caret>m = (0..count-1)
+            .asSequence()
+            .map { getLineWidth(it) }
+            .max()
+            ?: 0.0
+    return m
+}
+
+fun getLineWidth(i: Int): Double = TODO()
