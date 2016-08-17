@@ -233,6 +233,60 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("memberImportFunction.test")
+        public void testMemberImportFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportFunction.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportJavaField.test")
+        public void testMemberImportJavaField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportJavaField.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportJavaMethod.test")
+        public void testMemberImportJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportJavaMethod.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportNotForClassFunction.test")
+        public void testMemberImportNotForClassFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportNotForClassFunction.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportNotForClassProperty.test")
+        public void testMemberImportNotForClassProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportNotForClassProperty.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportNotForJavaNonStaticField.test")
+        public void testMemberImportNotForJavaNonStaticField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportNotForJavaNonStaticField.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportNotForJavaNonStaticMethod.test")
+        public void testMemberImportNotForJavaNonStaticMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportNotForJavaNonStaticMethod.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportNotForTopLevelFunction.test")
+        public void testMemberImportNotForTopLevelFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportNotForTopLevelFunction.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("memberImportProperty.test")
+        public void testMemberImportProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberImportProperty.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("minusOperator.before.Main.kt")
         public void testMinusOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/minusOperator.before.Main.kt");
@@ -347,36 +401,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
-        @TestMetadata("noStaticImportForClassFunction.test")
-        public void testNoStaticImportForClassFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForClassFunction.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("noStaticImportForClassProperty.test")
-        public void testNoStaticImportForClassProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForClassProperty.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("noStaticImportForJavaNonStaticField.test")
-        public void testNoStaticImportForJavaNonStaticField() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticField.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("noStaticImportForJavaNonStaticMethod.test")
-        public void testNoStaticImportForJavaNonStaticMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForJavaNonStaticMethod.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("noStaticImportForTopLevelFunction.test")
-        public void testNoStaticImportForTopLevelFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noStaticImportForTopLevelFunction.test");
-            doTestWithExtraFile(fileName);
-        }
-
         @TestMetadata("notExcludedClass.before.Main.kt")
         public void testNotExcludedClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notExcludedClass.before.Main.kt");
@@ -434,30 +458,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("sameModuleImportPriority.before.Main.kt")
         public void testSameModuleImportPriority() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/sameModuleImportPriority.before.Main.kt");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("staticImportFunction.test")
-        public void testStaticImportFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/staticImportFunction.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("staticImportJavaField.test")
-        public void testStaticImportJavaField() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/staticImportJavaField.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("staticImportJavaMethod.test")
-        public void testStaticImportJavaMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/staticImportJavaMethod.test");
-            doTestWithExtraFile(fileName);
-        }
-
-        @TestMetadata("staticImportProperty.test")
-        public void testStaticImportProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/staticImportProperty.test");
             doTestWithExtraFile(fileName);
         }
 

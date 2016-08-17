@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create function 'foobar'
 // ACTION: Rename reference
@@ -11,17 +11,16 @@ fun f() {
     foobar<caret>()
 }
 
-//FILE: dependency.before.java
+//FILE: dependency.before.kt
 package bar
 
-public class Foo {
-    public void foobar()
-    {
+class Foo {
+    fun foobar() {
     }
 }
 
 //FILE: main.after.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create function 'foobar'
 // ACTION: Rename reference

@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Static import" "true"
+// "Import member" "true"
 // ERROR: Unresolved reference: foobar
 
 //KT-9009
@@ -7,7 +7,7 @@
 package foo
 
 fun f() {
-    foobar<caret>()
+    foobar<caret> = "barfoo"
 }
 
 
@@ -15,12 +15,11 @@ fun f() {
 package bar
 
 object Foo {
-    fun foobar() {
-    }
+    var foobar = "foobar"
 }
 
 // FILE: main.after.kt
-// "Static import" "true"
+// "Import member" "true"
 // ERROR: Unresolved reference: foobar
 
 //KT-9009
@@ -30,5 +29,5 @@ package foo
 import bar.Foo.foobar
 
 fun f() {
-    foobar<caret>()
+    foobar<caret> = "barfoo"
 }

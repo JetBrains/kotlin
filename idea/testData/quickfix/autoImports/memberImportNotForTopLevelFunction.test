@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create function 'foobar'
 // ACTION: Import
@@ -19,7 +19,7 @@ fun foobar() {
 }
 
 //FILE: main.after.kt
-// "Static import" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create function 'foobar'
 // ACTION: Rename reference
