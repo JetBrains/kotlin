@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.framework.getJsStdLibJar
 import org.jetbrains.kotlin.idea.framework.getReflectJar
 import org.jetbrains.kotlin.idea.framework.getRuntimeJar
 import org.jetbrains.kotlin.idea.framework.getTestJar
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil.isJsKotlinModule
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -334,12 +335,15 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         }
 
         fun collectBadRoots(module: Module): Collection<BinaryVersionedFile<BinaryVersion>> {
-            val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
-            val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
+            val badRoots =
+                    if (!isJsKotlinModule(module))
+                        getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
+                    else
+                        getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
 
-            if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return emptyList()
+            if (badRoots.isEmpty()) return emptyList()
 
-            return (badJVMRoots + badJSRoots).toHashSet()
+            return badRoots.toHashSet()
         }
     }
 }
