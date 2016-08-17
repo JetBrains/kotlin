@@ -1,21 +1,24 @@
 fun echoUsb() {
-    led_on()
-
     clear_buffer()
     while (true) {
         val command = receive_int()
         send_int(command)
+
+        blink()
+        wait(PROGRAM_DURATION)
     }
 
 }
 
 fun echoProto() {
-    led_on()
-
     clear_buffer()
+
     while (true) {
         val route = readRoute()
         go(route)
+
+        blink()
+        wait(PROGRAM_DURATION)
     }
 }
 
@@ -28,11 +31,23 @@ fun readRoute(): RouteRequest {
     return result
 }
 
+fun writeRoute(route: RouteRequest) {
+    val size = route.getSizeNoTag()
+    val buffer = ByteArray(size)
+    val stream = CodedOutputStream(buffer)
+
+    route.writeTo(stream)
+
+    sendByteArray(buffer)
+}
+
 fun go(request: RouteRequest) {
     val times = request.distances
     var j = 0
+
     while (j < times.size) {
         val time = times[j]
+
         engine_forward()
         wait(time)
         engine_stop()
@@ -40,14 +55,3 @@ fun go(request: RouteRequest) {
     }
 
 }
-
-//fun writeProto() {
-//    val msg = DirectionResponse.BuilderDirectionResponse(4242).build()
-//    val size = msg.getSizeNoTag()
-//    val buffer = ByteArray(size)
-//    val outputStream = CodedOutputStream(buffer)
-//
-//    msg.writeTo(outputStream)
-//    sendByteArray(buffer)
-//    send_int(0xDDEEFF)
-//}
