@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.isAssignment
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 
 class ForEachTransformation(
         loop: KtForExpression,
@@ -53,6 +53,11 @@ class ForEachTransformation(
             if (state.previousTransformations.isEmpty()) return null // do not suggest conversion to just ".forEach{}" or ".forEachIndexed{}"
 
             val statement = state.statements.singleOrNull() ?: return null
+
+            // check if contains assignment to non-qualified variable - in this case only use of lazy sequence is correct
+            if (!state.lazySequence
+                && statement.anyDescendantOfType<KtBinaryExpression> { isAssignment(it) && it.left is KtNameReferenceExpression }) return null
+
             //TODO: should we disallow it for complicated statements like loops, if, when?
             val transformation = ForEachTransformation(state.outerLoop, state.inputVariable, state.indexVariable, statement)
             return TransformationMatch.Result(transformation)
