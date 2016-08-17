@@ -26,7 +26,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,44 +35,50 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
 public abstract class KotlinTemplateContextType extends TemplateContextType {
-    protected KotlinTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable java.lang.Class<? extends TemplateContextType> baseContextType) {
+    private KotlinTemplateContextType(
+            @NotNull @NonNls String id,
+            @NotNull String presentableName,
+            @Nullable java.lang.Class<? extends TemplateContextType> baseContextType
+    ) {
         super(id, presentableName, baseContextType);
     }
 
     @Override
     public boolean isInContext(@NotNull PsiFile file, int offset) {
-        if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(KotlinLanguage.INSTANCE)) {
-            PsiElement element = file.findElementAt(offset);
-            if (element == null) {
-                element = file.findElementAt(offset - 1);
-            }
-            if (element instanceof PsiWhiteSpace) {
-                return false;
-            }
-            else if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
-                return isCommentInContext();
-            }
-            else if (PsiTreeUtil.getParentOfType(element, KtPackageDirective.class) != null
-                    || PsiTreeUtil.getParentOfType(element, KtImportDirective.class) != null) {
-                return false;
-            }
-            else if (element instanceof LeafPsiElement) {
-                IElementType elementType = ((LeafPsiElement) element).getElementType();
-                if (elementType == KtTokens.IDENTIFIER) {
-                    PsiElement parent = element.getParent();
-                    if (parent instanceof KtReferenceExpression) {
-                        PsiElement parentOfParent = parent.getParent();
-                        KtQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(element, KtQualifiedExpression.class);
-                        if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == parentOfParent) {
-                            return false;
-                        }
+        if (!PsiUtilCore.getLanguageAtOffset(file, offset).isKindOf(KotlinLanguage.INSTANCE)) {
+            return false;
+        }
+
+        PsiElement element = file.findElementAt(offset);
+        if (element == null) {
+            element = file.findElementAt(offset - 1);
+        }
+
+        if (element instanceof PsiWhiteSpace) {
+            return false;
+        }
+        else if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
+            return isCommentInContext();
+        }
+        else if (PsiTreeUtil.getParentOfType(element, KtPackageDirective.class) != null
+                || PsiTreeUtil.getParentOfType(element, KtImportDirective.class) != null) {
+            return false;
+        }
+        else if (element instanceof LeafPsiElement) {
+            IElementType elementType = ((LeafPsiElement) element).getElementType();
+            if (elementType == KtTokens.IDENTIFIER) {
+                PsiElement parent = element.getParent();
+                if (parent instanceof KtReferenceExpression) {
+                    PsiElement parentOfParent = parent.getParent();
+                    KtQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(element, KtQualifiedExpression.class);
+                    if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == parentOfParent) {
+                        return false;
                     }
                 }
             }
-            return element != null && isInContext(element);
         }
 
-        return false;
+        return element != null && isInContext(element);
     }
 
     protected boolean isCommentInContext() {
@@ -114,8 +120,7 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
                     }
                     continue;
                 }
-                if (e instanceof KtProperty || e instanceof KtNamedFunction
-                    || e instanceof KtClassOrObject) {
+                if (e instanceof KtProperty || e instanceof KtNamedFunction || e instanceof KtClassOrObject) {
                     return false;
                 }
                 if (e instanceof KtScriptInitializer) {
@@ -127,6 +132,18 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
         }
     }
 
+    public static class ObjectDeclaration extends KotlinTemplateContextType {
+        public ObjectDeclaration() {
+            super("KOTLIN_OBJECT_DECLARATION", "Object declaration", Generic.class);
+        }
+
+        @Override
+        protected boolean isInContext(@NotNull PsiElement element) {
+            KtObjectDeclaration objectDeclaration = getParentClassOrObject(element, KtObjectDeclaration.class);
+            return objectDeclaration != null && !objectDeclaration.isObjectLiteral();
+        }
+    }
+
     public static class Class extends KotlinTemplateContextType {
         public Class() {
             super("KOTLIN_CLASS", "Class", Generic.class);
@@ -134,22 +151,7 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
-            PsiElement e = element;
-            while (e != null && !(e instanceof KtClassOrObject)) {
-                if (e instanceof KtModifierList) {
-                    // skip property/function/class or object which is owner of modifier list
-                    e = e.getParent();
-                    if (e != null) {
-                        e = e.getParent();
-                    }
-                    continue;
-                }
-                if (e instanceof KtProperty || e instanceof KtNamedFunction) {
-                    return false;
-                }
-                e = e.getParent();
-            }
-            return e != null;
+            return getParentClassOrObject(element, KtClassOrObject.class) != null;
         }
     }
 
@@ -201,5 +203,26 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
         protected boolean isCommentInContext() {
             return true;
         }
+    }
+
+    private static <T extends PsiElement> T getParentClassOrObject(@NotNull PsiElement element, @NotNull java.lang.Class<? extends T> klass) {
+        PsiElement e = element;
+        while (e != null && !klass.isInstance(e)) {
+            if (e instanceof KtModifierList) {
+                // skip property/function/class or object which is owner of modifier list
+                e = e.getParent();
+                if (e != null) {
+                    e = e.getParent();
+                }
+                continue;
+            }
+            if (e instanceof KtProperty || e instanceof KtNamedFunction) {
+                return null;
+            }
+            e = e.getParent();
+        }
+
+        //noinspection unchecked
+        return (T) e;
     }
 }
