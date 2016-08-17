@@ -18,16 +18,21 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
-import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -104,8 +109,16 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             return KotlinBundle.message("unused.receiver.parameter.remove")
         }
 
+        private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
+            override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
+            override fun configure(originalDescriptor: KotlinMethodDescriptor) = originalDescriptor.modify { it.removeParameter(0) }
+        }
+
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            declaration.setReceiverTypeReference(null)
+            val element = descriptor.psiElement
+            val function = element.parent as? KtCallableDeclaration ?: return
+            val callableDescriptor = function.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? CallableDescriptor ?: return
+            runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
         }
 
         override fun getFamilyName(): String = name
