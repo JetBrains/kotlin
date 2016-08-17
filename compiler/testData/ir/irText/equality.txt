@@ -1,0 +1,22 @@
+IrFile /equality.kt
+  IrFunction public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            GET_VAR a type=kotlin.Int
+            GET_VAR b type=kotlin.Int
+  IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          BINARY_OP operator=EXCLEQ type=kotlin.Boolean related=public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            GET_VAR a type=kotlin.Int
+            GET_VAR b type=kotlin.Int
+  IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=true
+        RETURN type=<no-type>
+          BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open operator fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            GET_VAR a type=kotlin.Any?
+            GET_VAR b type=kotlin.Any?

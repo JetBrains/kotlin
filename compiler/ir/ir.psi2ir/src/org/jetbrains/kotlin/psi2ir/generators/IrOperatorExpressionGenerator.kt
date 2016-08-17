@@ -29,12 +29,15 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.values.*
+import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-val KT_OPERATOR_TO_IR_OPERATOR: Map<IElementType, IrOperator> =
-        hashMapOf(
+internal val KT_TOKEN_TO_IR_OPERATOR =
+        mapOf(
+                KtTokens.EQ to IrOperator.EQ,
+
                 KtTokens.PLUSEQ to IrOperator.PLUSEQ,
                 KtTokens.MINUSEQ to IrOperator.MINUSEQ,
                 KtTokens.MULTEQ to IrOperator.MULTEQ,
@@ -51,51 +54,104 @@ val KT_OPERATOR_TO_IR_OPERATOR: Map<IElementType, IrOperator> =
                 KtTokens.LT to IrOperator.LT,
                 KtTokens.LTEQ to IrOperator.LTEQ,
                 KtTokens.GT to IrOperator.GT,
-                KtTokens.GTEQ to IrOperator.GTEQ
+                KtTokens.GTEQ to IrOperator.GTEQ,
+
+                KtTokens.EQEQ to IrOperator.EQEQ,
+                KtTokens.EXCLEQ to IrOperator.EXCLEQ,
+                KtTokens.EQEQEQ to IrOperator.EQEQEQ,
+                KtTokens.EXCLEQEQEQ to IrOperator.EXCLEQEQ
         )
 
-val AUGMENTED_ASSIGNMENTS = KtTokens.AUGMENTED_ASSIGNMENTS
-val BINARY_OPERATORS_WITH_CALLS = OperatorConventions.BINARY_OPERATION_NAMES.keys
-val COMPARISON_OPERATORS = OperatorConventions.COMPARISON_OPERATIONS
+internal val AUGMENTED_ASSIGNMENTS =
+        setOf(IrOperator.PLUSEQ, IrOperator.MINUSEQ, IrOperator.MULTEQ, IrOperator.DIVEQ, IrOperator.PERCEQ)
+
+internal val BINARY_OPERATORS_DESUGARED_TO_CALLS =
+        setOf(IrOperator.PLUS, IrOperator.MINUS, IrOperator.MUL, IrOperator.DIV, IrOperator.PERC, IrOperator.RANGE)
+
+internal val COMPARISON_OPERATORS =
+        setOf(IrOperator.LT, IrOperator.LTEQ, IrOperator.GT, IrOperator.GTEQ)
+
+internal val EQUALITY_OPERATORS =
+        setOf(IrOperator.EQEQ, IrOperator.EXCLEQ)
+
+internal val IDENTITY_OPERATORS =
+        setOf(IrOperator.EQEQEQ, IrOperator.EXCLEQEQ)
 
 class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerator): IrGenerator {
     override val context: IrGeneratorContext get() = irStatementGenerator.context
 
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
+        val irOperator = getIrOperator(ktOperator)
 
-        return when (ktOperator) {
-            KtTokens.EQ -> generateAssignment(expression)
-            in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, ktOperator)
-            in BINARY_OPERATORS_WITH_CALLS -> generateBinaryOperatorWithConventionalCall(expression, ktOperator)
-            in COMPARISON_OPERATORS -> generateComparisonOperator(expression, ktOperator)
+        return when (irOperator) {
+            null -> createDummyExpression(expression, ktOperator.toString())
+            IrOperator.EQ -> generateAssignment(expression)
+            in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, irOperator)
+            in BINARY_OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorWithConventionalCall(expression, irOperator)
+            in COMPARISON_OPERATORS -> generateComparisonOperator(expression, irOperator)
+            in EQUALITY_OPERATORS -> generateEqualityOperator(expression, irOperator)
+            in IDENTITY_OPERATORS -> generateIdentityOperator(expression, irOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
     }
 
-    private fun generateComparisonOperator(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
-        val irOperator = getIrOperator(ktOperator)
-
-        val compareToCall = getResolvedCall(expression)!!
-        val compareToDescriptor = compareToCall.resultingDescriptor
-
-        val irCallGenerator = IrCallGenerator(irStatementGenerator)
-        val irArgument0 = irCallGenerator.generateReceiver(expression.left!!, compareToCall.dispatchReceiver, compareToDescriptor.dispatchReceiverParameter)!!
-        val irArgument1 = irCallGenerator.generateValueArgument(compareToCall.valueArgumentsByIndex!![0], compareToDescriptor.valueParameters[0])!!
-        return IrBinaryOperatorExpressionImpl(expression.startOffset, expression.endOffset, context.builtIns.booleanType,
-                                              irOperator, compareToDescriptor, irArgument0, irArgument1)
+    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+        val irArgument0 = irStatementGenerator.generateExpression(expression.left!!)
+        val irArgument1 = irStatementGenerator.generateExpression(expression.right!!)
+        return IrBinaryOperatorExpressionImpl(
+                expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                irOperator, null, irArgument0, irArgument1
+        )
     }
 
-    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
-        val irOperator = getIrOperator(ktOperator)
+    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+        val relatedCall = getResolvedCall(expression)!!
+        val relatedDescriptor = relatedCall.resultingDescriptor
+
+        val irCallGenerator = IrCallGenerator(irStatementGenerator)
+
+        // NB special typing rules for equality operators: both arguments are nullable
+
+        val irArgument0 =
+                irCallGenerator.generateReceiver(expression.left!!, relatedCall.dispatchReceiver)!!
+                        .toExpectedType(relatedDescriptor.dispatchReceiverParameter!!.type.makeNullable())
+
+        val valueParameter0 = relatedDescriptor.valueParameters[0]
+        val irArgument1 =
+                irCallGenerator.generateValueArgument(
+                        relatedCall.valueArgumentsByIndex!![0],
+                        valueParameter0, valueParameter0.type.makeNullable()
+                )!!
+
+        return IrBinaryOperatorExpressionImpl(
+                expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                irOperator, relatedDescriptor, irArgument0, irArgument1
+        )
+    }
+
+    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+        val relatedCall = getResolvedCall(expression)!!
+        val relatedDescriptor = relatedCall.resultingDescriptor
+
+        val irCallGenerator = IrCallGenerator(irStatementGenerator)
+        val irArgument0 = irCallGenerator.generateReceiver(expression.left!!, relatedCall.dispatchReceiver, relatedDescriptor.dispatchReceiverParameter!!)!!
+        val valueParameter0 = relatedDescriptor.valueParameters[0]
+        val irArgument1 = irCallGenerator.generateValueArgument(relatedCall.valueArgumentsByIndex!![0], valueParameter0)!!
+        return IrBinaryOperatorExpressionImpl(
+                expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                irOperator, relatedDescriptor, irArgument0, irArgument1
+        )
+    }
+
+    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
         return IrCallGenerator(irStatementGenerator).generateCall(expression, operatorCall, irOperator)
     }
 
-    private fun generateAugmentedAssignment(expression: KtBinaryExpression, ktOperator: IElementType): IrExpression {
+    private fun generateAugmentedAssignment(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val ktLeft = expression.left!!
 
-        val irOperator = getIrOperator(ktOperator)
         val irLhs = generateLValue(ktLeft, irOperator)
 
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
@@ -119,8 +175,8 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         }
     }
 
-    private fun getIrOperator(ktOperator: IElementType): IrOperator =
-            KT_OPERATOR_TO_IR_OPERATOR[ktOperator] ?: TODO("Operator: $ktOperator")
+    private fun getIrOperator(ktOperator: IElementType): IrOperator? =
+            KT_TOKEN_TO_IR_OPERATOR[ktOperator]
 
     private fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!

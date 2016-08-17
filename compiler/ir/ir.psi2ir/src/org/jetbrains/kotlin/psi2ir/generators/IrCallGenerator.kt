@@ -192,7 +192,10 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
     }
 
     fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?, receiverParameterDescriptor: ReceiverParameterDescriptor?) =
-            generateReceiver(ktExpression, receiver)?.toExpectedType(receiverParameterDescriptor?.type)
+            generateReceiver(ktExpression, receiver, receiverParameterDescriptor?.type)
+
+    fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?, expectedType: KotlinType?) =
+            generateReceiver(ktExpression, receiver)?.toExpectedType(expectedType)
 
     fun generateReceiver(ktExpression: KtExpression, receiver: ReceiverValue?): IrExpression? =
             if (receiver == null)
@@ -223,19 +226,19 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
             }
 
     fun generateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
-            if (valueParameterDescriptor.varargElementType != null) {
+            generateValueArgument(valueArgument, valueParameterDescriptor, valueParameterDescriptor.type)
+
+    fun generateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor, expectedType: KotlinType): IrExpression? =
+            if (valueParameterDescriptor.varargElementType != null)
                 doGenerateValueArgument(valueArgument, valueParameterDescriptor)
-            }
-            else {
-                doGenerateValueArgument(valueArgument, valueParameterDescriptor)?.toExpectedType(valueParameterDescriptor.type)
-            }
+            else
+                doGenerateValueArgument(valueArgument, valueParameterDescriptor)?.toExpectedType(expectedType)
 
     private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
             if (valueArgument is DefaultValueArgument)
                 null
             else
                 valueArgumentValues[valueParameterDescriptor]?.load() ?: doGenerateValueArgument(valueArgument)
-
 
     private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? =
             when (valueArgument) {
