@@ -2,61 +2,72 @@
 
 ## Building 
 
-    $ cd google/protobuf/compiler/kotlin
+To build Protobuf Compiler (here and below "protoc") you should have Google Protobuf libraries installed.
+You can check if your system meet requirements launching "pre-build" script
+
+    $ proto/compiler/pre-build.sh
     $ make
 
-This will build current version of .proto compiler, placed as *protoc* executable file in current directory.
+Script will ask you for your permission to install prerequisites automatically. 
 
-*Note:* You need g++ and protobuf installed (-lprotoc used for linking)
+Note that this process requires pulling official google-protobuf repository from Github, then building it from scratch (which, in turn,
+can require addition packages installation, like libtool, autoreconf, etc), and then installing it into your system. Make sure that you 
+have superuser permissions.
+
+After you have finished installation of all prerequisites, you can launch Makefile that will build ProtoKot library.
+
+    $ cd proto/compiler/pre-build.sh
+    $ make
+
+This will produce build/ folder, where you can find three artifacts: executable proto-compiler protoc, runtime library protokot-runtime.jar
+and symlink to runtime sources folder (in case you want to link against source files, not jar)
+
+    $ cd build
+    $ ls
+    protoc*  protokot-runtime.jar  sources@
+
+Usage of ProtoKot consists of two main steps:
+1. Compiling .proto-file in .kt-file with protoc
+2. Linking your code against Protokot Runtime Library (needed by generated classes) 
 
 ## Using compiler
 
-    $ ./protoc kotlin_out==$(DST_DIR) $(PATH_TO_PROTO)
+    $ ./protoc --kotlin_out=$(DST_DIR) $(PATH_TO_PROTO)/$(PROTO_FILE) -I $(PATH_TO_PROTO)
 
-where $(DST_DIR) stands for path to place, where generated files should be stored, and $(PATH_TO_PROTO) stands for path to .proto-file.
+where $(DST_DIR) stands for path to place, where generated files should be stored, $(PATH_TO_PROTO) stands for path to .proto-file, and $(PROTO_FILE) 
+is .proto-file name. Note that you should specify $(PATH_TO_PROTO) second time using "-I" directive.
 
-## Linking with Kotlin-runtime
-
-In folder /src/ you can find sources for ProtoKot-runtime, that will be used by generated messages. 
 
 ## Using generated code
 
 Example:
 
 ```java
-// Messages work only with CodedStream classes, provided by ProtoKot-runtime library.
-// One can create CodedStream passing any instance of corresponding Stream from Java's library.
-val s = ByteArrayOutputStream()
-val outs = CodedOutputStream(s)
-
 // All messages are immutable. Use Builders for creating new messages
-val msg = Person.BuilderPerson()
-        .setEmail("wtf@dasda.com")  // all setters return this builder, so you could chain modifiers in LINQ-style
-        .setId(42)
-        .setName("John Doe")
-        .setPhones(arrayOf(         // repeated fields stored as Array<>, so use arrayOf() for creating repeated fields
-                Person.PhoneNumber.BuilderPhoneNumber()
-                        .setNumber("342143-23423-42")
-                        .setType(Person.PhoneType.HOME)
-                        .build()
-        ))
-        .build()    // don't forget to call build() to produce message
+// Currently you have to pass default arguments to Builders constructor by yourself. This will be changed in future.
+val msg = Person.BuilderPerson("", 0, "")
+            // all setters return "this" builder so you can chain modifiers in LINQ-style
+            .setEmail("wtf@dasda.com")      
+            .setId(42)
+            .setName("John Doe")
+            // don't forget to call build() to produce message
+            .build()                            
+
+// Messages work only with CodedStream classes, provided by ProtoKot-runtime library.
+// You can create CodedStream passing reference to ByteArray.
+// To get serialized size of message (in bytes) use Message.getSizeNoTag() method
+val byteArray = ByteArray(msg.getSizeNoTag())
+val outs = CodedOutputStream(byteArray)
 msg.writeTo(outs)
 
-// Now let's use output stream as input to read our message from it!
-var ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
+// InputStreams are created in some manner.
+// WARNING! You have to pass reference to the buffer containing *ONLY* message and *NOTHING* except the message.
+// That mean, trailing cells containing some trash are forbidden - you will be getting errors if you try to parse message from such buffer.
+var ins = CodedInputStream(byteArray)
 
-// Create default instance of message
-var readMsg = Person.BuilderPerson().build()
-// Read in that message data from input stream.
-readMsg.mergeFrom(ins)
+// Parse message from input stream
+var readMsg = Person.BuilderPerson(0, "", 0).parseFrom(ins).build()
 
-// Note, that currently mergeFrom is the only way to mutate instance of message.
-// Don't rely on it, probably mergeFrom will be refactored lately to guarantee full immutability of mesages.
-
-// Better way to read a message:
-ins = CodedInputStream(ByteArrayInputStream(s.toByteArray()))
-readMsg = Person.BuilderPerson().readFrom(ins).build()
 assert(msg == readMsg)
 ```
 
