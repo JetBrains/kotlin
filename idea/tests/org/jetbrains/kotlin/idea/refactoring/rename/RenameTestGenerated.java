@@ -995,6 +995,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renamePackageWithQuotation/renamePackageWithQuotation.test")
+    public void testRenamePackageWithQuotation_RenamePackageWithQuotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePackageWithQuotation/renamePackageWithQuotation.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renamePlus/plus.test")
     public void testRenamePlus_Plus() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePlus/plus.test");
