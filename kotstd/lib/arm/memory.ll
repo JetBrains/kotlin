@@ -6,7 +6,7 @@ target triple = "thumbv7m-none--eabi"
 
 @static_area_ptr = global i32 0, align 4
 @dynamic_area_ptr = global i32 0, align 4
-@static_area = common global [1000 x i8] zeroinitializer, align 1
+@static_area = common global [30000 x i8] zeroinitializer, align 1
 @dynamic_area = common global [1000 x i8] zeroinitializer, align 1
 
 ; Function Attrs: nounwind
@@ -33,7 +33,7 @@ define weak i8* @malloc_static(i32 %size) #0 {
 
 ; <label>:8                                       ; preds = %0
   %9 = load i32* @static_area_ptr, align 4
-  %10 = getelementptr inbounds i8* getelementptr inbounds ([1000 x i8]* @static_area, i32 0, i32 0), i32 %9
+  %10 = getelementptr inbounds i8* getelementptr inbounds ([30000 x i8]* @static_area, i32 0, i32 0), i32 %9
   %11 = ptrtoint i8* %10 to i32
   store i32 %11, i32* %result, align 4
   %12 = load i32* %2, align 4

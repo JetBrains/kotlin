@@ -13,6 +13,7 @@ class ByteArray(var size: Int) {
     init {
         this.data = malloc_array(kotlinclib_byte_size() * this.size)
         var index = 0
+
         while (index < this.size) {
             set(index, 0)
             index = index + 1

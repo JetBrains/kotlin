@@ -323,7 +323,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                         val type = receiver.type as LLVMReferenceType
                         val clazz = resolveClassOrObjectLocation(type) ?: throw UnexpectedException(type.toString())
 
-                        val method = clazz.methods[methodName]!!
+                        val method = clazz.methods[methodName] ?: throw UnexpectedException(expr.text)
                         val returnType = clazz.methods[methodName]!!.returnType!!.type
 
                         val loadedArgs = loadArgsIfRequired(names, method.args)

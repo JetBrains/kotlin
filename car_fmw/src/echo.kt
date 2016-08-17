@@ -15,16 +15,15 @@ fun echoProto() {
 
     while (true) {
         val route = readRoute()
+        blink()
         go(route)
-
         blink()
         wait(PROGRAM_DURATION)
     }
 }
 
 fun readRoute(): RouteRequest {
-    val size = receive_int()
-    val buffer = ByteArray(size)
+    val buffer = receiveByteArray()
     val stream = CodedInputStream(buffer)
     val result = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0)).parseFrom(stream).build()
 

@@ -14,12 +14,10 @@ void clear_buffer()
 
 void send_int(int n)
 {
-    int i = 0;
-    char *buffer = (char *) &n;
-
-    for (; i < sizeof(int); ++i) {
-        VCP_put_char(buffer[i]);
-    }
+    VCP_put_char(n >> 24);
+    VCP_put_char(n >> 16);
+    VCP_put_char(n >> 8);
+    VCP_put_char(n);
 }
 
 void send_buffer(int size, int pointer)
@@ -35,15 +33,19 @@ void send_buffer(int size, int pointer)
 
 int receive_int()
 {
-    int i = 0;
-    char buffer[sizeof(int)];
+    int result = 0;
+    uint8_t byte = 0;
 
-    while (i < 4) {
-        while (!VCP_get_char(&buffer[i]));
-        i++;
-    }
+    while (!VCP_get_char(&byte));
+    result += (byte << 24);
+    while (!VCP_get_char(&byte));
+    result += (byte << 16);
+    while (!VCP_get_char(&byte));
+    result += (byte << 8);
+    while (!VCP_get_char(&byte));
+    result += byte;
 
-    return *((int*) buffer);
+    return result;
 }
 
 void receive_buffer(int size, int pointer)
@@ -54,6 +56,4 @@ void receive_buffer(int size, int pointer)
     for (; i < size; ++i) {
         while(!VCP_get_char(&buffer[i]));
     }
-
-    return buffer;
 }
