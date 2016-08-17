@@ -1,7 +1,10 @@
 #!/bin/bash
+green='\033[0;32m'
+red='\033[0;31m'
+nc='\033[0m'
 
 if [ ! -d "src/test/kotlin/tests/linked" ]; then
-	# Создать папку, только если ее не было
+	# Create folder if not exists
 	mkdir src/test/kotlin/tests/linked
 fi
 
@@ -13,7 +16,7 @@ MAIN="$DIRECTORY/linked/main.c"
 for i in $( ls "$DIRECTORY/input" $1); do
 	rm -f $DIRECTORY/linked/*
 	TEST=`basename $i ".txt"`
-	echo test: $TEST
+	echo -e "${red}test: ${TEST}${nc}"
 	echo "#include <stdlib.h>" >> $MAIN
 	echo "#include <stdio.h>" >> $MAIN
 	echo "#include <assert.h>" >> $MAIN

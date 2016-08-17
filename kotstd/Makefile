@@ -12,7 +12,10 @@ LLINK_FLAGS=-S
 KT_ALL_DEPS=java -jar $(KT)
 LLINK_ALL_DEPS=$(LLINK) $(LLINK_FLAGS) $(filter %.ll,$^) > $@
 
-all: $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
+all: $(BUILD_DIR) $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/stdlib_x86.ll: $(LIB_X86_DIR)/*.ll
 	$(LLINK_ALL_DEPS)
@@ -27,7 +30,7 @@ $(BUILD_DIR)/classes_arm.ll: $(INCLUDE_DIR)/*.kt
 	$(KT_ALL_DEPS) --arm -o $@ $(filter %.kt,$^)
 
 clean:
-	rm $(BUILD_DIR)/*
+	rm -rf $(BUILD_DIR)
 
 .PHONY: all clean
 
