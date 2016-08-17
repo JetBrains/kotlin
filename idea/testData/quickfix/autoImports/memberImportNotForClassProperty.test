@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create local variable 'foobar'
 // ACTION: Create property 'foobar'
@@ -21,7 +21,7 @@ class Foo {
 }
 
 //FILE: main.after.kt
-// "class org.jetbrains.kotlin.idea.quickfix.AutoImportMemberFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ImportMemberFix" "false"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create local variable 'foobar'
 // ACTION: Create property 'foobar'

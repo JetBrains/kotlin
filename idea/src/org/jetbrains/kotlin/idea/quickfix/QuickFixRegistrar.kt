@@ -128,20 +128,20 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
         NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
-        UNRESOLVED_REFERENCE.registerFactory(AutoImportMemberFix)
-        UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
+        UNRESOLVED_REFERENCE.registerFactory(ImportMemberFix)
+        UNRESOLVED_REFERENCE.registerFactory(ImportFix)
 
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
 
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(ImportFix)
 
-        FUNCTION_EXPECTED.registerFactory(MissingInvokeAutoImportFix)
+        FUNCTION_EXPECTED.registerFactory(InvokeImportFix)
 
-        DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(MissingDelegateAccessorsAutoImportFix)
-        COMPONENT_FUNCTION_MISSING.registerFactory(MissingComponentsAutoImportFix)
+        DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(DelegateAccessorsImportFix)
+        COMPONENT_FUNCTION_MISSING.registerFactory(ComponentsImportFix)
 
-        NO_GET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
-        NO_SET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
+        NO_GET_METHOD.registerFactory(ArrayAccessorImportFix)
+        NO_SET_METHOD.registerFactory(ArrayAccessorImportFix)
 
         CONFLICTING_IMPORT.registerFactory(RemovePsiElementSimpleFix.RemoveImportFactory)
 
@@ -373,7 +373,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.OPERATOR_KEYWORD))
-        OPERATOR_MODIFIER_REQUIRED.registerFactory(AutoImportForMissingOperatorFactory)
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(ImportForMissingOperatorFactory)
 
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))
         INFIX_MODIFIER_REQUIRED.registerFactory(InfixCallFix)

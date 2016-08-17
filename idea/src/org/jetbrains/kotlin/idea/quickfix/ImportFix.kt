@@ -62,7 +62,7 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-internal abstract class AutoImportFixBase<T : KtExpression>(expression: T) :
+internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
         KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
 
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
@@ -175,7 +175,7 @@ internal abstract class AutoImportFixBase<T : KtExpression>(expression: T) :
     }
 }
 
-internal abstract class AutoImportFixBaseDynamicContext<T : KtExpression>(expression: T) : AutoImportFixBase<T>(expression) {
+internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) : ImportFixBase<T>(expression) {
     override fun fillCandidates(
             name: String,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
@@ -207,7 +207,7 @@ internal abstract class AutoImportFixBaseDynamicContext<T : KtExpression>(expres
 
 }
 
-internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFixBaseDynamicContext<KtSimpleNameExpression>(expression) {
+internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
     override val importNames: Collection<Name> = run {
@@ -240,7 +240,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::AutoImportFix)
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let { ImportFix(it) }
 
         override fun isApplicableForCodeFragment() = true
 
@@ -249,7 +249,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
 }
 
 
-internal class MissingInvokeAutoImportFix(expression: KtExpression) : AutoImportFixBaseDynamicContext<KtExpression>(expression) {
+internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression) {
     override val importNames = OperatorNameConventions.INVOKE.singletonList()
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
@@ -258,14 +258,14 @@ internal class MissingInvokeAutoImportFix(expression: KtExpression) : AutoImport
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtExpression)?.let(::MissingInvokeAutoImportFix)
+                (diagnostic.psiElement as? KtExpression)?.let { InvokeImportFix(it) }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal open class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, override val importNames: Collection<Name>, private val showHint: Boolean) :
-        AutoImportFixBaseDynamicContext<KtArrayAccessExpression>(element) {
+internal open class ArrayAccessorImportFix(element: KtArrayAccessExpression, override val importNames: Collection<Name>, private val showHint: Boolean) :
+        OrdinaryImportFixBase<KtArrayAccessExpression>(element) {
     override fun getCallTypeAndReceiver() =
             CallTypeAndReceiver.OPERATOR(element.arrayExpression!!)
 
@@ -288,7 +288,7 @@ internal open class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpr
 
             val element = diagnostic.psiElement
             if (element is KtArrayAccessExpression && element.arrayExpression != null) {
-                return MissingArrayAccessorAutoImportFix(element, importName(diagnostic).singletonList(), true)
+                return ArrayAccessorImportFix(element, importName(diagnostic).singletonList(), true)
             }
 
             return null
@@ -298,9 +298,9 @@ internal open class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpr
     }
 }
 
-internal class MissingDelegateAccessorsAutoImportFix(
+internal class DelegateAccessorsImportFix(
         element: KtExpression, override val importNames: Collection<Name>, private val solveSeveralProblems: Boolean) :
-        AutoImportFixBaseDynamicContext<KtExpression>(element) {
+        OrdinaryImportFixBase<KtExpression>(element) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.DELEGATE(element)
 
     override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
@@ -326,22 +326,22 @@ internal class MissingDelegateAccessorsAutoImportFix(
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                MissingDelegateAccessorsAutoImportFix(it, importNames(diagnostic.singletonList()), false)
+                DelegateAccessorsImportFix(it, importNames(diagnostic.singletonList()), false)
             }
         }
 
         override fun doCreateActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> {
             val element = sameTypeDiagnostics.first().psiElement
             val names = importNames(sameTypeDiagnostics)
-            return (element as? KtExpression)?.let { MissingDelegateAccessorsAutoImportFix(it, names, true) }.singletonOrEmptyList()
+            return (element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) }.singletonOrEmptyList()
         }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class MissingComponentsAutoImportFix(element: KtExpression, override val importNames: Collection<Name>, private val solveSeveralProblems: Boolean) :
-        AutoImportFixBaseDynamicContext<KtExpression>(element) {
+internal class ComponentsImportFix(element: KtExpression, override val importNames: Collection<Name>, private val solveSeveralProblems: Boolean) :
+        OrdinaryImportFixBase<KtExpression>(element) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
     override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
@@ -360,7 +360,7 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                MissingComponentsAutoImportFix(it, importNames(diagnostic.singletonList()), false)
+                ComponentsImportFix(it, importNames(diagnostic.singletonList()), false)
             }
         }
 
@@ -368,14 +368,14 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
             val element = sameTypeDiagnostics.first().psiElement
             val names = importNames(sameTypeDiagnostics)
             val solveSeveralProblems = sameTypeDiagnostics.size > 1
-            return (element as? KtExpression)?.let { MissingComponentsAutoImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
+            return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
         }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class AutoImportMemberFix(expression: KtSimpleNameExpression) : AutoImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression) {
 
     override fun getText() = "Import member"
 
@@ -426,7 +426,7 @@ internal class AutoImportMemberFix(expression: KtSimpleNameExpression) : AutoImp
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::AutoImportMemberFix)
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
 
         override fun isApplicableForCodeFragment() = true
 
@@ -435,7 +435,7 @@ internal class AutoImportMemberFix(expression: KtSimpleNameExpression) : AutoImp
 
 }
 
-object AutoImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {
+object ImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val element = diagnostic.psiElement as? KtExpression ?: return null
         val operatorDescriptor = Errors.OPERATOR_MODIFIER_REQUIRED.cast(diagnostic).a
@@ -443,7 +443,7 @@ object AutoImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory(
         when (name) {
             OperatorNameConventions.GET, OperatorNameConventions.SET -> {
                 if (element is KtArrayAccessExpression) {
-                    return object : MissingArrayAccessorAutoImportFix(element, name.singletonList(), false) {
+                    return object : ArrayAccessorImportFix(element, name.singletonList(), false) {
                         override fun getSupportedErrors() = Errors.OPERATOR_MODIFIER_REQUIRED.singletonList()
                     }
                 }
