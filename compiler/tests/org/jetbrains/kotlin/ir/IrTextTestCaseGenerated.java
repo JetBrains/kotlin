@@ -107,6 +107,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("elvis.kt")
+    public void testElvis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/elvis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("equality.kt")
     public void testEquality() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/equality.kt");

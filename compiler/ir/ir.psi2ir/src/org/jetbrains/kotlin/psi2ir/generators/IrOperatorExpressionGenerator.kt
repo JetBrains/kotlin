@@ -44,14 +44,37 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         return when (irOperator) {
             null -> createDummyExpression(expression, ktOperator.toString())
             IrOperator.EQ -> generateAssignment(expression)
+            IrOperator.ELVIS -> generateElvis(expression)
             in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, irOperator)
             in BINARY_OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorWithConventionalCall(expression, irOperator)
             in COMPARISON_OPERATORS -> generateComparisonOperator(expression, irOperator)
             in EQUALITY_OPERATORS -> generateEqualityOperator(expression, irOperator)
             in IDENTITY_OPERATORS -> generateIdentityOperator(expression, irOperator)
             in IN_OPERATORS -> generateInOperator(expression, irOperator)
+            in BINARY_BOOLEAN_OPERATORS -> generateBinaryBooleanOperator(expression, irOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
+    }
+
+    private fun generateElvis(expression: KtBinaryExpression): IrExpression {
+        // TODO desugar '?:' to 'if'?
+        val specialCallForElvis = getResolvedCall(expression)!!
+        val returnType = specialCallForElvis.resultingDescriptor.returnType!!
+        val irArgument0 = irStatementGenerator.generateExpression(expression.left!!).toExpectedType(returnType.makeNullable())
+        val irArgument1 = irStatementGenerator.generateExpression(expression.right!!).toExpectedType(returnType)
+        return IrBinaryOperatorExpressionImpl(
+                expression.startOffset, expression.endOffset, returnType,
+                IrOperator.ELVIS, null, irArgument0, irArgument1
+        )
+    }
+
+    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+        val irArgument0 = irStatementGenerator.generateExpression(expression.left!!).toExpectedType(context.builtIns.booleanType)
+        val irArgument1 = irStatementGenerator.generateExpression(expression.right!!).toExpectedType(context.builtIns.booleanType)
+        return IrBinaryOperatorExpressionImpl(
+                expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                irOperator, null, irArgument0, irArgument1
+        )
     }
 
     private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {

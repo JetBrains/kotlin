@@ -54,7 +54,12 @@ internal val KT_TOKEN_TO_IR_OPERATOR =
                 KtTokens.EXCLEQEQEQ to IrOperator.EXCLEQEQ,
 
                 KtTokens.IN_KEYWORD to IrOperator.IN,
-                KtTokens.NOT_IN to IrOperator.NOT_IN
+                KtTokens.NOT_IN to IrOperator.NOT_IN,
+
+                KtTokens.ANDAND to IrOperator.ANDAND,
+                KtTokens.OROR to IrOperator.OROR,
+
+                KtTokens.ELVIS to IrOperator.ELVIS
         )
 
 internal val AUGMENTED_ASSIGNMENTS =
@@ -74,3 +79,6 @@ internal val IDENTITY_OPERATORS =
 
 internal val IN_OPERATORS =
         setOf(IrOperator.IN, IrOperator.NOT_IN)
+
+internal val BINARY_BOOLEAN_OPERATORS =
+        setOf(IrOperator.ANDAND, IrOperator.OROR)

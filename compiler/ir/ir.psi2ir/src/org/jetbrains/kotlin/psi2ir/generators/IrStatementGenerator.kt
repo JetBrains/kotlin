@@ -102,10 +102,12 @@ class IrStatementGenerator(
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
+        val irReturnedExpression = expression.returnedExpression?.let {
+            it.genExpr().toExpectedType(returnTarget.returnType)
+        }
         return IrReturnExpressionImpl(
                 expression.startOffset, expression.endOffset,
-                returnTarget,
-                expression.returnedExpression?.let { it.genExpr().toExpectedType(returnTarget.returnType) }
+                returnTarget, irReturnedExpression
         )
     }
 
