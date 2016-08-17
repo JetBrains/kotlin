@@ -450,6 +450,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                  && !(containingElement is KtClass && containingElement.isInterface())
                                  && containingElement.isAncestor(config.originalElement)
                                  && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR) "private "
+                        else if (isExtension) "private "
                         else ""
 
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {

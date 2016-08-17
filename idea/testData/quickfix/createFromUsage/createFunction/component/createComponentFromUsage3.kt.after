@@ -18,6 +18,6 @@ fun foo() {
     for ((i: Int, j: Int) in Foo<Int>()) { }
 }
 
-operator fun Any.component2(): Int {
+private operator fun Any.component2(): Int {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

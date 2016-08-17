@@ -5,6 +5,6 @@ fun test(): Int {
     return A().foo()
 }
 
-fun A.foo(): Int {
+private fun A.foo(): Int {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized
 class A(val n: Int)
 
-val A.foo: Boolean<caret>
+private val A.foo: Boolean
 
 class B {
     val A.test: Boolean get() = foo

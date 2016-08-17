@@ -10,6 +10,6 @@ class X {
     }
 }
 
-fun package2.A.foo() {
+private fun package2.A.foo() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

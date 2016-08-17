@@ -5,6 +5,6 @@ fun test(): Int? {
     return A().foo(1, "2")
 }
 
-fun A.foo(i: Int, s: String): Int? {
+private fun A.foo(i: Int, s: String): Int? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
