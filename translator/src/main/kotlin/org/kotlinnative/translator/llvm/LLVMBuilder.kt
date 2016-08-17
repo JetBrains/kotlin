@@ -1,9 +1,6 @@
 package org.kotlinnative.translator.llvm
 
-import org.kotlinnative.translator.llvm.types.LLVMCharType
-import org.kotlinnative.translator.llvm.types.LLVMIntType
-import org.kotlinnative.translator.llvm.types.LLVMStringType
-import org.kotlinnative.translator.llvm.types.LLVMType
+import org.kotlinnative.translator.llvm.types.*
 import java.util.*
 
 class LLVMBuilder(val arm: Boolean = false) {
@@ -18,12 +15,19 @@ class LLVMBuilder(val arm: Boolean = false) {
         initBuilder()
     }
 
+    var exceptions: Map<String, LLVMVariable> = mapOf()
+
     private fun initBuilder() {
         val declares = arrayOf(
                 "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @malloc_static(i32)")
+                "declare i8* @malloc_static(i32)",
+                "declare i32 @printf(i8*, ...)",
+                "declare void @abort()")
 
         declares.forEach { globalCode.appendln(it) }
+
+        exceptions = mapOf(
+                Pair("KotlinNullPointerException", initializeString("Exception in thread main kotlin.KotlinNullPointerException")))
 
         val funcAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
         if (arm) {
@@ -31,9 +35,9 @@ class LLVMBuilder(val arm: Boolean = false) {
         }
     }
 
-    fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null, scope: LLVMScope = LLVMRegisterScope()): LLVMVariable {
+    fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null, scope: LLVMScope = LLVMRegisterScope(), prefix: String = "var"): LLVMVariable {
         variableCount++
-        return LLVMVariable("var$variableCount", type, kotlinName, scope, pointer)
+        return LLVMVariable("${prefix}$variableCount", type, kotlinName, scope, pointer)
     }
 
     fun getNewLabel(scope: LLVMScope = LLVMRegisterScope(), prefix: String): LLVMLabel {
@@ -77,9 +81,15 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln("ret $type $value")
     }
 
+    private fun initializeString(string: String): LLVMVariable {
+        val result = getNewVariable(LLVMStringType(string.length), pointer = 0, scope = LLVMVariableScope(), prefix = "exceptions.str.")
+        addStringConstant(result, string)
+        return result
+    }
+
     fun addStringConstant(variable: LLVMVariable, value: String) {
         val type = variable.type as LLVMStringType
-        globalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"$value\\00\", align 1")
+        globalCode.appendln("$variable = private unnamed_addr constant  ${type.fullType()} c\"${value.replace("\"", "\\\"")}\\00\", align 1")
     }
 
     fun addGlobalInitialize(target: LLVMVariable, fields: ArrayList<LLVMVariable>, initializers: Map<LLVMVariable, String>, classType: LLVMType) {
@@ -119,6 +129,17 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun storeNull(result: LLVMVariable) {
         val code = "store ${result.getType().dropLast(1)} null, ${result.getType()} $result, align $POINTER_SIZE"
         localCode.appendln(code)
+    }
+
+    fun nullCheck(variable: LLVMVariable): LLVMVariable {
+        val result = getNewVariable(LLVMBooleanType(), pointer = 0)
+
+        val loaded = getNewVariable(variable.type, pointer = variable.pointer - 1)
+        loadVariable(loaded, variable)
+
+        val code = "$result = icmp eq ${loaded.getType()} null, $loaded"
+        localCode.appendln(code)
+        return result
     }
 
     fun addComment(comment: String) {
@@ -216,6 +237,17 @@ class LLVMBuilder(val arm: Boolean = false) {
         val code = "$empty = bitcast ${src.getType()} $src to ${llvmType.getType()}"
         localCode.appendln(code)
         return empty
+    }
+
+    fun addExceptionCall(exceptionName: String) {
+        val exception = exceptions[exceptionName]
+        val printResult = getNewVariable(LLVMIntType(), pointer = 0)
+        localCode.appendln("$printResult = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds (${(exception!!.type as LLVMStringType).fullType()}* $exception, i32 0, i32 0))")
+        addFunctionCall(LLVMVariable("abort", LLVMVoidType(), scope = LLVMVariableScope()), emptyList())
+    }
+
+    fun addFunctionCall(functionName: LLVMVariable, arguments: List<LLVMVariable>) {
+        localCode.appendln("call ${functionName.type} $functionName(${arguments.joinToString { it -> "${it.type} $it" }})")
     }
 
     fun memcpy(castedDst: LLVMVariable, castedSrc: LLVMVariable, size: Int, align: Int = 4, volatile: Boolean = false) {

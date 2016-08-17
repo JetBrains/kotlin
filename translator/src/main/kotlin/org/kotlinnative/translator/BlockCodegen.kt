@@ -90,7 +90,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
         return when (expr) {
             is KtBlockExpression -> {
-                expressionWalker(expr.firstChild, null, scopeDepth + 1)
+                expressionWalker(expr.firstChild, breakLabel = null, scopeDepth = scopeDepth + 1)
                 return null
             }
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
@@ -636,6 +636,18 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 codeBuilder.storeVariable(firstOp, resultOp)
                 return oldValue
             }
+            KtTokens.EXCLEXCL -> {
+                val nullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
+                val notNullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
+                val nullCheck = codeBuilder.nullCheck(firstOp)
+                codeBuilder.addCondition(nullCheck, nullLabel, notNullLabel)
+
+                codeBuilder.markWithLabel(nullLabel)
+                codeBuilder.addExceptionCall("KotlinNullPointerException")
+                codeBuilder.addUnconditionalJump(notNullLabel)
+                codeBuilder.markWithLabel(notNullLabel)
+                return firstOp
+            }
             else -> throw UnsupportedOperationException()
         }
     }
@@ -895,7 +907,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         when (expressionType) {
             is LLVMVoidType,
-            is LLVMNullType -> {}
+            is LLVMNullType -> {
+            }
             is LLVMReferenceType -> codeBuilder.allocStaticVar(resultVariable, asValue = true)
             else -> codeBuilder.allocStackVar(resultVariable, asValue = true)
         }
