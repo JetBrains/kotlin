@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubtypeOfClass
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -244,8 +246,8 @@ private fun isExpressionTypeSupported(expression: KtExpression): Boolean {
 private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchResult): Boolean {
     val bindingContext = loop.analyze(BodyResolveMode.FULL)
 
-    val SMARTCAST_KEY = Key<KotlinType>("SMARTCAST_KEY")
-    val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<KotlinType>("IMPLICIT_RECEIVER_SMARTCAST")
+    val SMARTCAST_KEY = Key<ExplicitSmartCasts>("SMARTCAST_KEY")
+    val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<ImplicitSmartCasts>("IMPLICIT_RECEIVER_SMARTCAST")
 
     var smartCastCount = 0
     try {
