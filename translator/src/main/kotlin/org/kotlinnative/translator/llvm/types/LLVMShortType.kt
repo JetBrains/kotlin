@@ -22,6 +22,9 @@ class LLVMShortType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i16 $firstOp, $secondOp")
 
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMShortType(), "srem i16 $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMShortType
     }

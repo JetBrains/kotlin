@@ -42,6 +42,9 @@ class LLVMFloatType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "fcmp one float $firstOp, $secondOp")
 
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMFloatType(), "frem float $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMFloatType
     }

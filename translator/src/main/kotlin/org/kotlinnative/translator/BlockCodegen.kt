@@ -716,6 +716,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
             "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
             "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
+            "%" -> firstNativeOp.type!!.operatorMod(firstNativeOp, secondNativeOp)
             "shl" -> {
                 var secondNativeOpWithRequiredType = secondNativeOp
                 if (firstNativeOp.type != secondNativeOp.type) {
@@ -760,6 +761,13 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
             "*=" -> {
                 val llvmExpression = firstNativeOp.type!!.operatorTimes(firstNativeOp, secondNativeOp)
+                val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType)
+                codeBuilder.addAssignment(resultOp, llvmExpression)
+                codeBuilder.storeVariable(firstOp, resultOp)
+                return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
+            }
+            "%=" -> {
+                val llvmExpression = firstNativeOp.type!!.operatorMod(firstNativeOp, secondNativeOp)
                 val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType)
                 codeBuilder.addAssignment(resultOp, llvmExpression)
                 codeBuilder.storeVariable(firstOp, resultOp)

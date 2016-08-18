@@ -43,7 +43,6 @@ class LLVMLongType() : LLVMType() {
     override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp sgt i64 $firstOp, $secondOp")
 
-
     override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp sle i64 $firstOp, $secondOp")
 
@@ -55,6 +54,9 @@ class LLVMLongType() : LLVMType() {
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i64 $firstOp, $secondOp")
+
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMLongType(), "srem i64 $firstOp, $secondOp")
 
     override fun convertFrom(source: LLVMSingleValue): LLVMExpression = when (source.type!!) {
         is LLVMBooleanType,

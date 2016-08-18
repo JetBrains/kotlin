@@ -21,6 +21,7 @@ abstract class LLVMType() : Cloneable {
     open fun operatorShl(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorShr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorUshr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
+    open fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorInc(firstOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun parseArg(inputArg: String) = inputArg

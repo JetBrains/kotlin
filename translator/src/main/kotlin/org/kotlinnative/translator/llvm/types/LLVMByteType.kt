@@ -22,6 +22,9 @@ class LLVMByteType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp ne i8 $firstOp, $secondOp")
 
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMByteType(), "srem i8 $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMByteType
     }

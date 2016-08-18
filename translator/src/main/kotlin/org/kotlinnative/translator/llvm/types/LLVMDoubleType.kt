@@ -42,6 +42,9 @@ class LLVMDoubleType() : LLVMType() {
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "fcmp one double $firstOp, $secondOp")
 
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMDoubleType(), "frem double $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMDoubleType
     }
