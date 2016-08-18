@@ -234,7 +234,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             PsiElement refElement = ref.getElement();
             if (PsiTreeUtil.getParentOfType(refElement, KtImportDirective.class, true) != null) return true;
 
-            PsiElement element = HierarchyUtils.getCallHierarchyElement(refElement);
+            PsiElement element = HierarchyUtils.INSTANCE.getCallHierarchyElement(refElement);
 
             if (kotlinOnly && !(element instanceof KtNamedDeclaration)) return true;
 
@@ -242,7 +242,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             if (element instanceof KtProperty) {
                 KtProperty property = (KtProperty) element;
                 if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
-                    element = HierarchyUtils.getCallHierarchyElement(element.getParent());
+                    element = HierarchyUtils.INSTANCE.getCallHierarchyElement(element.getParent());
                 }
             }
 
