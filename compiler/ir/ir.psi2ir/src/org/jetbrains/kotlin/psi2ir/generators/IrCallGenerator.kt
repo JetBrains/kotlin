@@ -161,11 +161,9 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
-        val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType,
-                                            hasResult = isUsedAsExpression(ktExpression),
-                                            isDesugared = true)
-
-
+        val hasResult = isUsedAsExpression(ktExpression)
+        val irBlock = IrBlockExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, resultType, hasResult,
+                                            IrOperator.SYNTHETIC_BLOCK)
 
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {

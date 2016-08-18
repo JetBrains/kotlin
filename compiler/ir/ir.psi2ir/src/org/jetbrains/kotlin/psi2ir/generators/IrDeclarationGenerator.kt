@@ -150,7 +150,7 @@ class IrDeclarationGenerator(override val context: IrGeneratorContext) : IrGener
                 if (ktBody is KtBlockExpression)
                     irRhs
                 else
-                    IrBlockExpressionImpl(ktBody.startOffset, ktBody.endOffset, null, hasResult = false, isDesugared = true).apply {
+                    IrBlockExpressionImpl(ktBody.startOffset, ktBody.endOffset, null, false).apply {
                         addStatement(IrReturnExpressionImpl(ktBody.startOffset, ktBody.endOffset, scopeOwner, irRhs))
                     }
         return IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset, irExpressionBody)

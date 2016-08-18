@@ -2,12 +2,12 @@ IrFile /extensionPropertyGetterCall.kt
   IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
   IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .okext type=kotlin.String
+          GET_PROPERTY .okext type=kotlin.String operator=null
             $receiver: $RECEIVER of: test5 type=kotlin.String

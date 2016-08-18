@@ -3,13 +3,14 @@ IrFile /arrayAugmentedAssignment2.kt
   DUMMY IB
   IrFunction public fun IB.test(/*0*/ a: IA): kotlin.Unit
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
-        CALL .set type=kotlin.Unit operator=PLUSEQ
-          $this: $RECEIVER of: test type=IB
-          $receiver: GET_VAR a type=IA
-          index: LITERAL String type=kotlin.String value=''
-          value: CALL .plus type=kotlin.Int operator=PLUSEQ
-            $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR a type=IA
-              index: LITERAL String type=kotlin.String value=''
-            other: LITERAL Int type=kotlin.Int value='42'
+      BLOCK type=<no-type> hasResult=false operator=null
+        BLOCK type=kotlin.Unit hasResult=false operator=PLUSEQ
+          CALL .set type=kotlin.Unit operator=PLUSEQ
+            $this: $RECEIVER of: test type=IB
+            $receiver: GET_VAR a type=IA operator=null
+            index: LITERAL String type=kotlin.String value=''
+            value: CALL .plus type=kotlin.Int operator=PLUSEQ
+              $this: CALL .get type=kotlin.Int operator=PLUSEQ
+                $this: GET_VAR a type=IA operator=null
+                index: LITERAL String type=kotlin.String value=''
+              other: LITERAL Int type=kotlin.Int value='42'

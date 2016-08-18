@@ -1,29 +1,29 @@
 IrFile /primitiveComparisons.kt
   IrFunction public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=GT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=LT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test3(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=GTEQ type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test4(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=LTEQ type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null

@@ -1,22 +1,22 @@
 IrFile /identity.kt
   IrFunction public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=EQEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=EXCLEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Int
-            GET_VAR b type=kotlin.Int
+            GET_VAR a type=kotlin.Int operator=null
+            GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BINARY_OP operator=EQEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Any?
-            GET_VAR b type=kotlin.Any?
+            GET_VAR a type=kotlin.Any? operator=null
+            GET_VAR b type=kotlin.Any? operator=null

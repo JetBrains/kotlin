@@ -27,7 +27,7 @@ import java.util.*
 
 interface IrBlockExpression : IrExpression {
     val hasResult: Boolean
-    val isDesugared: Boolean
+    val operator: IrOperator?
 
     val statements: List<IrStatement>
     fun addStatement(statement: IrStatement)
@@ -42,7 +42,7 @@ class IrBlockExpressionImpl(
         endOffset: Int,
         type: KotlinType?,
         override val hasResult: Boolean,
-        override val isDesugared: Boolean
+        override val operator: IrOperator? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrBlockExpression {
     override val statements: MutableList<IrStatement> = ArrayList()
 

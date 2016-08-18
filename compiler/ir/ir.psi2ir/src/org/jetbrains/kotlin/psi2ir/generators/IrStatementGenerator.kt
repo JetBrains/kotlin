@@ -72,8 +72,7 @@ class IrStatementGenerator(
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         // TODO use some special form that introduces multiple declarations into surrounding scope?
 
-        val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null,
-                                            hasResult = false, isDesugared = true)
+        val irBlock = IrBlockExpressionImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null, false, IrOperator.SYNTHETIC_BLOCK)
         val ktInitializer = multiDeclaration.initializer!!
         val irTmpInitializer = temporaryVariableFactory.createTemporaryVariable(ktInitializer.genExpr())
         irBlock.addStatement(irTmpInitializer)
@@ -94,8 +93,8 @@ class IrStatementGenerator(
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
-        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, getReturnType(expression),
-                                            hasResult = isUsedAsExpression(expression), isDesugared = false)
+        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset,
+                                            getReturnType(expression), isUsedAsExpression(expression))
         expression.statements.forEach { irBlock.addStatement(it.genStmt()) }
         return irBlock
     }

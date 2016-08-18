@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
     class Configuration(
-            val shouldInlineDesugaredBlocks: Boolean = true,
+            val shouldInlineDesugaredBlocks: Boolean = false,
             val shouldFoldStringConcatenation: Boolean = true
     )
 

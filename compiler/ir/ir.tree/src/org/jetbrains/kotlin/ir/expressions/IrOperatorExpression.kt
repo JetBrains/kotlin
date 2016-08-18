@@ -27,10 +27,12 @@ interface IrOperatorExpression : IrExpression {
 }
 
 interface IrUnaryOperatorExpression : IrOperatorExpression {
+    override val operator: IrUnaryOperator
     var argument: IrExpression
 }
 
 interface IrBinaryOperatorExpression : IrOperatorExpression {
+    override val operator: IrBinaryOperator
     var argument0: IrExpression
     var argument1: IrExpression
 }
@@ -39,14 +41,14 @@ class IrUnaryOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        override val operator: IrOperator,
+        override val operator: IrUnaryOperator,
         override val relatedDescriptor: CallableDescriptor?
 ) : IrExpressionBase(startOffset, endOffset, type), IrUnaryOperatorExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType?,
-            operator: IrOperator,
+            operator: IrUnaryOperator,
             relatedDescriptor: CallableDescriptor?,
             argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
@@ -89,14 +91,14 @@ class IrBinaryOperatorExpressionImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        override val operator: IrOperator,
+        override val operator: IrBinaryOperator,
         override val relatedDescriptor: CallableDescriptor?
 ) : IrExpressionBase(startOffset, endOffset, type), IrBinaryOperatorExpression {
     constructor(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType?,
-            operator: IrOperator,
+            operator: IrBinaryOperator,
             relatedDescriptor: CallableDescriptor?,
             argument0: IrExpression,
             argument1: IrExpression

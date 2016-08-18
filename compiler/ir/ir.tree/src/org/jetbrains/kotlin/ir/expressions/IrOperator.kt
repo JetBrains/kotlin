@@ -16,51 +16,54 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrOperator(val debugName: String) {
-    override fun toString(): String = debugName
+interface IrOperator {
+    object UMINUS : IrOperatorImpl("UMINUS"), IrUnaryOperator
+    object EXCL : IrOperatorImpl("EXCL"), IrUnaryOperator
+    object EXCLEXCL : IrOperatorImpl("EXCLEXCL"), IrUnaryOperator
 
-    object INVOKE : IrOperator("INVOKE")
+    object ELVIS : IrOperatorImpl("ELVIS"), IrBinaryOperator
 
-    object PREFIX_INCR : IrOperator("PREFIX_INCR")
-    object PREFIX_DECR : IrOperator("PREFIX_DECR")
-    object POSTFIX_INCR : IrOperator("POSTFIX_INCR")
-    object POSTFIX_DECR : IrOperator("POSTFIX_DECR")
+    object LT : IrOperatorImpl("LT"), IrBinaryOperator
+    object GT : IrOperatorImpl("GT"), IrBinaryOperator
+    object LTEQ : IrOperatorImpl("LTEQ"), IrBinaryOperator
+    object GTEQ : IrOperatorImpl("GTEQ"), IrBinaryOperator
 
-    object UMINUS : IrOperator("UMINUS")
-    object EXCL : IrOperator("EXCL")
-    object EXCLEXCL : IrOperator("EXCLEXCL")
-    object ELVIS : IrOperator("ELVIS")
+    object EQEQ : IrOperatorImpl("EQEQ"), IrBinaryOperator
+    object EQEQEQ : IrOperatorImpl("EQEQEQ"), IrBinaryOperator
+    object EXCLEQ : IrOperatorImpl("EXCLEQ"), IrBinaryOperator
+    object EXCLEQEQ : IrOperatorImpl("EXCLEQEQ"), IrBinaryOperator
 
-    object LT : IrOperator("LT")
-    object GT : IrOperator("GT")
-    object LTEQ : IrOperator("LTEQ")
-    object GTEQ : IrOperator("GTEQ")
+    object IN : IrOperatorImpl("IN"), IrBinaryOperator
+    object NOT_IN : IrOperatorImpl("NOT_IN"), IrBinaryOperator
+    object ANDAND : IrOperatorImpl("ANDAND"), IrBinaryOperator
+    object OROR : IrOperatorImpl("OROR"), IrBinaryOperator
 
-    object EQEQ : IrOperator("EQEQ")
-    object EQEQEQ : IrOperator("EQEQEQ")
-    object EXCLEQ : IrOperator("EXCLEQ")
-    object EXCLEQEQ : IrOperator("EXCLEQEQ")
 
-    object IN : IrOperator("IN")
-    object NOT_IN : IrOperator("NOT_IN")
-    object ANDAND : IrOperator("ANDAND")
-    object OROR : IrOperator("OROR")
-    object RANGE : IrOperator("RANGE")
 
-    object PLUS : IrOperator("PLUS")
-    object MINUS : IrOperator("MINUS")
-    object MUL : IrOperator("MUL")
-    object DIV : IrOperator("DIV")
-    object PERC : IrOperator("PERC")
+    object PLUS : IrOperatorImpl("PLUS"), IrBinaryOperator
+    object MINUS : IrOperatorImpl("MINUS"), IrBinaryOperator
+    object MUL : IrOperatorImpl("MUL"), IrBinaryOperator
+    object DIV : IrOperatorImpl("DIV"), IrBinaryOperator
+    object PERC : IrOperatorImpl("PERC"), IrBinaryOperator
+    object RANGE : IrOperatorImpl("RANGE"), IrBinaryOperator
 
-    object EQ : IrOperator("EQ")
-    object PLUSEQ : IrOperator("PLUSEQ")
-    object MINUSEQ : IrOperator("MINUSEQ")
-    object MULTEQ : IrOperator("MULTEQ")
-    object DIVEQ : IrOperator("DIVEQ")
-    object PERCEQ : IrOperator("PERCEQ")
+    object INVOKE : IrOperatorImpl("INVOKE"), IrUnaryOperator
 
-    data class COMPONENT_N private constructor(val index: Int) : IrOperator("COMPONENT_$index") {
+    object PREFIX_INCR : IrOperatorImpl("PREFIX_INCR"), IrUnaryOperator
+    object PREFIX_DECR : IrOperatorImpl("PREFIX_DECR"), IrUnaryOperator
+    object POSTFIX_INCR : IrOperatorImpl("POSTFIX_INCR"), IrUnaryOperator
+    object POSTFIX_DECR : IrOperatorImpl("POSTFIX_DECR"), IrUnaryOperator
+
+    object EQ : IrOperatorImpl("EQ"), IrBinaryOperator
+    object PLUSEQ : IrOperatorImpl("PLUSEQ"), IrBinaryOperator
+    object MINUSEQ : IrOperatorImpl("MINUSEQ"), IrBinaryOperator
+    object MULTEQ : IrOperatorImpl("MULTEQ"), IrBinaryOperator
+    object DIVEQ : IrOperatorImpl("DIVEQ"), IrBinaryOperator
+    object PERCEQ : IrOperatorImpl("PERCEQ"), IrBinaryOperator
+
+    object SYNTHETIC_BLOCK : IrOperatorImpl("SYNTHETIC_BLOCK")
+
+    data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }
 
@@ -71,4 +74,11 @@ abstract class IrOperator(val debugName: String) {
                         COMPONENT_N(index)
         }
     }
+}
+
+interface IrUnaryOperator : IrOperator
+interface IrBinaryOperator : IrOperator
+
+abstract class IrOperatorImpl(val debugName: String): IrOperator {
+    override fun toString(): String = debugName
 }

@@ -78,7 +78,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         )
     }
 
-    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
         val irArgument0 = irStatementGenerator.generateExpression(expression.left!!).toExpectedType(context.builtIns.booleanType)
         val irArgument1 = irStatementGenerator.generateExpression(expression.right!!).toExpectedType(context.builtIns.booleanType)
         return IrBinaryOperatorExpressionImpl(
@@ -99,7 +99,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
                                           IrOperator.EXCL, null, irOperatorCall)
     }
 
-    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
         val irArgument0 = irStatementGenerator.generateExpression(expression.left!!)
         val irArgument1 = irStatementGenerator.generateExpression(expression.right!!)
         return IrBinaryOperatorExpressionImpl(
@@ -108,7 +108,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         )
     }
 
-    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
         val relatedCall = getResolvedCall(expression)!!
         val relatedDescriptor = relatedCall.resultingDescriptor
 
@@ -133,7 +133,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         )
     }
 
-    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
         val relatedCall = getResolvedCall(expression)!!
         val relatedDescriptor = relatedCall.resultingDescriptor
 
@@ -158,11 +158,11 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         val operatorCall = getResolvedCall(expression)!!
 
         if (irLValue is IrLValueWithAugmentedStore) {
-            return irLValue.prefixAugmentedStore(operatorCall)
+            return irLValue.prefixAugmentedStore(operatorCall, irOperator)
         }
 
         val opCallGenerator = IrCallGenerator(irStatementGenerator).apply { putValue(ktBaseExpression, irLValue) }
-        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, irLValue.type, true, true)
+        val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
         val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
         val irTmp = irStatementGenerator.temporaryVariableFactory.createTemporaryVariable(irOpCall)
         irBlock.addStatement(irTmp)
@@ -179,7 +179,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
 
         if (isSimpleAssignment && irLValue is IrLValueWithAugmentedStore) {
-            return irLValue.augmentedStore(operatorCall, irStatementGenerator.generateExpression(expression.right!!))
+            return irLValue.augmentedStore(operatorCall, irOperator, irStatementGenerator.generateExpression(expression.right!!))
         }
 
         val opCallGenerator = IrCallGenerator(irStatementGenerator).apply { putValue(ktLeft, irLValue) }

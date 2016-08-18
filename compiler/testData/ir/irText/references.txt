@@ -4,44 +4,44 @@ IrFile /references.kt
       LITERAL String type=kotlin.String value='OK'
   IrProperty public val ok2: kotlin.String = "OK" getter=null setter=null
     IrExpressionBody
-      GET_PROPERTY .ok type=kotlin.String
+      GET_PROPERTY .ok type=kotlin.String operator=null
   IrProperty public val ok3: kotlin.String getter=<get-ok3> setter=null
   IrPropertyGetter public fun <get-ok3>(): kotlin.String property=ok3
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL String type=kotlin.String value='OK'
   IrFunction public fun test1(): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .ok type=kotlin.String
+          GET_PROPERTY .ok type=kotlin.String operator=null
   IrFunction public fun test2(/*0*/ x: kotlin.String): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_VAR x type=kotlin.String
+          GET_VAR x type=kotlin.String operator=null
   IrFunction public fun test3(): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false operator=null
         VAR val x: kotlin.String = "OK"
           LITERAL String type=kotlin.String value='OK'
         RETURN type=<no-type>
-          GET_VAR x type=kotlin.String
+          GET_VAR x type=kotlin.String operator=null
   IrFunction public fun test4(): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .ok3 type=kotlin.String
+          GET_PROPERTY .ok3 type=kotlin.String operator=null
   IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
   IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .okext type=kotlin.String
+          GET_PROPERTY .okext type=kotlin.String operator=null
             $receiver: $RECEIVER of: test5 type=kotlin.String

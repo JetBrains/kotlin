@@ -1,42 +1,44 @@
 IrFile /callWithReorderedArguments.kt
   IrFunction public fun foo(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false operator=null
   IrFunction public fun noReorder1(): kotlin.Int
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun noReorder2(): kotlin.Int
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL Int type=kotlin.Int value='2'
   IrFunction public fun reordered1(): kotlin.Int
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL Int type=kotlin.Int value='1'
   IrFunction public fun reordered2(): kotlin.Int
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           LITERAL Int type=kotlin.Int value='2'
   IrFunction public fun test(): kotlin.Unit
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
-        CALL .foo type=kotlin.Unit operator=
-          a: CALL .noReorder1 type=kotlin.Int operator=
-          b: CALL .noReorder2 type=kotlin.Int operator=
-        VAR val tmp0_b: kotlin.Int
-          CALL .reordered1 type=kotlin.Int operator=
-        VAR val tmp1_a: kotlin.Int
-          CALL .reordered2 type=kotlin.Int operator=
-        CALL .foo type=kotlin.Unit operator=
-          a: GET_VAR tmp1_a type=kotlin.Int
-          b: GET_VAR tmp0_b type=kotlin.Int
-        VAR val tmp2_a: kotlin.Int
-          CALL .reordered2 type=kotlin.Int operator=
-        CALL .foo type=kotlin.Unit operator=
-          a: GET_VAR tmp2_a type=kotlin.Int
-          b: LITERAL Int type=kotlin.Int value='1'
+      BLOCK type=<no-type> hasResult=false operator=null
+        CALL .foo type=kotlin.Unit operator=null
+          a: CALL .noReorder1 type=kotlin.Int operator=null
+          b: CALL .noReorder2 type=kotlin.Int operator=null
+        BLOCK type=kotlin.Unit hasResult=false operator=SYNTHETIC_BLOCK
+          VAR val tmp0_b: kotlin.Int
+            CALL .reordered1 type=kotlin.Int operator=null
+          VAR val tmp1_a: kotlin.Int
+            CALL .reordered2 type=kotlin.Int operator=null
+          CALL .foo type=kotlin.Unit operator=null
+            a: GET_VAR tmp1_a type=kotlin.Int operator=null
+            b: GET_VAR tmp0_b type=kotlin.Int operator=null
+        BLOCK type=kotlin.Unit hasResult=false operator=SYNTHETIC_BLOCK
+          VAR val tmp2_a: kotlin.Int
+            CALL .reordered2 type=kotlin.Int operator=null
+          CALL .foo type=kotlin.Unit operator=null
+            a: GET_VAR tmp2_a type=kotlin.Int operator=null
+            b: LITERAL Int type=kotlin.Int value='1'

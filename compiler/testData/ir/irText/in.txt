@@ -1,31 +1,31 @@
 IrFile /in.kt
   IrFunction public fun test1(/*0*/ a: kotlin.Any, /*1*/ x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           CALL .contains type=kotlin.Boolean operator=IN
-            $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any>
-            element: GET_VAR a type=kotlin.Any
+            $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any> operator=null
+            element: GET_VAR a type=kotlin.Any operator=null
   IrFunction public fun test2(/*0*/ a: kotlin.Any, /*1*/ x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           UNARY_OP operator=EXCL type=kotlin.Boolean related=null
             CALL .contains type=kotlin.Boolean operator=NOT_IN
-              $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any>
-              element: GET_VAR a type=kotlin.Any
+              $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any> operator=null
+              element: GET_VAR a type=kotlin.Any operator=null
   IrFunction public fun </*0*/ T> test3(/*0*/ a: T, /*1*/ x: kotlin.collections.Collection<T>): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           CALL .contains type=kotlin.Boolean operator=IN
-            $this: GET_VAR x type=kotlin.collections.Collection<T>
-            element: GET_VAR a type=T
+            $this: GET_VAR x type=kotlin.collections.Collection<T> operator=null
+            element: GET_VAR a type=T operator=null
   IrFunction public fun </*0*/ T> test4(/*0*/ a: T, /*1*/ x: kotlin.collections.Collection<T>): kotlin.Boolean
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           UNARY_OP operator=EXCL type=kotlin.Boolean related=null
             CALL .contains type=kotlin.Boolean operator=NOT_IN
-              $this: GET_VAR x type=kotlin.collections.Collection<T>
-              element: GET_VAR a type=T
+              $this: GET_VAR x type=kotlin.collections.Collection<T> operator=null
+              element: GET_VAR a type=T operator=null

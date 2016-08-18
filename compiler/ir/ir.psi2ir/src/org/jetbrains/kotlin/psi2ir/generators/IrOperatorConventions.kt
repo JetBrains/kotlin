@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.ir.expressions.IrBinaryOperator
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
-fun getIrBinaryOperator(ktOperator: IElementType): IrOperator? =
+fun getIrBinaryOperator(ktOperator: IElementType): IrBinaryOperator? =
         KT_TOKEN_TO_IR_BINARY_OPERATOR[ktOperator]
 
 fun getIrPrefixOperator(ktOperator: IElementType): IrOperator? =
@@ -30,7 +31,7 @@ fun getIrPrefixOperator(ktOperator: IElementType): IrOperator? =
 fun getIrPostfixOperator(ktOperator: IElementType): IrOperator? =
         KT_TOKEN_TO_IR_POSTFIX_OPERATOR[ktOperator]
 
-private val KT_TOKEN_TO_IR_BINARY_OPERATOR = mapOf(
+private val KT_TOKEN_TO_IR_BINARY_OPERATOR = mapOf<IElementType, IrBinaryOperator>(
         KtTokens.EQ to IrOperator.EQ,
 
         KtTokens.PLUSEQ to IrOperator.PLUSEQ,
@@ -66,14 +67,14 @@ private val KT_TOKEN_TO_IR_BINARY_OPERATOR = mapOf(
         KtTokens.ELVIS to IrOperator.ELVIS
 )
 
-private val KT_TOKEN_TO_IR_PREFIX_OPERATOR = mapOf(
+private val KT_TOKEN_TO_IR_PREFIX_OPERATOR = mapOf<IElementType, IrOperator>(
         KtTokens.PLUSPLUS to IrOperator.PREFIX_INCR,
         KtTokens.MINUSMINUS to IrOperator.PREFIX_DECR,
         KtTokens.EXCL to IrOperator.EXCL,
         KtTokens.MINUS to IrOperator.UMINUS
 )
 
-private val KT_TOKEN_TO_IR_POSTFIX_OPERATOR = mapOf(
+private val KT_TOKEN_TO_IR_POSTFIX_OPERATOR = mapOf<IElementType, IrOperator>(
         KtTokens.PLUSPLUS to IrOperator.POSTFIX_INCR,
         KtTokens.MINUSMINUS to IrOperator.POSTFIX_DECR,
         KtTokens.EXCLEXCL to IrOperator.EXCLEXCL

@@ -1,14 +1,14 @@
 IrFile /dotQualified.kt
   IrFunction public fun length(/*0*/ s: kotlin.String): kotlin.Int
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .length type=kotlin.Int
-            $this: GET_VAR s type=kotlin.String
+          GET_PROPERTY .length type=kotlin.Int operator=null
+            $this: GET_VAR s type=kotlin.String operator=null
   IrFunction public fun lengthN(/*0*/ s: kotlin.String?): kotlin.Int?
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY ?.length type=kotlin.Int?
+          GET_PROPERTY ?.length type=kotlin.Int? operator=null
             $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR s type=kotlin.String?
+              GET_VAR s type=kotlin.String? operator=null

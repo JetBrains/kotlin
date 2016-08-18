@@ -64,7 +64,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
-            "BLOCK type=${expression.renderType()} hasResult=${expression.hasResult} isDesugared=${expression.isDesugared}"
+            "BLOCK type=${expression.renderType()} hasResult=${expression.hasResult} operator=${expression.operator}"
 
     override fun visitReturnExpression(expression: IrReturnExpression, data: Nothing?): String =
             "RETURN type=${expression.renderType()}"
@@ -77,27 +77,27 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
             "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
-            "type=${expression.renderType()} operator=${expression.operator ?: ""}"
+            "type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitGetProperty(expression: IrGetPropertyExpression, data: Nothing?): String =
             "GET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
-            "type=${expression.renderType()}"
+            "type=${expression.renderType()} operator=${expression.operator}"
+
+    override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
+            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
+            "type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
-            "GET_VAR ${expression.descriptor.name} type=${expression.renderType()}"
+            "GET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitSetVariable(expression: IrSetVariableExpression, data: Nothing?): String =
-            "SET_VAR ${expression.descriptor.name} type=${expression.renderType()}"
+            "SET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: Nothing?): String =
             "GET_OBJECT ${expression.descriptor.name} type=${expression.renderType()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValueExpression, data: Nothing?): String =
             "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.renderType()}"
-
-    override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
-            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
-            "type=${expression.renderType()}"
 
     override fun visitUnaryOperator(expression: IrUnaryOperatorExpression, data: Nothing?): String =
             "UNARY_OP operator=${expression.operator} " +

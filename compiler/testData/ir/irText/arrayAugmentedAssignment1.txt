@@ -1,30 +1,50 @@
 IrFile /arrayAugmentedAssignment1.kt
   IrFunction public fun foo(): kotlin.IntArray
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=true
+      BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          CALL .intArrayOf type=kotlin.IntArray operator=
+          CALL .intArrayOf type=kotlin.IntArray operator=null
             elements: DUMMY vararg type=kotlin.Int
+  IrFunction public fun bar(): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          LITERAL Int type=kotlin.Int value='42'
   IrFunction public fun testVariable(): kotlin.Unit
     IrExpressionBody
-      BLOCK type=<no-type> hasResult=false isDesugared=false
+      BLOCK type=<no-type> hasResult=false operator=null
         VAR var x: kotlin.IntArray
-          CALL .foo type=kotlin.IntArray operator=
-        CALL .set type=kotlin.Unit operator=PLUSEQ
-          $this: GET_VAR x type=kotlin.IntArray
-          index: LITERAL Int type=kotlin.Int value='0'
-          value: CALL .plus type=kotlin.Int operator=PLUSEQ
-            $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR x type=kotlin.IntArray
-              index: LITERAL Int type=kotlin.Int value='0'
-            other: LITERAL Int type=kotlin.Int value='1'
-        VAR val tmp0_array: kotlin.IntArray
-          CALL .foo type=kotlin.IntArray operator=
-        CALL .set type=kotlin.Unit operator=MULTEQ
-          $this: GET_VAR tmp0_array type=kotlin.IntArray
-          index: LITERAL Int type=kotlin.Int value='0'
-          value: CALL .times type=kotlin.Int operator=MULTEQ
-            $this: CALL .get type=kotlin.Int operator=MULTEQ
-              $this: GET_VAR tmp0_array type=kotlin.IntArray
-              index: LITERAL Int type=kotlin.Int value='0'
-            other: LITERAL Int type=kotlin.Int value='2'
+          CALL .foo type=kotlin.IntArray operator=null
+        BLOCK type=kotlin.Unit hasResult=false operator=PLUSEQ
+          CALL .set type=kotlin.Unit operator=PLUSEQ
+            $this: GET_VAR x type=kotlin.IntArray operator=null
+            index: LITERAL Int type=kotlin.Int value='0'
+            value: CALL .plus type=kotlin.Int operator=PLUSEQ
+              $this: CALL .get type=kotlin.Int operator=PLUSEQ
+                $this: GET_VAR x type=kotlin.IntArray operator=null
+                index: LITERAL Int type=kotlin.Int value='0'
+              other: LITERAL Int type=kotlin.Int value='1'
+        BLOCK type=kotlin.Unit hasResult=false operator=MULTEQ
+          VAR val tmp0_array: kotlin.IntArray
+            CALL .foo type=kotlin.IntArray operator=null
+          CALL .set type=kotlin.Unit operator=MULTEQ
+            $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+            index: LITERAL Int type=kotlin.Int value='0'
+            value: CALL .times type=kotlin.Int operator=MULTEQ
+              $this: CALL .get type=kotlin.Int operator=MULTEQ
+                $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+                index: LITERAL Int type=kotlin.Int value='0'
+              other: LITERAL Int type=kotlin.Int value='2'
+        BLOCK type=kotlin.Unit hasResult=false operator=MINUSEQ
+          VAR val tmp1_array: kotlin.IntArray
+            CALL .foo type=kotlin.IntArray operator=null
+          VAR val tmp2_index0: kotlin.Int
+            CALL .bar type=kotlin.Int operator=null
+          CALL .set type=kotlin.Unit operator=MINUSEQ
+            $this: GET_VAR tmp1_array type=kotlin.IntArray operator=null
+            index: GET_VAR tmp2_index0 type=kotlin.Int operator=null
+            value: CALL .minus type=kotlin.Int operator=MINUSEQ
+              $this: CALL .get type=kotlin.Int operator=MINUSEQ
+                $this: GET_VAR tmp1_array type=kotlin.IntArray operator=null
+                index: GET_VAR tmp2_index0 type=kotlin.Int operator=null
+              other: LITERAL Int type=kotlin.Int value='1'

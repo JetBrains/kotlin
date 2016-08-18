@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators.values
 
 import org.jetbrains.kotlin.ir.assertDetached
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -49,7 +50,7 @@ interface IrLValue : IrValue {
 }
 
 interface IrLValueWithAugmentedStore : IrLValue {
-    fun prefixAugmentedStore(operatorCall: ResolvedCall<*>): IrExpression
-    fun augmentedStore(operatorCall: ResolvedCall<*>, irOperatorArgument: IrExpression): IrExpression
+    fun prefixAugmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator): IrExpression
+    fun augmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator, irOperatorArgument: IrExpression): IrExpression
 }
 
