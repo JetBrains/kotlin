@@ -44,6 +44,7 @@ object MatcherRegistrar {
             FindTransformationMatcher,
             AddToCollectionTransformation.Matcher,
             CountTransformation.Matcher,
+            SumTransformationBase.Matcher,
             MaxOrMinTransformation.Matcher,
             IntroduceIndexMatcher,
             FilterTransformation.Matcher,

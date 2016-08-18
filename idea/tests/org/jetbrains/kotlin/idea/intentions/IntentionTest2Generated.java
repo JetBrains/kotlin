@@ -1180,4 +1180,103 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/twoInitializationsBeforeLoop.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("idea/testData/intentions/loopToCallChain/sum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Sum extends AbstractIntentionTest2 {
+        public void testAllFilesPresentInSum() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/sum"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("bytes.kt")
+        public void testBytes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/bytes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubles.kt")
+        public void testDoubles() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/doubles.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floats.kt")
+        public void testFloats() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/floats.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floatsIntoDouble.kt")
+        public void testFloatsIntoDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/floatsIntoDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexUsed.kt")
+        public void testIndexUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/indexUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexUsed2.kt")
+        public void testIndexUsed2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/indexUsed2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ints.kt")
+        public void testInts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/ints.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longs.kt")
+        public void testLongs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/longs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonNumbers.kt")
+        public void testNonNumbers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/nonNumbers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonZeroInitial.kt")
+        public void testNonZeroInitial() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/nonZeroInitial.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("short.kt")
+        public void testShort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/short.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sumByDouble.kt")
+        public void testSumByDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/sumByDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sumByInts.kt")
+        public void testSumByInts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/sumByInts.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sumByIntsIntoLong.kt")
+        public void testSumByIntsIntoLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/sumByIntsIntoLong.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sumByShorts.kt")
+        public void testSumByShorts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/sumByShorts.kt");
+            doTest(fileName);
+        }
+    }
 }

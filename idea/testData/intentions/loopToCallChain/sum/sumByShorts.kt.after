@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'sumBy{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>): Int {
+    val <caret>l = list.sumBy { it.getShort().toInt() }
+    return l
+}
+
+fun String.getShort(): Short = TODO()

@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'sum()'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<Int>): Int {
+    val <caret>s = 1 + list.sum()
+    return s
+}
