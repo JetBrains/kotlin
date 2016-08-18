@@ -545,7 +545,3 @@ fun testArraysOfDefaultValues(): Int {
     val msg = MessageRepeatedZigZag.BuilderMessageRepeatedZigZag(intArr, longArr).build()
     return checkRepZZSerializationIdentity(msg)
 }
-
-fun main(args: Array<String>) {
-    println(testRepZigZag())
-}
