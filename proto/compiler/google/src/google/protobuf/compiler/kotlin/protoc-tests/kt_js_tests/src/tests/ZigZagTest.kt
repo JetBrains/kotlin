@@ -3,9 +3,6 @@ import MessageZigZag
 import CodedInputStream
 
 object ZigZagTest {
-    val builder = protoBuf.loadProtoFile("./js_messages/zigzag.proto")
-    val JSMessageZigZag = builder.build("MessageZigZag")
-
     fun generateKtZigZag(): MessageZigZag {
         val int = Util.nextInt()
         val long = Util.nextLong()
