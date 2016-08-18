@@ -247,16 +247,25 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
             return false
           }
           val expectedByteSize = input.readInt32NoTag()
-          var newArray = IntArray(0)
           var readSize = 0
+          var arraySize = 0
+          input.mark()
           do {
             var i = 0
             while(readSize < expectedByteSize) {
-              var tmp = IntArray(1)
-              tmp[0] = input.readInt32NoTag()
-              newArray = newArray.plus(tmp)
-              readSize += WireFormat.getInt32SizeNoTag(tmp[0])
+              var tmp = 0
+              tmp = input.readInt32NoTag()
+              arraySize += 1
+              readSize += WireFormat.getInt32SizeNoTag(tmp)
             }
+          } while (false)
+          var newArray = IntArray(arraySize)
+          input.reset()
+          do {
+            var i = 0
+            while(i < arraySize) {
+              newArray[i] = input.readInt32NoTag()
+              i += 1}
             distances = newArray
           } while (false)
         }
@@ -266,16 +275,25 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
             return false
           }
           val expectedByteSize = input.readInt32NoTag()
-          var newArray = IntArray(0)
           var readSize = 0
+          var arraySize = 0
+          input.mark()
           do {
             var i = 0
             while(readSize < expectedByteSize) {
-              var tmp = IntArray(1)
-              tmp[0] = input.readInt32NoTag()
-              newArray = newArray.plus(tmp)
-              readSize += WireFormat.getInt32SizeNoTag(tmp[0])
+              var tmp = 0
+              tmp = input.readInt32NoTag()
+              arraySize += 1
+              readSize += WireFormat.getInt32SizeNoTag(tmp)
             }
+          } while (false)
+          var newArray = IntArray(arraySize)
+          input.reset()
+          do {
+            var i = 0
+            while(i < arraySize) {
+              newArray[i] = input.readInt32NoTag()
+              i += 1}
             angles = newArray
           } while (false)
         }

@@ -4,14 +4,22 @@
 
 class KotlinInputStream(val buffer: ByteArray) {
     var pos = 0
+    var mark_ = 0
 
     fun read(): Byte {
-        val result = buffer[pos]
-        pos++
-        return result
+        pos += 1
+        return buffer[pos - 1]
     }
 
     fun isAtEnd(): Boolean {
         return pos >= buffer.size
+    }
+
+    fun mark() {
+        mark_ = pos
+    }
+
+    fun reset() {
+        pos = mark_
     }
 }

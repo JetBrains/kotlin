@@ -187,7 +187,6 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
 
 }
 
-
 class DirectionResponse private constructor (var code: Int) {
   //========== Properties ===========
   //int32 code = 1
