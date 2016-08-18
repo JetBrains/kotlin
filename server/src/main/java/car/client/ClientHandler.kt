@@ -2,6 +2,7 @@ package car.client
 
 import CodedInputStream
 import LocationResponse
+import debugMemoryUrl
 import getLocationUrl
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -37,6 +38,14 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
                         }
                     })
                 }
+            }
+            debugMemoryUrl -> {
+                val response = DebugResponseMemoryStats.BuilderDebugResponseMemoryStats(0, 0, 0, 0).build()
+                response.mergeFrom(CodedInputStream(contentBytes))
+                println("heapDynamicMaxBytes ${response.heapDynamicMaxBytes}")
+                println("heapDynamicTail ${response.heapDynamicTail}")
+                println("heapDynamicTotalBytes ${response.heapDynamicTotalBytes}")
+                println("heapStaticTail ${response.heapStaticTail}")
             }
             else -> {
 
