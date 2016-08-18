@@ -238,6 +238,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("replaceArrayEqualityOpWithArraysEquals/inspectionData/inspections.test")
+        public void testReplaceArrayEqualityOpWithArraysEquals_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceArrayEqualityOpWithArraysEquals/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("replaceCallWithComparison/inspectionData/inspections.test")
         public void testReplaceCallWithComparison_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceCallWithComparison/inspectionData/inspections.test");
