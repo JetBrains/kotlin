@@ -50,32 +50,30 @@ IrFile /incrementDecrement.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         VAR val a1: kotlin.Int
-          TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
-            BLOCK type=kotlin.Unit hasResult=true operator=PREFIX_INCR
-              VAR val tmp0_array: kotlin.IntArray
-                GET_PROPERTY .arr type=kotlin.IntArray operator=null
-              VAR val tmp1: kotlin.Int
-                CALL .inc type=kotlin.Int operator=PREFIX_INCR
-                  $this: CALL .get type=kotlin.Int operator=PREFIX_INCR
-                    $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-                    index: LITERAL Int type=kotlin.Int value='0'
-              CALL .set type=kotlin.Unit operator=PREFIX_INCR
-                $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-                index: LITERAL Int type=kotlin.Int value='0'
-                value: GET_VAR tmp1 type=kotlin.Int operator=null
-              GET_VAR tmp1 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int hasResult=true operator=PREFIX_INCR
+            VAR val tmp0_array: kotlin.IntArray
+              GET_PROPERTY .arr type=kotlin.IntArray operator=null
+            VAR val tmp1: kotlin.Int
+              CALL .inc type=kotlin.Int operator=PREFIX_INCR
+                $this: CALL .get type=kotlin.Int operator=PREFIX_INCR
+                  $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+                  index: LITERAL Int type=kotlin.Int value='0'
+            CALL .set type=kotlin.Unit operator=PREFIX_INCR
+              $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+              index: LITERAL Int type=kotlin.Int value='0'
+              value: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
         VAR val a2: kotlin.Int
-          TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
-            BLOCK type=kotlin.Unit hasResult=true operator=PREFIX_DECR
-              VAR val tmp2_array: kotlin.IntArray
-                GET_PROPERTY .arr type=kotlin.IntArray operator=null
-              VAR val tmp3: kotlin.Int
-                CALL .dec type=kotlin.Int operator=PREFIX_DECR
-                  $this: CALL .get type=kotlin.Int operator=PREFIX_DECR
-                    $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
-                    index: LITERAL Int type=kotlin.Int value='0'
-              CALL .set type=kotlin.Unit operator=PREFIX_DECR
-                $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
-                index: LITERAL Int type=kotlin.Int value='0'
-                value: GET_VAR tmp3 type=kotlin.Int operator=null
-              GET_VAR tmp3 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
+            VAR val tmp2_array: kotlin.IntArray
+              GET_PROPERTY .arr type=kotlin.IntArray operator=null
+            VAR val tmp3: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: CALL .get type=kotlin.Int operator=PREFIX_DECR
+                  $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
+                  index: LITERAL Int type=kotlin.Int value='0'
+            CALL .set type=kotlin.Unit operator=PREFIX_DECR
+              $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
+              index: LITERAL Int type=kotlin.Int value='0'
+              value: GET_VAR tmp3 type=kotlin.Int operator=null
+            GET_VAR tmp3 type=kotlin.Int operator=null

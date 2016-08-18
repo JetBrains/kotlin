@@ -76,7 +76,7 @@ class IrIndexedLValue(
         irBlock.addStatement(irTmp)
 
         callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               IrVariableValue(irTmp))
+                               IrVariableLValue(irTmp))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
@@ -120,7 +120,7 @@ class IrIndexedLValue(
 
     private fun createDesugaredBlock(call: ResolvedCall<*>, hasResult: Boolean, operator: IrOperator?): IrBlockExpressionImpl {
         return IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
-                                     call.resultingDescriptor.returnType,
+                                     if (hasResult) type else call.resultingDescriptor.returnType,
                                      hasResult, operator)
     }
 

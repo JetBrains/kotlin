@@ -223,10 +223,10 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
                 if (descriptor.isDelegated)
                     TODO("Delegated local variable")
                 else
-                    IrVariableValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, irOperator)
+                    IrVariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, irOperator)
             is PropertyDescriptor ->
                 IrCallGenerator(irStatementGenerator).run {
-                    IrPropertyLValueValue(
+                    IrPropertyLValue(
                             ktLeft, irOperator, descriptor,
                             generateReceiver(ktLeft, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter),
                             generateReceiver(ktLeft, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter),
