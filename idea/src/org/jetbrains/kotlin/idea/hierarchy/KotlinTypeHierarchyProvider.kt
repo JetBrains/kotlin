@@ -14,96 +14,81 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.hierarchy;
+package org.jetbrains.kotlin.idea.hierarchy
 
-import com.intellij.codeInsight.TargetElementUtilBase;
-import com.intellij.ide.hierarchy.type.JavaTypeHierarchyProvider;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper;
-import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.ide.hierarchy.type.JavaTypeHierarchyProvider
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
+import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
 
-import java.util.Collection;
+class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
+    override fun getTarget(dataContext: DataContext): PsiElement? {
+        val project = PlatformDataKeys.PROJECT.getData(dataContext) ?: return null
 
-public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
-    @Override
-    public PsiElement getTarget(@NotNull DataContext dataContext) {
-        Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-        if (project == null) return null;
-
-        Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
+        val editor = PlatformDataKeys.EDITOR.getData(dataContext)
         if (editor != null) {
-            PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            if (file == null) return null;
+            val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return null
 
-            if (!ProjectRootsUtil.isInProjectOrLibSource(file)) return null;
+            if (!ProjectRootsUtil.isInProjectOrLibSource(file)) return null
 
-            PsiElement target = TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
+            val target = TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().allAccepted)
 
-            if (target instanceof PsiClass) {
-                return target;
+            if (target is PsiClass) {
+                return target
             }
 
-            if (target instanceof KtClassOrObject) {
-                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) target);
+            if (target is KtClassOrObject) {
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((target as KtClassOrObject?)!!)
             }
-            // Factory methods
-            else if (target instanceof KtNamedFunction) {
-                KtNamedFunction function = (KtNamedFunction) target;
-                String functionName = function.getName();
-                FunctionDescriptor functionDescriptor = ResolutionUtils.analyze(function)
-                        .get(BindingContext.FUNCTION, target);
+            else if (target is KtNamedFunction) {
+                val functionName = target.name
+                val functionDescriptor = target.analyze().get<PsiElement, SimpleFunctionDescriptor>(BindingContext.FUNCTION, target)
                 if (functionDescriptor != null) {
-                    KotlinType type = functionDescriptor.getReturnType();
+                    val type = functionDescriptor!!.getReturnType()
                     if (type != null) {
-                        String returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
-                        if (returnTypeText.equals(functionName)) {
-                            Collection<KtClassOrObject> classOrObjects =
-                                    KotlinClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
-                            if (classOrObjects.size() == 1) {
-                                KtClassOrObject classOrObject = classOrObjects.iterator().next();
-                                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
+                        val returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type!!)
+                        if (returnTypeText == functionName) {
+                            val classOrObjects = KotlinClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project))
+                            if (classOrObjects.size == 1) {
+                                val classOrObject = classOrObjects.iterator().next()
+                                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject)
                             }
                         }
                     }
                 }
-            }
+            }// Factory methods
 
-            int offset = editor.getCaretModel().getOffset();
-            PsiElement element = file.findElementAt(offset);
-            if (element == null) return null;
+            val offset = editor.caretModel.offset
+            val element = file.findElementAt(offset) ?: return null
 
-            KtClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject.class);
+            val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
             if (classOrObject != null) {
-                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject)
             }
         }
         else {
-            PsiElement element = LangDataKeys.PSI_ELEMENT.getData(dataContext);
-            if (element instanceof KtClassOrObject) {
-                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) element);
+            val element = LangDataKeys.PSI_ELEMENT.getData(dataContext)
+            if (element is KtClassOrObject) {
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((element as KtClassOrObject?)!!)
             }
         }
 
-        return null;
+        return null
     }
 }
 
