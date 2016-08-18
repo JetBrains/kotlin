@@ -1,29 +1,43 @@
 IrFile /conventionComparisons.kt
-  IrFunction public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+  DUMMY IA
+  DUMMY IB
+  IrFunction public fun IB.test1(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=GT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-            GET_VAR a type=kotlin.String operator=null
-            GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+          BINARY_OP operator=GT type=kotlin.Boolean related=null
+            CALL .compareTo type=kotlin.Int operator=GT
+              $this: $RECEIVER of: test1 type=IB
+              $receiver: GET_VAR a1 type=IA operator=null
+              other: GET_VAR a2 type=IA operator=null
+            LITERAL Int type=kotlin.Int value='0'
+  IrFunction public fun IB.test2(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=LT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-            GET_VAR a type=kotlin.String operator=null
-            GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+          BINARY_OP operator=GTEQ type=kotlin.Boolean related=null
+            CALL .compareTo type=kotlin.Int operator=GTEQ
+              $this: $RECEIVER of: test2 type=IB
+              $receiver: GET_VAR a1 type=IA operator=null
+              other: GET_VAR a2 type=IA operator=null
+            LITERAL Int type=kotlin.Int value='0'
+  IrFunction public fun IB.test3(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=GTEQ type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-            GET_VAR a type=kotlin.String operator=null
-            GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test4(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+          BINARY_OP operator=LT type=kotlin.Boolean related=null
+            CALL .compareTo type=kotlin.Int operator=LT
+              $this: $RECEIVER of: test3 type=IB
+              $receiver: GET_VAR a1 type=IA operator=null
+              other: GET_VAR a2 type=IA operator=null
+            LITERAL Int type=kotlin.Int value='0'
+  IrFunction public fun IB.test4(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=LTEQ type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-            GET_VAR a type=kotlin.String operator=null
-            GET_VAR b type=kotlin.String operator=null
+          BINARY_OP operator=LTEQ type=kotlin.Boolean related=null
+            CALL .compareTo type=kotlin.Int operator=LTEQ
+              $this: $RECEIVER of: test4 type=IB
+              $receiver: GET_VAR a1 type=IA operator=null
+              other: GET_VAR a2 type=IA operator=null
+            LITERAL Int type=kotlin.Int value='0'

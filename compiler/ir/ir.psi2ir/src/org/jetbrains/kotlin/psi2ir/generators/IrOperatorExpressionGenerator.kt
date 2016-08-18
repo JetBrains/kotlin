@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -26,8 +28,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.load
 import org.jetbrains.kotlin.psi2ir.generators.values.*
+import org.jetbrains.kotlin.psi2ir.load
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -139,18 +141,34 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
     }
 
     private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
-        val relatedCall = getResolvedCall(expression)!!
-        val relatedDescriptor = relatedCall.resultingDescriptor
+        val compareToCall = getResolvedCall(expression)!!
+        val compareToDescriptor = compareToCall.resultingDescriptor
 
         val irCallGenerator = IrCallGenerator(irStatementGenerator)
-        val irArgument0 = irCallGenerator.generateReceiver(expression.left!!, relatedCall.dispatchReceiver, relatedDescriptor.dispatchReceiverParameter!!)!!
-        val valueParameter0 = relatedDescriptor.valueParameters[0]
-        val irArgument1 = irCallGenerator.generateValueArgument(relatedCall.valueArgumentsByIndex!![0], valueParameter0)!!
-        return IrBinaryOperatorExpressionImpl(
-                expression.startOffset, expression.endOffset, context.builtIns.booleanType,
-                irOperator, relatedDescriptor, irArgument0, irArgument1
-        )
+
+        return if (shouldKeepComparisonAsBinaryOperation(compareToDescriptor)) {
+            val irArgument0 = irCallGenerator.generateReceiver(expression.left!!, compareToCall.dispatchReceiver, compareToDescriptor.dispatchReceiverParameter!!)!!
+            val valueParameter0 = compareToDescriptor.valueParameters[0]
+            val irArgument1 = irCallGenerator.generateValueArgument(compareToCall.valueArgumentsByIndex!![0], valueParameter0)!!
+            IrBinaryOperatorExpressionImpl(
+                    expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                    irOperator, compareToDescriptor, irArgument0, irArgument1
+            )
+        }
+        else {
+            val irCompareToCall = irCallGenerator.generateCall(expression, compareToCall, irOperator)
+            IrBinaryOperatorExpressionImpl(
+                    expression.startOffset, expression.endOffset, context.builtIns.booleanType,
+                    irOperator, null, irCompareToCall,
+                    IrLiteralExpressionImpl.int(expression.startOffset, expression.endOffset, context.builtIns.intType, 0)
+            )
+        }
     }
+
+    private fun shouldKeepComparisonAsBinaryOperation(compareToDescriptor: CallableDescriptor) =
+            compareToDescriptor.dispatchReceiverParameter?.type.let {
+                it != null && (KotlinBuiltIns.isPrimitiveType(it) || KotlinBuiltIns.isString(it))
+            }
 
     private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!

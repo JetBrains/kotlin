@@ -191,6 +191,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("stringComparisons.kt")
+    public void testStringComparisons() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stringComparisons.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("stringPlus.kt")
     public void testStringPlus() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stringPlus.kt");
