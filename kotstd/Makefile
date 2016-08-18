@@ -9,8 +9,8 @@ KT=$(PWD)/../translator/build/libs/translator-1.0.jar
 LLINK=llvm-link-3.6
 CC=clang-3.6
 
-CCFLAGS_ARM=-S -Wall -m32 -emit-llvm -nostdlib -ffreestanding -march=armv7-m -mthumb -flto -O0 -target arm-none-eabi -DARM
-CCFLAGS=-O0 -S -Wall -emit-llvm -nostdlib -ffreestanding
+CCFLAGS_ARM=-g -S -Wall -m32 -emit-llvm -nostdlib -ffreestanding -march=armv7-m -mthumb -flto -O0 -target arm-none-eabi -DARM
+CCFLAGS=-g -O0 -S -Wall -emit-llvm -nostdlib -ffreestanding
 LLINK_FLAGS=-S
 
 KT_ALL_DEPS=java -jar $(KT)

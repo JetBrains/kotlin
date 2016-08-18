@@ -18,6 +18,9 @@ char* heaps[2] = {
 int heap_tails[2] = {0, 0};
 int active_heap = STATIC_HEAP;
 
+int dynamic_heap_consume = 0;
+int dynamic_heap_max = 0;
+
 #else
 char* malloc(int);
 #endif
@@ -42,6 +45,11 @@ void set_active_heap(int heap) {
 
 void clean_dynamic_heap() {
 #ifdef ARM
+    dynamic_heap_consume += heap_tails[DYNAMIC_HEAP];
+    if (heap_tails[DYNAMIC_HEAP] > dynamic_heap_max) {
+        dynamic_heap_max = heap_tails[DYNAMIC_HEAP];
+    }
+
     heap_tails[DYNAMIC_HEAP] = 0;
 #endif
 }

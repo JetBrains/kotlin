@@ -13,12 +13,14 @@ fun echoUsb() {
 fun echoProto() {
     clear_buffer()
 
+    set_active_heap(MEMORY_DYNAMIC_HEAP)
     while (true) {
         val route = readRoute()
         blink()
         go(route)
         blink()
         wait(PROGRAM_DURATION)
+        clean_dynamic_heap()
     }
 }
 
