@@ -42,7 +42,7 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
         PsiElement element = getCurrentElement(dataContext, project);
         if (element == null) return null;
 
-        element = HierarchyUtils.getCallHierarchyElement(element);
+        element = HierarchyUtils.INSTANCE.getCallHierarchyElement(element);
         if (element instanceof KtFile || element == null || element.getLanguage() != KotlinLanguage.INSTANCE) return null;
 
         return element;

@@ -76,7 +76,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
     @Override
     protected boolean isApplicableElement(@NotNull PsiElement element) {
         if (element instanceof PsiClass) return false; // PsiClass is not allowed at the hierarchy root
-        return HierarchyUtils.IS_CALL_HIERARCHY_ELEMENT.invoke(element);
+        return HierarchyUtils.INSTANCE.getIS_CALL_HIERARCHY_ELEMENT().invoke(element);
     }
 
     @Override
