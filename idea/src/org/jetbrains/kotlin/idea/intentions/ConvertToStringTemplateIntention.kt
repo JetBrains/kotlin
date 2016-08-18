@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
-        ConvertToStringTemplateIntention(),
-        { it -> ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
+        ConvertToStringTemplateIntention::class,
+        { it -> ConvertToStringTemplateIntention.shouldSuggestToConvert(it) }
 )
 
 class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
@@ -47,101 +47,103 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
         element.replaced(buildReplacement(element))
     }
 
-    fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
-        val entries = buildReplacement(expression).entries
-        return entries.none { it is KtBlockStringTemplateEntry }
-               && !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
-               && entries.count { it is KtLiteralStringTemplateEntry } > 1
-               && !expression.textContains('\n')
-    }
-
-    private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
-        if (expression.operationToken != KtTokens.PLUS) return false
-        val expressionType = expression.analyze(BodyResolveMode.PARTIAL).getType(expression)
-        if (!KotlinBuiltIns.isString(expressionType)) return false
-        return isSuitable(expression)
-    }
-
-    private fun isSuitable(expression: KtExpression): Boolean {
-        if (expression is KtBinaryExpression && expression.operationToken == KtTokens.PLUS) {
-            return isSuitable(expression.left ?: return false) && isSuitable(expression.right ?: return false)
+    companion object {
+        fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
+            val entries = buildReplacement(expression).entries
+            return entries.none { it is KtBlockStringTemplateEntry }
+                   && !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
+                   && entries.count { it is KtLiteralStringTemplateEntry } > 1
+                   && !expression.textContains('\n')
         }
 
-        if (PsiUtilCore.hasErrorElementChild(expression)) return false
-        if (expression.textContains('\n')) return false
-        return true
-    }
-
-    private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
-        val rightText = buildText(expression.right, false)
-        return fold(expression.left, rightText, KtPsiFactory(expression))
-    }
-
-    private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
-        val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
-
-        if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
-            val leftRight = buildText(left.right, forceBraces)
-            return fold(left.left, leftRight + right, factory)
+        private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
+            val rightText = buildText(expression.right, false)
+            return fold(expression.left, rightText, KtPsiFactory(expression))
         }
-        else {
-            val leftText = buildText(left, forceBraces)
-            return factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
-        }
-    }
 
-    private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
-        if (expr == null) return ""
-        val expression = KtPsiUtil.safeDeparenthesize(expr)
-        val expressionText = expression.text
-        when (expression) {
-            is KtConstantExpression -> {
-                val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-                val type = bindingContext.getType(expression)!!
+        private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
+            val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
-                if (KotlinBuiltIns.isChar(type)) {
-                    val value = expressionText.removePrefix("'").removeSuffix("'")
-                    return when (value) { // escape double quote and unescape single one
-                        "\"" -> "\\\""
-                        "\\'" -> "'"
-                        else -> value
-                    }
-                }
-
-                val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                val stringValue = constant?.getValue(type).toString()
-                if (stringValue == expressionText) {
-                    return StringUtil.escapeStringCharacters(stringValue)
-                }
+            if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
+                val leftRight = buildText(left.right, forceBraces)
+                return fold(left.left, leftRight + right, factory)
             }
+            else {
+                val leftText = buildText(left, forceBraces)
+                return factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
+            }
+        }
 
-            is KtStringTemplateExpression -> {
-                val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
-                    val unquoted = expressionText.substring(3, expressionText.length - 3)
-                    StringUtil.escapeStringCharacters(unquoted)
-                }
-                else {
-                    StringUtil.unquoteString(expressionText)
-                }
+        private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
+            if (expr == null) return ""
+            val expression = KtPsiUtil.safeDeparenthesize(expr)
+            val expressionText = expression.text
+            when (expression) {
+                is KtConstantExpression -> {
+                    val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+                    val type = bindingContext.getType(expression)!!
 
-                if (forceBraces) {
-                    if (base.endsWith('$')) {
-                        return base.dropLast(1) + "\\$"
-                    }
-                    else {
-                        val lastPart = expression.children.lastOrNull()
-                        if (lastPart is KtSimpleNameStringTemplateEntry) {
-                            return base.dropLast(lastPart.textLength) + "\${" + lastPart.text.drop(1) + "}"
+                    if (KotlinBuiltIns.isChar(type)) {
+                        val value = expressionText.removePrefix("'").removeSuffix("'")
+                        return when (value) { // escape double quote and unescape single one
+                            "\"" -> "\\\""
+                            "\\'" -> "'"
+                            else -> value
                         }
                     }
+
+                    val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
+                    val stringValue = constant?.getValue(type).toString()
+                    if (stringValue == expressionText) {
+                        return StringUtil.escapeStringCharacters(stringValue)
+                    }
                 }
-                return base
+
+                is KtStringTemplateExpression -> {
+                    val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
+                        val unquoted = expressionText.substring(3, expressionText.length - 3)
+                        StringUtil.escapeStringCharacters(unquoted)
+                    }
+                    else {
+                        StringUtil.unquoteString(expressionText)
+                    }
+
+                    if (forceBraces) {
+                        if (base.endsWith('$')) {
+                            return base.dropLast(1) + "\\$"
+                        }
+                        else {
+                            val lastPart = expression.children.lastOrNull()
+                            if (lastPart is KtSimpleNameStringTemplateEntry) {
+                                return base.dropLast(lastPart.textLength) + "\${" + lastPart.text.drop(1) + "}"
+                            }
+                        }
+                    }
+                    return base
+                }
+
+                is KtNameReferenceExpression ->
+                    return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
             }
 
-            is KtNameReferenceExpression ->
-                return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
+            return "\${$expressionText}"
         }
 
-        return "\${$expressionText}"
+        private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
+            if (expression.operationToken != KtTokens.PLUS) return false
+            val expressionType = expression.analyze(BodyResolveMode.PARTIAL).getType(expression)
+            if (!KotlinBuiltIns.isString(expressionType)) return false
+            return isSuitable(expression)
+        }
+
+        private fun isSuitable(expression: KtExpression): Boolean {
+            if (expression is KtBinaryExpression && expression.operationToken == KtTokens.PLUS) {
+                return isSuitable(expression.left ?: return false) && isSuitable(expression.right ?: return false)
+            }
+
+            if (PsiUtilCore.hasErrorElementChild(expression)) return false
+            if (expression.textContains('\n')) return false
+            return true
+        }
     }
 }

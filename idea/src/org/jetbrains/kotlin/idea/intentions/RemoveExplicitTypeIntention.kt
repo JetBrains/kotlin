@@ -25,11 +25,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class RemoveSetterParameterTypeInspection(
-        val intention: RemoveExplicitTypeIntention = RemoveExplicitTypeIntention()
-) : IntentionBasedInspection<KtCallableDeclaration>(
-        intention,
-        { it -> intention.isSetterParameter(it) }
+class RemoveSetterParameterTypeInspection()
+: IntentionBasedInspection<KtCallableDeclaration>(
+        RemoveExplicitTypeIntention::class,
+        { it -> RemoveExplicitTypeIntention.isSetterParameter(it) }
 ) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
@@ -43,11 +42,6 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         KtCallableDeclaration::class.java,
         "Remove explicit type specification"
 ) {
-
-    private val KtParameter.isSetterParameter: Boolean get() = (parent?.parent as? KtPropertyAccessor)?.isSetter ?: false
-
-    fun isSetterParameter(element: KtCallableDeclaration) =
-            element is KtParameter && element.isSetterParameter
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (element.containingFile is KtCodeFragment) return null
@@ -65,5 +59,12 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         element.typeReference = null
+    }
+
+    companion object {
+        fun isSetterParameter(element: KtCallableDeclaration) =
+                element is KtParameter && element.isSetterParameter
+
+        private val KtParameter.isSetterParameter: Boolean get() = (parent?.parent as? KtPropertyAccessor)?.isSetter ?: false
     }
 }
