@@ -44,6 +44,26 @@ class ShortArray(var size: Int) {
 
 }
 
+fun ShortArray.print() {
+    var index = 0
+    print('[')
+    while (index < size) {
+        print(get(index))
+        index++
+        if (index < size) {
+            print(';')
+            print(' ')
+        }
+    }
+    print(']')
+}
+
+fun ShortArray.println() {
+    this.print()
+    println()
+}
+
+
 fun ShortArray.copyOf(newSize: Int): ShortArray {
     val newInstance = ShortArray(newSize)
     var index = 0

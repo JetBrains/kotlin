@@ -43,6 +43,25 @@ class LongArray(var size: Int) {
     }
 }
 
+fun LongArray.print() {
+    var index = 0
+    print('[')
+    while (index < size) {
+        print(get(index))
+        index++
+        if (index < size) {
+            print(';')
+            print(' ')
+        }
+    }
+    print(']')
+}
+
+fun LongArray.println() {
+    this.print()
+    println()
+}
+
 fun LongArray.copyOf(newSize: Int): LongArray {
     val newInstance = LongArray(newSize)
     var index = 0

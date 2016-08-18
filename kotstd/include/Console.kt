@@ -1,5 +1,7 @@
 import ByteArray
 import IntArray
+import LongArray
+import ShortArray
 
 /*
 * Library for console interaction
@@ -85,6 +87,16 @@ fun print(message: IntArray) {
     message.print()
 }
 
+/** Prints the given message and newline to the standard output stream. */
+fun print(message: LongArray) {
+    message.print()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun print(message: ShortArray) {
+    message.print()
+}
+
 
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: Int) {
@@ -143,6 +155,16 @@ fun println(message: BooleanArray) {
 
 /** Prints the given message and newline to the standard output stream. */
 fun println(message: IntArray) {
+    message.println()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun println(message: LongArray) {
+    message.println()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+fun println(message: ShortArray) {
     message.println()
 }
 
