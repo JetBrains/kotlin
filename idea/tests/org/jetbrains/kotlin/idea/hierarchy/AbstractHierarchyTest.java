@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.idea.hierarchy;
 
 import com.intellij.ide.hierarchy.*;
+import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase;
 import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure;
-import com.intellij.lang.Language;
+import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -36,10 +37,10 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinHierarchyViewTestBase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeMethodsTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerMethodsTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new SupertypesHierarchyTreeStructure(
                         getProject(),
-                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage()))
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE)
                 );
             }
         };
@@ -103,7 +104,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new SubtypesHierarchyTreeStructure(
                         getProject(),
-                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
                 );
             }
@@ -116,7 +117,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new TypeHierarchyTreeStructure(
                         getProject(),
-                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
                 );
             }
@@ -129,7 +130,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new KotlinCallerMethodsTreeStructure(
                         getProject(),
-                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
                 );
             }
@@ -142,7 +143,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new KotlinCalleeMethodsTreeStructure(
                         getProject(),
-                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
                 );
             }
@@ -155,22 +156,18 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new KotlinOverrideTreeStructure(
                         getProject(),
-                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage()))
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE)
                 );
             }
         };
     }
 
-    private PsiElement getElementAtCaret(HierarchyProvider provider) {
-        PsiElement target = provider.getTarget(getDataContext());
+    private PsiElement getElementAtCaret(LanguageExtension<HierarchyProvider> extension) {
+        PsiFile file = PsiDocumentManager.getInstance(getProject()).getPsiFile(getEditor().getDocument());
+        HierarchyProvider provider = BrowseHierarchyActionBase.findProvider(extension, file, file, getDataContext());
+        PsiElement target = provider != null ? provider.getTarget(getDataContext()) : null;
         if (target == null) throw new RefactoringErrorHintException("Cannot apply action for element at caret");
         return target;
-    }
-
-    private Language getLanguage() {
-        PsiFile file = PsiDocumentManager.getInstance(getProject()).getPsiFile(getEditor().getDocument());
-        assert file != null : "Cannot find file in editor";
-        return file.getLanguage();
     }
 
     private DataContext getDataContext() {

@@ -1,0 +1,7 @@
+<node text="Object (java.lang)">
+  <node text="A ()" base="true">
+    <node text="B ()">
+      <node text="C ()"/>
+    </node>
+  </node>
+</node>

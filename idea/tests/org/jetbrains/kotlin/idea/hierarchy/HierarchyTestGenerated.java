@@ -85,6 +85,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("CaretAtSuperTypeCallEntry")
+        public void testCaretAtSuperTypeCallEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtSuperTypeCallEntry/");
+            doTypeClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("CaretAtSupertypesList")
         public void testCaretAtSupertypesList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtSupertypesList/");

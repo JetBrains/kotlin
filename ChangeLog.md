@@ -91,6 +91,12 @@ These artifacts include extensions for the types available in the latter JDKs, s
 + [`KT-12389`](https://youtrack.jetbrains.com/issue/KT-12389) Do not exit from REPL when toString() of user class throws an exception
 + [`KT-12129`](https://youtrack.jetbrains.com/issue/KT-12129) Fixed link on api reference page in KDoc
 
+## 1.0.5
+
+### IDE
+
+- [`KT-9125`](https://youtrack.jetbrains.com/issue/KT-9125) Support Type Hierarchy on references inside of super type call entries
+
 ## 1.0.4
 
 ### Compiler
