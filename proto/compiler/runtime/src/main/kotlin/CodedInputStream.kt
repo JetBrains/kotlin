@@ -12,7 +12,15 @@
 class CodedInputStream(val buffer: ByteArray) {
     val inputStream: KotlinInputStream
     init {
-        inputStream = KotlinInputStream(buffer)  // TODO: Java's realization uses hand-written buffers. Why?
+        inputStream = KotlinInputStream(buffer)
+    }
+
+    fun mark() {
+        inputStream.mark()
+    }
+
+    fun reset() {
+        inputStream.reset()
     }
 
     fun readInt32(expectedFieldNumber: Int): Int {

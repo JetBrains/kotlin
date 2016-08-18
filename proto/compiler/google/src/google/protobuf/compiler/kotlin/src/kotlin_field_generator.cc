@@ -100,27 +100,73 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
          */
         FieldGenerator singleFieldGen = getUnderlyingTypeGenerator();
 
-        // Allocate new array and current size
-        printer->Print(vars, "var newArray = $arrayType$(0)\n");
-        printer->Print(vars, "var readSize = 0\n");
+        /* Because we use arrays of static size as backend for repeated fields,
+           we would have to make excessive allocations in one-pass read, resulting
+           in O(n^2) memory usage for parsing n-element array.
+           Therefore, we use two-pass algorithms:
+                1. Mark beginning of array in stream
+                2. Read array, discarding all elements, just counting them
+                3. Reset stream to beginning of array
+                4. Allocate array of counted size
+                5. Read all elements again, now storing them in that array
+         */
 
-        // place declaration of new variable in anonymous scope for hygiene
+        // ================ First pass: Counting Size =====================
+        // Declare needed variables
+        printer->Print("var readSize = 0\n");
+        printer->Print("var arraySize = 0\n");
+
+        // Mark stream
+        printer->Print("input.mark()\n");
+
+        // place declarations of tmp variables in anonymous scope for hygiene
         printer->Print("do {\n");
         printer->Indent();
         printer->Print("var i = 0\n");
         printer->Print(vars, "while(readSize < expectedByteSize) {\n");
         printer->Indent();
 
-        printer->Print(vars, "var tmp = $arrayType$(1)\n");
-        singleFieldGen.simpleName = "tmp[0]";
+        // read single element
+        printer->Print(vars, "var tmp = $initValue$\n");
+        singleFieldGen.simpleName = "tmp";
         singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
 
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
 
-        printer->Print(vars, "newArray = newArray.plus(tmp)\n");
+        // increment arraySize
+        printer->Print("arraySize += 1\n");
 
         // add size of read element to readSize
         singleFieldGen.generateSizeEstimationCode(printer, "readSize", /* noTag = */ true, /* isField = */ false);
+        printer->Outdent();     // while-loop
+        printer->Print("}\n");
+
+        printer->Outdent();     // anonymous scope
+        printer->Print("} while (false)\n");
+
+
+        // ================ Second pass: Reading array =====================
+        // Allocate array of caluclated size
+        printer->Print(vars, "var newArray = $arrayType$(arraySize)\n");
+
+        // Reset stream
+        printer->Print("input.reset()\n");
+        // Read elements
+        printer->Print("do {\n");
+        printer->Indent();
+        printer->Print("var i = 0\n");
+        printer->Print(vars, "while(i < arraySize) {\n");
+        printer->Indent();
+
+//        printer->Print(vars, "var tmp = $initValue$\n");
+        singleFieldGen.simpleName = "newArray[i]";
+        singleFieldGen.protoLabel = FieldDescriptor::LABEL_OPTIONAL;
+
+        singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
+
+        // increment iterator
+        printer->Print("i += 1");
+
         printer->Outdent();     // while-loop
         printer->Print("}\n");
 
