@@ -32,3 +32,6 @@ proto/compiler/tests
 
 proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
 proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
+
+# translator auto generated artifacts
+kotstd/lib/arm/memory.ll
