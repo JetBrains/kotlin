@@ -37,7 +37,7 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
+import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtilsKt;
 import org.jetbrains.kotlin.idea.references.KtReference;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
@@ -234,7 +234,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             PsiElement refElement = ref.getElement();
             if (PsiTreeUtil.getParentOfType(refElement, KtImportDirective.class, true) != null) return true;
 
-            PsiElement element = HierarchyUtils.INSTANCE.getCallHierarchyElement(refElement);
+            PsiElement element = HierarchyUtilsKt.getCallHierarchyElement(refElement);
 
             if (kotlinOnly && !(element instanceof KtNamedDeclaration)) return true;
 
@@ -242,7 +242,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             if (element instanceof KtProperty) {
                 KtProperty property = (KtProperty) element;
                 if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
-                    element = HierarchyUtils.INSTANCE.getCallHierarchyElement(element.getParent());
+                    element = HierarchyUtilsKt.getCallHierarchyElement(element.getParent());
                 }
             }
 

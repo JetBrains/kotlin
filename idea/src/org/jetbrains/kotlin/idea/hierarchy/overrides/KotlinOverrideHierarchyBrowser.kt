@@ -16,21 +16,19 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.overrides
 
-import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
-import com.intellij.psi.PsiElement
-import javax.swing.JPanel
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils
-import org.jetbrains.kotlin.idea.KotlinBundle
+import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
 import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
-import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
-import com.intellij.psi.PsiMethod
+import com.intellij.openapi.project.Project
 import com.intellij.psi.ElementDescriptionUtil
-import com.intellij.refactoring.util.RefactoringDescriptionLocation
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageViewLongNameLocation
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.psi.KtDeclaration
+import javax.swing.JPanel
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement
