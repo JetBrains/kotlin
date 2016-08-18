@@ -23,8 +23,8 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 
-class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(RemoveExplicitSuperQualifierIntention()), CleanupLocalInspectionTool {
+class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(RemoveExplicitSuperQualifierIntention::class), CleanupLocalInspectionTool {
     override val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }

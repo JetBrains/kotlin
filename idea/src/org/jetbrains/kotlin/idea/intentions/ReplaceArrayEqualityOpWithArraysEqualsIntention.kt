@@ -31,8 +31,9 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class ReplaceArrayEqualityOpWithArraysEqualsInspection :
-        IntentionBasedInspection<KtBinaryExpression>(ReplaceArrayEqualityOpWithArraysEqualsIntention())
+class ReplaceArrayEqualityOpWithArraysEqualsInspection : IntentionBasedInspection<KtBinaryExpression>(
+        ReplaceArrayEqualityOpWithArraysEqualsIntention::class
+)
 
 class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         KtBinaryExpression::class.java,

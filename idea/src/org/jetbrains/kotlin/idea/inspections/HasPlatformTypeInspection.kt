@@ -33,14 +33,13 @@ import org.jetbrains.kotlin.types.isNullabilityFlexible
 import javax.swing.JComponent
 
 class HasPlatformTypeInspection(
-        val intention: SpecifyTypeExplicitlyIntention = SpecifyTypeExplicitlyIntention(),
         @JvmField var publicAPIOnly: Boolean = true,
         @JvmField var reportPlatformArguments: Boolean = false
 ) : IntentionBasedInspection<KtCallableDeclaration>(
-        intention,
+        SpecifyTypeExplicitlyIntention::class,
         { element, inspection ->
             with(inspection as HasPlatformTypeInspection) {
-                intention.dangerousFlexibleTypeOrNull(element, this.publicAPIOnly, this.reportPlatformArguments) != null
+                SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(element, this.publicAPIOnly, this.reportPlatformArguments) != null
             }
         }
 ) {
@@ -50,7 +49,7 @@ class HasPlatformTypeInspection(
     override val problemText = "Declaration has platform type. Make the type explicit to prevent subtle bugs."
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
-        val type = intention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null
+        val type = SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null
 
         if (type.isNullabilityFlexible()) {
             val expression = element.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()

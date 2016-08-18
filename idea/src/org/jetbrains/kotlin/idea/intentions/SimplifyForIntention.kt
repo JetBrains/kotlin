@@ -37,9 +37,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
-import kotlin.collections.forEach
 
-class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
+class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention::class)
 
 class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         KtForExpression::class.java,

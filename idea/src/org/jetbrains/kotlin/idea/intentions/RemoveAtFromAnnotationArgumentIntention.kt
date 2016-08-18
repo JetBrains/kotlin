@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-class RemoveAtFromAnnotationArgumentInspection : IntentionBasedInspection<KtAnnotatedExpression>(RemoveAtFromAnnotationArgumentIntention())
+class RemoveAtFromAnnotationArgumentInspection : IntentionBasedInspection<KtAnnotatedExpression>(RemoveAtFromAnnotationArgumentIntention::class)
 
 class RemoveAtFromAnnotationArgumentIntention : SelfTargetingOffsetIndependentIntention<KtAnnotatedExpression>(
         KtAnnotatedExpression::class.java,
