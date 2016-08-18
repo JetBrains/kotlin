@@ -11,6 +11,14 @@ class LLVMBuilder(val arm: Boolean = false) {
     private var variableCount = 0
     private var labelCount = 0
 
+    object UniqueGenerator {
+        private var unique = 0
+        fun generateUniqueString(): String {
+            unique += 1
+            return ".unique." + unique
+        }
+    }
+
     init {
         initBuilder()
     }

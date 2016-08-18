@@ -124,7 +124,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val receiveValue = state.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr)
         val type = (receiveValue as TypedCompileTimeConstant).type
         val value = receiveValue.getValue(type) ?: return null
-        val variable = variableManager.receiveVariable(".str", LLVMStringType(value.toString().length, isLoaded = false), LLVMVariableScope(), pointer = 0)
+        val variable = variableManager.receiveVariable(".str" + LLVMBuilder.UniqueGenerator.generateUniqueString(), LLVMStringType(value.toString().length, isLoaded = false), LLVMVariableScope(), pointer = 0)
 
         codeBuilder.addStringConstant(variable, value.toString())
         return variable
