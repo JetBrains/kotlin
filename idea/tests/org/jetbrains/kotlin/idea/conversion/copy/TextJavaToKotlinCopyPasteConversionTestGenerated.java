@@ -71,6 +71,18 @@ public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTe
         doTest(fileName);
     }
 
+    @TestMetadata("KT13529.txt")
+    public void testKT13529() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/KT13529.txt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KT13529_1.txt")
+    public void testKT13529_1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/KT13529_1.txt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MembersIntoClass.txt")
     public void testMembersIntoClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/MembersIntoClass.txt");

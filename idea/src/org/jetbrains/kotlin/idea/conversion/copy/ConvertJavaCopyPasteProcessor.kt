@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.j2k.ParseContext
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -247,7 +248,9 @@ internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
     if (token !is PsiWhiteSpace && token.endOffset != offset) return true // pasting into the middle of token
 
     for (element in token.parentsWithSelf) {
-        if (element is PsiComment) return true
+        if (element is PsiComment) {
+            return element.node.elementType == KtTokens.EOL_COMMENT || offset != element.endOffset
+        }
         if (element is KtStringTemplateEntryWithExpression) return false
         if (element is KtStringTemplateExpression) return true
     }
