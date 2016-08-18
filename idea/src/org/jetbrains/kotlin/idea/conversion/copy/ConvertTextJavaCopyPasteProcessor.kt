@@ -31,7 +31,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFile
@@ -128,8 +128,10 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val newFileText = fileText.substring(0, startOffset) + " " + dummyDeclarationText + "\n" + fileText.substring(endOffset)
 
         val newFile = parseAsFile(newFileText, KotlinFileType.INSTANCE, file.project)
-        val declaration = PsiTreeUtil.findElementOfClassAtRange(newFile, startOffset + 1, startOffset + 1 + dummyDeclarationText.length, KtFunction::class.java) ?: return null
-        if (declaration.textLength != dummyDeclarationText.length) return null
+
+        val funKeyword = newFile.findElementAt(startOffset + 1) ?: return null
+        if (funKeyword.node.elementType != KtTokens.FUN_KEYWORD) return null
+        val declaration = funKeyword.parent as? KtFunction ?: return null
 
         val parent = declaration.parent
         return when (parent) {
