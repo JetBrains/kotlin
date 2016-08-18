@@ -2,7 +2,7 @@
 
 package test
 
-inline fun call(a: String, b: String, s: String.(String) -> String): Int {
+inline fun call(a: String, b: String, s: String.(String) -> String): String {
     return a.s(b)
 }
 
@@ -11,5 +11,5 @@ inline fun call(a: String, b: String, s: String.(String) -> String): Int {
 import test.*
 
 fun box() : String {
-    return return call("O", "K", String::plus)
+    return call("O", "K", String::plus)
 }

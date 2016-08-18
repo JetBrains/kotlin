@@ -236,8 +236,7 @@ class PropertyReferenceCodegen(
             }
 
             if (receiverType != null) {
-                StackValue.field(receiverType, asmType, AsmUtil.CAPTURED_RECEIVER_FIELD, /* isStatic = */ false, StackValue.LOCAL_0)
-                        .put(receiverType, v)
+                capturedReceiver(asmType, receiverType).put(receiverType, v)
             }
             else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)

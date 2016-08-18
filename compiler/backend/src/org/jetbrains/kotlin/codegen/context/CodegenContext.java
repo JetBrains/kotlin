@@ -305,8 +305,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public MethodContext intoInlinedLambda(FunctionDescriptor descriptor, boolean isCrossInline) {
-        return new InlineLambdaContext(descriptor, getContextKind(), this, null, isCrossInline);
+    public MethodContext intoInlinedLambda(FunctionDescriptor descriptor, boolean isCrossInline, boolean isPropertyReference) {
+        return new InlineLambdaContext(descriptor, getContextKind(), this, null, isCrossInline, isPropertyReference);
     }
 
     @NotNull
