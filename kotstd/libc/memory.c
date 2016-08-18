@@ -25,6 +25,10 @@ int dynamic_heap_max = 0;
 char* malloc(int);
 #endif
 
+#ifdef DEBUG
+    static int total = 0;
+#endif
+
 char* malloc_heap(int size) {
 #ifdef ARM
     char* ptr = heaps[active_heap] + heap_tails[active_heap];
@@ -33,6 +37,10 @@ char* malloc_heap(int size) {
     return ptr;
 
 #else
+    #ifdef DEBUG
+        total = total + size;
+        printf("Alloc [%d] TOTAL: [%d]\n", size, total);
+    #endif
     return malloc(size);
 #endif
 }
