@@ -211,6 +211,7 @@ class KotlinIndicesHelper(
                           PsiShortNamesCache.getInstance(project).getMethodsByName(name, scope))
                 .flatMap { it.asSequence() }
                 .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) }
+                .filterNot { it.importableFqName == null }
                 .filter(descriptorFilter)
                 .toSet()
     }
