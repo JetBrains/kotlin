@@ -11,9 +11,6 @@ class DebugClInterface {
 
     fun run() {
 
-        DebugRequest.BuilderDebugRequest(DebugRequest.TYPE.valueOf("mem"))
-//        DebugRequest.TYPE.
-
         val helpString = "available commands:\n" +
                 "cars - get list of connected cars\n" +
                 "route [car_id] - setting a route for car with car id.\n" +
