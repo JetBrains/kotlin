@@ -21,64 +21,87 @@ import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
+fun getIrBinaryOperator(ktOperator: IElementType): IrOperator? =
+        KT_TOKEN_TO_IR_BINARY_OPERATOR[ktOperator]
 
-internal fun getIrOperator(ktOperator: IElementType): IrOperator? =
-        KT_TOKEN_TO_IR_OPERATOR[ktOperator]
+fun getIrPrefixOperator(ktOperator: IElementType): IrOperator? =
+        KT_TOKEN_TO_IR_PREFIX_OPERATOR[ktOperator]
 
-internal val KT_TOKEN_TO_IR_OPERATOR =
-        mapOf(
-                KtTokens.EQ to IrOperator.EQ,
+fun getIrPostfixOperator(ktOperator: IElementType): IrOperator? =
+        KT_TOKEN_TO_IR_POSTFIX_OPERATOR[ktOperator]
 
-                KtTokens.PLUSEQ to IrOperator.PLUSEQ,
-                KtTokens.MINUSEQ to IrOperator.MINUSEQ,
-                KtTokens.MULTEQ to IrOperator.MULTEQ,
-                KtTokens.DIVEQ to IrOperator.DIVEQ,
-                KtTokens.PERCEQ to IrOperator.PERCEQ,
+private val KT_TOKEN_TO_IR_BINARY_OPERATOR = mapOf(
+        KtTokens.EQ to IrOperator.EQ,
 
-                KtTokens.PLUS to IrOperator.PLUS,
-                KtTokens.MINUS to IrOperator.MINUS,
-                KtTokens.MUL to IrOperator.MUL,
-                KtTokens.DIV to IrOperator.DIV,
-                KtTokens.PERC to IrOperator.PERC,
-                KtTokens.RANGE to IrOperator.RANGE,
+        KtTokens.PLUSEQ to IrOperator.PLUSEQ,
+        KtTokens.MINUSEQ to IrOperator.MINUSEQ,
+        KtTokens.MULTEQ to IrOperator.MULTEQ,
+        KtTokens.DIVEQ to IrOperator.DIVEQ,
+        KtTokens.PERCEQ to IrOperator.PERCEQ,
 
-                KtTokens.LT to IrOperator.LT,
-                KtTokens.LTEQ to IrOperator.LTEQ,
-                KtTokens.GT to IrOperator.GT,
-                KtTokens.GTEQ to IrOperator.GTEQ,
+        KtTokens.PLUS to IrOperator.PLUS,
+        KtTokens.MINUS to IrOperator.MINUS,
+        KtTokens.MUL to IrOperator.MUL,
+        KtTokens.DIV to IrOperator.DIV,
+        KtTokens.PERC to IrOperator.PERC,
+        KtTokens.RANGE to IrOperator.RANGE,
 
-                KtTokens.EQEQ to IrOperator.EQEQ,
-                KtTokens.EXCLEQ to IrOperator.EXCLEQ,
+        KtTokens.LT to IrOperator.LT,
+        KtTokens.LTEQ to IrOperator.LTEQ,
+        KtTokens.GT to IrOperator.GT,
+        KtTokens.GTEQ to IrOperator.GTEQ,
 
-                KtTokens.EQEQEQ to IrOperator.EQEQEQ,
-                KtTokens.EXCLEQEQEQ to IrOperator.EXCLEQEQ,
+        KtTokens.EQEQ to IrOperator.EQEQ,
+        KtTokens.EXCLEQ to IrOperator.EXCLEQ,
 
-                KtTokens.IN_KEYWORD to IrOperator.IN,
-                KtTokens.NOT_IN to IrOperator.NOT_IN,
+        KtTokens.EQEQEQ to IrOperator.EQEQEQ,
+        KtTokens.EXCLEQEQEQ to IrOperator.EXCLEQEQ,
 
-                KtTokens.ANDAND to IrOperator.ANDAND,
-                KtTokens.OROR to IrOperator.OROR,
+        KtTokens.IN_KEYWORD to IrOperator.IN,
+        KtTokens.NOT_IN to IrOperator.NOT_IN,
 
-                KtTokens.ELVIS to IrOperator.ELVIS
-        )
+        KtTokens.ANDAND to IrOperator.ANDAND,
+        KtTokens.OROR to IrOperator.OROR,
 
-internal val AUGMENTED_ASSIGNMENTS =
+        KtTokens.ELVIS to IrOperator.ELVIS
+)
+
+private val KT_TOKEN_TO_IR_PREFIX_OPERATOR = mapOf(
+        KtTokens.PLUSPLUS to IrOperator.PREFIX_INCR,
+        KtTokens.MINUSMINUS to IrOperator.PREFIX_DECR,
+        KtTokens.EXCL to IrOperator.EXCL,
+        KtTokens.MINUS to IrOperator.UMINUS
+)
+
+private val KT_TOKEN_TO_IR_POSTFIX_OPERATOR = mapOf(
+        KtTokens.PLUSPLUS to IrOperator.POSTFIX_INCR,
+        KtTokens.MINUSMINUS to IrOperator.POSTFIX_DECR,
+        KtTokens.EXCLEXCL to IrOperator.EXCLEXCL
+)
+
+val AUGMENTED_ASSIGNMENTS =
         setOf(IrOperator.PLUSEQ, IrOperator.MINUSEQ, IrOperator.MULTEQ, IrOperator.DIVEQ, IrOperator.PERCEQ)
 
-internal val BINARY_OPERATORS_DESUGARED_TO_CALLS =
+val BINARY_OPERATORS_DESUGARED_TO_CALLS =
         setOf(IrOperator.PLUS, IrOperator.MINUS, IrOperator.MUL, IrOperator.DIV, IrOperator.PERC, IrOperator.RANGE)
 
-internal val COMPARISON_OPERATORS =
+val COMPARISON_OPERATORS =
         setOf(IrOperator.LT, IrOperator.LTEQ, IrOperator.GT, IrOperator.GTEQ)
 
-internal val EQUALITY_OPERATORS =
+val EQUALITY_OPERATORS =
         setOf(IrOperator.EQEQ, IrOperator.EXCLEQ)
 
-internal val IDENTITY_OPERATORS =
+val IDENTITY_OPERATORS =
         setOf(IrOperator.EQEQEQ, IrOperator.EXCLEQEQ)
 
-internal val IN_OPERATORS =
+val IN_OPERATORS =
         setOf(IrOperator.IN, IrOperator.NOT_IN)
 
-internal val BINARY_BOOLEAN_OPERATORS =
+val BINARY_BOOLEAN_OPERATORS =
         setOf(IrOperator.ANDAND, IrOperator.OROR)
+
+val PREFIX_INCREMENT_DECREMENT_OPERATORS =
+        setOf(IrOperator.PREFIX_INCR, IrOperator.PREFIX_DECR)
+
+val POSTFIX_INCREMENT_DECREMENT_OPERATORS =
+        setOf(IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR)

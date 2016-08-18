@@ -38,5 +38,5 @@ fun IrExpression.toExpectedType(expectedType: KotlinType?): IrExpression {
     )
 }
 
-fun IrVariable.createDefaultGetExpression(): IrExpression =
+fun IrVariable.load(): IrExpression =
         IrGetVariableExpressionImpl(startOffset, endOffset, descriptor)

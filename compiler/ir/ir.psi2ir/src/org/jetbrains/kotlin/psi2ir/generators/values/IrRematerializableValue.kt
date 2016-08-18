@@ -17,8 +17,14 @@
 package org.jetbrains.kotlin.psi2ir.generators.values
 
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.types.KotlinType
 
-interface IrRematerializableValue : IrValue
+interface IrRematerializableValue : IrValue {
+    val irExpression: IrExpression
+
+    override val type: KotlinType?
+        get() = irExpression.type
+}
 
 fun createRematerializableValue(irExpression: IrExpression): IrRematerializableValue? =
         when (irExpression) {
@@ -29,23 +35,23 @@ fun createRematerializableValue(irExpression: IrExpression): IrRematerializableV
             else -> null
         }
 
-class IrRematerializableLiteralValue(val irExpression: IrLiteralExpression<*>): IrRematerializableValue {
+class IrRematerializableLiteralValue(override val irExpression: IrLiteralExpression<*>): IrRematerializableValue {
     override fun load(): IrExpression =
             IrLiteralExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type,
                                     irExpression.kind, irExpression.kind.valueOf(irExpression))
 }
 
-class IrRematerializableVariableValue(val irExpression: IrGetVariableExpression) : IrRematerializableValue {
+class IrRematerializableVariableValue(override val irExpression: IrGetVariableExpression) : IrRematerializableValue {
     override fun load(): IrExpression =
             IrGetVariableExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.descriptor)
 }
 
-class IrRematerializableExtensionReceiverValue(val irExpression: IrGetExtensionReceiverExpression) : IrRematerializableValue {
+class IrRematerializableExtensionReceiverValue(override val irExpression: IrGetExtensionReceiverExpression) : IrRematerializableValue {
     override fun load(): IrExpression =
             IrGetExtensionReceiverExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.descriptor)
 }
 
-class IrRematerializableThisValue(val irExpression: IrThisExpression): IrRematerializableValue {
+class IrRematerializableThisValue(override val irExpression: IrThisExpression): IrRematerializableValue {
     override fun load(): IrExpression =
             IrThisExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.classDescriptor)
 }

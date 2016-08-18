@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.generators.values.IrTemporaryVariableValue
+import org.jetbrains.kotlin.psi2ir.generators.values.IrVariableValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -79,7 +79,7 @@ class IrStatementGenerator(
         irBlock.addStatement(irTmpInitializer)
 
         val irCallGenerator = IrCallGenerator(this)
-        irCallGenerator.putValue(ktInitializer, IrTemporaryVariableValue(irTmpInitializer))
+        irCallGenerator.putValue(ktInitializer, IrVariableValue(irTmpInitializer))
 
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
@@ -241,4 +241,7 @@ class IrStatementGenerator(
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Nothing?): IrStatement =
             IrOperatorExpressionGenerator(this).generateBinaryExpression(expression)
+
+    override fun visitPrefixExpression(expression: KtPrefixExpression, data: Nothing?): IrStatement =
+            IrOperatorExpressionGenerator(this).generatePrefixExpression(expression)
 }

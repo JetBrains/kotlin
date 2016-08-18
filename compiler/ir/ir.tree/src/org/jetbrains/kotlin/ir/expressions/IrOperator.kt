@@ -20,10 +20,12 @@ abstract class IrOperator(val debugName: String) {
     override fun toString(): String = debugName
 
     object INVOKE : IrOperator("INVOKE")
+
     object PREFIX_INCR : IrOperator("PREFIX_INCR")
     object PREFIX_DECR : IrOperator("PREFIX_DECR")
     object POSTFIX_INCR : IrOperator("POSTFIX_INCR")
     object POSTFIX_DECR : IrOperator("POSTFIX_DECR")
+
     object UMINUS : IrOperator("UMINUS")
     object EXCL : IrOperator("EXCL")
     object EXCLEXCL : IrOperator("EXCLEXCL")

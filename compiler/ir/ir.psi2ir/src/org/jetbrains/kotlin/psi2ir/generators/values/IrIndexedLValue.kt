@@ -21,15 +21,18 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.load
 import org.jetbrains.kotlin.psi2ir.generators.IrCallGenerator
 import org.jetbrains.kotlin.psi2ir.generators.IrStatementGenerator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 
 class IrIndexedLValue(
         var irStatementGenerator: IrStatementGenerator,
         val ktArrayAccessExpression: KtArrayAccessExpression,
         val irOperator: IrOperator?,
         val irArray: IrExpression,
+        override val type: KotlinType?,
         val indexValues: List<Pair<KtExpression, IrExpression>>,
         val indexedGetCall: ResolvedCall<*>?,
         val indexedSetCall: ResolvedCall<*>?
@@ -37,50 +40,64 @@ class IrIndexedLValue(
     override fun load(): IrExpression {
         if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
 
-        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
-                                            indexedGetCall.resultingDescriptor.returnType,
-                                            hasResult = true, isDesugared = true)
-
-        val callGenerator = IrCallGenerator(irStatementGenerator)
-
-        defineContextVariables(irBlock, callGenerator)
-
-        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator))
-
-        return irBlock
+        return generateGetOrSetCallAsDesugaredBlock(indexedGetCall)
     }
 
     override fun store(irExpression: IrExpression): IrExpression {
         if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
 
-        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
-                                            indexedSetCall.resultingDescriptor.returnType,
-                                            hasResult = true, isDesugared = true)
+        return generateGetOrSetCallAsDesugaredBlock(indexedSetCall)
+    }
 
+    private fun generateGetOrSetCallAsDesugaredBlock(call: ResolvedCall<*>, irArgument: IrExpression? = null): IrExpression {
         val callGenerator = IrCallGenerator(irStatementGenerator)
 
-        defineContextVariables(irBlock, callGenerator)
+        val hasResult = irArgument == null
+        val irBlock = createDesugaredBlock(call, callGenerator, hasResult)
 
-        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irExpression))
+        if (irArgument != null) {
+            callGenerator.putValue(call.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irArgument))
+        }
 
-        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, call, irOperator))
 
         return irBlock
     }
 
-    override fun augmentedStore(operatorCall: ResolvedCall<*>, irRhs: IrExpression): IrExpression {
+    override fun prefixAugmentedStore(operatorCall: ResolvedCall<*>): IrExpression {
         if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
         if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
 
-        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
-                                            indexedSetCall.resultingDescriptor.returnType,
-                                            hasResult = true, isDesugared = true)
+        val callGenerator = IrCallGenerator(irStatementGenerator)
+
+        val irBlock = createDesugaredBlock(indexedSetCall, callGenerator, true)
+
+        val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
+        callGenerator.putValue(operatorCallReceiver!!,
+                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
+        val irTmp = irStatementGenerator.temporaryVariableFactory.createTemporaryVariable(
+                callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator))
+        irBlock.addStatement(irTmp)
+
+        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
+                               IrVariableValue(irTmp))
+
+        irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+
+        irBlock.addStatement(irTmp.load())
+
+        return irBlock
+    }
+
+    override fun augmentedStore(operatorCall: ResolvedCall<*>, irOperatorArgument: IrExpression): IrExpression {
+        if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
+        if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
 
         val callGenerator = IrCallGenerator(irStatementGenerator)
 
-        defineContextVariables(irBlock, callGenerator)
+        val irBlock = createDesugaredBlock(indexedSetCall, callGenerator, false)
 
-        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irRhs))
+        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irOperatorArgument))
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
         callGenerator.putValue(operatorCallReceiver!!,
@@ -90,6 +107,16 @@ class IrIndexedLValue(
                                IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+
+        return irBlock
+    }
+
+    private fun createDesugaredBlock(call: ResolvedCall<*>, callGenerator: IrCallGenerator, hasResult: Boolean): IrBlockExpressionImpl {
+        val irBlock = IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
+                                            call.resultingDescriptor.returnType,
+                                            hasResult, true)
+
+        defineContextVariables(irBlock, callGenerator)
 
         return irBlock
     }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.generators.values.IrTemporaryVariableValue
+import org.jetbrains.kotlin.psi2ir.generators.values.IrVariableValue
 import org.jetbrains.kotlin.psi2ir.generators.values.IrValue
 import org.jetbrains.kotlin.psi2ir.generators.values.createRematerializableValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
@@ -51,7 +51,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         }
 
         val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, nameHint)
-        putValue(ktExpression, IrTemporaryVariableValue(irTmpVar))
+        putValue(ktExpression, IrVariableValue(irTmpVar))
         return irTmpVar
     }
 
@@ -63,7 +63,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         }
 
         val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, valueParameterDescriptor.name.asString())
-        putValue(valueParameterDescriptor, IrTemporaryVariableValue(irTmpVar))
+        putValue(valueParameterDescriptor, IrVariableValue(irTmpVar))
         return irTmpVar
     }
 

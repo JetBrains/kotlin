@@ -17,29 +17,31 @@
 package org.jetbrains.kotlin.psi2ir.generators.values
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.expressions.IrSetVariableExpressionImpl
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.types.KotlinType
 
-class IrVariableLValueValue(
-        val ktElement: KtElement,
-        val irOperator: IrOperator?,
-        val descriptor: VariableDescriptor
+class IrVariableValue(
+        val startOffset: Int,
+        val endOffset: Int,
+        val descriptor: VariableDescriptor,
+        val irOperator: IrOperator? = null
 ) : IrLValue {
+    constructor(
+            irVariable: IrVariable,
+            irOperator: IrOperator? = null
+    ) : this(irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
+
+    override val type: KotlinType? get() = descriptor.type
+
     override fun load(): IrExpression =
-            IrGetVariableExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor, irOperator
-            )
+            IrGetVariableExpressionImpl(startOffset, endOffset, descriptor, irOperator)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor, irExpression.toExpectedType(descriptor.type), irOperator
-            )
+            IrSetVariableExpressionImpl(startOffset, endOffset, descriptor,
+                                        irExpression.toExpectedType(descriptor.type), irOperator)
 }

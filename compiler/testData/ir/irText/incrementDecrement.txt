@@ -1,0 +1,81 @@
+IrFile /incrementDecrement.kt
+  IrProperty public var p: kotlin.Int getter=null setter=null
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='0'
+  IrProperty public val arr: kotlin.IntArray getter=null setter=null
+    IrExpressionBody
+      CALL .intArrayOf type=kotlin.IntArray operator=
+        elements: DUMMY vararg type=kotlin.Int
+  IrFunction public fun testVar(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR var x: kotlin.Int
+          LITERAL Int type=kotlin.Int value='0'
+        VAR val x1: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true isDesugared=true
+            VAR val tmp0: kotlin.Int
+              CALL .inc type=kotlin.Int operator=PREFIX_INCR
+                $this: GET_VAR x type=kotlin.Int
+            SET_VAR x type=<no-type>
+              GET_VAR tmp0 type=kotlin.Int
+            GET_VAR tmp0 type=kotlin.Int
+        VAR val x2: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true isDesugared=true
+            VAR val tmp1: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: GET_VAR x type=kotlin.Int
+            SET_VAR x type=<no-type>
+              GET_VAR tmp1 type=kotlin.Int
+            GET_VAR tmp1 type=kotlin.Int
+  IrFunction public fun testProp(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR val p1: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true isDesugared=true
+            VAR val tmp0: kotlin.Int
+              CALL .inc type=kotlin.Int operator=PREFIX_INCR
+                $this: GET_PROPERTY .p type=kotlin.Int
+            SET_PROPERTY .ptype=<no-type>
+              $value: GET_VAR tmp0 type=kotlin.Int
+            GET_VAR tmp0 type=kotlin.Int
+        VAR val p2: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true isDesugared=true
+            VAR val tmp1: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: GET_PROPERTY .p type=kotlin.Int
+            SET_PROPERTY .ptype=<no-type>
+              $value: GET_VAR tmp1 type=kotlin.Int
+            GET_VAR tmp1 type=kotlin.Int
+  IrFunction public fun testArray(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false isDesugared=false
+        VAR val a1: kotlin.Int
+          TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
+            BLOCK type=kotlin.Unit hasResult=true isDesugared=true
+              VAR val tmp0_array: kotlin.IntArray
+                GET_PROPERTY .arr type=kotlin.IntArray
+              VAR val tmp1: kotlin.Int
+                CALL .inc type=kotlin.Int operator=PREFIX_INCR
+                  $this: CALL .get type=kotlin.Int operator=PREFIX_INCR
+                    $this: GET_VAR tmp0_array type=kotlin.IntArray
+                    index: LITERAL Int type=kotlin.Int value='0'
+              CALL .set type=kotlin.Unit operator=PREFIX_INCR
+                $this: GET_VAR tmp0_array type=kotlin.IntArray
+                index: LITERAL Int type=kotlin.Int value='0'
+                value: GET_VAR tmp1 type=kotlin.Int
+              GET_VAR tmp1 type=kotlin.Int
+        VAR val a2: kotlin.Int
+          TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
+            BLOCK type=kotlin.Unit hasResult=true isDesugared=true
+              VAR val tmp2_array: kotlin.IntArray
+                GET_PROPERTY .arr type=kotlin.IntArray
+              VAR val tmp3: kotlin.Int
+                CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                  $this: CALL .get type=kotlin.Int operator=PREFIX_DECR
+                    $this: GET_VAR tmp2_array type=kotlin.IntArray
+                    index: LITERAL Int type=kotlin.Int value='0'
+              CALL .set type=kotlin.Unit operator=PREFIX_DECR
+                $this: GET_VAR tmp2_array type=kotlin.IntArray
+                index: LITERAL Int type=kotlin.Int value='0'
+                value: GET_VAR tmp3 type=kotlin.Int
+              GET_VAR tmp3 type=kotlin.Int

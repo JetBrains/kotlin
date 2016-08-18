@@ -17,18 +17,13 @@
 package org.jetbrains.kotlin.psi2ir.generators.values
 
 import org.jetbrains.kotlin.ir.assertDetached
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.psi2ir.createDefaultGetExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IrValue {
     fun load(): IrExpression
-}
-
-class IrTemporaryVariableValue(val irVariable: IrVariable) : IrValue {
-    override fun load(): IrExpression =
-            irVariable.createDefaultGetExpression()
+    val type: KotlinType?
 }
 
 class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
@@ -45,6 +40,8 @@ class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
             }
             else
                 throw AssertionError("Single exprssion value is already instantiated")
+
+    override val type: KotlinType? get() = irExpression.type
 }
 
 interface IrLValue : IrValue {
@@ -52,6 +49,7 @@ interface IrLValue : IrValue {
 }
 
 interface IrLValueWithAugmentedStore : IrLValue {
-    fun augmentedStore(operatorCall: ResolvedCall<*>, irRhs: IrExpression): IrExpression
+    fun prefixAugmentedStore(operatorCall: ResolvedCall<*>): IrExpression
+    fun augmentedStore(operatorCall: ResolvedCall<*>, irOperatorArgument: IrExpression): IrExpression
 }
 
