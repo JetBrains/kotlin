@@ -51,6 +51,16 @@ fun KtExpression?.isTrueConstant()
 fun KtExpression?.isFalseConstant()
         = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "false"
 
+private val ZERO_VALUES = setOf(0, 0L, 0f, 0.0)
+
+fun KtExpression.isZeroConstant(): Boolean {
+    if (this !is KtConstantExpression) return false
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    val type = bindingContext.getType(this) ?: return false
+    val constant = ConstantExpressionEvaluator.getConstant(this, bindingContext) ?: return false
+    return constant.getValue(type) in ZERO_VALUES
+}
+
 fun KtExpression?.isVariableReference(variable: KtCallableDeclaration): Boolean {
     return this is KtNameReferenceExpression && this.mainReference.isReferenceTo(variable)
 }

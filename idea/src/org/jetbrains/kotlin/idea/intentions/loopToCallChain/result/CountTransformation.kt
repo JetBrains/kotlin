@@ -49,7 +49,7 @@ class CountTransformation(
             chainedCallGenerator.generate("count()")
         }
 
-        if ((initialization.initializer as? KtConstantExpression)?.text == "0") {
+        if (initialization.initializer.isZeroConstant()) {
             return call
         }
         else {
