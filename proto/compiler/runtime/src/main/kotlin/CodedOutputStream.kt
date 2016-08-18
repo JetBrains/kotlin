@@ -145,7 +145,7 @@ class CodedOutputStream(val buffer: ByteArray) {
         val res = ByteArray(10)
 
         var resSize = 0
-        while(curValue != 0L) {
+        do {
             // encode current 7 bits
             var curByte = (curValue and WireFormat.VARINT_INFO_BITS_MASK.toLong())
 
@@ -159,7 +159,7 @@ class CodedOutputStream(val buffer: ByteArray) {
 
             res[resSize] = curByte.toByte()
             resSize++
-        }
+        } while(curValue != 0L)
         output.write(res, 0, resSize)
     }
 

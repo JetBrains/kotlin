@@ -165,7 +165,7 @@ void FieldGenerator::generateSerializationForPacked(io::Printer *printer, bool i
         singleFieldGen.generateSerializationCode(printer, isRead, /* noTag = */ true, /* isField = */ false);
 
         // increment iterator
-        printer->Print("i += 1");
+        printer->Print("i += 1\n");
 
         printer->Outdent();     // while-loop
         printer->Print("}\n");
