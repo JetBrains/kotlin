@@ -7,12 +7,12 @@ define weak i32 @malloc_array(i32 %x) #0 {
   %1 = alloca i32, align 4
   store i32 %x, i32* %1, align 4
   %2 = load i32* %1, align 4
-  %3 = call i8* @malloc_static(i32 %2) #2
+  %3 = call i8* @malloc_heap(i32 %2) #2
   %4 = ptrtoint i8* %3 to i32
   ret i32 %4
 }
 
-declare i8* @malloc_static(i32) #1
+declare i8* @malloc_heap(i32) #1
 
 ; Function Attrs: nounwind
 define weak zeroext i8 @kotlinclib_get_byte(i32 %data, i32 %index) #0 {

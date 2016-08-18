@@ -20,7 +20,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     private fun initBuilder() {
         val declares = arrayOf(
                 "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @malloc_static(i32)",
+                "declare i8* @malloc_heap(i32)",
                 "declare i32 @printf(i8*, ...)",
                 "%class.Nothing = type { }",
                 "declare void @abort()")
@@ -38,7 +38,7 @@ class LLVMBuilder(val arm: Boolean = false) {
 
     fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null, scope: LLVMScope = LLVMRegisterScope(), prefix: String = "var"): LLVMVariable {
         variableCount++
-        return LLVMVariable("${prefix}$variableCount", type, kotlinName, scope, pointer)
+        return LLVMVariable("$prefix$variableCount", type, kotlinName, scope, pointer)
     }
 
     fun getNewLabel(scope: LLVMScope = LLVMRegisterScope(), prefix: String): LLVMLabel {
@@ -182,17 +182,17 @@ class LLVMBuilder(val arm: Boolean = false) {
     }
 
     fun allocStackVar(target: LLVMVariable, asValue: Boolean = false) {
-        localCode.appendln("$target = alloca ${if (asValue) target.type else target.getType()}, align ${target.type.align}")
+        localCode.appendln("$target = alloca ${if (asValue) target.type.toString() else target.getType()}, align ${target.type.align}")
     }
 
     fun allocStaticVar(target: LLVMVariable, asValue: Boolean = false) {
         val allocated = getNewVariable(LLVMCharType(), pointer = 1)
 
         val size = if (target.pointer > 0) POINTER_SIZE else target.type.size
-        val alloc = "$allocated = call i8* @malloc_static(i32 $size)"
+        val alloc = "$allocated = call i8* @malloc_heap(i32 $size)"
         localCode.appendln(alloc)
 
-        val cast = "$target = bitcast ${allocated.getType()} $allocated to ${if (asValue) target.type else target.getType()}*"
+        val cast = "$target = bitcast ${allocated.getType()} $allocated to ${if (asValue) target.type.toString() else target.getType()}*"
         localCode.appendln(cast)
     }
 

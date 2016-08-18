@@ -3,10 +3,14 @@ BUILD_DIR=$(PWD)/build
 INCLUDE_DIR=$(PWD)/include
 LIB_ARM_DIR=$(PWD)/lib/arm
 LIB_X86_DIR=$(PWD)/lib/x86
+LIBC=$(PWD)/libc
 
 KT=$(PWD)/../translator/build/libs/translator-1.0.jar
 LLINK=llvm-link-3.6
+CC=clang-3.6
 
+CCFLAGS_ARM=-S -Wall -m32 -emit-llvm -nostdlib -ffreestanding -march=armv7-m -mthumb -flto -O0 -target arm-none-eabi -DARM
+CCFLAGS=-O0 -S -Wall -emit-llvm -nostdlib -ffreestanding
 LLINK_FLAGS=-S
 
 KT_ALL_DEPS=java -jar $(KT)
@@ -28,6 +32,10 @@ $(BUILD_DIR)/classes_x86.ll: $(INCLUDE_DIR)/*.kt
 
 $(BUILD_DIR)/classes_arm.ll: $(INCLUDE_DIR)/*.kt
 	$(KT_ALL_DEPS) --arm -o $@ $(filter %.kt,$^)
+
+memory:
+	$(CC) $(CCFLAGS) $(LIBC)/memory.c -o $(LIB_X86_DIR)/memory.ll
+	$(CC) $(CCFLAGS_ARM) $(LIBC)/memory.c -o $(LIB_ARM_DIR)/memory.ll
 
 clean:
 	rm -rf $(BUILD_DIR)

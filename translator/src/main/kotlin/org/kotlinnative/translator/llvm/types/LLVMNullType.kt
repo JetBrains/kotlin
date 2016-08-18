@@ -1,8 +1,5 @@
 package org.kotlinnative.translator.llvm.types
 
-import org.kotlinnative.translator.llvm.LLVMExpression
-import org.kotlinnative.translator.llvm.LLVMSingleValue
-
 class LLVMNullType(var basetype: LLVMType? = null) : LLVMReferred, LLVMType() {
     override val align: Int = 1
     override var size: Int = 0
