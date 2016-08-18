@@ -87,4 +87,8 @@ for i in $TESTS; do
 	if [ $? -ne 0 ]; then
 		echo -e "${lightRed}Error running test${nc}"
 	fi
+
+	if [ "$2" == "--once" ]; then
+    	exit
+	fi
 done
