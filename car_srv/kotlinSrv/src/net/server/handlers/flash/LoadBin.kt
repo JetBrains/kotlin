@@ -26,7 +26,7 @@ class LoadBin : AbstractHandler {
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
         val responseMessage = toServerObjectBuilder.build()
-        mcTransport.writeToFile(message.data)
+        mcTransport.sendBytes(message.data)
         val stFlashCommand = "./st-flash write ./flash.bin " + "0x08000000"
         exec(stFlashCommand, { err, stdOutRes, stdErrRes ->
             val resultCode = if (err != null) 15 else 0

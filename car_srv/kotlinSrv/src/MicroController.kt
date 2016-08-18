@@ -32,7 +32,7 @@ class MicroController private constructor() {
 
     fun start() {
 
-        connectToServer(config.getCarIp(), serverPort)
+        connectToServer(config.getCarIp(), carServerPort)
 
         mcTransport.setCallBack { bytes ->
             println("read: " + bytes.toString())
@@ -96,7 +96,7 @@ class MicroController private constructor() {
     }
 
     fun connectToServer(thisIp: String, thisPort: Int) {
-        val requestObject = ConnectionRequest.BuilderConnectionRequest(config.getCarIp().split(".").map { str -> parseInt(str, 10) }.toIntArray(), serverPort).build()
+        val requestObject = ConnectionRequest.BuilderConnectionRequest(config.getCarIp().split(".").map { str -> parseInt(str, 10) }.toIntArray(), carServerPort).build()
         val bytes = ByteArray(requestObject.getSizeNoTag())
         requestObject.writeTo(CodedOutputStream(bytes))
         net.sendRequest(js("new Buffer(bytes)"), "/connect", { resultData ->

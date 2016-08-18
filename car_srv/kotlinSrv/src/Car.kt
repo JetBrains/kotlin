@@ -2,14 +2,15 @@ import carControl.Control
 import carControl.RouteExecutor
 import carControl.RouteExecutorImpl.MoveDirection
 
+private val MOVE_VELOCITY = 0.3278
+private val ROTATION_VELOCITY = 12.3
+
+// TODO make Car class mutable state saving entity
+// that almost doesn't have behavior
 /**
  * Created by user on 7/27/16.
  */
 class Car constructor(val routeExecutor: RouteExecutor, val controller: Control) {
-
-    val velocityMove = 0.3278
-    val velocityRotation = 12.3
-
     //position
     var x: Double
     var y: Double
@@ -32,15 +33,15 @@ class Car constructor(val routeExecutor: RouteExecutor, val controller: Control)
         val deltaSeconds = delta.toDouble() / 1000
         when (moveDirection) {
             MoveDirection.FORWARD -> {
-                this.x += this.velocityMove * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
-                this.y += this.velocityMove * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
+                this.x += MOVE_VELOCITY * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
+                this.y += MOVE_VELOCITY * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
             }
             MoveDirection.BACKWARD -> {
-                this.x -= this.velocityMove * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
-                this.y -= this.velocityMove * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
+                this.x -= MOVE_VELOCITY * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
+                this.y -= MOVE_VELOCITY * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
             }
-            MoveDirection.LEFT -> this.angle += velocityRotation * deltaSeconds
-            MoveDirection.RIGHT -> this.angle -= velocityRotation * deltaSeconds
+            MoveDirection.LEFT -> this.angle += ROTATION_VELOCITY * deltaSeconds
+            MoveDirection.RIGHT -> this.angle -= ROTATION_VELOCITY * deltaSeconds
             else -> {
 
             }
@@ -64,9 +65,9 @@ class Car constructor(val routeExecutor: RouteExecutor, val controller: Control)
         }
         if (moveDirection != MoveDirection.STOP) {
             if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
-                controller.delay(getTimeForMoving(value, velocityMove), callBack)
+                controller.delay(getTimeForMoving(value, MOVE_VELOCITY), callBack)
             } else {
-                controller.delay(getTimeForMoving(value, velocityRotation), callBack)
+                controller.delay(getTimeForMoving(value, ROTATION_VELOCITY), callBack)
             }
         }
     }

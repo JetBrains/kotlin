@@ -30,7 +30,9 @@ class Udev {
 
     fun isOurMcDevice(device: dynamic): Boolean {
         val microController = MicroController.instance
-        return device.ID_VENDOR_ID == microController.vendorID && device.ID_MODEL_ID == microController.modelID && device.SUBSYSTEM == "tty"
+        return (device.ID_VENDOR_ID == microController.vendorID)
+                && (device.ID_MODEL_ID == microController.modelID)
+                && (device.SUBSYSTEM == "tty")
     }
 
     fun disconnectDevice() {
