@@ -490,7 +490,6 @@ fun testRepZigZag(): Int {
     var i = 0
     val testRuns = 8
     while (i < testRuns) {
-        println(i)
         val msg = generateRandomMessage()
         if (checkRepZZSerializationIdentity(msg) == 1) {
             return 1

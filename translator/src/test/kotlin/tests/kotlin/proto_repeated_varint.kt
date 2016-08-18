@@ -1214,7 +1214,6 @@ fun testRepVarints(): Int {
     var i = 0
     val testRuns = 100
     while (i < testRuns) {
-        println(i)
         val msg = generateRandomMessage()
         if (checkRepSerializationIdentity(msg) == 1) {
             return 1
