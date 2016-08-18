@@ -71,6 +71,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("booleanOperators.kt")
+    public void testBooleanOperators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/booleanOperators.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("boxOk.kt")
     public void testBoxOk() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/boxOk.kt");

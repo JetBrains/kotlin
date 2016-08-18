@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -49,6 +50,10 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
 
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
+        if (ktOperator == KtTokens.IDENTIFIER) {
+            return generateBinaryOperatorWithConventionalCall(expression, null)
+        }
+
         val irOperator = getIrBinaryOperator(ktOperator)
 
         return when (irOperator) {
@@ -83,7 +88,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         val irArgument1 = irStatementGenerator.generateExpression(expression.right!!).toExpectedType(context.builtIns.booleanType)
         return IrBinaryOperatorExpressionImpl(
                 expression.startOffset, expression.endOffset, context.builtIns.booleanType,
-                irOperator, null, irArgument0, irArgument1
+                irOperator, getResolvedCall(expression)?.resultingDescriptor, irArgument0, irArgument1
         )
     }
 
@@ -147,7 +152,7 @@ class IrOperatorExpressionGenerator(val irStatementGenerator: IrStatementGenerat
         )
     }
 
-    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
         return IrCallGenerator(irStatementGenerator).generateCall(expression, operatorCall, irOperator)
     }
