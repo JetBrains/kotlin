@@ -435,14 +435,15 @@ fun checkRepZZSerializationIdentity(msg: MessageRepeatedZigZag): Int {
     }
 }
 
+
 object Rng {
     var rngState = 0.6938893903907228
 
     val point = 762939453125
     fun rng(): Double {
-        val res = rngState - rngState.toInt().toDouble()
         rngState *= point.toDouble()
-        return res
+        rngState -= rngState.toLong().toDouble()
+        return rngState
     }
 }
 
@@ -543,4 +544,8 @@ fun testArraysOfDefaultValues(): Int {
 
     val msg = MessageRepeatedZigZag.BuilderMessageRepeatedZigZag(intArr, longArr).build()
     return checkRepZZSerializationIdentity(msg)
+}
+
+fun main(args: Array<String>) {
+    println(testRepZigZag())
 }
