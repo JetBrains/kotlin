@@ -1,6 +1,8 @@
 #!/bin/bash
 green='\033[0;32m'
 red='\033[0;31m'
+lightRed='\033[1;31m'
+orange='\033[0;33m'
 nc='\033[0m'
 
 if [ ! -d "src/test/kotlin/tests/linked" ]; then
@@ -30,7 +32,7 @@ fi
 for i in $TESTS; do
 	rm -f $DIRECTORY/linked/*
 	TEST=`basename $i ".txt"`
-	echo -e "${red}test: ${TEST}${nc}"
+	echo -e "${orange}test: ${TEST}${nc}"
 	echo "#include <stdlib.h>" >> $MAIN
 	echo "#include <stdio.h>" >> $MAIN
 	echo "#include <assert.h>" >> $MAIN
@@ -39,7 +41,7 @@ for i in $TESTS; do
 	cat "$i" | while read LINE
 	do
 		echo " assert($LINE);" >> $MAIN
-		echo " printf(\"OK: $LINE\n\");" >> $MAIN
+		echo " printf(\"%s[OK]:%s $LINE\n\", \"\x1B[32m\", \"\x1B[0m\");" >> $MAIN
 	done
 
 	echo "printf(\"TEST RESULT: OK\n\");" >> $MAIN
@@ -68,25 +70,21 @@ for i in $TESTS; do
 		clang-3.6 -S -emit-llvm "$DIRECTORY/c/$TEST.c" -o $DIRECTORY/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
 		if [ $? -ne 0 ]; then
 			echo -e "${red}Error building: ${DIRECTORY}/linked/${TEST}_c.ll${nc}"
-			exit 1
 		fi
 	fi
 
 	java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Translation error: ${DIRECTORY}/kotlin/${TEST}.kt${nc}"
-		exit 1
 	fi
 
 	llvm-link-3.6 -S $DIRECTORY/linked/*.ll > $DIRECTORY/linked/run.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Error linking with llvm${nc}"
-		exit 1
 	fi
 
 	lli-3.6 $DIRECTORY/linked/run.ll
 	if [ $? -ne 0 ]; then
-		echo -e "${red}Error running test${nc}"
-		exit 1
+		echo -e "${lightRed}Error running test${nc}"
 	fi
 done
