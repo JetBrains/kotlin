@@ -44,7 +44,8 @@ Example:
 
 ```java
 // All messages are immutable. Use Builders for creating new messages
-// Currently you have to pass default arguments to Builders constructor by yourself. This will be changed in future.
+// Currently you have to pass default arguments to Builders constructor by yourself. 
+// This will be changed in future.
 val msg = Person.BuilderPerson("", 0, "")
             // all setters return "this" builder so you can chain modifiers in LINQ-style
             .setEmail("wtf@dasda.com")      
@@ -60,14 +61,19 @@ val byteArray = ByteArray(msg.getSizeNoTag())
 val outs = CodedOutputStream(byteArray)
 msg.writeTo(outs)
 
-// InputStreams are created in some manner.
+// InputStreams are created in the same manner.
 // WARNING! You have to pass reference to the buffer containing *ONLY* message and *NOTHING* except the message.
-// That mean, trailing cells containing some trash are forbidden - you will be getting errors if you try to parse message from such buffer.
+// That mean, trailing cells containing some trash are forbidden - 
+// - you will be getting errors if you try to parse message from such buffer.
 var ins = CodedInputStream(byteArray)
 
 // Parse message from input stream
 var readMsg = Person.BuilderPerson(0, "", 0).parseFrom(ins).build()
 
+// Check is parse succeeded 
+// Note that currently exceptions are not supported, errors are reported using Message.errorCode field
+// You can find description of error codes in carkot/proto/compiler/error_codes.txt
+assert(readMsg.errorCode == 0)
 assert(msg == readMsg)
 ```
 
