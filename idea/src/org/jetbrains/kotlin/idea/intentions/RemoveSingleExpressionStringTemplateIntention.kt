@@ -30,7 +30,7 @@ private fun KtStringTemplateExpression.singleExpressionOrNull() =
         children.singleOrNull()?.children?.firstOrNull() as? KtExpression
 
 class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<KtStringTemplateExpression>(
-        RemoveSingleExpressionStringTemplateIntention(),
+        RemoveSingleExpressionStringTemplateIntention::class,
         additionalChecker = {
             templateExpression ->
             templateExpression.singleExpressionOrNull()?.let {

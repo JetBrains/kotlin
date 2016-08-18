@@ -23,12 +23,15 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-class RemoveUnnecessaryLateinitInspection : IntentionBasedInspection<KtProperty>(RemoveUnnecessaryLateinitIntention()) {
+class RemoveUnnecessaryLateinitInspection : IntentionBasedInspection<KtProperty>(RemoveUnnecessaryLateinitIntention::class) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
     override val problemText = "Unnecessary lateinit"

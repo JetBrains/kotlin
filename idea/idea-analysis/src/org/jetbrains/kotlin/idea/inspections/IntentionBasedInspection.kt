@@ -31,34 +31,34 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
+import kotlin.reflect.KClass
 
 abstract class IntentionBasedInspection<TElement : PsiElement>(
-        val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
-        protected open val problemText: String?,
-        protected val elementType: Class<TElement>
+        val intentionInfos: List<IntentionBasedInspection.IntentionData<TElement>>,
+        protected open val problemText: String?
 ) : AbstractKotlinInspection() {
 
     constructor(
-            intention: SelfTargetingRangeIntention<TElement>,
+            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention)), problemText, intention.elementType)
+    ) : this(listOf(IntentionData(intention)), problemText)
 
     constructor(
-            intention: SelfTargetingRangeIntention<TElement>,
+            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention, additionalChecker)), problemText, intention.elementType)
+    ) : this(listOf(IntentionData(intention, additionalChecker)), problemText)
 
     constructor(
-            intention: SelfTargetingRangeIntention<TElement>,
+            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             additionalChecker: (TElement) -> Boolean,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), problemText, intention.elementType)
+    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), problemText)
 
 
 
     data class IntentionData<TElement : PsiElement>(
-            val intention: SelfTargetingRangeIntention<TElement>,
+            val intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { element, inspection -> true }
     )
 
@@ -67,6 +67,13 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
     open fun inspectionRange(element: TElement): TextRange? = null
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
+
+        val intentionsAndCheckers = intentionInfos.map {
+            it.intention.constructors.single().call() to it.additionalChecker
+        }
+        val elementType = intentionsAndCheckers.map { it.first.elementType }.distinct().singleOrNull()
+                          ?: error("$intentionInfos should have the same elementType")
+
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (!elementType.isInstance(element) || element.textLength == 0) return
@@ -77,21 +84,19 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                 var problemRange: TextRange? = null
                 var fixes: SmartList<LocalQuickFix>? = null
 
-                for ((intention, additionalChecker) in intentions) {
-                    synchronized(intention) {
-                        val range = intention.applicabilityRange(targetElement)?.let { range ->
-                            val elementRange = targetElement.textRange
-                            assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
-                            range.shiftRight(-elementRange.startOffset)
-                        }
+                for ((intention, additionalChecker) in intentionsAndCheckers) {
+                    val range = intention.applicabilityRange(targetElement)?.let { range ->
+                        val elementRange = targetElement.textRange
+                        assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
+                        range.shiftRight(-elementRange.startOffset)
+                    }
 
-                        if (range != null && additionalChecker(targetElement, this@IntentionBasedInspection)) {
-                            problemRange = problemRange?.union(range) ?: range
-                            if (fixes == null) {
-                                fixes = SmartList<LocalQuickFix>()
-                            }
-                            fixes!!.add(createQuickFix(intention, additionalChecker, targetElement))
+                    if (range != null && additionalChecker(targetElement, this@IntentionBasedInspection)) {
+                        problemRange = problemRange?.union(range) ?: range
+                        if (fixes == null) {
+                            fixes = SmartList<LocalQuickFix>()
                         }
+                        fixes!!.add(createQuickFix(intention, additionalChecker, targetElement))
                     }
                 }
 

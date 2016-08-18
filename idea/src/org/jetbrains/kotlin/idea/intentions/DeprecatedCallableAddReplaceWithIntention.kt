@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
-class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
+class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention::class)
 
 class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
         KtCallableDeclaration::class.java, "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"

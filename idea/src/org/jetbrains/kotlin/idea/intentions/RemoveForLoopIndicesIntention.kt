@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
-        RemoveForLoopIndicesIntention(),
-        problemText = "Index is not used in the loop body"
+        RemoveForLoopIndicesIntention::class,
+        "Index is not used in the loop body"
 ) {
     override val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
