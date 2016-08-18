@@ -11,14 +11,14 @@ CC=clang-3.6
 
 CCFLAGS_ARM=-g -S -Wall -m32 -emit-llvm -nostdlib -ffreestanding -march=armv7-m -mthumb -flto -O0 -target arm-none-eabi -DARM
 CCFLAGS=-g -O0 -S -Wall -emit-llvm -nostdlib -ffreestanding
-CCFLAGS_DEBUG=-g -O0 -S -Wall -emit-llvm -nostdlib -ffreestanding -DDEBUG
+CCFLAGS_DEBUG=-g -O0 -S -Wall -emit-llvm -nostdlib -ffreestanding -DDBG
 LLINK_FLAGS=-S
 
 KT_ALL_DEPS=java -jar $(KT)
 LLINK_ALL_DEPS=$(LLINK) $(LLINK_FLAGS) $(filter %.ll,$^) > $@
 
 all: memory $(BUILD_DIR) $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
-debug: memory_debug
+debug: memory_debug  $(BUILD_DIR) $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)

@@ -25,8 +25,9 @@ int dynamic_heap_max = 0;
 char* malloc(int);
 #endif
 
-#ifdef DEBUG
+#ifdef DBG
     static int total = 0;
+    int printf(const char * restrict format, ... );
 #endif
 
 char* malloc_heap(int size) {
@@ -37,7 +38,7 @@ char* malloc_heap(int size) {
     return ptr;
 
 #else
-    #ifdef DEBUG
+    #ifdef DBG
         total = total + size;
         printf("Alloc [%d] TOTAL: [%d]\n", size, total);
     #endif

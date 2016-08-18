@@ -14,7 +14,12 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-cd ../kotstd && make clean && make
+if [ "$3" == "--debug" ]; then
+    cd ../kotstd && make clean && make debug
+else
+    cd ../kotstd && make clean && make
+fi
+
 if [ $? -ne 0 ]; then
 	echo -e "${red}Error building kotstd lib${nc}"
 	exit 1
