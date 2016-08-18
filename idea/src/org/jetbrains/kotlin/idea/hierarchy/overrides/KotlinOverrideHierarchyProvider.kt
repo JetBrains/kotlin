@@ -24,7 +24,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils
+import org.jetbrains.kotlin.idea.hierarchy.getCurrentElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 class KotlinOverrideHierarchyProvider: HierarchyProvider {
     override fun getTarget(dataContext: DataContext): PsiElement? {
         return CommonDataKeys.PROJECT.getData(dataContext)?.let { project ->
-            getOverrideHierarchyElement(HierarchyUtils.getCurrentElement(dataContext, project))
+            getOverrideHierarchyElement(getCurrentElement(dataContext, project))
         }
     }
 

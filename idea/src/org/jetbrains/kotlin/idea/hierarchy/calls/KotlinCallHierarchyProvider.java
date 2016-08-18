@@ -29,7 +29,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
+import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtilsKt;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -42,7 +42,7 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
         PsiElement element = getCurrentElement(dataContext, project);
         if (element == null) return null;
 
-        element = HierarchyUtils.INSTANCE.getCallHierarchyElement(element);
+        element = HierarchyUtilsKt.getCallHierarchyElement(element);
         if (element instanceof KtFile || element == null || element.getLanguage() != KotlinLanguage.INSTANCE) return null;
 
         return element;
