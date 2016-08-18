@@ -19,17 +19,18 @@ RUNTIME_JAR = $(RUNTIME_DIR)/build/libs/protokot-runtime.jar
 
 # Testing project
 TEST_PROJECT = $(PROTOC_DIR)/protoc-tests
-TRANSLATOR_TEST_DIR = ../../translator
+TRANSLATOR_DIR = ../../translator
+TRANSLATOR_TEST_DIR = $(TRANSLATOR_DIR)
 
 # Produce protoc*, .jar-packed runtime and symlink to runtime sources
 all: $(EXE) $(JAR) $(SYMLINK)
 
 # Place protoc* into build directory
-$(EXE): $(BUILDDIR) $(PROTOC_EXE)
+$(EXE): $(BUILDDIR) protoc
 	cp $(PROTOC_EXE) $(EXE)
 
 # Build Protobuf Compiler via delegating call to another Makefile
-$(PROTOC_EXE):
+protoc:
 	$(MAKE) -C $(PROTOC_DIR)
 
 # Place ProtoKot Runtime JAR into build directory
@@ -51,8 +52,15 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 # Testing
-test:
+test: all
+	# Compile .proto-files for Java and JS tests
+	cd $(PROTOC_DIR); make generate
+	# Run Java and JS test
 	cd $(TEST_PROJECT); ./run_tests.sh
+
+	# Rebuild translator JAR
+	cd $(TRANSLATOR_DIR); gradle jar
+	# Run Native tests
 	cd $(TRANSLATOR_TEST_DIR); ./run_tests.sh -t --proto
 clean:
 	$(MAKE) -C $(PROTOC_DIR) clean
