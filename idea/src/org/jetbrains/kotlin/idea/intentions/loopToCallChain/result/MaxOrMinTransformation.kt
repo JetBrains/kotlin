@@ -56,6 +56,16 @@ class MaxOrMinTransformation(
      *         variable = if (variable > <input variable>) <input variable> else variable
      *         }
      *     }
+
+     *     or
+     *
+     *     val variable = <initial>
+     *     for (...) {
+     *         ...
+     *         // or Math.min or operands swapped
+     *         variable = Math.max(variable, <expression>)
+     *         }
+     *     }
      */
     object Matcher : TransformationMatcher {
         override val indexVariableAllowed: Boolean
