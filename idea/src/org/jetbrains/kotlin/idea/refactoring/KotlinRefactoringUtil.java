@@ -152,7 +152,6 @@ public class KotlinRefactoringUtil {
         String message = KotlinBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
-                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
                 KotlinBundle.message(actionStringKey)
         );

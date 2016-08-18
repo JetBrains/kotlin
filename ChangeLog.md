@@ -99,6 +99,7 @@
 - [`KT-13218`](https://youtrack.jetbrains.com/issue/KT-13218) Extract Function: Fix AssertionError on callable references
 - [`KT-6520`](https://youtrack.jetbrains.com/issue/KT-6520) Introduce 'maino' and 'psvmo' templates for generating main in object
 - [`KT-13455`](https://youtrack.jetbrains.com/issue/KT-13455) Override/Implement: Make return type non-nullable (platform collection case) when overriding Java method
+- [`KT-10209`](https://youtrack.jetbrains.com/issue/KT-10209) Find Usages: Do not duplicate containing declaration in super member warning dialog
 - Fix exception when choose Gradle configurer after project is synced
 - Allow configuring Kotlin in Gradle module without Kotlin sources
 - Show all Kotlin annotations when browsing hierarchy of "java.lang.Annotation"
