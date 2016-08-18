@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.java.model.internal
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.types.toJeType
 import sun.reflect.annotation.AnnotationParser
 import sun.reflect.annotation.ExceptionProxy
@@ -74,10 +74,13 @@ private fun getConstantValue(
     
     when {
         returnType == PsiType.NULL || returnType == PsiType.VOID -> unexpectedType("void")
-        jReturnType == String::class.java -> return (psiValue as? PsiExpression)?.calcConstantValue(evaluator)
-        jReturnType == Class::class.java -> {
-            val type = getObjectType(psiValue).toJeType(manager)
-            return MirroredTypeExceptionProxy(type)
+        returnType.fqName == "java.lang.String" -> return (psiValue as? PsiExpression)?.calcConstantValue(evaluator)
+        jReturnType.isAnnotation -> {
+            if (psiValue !is PsiAnnotation) error("psiValue is not a PsiAnnotation")
+            val annotationClass = PsiTypesUtil.getPsiClass(returnType) ?: error("Can't resolve type $returnType")
+            @Suppress("UNCHECKED_CAST")
+            val annotation = KotlinAnnotationProxyMaker(psiValue, annotationClass, jReturnType as Class<out Annotation>)
+            return jReturnType.cast(annotation.generate())
         }
         jReturnType.isArray -> {
             val jComponentType = jReturnType.componentType ?: unexpectedType("no component type for $jReturnType")
@@ -88,7 +91,7 @@ private fun getConstantValue(
                 else -> listOf(psiValue)
             }
             
-            if (jComponentType == Class::class.java) {
+            if (!jComponentType.isPrimitive && !jComponentType.isAnnotation) {
                 val typeMirrors = arrayValues.map { getObjectType(it).toJeType(manager) }
                 return MirroredTypesExceptionProxy(Collections.unmodifiableList(typeMirrors))
             } else {
@@ -105,9 +108,17 @@ private fun getConstantValue(
                     ?: error("$psiValue can not be resolved to enum constant")
             return AnnotationUtil.createEnumValue(jReturnType, enumConstant.name)
         }
-        else -> return castPrimitiveValue(returnType, (psiValue as? PsiExpression)?.calcConstantValue(evaluator))
+        else -> return if (returnType is PsiClassType) {
+            val type = getObjectType(psiValue).toJeType(manager)
+            MirroredTypeExceptionProxy(type)
+        } else {
+            castPrimitiveValue(returnType, (psiValue as? PsiExpression)?.calcConstantValue(evaluator))
+        }
     }
 }
+
+private val PsiType.fqName: String?
+    get() = (this as? PsiClassType)?.resolve()?.qualifiedName
 
 private fun getObjectType(value: PsiAnnotationMemberValue): PsiType {
     when (value) {
