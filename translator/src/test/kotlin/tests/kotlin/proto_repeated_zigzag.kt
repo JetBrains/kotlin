@@ -247,15 +247,25 @@ class MessageRepeatedZigZag private constructor (var int: IntArray, var long: Lo
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = IntArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = IntArray(1)
-                            tmp[0] = input.readSInt32NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getSInt32SizeNoTag(tmp[0])
+                            var tmp = 0
+                            tmp = input.readSInt32NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getSInt32SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = IntArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readSInt32NoTag()
+                            i += 1
                         }
                         int = newArray
                     } while (false)
@@ -266,15 +276,25 @@ class MessageRepeatedZigZag private constructor (var int: IntArray, var long: Lo
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = LongArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
-                            tmp[0] = input.readSInt64NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getSInt64SizeNoTag(tmp[0])
+                            var tmp = 0L
+                            tmp = input.readSInt64NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getSInt64SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = LongArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readSInt64NoTag()
+                            i += 1
                         }
                         long = newArray
                     } while (false)

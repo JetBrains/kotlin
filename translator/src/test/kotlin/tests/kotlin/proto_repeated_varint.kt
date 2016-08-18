@@ -712,15 +712,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = IntArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = IntArray(1)
-                            tmp[0] = input.readInt32NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getInt32SizeNoTag(tmp[0])
+                            var tmp = 0
+                            tmp = input.readInt32NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getInt32SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = IntArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readInt32NoTag()
+                            i += 1
                         }
                         int = newArray
                     } while (false)
@@ -731,15 +741,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = LongArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
-                            tmp[0] = input.readInt64NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getInt64SizeNoTag(tmp[0])
+                            var tmp = 0L
+                            tmp = input.readInt64NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getInt64SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = LongArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readInt64NoTag()
+                            i += 1
                         }
                         long = newArray
                     } while (false)
@@ -750,15 +770,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = IntArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = IntArray(1)
-                            tmp[0] = input.readSInt32NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getSInt32SizeNoTag(tmp[0])
+                            var tmp = 0
+                            tmp = input.readSInt32NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getSInt32SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = IntArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readSInt32NoTag()
+                            i += 1
                         }
                         sint = newArray
                     } while (false)
@@ -769,15 +799,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = LongArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
-                            tmp[0] = input.readSInt64NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getSInt64SizeNoTag(tmp[0])
+                            var tmp = 0L
+                            tmp = input.readSInt64NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getSInt64SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = LongArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readSInt64NoTag()
+                            i += 1
                         }
                         slong = newArray
                     } while (false)
@@ -788,15 +828,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = BooleanArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = BooleanArray(1)
-                            tmp[0] = input.readBoolNoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getBoolSizeNoTag(tmp[0])
+                            var tmp = false
+                            tmp = input.readBoolNoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getBoolSizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = BooleanArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readBoolNoTag()
+                            i += 1
                         }
                         bl = newArray
                     } while (false)
@@ -807,15 +857,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = IntArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = IntArray(1)
-                            tmp[0] = input.readUInt32NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getUInt32SizeNoTag(tmp[0])
+                            var tmp = 0
+                            tmp = input.readUInt32NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getUInt32SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = IntArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readUInt32NoTag()
+                            i += 1
                         }
                         uint = newArray
                     } while (false)
@@ -826,15 +886,25 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                         return false
                     }
                     val expectedByteSize = input.readInt32NoTag()
-                    var newArray = LongArray(0)
                     var readSize = 0
+                    var arraySize = 0
+                    input.mark()
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
-                            tmp[0] = input.readUInt64NoTag()
-                            newArray = newArray.plus(tmp)
-                            readSize += WireFormat.getUInt64SizeNoTag(tmp[0])
+                            var tmp = 0L
+                            tmp = input.readUInt64NoTag()
+                            arraySize += 1
+                            readSize += WireFormat.getUInt64SizeNoTag(tmp)
+                        }
+                    } while (false)
+                    var newArray = LongArray(arraySize)
+                    input.reset()
+                    do {
+                        var i = 0
+                        while(i < arraySize) {
+                            newArray[i] = input.readUInt64NoTag()
+                            i += 1
                         }
                         ulong = newArray
                     } while (false)
@@ -1052,6 +1122,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
         }
 
     }
+
 }
 
 fun compareIntArrays(lhs: IntArray, rhs: IntArray): Boolean {
