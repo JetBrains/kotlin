@@ -4,8 +4,8 @@ import kotlin.properties.ReadOnlyProperty
 // ERROR: Local variables are not allowed to have delegates
 // ERROR: Property must be initialized
 
-val foo: ReadOnlyProperty<Nothing?, Int>
-
 fun test() {
     val x: Int by foo
 }
+
+val foo: ReadOnlyProperty<Nothing?, Int>
