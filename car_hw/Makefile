@@ -17,10 +17,7 @@ LIB_USB_DEV_OBJ=$(BIN_DIR)/libusbdevice.o
 LIB_USB_OTG_OBJ=$(BIN_DIR)/libusbotg.o
 LIB_USB_VCP_OBJ=$(BIN_DIR)/libusbvcp.o
 
-CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
-CAR_FMW=$(BIN_DIR)/car_fmw.elf
-CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
-ST_DIR=$(SRC_DIR)/../../devloader/data/$(OS_ARCH)
+CARHW_OBJ=$(BIN_DIR)/car_hw.o
 
 CC=arm-none-eabi-gcc
 AS=arm-none-eabi-as
@@ -49,23 +46,21 @@ LD_ALL_DEPS=$(LD) -r $(filter %.o,$^) -o $@
 CC_ALL_DEPS=$(CC) $(CFLAGS) -c $(INCLUDES) $(filter %.c,$^) -o $@
 AS_ALL_DEPS=$(AS) $(ASMFLAGS) $(filter %.s,$^) -o $@
 
-CAR_OBJ_PREFIX=car_
-
 dirhs=$(wildcard $(1)/*.h)
 dircs=$(wildcard $(1)/*.c)
 dircs_to_prefxd_objs=\
 	$(patsubst $(1)/%.c,$(BIN_DIR)/$(2)%.o,$(call dircs,$1))
 
-all: $(BIN_DIR)/car_hw.o
+CAR_OBJ=$(BIN_DIR)/car.o
+CAR_OBJ_PREFIX=car_
 
-$(BIN_DIR)/car_hw.o: $(CAR_FMW_OBJ) $(LIB_STM32F4D_OBJ) \
+$(CARHW_OBJ): $(CAR_OBJ) $(LIB_STM32F4D_OBJ) \
 		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) \
 		$(LIB_USB_DEV_OBJ) $(LIB_USB_OTG_OBJ) \
 		$(LIB_USB_VCP_OBJ)
 	$(LD) -r $^ -o $@
 
-
-$(CAR_FMW_OBJ): \
+$(CAR_OBJ): \
 		$(call dircs_to_prefxd_objs,$(SRC_DIR),$(CAR_OBJ_PREFIX))
 	$(LD_ALL_DEPS)
 
