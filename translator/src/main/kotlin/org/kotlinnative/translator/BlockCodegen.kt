@@ -713,8 +713,10 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     fun addPrimitiveReferenceOperationByName(operator: String, firstOp: LLVMSingleValue, secondNativeOp: LLVMSingleValue): LLVMExpression {
         val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
         return when (operator) {
+            "||",
             "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
             "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
+            "&&",
             "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
             "%" -> firstNativeOp.type!!.operatorMod(firstNativeOp, secondNativeOp)
             "shl" -> {
