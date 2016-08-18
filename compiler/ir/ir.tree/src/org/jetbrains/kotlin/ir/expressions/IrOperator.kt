@@ -21,6 +21,8 @@ interface IrOperator {
     object EXCL : IrOperatorImpl("EXCL"), IrUnaryOperator
     object EXCLEXCL : IrOperatorImpl("EXCLEXCL"), IrUnaryOperator
 
+    object IMPLICIT_NOTNULL : IrOperatorImpl("IMPLICIT_NOTNULL"), IrUnaryOperator
+
     object ELVIS : IrOperatorImpl("ELVIS"), IrBinaryOperator
 
     object LT : IrOperatorImpl("LT"), IrBinaryOperator
@@ -37,8 +39,6 @@ interface IrOperator {
     object NOT_IN : IrOperatorImpl("NOT_IN"), IrBinaryOperator
     object ANDAND : IrOperatorImpl("ANDAND"), IrBinaryOperator
     object OROR : IrOperatorImpl("OROR"), IrBinaryOperator
-
-
 
     object PLUS : IrOperatorImpl("PLUS"), IrBinaryOperator
     object MINUS : IrOperatorImpl("MINUS"), IrBinaryOperator

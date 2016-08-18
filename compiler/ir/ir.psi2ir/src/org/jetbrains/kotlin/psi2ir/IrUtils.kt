@@ -17,25 +17,26 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetVariableExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 fun IrExpression.toExpectedType(expectedType: KotlinType?): IrExpression {
     if (expectedType == null) return this
     val valueType = type ?: throw AssertionError("expectedType != null, valueType == null: $this")
-    if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
-        return this
+
+    if (valueType.isNullabilityFlexible() && !expectedType.isMarkedNullable) {
+        return IrUnaryOperatorExpressionImpl(startOffset, endOffset, expectedType,
+                                             IrOperator.IMPLICIT_NOTNULL, null, this)
     }
 
-    return IrTypeOperatorExpressionImpl(
-            startOffset, endOffset, expectedType,
-            IrTypeOperator.IMPLICIT_CAST, expectedType,
-            this
-    )
+    if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
+        return IrTypeOperatorExpressionImpl(startOffset, endOffset, expectedType,
+                                            IrTypeOperator.IMPLICIT_CAST, expectedType, this)
+    }
+
+    return this
 }
 
 fun IrVariable.load(): IrExpression =

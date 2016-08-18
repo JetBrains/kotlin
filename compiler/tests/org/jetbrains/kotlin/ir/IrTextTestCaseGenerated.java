@@ -131,6 +131,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("implicitCastOnPlatformType.kt")
+    public void testImplicitCastOnPlatformType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/implicitCastOnPlatformType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("in.kt")
     public void testIn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/in.kt");

@@ -1,0 +1,8 @@
+IrFile /implicitCastOnPlatformType.kt
+  IrFunction public fun test(): kotlin.String
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          UNARY_OP operator=IMPLICIT_NOTNULL type=kotlin.String related=null
+            CALL .getProperty type=kotlin.String! operator=null
+              p0: LITERAL String type=kotlin.String value='test'
