@@ -1,9 +1,11 @@
 // "Create extension property 'A.foo'" "true"
-// ERROR: Property must be initialized
 class A(val n: Int)
-
-private val A.foo: Boolean
 
 class B {
     val A.test: Boolean get() = foo
 }
+
+private val A.foo: Boolean
+    get() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }

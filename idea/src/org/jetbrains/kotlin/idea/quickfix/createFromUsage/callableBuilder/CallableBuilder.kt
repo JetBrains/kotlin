@@ -498,8 +498,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                     }
                     CallableKind.PROPERTY -> {
-                        val valVar = if ((callableInfo as PropertyInfo).writable) "var" else "val"
-                        psiFactory.createProperty("$modifiers$valVar<> $header")
+                        val isVar = (callableInfo as PropertyInfo).writable
+                        val valVar = if (isVar) "var" else "val"
+                        val accessors = if (isExtension) {
+                            buildString {
+                                append("\nget() {}")
+                                if (isVar) {
+                                    append("\nset() {}")
+                                }
+                            }
+                        }
+                        else ""
+                        psiFactory.createProperty("$modifiers$valVar<> $header$accessors")
                     }
                 }
 
@@ -559,7 +569,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 }
                             }
                         }
-                        addNextToOriginalElementContainer(insertToBlock || declaration is KtProperty)
+                        addNextToOriginalElementContainer(insertToBlock || (declaration is KtProperty && actualContainer !is KtFile))
                     }
 
                     containingElement is KtFile -> containingElement.add(declaration) as KtNamedDeclaration
@@ -683,18 +693,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return typeRefsToShorten
         }
 
-        private fun setupFunctionBody(func: KtFunction) {
+        private fun setupDeclarationBody(func: KtDeclarationWithBody) {
             val oldBody = func.bodyExpression ?: return
             val templateKind = when (func) {
                 is KtSecondaryConstructor -> TemplateKind.SECONDARY_CONSTRUCTOR
-                is KtNamedFunction -> TemplateKind.FUNCTION
+                is KtNamedFunction, is KtPropertyAccessor -> TemplateKind.FUNCTION
                 else -> throw AssertionError("Unexpected declaration: " + func.getElementTextWithContext())
             }
             val bodyText = getFunctionBodyTextFromTemplate(
                     func.project,
                     templateKind,
                     if (callableInfo.name.isNotEmpty()) callableInfo.name else null,
-                    if (skipReturnType) "Unit" else func.typeReference!!.text,
+                    if (skipReturnType) "Unit" else (func as? KtFunction)?.typeReference?.text ?: "",
                     receiverClassDescriptor?.importableFqName ?: receiverClassDescriptor?.name?.let { FqName.topLevel(it) }
             )
             oldBody.replace(KtPsiFactory(func).createBlock(bodyText))
@@ -988,7 +998,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         runWriteAction {
                             // file templates
                             if (newDeclaration is KtNamedFunction || newDeclaration is KtSecondaryConstructor) {
-                                setupFunctionBody(newDeclaration as KtFunction)
+                                setupDeclarationBody(newDeclaration as KtFunction)
+                            }
+
+                            if (newDeclaration is KtProperty) {
+                                newDeclaration.getter?.let { setupDeclarationBody(it) }
                             }
 
                             val callElement = config.originalElement as? KtCallElement
