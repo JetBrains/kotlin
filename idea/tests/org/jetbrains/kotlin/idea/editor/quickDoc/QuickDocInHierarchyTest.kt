@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.editor.quickDoc
 import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
 import com.intellij.ide.hierarchy.LanguageTypeHierarchy
+import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase
 import com.intellij.ide.hierarchy.type.TypeHierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -30,6 +31,7 @@ import com.intellij.testFramework.MapDataContext
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 class QuickDocInHierarchyTest() : CodeInsightTestCase() {
@@ -44,9 +46,10 @@ class QuickDocInHierarchyTest() : CodeInsightTestCase() {
         context.put<Project>(CommonDataKeys.PROJECT, project)
         context.put<Editor>(CommonDataKeys.EDITOR, editor)
 
+        val provider = BrowseHierarchyActionBase.findProvider(LanguageTypeHierarchy.INSTANCE, file, file, context)!!
         val hierarchyTreeStructure = TypeHierarchyTreeStructure(
                 project,
-                LanguageTypeHierarchy.INSTANCE.forLanguage(KotlinLanguage.INSTANCE).getTarget(context) as PsiClass?,
+                provider.getTarget(context) as PsiClass?,
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
         )
         val hierarchyNodeDescriptor = hierarchyTreeStructure.baseDescriptor as TypeHierarchyNodeDescriptor
