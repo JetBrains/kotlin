@@ -248,6 +248,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideDirectoryTest("foo")
     }
 
+    fun testPlatformCollectionTypes() {
+        doOverrideDirectoryTest("foo")
+    }
+
     fun testNullableJavaType() {
         doOverrideDirectoryTest("foo")
     }
