@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.jetbrains.kotlin.annotation.processing.impl.KotlinElements
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.java.model.types.JeArrayType
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
@@ -127,5 +128,11 @@ class ElementsTests : AbstractProcessorTest() {
         assertFalse(packageElement.isUnnamed)
         val classes = packageElement.enclosedElements.filterIsInstance<JeTypeElement>()
         assertEquals(2, classes.size)
+    }
+    
+    fun testGetArrayType() = test("GetPackageOf", "*") { set, roundEnv, env ->
+        val myClass = env.findClass("test.MyClass").asType()
+        val array = env.typeUtils.getArrayType(myClass)
+        assert(array is JeArrayType)
     }
 }
