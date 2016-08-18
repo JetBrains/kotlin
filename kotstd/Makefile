@@ -16,7 +16,7 @@ LLINK_FLAGS=-S
 KT_ALL_DEPS=java -jar $(KT)
 LLINK_ALL_DEPS=$(LLINK) $(LLINK_FLAGS) $(filter %.ll,$^) > $@
 
-all: $(BUILD_DIR) $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
+all: memory $(BUILD_DIR) $(BUILD_DIR)/stdlib_arm.ll $(BUILD_DIR)/stdlib_x86.ll
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
