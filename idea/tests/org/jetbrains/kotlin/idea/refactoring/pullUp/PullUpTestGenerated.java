@@ -223,6 +223,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("removeVisibilityOnOverride.kt")
+        public void testRemoveVisibilityOnOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/removeVisibilityOnOverride.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("skipFakeOverrides.kt")
         public void testSkipFakeOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/skipFakeOverrides.kt");
