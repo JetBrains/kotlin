@@ -3,7 +3,7 @@ package carkot;
 
 message DebugRequest {
 
-    TYPE type = 1;
+    Type type = 1;
 
     enum Type {
         MEMORY_STATS = 0;

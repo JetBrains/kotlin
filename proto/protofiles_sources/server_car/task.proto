@@ -3,7 +3,7 @@ package carkot;
 
 message TaskRequest {
 
-    TYPE protoBufType = 1;
+    Type type = 1;
 
     enum Type {
         DEBUG = 0;
