@@ -15,15 +15,9 @@ class LLVMReferenceType(val type: String, var prefix: String = "", override var 
 
     override fun toString() = "%$typename"
 
-    private val params = ArrayList<String>()
-
     val location = ArrayList<String>()
 
     override fun mangle() = "Ref_$type"
-
-    fun addParam(param: String) {
-        params.add(param)
-    }
 
     override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp eq ${firstOp.getType()} $firstOp, ${if (secondOp.type is LLVMNullType) "null" else "$secondOp"}")

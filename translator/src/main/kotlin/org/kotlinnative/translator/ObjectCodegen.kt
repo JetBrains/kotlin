@@ -7,6 +7,7 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.LLVMVariableScope
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
+import org.kotlinnative.translator.llvm.types.LLVMType
 
 class ObjectCodegen(state: TranslationState,
                     variableManager: VariableManager,
@@ -25,6 +26,9 @@ class ObjectCodegen(state: TranslationState,
             type.location.addAll(parentCodegen.type.location)
             type.location.add(parentCodegen.structName)
         }
+        primaryConstructorIndex = LLVMType.mangleFunctionArguments(emptyList())
+        constructorFields.put(primaryConstructorIndex!!, arrayListOf())
+
         generateInnerFields(objectDeclaration.declarations)
 
         calculateTypeSize()

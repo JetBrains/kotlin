@@ -72,6 +72,31 @@ class LLVMBuilder(val arm: Boolean = false) {
         else -> throw UnsupportedOperationException()
     }
 
+    fun loadArgumentIfRequired(value: LLVMSingleValue, argument: LLVMVariable): LLVMSingleValue {
+        var result = value
+
+        while (argument.pointer < result.pointer) {
+            result = getNewVariable(argument.type, pointer = result.pointer - 1)
+            loadVariable(result, value as LLVMVariable)
+        }
+
+        when (value.type) {
+            is LLVMStringType -> if (!(value.type as LLVMStringType).isLoaded) {
+                val newVariable = getNewVariable(value.type!!, pointer = result.pointer + 1)
+                allocStackVar(newVariable, asValue = true)
+                copyVariable(result as LLVMVariable, newVariable)
+
+                result = getNewVariable(argument.type, pointer = newVariable.pointer - 1)
+                loadVariable(result, newVariable)
+            }
+        }
+
+        return result
+    }
+
+    fun downLoadArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue =
+            loadArgumentIfRequired(value, LLVMVariable("", value.type!!, pointer = pointer))
+
     fun clean() {
         localCode = StringBuilder()
         globalCode = StringBuilder()

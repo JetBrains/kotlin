@@ -31,7 +31,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     var returnType: LLVMVariable? = null
     var wasReturnOnTopLevel = false
 
-    protected fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel? = null, nextIterationLabel: LLVMLabel? = null, breakLabel: LLVMLabel? = null, scopeDepth: Int = 0, isBlock: Boolean = true) {
+    fun evaluateCodeBlock(expr: PsiElement?, startLabel: LLVMLabel? = null, nextIterationLabel: LLVMLabel? = null, breakLabel: LLVMLabel? = null, scopeDepth: Int = 0, isBlock: Boolean = true) {
         codeBuilder.markWithLabel(startLabel)
         if (isBlock) {
             expressionWalker(expr, breakLabel, scopeDepth)
@@ -114,6 +114,14 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             null -> null
             else -> throw UnsupportedOperationException()
         }
+    }
+
+    fun evaluateConstructorDelegationReferenceExpression(expr: KtConstructorDelegationReferenceExpression, structCodegen: StructCodegen, constructorArguments: List<LLVMVariable>, scopeDepth: Int): LLVMSingleValue? {
+        val targetCall = state.bindingContext.get(BindingContext.CALL, expr)
+
+        val names = parseValueArguments(targetCall!!.valueArguments, scopeDepth)
+        val args = loadArgsIfRequired(names, constructorArguments)
+        return evaluateConstructorCallExpression(LLVMVariable(structCodegen.fullName + structCodegen.primaryConstructorIndex, structCodegen.type, scope = LLVMVariableScope()), args)
     }
 
     private fun evaluateThisExpression(): LLVMSingleValue? {
@@ -247,7 +255,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             else -> LLVMVariable("type", standardType, pointer = 0)
         }
 
-        val args = mutableListOf(loadArgumentIfRequired(receiverExpression, typeThisArgument))
+        val args = mutableListOf(codeBuilder.loadArgumentIfRequired(receiverExpression, typeThisArgument))
         args.addAll(loadArgsIfRequired(names, extensionCodegen.args))
         return evaluateFunctionCallExpression(LLVMVariable(extensionCodegen.fullName, extensionCodegen.returnType!!.type, scope = LLVMVariableScope()), args)
     }
@@ -315,7 +323,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                         val arrayActionType = if (callMaker.callType == Call.CallType.ARRAY_SET_METHOD) "set" else "get"
                         val explicitReceiver = callMaker.explicitReceiver as ExpressionReceiver
                         val receiver = evaluateExpression(explicitReceiver.expression, scope)!! as LLVMVariable
-                        val pureReceiver = downLoadArgument(receiver, 1)
+                        val pureReceiver = codeBuilder.downLoadArgument(receiver, 1)
 
                         val targetClassName = (receiver.type as LLVMReferenceType).type
 
@@ -397,7 +405,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val names = parseArgList(expr, scopeDepth)
         var name = expr.firstChild.firstChild.text
         val external = state.externalFunctions.containsKey(name)
-
         val function = "$name${if (names.size > 0 && !external) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
 
         if (state.functions.containsKey(function) || state.externalFunctions.containsKey(function)) {
@@ -408,8 +415,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         if (state.classes.containsKey(name) || classScope?.structName == name) {
             val descriptor = state.classes[name] ?: classScope ?: return null
-            val args = loadArgsIfRequired(names, descriptor.constructorFields)
-            return evaluateConstructorCallExpression(LLVMVariable(descriptor.fullName, descriptor.type, scope = LLVMVariableScope()), args)
+            val detectedConstructor = LLVMType.mangleFunctionArguments(names)
+            val args = loadArgsIfRequired(names, descriptor.constructorFields[detectedConstructor]!!)
+            return evaluateConstructorCallExpression(LLVMVariable(descriptor.fullName + detectedConstructor, descriptor.type, scope = LLVMVariableScope()), args)
         }
 
         val localFunction = variableManager[name]
@@ -437,7 +445,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         val nestedConstructor = classScope?.nestedClasses?.get(expr.calleeExpression!!.text)
         if (nestedConstructor != null) {
-            val args = loadArgsIfRequired(names, nestedConstructor.constructorFields)
+            val args = loadArgsIfRequired(names, nestedConstructor.constructorFields[nestedConstructor.primaryConstructorIndex]!!)
             return evaluateConstructorCallExpression(LLVMVariable(nestedConstructor.fullName, nestedConstructor.type, scope = LLVMVariableScope()), args)
         }
 
@@ -445,7 +453,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         name = "${containingClass.fullName}.$function"
         val method = containingClass.methods[name]!!
         val args = mutableListOf<LLVMSingleValue>()
-        val leftName = (expr.context as? KtDotQualifiedExpression)?.receiverExpression?.text
 
         if (caller != null) {
             args.add(caller)
@@ -467,7 +474,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         if (location.size > 0) {
             val type = LLVMReferenceType(name, prefix = "class")
             type.location.addAll(location)
-
             return resolveClassOrObjectLocation(type)
         }
 
@@ -510,34 +516,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return null
     }
 
-    private fun loadArgumentIfRequired(value: LLVMSingleValue, argument: LLVMVariable): LLVMSingleValue {
-        var result = value
-
-        while (argument.pointer < result.pointer) {
-            result = codeBuilder.getNewVariable(argument.type, pointer = result.pointer - 1)
-            codeBuilder.loadVariable(result, value as LLVMVariable)
-        }
-
-        when (value.type) {
-            is LLVMStringType -> if (!(value.type as LLVMStringType).isLoaded) {
-                val newVariable = codeBuilder.getNewVariable(value.type!!, pointer = result.pointer + 1)
-                codeBuilder.allocStackVar(newVariable, asValue = true)
-                codeBuilder.copyVariable(result as LLVMVariable, newVariable)
-
-                result = codeBuilder.getNewVariable(argument.type, pointer = newVariable.pointer - 1)
-                codeBuilder.loadVariable(result, newVariable)
-            }
-        }
-
-        return result
-    }
-
-    private fun downLoadArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue =
-            loadArgumentIfRequired(value, LLVMVariable("", value.type!!, pointer = pointer))
-
     private fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
             names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
-                return loadArgumentIfRequired(value, args[i])
+                return codeBuilder.loadArgumentIfRequired(value, args[i])
             }).toList()
 
     private fun evaluateConstructorCallExpression(function: LLVMVariable, names: List<LLVMSingleValue>): LLVMSingleValue? {
@@ -968,7 +949,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateIfOperator(element: KtIfExpression, scopeDepth: Int, isExpression: Boolean = true): LLVMVariable? {
         val conditionResult = evaluateExpression(element.condition, scopeDepth)!!
-        val conditionNativeResult = downLoadArgument(conditionResult, 0)
+        val conditionNativeResult = codeBuilder.downLoadArgument(conditionResult, 0)
 
         return if (isExpression)
             executeIfExpression(conditionNativeResult, element.then!!, element.`else`, element, scopeDepth + 1)

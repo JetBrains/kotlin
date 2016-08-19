@@ -26,8 +26,6 @@ abstract class LLVMType() : Cloneable {
     open fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
     open fun parseArg(inputArg: String) = inputArg
 
-    fun makeClone() = clone()
-
     open fun convertFrom(source: LLVMSingleValue): LLVMExpression = throw UnimplementedException()
 
     abstract fun mangle(): String
@@ -38,6 +36,12 @@ abstract class LLVMType() : Cloneable {
     abstract var size: Int
     abstract val defaultValue: String
     open fun isPrimitive(): Boolean = false
+
+    companion object {
+        fun mangleFunctionArguments(names: List<LLVMSingleValue>) =
+                "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}"
+    }
+
 }
 
 fun parseLLVMType(type: String): LLVMType = when (type) {
