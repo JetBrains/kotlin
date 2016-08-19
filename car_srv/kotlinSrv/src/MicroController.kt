@@ -1,7 +1,7 @@
-import carControl.ControlImpl
-import carControl.RouteExecutorImpl
-import carControl.RouteExecutorToUsb
+import control.emulator.RouteExecutorImpl
+import control.car.RouteExecutorToUsb
 import exceptions.RcControlException
+import kotlin.js.Date
 
 /**
  * Created by user on 7/28/16.
@@ -17,7 +17,7 @@ class MicroController private constructor() {
     val modelID: String
     var transportFilePath: String
 
-    val car: Car
+    val car: CarState
 
     init {
         this.rcSid = 0
@@ -27,7 +27,8 @@ class MicroController private constructor() {
         this.modelID = "5740"
         this.transportFilePath = ""
 
-        this.car = Car(RouteExecutorToUsb(), ControlImpl())
+
+        this.car = CarState.instance
     }
 
     fun start() {
@@ -38,65 +39,11 @@ class MicroController private constructor() {
             println("read: " + bytes.toString())
         }
 
-        setInterval({ this.car.refreshLocation(deltaTimeLocationRefresh) }, deltaTimeLocationRefresh);
-        setInterval({
-            if (needDropRC()) {
-                dropRC()
-            }
-        }, 500)
-    }
-
-    fun dropRC() {
-        this.rcSid = 0
-        car.stopCar()
-    }
-
-    fun disconnectRC(sid: Int) {
-        if (sid != rcSid) {
-            throw RcControlException()
-        }
-        dropRC()
-    }
-
-    fun RcMove(command: RouteExecutorImpl.MoveDirection, sid: Int) {
-        if (sid != this.rcSid) {
-            throw RcControlException()
-        }
-        car.move(command, 0, {})
-        rcHeartBeat(sid)
-    }
-
-    fun needDropRC(): Boolean {
-        return Date().getTime() > (rcLastRequest + 1000) && controlledByRC()
-    }
-
-    fun connectRC(): Int {
-        if (controlledByRC()) {
-            throw RcControlException()
-        }
-        val sid = (Math.random() * 100000).toInt()
-        this.rcSid = sid
-        rcHeartBeat(sid)
-        return sid
-    }
-
-    fun controlledByRC(): Boolean {
-        return (rcSid != 0)
-    }
-
-    fun isConnected(): Boolean {
-        return transportFilePath != ""
-    }
-
-    fun rcHeartBeat(sid: Int) {
-        if (sid != this.rcSid) {
-            throw RcControlException()
-        }
-        rcLastRequest = Date().getTime()
+//        setInterval({ this.car.refreshLocation(deltaTimeLocationRefresh) }, deltaTimeLocationRefresh);
     }
 
     fun connectToServer(thisIp: String, thisPort: Int) {
-        val requestObject = ConnectionRequest.BuilderConnectionRequest(config.getCarIp().split(".").map { str -> parseInt(str, 10) }.toIntArray(), carServerPort).build()
+        val requestObject = ConnectionRequest.BuilderConnectionRequest(thisIp.split(".").map { str -> parseInt(str, 10) }.toIntArray(), thisPort).build()
         val bytes = ByteArray(requestObject.getSizeNoTag())
         requestObject.writeTo(CodedOutputStream(bytes))
         net.sendRequest(js("new Buffer(bytes)"), "/connect", { resultData ->

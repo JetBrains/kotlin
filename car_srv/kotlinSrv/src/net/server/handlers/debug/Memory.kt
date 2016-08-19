@@ -1,9 +1,8 @@
 package net.server.handlers.debug
 
-import CodedInputStream
 import DebugRequest
 import DebugResponseMemoryStats
-import MicroController
+import McState
 import encodeProtoBuf
 import mcTransport
 import net.server.handlers.AbstractHandler
@@ -23,7 +22,7 @@ class Memory : AbstractHandler {
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
 
-        if (!MicroController.instance.isConnected()) {
+        if (!McState.instance.isConnected()) {
             println("mc is disconnected!")
             val responseMessage = toServerObjectBuilder.build()
             callback.invoke(encodeProtoBuf(responseMessage))

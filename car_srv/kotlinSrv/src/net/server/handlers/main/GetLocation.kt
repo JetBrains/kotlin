@@ -1,7 +1,9 @@
 package net.server.handlers.main
 
-import net.server.handlers.AbstractHandler
+import LocationResponse
+import MicroController
 import encodeProtoBuf
+import net.server.handlers.AbstractHandler
 
 /**
  * Created by user on 7/28/16.
@@ -10,8 +12,9 @@ class GetLocation : AbstractHandler {
 
     val toServerObjectBuilder: LocationResponse.BuilderLocationResponse
 
-    constructor(toSrv: LocationResponse.BuilderLocationResponse) : super() {
-        this.toServerObjectBuilder = toSrv
+    constructor() : super() {
+        val defaultLocationData = LocationResponse.LocationData.BuilderLocationData(0, 0, 0).build()
+        this.toServerObjectBuilder = LocationResponse.BuilderLocationResponse(defaultLocationData, 0)
     }
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {

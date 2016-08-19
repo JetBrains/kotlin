@@ -1,12 +1,13 @@
 package net.server.handlers.rc
 
+import CodedInputStream
+import DirectionRequest
+import DirectionResponse
 import MicroController
-import carControl.RouteExecutorImpl.MoveDirection
+import control.emulator.RouteExecutorImpl.MoveDirection
+import encodeProtoBuf
 import exceptions.RcControlException
 import net.server.handlers.AbstractHandler
-import DirectionRequest
-import CodedInputStream
-import encodeProtoBuf
 
 /**
  * Created by user on 7/27/16.
@@ -16,9 +17,9 @@ class Control : AbstractHandler {
     val fromServerObjectBuilder: DirectionRequest.BuilderDirectionRequest
     val toServerObjectBuilder: DirectionResponse.BuilderDirectionResponse
 
-    constructor(fromSrv: DirectionRequest.BuilderDirectionRequest, toSrv: DirectionResponse.BuilderDirectionResponse) : super() {
-        this.fromServerObjectBuilder = fromSrv
-        this.toServerObjectBuilder = toSrv
+    constructor() : super() {
+        this.fromServerObjectBuilder = DirectionRequest.BuilderDirectionRequest(DirectionRequest.Command.fromIntToCommand(0), 0)
+        this.toServerObjectBuilder = DirectionResponse.BuilderDirectionResponse(0)
     }
 
     override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
@@ -46,7 +47,7 @@ class Control : AbstractHandler {
         }
         val resultCode: Int
         try {
-            MicroController.instance.RcMove(command, sid)
+//            MicroController.instance.RcMove(command, sid)
             resultCode = 0
         } catch (e: RcControlException) {
             resultCode = 12

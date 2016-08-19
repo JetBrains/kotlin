@@ -1,5 +1,7 @@
 package net.server.handlers
 
+import CodedOutputStream
+
 /**
  * Created by user on 7/27/16.
  */
@@ -12,6 +14,7 @@ abstract class AbstractHandler {
             response.end()
         })
     }
+
 
     abstract fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit)
 

@@ -1,10 +1,12 @@
 package net.server.handlers.flash
 
-import net.server.handlers.AbstractHandler
-import require
 import CodedInputStream
+import Upload
+import UploadResult
 import encodeProtoBuf
 import mcTransport
+import net.server.handlers.AbstractHandler
+import require
 
 /**
  * Created by user on 7/27/16.
@@ -16,9 +18,9 @@ class LoadBin : AbstractHandler {
     val fromServerObjectBuilder: Upload.BuilderUpload
     val toServerObjectBuilder: UploadResult.BuilderUploadResult
 
-    constructor(fromSrv: Upload.BuilderUpload, toSrv: UploadResult.BuilderUploadResult) : super() {
-        this.fromServerObjectBuilder = fromSrv
-        this.toServerObjectBuilder = toSrv
+    constructor() : super() {
+        this.fromServerObjectBuilder = Upload.BuilderUpload(ByteArray(0))
+        this.toServerObjectBuilder = UploadResult.BuilderUploadResult(0)
         this.exec = require("child_process").exec
     }
 

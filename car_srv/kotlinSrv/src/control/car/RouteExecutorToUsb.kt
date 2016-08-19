@@ -1,16 +1,19 @@
-package carControl
+package control.car
 
 import RouteRequest
-import mcTransport
-import encodeInt
-import decodeInt
+import control.RouteExecutor
 import encodeProtoBuf
+import mcTransport
+import CodedOutputStream
 
 class RouteExecutorToUsb : RouteExecutor {
 
     override fun executeRoute(route: RouteRequest) {
         println("Execute Route:")
-        val routeBytes = encodeProtoBuf(route)
+        val protoSize = route.getSizeNoTag()
+        val routeBytes = ByteArray(protoSize)
+
+        route.writeTo(CodedOutputStream(routeBytes))
 
         mcTransport.setCallBack { bytes ->
             println("Read $bytes;")

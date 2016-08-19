@@ -79,7 +79,6 @@ class McTransport() {
         result += bytes[0].toInt().shl(24)
         return result
     }
-
 }
 
 private val protoHeaderLength: Int = 4

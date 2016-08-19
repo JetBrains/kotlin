@@ -25,26 +25,16 @@ sourceSets {
 }
 
 task copyKotlinLib(type: Copy) {
-    from "${projectDir}/helpers/kotlin.js"
-    from "${projectDir}/helpers/package.json"
+    from "${projectDir}/kotlinJsRequiredFiles/kotlin.js"
+    from "${projectDir}/kotlinJsRequiredFiles/package.json"
 
     into "${projectDir}/build/js"
 }
 
-task copyProtoFiles(type: Copy) {
-
-    from "${projectDir}/../../proto/carkot.proto"
-    from "${projectDir}/../../proto/server_car/"
-
-    into "${projectDir}/build/js/proto"
-}
-
-
 build.dependsOn copyKotlinLib
-build.dependsOn copyProtoFiles
 
 compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/main.js"
-compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/helpers/prefix.js"
+compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/kotlinJsRequiredFiles/connectKotlinLib.js"
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
