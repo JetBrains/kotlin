@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
 class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
-        ReplaceGetOrSetIntention(), ReplaceGetOrSetInspection.additionalChecker
+        ReplaceGetOrSetIntention::class, ReplaceGetOrSetInspection.additionalChecker
 
 ) {
     companion object {

@@ -190,7 +190,7 @@ object J2KPostProcessingRegistrar {
         private val intention = ConvertToStringTemplateIntention()
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is KtBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
+            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(element)) {
                 return { intention.applyTo(element, null) }
             }
             else {

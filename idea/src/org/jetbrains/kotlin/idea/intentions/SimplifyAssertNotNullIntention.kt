@@ -20,12 +20,12 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class SimplifyAssertNotNullInspection : IntentionBasedInspection<KtCallExpression>(SimplifyAssertNotNullIntention())
+class SimplifyAssertNotNullInspection : IntentionBasedInspection<KtCallExpression>(SimplifyAssertNotNullIntention::class)
 
 class SimplifyAssertNotNullIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
         KtCallExpression::class.java,

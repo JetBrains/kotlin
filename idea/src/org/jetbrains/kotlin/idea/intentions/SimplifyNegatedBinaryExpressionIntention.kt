@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
+class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention::class)
 
 class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "Simplify negated binary expression") {
 
