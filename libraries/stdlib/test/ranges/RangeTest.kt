@@ -36,8 +36,7 @@ public class RangeTest {
         assertTrue(9 in openRange)
         assertFalse(10 in openRange)
 
-        // fails to throw in JS
-        // assertTrue(assertFails { 1 until Int.MIN_VALUE } is IllegalArgumentException)
+        assertTrue((1 until Int.MIN_VALUE).isEmpty())
     }
 
     @test fun byteRange() {
@@ -72,7 +71,7 @@ public class RangeTest {
 
         // byte arguments now construct IntRange so no overflow here
         // assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
-
+        assertTrue((0.toByte() until Int.MIN_VALUE).isEmpty())
     }
 
     @test fun shortRange() {
@@ -106,6 +105,7 @@ public class RangeTest {
 
         // short arguments now construct IntRange so no overflow here
         // assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
+        assertTrue((0.toShort() until Int.MIN_VALUE).isEmpty())
     }
 
     @test fun longRange() {
@@ -140,7 +140,8 @@ public class RangeTest {
         assertTrue(9L in openRange)
         assertFalse(10L in openRange)
 
-        assertFailsWith<IllegalArgumentException> { 0L until Long.MIN_VALUE }
+        assertTrue((0 until Long.MIN_VALUE).isEmpty())
+        assertTrue((0L until Long.MIN_VALUE).isEmpty())
 
     }
 
@@ -168,7 +169,7 @@ public class RangeTest {
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
 
-        assertFailsWith<IllegalArgumentException> { 'A' until '\u0000' }
+        assertTrue(('A' until '\u0000').isEmpty())
     }
 
     @test fun doubleRange() {

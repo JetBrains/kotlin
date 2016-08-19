@@ -38,6 +38,8 @@ object DocExtensions {
             else -> "list"
         }
 
+    fun textWhen(condition: Boolean, text: () -> String): String = if (condition) text() else ""
+
     private fun String.singularize() = removeSuffix("s")
 
     public fun String.pluralize() = when {

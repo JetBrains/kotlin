@@ -482,23 +482,21 @@ public infix fun Short.until(to: Byte): IntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Char.MIN_VALUE].
+ * If the [to] value is less than or equal to ['\u0000'] the returned range is empty.
  */
 public infix fun Char.until(to: Char): CharRange {
-    val to_  = (to.toInt() - 1).toChar()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+    if (to <= '\u0000') return CharRange.EMPTY
+    return this .. (to - 1).toChar()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Int.MIN_VALUE].
+ * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
 public infix fun Int.until(to: Int): IntRange {
-    val to_  = (to.toLong() - 1).toInt()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+    if (to <= Int.MIN_VALUE) return IntRange.EMPTY
+    return this .. (to - 1).toInt()
 }
 
 /**
@@ -511,67 +509,61 @@ public infix fun Long.until(to: Int): LongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Int.MIN_VALUE].
+ * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
 public infix fun Byte.until(to: Int): IntRange {
-    val to_  = (to.toLong() - 1).toInt()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toInt() .. to_
+    if (to <= Int.MIN_VALUE) return IntRange.EMPTY
+    return this.toInt() .. (to - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Int.MIN_VALUE].
+ * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
 public infix fun Short.until(to: Int): IntRange {
-    val to_  = (to.toLong() - 1).toInt()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toInt() .. to_
+    if (to <= Int.MIN_VALUE) return IntRange.EMPTY
+    return this.toInt() .. (to - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Long.MIN_VALUE].
+ * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Int.until(to: Long): LongRange {
-    val to_  = (to - 1).toLong()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toLong() .. to_
+    if (to <= Long.MIN_VALUE) return LongRange.EMPTY
+    return this.toLong() .. (to - 1).toLong()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Long.MIN_VALUE].
+ * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Long.until(to: Long): LongRange {
-    val to_  = (to - 1).toLong()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+    if (to <= Long.MIN_VALUE) return LongRange.EMPTY
+    return this .. (to - 1).toLong()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Long.MIN_VALUE].
+ * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Byte.until(to: Long): LongRange {
-    val to_  = (to - 1).toLong()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toLong() .. to_
+    if (to <= Long.MIN_VALUE) return LongRange.EMPTY
+    return this.toLong() .. (to - 1).toLong()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * The [to] value must be greater than [Long.MIN_VALUE].
+ * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Short.until(to: Long): LongRange {
-    val to_  = (to - 1).toLong()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toLong() .. to_
+    if (to <= Long.MIN_VALUE) return LongRange.EMPTY
+    return this.toLong() .. (to - 1).toLong()
 }
 
 /**
