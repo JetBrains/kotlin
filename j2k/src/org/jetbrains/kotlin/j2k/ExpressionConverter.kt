@@ -701,7 +701,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             val paramName = Identifier(it.name!!).assignNoPrototype()
             val paramType = if (it.typeElement != null) converter.typeConverter.convertType(it.type) else null
             LambdaParameter(paramName, paramType).assignPrototype(it)
-        }).assignPrototype(parameters)
+        }, lPar = null, rPar = null).assignPrototype(parameters)
 
         val body = expression.body
         when (body) {
@@ -819,7 +819,9 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     emptyList()
                 } else {
                     parameters.map { LambdaParameter(it.first, it.second).assignNoPrototype() }
-                }).assignNoPrototype()
+                },
+                lPar = null,
+                rPar = null).assignNoPrototype()
 
         val lambdaExpression = LambdaExpression(lambdaParameterList, Block.of(statement).assignNoPrototype()).assignNoPrototype()
 

@@ -75,10 +75,10 @@ class PrimaryConstructorSignature(val annotations: Annotations, private val modi
         }
 
         if (needConstructorKeyword) {
-            builder append " constructor"
+            builder.append(" constructor")
         }
 
-        builder append "(" append parameterList append ")"
+        builder.append(parameterList)
     }
 }
 
@@ -93,9 +93,8 @@ class SecondaryConstructor(
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)
                 .appendWithSpaceAfter(modifiers)
-                .append("constructor(")
+                .append("constructor")
                 .append(parameterList)
-                .append(")")
 
         if (thisOrSuperCall != null) {
             builder append " : " append thisOrSuperCall

@@ -61,9 +61,7 @@ class Function(
                 .append("fun ")
                 .appendWithSuffix(typeParameterList, " ")
                 .append(name)
-                .append("(")
                 .append(parameterList)
-                .append(")")
 
         if (!returnType.isUnit()) {
             builder append ":" append returnType

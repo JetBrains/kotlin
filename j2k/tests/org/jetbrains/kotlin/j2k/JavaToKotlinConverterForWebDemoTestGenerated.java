@@ -2335,6 +2335,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("parameterList.java")
+        public void testParameterList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/parameterList.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("staticAndNonStaticMembersWithComments.java")
         public void testStaticAndNonStaticMembersWithComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/staticAndNonStaticMembersWithComments.java");

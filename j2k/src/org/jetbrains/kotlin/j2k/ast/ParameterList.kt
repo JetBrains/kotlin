@@ -19,9 +19,35 @@ package org.jetbrains.kotlin.j2k.ast
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 
-class ParameterList(val parameters: List<Parameter>) : Element() {
+class ParameterList(
+        val parameters: List<Parameter>,
+        val lPar: LPar?,
+        val rPar: RPar?
+) : Element() {
     override fun generateCode(builder: CodeBuilder) {
+        lPar?.let { builder.append(it) }
+
         builder.append(parameters, ", ")
+
+        rPar?.let { builder.append(it) }
+    }
+
+    companion object {
+        fun withNoPrototype(parameters: List<Parameter>): ParameterList {
+            return ParameterList(parameters, LPar().assignNoPrototype(), RPar().assignNoPrototype()).assignNoPrototype()
+        }
     }
 }
 
+// we use LPar and RPar elements to better handle comments and line breaks around them
+class LPar : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("(")
+    }
+}
+
+class RPar : Element() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(")")
+    }
+}

@@ -181,13 +181,19 @@ fun Converter.convertParameterList(
 ): ParameterList {
     val parameterList = method.parameterList
     val params = parameterList.parameters
-    return ParameterList(params.indices.map { i ->
-        val parameter = params[i]
-        val defaultValue = overloadReducer?.parameterDefault(method, i)
-        val defaultValueConverted = if (defaultValue != null)
-            deferredElement { codeConverter -> codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type) }
-        else
-            null
-        convertParameter(parameter, defaultValueConverted)
-    }).assignPrototype(parameterList)
+    val lParen = parameterList.node.findChildByType(JavaTokenType.LPARENTH)?.psi
+    val rParen = parameterList.node.findChildByType(JavaTokenType.RPARENTH)?.psi
+    return ParameterList(
+            params.indices.map { i ->
+                val parameter = params[i]
+                val defaultValue = overloadReducer?.parameterDefault(method, i)
+                val defaultValueConverted = if (defaultValue != null)
+                    deferredElement { codeConverter -> codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type) }
+                else
+                    null
+                convertParameter(parameter, defaultValueConverted)
+            },
+            LPar().assignPrototype(lParen, CommentsAndSpacesInheritance.LINE_BREAKS),
+            RPar().assignPrototype(rParen, CommentsAndSpacesInheritance.LINE_BREAKS)
+    ).assignPrototype(parameterList)
 }

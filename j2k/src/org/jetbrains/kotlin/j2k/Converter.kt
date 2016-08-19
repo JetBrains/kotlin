@@ -276,7 +276,7 @@ class Converter private constructor(
                 } +
                 otherMethods.map { method -> createParameter(convertType(method.returnType), method) }
 
-        val parameterList = ParameterList(parameters).assignNoPrototype()
+        val parameterList = ParameterList.withNoPrototype(parameters)
         val constructorSignature = if (parameterList.parameters.isNotEmpty())
             PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
         else
@@ -358,7 +358,7 @@ class Converter private constructor(
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
                     val body = Block.of(returnStatement).assignNoPrototype()
-                    val parameterList = ParameterList(emptyList()).assignNoPrototype()
+                    val parameterList = ParameterList.withNoPrototype(emptyList())
                     getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, parameterList, deferredElement { body })
                     getter.assignNoPrototype()
                 }
@@ -381,7 +381,7 @@ class Converter private constructor(
                         val parameterList = if (method.body != null || !parameterAnnotations.isEmpty) {
                             val parameter = FunctionParameter(convertedParameter.identifier, null, FunctionParameter.VarValModifier.None, parameterAnnotations, Modifiers.Empty)
                                     .assignPrototypesFrom(convertedParameter, CommentsAndSpacesInheritance.NO_SPACES)
-                            ParameterList(listOf(parameter)).assignNoPrototype()
+                            ParameterList.withNoPrototype(listOf(parameter))
                         }
                         else {
                             null
@@ -397,7 +397,7 @@ class Converter private constructor(
                     val assignment = AssignmentExpression(superAccess, valueIdentifier, Operator.EQ).assignNoPrototype()
                     val body = Block.of(assignment).assignNoPrototype()
                     val parameter = FunctionParameter(valueIdentifier, propertyType, FunctionParameter.VarValModifier.None, Annotations.Empty, Modifiers.Empty).assignNoPrototype()
-                    val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
+                    val parameterList = ParameterList.withNoPrototype(listOf(parameter))
                     setter = PropertyAccessor(AccessorKind.SETTER, Annotations.Empty, accessorModifiers, parameterList, deferredElement { body })
                     setter.assignNoPrototype()
                 }
