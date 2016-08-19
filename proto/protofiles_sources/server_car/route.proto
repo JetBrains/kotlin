@@ -2,8 +2,8 @@ syntax = "proto3";
 package carkot;
 
 message RouteRequest {
-    repeated int32 moveTime = 1; 
-    repeated int32 moveDirection = 2;
+    repeated int32 times = 1; 
+    repeated int32 directions = 2;
 }
 
 message RouteResponse {

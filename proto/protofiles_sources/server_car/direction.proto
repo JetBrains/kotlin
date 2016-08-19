@@ -3,11 +3,11 @@ package carkot;
 
 message DirectionRequest {
     enum Command {
-        stop = 0;
-        forward = 1;
-        backward = 2;
-        left = 3;
-        right = 4;
+        STOP = 0;
+        FORWARD = 1;
+        BACKWARD = 2;
+        LEFT = 3;
+        RIGHT = 4;
     }
     Command command = 1;
     int32 sid = 2;

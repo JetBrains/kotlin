@@ -5,8 +5,8 @@ message DebugRequest {
 
     TYPE type = 1;
 
-    enum TYPE {
-        MEMORYSTATS = 0;
+    enum Type {
+        MEMORY_STATS = 0;
     }
 }
 

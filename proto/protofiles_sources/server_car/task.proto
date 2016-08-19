@@ -5,7 +5,7 @@ message TaskRequest {
 
     TYPE protoBufType = 1;
 
-    enum TYPE {
+    enum Type {
         DEBUG = 0;
         ROUTE = 1;
     }
