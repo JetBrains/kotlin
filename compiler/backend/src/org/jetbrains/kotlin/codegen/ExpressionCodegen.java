@@ -3274,7 +3274,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (variableDescriptor != null) {
             return generatePropertyReference(
                     expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                    resolvedCall.getDispatchReceiver(), receiverAsmType, receiverValue
+                    receiverAsmType, receiverValue
             );
         }
 
@@ -3286,7 +3286,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull VariableDescriptor target,
-            @Nullable ReceiverValue dispatchReceiver,
             @Nullable final Type receiverAsmType,
             @Nullable final StackValue receiverValue
     ) {
@@ -3300,7 +3299,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, variableDescriptor, target, dispatchReceiver, receiverAsmType
+                element, classBuilder, variableDescriptor, target, receiverAsmType
         );
         codegen.generate();
 
@@ -3960,7 +3959,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull StackValue metadataVar
     ) {
         //noinspection ConstantConditions
-        StackValue value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null, null);
+        StackValue value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null);
         value.put(K_PROPERTY0_TYPE, v);
         metadataVar.storeSelector(K_PROPERTY0_TYPE, v);
     }
