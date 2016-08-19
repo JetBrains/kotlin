@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.effectiveSearchScope
+import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
@@ -48,7 +49,8 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
                                          val acceptOverloads: Boolean = false,
                                          val acceptExtensionsOfDeclarationClass: Boolean = false,
-                                         val acceptCompanionObjectMembers: Boolean = false) {
+                                         val acceptCompanionObjectMembers: Boolean = false,
+                                         val searchForComponentConventions: Boolean = true) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
     companion object {
@@ -71,7 +73,10 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val unwrappedElement = element.namedUnwrappedElement ?: return
 
-        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch() }
+        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                            ?: KotlinReferencesSearchOptions.Empty
+
+        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch(kotlinOptions) }
         val words = runReadAction {
             val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
             specialSymbols.first +
@@ -80,7 +85,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val effectiveSearchScope = runReadAction {
             val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
-            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.union(queryParameters.effectiveSearchScope(e)) }
+            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.unionSafe(queryParameters.effectiveSearchScope(e)) }
         }
 
         val refFilter: (PsiReference) -> Boolean = when {
@@ -89,9 +94,6 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             else -> ({true})
         }
 
-
-        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
-                            ?: KotlinReferencesSearchOptions.Empty
         val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
         if (kotlinOptions.anyEnabled()) {
@@ -146,7 +148,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
     companion object {
         fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
-            val className = element.name
+            val className = runReadAction { element.name }
             if (className != null) {
                 val lightClass = runReadAction { element.toLightClass() }
                 if (lightClass != null) {

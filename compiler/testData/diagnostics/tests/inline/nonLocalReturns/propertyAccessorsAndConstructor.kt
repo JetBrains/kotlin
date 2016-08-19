@@ -7,7 +7,7 @@ inline fun <R> doCallInt(p: () -> R): R {
 }
 
 class A {
-    var result: Int = doCallInt { <!RETURN_NOT_ALLOWED!>return this<!> };
+    var result: Int = doCallInt { <!RETURN_NOT_ALLOWED!>return<!> this };
 
     var field: Int
         get() {

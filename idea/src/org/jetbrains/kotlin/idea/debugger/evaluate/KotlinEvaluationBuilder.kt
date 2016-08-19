@@ -43,6 +43,7 @@ import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -90,20 +91,18 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
-        val file = position.file
-        if (file !is KtFile) {
-            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
-        }
-
         if (position.line < 0) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression at $position")
         }
 
-        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-        if (document == null || document.lineCount < position.line) {
-            throw EvaluateExceptionUtil.createEvaluateException(
-                    "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
-                    "It may happen when you've changed source file after starting a debug process.")
+        val file = position.file
+        if (file is KtFile) {
+            val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+            if (document == null || document.lineCount < position.line) {
+                throw EvaluateExceptionUtil.createEvaluateException(
+                        "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
+                        "It may happen when you've changed source file after starting a debug process.")
+            }
         }
 
         if (codeFragment.context !is KtElement) {
@@ -548,7 +547,7 @@ fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
 
     val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
 
-    val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName)
+    val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName, DefaultBuiltIns.Instance)
     if (platformClasses.isNotEmpty()) return platformClasses.first()
 
     return runReadAction {

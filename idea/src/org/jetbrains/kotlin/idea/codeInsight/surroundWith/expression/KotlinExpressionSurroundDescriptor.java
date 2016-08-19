@@ -37,7 +37,10 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
     @Override
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        KtExpression expression = CodeInsightUtils.findExpression(file, startOffset, endOffset);
+        KtExpression expression = (KtExpression) CodeInsightUtils.findElement(file,
+                                                                              startOffset,
+                                                                              endOffset,
+                                                                              CodeInsightUtils.ElementKind.EXPRESSION);
         if (expression == null) {
             return PsiElement.EMPTY_ARRAY;
         }

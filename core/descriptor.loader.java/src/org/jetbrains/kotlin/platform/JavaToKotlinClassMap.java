@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -34,59 +31,59 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getFqNameUnsafe;
+
 public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
-    private final Map<FqName, ClassDescriptor> javaToKotlin = new HashMap<FqName, ClassDescriptor>();
+    private final Map<FqNameUnsafe, FqName> javaToKotlin = new HashMap<FqNameUnsafe, FqName>();
     private final Map<FqNameUnsafe, ClassId> kotlinToJava = new HashMap<FqNameUnsafe, ClassId>();
 
-    private final Map<ClassDescriptor, ClassDescriptor> mutableToReadOnly = new HashMap<ClassDescriptor, ClassDescriptor>();
-    private final Map<ClassDescriptor, ClassDescriptor> readOnlyToMutable = new HashMap<ClassDescriptor, ClassDescriptor>();
-    private final CompanionObjectMapping companionObjectMapping;
+    private final Map<FqNameUnsafe, FqName> mutableToReadOnly = new HashMap<FqNameUnsafe, FqName>();
+    private final Map<FqNameUnsafe, FqName> readOnlyToMutable = new HashMap<FqNameUnsafe, FqName>();
 
     private JavaToKotlinClassMap() {
-        KotlinBuiltIns builtIns = JvmBuiltIns.getInstance();
+        add(Object.class, FQ_NAMES.any);
+        add(String.class, FQ_NAMES.string);
+        add(CharSequence.class, FQ_NAMES.charSequence);
+        add(Throwable.class, FQ_NAMES.throwable);
+        add(Cloneable.class, FQ_NAMES.cloneable);
+        add(Number.class, FQ_NAMES.number);
+        add(Comparable.class, FQ_NAMES.comparable);
+        add(Enum.class, FQ_NAMES._enum);
+        add(Annotation.class, FQ_NAMES.annotation);
 
-        add(Object.class, builtIns.getAny());
-        add(String.class, builtIns.getString());
-        add(CharSequence.class, builtIns.getCharSequence());
-        add(Throwable.class, builtIns.getThrowable());
-        add(Cloneable.class, builtIns.getCloneable());
-        add(Number.class, builtIns.getNumber());
-        add(Comparable.class, builtIns.getComparable());
-        add(Enum.class, builtIns.getEnum());
-        add(Annotation.class, builtIns.getAnnotation());
-
-        add(Iterable.class, builtIns.getIterable(), builtIns.getMutableIterable());
-        add(Iterator.class, builtIns.getIterator(), builtIns.getMutableIterator());
-        add(Collection.class, builtIns.getCollection(), builtIns.getMutableCollection());
-        add(List.class, builtIns.getList(), builtIns.getMutableList());
-        add(Set.class, builtIns.getSet(), builtIns.getMutableSet());
-        add(Map.class, builtIns.getMap(), builtIns.getMutableMap());
-        add(Map.Entry.class, builtIns.getMapEntry(), builtIns.getMutableMapEntry());
-        add(ListIterator.class, builtIns.getListIterator(), builtIns.getMutableListIterator());
+        add(Iterable.class, FQ_NAMES.iterable, FQ_NAMES.mutableIterable);
+        add(Iterator.class, FQ_NAMES.iterator, FQ_NAMES.mutableIterator);
+        add(Collection.class, FQ_NAMES.collection, FQ_NAMES.mutableCollection);
+        add(List.class, FQ_NAMES.list, FQ_NAMES.mutableList);
+        add(Set.class, FQ_NAMES.set, FQ_NAMES.mutableSet);
+        add(Map.class, FQ_NAMES.map, FQ_NAMES.mutableMap);
+        add(Map.Entry.class, FQ_NAMES.mapEntry, FQ_NAMES.mutableMapEntry);
+        add(ListIterator.class, FQ_NAMES.listIterator, FQ_NAMES.mutableListIterator);
 
         for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
-            add(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
+            add(ClassId.topLevel(jvmType.getWrapperFqName()), KotlinBuiltIns.getPrimitiveFqName(jvmType.getPrimitiveType()));
         }
 
-        companionObjectMapping = new CompanionObjectMapping(builtIns);
-        for (ClassDescriptor descriptor : companionObjectMapping.allClassesWithIntrinsicCompanions()) {
-            ClassDescriptor companion = descriptor.getCompanionObjectDescriptor();
-            assert companion != null : "No companion object found for " + descriptor;
-            add(ClassId.topLevel(new FqName("kotlin.jvm.internal." + descriptor.getName().asString() + "CompanionObject")), companion);
+        for (FqName fqName : CompanionObjectMapping.INSTANCE.allClassesWithIntrinsicCompanions()) {
+            add(ClassId.topLevel(
+                    new FqName("kotlin.jvm.internal." + fqName.shortName().asString() + "CompanionObject")),
+                    fqName.child(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT));
         }
 
         // TODO: support also functions with >= 23 parameters
         for (int i = 0; i < 23; i++) {
-            add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), builtIns.getFunction(i));
+            add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), KotlinBuiltIns.getFunctionFqName(i));
 
             FunctionClassDescriptor.Kind kFunction = FunctionClassDescriptor.Kind.KFunction;
             String kFun = kFunction.getPackageFqName() + "." + kFunction.getClassNamePrefix();
-            addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
+            addKotlinToJava(new FqName(kFun + i), ClassId.topLevel(new FqName(kFun)));
         }
 
-        addKotlinToJava(builtIns.getNothing(), classId(Void.class));
+        addKotlinToJava(FQ_NAMES.nothing.toSafe(), classId(Void.class));
     }
 
     /**
@@ -100,8 +97,9 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * kotlin.jvm.functions.Function3 -> kotlin.Function3
      */
     @Nullable
-    public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName) {
-        return javaToKotlin.get(fqName);
+    public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName, @NotNull KotlinBuiltIns builtIns) {
+        FqName kotlinFqName = javaToKotlin.get(fqName.toUnsafe());
+        return kotlinFqName != null ? builtIns.getBuiltInClassByFqName(kotlinFqName) : null;
     }
 
     /**
@@ -119,43 +117,39 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return kotlinToJava.get(kotlinFqName);
     }
 
-    public boolean isMappedCompanion(@NotNull ClassDescriptor descriptor) {
-        return companionObjectMapping.hasMappingToObject(descriptor);
-    }
-
     private void add(
             @NotNull Class<?> javaClass,
-            @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor
+            @NotNull FqName kotlinReadOnlyFqName,
+            @NotNull FqName kotlinMutableFqName
     ) {
         ClassId javaClassId = classId(javaClass);
 
-        add(javaClassId, kotlinDescriptor);
-        addKotlinToJava(kotlinMutableDescriptor, javaClassId);
+        add(javaClassId, kotlinReadOnlyFqName);
+        addKotlinToJava(kotlinMutableFqName, javaClassId);
 
-        mutableToReadOnly.put(kotlinMutableDescriptor, kotlinDescriptor);
-        readOnlyToMutable.put(kotlinDescriptor, kotlinMutableDescriptor);
+        mutableToReadOnly.put(kotlinMutableFqName.toUnsafe(), kotlinReadOnlyFqName);
+        readOnlyToMutable.put(kotlinReadOnlyFqName.toUnsafe(), kotlinMutableFqName);
     }
 
-    private void add(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        addJavaToKotlin(javaClassId, kotlinDescriptor);
-        addKotlinToJava(kotlinDescriptor, javaClassId);
+    private void add(@NotNull ClassId javaClassId, @NotNull FqName kotlinFqName) {
+        addJavaToKotlin(javaClassId, kotlinFqName);
+        addKotlinToJava(kotlinFqName, javaClassId);
     }
 
-    private void add(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        add(classId(javaClass), kotlinDescriptor);
+    private void add(@NotNull Class<?> javaClass, @NotNull FqNameUnsafe kotlinFqName) {
+        add(javaClass, kotlinFqName.toSafe());
     }
 
-    private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        javaToKotlin.put(javaClassId.asSingleFqName(), kotlinDescriptor);
+    private void add(@NotNull Class<?> javaClass, @NotNull FqName kotlinFqName) {
+        add(classId(javaClass), kotlinFqName);
     }
 
-    private void addKotlinToJava(@NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassId javaClassId) {
-        addKotlinToJava(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
+    private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull FqName kotlinFqName) {
+        javaToKotlin.put(javaClassId.asSingleFqName().toUnsafe(), kotlinFqName);
     }
 
-    private void addKotlinToJava(@NotNull FqNameUnsafe kotlinFqName, @NotNull ClassId javaClassId) {
-        kotlinToJava.put(kotlinFqName, javaClassId);
+    private void addKotlinToJava(@NotNull FqName kotlinFqNameUnsafe, @NotNull ClassId javaClassId) {
+        kotlinToJava.put(kotlinFqNameUnsafe.toUnsafe(), javaClassId);
     }
 
     @NotNull
@@ -168,25 +162,27 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     }
 
     @NotNull
-    public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName) {
-        ClassDescriptor kotlinAnalog = mapJavaToKotlin(fqName);
+    public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName, @NotNull KotlinBuiltIns builtIns) {
+        ClassDescriptor kotlinAnalog = mapJavaToKotlin(fqName, builtIns);
         if (kotlinAnalog == null) return Collections.emptySet();
 
-        ClassDescriptor kotlinMutableAnalog = readOnlyToMutable.get(kotlinAnalog);
-        if (kotlinMutableAnalog == null) return Collections.singleton(kotlinAnalog);
+        FqName kotlinMutableAnalogFqName = readOnlyToMutable.get(getFqNameUnsafe(kotlinAnalog));
+        if (kotlinMutableAnalogFqName == null) return Collections.singleton(kotlinAnalog);
 
-        return Arrays.asList(kotlinAnalog, kotlinMutableAnalog);
+        return Arrays.asList(kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName));
     }
 
     @Override
     @NotNull
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
         FqNameUnsafe className = DescriptorUtils.getFqName(classDescriptor);
-        return className.isSafe() ? mapPlatformClass(className.toSafe()) : Collections.<ClassDescriptor>emptySet();
+        return className.isSafe()
+               ? mapPlatformClass(className.toSafe(), getBuiltIns(classDescriptor))
+               : Collections.<ClassDescriptor>emptySet();
     }
 
     public boolean isMutable(@NotNull ClassDescriptor mutable) {
-        return mutableToReadOnly.containsKey(mutable);
+        return mutableToReadOnly.containsKey(DescriptorUtils.getFqName(mutable));
     }
 
     public boolean isMutable(@NotNull KotlinType type) {
@@ -195,7 +191,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     }
 
     public boolean isReadOnly(@NotNull ClassDescriptor readOnly) {
-        return readOnlyToMutable.containsKey(readOnly);
+        return readOnlyToMutable.containsKey(DescriptorUtils.getFqName(readOnly));
     }
 
     public boolean isReadOnly(@NotNull KotlinType type) {
@@ -205,19 +201,24 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
 
     @NotNull
     public ClassDescriptor convertMutableToReadOnly(@NotNull ClassDescriptor mutable) {
-        ClassDescriptor readOnly = mutableToReadOnly.get(mutable);
-        if (readOnly == null) {
-            throw new IllegalArgumentException("Given class " + mutable + " is not a mutable collection");
+        return convertToOppositeMutability(mutable, mutableToReadOnly, "mutable");
+    }
+
+    @NotNull
+    private static ClassDescriptor convertToOppositeMutability(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull Map<FqNameUnsafe, FqName> map,
+            @NotNull String mutabilityKindName
+    ) {
+        FqName oppositeClassFqName = map.get(DescriptorUtils.getFqName(descriptor));
+        if (oppositeClassFqName == null) {
+            throw new IllegalArgumentException("Given class " + descriptor + " is not a " + mutabilityKindName + " collection");
         }
-        return readOnly;
+        return getBuiltIns(descriptor).getBuiltInClassByFqName(oppositeClassFqName);
     }
 
     @NotNull
     public ClassDescriptor convertReadOnlyToMutable(@NotNull ClassDescriptor readOnly) {
-        ClassDescriptor mutable = readOnlyToMutable.get(readOnly);
-        if (mutable == null) {
-            throw new IllegalArgumentException("Given class " + readOnly + " is not a read-only collection");
-        }
-        return mutable;
+        return convertToOppositeMutability(readOnly, readOnlyToMutable, "read-only");
     }
 }

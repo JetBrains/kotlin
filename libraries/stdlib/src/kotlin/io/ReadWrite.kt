@@ -158,7 +158,7 @@ public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
     } catch (e: Exception) {
         closed = true
         try {
-            close()
+            this?.close()
         } catch (closeException: Exception) {
             // eat the closeException as we are already throwing the original cause
             // and we don't want to mask the real exception
@@ -171,7 +171,7 @@ public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
         throw e
     } finally {
         if (!closed) {
-            close()
+            this?.close()
         }
     }
 }

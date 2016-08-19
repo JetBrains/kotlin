@@ -843,7 +843,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         if (beforeMethodChange) {
-            if (method !is PsiMethod || initializedOriginalDescriptor) return true
+            if (method !is PsiMethod || initializedOriginalDescriptor) return false
 
             val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
             if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true

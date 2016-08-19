@@ -248,6 +248,18 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideDirectoryTest("foo")
     }
 
+    fun testPlatformCollectionTypes() {
+        doOverrideDirectoryTest("foo")
+    }
+
+    fun testNullableJavaType() {
+        doOverrideDirectoryTest("foo")
+    }
+
+    fun testNullableKotlinType() {
+        doOverrideDirectoryTest("foo")
+    }
+
     fun testAbstractAndNonAbstractInheritedFromInterface() {
         doImplementFileTest("getFoo")
     }

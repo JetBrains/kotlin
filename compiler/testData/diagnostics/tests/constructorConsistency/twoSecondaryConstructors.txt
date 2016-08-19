@@ -1,0 +1,12 @@
+package
+
+public fun use(/*0*/ x: kotlin.Any?): kotlin.Any?
+
+public final class Eap {
+    public constructor Eap(/*0*/ foo: kotlin.Int)
+    public constructor Eap(/*0*/ foo: kotlin.String)
+    private final val foo: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

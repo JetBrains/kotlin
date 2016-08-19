@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
+import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractJavaModelWrappersTest
+import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractKotlinModelWrappersTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
@@ -1018,6 +1020,16 @@ fun main(args: Array<String>) {
             model("collectToFile", recursive = false, extension = null)
         }
     }
+    
+    testGroup("plugins/plugins-tests/tests", "plugins/annotation-processing/testData") {
+        testClass<AbstractJavaModelWrappersTest>() {
+            model("javaWrappers", extension = null)
+        }
+        
+        testClass<AbstractKotlinModelWrappersTest>() {
+            model("kotlinWrappers", extension = "kt")
+        }
+    }
 
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest>() {
@@ -1106,6 +1118,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractCastTest>() {
             model("expression/cast/cases")
+        }
+
+        testClass<AbstractLightReflectionTest>() {
+            model("reflection/light/cases")
         }
     }
 

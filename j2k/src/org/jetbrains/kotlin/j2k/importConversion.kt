@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.j2k.ast.Import
 import org.jetbrains.kotlin.j2k.ast.ImportList
@@ -59,7 +60,7 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
         if (annotationConverter.isImportNotRequired(fqName)) return emptyList()
 
         // If imported class has a kotlin analog, drop the import
-        if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isEmpty()) return emptyList()
+        if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName, DefaultBuiltIns.Instance).isEmpty()) return emptyList()
     }
 
     //TODO: how to detect compiled Kotlin here?

@@ -220,6 +220,7 @@ data class ExtractionData(
                 if (shouldSkipPrimaryReceiver && !(originalResolveResult.resolvedCall?.hasBothReceivers() ?: false)) continue
             }
             else {
+                if (newRef.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) continue
                 smartCast = originalContext[BindingContext.SMARTCAST, originalResolveResult.originalRefExpr]
                 possibleTypes = getPossibleTypes(originalResolveResult.originalRefExpr, originalResolveResult.resolvedCall, originalContext)
                 shouldSkipPrimaryReceiver = false

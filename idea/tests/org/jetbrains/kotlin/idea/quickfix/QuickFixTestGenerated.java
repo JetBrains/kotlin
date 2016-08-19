@@ -383,6 +383,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addInlineToReifiedFunctionFix")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddInlineToReifiedFunctionFix extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddInlineToReifiedFunctionFix() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInlineToReifiedFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addInlineToReifiedFunctionFix/basic.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addNoinline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1851,6 +1866,42 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("nestedClassByTypeArgumentRefWithBody.kt")
                 public void testNestedClassByTypeArgumentRefWithBody() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/nestedClassByTypeArgumentRefWithBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAnnotationForTypeBound.kt")
+                public void testNoAnnotationForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noAnnotationForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAnnotationForTypeConstraint.kt")
+                public void testNoAnnotationForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noAnnotationForTypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noEnumForTypeBound.kt")
+                public void testNoEnumForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noEnumForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noEnumForTypeConstraint.kt")
+                public void testNoEnumForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noEnumForTypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noObjectForTypeBound.kt")
+                public void testNoObjectForTypeBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noObjectForTypeBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noObjectForTypeConstraint.kt")
+                public void testNoObjectForTypeConstraint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/noObjectForTypeConstraint.kt");
                     doTest(fileName);
                 }
 
@@ -3552,6 +3603,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonAbstractInInterface.kt")
+                public void testNonAbstractInInterface() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/nonAbstractInInterface.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("objectMemberValNoReceiver.kt")
                 public void testObjectMemberValNoReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/objectMemberValNoReceiver.kt");
@@ -4758,6 +4815,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("fixNullableBinaryWithExclExcl.kt")
+        public void testFixNullableBinaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableBinaryWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableInfixWithExclExcl.kt")
+        public void testFixNullableInfixWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableInfixWithExclExcl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fixNullableIterableGenericWithExclExcl.kt")
         public void testFixNullableIterableGenericWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableGenericWithExclExcl.kt");
@@ -4767,6 +4836,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("fixNullableIterableWithExclExcl.kt")
         public void testFixNullableIterableWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableUnaryWithExclExcl.kt")
+        public void testFixNullableUnaryWithExclExcl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableUnaryWithExclExcl.kt");
             doTest(fileName);
         }
 
@@ -6123,6 +6198,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unsafeComparisonInCondition.kt")
+            public void testUnsafeComparisonInCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInLogic.kt")
+            public void testUnsafeComparisonInLogic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInLogic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInWhen.kt")
+            public void testUnsafeComparisonInWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhen.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeComparisonInWhile.kt")
+            public void testUnsafeComparisonInWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeComparisonInWhile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsafeGet.kt")
             public void testUnsafeGet() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeGet.kt");
@@ -6785,6 +6884,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/removeToStringInStringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveToStringInStringTemplate extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRemoveToStringInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeToStringInStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("call.kt")
+        public void testCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/call.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("name.kt")
+        public void testName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/name.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameWithPostfix.kt")
+        public void testNameWithPostfix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/nameWithPostfix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeToStringInStringTemplate/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/removeUnused")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6829,9 +6961,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("usedClassAsAlias.kt")
+        public void testUsedClassAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedClassAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedFunAsAlias.kt")
+        public void testUsedFunAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedFunAsAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("usedObjectAsAlias.kt")
         public void testUsedObjectAsAlias() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedVarAsAlias.kt")
+        public void testUsedVarAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedVarAsAlias.kt");
             doTest(fileName);
         }
     }
@@ -7353,6 +7503,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("param.kt")
             public void testParam() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/declarationKinds/param.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/declarationKinds/secondaryConstructor.kt");
                 doTest(fileName);
             }
 
@@ -8158,6 +8314,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("changeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime.kt")
         public void testChangeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForAnonymousObject.kt")
+        public void testChangeReturnTypeNoFqNameForAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForCompanionObject.kt")
+        public void testChangeReturnTypeNoFqNameForCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForLocalClass.kt")
+        public void testChangeReturnTypeNoFqNameForLocalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForLocalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForNestedClass.kt")
+        public void testChangeReturnTypeNoFqNameForNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeNoFqNameForTopLevelClass.kt")
+        public void testChangeReturnTypeNoFqNameForTopLevelClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForTopLevelClass.kt");
             doTest(fileName);
         }
 

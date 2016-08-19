@@ -28,16 +28,17 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.SmartList
 
 class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is KtParameter && element.ownerFunction is KtNamedFunction
+    override fun canProcessElement(element: PsiElement) = element is KtParameter && element.ownerFunction is KtFunction
 
     override fun isToSearchInComments(psiElement: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_VARIABLE
 
@@ -84,7 +85,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
                 else -> null
             }
             if (parameter == null) continue
-            allRenames[parameter] = newName
+            allRenames[parameter] = newName.quoteIfNeeded()
         }
     }
 

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -154,9 +155,7 @@ class KotlinPushDownProcessor(
                             }
                         }
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
-                            if (hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                                addModifier(KtTokens.PROTECTED_KEYWORD)
-                            }
+                            KtTokens.VISIBILITY_MODIFIERS.types.forEach { removeModifier(it as KtModifierKeywordToken) }
                             addModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                     }

@@ -180,7 +180,8 @@ class VarianceCheckerCore(
 
         var noError = true
         for (argumentBinding in getArgumentBindings()) {
-            if (argumentBinding == null || argumentBinding.typeParameterDescriptor == null) continue
+            if (argumentBinding == null || argumentBinding.typeParameterDescriptor == null ||
+                argumentBinding.typeProjection.isStarProjection) continue
 
             val projectionKind = getEffectiveProjectionKind(argumentBinding.typeParameterDescriptor!!, argumentBinding.typeProjection)!!
             val newPosition = when (projectionKind) {

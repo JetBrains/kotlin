@@ -22,6 +22,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -78,6 +79,7 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
                 val funDescription = "$name$paramsDescription" + (returnTypeDescription?.let { ": $it" } ?: "")
                 return funDescription + (element.containerDescription?.let { " of $it" } ?: "")
             }
+            is KtLightElement<*, *> -> element.kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
             else -> ""
         }
     }

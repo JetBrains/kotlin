@@ -20,23 +20,29 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
+import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class FoldIfToReturnIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with return") {
+
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.then) == null) return null
-        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.`else`) == null) return null
+        val branches = element.branches
+
+        val lastElse = branches.lastOrNull()?.getStrictParentOfType<KtIfExpression>()?.`else` ?: return null
+        if (BranchedFoldingUtils.getFoldableBranchedReturn(lastElse) == null) return null
+
+        if (branches.any { BranchedFoldingUtils.getFoldableBranchedReturn(it) == null }) return null
         return element.ifKeyword.textRange
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.then!!)!!
-        val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.`else`!!)!!
-
-        thenReturn.replace(thenReturn.returnedExpression!!)
-        elseReturn.replace(elseReturn.returnedExpression!!)
+        for (it in element.branches) {
+            val returnExpression = BranchedFoldingUtils.getFoldableBranchedReturn(it)
+            returnExpression!!.replace(returnExpression.returnedExpression!!)
+        }
 
         element.replace(KtPsiFactory(element).createExpressionByPattern("return $0", element))
     }

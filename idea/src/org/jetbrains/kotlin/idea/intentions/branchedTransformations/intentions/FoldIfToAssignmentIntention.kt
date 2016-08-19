@@ -20,27 +20,38 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
+import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with assignment") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.then) ?: return null
-        val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.`else`) ?: return null
-        if (!BranchedFoldingUtils.checkAssignmentsMatch(thenAssignment, elseAssignment)) return null
+        val branches = element.branches
+
+        if (branches.lastOrNull()?.getStrictParentOfType<KtIfExpression>()?.`else` == null) return null
+        if (branches.size < 2) return null
+
+        for (i in 0..branches.size - 2) {
+            val assignment1 = BranchedFoldingUtils.getFoldableBranchedAssignment(branches[i]) ?: return null
+            val assignment2 = BranchedFoldingUtils.getFoldableBranchedAssignment(branches[i + 1]) ?: return null
+            if (!BranchedFoldingUtils.checkAssignmentsMatch(assignment1, assignment2)) return null
+        }
+
         return element.ifKeyword.textRange
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        var thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.then!!)!!
-        val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.`else`!!)!!
+        val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.then!!)!!
 
         val op = thenAssignment.operationReference.text
         val leftText = thenAssignment.left!!.text
 
-        thenAssignment.replace(thenAssignment.right!!)
-        elseAssignment.replace(elseAssignment.right!!)
+        element.branches.forEach {
+            val assignment = BranchedFoldingUtils.getFoldableBranchedAssignment(it!!)!!
+            assignment.replace(assignment.right!!)
+        }
 
         element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $1 $2", leftText, op, element))
     }

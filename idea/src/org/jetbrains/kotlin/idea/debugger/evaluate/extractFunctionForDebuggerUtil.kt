@@ -82,7 +82,7 @@ fun getFunctionForExtractedFragment(
     }
 
     fun generateFunction(): ExtractionResult? {
-        val originalFile = breakpointFile as KtFile
+        val originalFile = codeFragment.getContextContainingFile() ?: return null
 
         val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
@@ -124,6 +124,7 @@ fun addDebugExpressionIntoTmpFileForExtractFunction(originalFile: KtFile, codeFr
 
     val tmpFile = originalFile.copy() as KtFile
     tmpFile.suppressDiagnosticsInDebugMode = true
+    tmpFile.analysisContext = originalFile.analysisContext
 
     val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getOriginalContext(), line) ?: return emptyList()
 

@@ -43,7 +43,6 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                 val context = expression.analyzeFully()
                 val leakingThisDescriptor = context.get(LEAKING_THIS, expression) ?: return
                 val description = when (leakingThisDescriptor) {
-                    is PropertyIsNull -> return // Not supported yet
                     is NonFinalClass ->
                         if (expression is KtThisExpression)
                             "Leaking 'this' in constructor of non-final class ${leakingThisDescriptor.klass.name}"
@@ -53,6 +52,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                         "Accessing non-final property ${leakingThisDescriptor.property.name} in constructor"
                     is NonFinalFunction ->
                         "Calling non-final function ${leakingThisDescriptor.function.name} in constructor"
+                    else -> return // Not supported yet
                 }
                 val memberDescriptorToFix = when (leakingThisDescriptor) {
                     is NonFinalProperty -> leakingThisDescriptor.property

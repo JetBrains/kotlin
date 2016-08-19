@@ -72,8 +72,14 @@ abstract class BaseGradleIT {
             val androidHome: File? = null,
             val androidGradlePluginVersion: String? = null)
 
-    open inner class Project(val projectName: String, val wrapperVersion: String, val minLogLevel: LogLevel = LogLevel.DEBUG) {
-        open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
+    open inner class Project(
+            val projectName: String,
+            val wrapperVersion: String,
+            directoryPrefix: String? = null,
+            val minLogLevel: LogLevel = LogLevel.DEBUG
+    ) {
+        val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
+        open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
@@ -90,6 +96,25 @@ abstract class BaseGradleIT {
         fun relativizeToSubproject(subproject: String, vararg files: File): List<String> {
             val subprojectSir = File(projectDir, subproject)
             return files.map { it.relativeTo(subprojectSir).path }
+        }
+
+        fun performModifications() {
+            for (file in projectDir.walk()) {
+                if (!file.isFile) continue
+
+                val fileWithoutExt = File(file.parentFile, file.nameWithoutExtension)
+
+                when (file.extension) {
+                    "new" -> {
+                        file.copyTo(fileWithoutExt, overwrite = true)
+                        file.delete()
+                    }
+                    "delete" -> {
+                        fileWithoutExt.delete()
+                        file.delete()
+                    }
+                }
+            }
         }
     }
 

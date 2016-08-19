@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -79,7 +80,7 @@ class AutomaticVariableRenamer(
             myElements.add(parameterOrVariable)
         }
 
-        suggestAllNames(klass.name, newClassName)
+        suggestAllNames(klass.name?.unquote(), newClassName.unquote())
     }
 
     override fun getDialogTitle() = RefactoringBundle.message("rename.variables.title")

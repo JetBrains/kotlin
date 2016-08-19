@@ -100,6 +100,10 @@ public class CompilerConfiguration {
             this.readOnly = readOnly;
         }
     }
+    
+    public boolean isReadOnly() {
+        return readOnly;
+    }
 
     @NotNull
     private static <T> T unmodifiable(@NotNull T object) {

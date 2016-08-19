@@ -64,7 +64,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
     private var bindingContext: BindingContext by Delegates.notNull()
     private var module: ModuleDescriptor by Delegates.notNull()
 
-
+    
     override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
         this.bindingContext = trace.bindingContext
         this.module = module

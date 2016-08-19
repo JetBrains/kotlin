@@ -340,7 +340,10 @@
             }
     });
 
-    Kotlin.Enum = Kotlin.createClassNow(null,
+    lazyInitClasses.Enum = Kotlin.createClass(
+        function() {
+            return [Kotlin.Comparable];
+        },
         function () {
             this.name$ = void 0;
             this.ordinal$ = void 0;
@@ -665,19 +668,19 @@
             }
         });
 
-    Kotlin.Runnable = Kotlin.createClassNow(null, null, {
+    Kotlin.Runnable = Kotlin.createTraitNow(null, null, {
         run: throwAbstractFunctionInvocationError("Runnable#run")
     });
 
-    Kotlin.Comparable = Kotlin.createClassNow(null, null, {
+    Kotlin.Comparable = Kotlin.createTraitNow(null, null, {
         compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
     });
 
-    Kotlin.Appendable = Kotlin.createClassNow(null, null, {
+    Kotlin.Appendable = Kotlin.createTraitNow(null, null, {
         append: throwAbstractFunctionInvocationError("Appendable#append")
     });
 
-    Kotlin.Closeable = Kotlin.createClassNow(null, null, {
+    Kotlin.Closeable = Kotlin.createTraitNow(null, null, {
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
 

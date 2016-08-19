@@ -64,6 +64,7 @@ import java.awt.Insets
 import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
@@ -243,15 +244,15 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             val import = ref.element.getParentOfType<KtImportDirective>(false)
             if (import != null) {
+                if (import.aliasName != null && import.aliasName != declaration.name) {
+                    return false
+                }
                 // check if we import member(s) from object or enum and search for their usages
                 if (declaration is KtObjectDeclaration || (declaration is KtClass && declaration.isEnum())) {
                     if (import.isAllUnder) {
                         val importedFrom = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve()
                                                    as? KtClassOrObject ?: return true
                         return importedFrom.declarations.none { it is KtNamedDeclaration && hasNonTrivialUsages(it) }
-                    }
-                    else if (import.aliasName != null && import.aliasName != declaration.name) {
-                        return false
                     }
                     else {
                         if (import.importedFqName != declaration.fqName) {
@@ -313,10 +314,10 @@ class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
 
     override fun getFamilyName() = "Safe delete"
 
-    fun startInWriteAction(): Boolean = false
-
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
-        SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
+        SwingUtilities.invokeLater {
+            SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
+        }
     }
 }

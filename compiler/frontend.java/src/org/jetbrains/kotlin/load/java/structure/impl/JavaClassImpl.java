@@ -22,7 +22,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker;
+import org.jetbrains.kotlin.asJava.KtLightClassMarker;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
@@ -154,9 +154,14 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
         return JavaElementUtil.getVisibility(this);
     }
 
+    @Nullable
     @Override
-    public boolean isKotlinLightClass() {
-        return getPsi() instanceof KtJavaMirrorMarker;
+    public LightClassOriginKind getLightClassOriginKind() {
+        PsiClass psiClass = getPsi();
+        if (psiClass instanceof KtLightClassMarker) {
+            return ((KtLightClassMarker) psiClass).getOriginKind();
+        }
+        return null;
     }
 
     @Nullable

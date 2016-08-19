@@ -1,0 +1,19 @@
+class WithNested {
+    void myClassFun()
+
+    static class NestedClass {
+        void nestedClassFun()
+    }
+
+    class InnerClass {
+        void innerClassFun()
+    
+        class InnerInnerClass {
+            void innerInnerClassFun()
+        }
+    }
+
+    static abstract interface NestedInterface {
+        public abstract void nestedInterfaceFun()
+    }
+}

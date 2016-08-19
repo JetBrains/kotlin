@@ -61,40 +61,48 @@ class KotlinEditorTextProvider : EditorTextProvider {
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): KtExpression? {
             if (!isAcceptedAsCodeFragmentContext(element)) return null
 
-            val jetElement = PsiTreeUtil.getParentOfType(element, KtElement::class.java)
-            if (jetElement == null) return null
+            val ktElement = PsiTreeUtil.getParentOfType(element, KtElement::class.java) ?: return null
 
-            if (jetElement is KtProperty) {
-                val nameIdentifier = jetElement.nameIdentifier
+            if (ktElement is KtProperty) {
+                val nameIdentifier = ktElement.nameIdentifier
                 if (nameIdentifier == element) {
-                    return jetElement
+                    return ktElement
                 }
             }
 
-            val parent = jetElement.parent
-            if (parent == null) return null
+            val parent = ktElement.parent ?: return null
 
             val newExpression = when (parent) {
-                is KtThisExpression,
-                is KtSuperExpression,
-                is KtReferenceExpression -> {
+                is KtThisExpression -> parent
+                is KtSuperExpression -> {
                     val pparent = parent.parent
                     when (pparent) {
                         is KtQualifiedExpression -> pparent
                         else -> parent
                     }
                 }
-                is KtQualifiedExpression -> {
-                    if (parent.receiverExpression != jetElement) {
+                is KtReferenceExpression -> {
+                    val pparent = parent.parent
+                    if (pparent is KtQualifiedExpression && pparent.selectorExpression == parent) {
+                        pparent
+                    }
+                    else {
                         parent
-                    } else {
+                    }
+                }
+                is KtQualifiedExpression -> {
+                    if (parent.receiverExpression != ktElement) {
+                        parent
+                    }
+                    else {
                         null
                     }
                 }
                 is KtOperationExpression -> {
-                    if (parent.operationReference == jetElement) {
+                    if (parent.operationReference == ktElement) {
                         parent
-                    } else {
+                    }
+                    else {
                         null
                     }
                 }
@@ -104,22 +112,21 @@ class KotlinEditorTextProvider : EditorTextProvider {
             if (!allowMethodCalls && newExpression != null) {
                 fun PsiElement.isCall() = this is KtCallExpression || this is KtOperationExpression || this is KtArrayAccessExpression
 
-                if (newExpression.isCall() ||
-                        newExpression is KtQualifiedExpression && newExpression.selectorExpression!!.isCall()) {
+                if (newExpression.isCall() || newExpression is KtQualifiedExpression && newExpression.selectorExpression!!.isCall()) {
                     return null
                 }
             }
 
             return when {
                 newExpression is KtExpression -> newExpression
-                jetElement is KtSimpleNameExpression -> {
-                    val context = jetElement.analyzeAndGetResult().bindingContext
-                    val qualifier = context[BindingContext.QUALIFIER, jetElement]
+                ktElement is KtSimpleNameExpression -> {
+                    val context = ktElement.analyzeAndGetResult().bindingContext
+                    val qualifier = context[BindingContext.QUALIFIER, ktElement]
                     if (qualifier != null && !DescriptorUtils.isObject(qualifier.descriptor)) {
                         null
                     }
                     else {
-                        jetElement
+                        ktElement
                     }
                 }
                 else -> null
@@ -136,4 +143,3 @@ class KotlinEditorTextProvider : EditorTextProvider {
         }
     }
 }
-

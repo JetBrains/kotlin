@@ -50,6 +50,7 @@ fun ranges(): List<GenericFunction> {
         doc {
             """
             Returns a progression from this value down to the specified [to] value with the step -1.
+
             The [to] value has to be less than this value.
             """
         }
@@ -86,6 +87,7 @@ fun ranges(): List<GenericFunction> {
         doc {
             """
             Returns a range from this value up to but excluding the specified [to] value.
+
             ${ if (elementType == toType) "The [to] value must be greater than [$elementType.MIN_VALUE]." else "" }
             """
         }

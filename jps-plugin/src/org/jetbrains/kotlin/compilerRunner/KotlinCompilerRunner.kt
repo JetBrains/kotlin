@@ -289,6 +289,7 @@ object KotlinCompilerRunner {
         with(settings) {
             module = moduleFile.absolutePath
             noStdlib = true
+            noReflect = true
             noJdk = true
         }
     }

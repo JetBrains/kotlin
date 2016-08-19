@@ -63,4 +63,8 @@ class FakeCallableDescriptorForObject(
     override fun getSource(): SourceElement = classDescriptor.source
 
     override fun isConst(): Boolean = false
+
+    override fun equals(other: Any?) = other is FakeCallableDescriptorForObject && classDescriptor == other.classDescriptor
+
+    override fun hashCode() = classDescriptor.hashCode()
 }

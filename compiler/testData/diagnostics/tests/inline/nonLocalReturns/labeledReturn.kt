@@ -17,7 +17,7 @@ inline fun inlineFun(s: ()->Int) {
 fun noInlineCall(): String {
     noInline {
         if (true) {
-            <!RETURN_NOT_ALLOWED!>return@noInlineCall ""<!>
+            <!RETURN_NOT_ALLOWED!>return@noInlineCall<!> ""
         }
         1
     }

@@ -371,11 +371,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         doc[f]?.let { methodDoc ->
             builder.append("/**\n")
-            StringReader(methodDoc).forEachLine {
-                val line = it.trim()
-                if (!line.isEmpty()) {
-                    builder.append(" * ").append(line).append("\n")
-                }
+            StringReader(methodDoc.trim()).forEachLine { line ->
+                builder.append(" * ").append(line.trim()).append("\n")
             }
             builder.append(" */\n")
         }
