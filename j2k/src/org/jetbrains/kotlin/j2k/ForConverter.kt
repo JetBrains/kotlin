@@ -138,7 +138,8 @@ class ForConverter(
                     block.generateCode(builder)
                 }
                 else {
-                    val call = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block)), listOf(), false)
+                    val argumentList = ArgumentList.withNoPrototype(LambdaExpression(null, block))
+                    val call = MethodCallExpression.buildNonNull(null, "run", argumentList)
                     call.generateCode(builder)
                 }
             }
@@ -256,7 +257,7 @@ class ForConverter(
         if (indices == null) return null
 
         return if (reversed)
-            MethodCallExpression.build(indices.assignNoPrototype(), "reversed", listOf(), listOf(), false)
+            MethodCallExpression.buildNonNull(indices.assignNoPrototype(), "reversed")
         else
             indices
     }

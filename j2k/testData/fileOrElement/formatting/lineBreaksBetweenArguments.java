@@ -5,6 +5,7 @@ class F {
   void f2(int[] array) {
     f1(1, 2,
        3, 4,
-       array);
+       array
+    );
   }
 }

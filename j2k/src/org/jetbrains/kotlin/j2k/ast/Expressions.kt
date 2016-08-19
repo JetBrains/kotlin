@@ -257,5 +257,5 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
             "arrayOf<" + arrayType.elementType.canonicalCode() + ">"
         else
             "arrayOf"
-    return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers)
+    return MethodCallExpression.buildNonNull(null, createArrayFunction, ArgumentList.withNoPrototype(initializers))
 }

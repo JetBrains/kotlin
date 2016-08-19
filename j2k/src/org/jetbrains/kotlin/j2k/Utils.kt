@@ -34,8 +34,8 @@ fun getDefaultInitializer(property: Property): Expression? {
         when (t.name.name) {
             "Boolean" -> LiteralExpression("false")
             "Char" -> LiteralExpression("' '")
-            "Double" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
-            "Float" -> MethodCallExpression.buildNotNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
+            "Double" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
+            "Float" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
             else -> LiteralExpression("0")
         }
     }
