@@ -54,6 +54,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtClass -> if (targetElement.isInterface()) "interface" else "class"
             is KtObjectDeclaration -> "object"
             is KtNamedFunction -> "function"
+            is KtPropertyAccessor -> (if (targetElement.isGetter) "getter" else "setter") + " for property "
             is KtFunctionLiteral -> "lambda"
             is KtPrimaryConstructor, is KtSecondaryConstructor -> "constructor"
             is KtProperty -> if (targetElement.isLocal) "variable" else "property"
@@ -67,17 +68,21 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             else -> null
         }
 
-        if (targetElement !is PsiNamedElement || targetElement.language != KotlinLanguage.INSTANCE) return null
+        val namedElement = if (targetElement is KtPropertyAccessor) {
+            targetElement.parent as? KtProperty
+        } else targetElement as? PsiNamedElement
+
+        if (namedElement == null || namedElement.language != KotlinLanguage.INSTANCE) return null
         return when(location) {
             is UsageViewTypeLocation -> elementKind()
-            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> targetElement.name
+            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
+                val descriptor = (namedElement as KtDeclaration).descriptor ?: return null
                 val renderFqName = location.includeParent() &&
-                                   targetElement !is KtTypeParameter &&
-                                   targetElement !is KtParameter &&
-                                   targetElement !is KtConstructor<*>
+                                   namedElement !is KtTypeParameter &&
+                                   namedElement !is KtParameter &&
+                                   namedElement !is KtConstructor<*>
                 val desc = when (descriptor) {
                     is FunctionDescriptor -> {
                         val baseText = REFACTORING_RENDERER.render(descriptor)
@@ -91,7 +96,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             }
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
+                val descriptor = (namedElement as KtDeclaration).descriptor ?: return null
                 "$kind ${descriptor.name.asString()}"
             }
             else -> null

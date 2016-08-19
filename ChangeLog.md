@@ -100,6 +100,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 #### Refactorings
 
 - [`KT-13535`](https://youtrack.jetbrains.com/issue/KT-13535) Pull Up: Remove visibility modifiers on adding 'override'
+- [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Report separate conflicts for each property accessor
 
 ## 1.0.4
 
