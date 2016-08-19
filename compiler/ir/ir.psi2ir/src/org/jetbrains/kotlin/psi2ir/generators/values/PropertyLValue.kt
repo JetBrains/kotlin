@@ -35,21 +35,21 @@ class PropertyLValue(
     override val type: KotlinType?
         get() = descriptor.type
 
-    private fun IrPropertyAccessExpression.setReceivers() =
-            apply {
-                dispatchReceiver = this@PropertyLValue.dispatchReceiver
-                extensionReceiver = this@PropertyLValue.extensionReceiver
-            }
+    override fun load(): IrExpression {
+        val getter = descriptor.getter!!
+        return IrGetterCallExpressionImpl(
+                ktElement.startOffset, ktElement.endOffset,
+                getter.returnType, getter, isSafe,
+                dispatchReceiver, extensionReceiver, IrOperator.GET_PROPERTY
+        )
+    }
 
-    override fun load(): IrExpression =
-            IrGetPropertyExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    descriptor.type, isSafe, descriptor, irOperator
-            ).setReceivers()
-
-    override fun store(irExpression: IrExpression): IrExpression =
-            IrSetPropertyExpressionImpl(
-                    ktElement.startOffset, ktElement.endOffset,
-                    isSafe, descriptor, irExpression.toExpectedType(descriptor.type), irOperator
-            ).setReceivers()
+    override fun store(irExpression: IrExpression): IrExpression {
+        val setter = descriptor.setter!!
+        val irArgument = irExpression.toExpectedType(descriptor.type)
+        val irCall = IrSetterCallExpressionImpl(ktElement.startOffset, ktElement.endOffset,
+                                                setter.returnType, setter, isSafe,
+                                                dispatchReceiver, extensionReceiver, irArgument, irOperator)
+        return irCall
+    }
 }

@@ -30,23 +30,23 @@ IrFile /augmentedAssignment1.kt
   IrFunction public fun testProperty(): kotlin.Unit
     IrExpressionBody
       BLOCK type=kotlin.Int hasResult=true operator=null
-        SET_PROPERTY .ptype=<no-type> operator=PLUSEQ
-          $value: CALL .plus type=kotlin.Int operator=PLUSEQ
-            $this: GET_PROPERTY .p type=kotlin.Int operator=PLUSEQ
+        CALL .<set-p> type=kotlin.Unit operator=PLUSEQ
+          <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
             other: LITERAL Int type=kotlin.Int value='1'
-        SET_PROPERTY .ptype=<no-type> operator=MINUSEQ
-          $value: CALL .minus type=kotlin.Int operator=MINUSEQ
-            $this: GET_PROPERTY .p type=kotlin.Int operator=MINUSEQ
+        CALL .<set-p> type=kotlin.Unit operator=MINUSEQ
+          <set-?>: CALL .minus type=kotlin.Int operator=MINUSEQ
+            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
             other: LITERAL Int type=kotlin.Int value='2'
-        SET_PROPERTY .ptype=<no-type> operator=MULTEQ
-          $value: CALL .times type=kotlin.Int operator=MULTEQ
-            $this: GET_PROPERTY .p type=kotlin.Int operator=MULTEQ
+        CALL .<set-p> type=kotlin.Unit operator=MULTEQ
+          <set-?>: CALL .times type=kotlin.Int operator=MULTEQ
+            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
             other: LITERAL Int type=kotlin.Int value='3'
-        SET_PROPERTY .ptype=<no-type> operator=DIVEQ
-          $value: CALL .div type=kotlin.Int operator=DIVEQ
-            $this: GET_PROPERTY .p type=kotlin.Int operator=DIVEQ
+        CALL .<set-p> type=kotlin.Unit operator=DIVEQ
+          <set-?>: CALL .div type=kotlin.Int operator=DIVEQ
+            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
             other: LITERAL Int type=kotlin.Int value='4'
-        SET_PROPERTY .ptype=<no-type> operator=PERCEQ
-          $value: CALL .mod type=kotlin.Int operator=PERCEQ
-            $this: GET_PROPERTY .p type=kotlin.Int operator=PERCEQ
+        CALL .<set-p> type=kotlin.Unit operator=PERCEQ
+          <set-?>: CALL .mod type=kotlin.Int operator=PERCEQ
+            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
             other: LITERAL Int type=kotlin.Int value='5'

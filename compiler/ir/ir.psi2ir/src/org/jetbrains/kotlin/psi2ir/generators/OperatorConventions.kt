@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.ir.expressions.IrBinaryOperator
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
-fun getIrBinaryOperator(ktOperator: IElementType): IrBinaryOperator? =
+fun getIrBinaryOperator(ktOperator: IElementType): IrOperator? =
         when (ktOperator) {
             KtTokens.EQ -> IrOperator.EQ
             KtTokens.PLUSEQ -> IrOperator.PLUSEQ

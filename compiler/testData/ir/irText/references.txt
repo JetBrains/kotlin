@@ -4,7 +4,7 @@ IrFile /references.kt
       LITERAL String type=kotlin.String value='OK'
   IrProperty public val ok2: kotlin.String = "OK" getter=null setter=null
     IrExpressionBody
-      GET_PROPERTY .ok type=kotlin.String operator=null
+      CALL .<get-ok> type=kotlin.String operator=GET_PROPERTY
   IrProperty public val ok3: kotlin.String getter=<get-ok3> setter=null
   IrPropertyGetter public fun <get-ok3>(): kotlin.String property=ok3
     IrExpressionBody
@@ -15,7 +15,7 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .ok type=kotlin.String operator=null
+          CALL .<get-ok> type=kotlin.String operator=GET_PROPERTY
   IrFunction public fun test2(/*0*/ x: kotlin.String): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -32,7 +32,7 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .ok3 type=kotlin.String operator=null
+          CALL .<get-ok3> type=kotlin.String operator=GET_PROPERTY
   IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
   IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
     IrExpressionBody
@@ -43,5 +43,5 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .okext type=kotlin.String operator=null
+          CALL .<get-okext> type=kotlin.String operator=GET_PROPERTY
             $receiver: $RECEIVER of: test5 type=kotlin.String

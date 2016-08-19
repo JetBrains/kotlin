@@ -19,7 +19,7 @@ IrFile /values.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .a type=kotlin.Int operator=null
+          CALL .<get-a> type=kotlin.Int operator=GET_PROPERTY
   IrFunction public fun test4(): Z.Companion
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null

@@ -9,5 +9,5 @@ IrFile /extensionPropertyGetterCall.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          GET_PROPERTY .okext type=kotlin.String operator=null
+          CALL .<get-okext> type=kotlin.String operator=GET_PROPERTY
             $receiver: $RECEIVER of: test5 type=kotlin.String

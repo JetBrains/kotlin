@@ -79,14 +79,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
             "type=${expression.renderType()} operator=${expression.operator}"
 
-    override fun visitGetProperty(expression: IrGetPropertyExpression, data: Nothing?): String =
-            "GET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
-            "type=${expression.renderType()} operator=${expression.operator}"
-
-    override fun visitSetProperty(expression: IrSetPropertyExpression, data: Nothing?): String =
-            "SET_PROPERTY ${if (expression.isSafe) "?." else "."}${expression.descriptor.name}" +
-            "type=${expression.renderType()} operator=${expression.operator}"
-
     override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
 

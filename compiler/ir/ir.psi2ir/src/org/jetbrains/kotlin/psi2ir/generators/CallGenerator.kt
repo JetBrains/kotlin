@@ -95,23 +95,28 @@ class CallGenerator(val statementGenerator: StatementGenerator) : IrGenerator {
             superQualifier: ClassDescriptor? = null
     ): IrExpression {
         val descriptor = resolvedCall.resultingDescriptor
-        val returnType = getReturnType(resolvedCall)
 
         return when (descriptor) {
             is PropertyDescriptor ->
-                IrGetPropertyExpressionImpl(
-                        ktElement.startOffset, ktElement.endOffset,
-                        returnType,
-                        resolvedCall.call.isSafeCall(), descriptor
-                ).apply {
-                    dispatchReceiver = generateReceiver(ktElement, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter)
-                    extensionReceiver = generateReceiver(ktElement, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter)
-                }
+                generatePropertyGetterCall(descriptor, ktElement, resolvedCall)
             is FunctionDescriptor ->
-                generateFunctionCall(descriptor, ktElement, returnType, operator, resolvedCall, superQualifier)
+                generateFunctionCall(descriptor, ktElement, operator, resolvedCall, superQualifier)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
+    }
+
+    private fun CallGenerator.generatePropertyGetterCall(
+            descriptor: PropertyDescriptor,
+            ktElement: KtElement,
+            resolvedCall: ResolvedCall<*>
+    ): IrGetterCallExpressionImpl {
+        val returnType = getReturnType(resolvedCall)
+        val dispatchReceiver = generateReceiver(ktElement, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter)
+        val extensionReceiver = generateReceiver(ktElement, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter)
+        return IrGetterCallExpressionImpl(ktElement.startOffset, ktElement.endOffset,
+                                          returnType, descriptor.getter!!, resolvedCall.call.isSafeCall(),
+                                          dispatchReceiver, extensionReceiver, IrOperator.GET_PROPERTY)
     }
 
     private fun ResolvedCall<*>.requiresArgumentReordering(): Boolean {
@@ -131,20 +136,21 @@ class CallGenerator(val statementGenerator: StatementGenerator) : IrGenerator {
     private fun generateFunctionCall(
             descriptor: FunctionDescriptor,
             ktElement: KtElement,
-            resultType: KotlinType?,
             operator: IrOperator?,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             superQualifier: ClassDescriptor?
     ): IrExpression {
+        val returnType = descriptor.returnType
+
         val irCall = IrCallExpressionImpl(
-                ktElement.startOffset, ktElement.endOffset, resultType,
+                ktElement.startOffset, ktElement.endOffset, returnType,
                 descriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
         )
         irCall.dispatchReceiver = generateReceiver(ktElement, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter)
         irCall.extensionReceiver = generateReceiver(ktElement, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter)
 
         return if (resolvedCall.requiresArgumentReordering()) {
-            generateCallWithArgumentReordering(irCall, ktElement, resolvedCall, resultType)
+            generateCallWithArgumentReordering(irCall, ktElement, resolvedCall, returnType)
         }
         else {
             irCall.apply {

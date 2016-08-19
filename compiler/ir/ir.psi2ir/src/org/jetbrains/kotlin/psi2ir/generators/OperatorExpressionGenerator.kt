@@ -114,7 +114,7 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
         )
     }
 
-    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
+    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val irArgument0 = statementGenerator.generateExpression(expression.left!!).toExpectedType(context.builtIns.booleanType)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!).toExpectedType(context.builtIns.booleanType)
         return IrBinaryOperatorExpressionImpl(
@@ -135,7 +135,7 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
                                           IrOperator.EXCL, null, irOperatorCall)
     }
 
-    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
+    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
         return IrBinaryOperatorExpressionImpl(
@@ -144,7 +144,7 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
         )
     }
 
-    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
+    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val relatedCall = getResolvedCall(expression)!!
         val relatedDescriptor = relatedCall.resultingDescriptor
 
@@ -169,7 +169,7 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
         )
     }
 
-    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrBinaryOperator): IrExpression {
+    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val compareToCall = getResolvedCall(expression)!!
         val compareToDescriptor = compareToCall.resultingDescriptor
 

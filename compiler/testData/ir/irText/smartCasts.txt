@@ -23,14 +23,14 @@ IrFile /smartCasts.kt
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
         CALL .println type=kotlin.Unit operator=null
-          message: GET_PROPERTY .length type=kotlin.Int operator=null
+          message: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
             $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR x type=kotlin.Any operator=null
         CALL .expectsString type=kotlin.Unit operator=null
           s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
         CALL .expectsInt type=kotlin.Unit operator=null
-          i: GET_PROPERTY .length type=kotlin.Int operator=null
+          i: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
             $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR x type=kotlin.Any operator=null
         CALL .expectsString type=kotlin.Unit operator=null

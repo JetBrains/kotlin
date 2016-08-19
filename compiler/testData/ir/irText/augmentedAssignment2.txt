@@ -42,17 +42,17 @@ IrFile /augmentedAssignment2.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-          $receiver: GET_PROPERTY .p type=A operator=PLUSEQ
+          $receiver: CALL .<get-p> type=A operator=GET_PROPERTY
           s: LITERAL String type=kotlin.String value='+='
         CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-          $receiver: GET_PROPERTY .p type=A operator=MINUSEQ
+          $receiver: CALL .<get-p> type=A operator=GET_PROPERTY
           s: LITERAL String type=kotlin.String value='-='
         CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-          $receiver: GET_PROPERTY .p type=A operator=MULTEQ
+          $receiver: CALL .<get-p> type=A operator=GET_PROPERTY
           s: LITERAL String type=kotlin.String value='*='
         CALL .divAssign type=kotlin.Unit operator=DIVEQ
-          $receiver: GET_PROPERTY .p type=A operator=DIVEQ
+          $receiver: CALL .<get-p> type=A operator=GET_PROPERTY
           s: LITERAL String type=kotlin.String value='/='
         CALL .modAssign type=kotlin.Unit operator=PERCEQ
-          $receiver: GET_PROPERTY .p type=A operator=PERCEQ
+          $receiver: CALL .<get-p> type=A operator=GET_PROPERTY
           s: LITERAL String type=kotlin.String value='%='

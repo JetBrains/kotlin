@@ -14,6 +14,6 @@ IrFile /assignments.kt
   IrFunction public fun test2(/*0*/ r: Ref): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        SET_PROPERTY .xtype=<no-type> operator=EQ
+        CALL .<set-x> type=kotlin.Unit operator=EQ
           $this: GET_VAR r type=Ref operator=null
-          $value: LITERAL Int type=kotlin.Int value='0'
+          <set-?>: LITERAL Int type=kotlin.Int value='0'

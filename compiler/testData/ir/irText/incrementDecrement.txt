@@ -34,17 +34,17 @@ IrFile /incrementDecrement.kt
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_INCR
             VAR val tmp0: kotlin.Int
               CALL .inc type=kotlin.Int operator=PREFIX_INCR
-                $this: GET_PROPERTY .p type=kotlin.Int operator=PREFIX_INCR
-            SET_PROPERTY .ptype=<no-type> operator=PREFIX_INCR
-              $value: GET_VAR tmp0 type=kotlin.Int operator=null
+                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_INCR
+              <set-?>: GET_VAR tmp0 type=kotlin.Int operator=null
             GET_VAR tmp0 type=kotlin.Int operator=null
         VAR val p2: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
             VAR val tmp1: kotlin.Int
               CALL .dec type=kotlin.Int operator=PREFIX_DECR
-                $this: GET_PROPERTY .p type=kotlin.Int operator=PREFIX_DECR
-            SET_PROPERTY .ptype=<no-type> operator=PREFIX_DECR
-              $value: GET_VAR tmp1 type=kotlin.Int operator=null
+                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
+              <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
   IrFunction public fun testArray(): kotlin.Unit
     IrExpressionBody
@@ -52,7 +52,7 @@ IrFile /incrementDecrement.kt
         VAR val a1: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_INCR
             VAR val tmp0_array: kotlin.IntArray
-              GET_PROPERTY .arr type=kotlin.IntArray operator=null
+              CALL .<get-arr> type=kotlin.IntArray operator=GET_PROPERTY
             VAR val tmp1: kotlin.Int
               CALL .inc type=kotlin.Int operator=PREFIX_INCR
                 $this: CALL .get type=kotlin.Int operator=PREFIX_INCR
@@ -66,7 +66,7 @@ IrFile /incrementDecrement.kt
         VAR val a2: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
             VAR val tmp2_array: kotlin.IntArray
-              GET_PROPERTY .arr type=kotlin.IntArray operator=null
+              CALL .<get-arr> type=kotlin.IntArray operator=GET_PROPERTY
             VAR val tmp3: kotlin.Int
               CALL .dec type=kotlin.Int operator=PREFIX_DECR
                 $this: CALL .get type=kotlin.Int operator=PREFIX_DECR

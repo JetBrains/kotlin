@@ -30,3 +30,4 @@ const val WHEN_ELSE_EXPRESSION_SLOT = -2
 const val BRANCH_RESULT_SLOT = -1
 const val LOOP_BODY_SLOT = -1
 const val LOOP_CONDITION_SLOT = -2
+const val SETTER_ARGUMENT_INDEX = 0
