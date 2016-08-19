@@ -196,7 +196,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             else
                 listOf(parameterType)
             for (t in types) {
-                var convertedType = codeConverter.typeConverter.convertType(t, Nullability.NotNull)
+                val convertedType = codeConverter.typeConverter.convertType(t, Nullability.NotNull)
                 val convertedParameter = FunctionParameter(parameter.declarationIdentifier(),
                                                            convertedType,
                                                            FunctionParameter.VarValModifier.None,
@@ -216,7 +216,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         var expression: Expression = Expression.Empty
         for (variable in resourceVariables.asReversed()) {
             val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
-            val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
+            val parameterList = ParameterList(listOf(parameter), lPar = null, rPar = null).assignNoPrototype()
             val lambda = LambdaExpression(parameterList, block)
             expression = MethodCallExpression.build(codeConverter.convertExpression(variable.initializer), "use", listOf(lambda), listOf(), false)
             expression.assignNoPrototype()

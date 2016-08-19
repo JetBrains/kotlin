@@ -94,11 +94,11 @@ class PropertyAccessor(
         }
 
         if (parameterList != null) {
-            builder append "(" append parameterList append ")"
+            builder.append(parameterList)
         }
 
         if (body != null) {
-            builder append " " append body
+            builder.append(" ").append(body)
         }
     }
 }
