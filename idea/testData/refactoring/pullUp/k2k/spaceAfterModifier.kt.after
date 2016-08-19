@@ -5,5 +5,5 @@ abstract class Upper {
 
 open class Lower : Upper() {
     // INFO: {"checked": "true", "toAbstract": "true"}
-    protected override val moving: Int = 0
+    override val moving: Int = 0
 }

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -359,6 +360,7 @@ class KotlinPullUpHelper(
         }
         else {
             member.addModifier(KtTokens.OVERRIDE_KEYWORD)
+            KtTokens.VISIBILITY_MODIFIERS.types.forEach { member.removeModifier(it as KtModifierKeywordToken) }
             (member as? KtNamedFunction)?.valueParameters?.forEach { it.dropDefaultValue() }
         }
     }
