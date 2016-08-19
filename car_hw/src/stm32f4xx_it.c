@@ -5,7 +5,7 @@
 #include "usbd_core.h"
 #include "usbd_cdc_core.h"
 
-#include "time.h"
+#include "car_time.h"
 
 extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
 extern USB_OTG_CORE_HANDLE USB_OTG_dev;
@@ -110,7 +110,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	timer_irq_handler();
+	car_time_irq_handler();
 }
 
 /******************************************************************************/

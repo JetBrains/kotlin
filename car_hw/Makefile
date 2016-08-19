@@ -1,4 +1,4 @@
-BIN_DIR=$(PWD)/bin
+BIN_DIR=bin
 SRC_DIR=src
 LIB_DIR=$(SRC_DIR)/lib
 OS_ARCH=linux-arm
@@ -65,7 +65,7 @@ $(CAR_OBJ): \
 	$(LD_ALL_DEPS)
 
 $(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
-		$(call dirhs,$(SRC_DIR))
+		$(call dirhs,$(SRC_DIR)/include)
 	$(CC_ALL_DEPS)
 
 clean:

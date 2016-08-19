@@ -5,12 +5,12 @@
 
 typedef enum
 {
-    LED_GREEN = LED4,
-    LED_ORANGE = LED3,
-    LED_RED = LED5,
-    LED_BLUE = LED6
-} led_t;
+    CAR_LED_GREEN = LED4,
+    CAR_LED_ORANGE = LED3,
+    CAR_LED_RED = LED5,
+    CAR_LED_BLUE = LED6
+} car_led_t;
 
-void leds_init(void);
-void leds_clear_all(void);
-void led_set(int led, bool on);
+void car_leds_init(void);
+void car_leds_clear_all(void);
+void car_led_set(int led, bool on);
