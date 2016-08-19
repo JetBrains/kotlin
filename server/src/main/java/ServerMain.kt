@@ -22,7 +22,7 @@ val getLocationUrl = "/getLocation"
 val routeDoneUrl = "/routeDone"
 val setRouteUrl = "/route"
 val connectUrl = "/connect"
-val debugMemoryUrl = "/debug/memoty"
+val debugMemoryUrl = "/debug/memory"
 
 fun main(args: Array<String>) {
 
