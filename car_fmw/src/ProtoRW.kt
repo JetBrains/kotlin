@@ -21,7 +21,7 @@ object Reader {
 }
 
 object Writer {
-    fun writeRoute(route: RouteRequest) {
+    fun writeRoute(route: RouteResponse) {
         val stream = makeOutputStream(route.getSizeNoTag())
         route.writeTo(stream)
         Connection.sendByteArray(stream.buffer)

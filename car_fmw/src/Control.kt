@@ -7,6 +7,8 @@ enum class RouteType(val id: Int) {
 }
 
 object Control {
+    val BLINK_DURATION = 1000
+
     fun run() {
         Memory.setHeap(Memory.DYNAMIC_HEAP)
         while (true) {
@@ -17,10 +19,16 @@ object Control {
 
     fun executeCommand() {
         val task = Reader.readTask()
+        Leds.blink()
+        Time.wait(BLINK_DURATION)
+
         when (task.type.id) {
             TaskRequest.Type.DEBUG.id -> debugTask()
             TaskRequest.Type.ROUTE.id -> routeTask()
         }
+
+        Leds.blink()
+        Time.wait(BLINK_DURATION)
     }
 
     fun debugTask() {
@@ -54,6 +62,8 @@ object Control {
             j++
         }
 
+        val response = RouteResponse.BuilderRouteResponse(0).build()
+        Writer.writeRoute(response)
     }
 
     fun sendMemoryStats() {

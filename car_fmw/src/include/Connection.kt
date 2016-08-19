@@ -39,6 +39,6 @@ object Connection {
 
     fun sendByteArray(array: ByteArray) {
         car_conn_snd_int(array.size)
-        car_conn_rcv_buf(array.size, array.data)
+        car_conn_snd_buf(array.size, array.data)
     }
 }
