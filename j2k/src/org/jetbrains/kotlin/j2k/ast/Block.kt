@@ -40,13 +40,14 @@ class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBr
 }
 
 // we use LBrace and RBrace elements to better handle comments around them
-class LBrace() : Element() {
+class LBrace : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("{")
     }
 }
 
-class RBrace() : Element() {
+
+class RBrace : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("}")
     }

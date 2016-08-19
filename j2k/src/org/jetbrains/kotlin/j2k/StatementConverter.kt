@@ -58,8 +58,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         }
         else {
             val description = codeConverter.convertExpression(descriptionExpr)
-            val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
-            val lambda = LambdaExpression(null, block.assignNoPrototype())
+            val lambda = LambdaExpression(null, Block.of(description).assignNoPrototype())
             result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
         }
     }
@@ -210,8 +209,8 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     private fun convertTryWithResources(tryBlock: PsiCodeBlock?, resourceVariables: List<PsiResourceVariable>, catchesConverted: List<CatchStatement>, finallyConverted: Block): Statement {
-        var wrapResultStatement: (Expression) -> Statement = { it }
-        var converterForBody = codeConverter
+        val wrapResultStatement: (Expression) -> Statement = { it }
+        val converterForBody = codeConverter
 
         var block = converterForBody.convertBlock(tryBlock)
         var expression: Expression = Expression.Empty
@@ -221,7 +220,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             val lambda = LambdaExpression(parameterList, block)
             expression = MethodCallExpression.build(codeConverter.convertExpression(variable.initializer), "use", listOf(lambda), listOf(), false)
             expression.assignNoPrototype()
-            block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            block = Block.of(expression).assignNoPrototype()
         }
 
         if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
