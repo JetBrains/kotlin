@@ -1322,6 +1322,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveEmptyParenthesesFromLambdaCallIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -1728,6 +1733,14 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveEmptyParenthesesFromLambdaCallInspection"
+                     displayName="Remove unnecessary parentheses from function call with lambda"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="INFO"
                      language="kotlin"
     />
 
