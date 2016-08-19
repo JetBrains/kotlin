@@ -707,7 +707,8 @@ import org.w3c.xhr.*
         get() = noImpl
         set(value) = noImpl
     fun item(index: Int): String = noImpl
-    operator @nativeGetter fun get(index: Int): String? = noImpl
+    @nativeGetter
+    operator fun get(index: Int): String? = noImpl
     fun getPropertyValue(property: String): String = noImpl
     fun getPropertyPriority(property: String): String = noImpl
     fun setProperty(property: String, value: String, priority: String = ""): Unit = noImpl
@@ -723,7 +724,8 @@ import org.w3c.xhr.*
     val length: Int
         get() = noImpl
     fun item(index: Int): String? = noImpl
-    operator @nativeGetter fun get(index: Int): String? = noImpl
+    @nativeGetter
+    operator fun get(index: Int): String? = noImpl
     fun appendMedium(medium: String): Unit = noImpl
     fun deleteMedium(medium: String): Unit = noImpl
 }
@@ -759,14 +761,16 @@ import org.w3c.xhr.*
     val length: Int
         get() = noImpl
     fun item(index: Int): StyleSheet? = noImpl
-    operator @nativeGetter fun get(index: Int): StyleSheet? = noImpl
+    @nativeGetter
+    operator fun get(index: Int): StyleSheet? = noImpl
 }
 
 @native public interface CSSRuleList {
     val length: Int
         get() = noImpl
     fun item(index: Int): CSSRule? = noImpl
-    operator @nativeGetter fun get(index: Int): CSSRule? = noImpl
+    @nativeGetter
+    operator fun get(index: Int): CSSRule? = noImpl
 }
 
 @native public interface CSSRule {
