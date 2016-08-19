@@ -1,0 +1,2 @@
+Getter for property  tempY uses class TempY which will be inaccessible after move
+Setter for property  tempY uses class TempY which will be inaccessible after move
