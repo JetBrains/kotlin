@@ -395,7 +395,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: StructCodegen? = null, caller: LLVMVariable? = null): LLVMSingleValue? {
         val names = parseArgList(expr, scopeDepth)
-        val name = expr.firstChild.firstChild.text
+        var name = expr.firstChild.firstChild.text
         val external = state.externalFunctions.containsKey(name)
 
         val function = "$name${if (names.size > 0 && !external) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
@@ -441,13 +441,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             return evaluateConstructorCallExpression(LLVMVariable(nestedConstructor.fullName, nestedConstructor.type, scope = LLVMVariableScope()), args)
         }
 
-        val containingClass = resolveContainingClass(expr)
-
-        if (containingClass == null) {
-            return null
-        }
-
-        val name = "${containingClass.fullName}.$function"
+        val containingClass = resolveContainingClass(expr) ?: return null
+        name = "${containingClass.fullName}.$function"
         val method = containingClass.methods[name]!!
         val args = mutableListOf<LLVMSingleValue>()
         val leftName = (expr.context as? KtDotQualifiedExpression)?.receiverExpression?.text
