@@ -1,31 +1,19 @@
-fun echoUsb() {
-    clear_buffer()
-    while (true) {
-        val command = receive_int()
-        send_int(command)
-
-        blink()
-        wait(PROGRAM_DURATION)
-    }
-
-}
 
 fun echoProto() {
-    clear_buffer()
 
-    set_active_heap(MEMORY_DYNAMIC_HEAP)
+    Memory.setHeap(Memory.DYNAMIC_HEAP)
     while (true) {
         val route = readRoute()
-        blink()
+        Leds.blink()
         go(route)
-        blink()
-        wait(PROGRAM_DURATION)
-        clean_dynamic_heap()
+        Leds.blink()
+        Time.wait(1000)
+        Memory.cleanDynamicHeap()
     }
 }
 
 fun readRoute(): RouteRequest {
-    val buffer = receiveByteArray()
+    val buffer = Connection.receiveByteArray()
     val stream = CodedInputStream(buffer)
     val result = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0)).parseFrom(stream).build()
 
@@ -39,6 +27,6 @@ fun writeRoute(route: RouteRequest) {
 
     route.writeTo(stream)
 
-    sendByteArray(buffer)
+    Connection.sendByteArray(buffer)
 }
 

@@ -1,3 +1,4 @@
+
 class DirectionRequest private constructor (var command: DirectionRequest.Command, var sid: Int) {
   //========== Properties ===========
   //enum command = 1

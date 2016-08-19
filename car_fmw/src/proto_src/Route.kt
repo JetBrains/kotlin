@@ -1,3 +1,4 @@
+
 class RouteRequest private constructor (var distances: IntArray, var angles: IntArray) {
   //========== Properties ===========
   //repeated int32 distances = 1

@@ -16,14 +16,14 @@ fun go(request: RouteRequest) {
         val action = actions[j]
 
         when (action) {
-            RouteType.FORWARD.id -> engine_forward()
-            RouteType.BACKWARD.id -> engine_backward()
-            RouteType.LEFT.id -> engine_turn_left()
-            RouteType.RIGHT.id -> engine_turn_right()
+            RouteType.FORWARD.id -> Engine.forward()
+            RouteType.BACKWARD.id -> Engine.backward()
+            RouteType.LEFT.id -> Engine.left()
+            RouteType.RIGHT.id -> Engine.right()
         }
 
-        wait(time)
-        engine_stop()
+        Time.wait(time)
+        Engine.stop()
         j++
     }
 
