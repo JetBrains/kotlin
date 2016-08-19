@@ -1,0 +1,35 @@
+// FILE: main.before.kt
+// "Static import" "false"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create local variable 'foobar'
+// ACTION: Create property 'foobar'
+// ACTION: Rename reference
+
+
+//KT-9009
+
+
+fun f() {
+    foobar<caret> = "barfoo"
+}
+
+//FILE: dependency.before.java
+package bar
+
+public class Foo {
+    public foobar = "foobar"
+}
+
+//FILE: main.after.kt
+// "Static import" "false"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create local variable 'foobar'
+// ACTION: Create property 'foobar'
+// ACTION: Rename reference
+
+//KT-9009
+
+
+fun f() {
+    foobar<caret> = "barfoo"
+}
