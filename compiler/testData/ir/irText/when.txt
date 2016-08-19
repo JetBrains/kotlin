@@ -1,11 +1,11 @@
 IrFile /when.kt
   DUMMY A
-  IrFunction public fun test(/*0*/ x: kotlin.Any?): kotlin.String
+  IrFunction public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           WHEN subject=tmp0_subject type=kotlin.String
-            $subject:: VAR val tmp0_subject: kotlin.Any?
+            $subject: VAR val tmp0_subject: kotlin.Any?
               GET_VAR x type=kotlin.Any? operator=null
             if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
               GET_VAR tmp0_subject type=kotlin.Any? operator=null
@@ -22,5 +22,27 @@ IrFile /when.kt
               $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
               element: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Any
                 GET_VAR tmp0_subject type=kotlin.Any? operator=null
+            then: LITERAL String type=kotlin.String value='nothingness?'
+            else: LITERAL String type=kotlin.String value='something'
+  IrFunction public fun test(/*0*/ x: kotlin.Any?): kotlin.String
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          WHEN subject=null type=kotlin.String
+            if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open operator fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+              GET_VAR x type=kotlin.Any? operator=null
+              LITERAL Null type=kotlin.Nothing? value='null'
+            then: LITERAL String type=kotlin.String value='null'
+            if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open operator fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+              GET_VAR x type=kotlin.Any? operator=null
+              GET_OBJECT A type=A
+            then: LITERAL String type=kotlin.String value='A'
+            if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
+              GET_VAR x type=kotlin.Any? operator=null
+            then: LITERAL String type=kotlin.String value='String'
+            if: CALL .contains type=kotlin.Boolean operator=IN
+              $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
+              element: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Any
+                GET_VAR x type=kotlin.Any? operator=null
             then: LITERAL String type=kotlin.String value='nothingness?'
             else: LITERAL String type=kotlin.String value='something'

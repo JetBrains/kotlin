@@ -74,7 +74,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     override fun visitWhenExpression(expression: IrWhenExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.subject?.let { subject ->
-                subject.accept(this, "\$subject:")
+                subject.accept(this, "\$subject")
             }
             for (branch in expression.branches) {
                 branch.conditions.forEach { it.accept(this, "if") }
