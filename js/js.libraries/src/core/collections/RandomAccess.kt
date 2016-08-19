@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package java.util
+package kotlin.collections
 
-public fun <E> HashSet(c: Collection<E>): HashSet<E>
-        = HashSet<E>(c.size).apply { addAll(c) }
-
-public fun <E> LinkedHashSet(c: Collection<E>): HashSet<E>
-        = LinkedHashSet<E>(c.size).apply { addAll(c) }
-
-public fun <K, V> HashMap(m: Map<out K, V>): HashMap<K, V>
-        = HashMap<K, V>(m.size).apply { putAll(m) }
-
-public fun <K, V> LinkedHashMap(m: Map<out K, V>): LinkedHashMap<K, V>
-        = LinkedHashMap<K, V>(m.size).apply { putAll(m) }
-
+public interface RandomAccess

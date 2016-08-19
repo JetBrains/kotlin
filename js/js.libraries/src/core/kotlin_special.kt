@@ -13,9 +13,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a [List] that wraps the original array.
  */
 public fun <T> Array<out T>.asList(): List<T> {
-    val al = ArrayList<T>()
-    al.asDynamic().array = this    // black dynamic magic
-    return al
+    return ArrayList<T>(this as Array<Any?>)
 }
 
 /**

@@ -1,0 +1,112 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package kotlin.collections
+
+//TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
+
+public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractList<E>(), RandomAccess {
+
+    public constructor(capacity: Int = 0) : this(emptyArray()) {}
+    public constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
+
+
+    override val size: Int get() = array.size
+    override fun get(index: Int): E = array[rangeCheck(index)] as E
+    override fun set(index: Int, element: E): E {
+        rangeCheck(index)
+        return array[index].apply { array[index] = element } as E
+    }
+
+    override fun add(element: E): Boolean {
+        array.asDynamic().push(element)
+        modCount++
+        return true
+    }
+
+    override fun add(index: Int, element: E): Unit {
+        array.asDynamic().splice(insertionRangeCheck(index), 0, element)
+        modCount++
+    }
+
+    override fun addAll(elements: Collection<E>): Boolean {
+        if (elements.isEmpty()) return false
+
+        array += elements.toTypedArray<Any?>()
+        modCount++
+        return true
+    }
+
+    override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        insertionRangeCheck(index)
+
+        if (index == size) return addAll(elements)
+        if (elements.isEmpty()) return false
+
+        array = array.copyOfRange(0, index) + elements.toTypedArray<Any?>() + array.copyOfRange(index, size)
+        modCount++
+        return true
+    }
+
+    override fun removeAt(index: Int): E {
+        rangeCheck(index)
+        modCount++
+        return if (index == size)
+            array.asDynamic().pop()
+        else
+            array.asDynamic().splice(index, 1)[0]
+    }
+
+    override fun remove(element: E): Boolean {
+        for (index in array.indices) {
+            if (array[index] == element) {
+                array.asDynamic().splice(index, 1)
+                modCount++
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun removeRange(fromIndex: Int, toIndex: Int) {
+        modCount++
+        array.asDynamic().splice(fromIndex, toIndex - fromIndex)
+    }
+
+    override fun clear() {
+        array = emptyArray()
+        modCount++
+    }
+
+    override fun contains(element: E): Boolean = indexOf(element) >= 0
+
+    override fun indexOf(element: E): Int = array.indexOf(element)
+
+    override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
+
+    override fun toString() = arrayToString(array)
+    override fun toArray(): Array<Any?> = array.copyOf()
+
+    private fun rangeCheck(index: Int) = index.apply {
+        if (index !in array.indices)
+            throw IndexOutOfBoundsException("Index: $index, Size: $size")
+    }
+
+    private fun insertionRangeCheck(index: Int) = index.apply {
+        if (index !in 0..size)
+            throw IndexOutOfBoundsException("Index: $index, Size: $size")
+    }
+}

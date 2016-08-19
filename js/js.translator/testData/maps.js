@@ -382,12 +382,7 @@
     Object.defineProperty(Hashtable.prototype, "values", {
         get: function () {
             var values = this._values();
-            var i = values.length;
-            var result = new Kotlin.ArrayList();
-            while (i--) {
-                result.add_za3rmp$(values[i]);
-            }
-            return result;
+            return Kotlin.kotlin.collections.asReversed_sqtfhv$(new Kotlin.kotlin.collections.ArrayList(values));
         },
         configurable: true
     });
@@ -570,7 +565,7 @@
      */
     lazyInitClasses.PrimitiveHashMapValues = Kotlin.createClass(
         function () {
-            return [Kotlin.AbstractCollection];
+            return [Kotlin.kotlin.collections.AbstractCollection];
         },
         function (map) {
             this.map = map;
@@ -1013,10 +1008,10 @@
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
-        this.addAll_wtfk93$ = Kotlin.AbstractCollection.prototype.addAll_wtfk93$;
-        this.removeAll_wtfk93$ = Kotlin.AbstractCollection.prototype.removeAll_wtfk93$;
-        this.retainAll_wtfk93$ = Kotlin.AbstractCollection.prototype.retainAll_wtfk93$;
-        this.containsAll_wtfk93$ = Kotlin.AbstractCollection.prototype.containsAll_wtfk93$;
+        this.addAll_wtfk93$ = Kotlin.kotlin.collections.AbstractCollection.prototype.addAll_wtfk93$;
+        this.removeAll_wtfk93$ = Kotlin.kotlin.collections.AbstractCollection.prototype.removeAll_wtfk93$;
+        this.retainAll_wtfk93$ = Kotlin.kotlin.collections.AbstractCollection.prototype.retainAll_wtfk93$;
+        this.containsAll_wtfk93$ = Kotlin.kotlin.collections.AbstractCollection.prototype.containsAll_wtfk93$;
 
         this.add_za3rmp$ = function (o) {
             return !hashTable.put_wn2jw4$(o, true);
@@ -1115,7 +1110,7 @@
 
     lazyInitClasses.HashSet = Kotlin.createClass(
         function () {
-            return [Kotlin.kotlin.collections.MutableSet, Kotlin.AbstractCollection];
+            return [Kotlin.kotlin.collections.MutableSet, Kotlin.kotlin.collections.AbstractCollection];
         },
         function () {
             HashSet.call(this);

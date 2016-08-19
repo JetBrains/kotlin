@@ -35,6 +35,9 @@ public open class IllegalStateException(message: String? = null) : RuntimeExcept
 public open class IndexOutOfBoundsException(message: String? = null) : RuntimeException(message) {}
 
 @library
+public open class ConcurrentModificationException(message: String? = null) : RuntimeException(message) {}
+
+@library
 public open class UnsupportedOperationException(message: String? = null) : RuntimeException(message) {}
 
 @library

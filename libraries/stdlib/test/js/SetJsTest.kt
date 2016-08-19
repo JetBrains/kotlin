@@ -4,8 +4,7 @@ import kotlin.test.*
 import org.junit.Test
 import test.collections.*
 import test.collections.behaviors.*
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 class ComplexSetJsTest : SetJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
