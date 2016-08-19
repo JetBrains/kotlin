@@ -49,7 +49,8 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
                                          val acceptOverloads: Boolean = false,
                                          val acceptExtensionsOfDeclarationClass: Boolean = false,
-                                         val acceptCompanionObjectMembers: Boolean = false) {
+                                         val acceptCompanionObjectMembers: Boolean = false,
+                                         val searchForComponentConventions: Boolean = true) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
     companion object {
@@ -72,7 +73,10 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val unwrappedElement = element.namedUnwrappedElement ?: return
 
-        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch() }
+        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                            ?: KotlinReferencesSearchOptions.Empty
+
+        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch(kotlinOptions) }
         val words = runReadAction {
             val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
             specialSymbols.first +
@@ -90,9 +94,6 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             else -> ({true})
         }
 
-
-        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
-                            ?: KotlinReferencesSearchOptions.Empty
         val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
         if (kotlinOptions.anyEnabled()) {

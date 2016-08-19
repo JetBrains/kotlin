@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -46,6 +47,8 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
                             override val targetContainerFqName = newFqName
 
                             override val directory: PsiDirectory = file.containingDirectory!!
+
+                            override val targetFile: VirtualFile? = directory.virtualFile
 
                             override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
 

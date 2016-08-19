@@ -21,6 +21,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
@@ -58,7 +59,13 @@ class AndroidSubplugin : KotlinGradleSubplugin {
         return true
     }
 
-    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption> {
+    override fun apply(
+            project: Project,
+            kotlinCompile: AbstractCompile, 
+            javaCompile: AbstractCompile, 
+            variantData: Any?, 
+            javaSourceSet: SourceSet?
+    ): List<SubpluginOption> {
         val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val sourceSets = androidExtension.sourceSets
 

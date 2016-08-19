@@ -1,0 +1,1 @@
+annotation class KotlinAnnotation(val a: String, val b: Int)

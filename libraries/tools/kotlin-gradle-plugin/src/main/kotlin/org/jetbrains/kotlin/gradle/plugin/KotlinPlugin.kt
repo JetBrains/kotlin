@@ -21,6 +21,8 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
+import org.jetbrains.kotlin.gradle.internal.Kapt2GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -125,15 +127,15 @@ class Kotlin2JvmSourceSetProcessor(
 
         project.afterEvaluate { project ->
             if (project != null) {
-                val subpluginEnvironment = loadSubplugins(project)
-                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
-                if (javaTask !is JavaCompile) return@afterEvaluate
 
+                val subpluginEnvironment = loadSubplugins(project)
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask, 
+                        javaTask as JavaCompile, null, sourceSet)
+                
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
-                if (aptConfiguration.dependencies.size > 1) {
+                if (aptConfiguration.dependencies.size > 1 && !Kapt2GradleSubplugin.isEnabled(project)) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
 
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
@@ -149,7 +151,7 @@ class Kotlin2JvmSourceSetProcessor(
                 // otherwise some java roots can be ignored
                 kotlinTask.source(kotlinSourceSet.kotlin)
                 kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
-                configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
+                configureJavaTask(kotlinTask, javaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
             }
         }
@@ -330,27 +332,39 @@ open class KotlinAndroidPlugin(
             kotlinTask.description = "Compiles the $variantDataName kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
+            val isKapt2Enabled = Kapt2GradleSubplugin.isEnabled(project)
+
             val aptFiles = arrayListOf<File>()
-            for (provider in variantData.sourceProviders) {
-                val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
-                // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
-                if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
-                    javaTask.dependsOn(aptConfiguration.buildDependencies)
-                    aptFiles.addAll(aptConfiguration.resolve())
+
+            if (!isKapt2Enabled) {
+                for (provider in variantData.sourceProviders) {
+                    val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
+                    // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
+                    if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
+                        javaTask.dependsOn(aptConfiguration.buildDependencies)
+                        aptFiles.addAll(aptConfiguration.resolve())
+                    }
                 }
             }
 
-            subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-            kotlinTask.mapClasspath { javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) }
-            val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
-            variantData.addJavaSourceFoldersToModel(aptOutputDir)
+            subpluginEnvironment.addSubpluginArguments(project, kotlinTask, javaTask, variantData, null)
+
+            kotlinTask.mapClasspath {
+                javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+            }
+
             var kotlinAfterJavaTask: KotlinCompile? = null
 
-            if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
+            if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt2Enabled) {
+                val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
+
+                variantData.addJavaSourceFoldersToModel(aptOutputDir)
+
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
                         aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
 
-                kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment, tasksProvider)
+                kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
+                        variantDataName, kotlinOptions, subpluginEnvironment, tasksProvider)
             }
 
             configureSources(kotlinTask, variantData)
@@ -358,7 +372,7 @@ open class KotlinAndroidPlugin(
                 configureSources(kotlinAfterJavaTask, variantData)
             }
 
-            configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
+            configureJavaTask(kotlinTask, javaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
         }
     }
@@ -381,7 +395,7 @@ open class KotlinAndroidPlugin(
         get() = variantConfiguration.sortedSourceProviders
 }
 
-private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, kotlinAfterJavaTask: KotlinCompile?, logger: Logger) {
+private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
     // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
     // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
     // explicitly being out of date whenever any kotlin files are compiled
@@ -471,7 +485,12 @@ class SubpluginEnvironment(
         val subplugins: List<KotlinGradleSubplugin>
 ) {
 
-    fun addSubpluginArguments(project: Project, kotlinTask: KotlinCompile) {
+    fun addSubpluginArguments(
+            project: Project, 
+            kotlinTask: KotlinCompile, 
+            javaTask: AbstractCompile,
+            variantData: Any?,
+            javaSourceSet: SourceSet?) {
         val pluginOptions = kotlinTask.pluginOptions
 
         for (subplugin in subplugins) {
@@ -484,7 +503,7 @@ class SubpluginEnvironment(
             val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
             subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-            for (arg in subplugin.getExtraArguments(project, kotlinTask)) {
+            for (arg in subplugin.apply(project, kotlinTask, javaTask, variantData, javaSourceSet)) {
                 pluginOptions.addPluginArgument(subplugin.getPluginName(), arg.key, arg.value)
             }
         }
@@ -502,7 +521,7 @@ private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, Fi
 }
 
 private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotationProcessingDep: String): Configuration {
-    val aptConfigurationName = if (sourceSetName != "main") "kapt${sourceSetName.capitalize()}" else "kapt"
+    val aptConfigurationName = Kapt2KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
     val aptConfiguration = configurations.create(aptConfigurationName)
     aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))

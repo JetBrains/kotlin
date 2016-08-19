@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -34,7 +35,10 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinType {
+fun KotlinType.approximateFlexibleTypes(
+        preferNotNull: Boolean = false,
+        preferStarForRaw: Boolean = false
+): KotlinType {
     if (isDynamic()) return this
     if (isFlexible()) {
         val flexible = flexibility()
@@ -47,6 +51,8 @@ fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinT
         var approximation =
                 if (isCollection)
                     TypeUtils.makeNullableAsSpecified(if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound, !preferNotNull)
+                else
+                    if (RawTypeCapabilities.getCapability(CustomSubstitutionCapability::class.java) != null && preferStarForRaw) TypeUtils.makeNullableAsSpecified(flexible.upperBound, !preferNotNull)
                 else
                     if (preferNotNull) flexible.lowerBound else flexible.upperBound
 

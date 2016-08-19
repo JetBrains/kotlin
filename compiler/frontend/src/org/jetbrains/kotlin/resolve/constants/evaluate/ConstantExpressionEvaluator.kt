@@ -702,9 +702,10 @@ private class ConstantExpressionEvaluatorVisitor(
         }
     }
 
-    private fun createOperationArgument(expression: KtExpression, expressionType: KotlinType, compileTimeType: CompileTimeType<*>): OperationArgument? {
-        val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, expressionType) ?: return null
-        val evaluationResult = compileTimeConstant.getValue(expressionType) ?: return null
+    private fun createOperationArgument(expression: KtExpression, parameterType: KotlinType, compileTimeType: CompileTimeType<*>): OperationArgument? {
+        val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, parameterType) ?: return null
+        if (compileTimeConstant is TypedCompileTimeConstant && !compileTimeConstant.type.isSubtypeOf(parameterType)) return null
+        val evaluationResult = compileTimeConstant.getValue(parameterType) ?: return null
         return OperationArgument(evaluationResult, compileTimeType, expression)
     }
 
@@ -866,18 +867,20 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
     }
 }
 
-internal class CompileTimeType<T>
+internal class CompileTimeType<T>(val name: String) {
+    override fun toString() = name
+}
 
-internal val BYTE = CompileTimeType<Byte>()
-internal val SHORT = CompileTimeType<Short>()
-internal val INT = CompileTimeType<Int>()
-internal val LONG = CompileTimeType<Long>()
-internal val DOUBLE = CompileTimeType<Double>()
-internal val FLOAT = CompileTimeType<Float>()
-internal val CHAR = CompileTimeType<Char>()
-internal val BOOLEAN = CompileTimeType<Boolean>()
-internal val STRING = CompileTimeType<String>()
-internal val ANY = CompileTimeType<Any>()
+internal val BYTE = CompileTimeType<Byte>("Byte")
+internal val SHORT = CompileTimeType<Short>("Short")
+internal val INT = CompileTimeType<Int>("Int")
+internal val LONG = CompileTimeType<Long>("Long")
+internal val DOUBLE = CompileTimeType<Double>("Double")
+internal val FLOAT = CompileTimeType<Float>("Float")
+internal val CHAR = CompileTimeType<Char>("Char")
+internal val BOOLEAN = CompileTimeType<Boolean>("Boolean")
+internal val STRING = CompileTimeType<String>("String")
+internal val ANY = CompileTimeType<Any>("Any")
 
 @Suppress("UNCHECKED_CAST")
 internal fun <A, B> binaryOperation(

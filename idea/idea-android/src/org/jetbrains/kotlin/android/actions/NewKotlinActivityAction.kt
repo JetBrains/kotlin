@@ -183,12 +183,19 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.ACTIVITY) {
 
     override fun update(e: AnActionEvent) {
         val view = LangDataKeys.IDE_VIEW.getData(e.dataContext)
-        val module = LangDataKeys.MODULE.getData(e.dataContext)
-        val facet = if (module != null) AndroidFacet.getInstance(module) else null
+        val facet = getKotlinFacet(e)
         val presentation = e.presentation
         val isProjectReady = facet != null && isProjectReady(facet)
         presentation.text = "Kotlin Activity" + if (isProjectReady) "" else " (Project not ready)"
         presentation.isVisible = view != null && facet != null && isVisible(facet)
+    }
+
+    private fun getKotlinFacet(e: AnActionEvent): AndroidFacet? {
+        val project = e.project
+        if (project == null || project.isDisposed) return null
+        val module = LangDataKeys.MODULE.getData(e.dataContext)
+        val facet = if (module != null) AndroidFacet.getInstance(module) else null
+        return facet
     }
 
     private fun isVisible(facet: AndroidFacet): Boolean {

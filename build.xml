@@ -765,6 +765,55 @@
             <fileset dir="${basedir}/plugins/android-extensions/android-extensions-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
+    
+    <target name="annotation-processing-under-jdk8">
+        <property environment="env"/>
+
+        <condition property="jdk18" value="${env.JDK_18}" else="${env.JAVA_HOME}">
+            <isset property="env.JDK_18" />
+        </condition>
+        <java classname="org.apache.tools.ant.launch.Launcher"
+              fork="true"
+              failonerror="true"
+              timeout="4000000"
+              taskname="startAnt"
+              jvm="${jdk18}/bin/java">
+            <env key="JAVA_HOME" value="${jdk18}"/>
+            <classpath>
+                <pathelement location="${ant.home}/lib/ant-launcher.jar"/>
+            </classpath>
+            <arg line="-f" />
+            <arg line="build.xml" />
+            <arg line="annotation-processing" />
+        </java>
+    </target>
+    
+    <target name="annotation-processing">
+        <cleandir dir="${output}/classes/annotation-processing"/>
+        <javac2 destdir="${output}/classes/annotation-processing" debug="true" debuglevel="lines,vars,source" 
+                includeAntRuntime="false" source="${java.target}" target="${java.target}">
+            <withKotlin modulename="annotation-processing">
+                <compilerarg value="-version"/>
+            </withKotlin>
+            <skip pattern="kotlin/Metadata"/>
+            <src>
+                <pathelement path="plugins/annotation-processing/src"/>
+                <pathelement path="plugins/java-model-wrappers/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
+            </classpath>
+        </javac2>
+
+        <jar destfile="${kotlin-home}/lib/kotlin-annotation-processing.jar">
+            <fileset dir="${output}/classes/annotation-processing"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <fileset dir="${basedir}/plugins/annotation-processing/src" includes="META-INF/services/**"/>
+        </jar>
+    </target>
 
     <target name="ant-tools">
         <cleandir dir="${output}/classes/ant"/>
@@ -1093,11 +1142,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"

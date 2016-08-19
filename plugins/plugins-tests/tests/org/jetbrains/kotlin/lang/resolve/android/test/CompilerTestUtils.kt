@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-fun KtUsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
+fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
     configuration.put(AndroidConfigurationKeys.VARIANT, resDirectories)
     configuration.put(AndroidConfigurationKeys.PACKAGE, "test")
 

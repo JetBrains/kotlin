@@ -97,6 +97,12 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
             doConstantTest(fileName);
         }
 
+        @TestMetadata("integerOperations.kt")
+        public void testIntegerOperations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/evaluate/constant/integerOperations.kt");
+            doConstantTest(fileName);
+        }
+
         @TestMetadata("integers.kt")
         public void testIntegers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/evaluate/constant/integers.kt");

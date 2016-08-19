@@ -1,0 +1,12 @@
+@KotlinAnnotation(a = "A", b = 5)
+public abstract class Simple {
+    static {}
+
+    {}
+
+    final java.lang.String field
+
+    abstract void voidMethod()
+
+    protected java.lang.String strMethod(int param)
+}

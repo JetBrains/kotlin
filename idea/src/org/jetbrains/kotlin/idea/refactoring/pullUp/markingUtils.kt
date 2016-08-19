@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -27,9 +28,11 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiverOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -53,8 +56,10 @@ fun markElements(
                 private fun visitSuperOrThis(expression: KtInstanceExpressionWithLabel) {
                     if (targetClassDescriptor == null) return
 
-                    val referenceTarget = context[BindingContext.REFERENCE_TARGET, expression.instanceReference]
-                    if (referenceTarget == targetClassDescriptor) {
+                    val callee = expression.getQualifiedExpressionForReceiver()?.selectorExpression?.getCalleeExpressionIfAny() ?: return
+                    val calleeTarget = callee.getResolvedCall(context)?.resultingDescriptor ?: return
+                    if ((calleeTarget as? CallableMemberDescriptor)?.kind != CallableMemberDescriptor.Kind.DECLARATION) return
+                    if (calleeTarget.containingDeclaration == targetClassDescriptor) {
                         expression.replaceWithTargetThis = true
                         affectedElements.add(expression)
                     }

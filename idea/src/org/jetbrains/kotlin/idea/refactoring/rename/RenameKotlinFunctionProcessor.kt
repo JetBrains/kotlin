@@ -80,7 +80,11 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             allRenames: Map<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
+        if (newName == null) return
+        val declaration = element.unwrapped as? KtNamedFunction ?: return
+        val descriptor = declaration.resolveToDescriptor()
         checkConflictsAndReplaceUsageInfos(element, allRenames, result)
+        checkRedeclarations(descriptor, newName, result)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {

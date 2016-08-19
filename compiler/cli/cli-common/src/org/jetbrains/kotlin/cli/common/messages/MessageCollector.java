@@ -26,10 +26,17 @@ public interface MessageCollector {
         }
 
         @Override
+        public void clear() {
+            // Do nothing
+        }
+
+        @Override
         public boolean hasErrors() {
             return false;
         }
     };
+
+    void clear();
 
     void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
 
