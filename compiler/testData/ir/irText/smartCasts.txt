@@ -19,7 +19,8 @@ IrFile /smartCasts.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         WHEN subject=null type=kotlin.Unit
-          if: DUMMY KtIsExpression type=kotlin.Boolean
+          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
         CALL .println type=kotlin.Unit operator=null
           message: GET_PROPERTY .length type=kotlin.Int operator=null
@@ -40,7 +41,8 @@ IrFile /smartCasts.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         WHEN subject=null type=kotlin.Unit
-          if: DUMMY KtIsExpression type=kotlin.Boolean
+          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
         RETURN type=<no-type>
@@ -51,7 +53,8 @@ IrFile /smartCasts.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         WHEN subject=null type=kotlin.Unit
-          if: DUMMY KtIsExpression type=kotlin.Boolean
+          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
         RETURN type=<no-type>

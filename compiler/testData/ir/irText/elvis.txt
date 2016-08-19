@@ -17,11 +17,13 @@ IrFile /elvis.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         WHEN subject=null type=kotlin.Unit
-          if: DUMMY KtIsExpression type=kotlin.Boolean
+          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR b type=kotlin.Any? operator=null
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
         WHEN subject=null type=kotlin.Unit
-          if: DUMMY KtIsExpression type=kotlin.Boolean
+          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String?
+            GET_VAR a type=kotlin.Any? operator=null
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
         RETURN type=<no-type>

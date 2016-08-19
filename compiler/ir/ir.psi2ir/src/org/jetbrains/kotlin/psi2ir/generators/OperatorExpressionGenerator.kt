@@ -52,6 +52,33 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
         TODO("not implemented")
     }
 
+    fun generateCastExpression(expression: KtBinaryExpressionWithTypeRHS): IrExpression {
+        val ktOperator = expression.operationReference.getReferencedNameElementType()
+        val irOperator = getIrTypeOperator(ktOperator)
+        val rhsType = getOrFail(BindingContext.TYPE, expression.right!!)
+
+        val resultType = when (irOperator) {
+            IrTypeOperator.CAST ->
+                rhsType
+            IrTypeOperator.SAFE_CAST ->
+                rhsType.makeNullable()
+            else ->
+                throw AssertionError("Unexpected IrTypeOperator: $irOperator")
+        }
+
+        return IrTypeOperatorExpressionImpl(expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
+                                            statementGenerator.generateExpression(expression.left))
+    }
+
+    fun generateInstanceOfExpression(expression: KtIsExpression): IrStatement {
+        val ktOperator = expression.operationReference.getReferencedNameElementType()
+        val irOperator = getIrTypeOperator(ktOperator)!!
+        val againstType = getOrFail(BindingContext.TYPE, expression.typeReference)
+
+        return IrTypeOperatorExpressionImpl(expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
+                                            againstType, statementGenerator.generateExpression(expression.leftHandSide))
+    }
+
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
         if (ktOperator == KtTokens.IDENTIFIER) {

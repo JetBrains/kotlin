@@ -19,66 +19,65 @@ package org.jetbrains.kotlin.psi2ir.generators
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.ir.expressions.IrBinaryOperator
 import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
 fun getIrBinaryOperator(ktOperator: IElementType): IrBinaryOperator? =
-        KT_TOKEN_TO_IR_BINARY_OPERATOR[ktOperator]
+        when (ktOperator) {
+            KtTokens.EQ -> IrOperator.EQ
+            KtTokens.PLUSEQ -> IrOperator.PLUSEQ
+            KtTokens.MINUSEQ -> IrOperator.MINUSEQ
+            KtTokens.MULTEQ -> IrOperator.MULTEQ
+            KtTokens.DIVEQ -> IrOperator.DIVEQ
+            KtTokens.PERCEQ -> IrOperator.PERCEQ
+            KtTokens.PLUS -> IrOperator.PLUS
+            KtTokens.MINUS -> IrOperator.MINUS
+            KtTokens.MUL -> IrOperator.MUL
+            KtTokens.DIV -> IrOperator.DIV
+            KtTokens.PERC -> IrOperator.PERC
+            KtTokens.RANGE -> IrOperator.RANGE
+            KtTokens.LT -> IrOperator.LT
+            KtTokens.LTEQ -> IrOperator.LTEQ
+            KtTokens.GT -> IrOperator.GT
+            KtTokens.GTEQ -> IrOperator.GTEQ
+            KtTokens.EQEQ -> IrOperator.EQEQ
+            KtTokens.EXCLEQ -> IrOperator.EXCLEQ
+            KtTokens.EQEQEQ -> IrOperator.EQEQEQ
+            KtTokens.EXCLEQEQEQ -> IrOperator.EXCLEQEQ
+            KtTokens.IN_KEYWORD -> IrOperator.IN
+            KtTokens.NOT_IN -> IrOperator.NOT_IN
+            KtTokens.ANDAND -> IrOperator.ANDAND
+            KtTokens.OROR -> IrOperator.OROR
+            KtTokens.ELVIS -> IrOperator.ELVIS
+            else -> null
+        }
 
 fun getIrPrefixOperator(ktOperator: IElementType): IrOperator? =
-        KT_TOKEN_TO_IR_PREFIX_OPERATOR[ktOperator]
+        when (ktOperator) {
+            KtTokens.PLUSPLUS -> IrOperator.PREFIX_INCR
+            KtTokens.MINUSMINUS -> IrOperator.PREFIX_DECR
+            KtTokens.EXCL -> IrOperator.EXCL
+            KtTokens.MINUS -> IrOperator.UMINUS
+            else -> null
+        }
 
 fun getIrPostfixOperator(ktOperator: IElementType): IrOperator? =
-        KT_TOKEN_TO_IR_POSTFIX_OPERATOR[ktOperator]
+        when (ktOperator) {
+            KtTokens.PLUSPLUS -> IrOperator.POSTFIX_INCR
+            KtTokens.MINUSMINUS -> IrOperator.POSTFIX_DECR
+            KtTokens.EXCLEXCL -> IrOperator.EXCLEXCL
+            else -> null
+        }
 
-private val KT_TOKEN_TO_IR_BINARY_OPERATOR = mapOf<IElementType, IrBinaryOperator>(
-        KtTokens.EQ to IrOperator.EQ,
-
-        KtTokens.PLUSEQ to IrOperator.PLUSEQ,
-        KtTokens.MINUSEQ to IrOperator.MINUSEQ,
-        KtTokens.MULTEQ to IrOperator.MULTEQ,
-        KtTokens.DIVEQ to IrOperator.DIVEQ,
-        KtTokens.PERCEQ to IrOperator.PERCEQ,
-
-        KtTokens.PLUS to IrOperator.PLUS,
-        KtTokens.MINUS to IrOperator.MINUS,
-        KtTokens.MUL to IrOperator.MUL,
-        KtTokens.DIV to IrOperator.DIV,
-        KtTokens.PERC to IrOperator.PERC,
-        KtTokens.RANGE to IrOperator.RANGE,
-
-        KtTokens.LT to IrOperator.LT,
-        KtTokens.LTEQ to IrOperator.LTEQ,
-        KtTokens.GT to IrOperator.GT,
-        KtTokens.GTEQ to IrOperator.GTEQ,
-
-        KtTokens.EQEQ to IrOperator.EQEQ,
-        KtTokens.EXCLEQ to IrOperator.EXCLEQ,
-
-        KtTokens.EQEQEQ to IrOperator.EQEQEQ,
-        KtTokens.EXCLEQEQEQ to IrOperator.EXCLEQEQ,
-
-        KtTokens.IN_KEYWORD to IrOperator.IN,
-        KtTokens.NOT_IN to IrOperator.NOT_IN,
-
-        KtTokens.ANDAND to IrOperator.ANDAND,
-        KtTokens.OROR to IrOperator.OROR,
-
-        KtTokens.ELVIS to IrOperator.ELVIS
-)
-
-private val KT_TOKEN_TO_IR_PREFIX_OPERATOR = mapOf<IElementType, IrOperator>(
-        KtTokens.PLUSPLUS to IrOperator.PREFIX_INCR,
-        KtTokens.MINUSMINUS to IrOperator.PREFIX_DECR,
-        KtTokens.EXCL to IrOperator.EXCL,
-        KtTokens.MINUS to IrOperator.UMINUS
-)
-
-private val KT_TOKEN_TO_IR_POSTFIX_OPERATOR = mapOf<IElementType, IrOperator>(
-        KtTokens.PLUSPLUS to IrOperator.POSTFIX_INCR,
-        KtTokens.MINUSMINUS to IrOperator.POSTFIX_DECR,
-        KtTokens.EXCLEXCL to IrOperator.EXCLEXCL
-)
+fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
+        when (ktOperator) {
+            KtTokens.IS_KEYWORD -> IrTypeOperator.INSTANCEOF
+            KtTokens.NOT_IS -> IrTypeOperator.NOT_INSTANCEOF
+            KtTokens.AS_KEYWORD -> IrTypeOperator.CAST
+            KtTokens.AS_SAFE -> IrTypeOperator.SAFE_CAST
+            else -> null
+        }
 
 val AUGMENTED_ASSIGNMENTS =
         setOf(IrOperator.PLUSEQ, IrOperator.MINUSEQ, IrOperator.MULTEQ, IrOperator.DIVEQ, IrOperator.PERCEQ)

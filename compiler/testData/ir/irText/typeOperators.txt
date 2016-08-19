@@ -1,0 +1,26 @@
+IrFile /typeOperators.kt
+  DUMMY IThing
+  IrFunction public fun test1(/*0*/ x: kotlin.Any): kotlin.Boolean
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          TYPE_OP operator=INSTANCEOF typeOperand=IThing
+            GET_VAR x type=kotlin.Any operator=null
+  IrFunction public fun test2(/*0*/ x: kotlin.Any): kotlin.Boolean
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          TYPE_OP operator=NOT_INSTANCEOF typeOperand=IThing
+            GET_VAR x type=kotlin.Any operator=null
+  IrFunction public fun test3(/*0*/ x: kotlin.Any): IThing
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          TYPE_OP operator=CAST typeOperand=IThing
+            GET_VAR x type=kotlin.Any operator=null
+  IrFunction public fun test4(/*0*/ x: kotlin.Any): IThing?
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          TYPE_OP operator=SAFE_CAST typeOperand=IThing
+            GET_VAR x type=kotlin.Any operator=null

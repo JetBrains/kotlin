@@ -247,6 +247,12 @@ class StatementGenerator(
     override fun visitPostfixExpression(expression: KtPostfixExpression, data: Nothing?): IrStatement =
             OperatorExpressionGenerator(this).generatePostfixExpression(expression)
 
+    override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS, data: Nothing?): IrStatement =
+            OperatorExpressionGenerator(this).generateCastExpression(expression)
+
+    override fun visitIsExpression(expression: KtIsExpression, data: Nothing?): IrStatement =
+            OperatorExpressionGenerator(this).generateInstanceOfExpression(expression)
+
     override fun visitIfExpression(expression: KtIfExpression, data: Nothing?): IrStatement {
         val resultType = getInferredTypeWithSmartcasts(expression)
         val irWhen = IrWhenExpressionImpl(expression.startOffset, expression.endOffset, resultType)
@@ -273,4 +279,6 @@ class StatementGenerator(
 
         return irWhen
     }
+
+
 }

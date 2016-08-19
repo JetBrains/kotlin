@@ -208,4 +208,10 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stringPlus.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("typeOperators.kt")
+    public void testTypeOperators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/typeOperators.kt");
+        doTest(fileName);
+    }
 }
