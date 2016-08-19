@@ -139,17 +139,17 @@ class DebugClInterface {
                     continue
                 }
                 val paramType = params[2]//maybe string or int
-                val type: DebugRequest.TYPE
+                val type: DebugRequest.Type
                 try {
-                    type = DebugRequest.TYPE.fromIntToTYPE(paramType.toInt())
+                    type = DebugRequest.Type.fromIntToType(paramType.toInt())
                 } catch (e: NumberFormatException) {
                     try {
-                        type = DebugRequest.TYPE.valueOf(paramType)
+                        type = DebugRequest.Type.valueOf(paramType)
                     } catch (e: IllegalArgumentException) {
-                        type = DebugRequest.TYPE.Unexpected
+                        type = DebugRequest.Type.Unexpected
                     }
                 }
-                if (type == DebugRequest.TYPE.Unexpected) {
+                if (type == DebugRequest.Type.Unexpected) {
                     println("type with name/id $paramType not found")
                     continue
                 }

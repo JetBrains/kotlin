@@ -17,8 +17,8 @@ class ControllerEmulator : Controller {
     }
 
     override fun executeRoute(route: RouteRequest) {
-        val moveTimes = route.moveTime
-        val moveDirections = route.moveDirection
+        val moveTimes = route.times
+        val moveDirections = route.directions
         //list of move direction and time to this move in ms
         val commands: MutableList<Pair<MoveDirection, Int>> = mutableListOf()
 
