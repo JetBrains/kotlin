@@ -1,5 +1,5 @@
 
-object Debug {
+object Tests {
     var PROGRAM_DURATION = 1000
 
     fun echoUsbTest() {

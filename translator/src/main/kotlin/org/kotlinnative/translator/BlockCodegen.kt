@@ -65,7 +65,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
             is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
             is KtDoWhileExpression -> evaluateDoWhileExpression(expr.firstChild, scopeDepth + 1)
-            is KtBreakExpression -> evaluateBreakExpression(expr, breakLabel!!, scopeDepth + 1)
+            is KtBreakExpression -> evaluateBreakExpression(breakLabel!!)
             is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
             is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
             is PsiElement -> evaluateExpression(expr.firstChild, scopeDepth + 1)
@@ -79,7 +79,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         expressionWalker(expr.getNextSiblingIgnoringWhitespaceAndComments(), breakLabel, scopeDepth)
     }
 
-    private fun evaluateBreakExpression(expr: KtBreakExpression, breakLabel: LLVMLabel, scopeDepth: Int) {
+    private fun evaluateBreakExpression(breakLabel: LLVMLabel) {
         codeBuilder.addUnconditionalJump(breakLabel)
     }
 
@@ -228,7 +228,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
         }
 
-        val clazz = resolveCodegen(receiverExpr) ?: return evaluateExtensionExpression(receiverExpr, receiver, selectorExpr as KtCallExpression, scopeDepth)
+        val clazz = resolveCodegen(receiverExpr) ?: return evaluateExtensionExpression(receiverExpr, receiver, selectorExpr as? KtCallExpression ?: throw UnexpectedException(selectorExpr.text), scopeDepth)
         return evaluateClassScopedDotExpression(clazz, selectorExpr, scopeDepth, receiver)
     }
 
@@ -442,26 +442,27 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
 
         val containingClass = resolveContainingClass(expr)
-        if (containingClass != null) {
-            val name = "${containingClass.fullName}.$function"
-            val method = containingClass.methods[name]!!
-            val args = mutableListOf<LLVMSingleValue>()
-            val leftName = (expr.context as? KtDotQualifiedExpression)?.receiverExpression?.text
 
-            if (caller != null) {
-                args.add(caller)
-            } else if (variableManager[containingClass.fullName] != null) {
-                args.add(variableManager[containingClass.fullName]!!)
-            } else {
-                args.add(variableManager["this"]!!)
-            }
-
-            args.addAll(loadArgsIfRequired(names, method.args))
-
-            return evaluateFunctionCallExpression(LLVMVariable(method.fullName, method.returnType?.type ?: LLVMVoidType(), scope = LLVMVariableScope()), args)
+        if (containingClass == null) {
+            return null
         }
 
-        return null
+        val name = "${containingClass.fullName}.$function"
+        val method = containingClass.methods[name]!!
+        val args = mutableListOf<LLVMSingleValue>()
+        val leftName = (expr.context as? KtDotQualifiedExpression)?.receiverExpression?.text
+
+        if (caller != null) {
+            args.add(caller)
+        } else if (variableManager[containingClass.fullName] != null) {
+            args.add(variableManager[containingClass.fullName]!!)
+        } else {
+            args.add(variableManager["this"]!!)
+        }
+
+        args.addAll(loadArgsIfRequired(names, method.args))
+
+        return evaluateFunctionCallExpression(LLVMVariable(method.fullName, method.returnType?.type ?: LLVMVoidType(), scope = LLVMVariableScope()), args)
     }
 
     private fun resolveContainingClass(expr: KtElement): StructCodegen? {
@@ -1075,9 +1076,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 val newVar = variableManager.receiveVariable(identifier, assignExpressionType, LLVMRegisterScope(), pointer = 1)
                 codeBuilder.addConstant(newVar, assignExpression)
                 variableManager.addVariable(identifier, newVar, scopeDepth)
-            }
-            null -> {
-                val xrptrz = 442
             }
             else -> {
                 throw UnsupportedOperationException()

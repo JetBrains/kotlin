@@ -1,0 +1,18 @@
+syntax = "proto3";
+package carkot;
+
+message DebugRequest {
+
+    Type type = 1;
+
+    enum Type {
+        MEMORY_STATS = 0;
+    }
+}
+
+message DebugResponseMemoryStats {
+    int32 heapDynamicTail = 1;
+    int32 heapStaticTail = 2;
+    int32 heapDynamicMaxBytes = 3;
+    int32 heapDynamicTotalBytes = 4;
+}

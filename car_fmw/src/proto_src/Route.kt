@@ -1,25 +1,24 @@
-
-class RouteRequest private constructor (var distances: IntArray, var angles: IntArray) {
+class RouteRequest private constructor (var times: IntArray, var directions: IntArray) {
   //========== Properties ===========
-  //repeated int32 distances = 1
+  //repeated int32 times = 1
 
-  //repeated int32 angles = 2
+  //repeated int32 directions = 2
 
   var errorCode: Int = 0
 
   //========== Serialization methods ===========
   fun writeTo (output: CodedOutputStream) {
-    //repeated int32 distances = 1
-    if (distances.size > 0) {
+    //repeated int32 times = 1
+    if (times.size > 0) {
       output.writeTag(1, WireType.LENGTH_DELIMITED)
       var arrayByteSize = 0
 
-      if (distances.size != 0) {
+      if (times.size != 0) {
         do {
           var arraySize = 0
           var i = 0
-          while (i < distances.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+          while (i < times.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(times[i])
             i += 1
           } 
           arrayByteSize += arraySize
@@ -29,24 +28,24 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
       do {
         var i = 0
-        while (i < distances.size) {
-          output.writeInt32NoTag (distances[i])
+        while (i < times.size) {
+          output.writeInt32NoTag (times[i])
           i += 1
         }
       } while(false)
     }
 
-    //repeated int32 angles = 2
-    if (angles.size > 0) {
+    //repeated int32 directions = 2
+    if (directions.size > 0) {
       output.writeTag(2, WireType.LENGTH_DELIMITED)
       var arrayByteSize = 0
 
-      if (angles.size != 0) {
+      if (directions.size != 0) {
         do {
           var arraySize = 0
           var i = 0
-          while (i < angles.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+          while (i < directions.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(directions[i])
             i += 1
           } 
           arrayByteSize += arraySize
@@ -56,8 +55,8 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
       do {
         var i = 0
-        while (i < angles.size) {
-          output.writeInt32NoTag (angles[i])
+        while (i < directions.size) {
+          output.writeInt32NoTag (directions[i])
           i += 1
         }
       } while(false)
@@ -66,8 +65,8 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
   }
 
   fun mergeWith (other: RouteRequest) {
-    distances = distances.plus((other.distances))
-    angles = angles.plus((other.angles))
+    times = times.plus((other.times))
+    directions = directions.plus((other.directions))
     this.errorCode = other.errorCode
   }
 
@@ -84,26 +83,26 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
   //========== Size-related methods ===========
   fun getSize(fieldNumber: Int): Int {
     var size = 0
-    if (distances.size != 0) {
+    if (times.size != 0) {
       do {
         var arraySize = 0
         size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
         var i = 0
-        while (i < distances.size) {
-          arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+        while (i < times.size) {
+          arraySize += WireFormat.getInt32SizeNoTag(times[i])
           i += 1
         } 
         size += arraySize
         size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
-    if (angles.size != 0) {
+    if (directions.size != 0) {
       do {
         var arraySize = 0
         size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
         var i = 0
-        while (i < angles.size) {
-          arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+        while (i < directions.size) {
+          arraySize += WireFormat.getInt32SizeNoTag(directions[i])
           i += 1
         } 
         size += arraySize
@@ -116,26 +115,26 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
   fun getSizeNoTag(): Int {
     var size = 0
-    if (distances.size != 0) {
+    if (times.size != 0) {
       do {
         var arraySize = 0
         size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
         var i = 0
-        while (i < distances.size) {
-          arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+        while (i < times.size) {
+          arraySize += WireFormat.getInt32SizeNoTag(times[i])
           i += 1
         } 
         size += arraySize
         size += WireFormat.getInt32SizeNoTag(arraySize)
       } while(false)
     }
-    if (angles.size != 0) {
+    if (directions.size != 0) {
       do {
         var arraySize = 0
         size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
         var i = 0
-        while (i < angles.size) {
-          arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+        while (i < directions.size) {
+          arraySize += WireFormat.getInt32SizeNoTag(directions[i])
           i += 1
         } 
         size += arraySize
@@ -146,25 +145,25 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
   }
 
   //========== Builder ===========
-  class BuilderRouteRequest constructor (var distances: IntArray, var angles: IntArray) {
+  class BuilderRouteRequest constructor (var times: IntArray, var directions: IntArray) {
     //========== Properties ===========
-    //repeated int32 distances = 1
-    fun setDistances(value: IntArray): RouteRequest.BuilderRouteRequest {
-      distances = value
+    //repeated int32 times = 1
+    fun setTimes(value: IntArray): RouteRequest.BuilderRouteRequest {
+      times = value
       return this
     }
-    fun setdistancesByIndex(index: Int, value: Int): RouteRequest.BuilderRouteRequest {
-      distances[index] = value
+    fun settimesByIndex(index: Int, value: Int): RouteRequest.BuilderRouteRequest {
+      times[index] = value
       return this
     }
 
-    //repeated int32 angles = 2
-    fun setAngles(value: IntArray): RouteRequest.BuilderRouteRequest {
-      angles = value
+    //repeated int32 directions = 2
+    fun setDirections(value: IntArray): RouteRequest.BuilderRouteRequest {
+      directions = value
       return this
     }
-    fun setanglesByIndex(index: Int, value: Int): RouteRequest.BuilderRouteRequest {
-      angles[index] = value
+    fun setdirectionsByIndex(index: Int, value: Int): RouteRequest.BuilderRouteRequest {
+      directions[index] = value
       return this
     }
 
@@ -172,17 +171,17 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
     //========== Serialization methods ===========
     fun writeTo (output: CodedOutputStream) {
-      //repeated int32 distances = 1
-      if (distances.size > 0) {
+      //repeated int32 times = 1
+      if (times.size > 0) {
         output.writeTag(1, WireType.LENGTH_DELIMITED)
         var arrayByteSize = 0
 
-        if (distances.size != 0) {
+        if (times.size != 0) {
           do {
             var arraySize = 0
             var i = 0
-            while (i < distances.size) {
-              arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+            while (i < times.size) {
+              arraySize += WireFormat.getInt32SizeNoTag(times[i])
               i += 1
             } 
             arrayByteSize += arraySize
@@ -192,24 +191,24 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
         do {
           var i = 0
-          while (i < distances.size) {
-            output.writeInt32NoTag (distances[i])
+          while (i < times.size) {
+            output.writeInt32NoTag (times[i])
             i += 1
           }
         } while(false)
       }
 
-      //repeated int32 angles = 2
-      if (angles.size > 0) {
+      //repeated int32 directions = 2
+      if (directions.size > 0) {
         output.writeTag(2, WireType.LENGTH_DELIMITED)
         var arrayByteSize = 0
 
-        if (angles.size != 0) {
+        if (directions.size != 0) {
           do {
             var arraySize = 0
             var i = 0
-            while (i < angles.size) {
-              arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+            while (i < directions.size) {
+              arraySize += WireFormat.getInt32SizeNoTag(directions[i])
               i += 1
             } 
             arrayByteSize += arraySize
@@ -219,8 +218,8 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
         do {
           var i = 0
-          while (i < angles.size) {
-            output.writeInt32NoTag (angles[i])
+          while (i < directions.size) {
+            output.writeInt32NoTag (directions[i])
             i += 1
           }
         } while(false)
@@ -230,7 +229,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
     //========== Mutating methods ===========
     fun build(): RouteRequest {
-      val res = RouteRequest(distances, angles)
+      val res = RouteRequest(times, directions)
       res.errorCode = errorCode
       return res
     }
@@ -267,7 +266,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
             while(i < arraySize) {
               newArray[i] = input.readInt32NoTag()
               i += 1}
-            distances = newArray
+            times = newArray
           } while (false)
         }
         2 -> {
@@ -295,7 +294,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
             while(i < arraySize) {
               newArray[i] = input.readInt32NoTag()
               i += 1}
-            angles = newArray
+            directions = newArray
           } while (false)
         }
         else -> errorCode = 4
@@ -319,26 +318,26 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
     //========== Size-related methods ===========
     fun getSize(fieldNumber: Int): Int {
       var size = 0
-      if (distances.size != 0) {
+      if (times.size != 0) {
         do {
           var arraySize = 0
           size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
           var i = 0
-          while (i < distances.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+          while (i < times.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(times[i])
             i += 1
           } 
           size += arraySize
           size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
-      if (angles.size != 0) {
+      if (directions.size != 0) {
         do {
           var arraySize = 0
           size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
           var i = 0
-          while (i < angles.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+          while (i < directions.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(directions[i])
             i += 1
           } 
           size += arraySize
@@ -351,26 +350,26 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
 
     fun getSizeNoTag(): Int {
       var size = 0
-      if (distances.size != 0) {
+      if (times.size != 0) {
         do {
           var arraySize = 0
           size += WireFormat.getTagSize(1, WireType.LENGTH_DELIMITED)
           var i = 0
-          while (i < distances.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(distances[i])
+          while (i < times.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(times[i])
             i += 1
           } 
           size += arraySize
           size += WireFormat.getInt32SizeNoTag(arraySize)
         } while(false)
       }
-      if (angles.size != 0) {
+      if (directions.size != 0) {
         do {
           var arraySize = 0
           size += WireFormat.getTagSize(2, WireType.LENGTH_DELIMITED)
           var i = 0
-          while (i < angles.size) {
-            arraySize += WireFormat.getInt32SizeNoTag(angles[i])
+          while (i < directions.size) {
+            arraySize += WireFormat.getInt32SizeNoTag(directions[i])
             i += 1
           } 
           size += arraySize

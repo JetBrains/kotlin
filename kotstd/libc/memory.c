@@ -62,3 +62,21 @@ void clean_dynamic_heap() {
     heap_tails[DYNAMIC_HEAP] = 0;
 #endif
 }
+
+#ifdef ARM
+int dynamic_heap_tail() {
+    return heap_tails[DYNAMIC_HEAP];
+}
+
+int static_heap_tail() {
+    return heap_tails[STATIC_HEAP];
+}
+
+int dynamic_heap_max_bytes() {
+    return dynamic_heap_max;
+}
+
+int dynamic_heap_total() {
+    return dynamic_heap_consume;
+}
+#endif

@@ -6,6 +6,6 @@ fun main() {
     Leds.init()
     Connection.init()
 
-    /* run test */
-    echoProto()
+    /* car task */
+    Control.run()
 }

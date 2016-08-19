@@ -1,0 +1,12 @@
+syntax = "proto3";
+package carkot;
+
+message TaskRequest {
+
+    Type type = 1;
+
+    enum Type {
+        DEBUG = 0;
+        ROUTE = 1;
+    }
+}

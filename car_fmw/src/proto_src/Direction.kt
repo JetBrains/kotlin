@@ -1,4 +1,3 @@
-
 class DirectionRequest private constructor (var command: DirectionRequest.Command, var sid: Int) {
   //========== Properties ===========
   //enum command = 1
@@ -9,21 +8,21 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
 
   //========== Nested enums declarations ===========
   enum class Command(val id: Int) {
-    stop (0),
-    forward (1),
-    backward (2),
-    left (3),
-    right (4),
+    STOP (0),
+    FORWARD (1),
+    BACKWARD (2),
+    LEFT (3),
+    RIGHT (4),
     Unexpected(5);
 
     companion object {
       fun fromIntToCommand (ord: Int): Command {
         return when (ord) {
-          0 -> Command.stop
-          1 -> Command.forward
-          2 -> Command.backward
-          3 -> Command.left
-          4 -> Command.right
+          0 -> Command.STOP
+          1 -> Command.FORWARD
+          2 -> Command.BACKWARD
+          3 -> Command.LEFT
+          4 -> Command.RIGHT
           else -> Unexpected
         }
       }
@@ -187,6 +186,7 @@ class DirectionRequest private constructor (var command: DirectionRequest.Comman
   }
 
 }
+
 
 class DirectionResponse private constructor (var code: Int) {
   //========== Properties ===========
