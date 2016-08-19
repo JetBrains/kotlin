@@ -86,7 +86,7 @@ class AnnotationConverter(private val converter: Converter) {
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), newLineAfter = false).assignNoPrototype() }
+                .map { Annotation(Identifier.withNoPrototype(it.second), listOf(), newLineAfter = false).assignNoPrototype() }
         return Annotations(list).assignNoPrototype()
     }
 
@@ -110,7 +110,7 @@ class AnnotationConverter(private val converter: Converter) {
         val qualifiedName = annotation.qualifiedName
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.parameterList.attributes.isEmpty()) {
             val deferredExpression = converter.deferredElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
-            return Identifier("Deprecated").assignNoPrototype() to listOf(null to deferredExpression) //TODO: insert comment
+            return Identifier.withNoPrototype("Deprecated") to listOf(null to deferredExpression) //TODO: insert comment
         }
         if (qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_TARGET) {
             val attributes = annotation.parameterList.attributes
@@ -131,11 +131,11 @@ class AnnotationConverter(private val converter: Converter) {
             val deferredExpressionList = arguments.map {
                 val name = it.name
                 null to converter.deferredElement<Expression> {
-                    QualifiedExpression(Identifier("AnnotationTarget", false).assignNoPrototype(),
-                                        Identifier(name, false).assignNoPrototype())
+                    QualifiedExpression(Identifier.withNoPrototype("AnnotationTarget", isNullable = false),
+                                        Identifier.withNoPrototype(name, isNullable = false))
                 }
             }
-            return Identifier("Target").assignNoPrototype() to deferredExpressionList
+            return Identifier.withNoPrototype("Target") to deferredExpressionList
         }
 
         val nameRef = annotation.nameReferenceElement
@@ -146,7 +146,7 @@ class AnnotationConverter(private val converter: Converter) {
             val method = annotationClass?.findMethodsByName(parameterName, false)?.firstOrNull()
             val expectedType = method?.returnType
 
-            val attrName = it.name?.let { Identifier(it).assignNoPrototype() }
+            val attrName = it.name?.let { Identifier.withNoPrototype(it) }
             val value = it.value
 
             val isVarArg = parameterName == "value" /* converted to vararg in Kotlin */

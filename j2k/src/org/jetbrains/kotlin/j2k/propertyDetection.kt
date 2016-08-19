@@ -229,7 +229,7 @@ private class PropertyDetector(
                 propertyAccess
             val specialSetterAccess = setterAccess?.check { it != propertyAccess }
 
-            val propertyInfo = PropertyInfo(Identifier(propertyName).assignNoPrototype(),
+            val propertyInfo = PropertyInfo(Identifier.withNoPrototype(propertyName),
                                             isVar,
                                             type,
                                             field,

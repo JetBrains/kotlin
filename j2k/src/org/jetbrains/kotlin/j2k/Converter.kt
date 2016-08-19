@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class Converter private constructor(
@@ -393,7 +394,7 @@ class Converter private constructor(
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
-                    val valueIdentifier = Identifier("value", false).assignNoPrototype()
+                    val valueIdentifier = Identifier.withNoPrototype("value", isNullable = false)
                     val assignment = AssignmentExpression(superAccess, valueIdentifier, Operator.EQ).assignNoPrototype()
                     val body = Block.of(assignment).assignNoPrototype()
                     val parameter = FunctionParameter(valueIdentifier, propertyType, FunctionParameter.VarValModifier.None, Annotations.Empty, Modifiers.Empty).assignNoPrototype()
@@ -578,14 +579,14 @@ class Converter private constructor(
 
         if (PsiMethodUtil.isMainMethod(method)) {
             function.annotations += Annotations(
-                    listOf(Annotation(Identifier("JvmStatic").assignNoPrototype(),
+                    listOf(Annotation(Identifier.withNoPrototype("JvmStatic"),
                                       listOf(),
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
 
         if (function.parameterList!!.parameters.any { it is FunctionParameter && it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(
-                    listOf(Annotation(Identifier("JvmOverloads").assignNoPrototype(),
+                    listOf(Annotation(Identifier.withNoPrototype("JvmOverloads"),
                                       listOf(),
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
@@ -658,7 +659,7 @@ class Converter private constructor(
                 result = Identifier.toKotlin(codeRefElement.referenceName!!) + "." + result
                 qualifier = codeRefElement.qualifier
             }
-            return ReferenceElement(Identifier(result).assignNoPrototype(), typeArgs).assignPrototype(element)
+            return ReferenceElement(Identifier.withNoPrototype(result), typeArgs).assignPrototype(element)
         }
         else {
             if (!hasExternalQualifier) {
@@ -671,7 +672,7 @@ class Converter private constructor(
                 }
             }
 
-            return ReferenceElement(Identifier(element.referenceName!!).assignNoPrototype(), typeArgs).assignPrototype(element)
+            return ReferenceElement(Identifier.withNoPrototype(element.referenceName!!), typeArgs).assignPrototype(element)
         }
     }
 
@@ -681,7 +682,7 @@ class Converter private constructor(
             && !PsiTreeUtil.isAncestor(outerClass, context, true)
             && !psiClass.isImported(context.containingFile as PsiJavaFile)) {
             val qualifier = constructNestedClassReferenceIdentifier(outerClass, context)?.name ?: outerClass.name!!
-            return Identifier(Identifier.toKotlin(qualifier) + "." + Identifier.toKotlin(psiClass.name!!)).assignNoPrototype()
+            return Identifier.withNoPrototype(Identifier.toKotlin(qualifier) + "." + Identifier.toKotlin(psiClass.name!!))
         }
         return null
     }
@@ -810,7 +811,7 @@ class Converter private constructor(
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
-        val annotation = Annotation(Identifier("Throws").assignNoPrototype(), arguments, newLineAfter = true)
+        val annotation = Annotation(Identifier.withNoPrototype("Throws"), arguments, newLineAfter = true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 

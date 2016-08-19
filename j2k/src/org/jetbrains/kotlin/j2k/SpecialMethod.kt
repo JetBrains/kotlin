@@ -196,7 +196,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     OBJECT_GET_CLASS(JAVA_LANG_OBJECT, "getClass", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression {
-            val identifier = Identifier("javaClass", false).assignNoPrototype()
+            val identifier = Identifier.withNoPrototype("javaClass", isNullable = false)
             return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
         }
     },
@@ -233,7 +233,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_TRIM(JAVA_LANG_STRING, "trim", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            val comparison = BinaryExpression(Identifier("it", isNullable = false).assignNoPrototype(), LiteralExpression("' '").assignNoPrototype(), Operator(JavaTokenType.LE).assignNoPrototype()).assignNoPrototype()
+            val comparison = BinaryExpression(Identifier.withNoPrototype("it", isNullable = false), LiteralExpression("' '").assignNoPrototype(), Operator(JavaTokenType.LE).assignNoPrototype()).assignNoPrototype()
             return MethodCallExpression.buildNotNull(
                     codeConverter.convertExpression(qualifier), "trim",
                     listOf(LambdaExpression(null, Block.of(comparison).assignNoPrototype())), emptyList())
@@ -266,7 +266,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     STRING_SPLIT(JAVA_LANG_STRING, "split", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
             val splitCall = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), "split", listOf(codeConverter.convertToRegex(arguments.single())), emptyList()).assignNoPrototype()
-            val isEmptyCall = MethodCallExpression.buildNotNull(Identifier("it", isNullable = false).assignNoPrototype(), "isEmpty", emptyList(), emptyList()).assignNoPrototype()
+            val isEmptyCall = MethodCallExpression.buildNotNull(Identifier.withNoPrototype("it", isNullable = false), "isEmpty", emptyList(), emptyList()).assignNoPrototype()
             val isEmptyCallBlock = Block.of(isEmptyCall).assignNoPrototype()
             val dropLastCall = MethodCallExpression.buildNotNull(splitCall, "dropLastWhile", listOf(LambdaExpression(null, isEmptyCallBlock).assignNoPrototype())).assignNoPrototype()
             return MethodCallExpression.buildNotNull(dropLastCall, "toTypedArray", emptyList(), emptyList())
@@ -419,7 +419,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     abstract fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?
 
     protected fun convertMethodCallToPropertyUse(codeConverter: CodeConverter, qualifier: PsiExpression?, propertyName: String = methodName): Expression {
-        val identifier = Identifier(propertyName, false).assignNoPrototype()
+        val identifier = Identifier.withNoPrototype(propertyName, isNullable = false)
         return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
     }
 
@@ -441,7 +441,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         val convertedQualifier = codeConverter.convertExpression(qualifier)
         val qualifierType = codeConverter.typeConverter.convertType(qualifier.type)
         val typeArgs = if (qualifierType is ClassType) qualifierType.referenceElement.typeArgs else emptyList()
-        val referenceElement = ReferenceElement(Identifier(type).assignNoPrototype(), typeArgs).assignNoPrototype()
+        val referenceElement = ReferenceElement(Identifier.withNoPrototype(type), typeArgs).assignNoPrototype()
         val newType = ClassType(referenceElement, Nullability.Default, codeConverter.settings).assignNoPrototype()
         return TypeCastExpression(newType, convertedQualifier).assignNoPrototype()
     }
@@ -485,7 +485,7 @@ private fun addIgnoreCaseArgument(
         ignoreCaseArgument: PsiExpression? = null
 ): Expression {
     val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) } ?: LiteralExpression("true").assignNoPrototype()
-    val ignoreCaseArgumentExpression = AssignmentExpression(Identifier("ignoreCase").assignNoPrototype(), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
+    val ignoreCaseArgumentExpression = AssignmentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
     return MethodCallExpression.build(codeConverter.convertExpression(qualifier), methodName,
                                       arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) } + ignoreCaseArgumentExpression,
                                       typeArgumentsConverted, false)

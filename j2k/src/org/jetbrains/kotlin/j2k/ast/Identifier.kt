@@ -61,5 +61,9 @@ class Identifier(
         private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
 
         fun toKotlin(name: String): String = Identifier(name).toKotlin()
+
+        fun withNoPrototype(name: String, isNullable: Boolean = true, quotingNeeded: Boolean = true, imports: Collection<FqName> = emptyList()): Identifier {
+            return Identifier(name, isNullable, quotingNeeded, imports).assignNoPrototype()
+        }
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import java.lang.AssertionError
 
 interface ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
@@ -241,7 +242,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
         else {
             val type = converter.convertTypeElement(operand, Nullability.NotNull)
-            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier("java").assignNoPrototype())
+            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype("java"))
             return
         }
 
@@ -252,7 +253,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         else
             wrapperTypeName.shortName().asString()
         result = QualifiedExpression(Identifier(classNameToUse, false).assignPrototype(operand),
-                                     Identifier("TYPE", false).assignNoPrototype())
+                                     Identifier.withNoPrototype("TYPE", isNullable = false))
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -335,7 +336,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     origin as KtNamedDeclaration
                 val parameterCount = target.parameterList.parameters.size
                 if (parameterCount == arguments.size) {
-                    val propertyName = Identifier(property.name!!, isNullable).assignNoPrototype()
+                    val propertyName = Identifier.withNoPrototype(property.name!!, isNullable)
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
@@ -547,7 +548,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
 
         if (qualifier != null && qualifier.type is PsiArrayType && referenceName == "length") {
-            identifier = Identifier("size", isNullable).assignNoPrototype()
+            identifier = Identifier.withNoPrototype("size", isNullable)
         }
         else if (qualifier != null) {
             if (target is KtLightField && target.kotlinOrigin is KtObjectDeclaration) {
@@ -558,7 +559,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         else {
             if (target is PsiClass) {
                 if (PrimitiveType.values().any { it.typeName.asString() == target.name }) {
-                    result = Identifier(target.qualifiedName!!, false)
+                    result = Identifier.withNoPrototype(target.qualifiedName!!, isNullable = false)
                     return
                 }
             }
@@ -577,7 +578,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     code = Identifier.toKotlin(containingClass.name!!) + "." + code
                     member = containingClass
                 }
-                result = Identifier(code, false, false)
+                result = Identifier.withNoPrototype(code, isNullable = false, quotingNeeded = false)
                 return
             }
         }
@@ -698,7 +699,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitLambdaExpression(expression: PsiLambdaExpression) {
         val parameters = expression.parameterList
         val convertedParameters = ParameterList(parameters.parameters.map {
-            val paramName = Identifier(it.name!!).assignNoPrototype()
+            val paramName = Identifier.withNoPrototype(it.name!!)
             val paramType = if (it.typeElement != null) converter.typeConverter.convertType(it.type) else null
             LambdaParameter(paramName, paramType).assignPrototype(it)
         }, lPar = null, rPar = null).assignPrototype(parameters)
@@ -727,7 +728,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
                         val callExpression = expression.getParentOfType<PsiMethodCallExpression>(false)
                         if (callExpression != null) {
-                            return ReturnStatement(expressionForReturn, Identifier(callExpression.methodExpression.text).assignNoPrototype())
+                            return ReturnStatement(expressionForReturn, Identifier.withNoPrototype(callExpression.methodExpression.text))
                         }
 
                         return ReturnStatement(expressionForReturn)
@@ -861,23 +862,23 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             val containingClassName = thisClass.qualifiedName ?: containingClass!!.name
             if (containingClassName != null) {
                 val fqName = FqName(containingClassName)
-                val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
+                val identifier = Identifier.withNoPrototype(fqName.shortName().identifier, imports = listOf(fqName))
                 thisClassType = ClassType(
                         ReferenceElement(identifier, converter.convertTypeParameterList(thisClass.typeParameterList).parameters).assignNoPrototype(),
                         Nullability.NotNull,
                         converter.settings).assignNoPrototype()
             }
         }
-        if (needThis) newParameters.add(Identifier("obj", false).assignNoPrototype() to thisClassType)
+        if (needThis) newParameters.add(Identifier.withNoPrototype("obj", isNullable = false) to thisClassType)
 
         parameterList.parameters.forEach {
             val parameterType = if (isKotlinFunctionType) converter.typeConverter.convertType(it.type, Nullability.NotNull) else null
-            newParameters.add(Identifier(it.name ?: "p", false).assignNoPrototype() to parameterType)
+            newParameters.add(Identifier.withNoPrototype(it.name ?: "p", isNullable = false) to parameterType)
         }
 
         if (newParameters.size == 1 && !isKotlinFunctionType) {
             newParameters.clear()
-            newParameters.add(Identifier("it", false).assignNoPrototype() to null)
+            newParameters.add(Identifier.withNoPrototype("it", isNullable = false) to null)
         }
 
         return newParameters

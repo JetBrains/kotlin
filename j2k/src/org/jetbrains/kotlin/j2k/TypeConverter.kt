@@ -58,7 +58,7 @@ class TypeConverter(val converter: Converter) {
 
     fun convertVariableType(variable: PsiVariable): Type {
         val result = if (variable.isMainMethodParameter()) {
-            ArrayType(ClassType(ReferenceElement(Identifier("String").assignNoPrototype(), listOf()).assignNoPrototype(), Nullability.NotNull, converter.settings).assignNoPrototype(),
+            ArrayType(ClassType(ReferenceElement(Identifier.withNoPrototype("String"), listOf()).assignNoPrototype(), Nullability.NotNull, converter.settings).assignNoPrototype(),
                       Nullability.NotNull,
                       converter.settings).assignNoPrototype()
         }

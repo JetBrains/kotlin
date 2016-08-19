@@ -56,7 +56,7 @@ class FieldToPropertyProcessing(
                                     || replaceWriteWithFieldReference && PsiUtil.isAccessedForWriting(expression)
 
             //TODO: what if local "field" is declared? Should be rare case though
-            val identifier = Identifier(if (useFieldReference) "field" else propertyName, isNullable).assignNoPrototype()
+            val identifier = Identifier.withNoPrototype(if (useFieldReference) "field" else propertyName, isNullable)
 
             val qualifier = expression.qualifierExpression
             if (qualifier != null && !useFieldReference) {
