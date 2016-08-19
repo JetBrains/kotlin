@@ -7,6 +7,6 @@ message TaskRequest {
 
     enum TYPE {
         DEBUG = 0;
-        ROUTE = 0;
+        ROUTE = 1;
     }
 }
