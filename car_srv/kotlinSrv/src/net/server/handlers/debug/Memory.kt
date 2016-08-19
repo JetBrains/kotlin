@@ -3,8 +3,10 @@ package net.server.handlers.debug
 import DebugRequest
 import DebugResponseMemoryStats
 import McState
+import encodeProtoBuf
 import mcTransport
 import net.server.handlers.AbstractHandler
+import CodedInputStream
 
 class Memory : AbstractHandler {
 
@@ -27,6 +29,8 @@ class Memory : AbstractHandler {
         mcTransport.setCallBack { bytes ->
             callback.invoke(bytes)
         }
-        mcTransport.sendBytes(data)
+        val message = fromServerObjectBuilder.build()
+        message.mergeFrom(CodedInputStream(data))
+        mcTransport.sendProtoBuf(message)
     }
 }

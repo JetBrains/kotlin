@@ -3,7 +3,8 @@ package net.server.handlers.flash
 import CodedInputStream
 import Upload
 import UploadResult
-import mcTransport
+import encodeProtoBuf
+import fs
 import net.server.handlers.AbstractHandler
 import require
 
@@ -23,13 +24,18 @@ class LoadBin : AbstractHandler {
     override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
-        val responseMessage = toServerObjectBuilder.build()
-        mcTransport.sendBytes(message.data)
-        val stFlashCommand = "./st-flash write ./flash.bin " + "0x08000000"
-        exec(stFlashCommand, { err, stdOutRes, stdErrRes ->
-            val resultCode = if (err != null) 15 else 0
-            responseMessage.resultCode = resultCode
-            callback.invoke(encodeProtoBuf(responseMessage))
+        fs.writeFile("./flash.bin", js("new Buffer(data)"), fun(err: dynamic) {
+            if (err) {
+                println("error in save flash.bin file\n $err")
+                val responseMessage = toServerObjectBuilder.setResultCode(14).build()
+                callback.invoke(encodeProtoBuf(responseMessage))
+            }
+            val stFlashCommand = "./st-flash write ./flash.bin " + "0x08000000"
+            exec(stFlashCommand, { err, stdOutRes, stdErrRes ->
+                val resultCode = if (err != null) 15 else 0
+                val responseMessage = toServerObjectBuilder.setResultCode(resultCode).build()
+                callback.invoke(encodeProtoBuf(responseMessage))
+            })
         })
     }
 }

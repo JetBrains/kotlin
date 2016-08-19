@@ -1,7 +1,6 @@
 import control.car.ControllerToUsb
 import net.Client
 import net.server.handlers.AbstractHandler
-import net.server.handlers.ProtoType
 import net.server.handlers.debug.Memory
 import net.server.handlers.flash.LoadBin
 import net.server.handlers.main.GetLocation
@@ -27,7 +26,6 @@ fun main(args: Array<String>) {
     handlers.put("/route", SetRoute(carController))
     handlers.put("/getLocation", GetLocation())
     handlers.put("/debug/memory", Memory())
-    handlers.put("/protoType", ProtoType())
 
     Client.instance.connectToServer(config.getCarIp(), carServerPort)
 

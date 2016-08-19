@@ -5,6 +5,7 @@ import McState
 import RouteRequest
 import RouteResponse
 import control.Controller
+import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
 class SetRoute : AbstractHandler {

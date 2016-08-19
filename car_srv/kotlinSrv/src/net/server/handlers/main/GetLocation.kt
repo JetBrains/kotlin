@@ -2,6 +2,7 @@ package net.server.handlers.main
 
 import CarState
 import LocationResponse
+import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
 class GetLocation : AbstractHandler {

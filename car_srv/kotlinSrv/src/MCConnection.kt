@@ -9,12 +9,35 @@ class McTransport() : MCConnectObserver<String> {
         McConditionMonitor.instance.addObserver(this)
     }
 
-    fun sendBytes(bytes: ByteArray) {
+    private fun sendBytes(bytes: ByteArray) {
         val bytesHeader = encodeInt(bytes.size)
         println("write: $bytesHeader")
         writeStream.write(js("new Buffer(bytesHeader)"))
         println("write: $bytes")
         writeStream.write(js("new Buffer(bytes)"))
+    }
+
+
+    fun sendProtoBuf(message: DebugRequest) {
+        val typeMessage = getProtoBufTypeMessage(TaskRequest.Type.DEBUG)
+        sendProtoBufType(typeMessage)
+        sendBytes(encodeProtoBuf(message))
+    }
+
+    fun sendProtoBuf(message: RouteRequest) {
+        val typeMessage = getProtoBufTypeMessage(TaskRequest.Type.ROUTE)
+        sendProtoBufType(typeMessage)
+        sendBytes(encodeProtoBuf(message))
+    }
+
+    private fun sendProtoBufType(messageType: TaskRequest) {
+        val typeBytes = encodeProtoBuf(messageType)
+        sendBytes(typeBytes)
+    }
+
+    private fun getProtoBufTypeMessage(type: TaskRequest.Type): TaskRequest {
+        val result = TaskRequest.BuilderTaskRequest(type)
+        return result.build()
     }
 
     private fun initStreams(pathToFile: String) {
