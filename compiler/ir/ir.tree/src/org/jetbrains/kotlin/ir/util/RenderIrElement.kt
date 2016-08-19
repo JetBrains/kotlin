@@ -112,9 +112,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitStringConcatenation(expression: IrStringConcatenationExpression, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.renderType()}"
 
-    override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String {
-        return "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
-    }
+    override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String =
+            "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+
+    override fun visitWhenExpression(expression: IrWhenExpression, data: Nothing?): String =
+            "WHEN subject=${expression.subject?.descriptor?.name} type=${expression.type.render()}"
+
+    override fun visitBranch(branch: IrBranch, data: Nothing?): String =
+            "BRANCH"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"

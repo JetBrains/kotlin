@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.IrGeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.IrModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.psi2ir.transformations.foldStringConcatenation
 import org.jetbrains.kotlin.psi2ir.transformations.inlineDesugaredBlocks
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,8 +33,8 @@ class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
     )
 
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModule {
-        val irGeneratorContext = IrGeneratorContext(moduleDescriptor, bindingContext)
-        val irModule = IrModuleGenerator(irGeneratorContext).generateModule(ktFiles)
+        val irGeneratorContext = GeneratorContext(moduleDescriptor, bindingContext)
+        val irModule = ModuleGenerator(irGeneratorContext).generateModule(ktFiles)
         postprocess(irModule)
         return irModule
     }

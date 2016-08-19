@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.generators.values.IrVariableLValue
+import org.jetbrains.kotlin.psi2ir.generators.values.VariableLValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -38,17 +38,17 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-class IrStatementGenerator(
-        override val context: IrGeneratorContext,
+class StatementGenerator(
+        override val context: GeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val temporaryVariableFactory: IrTemporaryVariableFactory
+        val temporaryVariableFactory: TemporaryVariableFactory
 ) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
 
     fun generateExpression(ktExpression: KtExpression): IrExpression =
             ktExpression.genExpr()
 
     private fun KtElement.genStmt(): IrStatement =
-            deparenthesize().accept(this@IrStatementGenerator, null)
+            deparenthesize().accept(this@StatementGenerator, null)
 
     private fun KtElement.genExpr(): IrExpression =
             genStmt().assertCast()
@@ -77,8 +77,8 @@ class IrStatementGenerator(
         val irTmpInitializer = temporaryVariableFactory.createTemporaryVariable(ktInitializer.genExpr())
         irBlock.addStatement(irTmpInitializer)
 
-        val irCallGenerator = IrCallGenerator(this)
-        irCallGenerator.putValue(ktInitializer, IrVariableLValue(irTmpInitializer))
+        val irCallGenerator = CallGenerator(this)
+        irCallGenerator.putValue(ktInitializer, VariableLValue(irTmpInitializer))
 
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
@@ -188,7 +188,7 @@ class IrStatementGenerator(
                                                    companionObjectDescriptor)
                 }
             is PropertyDescriptor -> {
-                IrCallGenerator(this).generateCall(expression, resolvedCall)
+                CallGenerator(this).generateCall(expression, resolvedCall)
             }
             is VariableDescriptor ->
                 IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, descriptor)
@@ -207,7 +207,7 @@ class IrStatementGenerator(
             TODO("VariableAsFunctionResolvedCall = variable call + invoke call")
         }
 
-        return IrCallGenerator(this).generateCall(expression, resolvedCall)
+        return CallGenerator(this).generateCall(expression, resolvedCall)
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
@@ -239,8 +239,38 @@ class IrStatementGenerator(
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Nothing?): IrStatement =
-            IrOperatorExpressionGenerator(this).generateBinaryExpression(expression)
+            OperatorExpressionGenerator(this).generateBinaryExpression(expression)
 
     override fun visitPrefixExpression(expression: KtPrefixExpression, data: Nothing?): IrStatement =
-            IrOperatorExpressionGenerator(this).generatePrefixExpression(expression)
+            OperatorExpressionGenerator(this).generatePrefixExpression(expression)
+
+    override fun visitPostfixExpression(expression: KtPostfixExpression, data: Nothing?): IrStatement =
+            OperatorExpressionGenerator(this).generatePostfixExpression(expression)
+
+    override fun visitIfExpression(expression: KtIfExpression, data: Nothing?): IrStatement {
+        val resultType = getInferredTypeWithSmartcasts(expression)
+        val irWhen = IrWhenExpressionImpl(expression.startOffset, expression.endOffset, resultType)
+
+        var ktBranch: KtIfExpression? = expression
+        branches@while (ktBranch != null) {
+            val irBranch = IrBranchImpl(ktBranch.startOffset, ktBranch.endOffset,
+                                        ktBranch.condition!!.genExpr().toExpectedType(context.builtIns.booleanType),
+                                        ktBranch.then!!.genExpr().toExpectedType(resultType))
+            irWhen.addBranch(irBranch)
+
+            val ktElse = ktBranch.`else`
+
+            ktBranch = when (ktElse) {
+                is KtIfExpression -> ktElse
+                null ->
+                    break@branches
+                else -> {
+                    irWhen.elseExpression = ktElse.genExpr().toExpectedType(resultType)
+                    break@branches
+                }
+            }
+        }
+
+        return irWhen
+    }
 }

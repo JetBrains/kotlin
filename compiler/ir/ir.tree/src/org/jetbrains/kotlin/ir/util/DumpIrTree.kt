@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetPropertyExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetPropertyExpression
+import org.jetbrains.kotlin.ir.expressions.IrWhenExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -67,6 +68,19 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
             expression.value.accept(this, "\$value")
+        }
+    }
+
+    override fun visitWhenExpression(expression: IrWhenExpression, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.subject?.let { subject ->
+                subject.accept(this, "\$subject:")
+            }
+            for (branch in expression.branches) {
+                branch.condition.accept(this, "if")
+                branch.result.accept(this, "then")
+            }
+            expression.elseExpression?.accept(this, "else")
         }
     }
 

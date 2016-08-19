@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.assertDetached
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -56,8 +53,11 @@ class IrBlockExpressionImpl(
             statements.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
+        newChild.assertDetached()
         if (0 <= slot && slot < statements.size) {
+            statements[slot].detach()
             statements[slot] = newChild.assertCast()
+            newChild.setTreeLocation(this, slot)
         }
     }
 

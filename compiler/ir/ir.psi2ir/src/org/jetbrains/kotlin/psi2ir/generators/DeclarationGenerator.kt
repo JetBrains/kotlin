@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-class IrDeclarationGenerator(override val context: IrGeneratorContext) : IrGenerator {
+class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator {
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
         // TODO create IrAnnotation's for each KtAnnotationEntry
     }
@@ -140,7 +140,7 @@ class IrDeclarationGenerator(override val context: IrGeneratorContext) : IrGener
     }
 
     private fun generateExpressionWithinContext(ktExpression: KtExpression, scopeOwner: DeclarationDescriptor): IrExpression =
-            IrStatementGenerator(context, scopeOwner, IrTemporaryVariableFactory(scopeOwner))
+            StatementGenerator(context, scopeOwner, TemporaryVariableFactory(scopeOwner))
                     .generateExpression(ktExpression)
                     .toExpectedType(getExpectedTypeForLastInferredCall(ktExpression))
 

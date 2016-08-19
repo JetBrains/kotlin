@@ -63,8 +63,10 @@ interface IrElementVisitor<out R, in D> {
     fun visitBinaryOperator(expression: IrBinaryOperatorExpression, data: D) = visitOperatorExpression(expression, data)
     fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: D) = visitExpression(expression, data)
 
+    fun visitWhenExpression(expression: IrWhenExpression, data: D) = visitExpression(expression, data)
+    fun visitBranch(branch: IrBranch, data: D): R = visitElement(branch, data)
+
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
-
 }

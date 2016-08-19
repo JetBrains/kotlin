@@ -16,8 +16,14 @@ IrFile /elvis.kt
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        DUMMY KtIfExpression type=kotlin.Unit
-        DUMMY KtIfExpression type=kotlin.Unit
+        WHEN subject=null type=kotlin.Unit
+          if: DUMMY KtIsExpression type=kotlin.Boolean
+          then: RETURN type=<no-type>
+            LITERAL String type=kotlin.String value=''
+        WHEN subject=null type=kotlin.Unit
+          if: DUMMY KtIsExpression type=kotlin.Boolean
+          then: RETURN type=<no-type>
+            LITERAL String type=kotlin.String value=''
         RETURN type=<no-type>
           BINARY_OP operator=ELVIS type=kotlin.String related=null
             TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String?

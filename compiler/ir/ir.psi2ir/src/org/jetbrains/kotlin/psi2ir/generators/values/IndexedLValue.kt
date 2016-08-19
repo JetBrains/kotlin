@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.load
-import org.jetbrains.kotlin.psi2ir.generators.IrCallGenerator
-import org.jetbrains.kotlin.psi2ir.generators.IrStatementGenerator
+import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
+import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrIndexedLValue(
-        var irStatementGenerator: IrStatementGenerator,
+class IndexedLValue(
+        var statementGenerator: StatementGenerator,
         val ktArrayAccessExpression: KtArrayAccessExpression,
         val irOperator: IrOperator?,
         val irArray: IrExpression,
@@ -50,7 +50,7 @@ class IrIndexedLValue(
     }
 
     private fun generateGetOrSetCallAsDesugaredBlock(call: ResolvedCall<*>, irArgument: IrExpression? = null): IrExpression {
-        val callGenerator = IrCallGenerator(irStatementGenerator)
+        val callGenerator = CallGenerator(statementGenerator)
         setupCallGeneratorContext(callGenerator)
 
         if (irArgument != null) {
@@ -64,19 +64,19 @@ class IrIndexedLValue(
         if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
         if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
 
-        val callGenerator = IrCallGenerator(irStatementGenerator)
+        val callGenerator = CallGenerator(statementGenerator)
 
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, true, irOperator)
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
         callGenerator.putValue(operatorCallReceiver!!,
                                IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
-        val irTmp = irStatementGenerator.temporaryVariableFactory.createTemporaryVariable(
+        val irTmp = statementGenerator.temporaryVariableFactory.createTemporaryVariable(
                 callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator))
         irBlock.addStatement(irTmp)
 
         callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               IrVariableLValue(irTmp))
+                               VariableLValue(irTmp))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
@@ -89,7 +89,7 @@ class IrIndexedLValue(
         if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
         if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
 
-        val callGenerator = IrCallGenerator(irStatementGenerator)
+        val callGenerator = CallGenerator(statementGenerator)
 
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, false, irOperator)
 
@@ -109,7 +109,7 @@ class IrIndexedLValue(
 
     private fun createDesugaredBlockWithTemporaries(
             call: ResolvedCall<*>,
-            callGenerator: IrCallGenerator,
+            callGenerator: CallGenerator,
             hasResult: Boolean,
             operator: IrOperator?
     ): IrBlockExpressionImpl {
@@ -124,7 +124,7 @@ class IrIndexedLValue(
                                      hasResult, operator)
     }
 
-    private fun defineTemporaryVariables(irBlock: IrBlockExpression, callGenerator: IrCallGenerator) {
+    private fun defineTemporaryVariables(irBlock: IrBlockExpression, callGenerator: CallGenerator) {
         irBlock.addIfNotNull(callGenerator.introduceTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
 
         var index = 0
@@ -133,7 +133,7 @@ class IrIndexedLValue(
         }
     }
 
-    private fun setupCallGeneratorContext(callGenerator: IrCallGenerator) {
+    private fun setupCallGeneratorContext(callGenerator: CallGenerator) {
         callGenerator.putValue(ktArrayAccessExpression.arrayExpression!!, IrSingleExpressionValue(irArray))
 
         for ((ktIndexExpression, irIndexValue) in indexValues) {

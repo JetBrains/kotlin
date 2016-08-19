@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 fun IrExpression.toExpectedType(expectedType: KotlinType?): IrExpression {
     if (expectedType == null) return this
+    if (KotlinBuiltIns.isUnit(expectedType)) return this // TODO expose coercion to Unit in IR?
+
     val valueType = type ?: throw AssertionError("expectedType != null, valueType == null: $this")
 
     if (valueType.isNullabilityFlexible() && !expectedType.isMarkedNullable) {

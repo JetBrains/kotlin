@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
 interface IrGenerator {
-    val context: IrGeneratorContext
+    val context: GeneratorContext
 }
 
 fun <K, V : Any> IrGenerator.get(slice: ReadOnlySlice<K, V>, key: K): V? =

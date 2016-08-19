@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IrGeneratorContext(
+class GeneratorContext(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext
 ) {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.generators.values.IrVariableLValue
+import org.jetbrains.kotlin.psi2ir.generators.values.VariableLValue
 import org.jetbrains.kotlin.psi2ir.generators.values.IrValue
 import org.jetbrains.kotlin.psi2ir.generators.values.createRematerializableValue
 import org.jetbrains.kotlin.psi2ir.toExpectedType
@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenerator {
-    override val context: IrGeneratorContext get() =
-            irStatementGenerator.context
+class CallGenerator(val statementGenerator: StatementGenerator) : IrGenerator {
+    override val context: GeneratorContext get() =
+            statementGenerator.context
 
-    private val temporaryVariableFactory: IrTemporaryVariableFactory get() =
-            irStatementGenerator.temporaryVariableFactory
+    private val temporaryVariableFactory: TemporaryVariableFactory get() =
+            statementGenerator.temporaryVariableFactory
 
     private val expressionValues = HashMap<KtExpression, IrValue>()
     private val receiverValues = HashMap<ReceiverValue, IrValue>()
@@ -51,7 +51,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         }
 
         val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, nameHint)
-        putValue(ktExpression, IrVariableLValue(irTmpVar))
+        putValue(ktExpression, VariableLValue(irTmpVar))
         return irTmpVar
     }
 
@@ -63,7 +63,7 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
         }
 
         val irTmpVar = temporaryVariableFactory.createTemporaryVariable(irExpression, valueParameterDescriptor.name.asString())
-        putValue(valueParameterDescriptor, IrVariableLValue(irTmpVar))
+        putValue(valueParameterDescriptor, VariableLValue(irTmpVar))
         return irTmpVar
     }
 
@@ -249,6 +249,6 @@ class IrCallGenerator(val irStatementGenerator: IrStatementGenerator) : IrGenera
             }
 
     private fun generateExpression(ktExpression: KtExpression): IrExpression =
-            expressionValues[ktExpression]?.load() ?: irStatementGenerator.generateExpression(ktExpression)
+            expressionValues[ktExpression]?.load() ?: statementGenerator.generateExpression(ktExpression)
 
 }

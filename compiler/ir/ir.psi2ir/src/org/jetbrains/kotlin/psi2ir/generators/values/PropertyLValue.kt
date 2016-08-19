@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrPropertyLValue(
+class PropertyLValue(
         val ktElement: KtElement,
         val irOperator: IrOperator?,
         val descriptor: PropertyDescriptor,
@@ -37,8 +37,8 @@ class IrPropertyLValue(
 
     private fun IrPropertyAccessExpression.setReceivers() =
             apply {
-                dispatchReceiver = this@IrPropertyLValue.dispatchReceiver
-                extensionReceiver = this@IrPropertyLValue.extensionReceiver
+                dispatchReceiver = this@PropertyLValue.dispatchReceiver
+                extensionReceiver = this@PropertyLValue.extensionReceiver
             }
 
     override fun load(): IrExpression =

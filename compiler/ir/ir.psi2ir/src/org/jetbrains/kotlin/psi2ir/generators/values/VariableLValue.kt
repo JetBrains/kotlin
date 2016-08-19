@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSetVariableExpressionImpl
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrVariableLValue(
+class VariableLValue(
         val startOffset: Int,
         val endOffset: Int,
         val descriptor: VariableDescriptor,

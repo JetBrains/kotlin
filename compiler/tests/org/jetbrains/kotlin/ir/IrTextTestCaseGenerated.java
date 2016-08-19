@@ -137,6 +137,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("ifElseIf.kt")
+    public void testIfElseIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/ifElseIf.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("implicitCastOnPlatformType.kt")
     public void testImplicitCastOnPlatformType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/implicitCastOnPlatformType.kt");

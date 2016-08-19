@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrTemporaryVariableFactory(val scopeOwner: DeclarationDescriptor) {
+class TemporaryVariableFactory(val scopeOwner: DeclarationDescriptor) {
     private var lastTemporaryIndex = 0
     private fun nextTemporaryIndex() = lastTemporaryIndex++
 

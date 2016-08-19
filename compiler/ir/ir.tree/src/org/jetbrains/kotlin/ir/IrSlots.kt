@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir
 
-const val CHILD_DECLARATION_SLOT = 0
 const val DETACHED_SLOT = Int.MIN_VALUE
 const val CHILD_EXPRESSION_SLOT = 0
 const val ARGUMENT0_SLOT = 0
@@ -26,3 +25,7 @@ const val EXTENSION_RECEIVER_SLOT = -2
 const val FUNCTION_BODY_SLOT = 0
 const val MODULE_SLOT = 0
 const val INITIALIZER_SLOT = 0
+const val WHEN_SUBJECT_VARIABLE_SLOT = -1
+const val WHEN_ELSE_EXPRESSION_SLOT = -2
+const val BRANCH_CONDITION_SLOT = -1
+const val BRANCH_RESULT_SLOT = -2
