@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
@@ -141,8 +140,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    // Should be SourceDirectorySet or File
-    val srcDirsSources = HashSet<Any>()
+    private val sourceRoots = HashSet<File>()
 
     // lazy because name is probably not available when constructor is called
     private val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name) }
@@ -156,34 +154,31 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
-    private var kaptStubGeneratingMode = false
+    private val additionalClasspath = arrayListOf<File>()
+    private val compileClasspath: Iterable<File>
+            get() = (classpath + additionalClasspath)
+                    .filterTo(LinkedHashSet()) { it.exists() }
+
+    val kaptOptions = KaptOptions()
+    val pluginOptions = CompilerPluginOptions()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        // show kotlin compiler where to look for java source files
-//        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
         logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
 
-        if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            args.classpath = classpath.filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
-            logger.kotlinDebug("args.classpath = ${args.classpath}")
+        if (kotlinOptions.classpath?.isNotBlank() ?: false) {
+            logger.warn("kotlinOptions.classpath will be ignored")
         }
-
-        if (args.destination?.isNotBlank() ?: false) {
-            // TODO: fix if needed
-            logger.warn("Setting kotlinOptions.destination is not supported in gradle")
+        if (kotlinOptions.destination?.isNotBlank() ?: false) {
+            logger.warn("kotlinOptions.destination will be ignored")
         }
 
         logger.kotlinDebug("destinationDir = $destinationDir")
 
         val extraProperties = extensions.extraProperties
-        args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
+        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         logger.kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
-        val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
-
-        val pluginOptions = arrayListOf(*basePluginOptions)
-        handleKaptProperties(extraProperties, pluginOptions)
-
-        args.pluginOptions = pluginOptions.toTypedArray()
+        handleKaptProperties()
+        args.pluginOptions = pluginOptions.arguments.toTypedArray()
         logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         args.noStdlib = true
@@ -207,6 +202,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug { "friendTaskName = $friendTaskName" }
         friendTaskName?.let { addFriendPathForTestTask(it) }
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
+
+        fun dumpPaths(files: Iterable<File>): String =
+            "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
+
+        logger.kotlinDebug { "$name source roots: ${dumpPaths(sourceRoots)}" }
+        logger.kotlinDebug { "$name java source roots: ${dumpPaths(getJavaSourceRoots())}" }
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
@@ -279,12 +280,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             return modifiedKotlinFiles
         }
 
-        fun isClassPathChanged(): Boolean {
-            // TODO: that doesn't look to wise - join it first and then split here, consider storing it somewhere in between
-            val classpath = args.classpath.split(File.pathSeparator).map { File(it) }.toHashSet()
-            val changedClasspath = modified.filter { classpath.contains(it) }
-            return changedClasspath.any()
-        }
+        fun isClassPathChanged(): Boolean =
+                modified.any { classpath.contains(it) }
 
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
             if (!incremental
@@ -352,8 +349,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
 
         if (isIncrementalDecided) {
-            // TODO: process as list here, merge into string later
-            args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
+            additionalClasspath.add(destinationDir)
         }
         else {
             // there is no point in updating annotation file since all files will be compiled anyway
@@ -426,7 +422,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
             lookupTracker: LookupTracker
     ): CompileChangedResults {
-        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        val moduleFile = makeModuleFile(args.moduleName,
+                isTest = false,
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = getJavaSourceRoots(),
+                classpath = compileClasspath,
+                friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
         val messageCollector = GradleMessageCollector(logger, outputItemCollector)
@@ -463,7 +465,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         // todo: can be optimized -- compile and remove only files that were not generated
         listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
 
-        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        val moduleFile = makeModuleFile(
+                args.moduleName,
+                isTest = false,
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = getJavaSourceRoots(),
+                classpath = compileClasspath,
+                friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val messageCollector = GradleMessageCollector(logger)
 
@@ -476,79 +485,84 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
     }
 
-    private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
-        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
-        if (kaptAnnotationsFile != null) {
+    private fun handleKaptProperties() {
+        kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
             if (incremental) {
                 kaptAnnotationsFileUpdater = AnnotationFileUpdater(kaptAnnotationsFile)
             }
 
             if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
         }
 
-        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
-        if (kaptClassFileStubsDir != null) {
-            kaptStubGeneratingMode = true
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+        if (kaptOptions.generateStubs) {
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
         }
 
-        val supportInheritedAnnotations = extraProperties.getOrNull<Boolean>("kaptInheritedAnnotations")
-        if (supportInheritedAnnotations != null && supportInheritedAnnotations) {
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:inherited=true")
+        if (kaptOptions.supportInheritedAnnotations) {
+            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
         }
     }
 
     private fun getJavaSourceRoots(): Set<File> =
-            getSource()
-            .filter { it.isJavaFile() }
-            .map { findSrcDirRoot(it) }
-            .filterNotNull()
-            .toSet()
+            findRootsForSources(getSource().filter { it.isJavaFile() })
 
-    private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
+    private fun File.isJavaFile() =
+            extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
+    
+    private fun File.isKapt2GeneratedDirectory(): Boolean {
+        val kapt2GeneratedSourcesDir = File(project.buildDir, "generated/source/kapt2")
+        if (!kapt2GeneratedSourcesDir.isDirectory) return false
+        return FileUtil.isAncestor(kapt2GeneratedSourcesDir, this, /* strict = */ false)
+    }
+
+    private fun filterOutKapt2Directories(vararg sources: Any?): Array<Any> {
+        return sources.flatMap { source ->
+            when (source) {
+                is File -> if (source.isKapt2GeneratedDirectory()) emptyList<File>() else listOf(source)
+                is SourceDirectorySet -> source.srcDirs.filter { !it.isKapt2GeneratedDirectory() }
+                else -> emptyList<File>()
+            }
+        }.toTypedArray()
+    }
 
     // override setSource to track source directory sets and files (for generated android folders)
-    override fun setSource(source: Any?) {
-        srcDirsSources.clear()
-        if (source is SourceDirectorySet) {
-            srcDirsSources.add(source)
-        }
-        else if (source is File) {
-            srcDirsSources.add(source)
-        }
-        super.setSource(source)
+    override fun setSource(sources: Any?) {
+        sourceRoots.clear()
+        val sourcesToAdd = filterOutKapt2Directories(sources)
+        addSourceRoots(*sourcesToAdd)
+        super.setSource(sourcesToAdd.firstOrNull())
     }
 
     // override source to track source directory sets and files (for generated android folders)
     override fun source(vararg sources: Any?): SourceTask? {
-        for (source in sources) {
-            if (source is SourceDirectorySet) {
-                srcDirsSources.add(source)
-            }
-            else if (source is File) {
-                srcDirsSources.add(source)
-            }
-        }
-        return super.source(sources)
+        val sourcesToAdd = filterOutKapt2Directories(*sources)
+        addSourceRoots(*sourcesToAdd)
+        return super.source(*sourcesToAdd)
     }
 
-    fun findSrcDirRoot(file: File): File? {
-        for (source in srcDirsSources) {
-            if (source is SourceDirectorySet) {
-                for (root in source.srcDirs) {
-                    if (FileUtil.isAncestor(root, file, false)) {
-                        return root
-                    }
-                }
-            }
-            else if (source is File) {
-                if (FileUtil.isAncestor(source, file, false)) {
-                    return source
+    fun findRootsForSources(sources: Iterable<File>): Set<File> {
+        val resultRoots = HashSet<File>()
+        val sourceDirs = sources.mapTo(HashSet()) { it.parentFile }
+
+        for (sourceDir in sourceDirs) {
+            for (sourceRoot in sourceRoots) {
+                if (FileUtil.isAncestor(sourceRoot, sourceDir, /* strict = */false)) {
+                    resultRoots.add(sourceRoot)
                 }
             }
         }
-        return null
+
+        return resultRoots
+    }
+
+    private fun addSourceRoots(vararg sources: Any?) {
+        for (source in sources) {
+            when (source) {
+                is SourceDirectorySet -> sourceRoots.addAll(source.srcDirs)
+                is File -> sourceRoots.add(source)
+            }
+        }
     }
 }
 
@@ -633,6 +647,10 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
     private var hasErrors = false
 
     override fun hasErrors() = hasErrors
+
+    override fun clear() {
+        // Do nothing
+    }
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
         val text = with(StringBuilder()) {

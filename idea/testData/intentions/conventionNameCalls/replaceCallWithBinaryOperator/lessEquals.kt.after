@@ -1,0 +1,3 @@
+// INTENTION_TEXT: Replace with '<=' operator
+
+val x = 4 <= 5

@@ -1,0 +1,75 @@
+== A ==
+class A {
+    companion object
+}
+---------------------
+=====================
+== B ==
+object B {
+    val A.Companion.foo: X get() = X
+}
+---------------------
+=====================
+== X ==
+object X
+---------------------
+=====================
+== C ==
+object C {
+    operator fun X.invoke() = println("Hello!")
+}
+---------------------
+=====================
+== invoke ==
+operator fun X.invoke() = println("Hello!")
+---------------------
+println             !<v1>: *
+"Hello!"            <v0>: *                                    NEW: r("Hello!") -> <v0>
+println("Hello!")   <v2>: {<: [ERROR : Error function type]}   NEW: magic[UNRESOLVED_CALL](println("Hello!")|<v0>, !<v1>) -> <v2>
+=====================
+== with ==
+inline fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
+---------------------
+                   <v0>: {<: T}           NEW: magic[FAKE_INITIALIZER](receiver: T) -> <v0>
+                   <v1>: {<: T.() -> R}   NEW: magic[FAKE_INITIALIZER](block: T.() -> R) -> <v1>
+receiver           <v3>: {<: T}           NEW: r(receiver) -> <v3>
+block              <v2>: {<: (T) -> R}    NEW: r(block) -> <v2>
+block()            <v4>: {<: R}           NEW: call(block(), invoke|<v2>, <v3>) -> <v4>
+receiver.block()   <v4>: {<: R}           COPY
+=====================
+== use ==
+fun use() = with(C) {
+    with(B) {
+        A.foo()
+    }
+}
+---------------------
+C                                 <v0>: C                                    NEW: r(C) -> <v0>
+{ with(B) { A.foo() } }           <v1>: {<: C.() -> ???}                     NEW: r({ with(B) { A.foo() } }) -> <v1>
+with(C) { with(B) { A.foo() } }   <v2>: {<: [ERROR : Error function type]}   NEW: call(with(C) { with(B) { A.foo() } }, with|<v0>, <v1>) -> <v2>
+=====================
+== anonymous_0 ==
+{
+    with(B) {
+        A.foo()
+    }
+}
+---------------------
+B                     <v0>: B                  NEW: r(B) -> <v0>
+{ A.foo() }           <v1>: {<: B.() -> ???}   NEW: r({ A.foo() }) -> <v1>
+with(B) { A.foo() }   <v2>: {<: ???}           NEW: call(with(B) { A.foo() }, with|<v0>, <v1>) -> <v2>
+with(B) { A.foo() }   <v2>: {<: ???}           COPY
+=====================
+== anonymous_1 ==
+{
+        A.foo()
+    }
+---------------------
+          <v0>: B                                    NEW: magic[IMPLICIT_RECEIVER](foo) -> <v0>
+          <v3>: C                                    NEW: magic[IMPLICIT_RECEIVER](foo()) -> <v3>
+A         <v1>: A.Companion                          NEW: r(A, Companion) -> <v1>
+foo       <v2>: X                                    NEW: r(foo|<v0>, <v1>) -> <v2>
+foo()     <v4>: {<: [ERROR : Error function type]}   NEW: call(foo(), invoke|<v2>, <v3>) -> <v4>
+A.foo()   <v4>: {<: [ERROR : Error function type]}   COPY
+A.foo()   <v4>: {<: [ERROR : Error function type]}   COPY
+=====================

@@ -1,0 +1,14 @@
+// INTENTION_TEXT: Remove unnecessary lateinit
+
+class Foo {
+    var bar: String
+    var baz: Int
+
+    init {
+        baz = 1
+    }
+
+    init {
+        bar = ""
+    }
+}

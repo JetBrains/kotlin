@@ -53,6 +53,12 @@ public class RttiTestGenerated extends AbstractRttiTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isObject.kt")
+    public void testIsObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("isSameClass.kt")
     public void testIsSameClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isSameClass.kt");
@@ -62,6 +68,18 @@ public class RttiTestGenerated extends AbstractRttiTest {
     @TestMetadata("notIsOtherClass.kt")
     public void testNotIsOtherClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/notIsOtherClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("objectExpression.kt")
+    public void testObjectExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/objectExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("onNativeObject.kt")
+    public void testOnNativeObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/onNativeObject.kt");
         doTest(fileName);
     }
 

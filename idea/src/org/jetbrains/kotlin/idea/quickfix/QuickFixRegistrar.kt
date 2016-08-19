@@ -202,8 +202,11 @@ class QuickFixRegistrar : QuickFixContributor {
         TYPE_MISMATCH.registerFactory(WrapWithSafeLetCallFix.TypeMismatchFactory)
 
         UNSAFE_CALL.registerFactory(AddExclExclCallFix)
+        UNSAFE_INFIX_CALL.registerFactory(AddExclExclCallFix)
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
-        UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix)
+        UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
+        UNSAFE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix) // [] only
+        UNSAFE_IMPLICIT_INVOKE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
 
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
         PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.registerActions(SpecifyTypeExplicitlyFix())
@@ -401,5 +404,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNUSED_LAMBDA_EXPRESSION.registerFactory(AddRunToLambdaFix)
 
         WRONG_LONG_SUFFIX.registerFactory(WrongLongSuffixFix)
+
+        REIFIED_TYPE_PARAMETER_NO_INLINE.registerFactory(AddInlineToFunctionWithReifiedFix)
     }
 }

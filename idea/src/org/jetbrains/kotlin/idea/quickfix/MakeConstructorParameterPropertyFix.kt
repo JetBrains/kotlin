@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.nonStaticOuterClasses
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class MakeConstructorParameterPropertyFix(
         element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
 ) : KotlinQuickFixAction<KtParameter>(element) {
-    override fun getFamilyName() = "Make primary constructor parameter a property"
+    override fun getFamilyName() = "Make constructor parameter a property"
 
     private val suffix = if (className != null) " in class '$className'" else ""
-    override fun getText() = "Make primary constructor parameter '${element.name}' a property" + suffix
+
+    override fun getText() =
+            "Make constructor parameter a property$suffix"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !element.hasValOrVar()
@@ -47,6 +47,12 @@ class MakeConstructorParameterPropertyFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.firstChild)
         element.addModifier(KtTokens.PRIVATE_KEYWORD)
+        element.visibilityModifier()?.let { private ->
+            editor?.apply {
+                selectionModel.setSelection(private.startOffset, private.endOffset)
+                caretModel.moveToOffset(private.endOffset)
+            }
+        }
     }
 
     companion object Factory : KotlinIntentionActionsFactory() {

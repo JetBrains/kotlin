@@ -44,7 +44,8 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
 }
 
 fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
-    val elementToSearch = (this as? KtClass)?.getPrimaryConstructor() ?: this
+    val primaryConstructor = (this as? KtClass)?.getPrimaryConstructor()
+    val elementsToSearch = if (primaryConstructor != null) listOf(primaryConstructor, this) else listOf(this)
     return allUsages
             .asSequence()
             .filter {
@@ -54,7 +55,7 @@ fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
                 || usage is CallerUsageInfo
                 || (usage is OverriderUsageInfo && !usage.isOriginalOverrider)
             }
-            .any { it.element == elementToSearch }
+            .any { it.element in elementsToSearch }
 }
 
 fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {

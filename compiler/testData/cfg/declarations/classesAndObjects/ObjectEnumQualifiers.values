@@ -1,0 +1,40 @@
+== O ==
+object O {
+    val y = 1
+}
+---------------------
+1   <v0>: Int   NEW: r(1) -> <v0>
+=====================
+== E ==
+enum class E(val x: Int) {
+    E1(0)
+}
+---------------------
+      <v0>: Int   NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v0>
+      <v1>: E     NEW: magic[FAKE_INITIALIZER](E1(0)) -> <v1>
+0     <v2>: Int   NEW: r(0) -> <v2>
+(0)   <v3>: *     NEW: call((0), <init>|<v2>) -> <v3>
+=====================
+== C ==
+class C {
+    companion object {
+        val z = 2
+    }
+}
+---------------------
+=====================
+== foo ==
+fun foo() = E1.x + O.y + C.z
+---------------------
+E1                 <v0>: E             NEW: r(E1) -> <v0>
+x                  <v1>: Int           NEW: r(x|<v0>) -> <v1>
+E1.x               <v1>: Int           COPY
+O                  <v2>: O             NEW: r(O) -> <v2>
+y                  <v3>: Int           NEW: r(y|<v2>) -> <v3>
+O.y                <v3>: Int           COPY
+E1.x + O.y         <v4>: Int           NEW: call(E1.x + O.y, plus|<v1>, <v3>) -> <v4>
+C                  <v5>: C.Companion   NEW: r(C, Companion) -> <v5>
+z                  <v6>: Int           NEW: r(z|<v5>) -> <v6>
+C.z                <v6>: Int           COPY
+E1.x + O.y + C.z   <v7>: Int           NEW: call(E1.x + O.y + C.z, plus|<v4>, <v6>) -> <v7>
+=====================

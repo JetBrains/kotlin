@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import com.google.common.base.Predicates
-import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 object CastDiagnosticsUtil {
 
@@ -36,10 +34,14 @@ object CastDiagnosticsUtil {
     fun isCastPossible(
             lhsType: KotlinType,
             rhsType: KotlinType,
-            platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false
+            platformToKotlinClassMap: PlatformToKotlinClassMap
+    ): Boolean {
+        val rhsNullable = TypeUtils.isNullableType(rhsType)
+        val lhsNullable = TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
-        if (KotlinBuiltIns.isNullableNothing(rhsType)) return TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
+        if (lhsNullable && rhsNullable) return true
         if (lhsType.isError) return true
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true
         // This is an oversimplification (which does not render the method incomplete):

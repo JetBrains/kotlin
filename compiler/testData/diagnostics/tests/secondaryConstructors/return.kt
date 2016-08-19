@@ -1,7 +1,7 @@
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>
-        <!RETURN_NOT_ALLOWED, UNREACHABLE_CODE!>return 1<!>
+        <!UNREACHABLE_CODE!><!RETURN_NOT_ALLOWED!>return<!> 1<!>
     }
     constructor() <!UNREACHABLE_CODE!>{
         if (1 == 1) {

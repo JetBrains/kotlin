@@ -1,0 +1,34 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with comparison</problem_class>
+        <description>Replace with '==' operator</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with comparison</problem_class>
+        <description>Replace with '!=' operator</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with comparison</problem_class>
+        <description>Replace with '&gt;' operator</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with comparison</problem_class>
+        <description>Replace with '&lt;=' operator</description>
+    </problem>
+</problems>

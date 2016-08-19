@@ -8,6 +8,8 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
 import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.builder.model.SourceProvider
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
@@ -28,10 +30,6 @@ class AndroidGradleWrapper {
   }
 
   static def srcDir(Object androidSourceSet, Object kotlinDirSet) {
-    /*before 0.11 gradle android plugin there was:
-      androidSourceSet.getAllJava().source(kotlinDirSet)
-      androidSourceSet.getAllSource().source(kotlinDirSet)
-      but those methods were removed so as temporary hack next code was suggested*/
     androidSourceSet.getJava().srcDir(kotlinDirSet)
   }
 
@@ -104,12 +102,23 @@ class AndroidGradleWrapper {
     return plugin.getVariantManager()
   }
 
-  static def List<File> getGeneratedSourceDirs(BaseVariantData variantData) {
-    def result = new ArrayList<File>()
+  static def List<File> getJavaSources(BaseVariantData variantData) {
+    def result = new LinkedHashSet<File>()
 
+    // user sources
+    List<SourceProvider> providers = variantData.variantConfiguration.getSortedSourceProviders();
+    for (SourceProvider provider : providers) {
+      result.addAll((provider as AndroidSourceSet).getJava().getSrcDirs());
+    }
+
+    // generated sources
     def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
     if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
       result.addAll(variantData.getJavaSources().findAll { it instanceof File })
+    }
+    else if (getJavaSourcesMethod.returnType.metaClass == List.metaClass) {
+      def fileTrees = variantData.getJavaSources().findAll { it instanceof ConfigurableFileTree }
+      result.addAll(fileTrees.collect { it.getDir() })
     }
     else {
       if (variantData.scope.getGenerateRClassTask() != null) {
@@ -142,6 +151,6 @@ class AndroidGradleWrapper {
       }
     }
 
-    return result
+    return result.toList()
   }
 }

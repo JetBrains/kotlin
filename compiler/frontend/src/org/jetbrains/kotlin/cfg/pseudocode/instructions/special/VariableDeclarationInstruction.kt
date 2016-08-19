@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtVariableDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.kotlin.psi.*
 
 class VariableDeclarationInstruction(
         element: KtDeclaration,
         blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
     init {
-        assert(element is KtVariableDeclaration || element is KtParameter) { "Invalid element: ${render(element)}}" }
+        assert(element is KtVariableDeclaration || element is KtParameter || element is KtEnumEntry || element is KtObjectDeclaration) {
+            "Invalid element: ${render(element)}}"
+        }
     }
 
     val variableDeclarationElement: KtDeclaration

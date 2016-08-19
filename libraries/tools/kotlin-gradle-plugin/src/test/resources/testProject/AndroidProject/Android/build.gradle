@@ -13,6 +13,7 @@ android {
     buildToolsVersion "21.1.2"
 
     sourceSets {
+        main.java.srcDirs += 'src/main/java2'
         main.kotlin.srcDirs += 'root/kotlin'
         test.kotlin.srcDirs += 'src/test/kotlin'
     }

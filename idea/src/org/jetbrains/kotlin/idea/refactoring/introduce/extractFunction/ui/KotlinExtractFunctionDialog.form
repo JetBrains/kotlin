@@ -53,7 +53,7 @@
             <properties/>
             <border type="none" title="Signature Preview"/>
             <children>
-              <component id="7722b" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinFunctionSignatureComponent" binding="signaturePreviewField" custom-create="true">
+              <component id="7722b" class="org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent" binding="signaturePreviewField" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <minimum-size width="500" height="100"/>

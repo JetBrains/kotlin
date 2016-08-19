@@ -133,12 +133,21 @@ fun KtExpression.negate(): KtExpression {
 }
 
 fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
-    is KtWhenExpression -> listOf(this)
+    is KtWhenExpression -> listOf(this) + entries.map { it.expression?.resultingWhens() ?: listOf() }.flatten()
     is KtIfExpression -> (then?.resultingWhens() ?: listOf()) + (`else`?.resultingWhens() ?: listOf())
     is KtBinaryExpression -> (left?.resultingWhens() ?: listOf()) + (right?.resultingWhens() ?: listOf())
     is KtUnaryExpression -> this.baseExpression?.resultingWhens() ?: listOf()
     is KtBlockExpression -> statements.lastOrNull()?.resultingWhens() ?: listOf()
     else -> listOf()
+}
+
+fun KtExpression?.hasResultingIfWithoutElse(): Boolean = when (this) {
+    is KtIfExpression -> `else` == null || then.hasResultingIfWithoutElse() || `else`.hasResultingIfWithoutElse()
+    is KtWhenExpression -> entries.any { it.expression.hasResultingIfWithoutElse() }
+    is KtBinaryExpression -> left.hasResultingIfWithoutElse() || right.hasResultingIfWithoutElse()
+    is KtUnaryExpression -> baseExpression.hasResultingIfWithoutElse()
+    is KtBlockExpression -> statements.lastOrNull().hasResultingIfWithoutElse()
+    else -> false
 }
 
 private fun KtExpression.specialNegation(): KtExpression? {
@@ -210,4 +219,10 @@ internal fun KotlinType.isFlexibleRecursive(): Boolean {
     return arguments.any { !it.isStarProjection && it.type.isFlexibleRecursive() }
 }
 
+val KtIfExpression.branches: List<KtExpression?> get() = ifBranchesOrThis()
+
+private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
+    if (this !is KtIfExpression) return listOf(this)
+    return listOf(then) + `else`?.ifBranchesOrThis().orEmpty()
+}
 

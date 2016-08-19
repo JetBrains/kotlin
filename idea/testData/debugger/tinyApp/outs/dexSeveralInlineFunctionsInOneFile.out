@@ -1,0 +1,23 @@
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:5
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:23
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:29
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:34
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:41
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:46
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:53
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:60
+LineBreakpoint created at dexSeveralInlineFunctionsInOneFile.kt:66
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! dexSeveralInlineFunctionsInOneFile.DexSeveralInlineFunctionsInOneFileKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+dexSeveralInlineFunctionsInOneFile.kt:5
+dexSeveralInlineFunctionsInOneFile.kt:23
+dexSeveralInlineFunctionsInOneFile.kt:29
+dexSeveralInlineFunctionsInOneFile.kt:41
+dexSeveralInlineFunctionsInOneFile.kt:66
+dexSeveralInlineFunctionsInOneFile.kt:34
+dexSeveralInlineFunctionsInOneFile.kt:46
+dexSeveralInlineFunctionsInOneFile.kt:53
+dexSeveralInlineFunctionsInOneFile.kt:60
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

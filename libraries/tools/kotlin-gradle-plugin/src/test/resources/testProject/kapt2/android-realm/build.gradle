@@ -1,0 +1,63 @@
+buildscript {
+    ext.realm_version = '1.1.1'
+
+    repositories {
+        maven {
+            url 'file://' + pathToKotlinPlugin
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+        classpath("io.realm:realm-gradle-plugin:$realm_version") {
+            exclude group: 'com.android.tools.build', module: 'gradle'
+        }
+        classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
+    }
+}
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+    defaultConfig {
+        applicationId 'io.realm.examples.kotlin'
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    dexOptions {
+        incremental false
+    }
+}
+
+repositories {
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+    maven {
+        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-reflect:0.1-SNAPSHOT"
+    compile 'org.jetbrains.anko:anko-common:0.9'
+}

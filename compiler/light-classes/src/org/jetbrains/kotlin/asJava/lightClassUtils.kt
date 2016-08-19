@@ -171,7 +171,7 @@ fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
     return when {
         JvmAbi.isGetterName(name) -> propertyNameByGetMethodName(methodName)
         JvmAbi.isSetterName(name) -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
-        else -> null
+        else -> methodName
     }?.asString()
 }
 

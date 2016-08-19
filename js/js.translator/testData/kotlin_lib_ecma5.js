@@ -192,7 +192,7 @@
     }
 
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
-        var obj = function () {};
+        var obj = {};
 
         obj.$metadata$ = computeMetadata(bases, properties, staticProperties);
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
@@ -301,6 +301,7 @@
     Kotlin.createTrait = function (basesFun, properties, staticProperties) {
         function $o() {
             var klass = Kotlin.createTraitNow(getBases(basesFun), properties, staticProperties);
+            klass.name = $o.className;
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
@@ -320,8 +321,8 @@
     Kotlin.createObject = function (basesFun, constructor, functions, staticProperties) {
         constructor = constructor || function() {};
         function $o() {
-            var klass = Kotlin.createClassNow(getBases(basesFun), null, functions, staticProperties);
-            var obj = new klass();
+            var klass = Kotlin.createClassNow(getBases(basesFun), constructor, functions, staticProperties);
+            var obj = Object.create(klass.prototype);
             var metadata = klass.$metadata$;
             metadata.type = Kotlin.TYPE.OBJECT;
             Object.defineProperty(this, $o.className, {value: obj});
@@ -365,22 +366,31 @@
         return false;
     }
 
+    /**
+     *
+     * @param {*} object
+     * @param {Function|Object} klass
+     * @returns {Boolean}
+     */
     Kotlin.isType = function (object, klass) {
         if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
             return false;
         }
-        else {
-            if (object instanceof klass) {
-                return true;
-            }
-            else if (isNativeClass(klass) || klass.$metadata$.type == Kotlin.TYPE.CLASS) {
-                return false;
-            }
-            else {
-                var metadata = "$metadata$" in object ? object.$metadata$ : object.constructor.$metadata$;
-                return isInheritanceFromTrait(metadata, klass);
-            }
+
+        if (typeof klass === "function") {
+            return object instanceof klass;
         }
+
+        // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
+        if (isNativeClass(klass)) {
+            return object instanceof klass;
+        }
+
+        if (object.constructor != null) {
+            return isInheritanceFromTrait(object.constructor.$metadata$, klass);
+        }
+
+        return false;
     };
 
     // TODO Store callable references for members in class

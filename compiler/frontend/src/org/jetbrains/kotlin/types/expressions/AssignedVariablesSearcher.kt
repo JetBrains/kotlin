@@ -27,7 +27,7 @@ abstract class AssignedVariablesSearcher: KtTreeVisitorVoid() {
 
     private val assignedNames: SetMultimap<Name, KtDeclaration?> = LinkedHashMultimap.create()
 
-    open fun writers(variableDescriptor: VariableDescriptor) = assignedNames[variableDescriptor.name]
+    open fun writers(variableDescriptor: VariableDescriptor): MutableSet<KtDeclaration?> = assignedNames[variableDescriptor.name]
 
     fun hasWriters(variableDescriptor: VariableDescriptor) = writers(variableDescriptor).isNotEmpty()
 

@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSuperTypeEntry
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
@@ -41,15 +39,19 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
 
         val isQualifier = (element.parent as? KtUserType)?.let { it.qualifier == element } ?: false
 
+        val typeReference = element.parent as? KtTypeReference
+        val isUpperBound = typeReference?.getParentOfTypeAndBranch<KtTypeParameter> { extendsBound } != null
+                           || typeReference?.getParentOfTypeAndBranch<KtTypeConstraint> { boundTypeReference } != null
+
         return when {
             interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
             else -> ClassKind.values().filter {
                 val noTypeArguments = element.typeArgumentsAsTypes.isEmpty()
                 when (it) {
                     ClassKind.OBJECT -> noTypeArguments && isQualifier
-                    ClassKind.ANNOTATION_CLASS -> noTypeArguments && !isQualifier
+                    ClassKind.ANNOTATION_CLASS -> noTypeArguments && !isQualifier && !isUpperBound
                     ClassKind.ENUM_ENTRY -> false
-                    ClassKind.ENUM_CLASS -> noTypeArguments
+                    ClassKind.ENUM_CLASS -> noTypeArguments && !isUpperBound
                     else -> true
                 }
             }

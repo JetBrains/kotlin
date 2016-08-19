@@ -1,0 +1,5 @@
+{
+  "mainFile": "p/main.kt",
+  "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
+  "targetPackage": "q.in.fun"
+}

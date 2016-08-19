@@ -270,7 +270,7 @@ private fun makeCall(
         }
     }
 
-    val calleeName = declaration.name
+    val calleeName = declaration.name?.quoteIfNeeded()
     val callText = when (declaration) {
         is KtNamedFunction -> {
             val argumentsText = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")")
@@ -300,7 +300,7 @@ private fun makeCall(
 
             val entries = declarationsToMerge.map { p -> p.name + (p.typeReference?.let { ": ${it.text}" } ?: "") }
             anchorInBlock?.replace(
-                    psiFactory.createDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
+                    psiFactory.createDestructuringDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
             )
 
             return

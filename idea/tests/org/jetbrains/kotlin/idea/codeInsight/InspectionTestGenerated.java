@@ -220,6 +220,24 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeSingleExpressionStringTemplate/inspectionData/inspections.test")
+        public void testRemoveSingleExpressionStringTemplate_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/removeSingleExpressionStringTemplate/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeToStringInStringTemplate/inspectionData/inspections.test")
+        public void testRemoveToStringInStringTemplate_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/removeToStringInStringTemplate/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceCallWithComparison/inspectionData/inspections.test")
+        public void testReplaceCallWithComparison_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceCallWithComparison/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");

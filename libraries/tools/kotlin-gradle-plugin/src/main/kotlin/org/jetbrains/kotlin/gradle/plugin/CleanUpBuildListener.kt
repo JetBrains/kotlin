@@ -21,6 +21,10 @@ import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 
 
 private fun comparableVersionStr(version: String) =
@@ -33,13 +37,13 @@ private fun comparableVersionStr(version: String) =
                 ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
-class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: Project) : BuildAdapter() {
+class CleanUpBuildListener(private val project: Project) : BuildAdapter() {
     companion object {
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private val cleanup = CompilerServicesCleanup(pluginClassLoader)
+    private val cleanup = CompilerServicesCleanup()
     private var startMemory: Long? = null
 
     // There is function with the same name in BuildAdapter,
@@ -91,12 +95,10 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: 
 }
 
 
-class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
-    val log = Logging.getLogger(this.javaClass)
+class CompilerServicesCleanup() {
+    private val log = Logging.getLogger(this.javaClass)
 
     operator fun invoke(gradleVersion: String) {
-        assert(pluginClassLoader != null)
-
         log.kotlinDebug("compiler services cleanup")
 
         // clearing jar cache to avoid problems like KT-9440 (unable to clean/rebuild a project due to locked jar file)
@@ -105,6 +107,8 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
         if (SystemUtils.IS_OS_WINDOWS) {
             cleanJarCache()
         }
+
+        (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
 
         // making cleanup of static objects only on recognized versions of gradle and if version < 2.4
         // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
@@ -123,31 +127,16 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
                 stopZipFileCache()
             }
         }
-
-        pluginClassLoader = null
     }
 
     private fun stopZipFileCache() {
-        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
+        ZipFileCache.stopBackgroundThread()
         log.kotlinDebug("ZipFileCache finished successfully")
-    }
-
-    private fun callVoidStaticMethod(classFqName: String, methodName: String) {
-        val shortName = classFqName.substring(classFqName.lastIndexOf('.') + 1)
-
-        log.kotlinDebug("Looking for $shortName class")
-        val cls = pluginClassLoader!!.loadClass(classFqName)
-
-        log.kotlinDebug("Looking for $methodName() method")
-        val method = cls.getMethod(methodName)
-
-        log.kotlinDebug("Call $shortName.$methodName()")
-        method.invoke(null)
     }
 
     private fun cleanJarCache() {
         log.kotlinDebug("Clean JAR cache")
-        callVoidStaticMethod("org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        ZipHandler.clearFileAccessorCache()
         log.kotlinDebug("JAR cache cleared")
     }
 }

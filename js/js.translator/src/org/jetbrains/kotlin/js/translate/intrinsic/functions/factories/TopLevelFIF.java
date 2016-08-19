@@ -22,8 +22,10 @@ import com.google.dart.compiler.backend.js.ast.JsNew;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
@@ -45,6 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
@@ -140,6 +144,30 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static final FunctionIntrinsic JS_CLASS_FUN_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = callInfo.getResolvedCall();
+            Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
+
+            assert typeArguments.size() == 1;
+            KotlinType type = typeArguments.values().iterator().next();
+
+            return UtilsKt.getReferenceToJsClass(type, context);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            throw new IllegalStateException();
+        }
+    };
+
     @NotNull
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
@@ -166,6 +194,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
 
         add(pattern("kotlin", "Throwable", "getMessage"), MESSAGE_PROPERTY_INTRINSIC);
+
+        add(pattern("kotlin.js", "jsClass"), JS_CLASS_FUN_INTRINSIC);
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {

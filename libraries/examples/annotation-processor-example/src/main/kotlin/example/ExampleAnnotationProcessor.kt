@@ -45,7 +45,7 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
             val simpleName = element.simpleName.toString()
             val generatedJavaClassName = generatedFilePrefix.capitalize() + simpleName.capitalize() + generatedFileSuffix
 
-            filer.createSourceFile(generatedJavaClassName).openWriter().use { with(it) {
+            filer.createSourceFile(packageName + '.' + generatedJavaClassName).openWriter().use { with(it) {
                 appendln("package $packageName;")
                 appendln("public final class $generatedJavaClassName {}")
             }}

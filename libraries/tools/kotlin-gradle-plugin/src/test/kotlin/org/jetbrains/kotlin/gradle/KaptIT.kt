@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.allJavaFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
 class KaptIT: BaseGradleIT() {
@@ -23,7 +24,7 @@ class KaptIT: BaseGradleIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertNoSuchFile("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
@@ -64,7 +65,7 @@ class KaptIT: BaseGradleIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
@@ -149,7 +150,7 @@ class KaptIT: BaseGradleIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
         }
@@ -159,8 +160,8 @@ class KaptIT: BaseGradleIT() {
     fun testInheritedAnnotations() {
         Project("kaptInheritedAnnotations", GRADLE_VERSION).build("build") {
             assertSuccessful()
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt/main/AncestorClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
         }
@@ -174,10 +175,30 @@ class KaptIT: BaseGradleIT() {
             assertContains(":compileKotlin")
             assertContains(":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
+
+    @Test
+    fun testInternalUserIsModifiedStubsIC() {
+        val options = defaultBuildOptions().copy(incremental = true)
+        val project = Project("kaptStubs", GRADLE_VERSION)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val internalDummyUserKt = project.projectDir.getFileByName("InternalDummyUser.kt")
+        internalDummyUserKt.modify { it + " " }
+        val internalDummyTestKt = project.projectDir.getFileByName("InternalDummyTest.kt")
+        internalDummyTestKt.modify { it + " " }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(internalDummyUserKt, internalDummyTestKt))
         }
     }
 }

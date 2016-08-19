@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import java.io.File
-import java.rmi.ConnectException
 import java.rmi.registry.LocateRegistry
 
 
@@ -30,7 +29,7 @@ enum class DaemonReportCategory {
 
 
 fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String =
-        "${COMPILE_DAEMON_DEFAULT_FILES_PREFIX}$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
+        "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
 
 fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
@@ -66,17 +65,18 @@ fun walkDaemons(registryDir: File,
 
 
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
+
     try {
         val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port)
                 ?.lookup(COMPILER_SERVICE_RMI_NAME)
-        if (daemon != null)
-            return daemon as? CompileService ?:
-                   throw ClassCastException("Unable to cast compiler service, actual class received: ${daemon.javaClass}")
-        report(DaemonReportCategory.EXCEPTION, "daemon not found")
+        when (daemon) {
+            null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
+            is CompileService -> return daemon
+            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon.javaClass.name}")
+        }
     }
-    catch (e: ConnectException) {
-        report(DaemonReportCategory.EXCEPTION, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown exception"))
-        // ignoring it - processing below
+    catch (e: Throwable) {
+        report(DaemonReportCategory.EXCEPTION, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown error"))
     }
     return null
 }

@@ -32,6 +32,16 @@ infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScop
 operator fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
 operator fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
 
+fun SearchScope.unionSafe(other: SearchScope): SearchScope {
+    if (this is LocalSearchScope && this.scope.isEmpty()) {
+        return other
+    }
+    if (other is LocalSearchScope && other.scope.isEmpty()) {
+        return this
+    }
+    return this.union(other)
+}
+
 fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(this)
 
 fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)

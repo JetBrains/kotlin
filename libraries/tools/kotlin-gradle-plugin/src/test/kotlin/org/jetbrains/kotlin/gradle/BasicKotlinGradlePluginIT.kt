@@ -138,4 +138,12 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertContains(":compileKotlin UP-TO-DATE")
         }
     }
+
+    @Test
+    fun testDestinationDirReferencedDuringEvaluation() {
+        Project("destinationDirReferencedDuringEvaluation", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+            assertContains("GreeterTest PASSED")
+        }
+    }
 }

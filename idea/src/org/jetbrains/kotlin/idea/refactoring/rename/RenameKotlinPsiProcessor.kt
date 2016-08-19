@@ -23,24 +23,32 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.utils.SmartList
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val references = SmartList<PsiReference>(super.findReferences(element))
+        val searchParameters = KotlinReferencesSearchParameters(
+                element,
+                element.project.projectScope(),
+                kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
+        )
+        val references = ReferencesSearch.search(searchParameters).toMutableList()
         if (element is KtNamedFunction
             || (element is KtProperty && !element.isLocal)
             || (element is KtParameter && element.hasValOrVar())) {

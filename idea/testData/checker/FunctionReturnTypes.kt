@@ -131,7 +131,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <error>{}</error> else <error>{}</error>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <error>{}</error> else 2
 
-val a = <error>return 1</error>
+val a = <error>return</error> 1
 
 class A() {
 }

@@ -1,0 +1,4 @@
+fun foo(x: Int, y: String) {
+    val z = "$y"
+    val w = "$x"
+}

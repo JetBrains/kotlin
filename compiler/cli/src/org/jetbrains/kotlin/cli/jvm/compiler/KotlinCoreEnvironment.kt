@@ -128,9 +128,7 @@ class KotlinCoreEnvironment private constructor(
         registerProjectServices(projectEnvironment)
 
         fillClasspath(configuration)
-        val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
-        val index = JvmDependenciesIndex(javaRoots)
-        (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
+        val index = initJvmDependenciesIndex()
 
         sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
             message ->
@@ -171,37 +169,53 @@ class KotlinCoreEnvironment private constructor(
 
     val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
 
+    private fun initJvmDependenciesIndex(): JvmDependenciesIndex {
+        val index = JvmDependenciesIndex(javaRoots)
+        val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
+        (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
+        return index
+    }
+    
+    fun addJavaSourceRoots(newRoots: List<JavaSourceRoot>) {
+        newRoots.forEach { addJavaRoot(it) }
+        initJvmDependenciesIndex()
+    }
+
     fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
             sourceFiles.sumBy {
                 val text = it.text
                 StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
-
+    
     private fun fillClasspath(configuration: CompilerConfiguration) {
         for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
             val javaRoot = root as? JvmContentRoot ?: continue
-            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
-
-            projectEnvironment.addSourcesToClasspath(virtualFile)
-
-            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
-                if (isValidJavaFqName(it)) {
-                    FqName(it)
-                }
-                else {
-                    report(WARNING, "Invalid package prefix name is ignored: $it")
-                    null
-                }
-            }
-
-            val rootType = when (javaRoot) {
-                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                else -> throw IllegalStateException()
-            }
-
-            javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
+            addJavaRoot(javaRoot)
         }
+    }
+
+    private fun addJavaRoot(javaRoot: JvmContentRoot) {
+        val virtualFile = contentRootToVirtualFile(javaRoot) ?: return
+
+        projectEnvironment.addSourcesToClasspath(virtualFile)
+
+        val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+            if (isValidJavaFqName(it)) {
+                FqName(it)
+            }
+            else {
+                report(WARNING, "Invalid package prefix name is ignored: $it")
+                null
+            }
+        }
+
+        val rootType = when (javaRoot) {
+            is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+            is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+            else -> throw IllegalStateException()
+        }
+
+        javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
     }
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
@@ -409,6 +423,11 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
+            /**
+             * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
+             * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
+             */
+
             with (projectEnvironment.project) {
                 registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 

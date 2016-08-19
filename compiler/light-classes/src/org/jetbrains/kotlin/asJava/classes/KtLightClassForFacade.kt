@@ -29,7 +29,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.KotlinFacadeLightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.fileHasTopLevelCallables
 import org.jetbrains.kotlin.name.FqName
@@ -52,8 +52,7 @@ class KtLightClassForFacade private constructor(
         private val facadeClassFqName: FqName,
         private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
         files: Collection<KtFile>
-) : KtLightClassBase(manager), KtJavaMirrorMarker {
-
+) : KtLightClassBase(manager) {
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
     class FacadeStubCache(private val project: Project) {
@@ -264,4 +263,7 @@ class KtLightClassForFacade private constructor(
             return KtLightClassForFacade(manager, facadeClassFqName, cachedValue, listOf(file))
         }
     }
+
+    override val originKind: LightClassOriginKind
+        get() = LightClassOriginKind.SOURCE
 }

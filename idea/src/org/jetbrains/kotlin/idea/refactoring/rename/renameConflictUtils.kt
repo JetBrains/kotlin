@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.explicateAsText
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.and
@@ -53,6 +52,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
@@ -64,7 +64,11 @@ import java.util.*
 
 internal fun ResolvedCall<*>.noReceivers() = dispatchReceiver == null && extensionReceiver == null
 
-internal fun PsiNamedElement.renderDescription() = "${UsageViewUtil.getType(this)} '$name'".trim()
+internal fun PsiNamedElement.renderDescription(): String {
+    val type = UsageViewUtil.getType(this)
+    if (name == null || name!!.startsWith("<")) return type
+    return "$type '$name'".trim()
+}
 
 internal fun PsiElement.representativeContainer(): PsiNamedElement? =
         when (this) {
@@ -82,23 +86,56 @@ internal fun checkRedeclarations(
         newName: String,
         result: MutableList<UsageInfo>
 ) {
-    fun getSiblingWithNewName(): DeclarationDescriptor? {
-        if (descriptor is ValueParameterDescriptor) {
-            return descriptor.containingDeclaration.valueParameters.firstOrNull { it.name.asString() == newName }
-        }
-
-        val containingDescriptor = descriptor.containingDeclaration
-        val containingScope = when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
-            else -> return null
-        }
+    fun MemberScope.findSiblingByName(): DeclarationDescriptor? {
         val descriptorKindFilter = when (descriptor) {
             is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
             is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
+            is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
             else -> return null
         }
-        return containingScope.getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull()
+        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull { it != descriptor }
+    }
+
+    fun getSiblingWithNewName(): DeclarationDescriptor? {
+        val containingDescriptor = descriptor.containingDeclaration
+
+        if (descriptor is ValueParameterDescriptor) {
+            return (containingDescriptor as CallableDescriptor).valueParameters.firstOrNull { it.name.asString() == newName }
+        }
+
+        if (descriptor is TypeParameterDescriptor) {
+            val typeParameters = when (containingDescriptor) {
+                is ClassDescriptor -> containingDescriptor.declaredTypeParameters
+                is CallableDescriptor -> containingDescriptor.typeParameters
+                else -> emptyList()
+            }
+            typeParameters.firstOrNull { it.name.asString() == newName }?.let { return it }
+
+            val containingDeclaration = (containingDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtDeclaration
+                                        ?: return null
+            val dummyVar = KtPsiFactory(containingDeclaration).createProperty("val foo: $newName")
+            val outerScope = containingDeclaration.getResolutionScope()
+            val context = dummyVar.analyzeInContext(outerScope, containingDeclaration)
+            return context[BindingContext.VARIABLE, dummyVar]?.type?.constructor?.declarationDescriptor as? TypeParameterDescriptor
+        }
+
+        return when (containingDescriptor) {
+            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingByName()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingByName()
+            else -> {
+                val block = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()?.parent as? KtBlockExpression
+                            ?: return null
+                (block.statements.firstOrNull {
+                    if (it.name != newName) return@firstOrNull false
+                    when (descriptor) {
+                        is ClassDescriptor -> it is KtClassOrObject
+                        is PropertyDescriptor -> it is KtProperty
+                        is FunctionDescriptor -> it is KtNamedFunction
+                        else -> false
+                    }
+                } as? KtDeclaration)?.resolveToDescriptor()
+            }
+        }
     }
 
     val candidateDescriptor = getSiblingWithNewName() ?: return
@@ -129,10 +166,12 @@ fun reportShadowing(
         result: MutableList<UsageInfo>
 ) {
     val candidate = DescriptorToSourceUtilsIde.getAnyDeclaration(declaration.project, candidateDescriptor) as? PsiNamedElement ?: return
+    if (declaration.parent == candidate.parent) return
     val message = "${declaration.renderDescription().capitalize()} will be shadowed by ${candidate.renderDescription()}"
     result += BasicUnresolvableCollisionUsageInfo(refElement, elementToBindUsageInfoTo, message)
 }
 
+// todo: break into smaller functions
 private fun checkUsagesRetargeting(
         elementToBindUsageInfosTo: PsiElement,
         declaration: PsiNamedElement,
@@ -249,7 +288,9 @@ private fun checkUsagesRetargeting(
             continue
         }
 
-        usageIterator.set(UsageInfoWithReplacement(fullCallExpression, declaration, qualifiedExpression))
+        if (fullCallExpression !is KtQualifiedExpression) {
+            usageIterator.set(UsageInfoWithReplacement(fullCallExpression, declaration, qualifiedExpression))
+        }
     }
 }
 

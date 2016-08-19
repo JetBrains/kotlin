@@ -187,6 +187,7 @@ interface DescriptorRendererOptions {
     var renderAccessors: Boolean
     var renderDefaultAnnotationArguments: Boolean
     var alwaysRenderModifiers: Boolean
+    var renderConstructorKeyword: Boolean
 }
 
 object ExcludedTypeAnnotations {

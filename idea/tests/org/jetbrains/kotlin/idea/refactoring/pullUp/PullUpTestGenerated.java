@@ -223,6 +223,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("skipFakeOverrides.kt")
+        public void testSkipFakeOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/skipFakeOverrides.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("spaceAfterModifier.kt")
         public void testSpaceAfterModifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/spaceAfterModifier.kt");

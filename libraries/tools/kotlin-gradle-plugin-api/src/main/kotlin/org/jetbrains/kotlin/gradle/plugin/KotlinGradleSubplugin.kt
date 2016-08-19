@@ -17,14 +17,23 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 
-public class SubpluginOption(val key: String, val value: String)
+class SubpluginOption(val key: String, val value: String)
 
-public interface KotlinGradleSubplugin {
-    public fun isApplicable(project: Project, task: AbstractCompile): Boolean
-    public fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption>
-    public fun getPluginName(): String
-    public fun getGroupName(): String
-    public fun getArtifactName(): String
+interface KotlinGradleSubplugin {
+    fun isApplicable(project: Project, task: AbstractCompile): Boolean
+    
+    fun apply(
+            project: Project, 
+            kotlinCompile: AbstractCompile, 
+            javaCompile: AbstractCompile,
+            variantData: Any?,
+            javaSourceSet: SourceSet?
+    ): List<SubpluginOption>
+    
+    fun getPluginName(): String
+    fun getGroupName(): String
+    fun getArtifactName(): String
 }

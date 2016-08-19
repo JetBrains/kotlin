@@ -1,0 +1,85 @@
+== O ==
+object O {
+    val y = 1
+}
+---------------------
+L0:
+  1 <START>
+    v(val y = 1)
+    r(1) -> <v0>
+    w(y|<v0>)
+L1:
+    <END>           NEXT:[<SINK>]
+error:
+    <ERROR>         PREV:[]
+sink:
+    <SINK>          PREV:[<ERROR>, <END>]
+=====================
+== E ==
+enum class E(val x: Int) {
+    E1(0)
+}
+---------------------
+L0:
+  1 <START>
+    v(val x: Int)
+    magic[FAKE_INITIALIZER](val x: Int) -> <v0>
+    w(x|<v0>)
+    v(E1(0))
+    magic[FAKE_INITIALIZER](E1(0)) -> <v1>
+    w(E1|<v1>)
+    r(0) -> <v2>
+    mark((0))
+    call((0), <init>|<v2>) -> <v3>
+L1:
+    <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================
+== C ==
+class C {
+    companion object {
+        val z = 2
+    }
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo() = E1.x + O.y + C.z
+---------------------
+L0:
+  1 <START>
+    mark(E1.x)
+    mark(E1)
+    r(E1) -> <v0>
+    r(x|<v0>) -> <v1>
+    mark(O.y)
+    mark(O)
+    r(O) -> <v2>
+    r(y|<v2>) -> <v3>
+    mark(E1.x + O.y)
+    call(E1.x + O.y, plus|<v1>, <v3>) -> <v4>
+    mark(C.z)
+    mark(C)
+    r(C, Companion) -> <v5>
+    r(z|<v5>) -> <v6>
+    mark(E1.x + O.y + C.z)
+    call(E1.x + O.y + C.z, plus|<v4>, <v6>) -> <v7>
+    ret(*|<v7>) L1
+L1:
+    <END>                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                            PREV:[]
+sink:
+    <SINK>                                             PREV:[<ERROR>, <END>]
+=====================
