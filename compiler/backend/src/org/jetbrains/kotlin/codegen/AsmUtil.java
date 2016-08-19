@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -244,13 +245,10 @@ public class AsmUtil {
         if (specialCase != null) {
             return specialCase;
         }
-        return getDefaultVisibilityFlag(descriptor.getVisibility());
-    }
-
-    public static int getDefaultVisibilityFlag(@NotNull Visibility visibility) {
+        Visibility visibility = descriptor.getVisibility();
         Integer defaultMapping = visibilityToAccessFlag.get(visibility);
         if (defaultMapping == null) {
-            throw new IllegalStateException(visibility + " is not a valid visibility in backend");
+            throw new IllegalStateException(visibility + " is not a valid visibility in backend for " + DescriptorRenderer.DEBUG_TEXT.render(descriptor));
         }
         return defaultMapping;
     }
