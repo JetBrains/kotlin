@@ -31,8 +31,11 @@ import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.IntValue
+import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
@@ -140,6 +143,8 @@ class StatementGenerator(
                 IrLiteralExpressionImpl.string(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is IntValue ->
                 IrLiteralExpressionImpl.int(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is NullValue ->
+                IrLiteralExpressionImpl.nullLiteral(expression.startOffset, expression.endOffset, constantType)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
@@ -166,39 +171,44 @@ class StatementGenerator(
             IrLiteralExpressionImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
-        val resolvedCall = getResolvedCall(expression)
+        val resolvedCall = getResolvedCall(expression)!!
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             TODO("Unexpected VariableAsFunctionResolvedCall")
         }
 
-        val descriptor = resolvedCall?.resultingDescriptor
+        val descriptor = resolvedCall.resultingDescriptor
 
-        return when (descriptor) {
-            is ClassDescriptor ->
-                if (DescriptorUtils.isObject(descriptor))
-                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
-                else if (DescriptorUtils.isEnumEntry(descriptor))
-                    IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
-                else {
-                    val companionObjectDescriptor = descriptor.companionObjectDescriptor
-                                                    ?: error("Class value without companion object: $descriptor")
-                    IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset,
-                                                   descriptor.classValueType,
-                                                   companionObjectDescriptor)
-                }
-            is PropertyDescriptor -> {
-                CallGenerator(this).generateCall(expression, resolvedCall)
-            }
-            is VariableDescriptor ->
-                IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, descriptor)
-            else ->
-                IrDummyExpression(
-                        expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression),
-                        expression.getReferencedName() + ": ${descriptor?.name} ${descriptor?.javaClass?.simpleName}"
-                )
-        }
+        return generateExpressionForReferencedDescriptor(descriptor, expression, resolvedCall)
     }
+
+    private fun generateExpressionForReferencedDescriptor(descriptor: DeclarationDescriptor, expression: KtExpression, resolvedCall: ResolvedCall<*>): IrExpression =
+            when (descriptor) {
+                is FakeCallableDescriptorForObject ->
+                    generateExpressionForReferencedDescriptor(descriptor.getReferencedDescriptor(), expression, resolvedCall)
+                is ClassDescriptor ->
+                    if (DescriptorUtils.isObject(descriptor))
+                        IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                    else if (DescriptorUtils.isEnumEntry(descriptor))
+                        IrGetEnumValueExpressionImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                    else {
+                        val companionObjectDescriptor = descriptor.companionObjectDescriptor
+                                                        ?: error("Class value without companion object: $descriptor")
+                        IrGetObjectValueExpressionImpl(expression.startOffset, expression.endOffset,
+                                                       descriptor.classValueType,
+                                                       companionObjectDescriptor)
+                    }
+                is PropertyDescriptor -> {
+                    CallGenerator(this).generateCall(expression, resolvedCall)
+                }
+                is VariableDescriptor ->
+                    IrGetVariableExpressionImpl(expression.startOffset, expression.endOffset, descriptor)
+                else ->
+                    IrDummyExpression(
+                            expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression),
+                            expression.text + ": ${descriptor.name} ${descriptor.javaClass.simpleName}"
+                    )
+            }
 
     override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrStatement {
         val resolvedCall = getResolvedCall(expression) ?: TODO("No resolved call for call expression")
@@ -280,5 +290,6 @@ class StatementGenerator(
         return irWhen
     }
 
-
+    override fun visitWhenExpression(expression: KtWhenExpression, data: Nothing?): IrStatement =
+            WhenExpressionGenerator(this).generate(expression)
 }

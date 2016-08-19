@@ -58,6 +58,9 @@ class IrLiteralExpressionImpl<out T> (
 
         fun int(startOffset: Int, endOffset: Int, type: KotlinType, value: Int): IrLiteralExpressionImpl<Int> =
                 IrLiteralExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Int, value)
+
+        fun  nullLiteral(startOffset: Int, endOffset: Int, type: KotlinType): IrLiteralExpressionImpl<Nothing?> =
+                IrLiteralExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Null, null)
     }
 }
 

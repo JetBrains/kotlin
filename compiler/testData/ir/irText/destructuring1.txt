@@ -3,7 +3,7 @@ IrFunction public fun B.test(): kotlin.Unit
     BLOCK type=<no-type> hasResult=false operator=null
       BLOCK type=<no-type> hasResult=false operator=SYNTHETIC_BLOCK
         VAR val tmp0: A
-          GET_VAR A type=A operator=null
+          GET_OBJECT A type=A
         VAR val x: kotlin.Int
           CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
             $this: $RECEIVER of: test type=B

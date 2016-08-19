@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -54,8 +55,8 @@ fun IrGenerator.getExpectedTypeForLastInferredCall(key: KtExpression): KotlinTyp
 fun IrGenerator.getInferredTypeWithSmarcastsOrFail(key: KtExpression): KotlinType =
         getInferredTypeWithSmartcasts(key) ?: TODO("No type for expression: ${key.text}")
 
-fun IrGenerator.isUsedAsExpression(ktExpression: KtExpression) =
-        get(BindingContext.USED_AS_EXPRESSION, ktExpression) ?: false
+fun IrGenerator.isUsedAsExpression(ktElement: KtElement) =
+        get(BindingContext.USED_AS_EXPRESSION, ktElement) ?: false
 
 fun IrGenerator.getResolvedCall(key: KtExpression): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)

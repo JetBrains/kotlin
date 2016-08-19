@@ -77,7 +77,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
                 subject.accept(this, "\$subject:")
             }
             for (branch in expression.branches) {
-                branch.condition.accept(this, "if")
+                branch.conditions.forEach { it.accept(this, "if") }
                 branch.result.accept(this, "then")
             }
             expression.elseExpression?.accept(this, "else")

@@ -1,0 +1,27 @@
+IrFile /values.kt
+  DUMMY Enum
+  DUMMY A
+  IrProperty public val a: kotlin.Int = 0 getter=null setter=null
+    IrExpressionBody
+      LITERAL Int type=kotlin.Int value='0'
+  DUMMY Z
+  IrFunction public fun test1(): Enum
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          GET_ENUM_VALUE A type=Enum
+  IrFunction public fun test2(): A
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          GET_OBJECT A type=A
+  IrFunction public fun test3(): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          GET_PROPERTY .a type=kotlin.Int operator=null
+  IrFunction public fun test4(): Z.Companion
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          GET_OBJECT Companion type=Z.Companion

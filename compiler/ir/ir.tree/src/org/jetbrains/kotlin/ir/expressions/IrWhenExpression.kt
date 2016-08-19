@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 interface IrWhenExpression : IrExpression {
@@ -31,8 +32,10 @@ interface IrWhenExpression : IrExpression {
 }
 
 interface IrBranch : IrElement {
-    var condition: IrExpression
+    val conditions: List<IrExpression>
     var result: IrExpression
+
+    fun addCondition(expression: IrExpression)
 }
 
 class IrWhenExpressionImpl(
@@ -44,7 +47,7 @@ class IrWhenExpressionImpl(
             startOffset: Int,
             endOffset: Int,
             type: KotlinType?,
-            subject: IrVariable
+            subject: IrVariable?
     ) : this(startOffset, endOffset, type) {
         this.subject = subject
     }
@@ -121,19 +124,17 @@ class IrWhenExpressionImpl(
 
 class IrBranchImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrBranch {
     constructor(startOffset: Int, endOffset: Int, condition: IrExpression, result: IrExpression) : this(startOffset, endOffset) {
-        this.condition = condition
         this.result = result
+        addCondition(condition)
     }
 
-    private var conditionImpl: IrExpression? = null
-    override var condition: IrExpression
-        get() = conditionImpl!!
-        set(value) {
-            value.assertDetached()
-            conditionImpl?.detach()
-            conditionImpl = value
-            value.setTreeLocation(this, BRANCH_CONDITION_SLOT)
-        }
+    override val conditions: MutableList<IrExpression> = SmartList()
+
+    override fun addCondition(expression: IrExpression) {
+        expression.assertDetached()
+        expression.setTreeLocation(this, conditions.size)
+        conditions.add(expression)
+    }
 
     private var resultImpl: IrExpression? = null
     override var result: IrExpression
@@ -147,17 +148,19 @@ class IrBranchImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset
 
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
-                BRANCH_CONDITION_SLOT -> condition
                 BRANCH_RESULT_SLOT -> result
-                else -> null
+                else -> conditions.getOrNull(slot)
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
-            BRANCH_CONDITION_SLOT ->
-                condition = newChild.assertCast()
             BRANCH_RESULT_SLOT ->
                 result = newChild.assertCast()
+            in conditions.indices -> {
+                conditions[slot].detach()
+                conditions[slot] = newChild.assertCast()
+                newChild.setTreeLocation(this, slot)
+            }
         }
     }
 
@@ -165,7 +168,7 @@ class IrBranchImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset
             visitor.visitBranch(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        conditionImpl?.accept(visitor, data)
+        conditions.forEach { it.accept(visitor, data) }
         resultImpl?.accept(visitor, data)
     }
 }

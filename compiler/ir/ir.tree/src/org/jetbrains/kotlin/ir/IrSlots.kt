@@ -27,5 +27,4 @@ const val MODULE_SLOT = 0
 const val INITIALIZER_SLOT = 0
 const val WHEN_SUBJECT_VARIABLE_SLOT = -1
 const val WHEN_ELSE_EXPRESSION_SLOT = -2
-const val BRANCH_CONDITION_SLOT = -1
-const val BRANCH_RESULT_SLOT = -2
+const val BRANCH_RESULT_SLOT = -1
