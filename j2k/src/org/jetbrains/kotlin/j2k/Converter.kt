@@ -317,8 +317,11 @@ class Converter private constructor(
         if (field is PsiEnumConstant) {
             assert(getMethod == null && setMethod == null)
             val argumentList = field.argumentList
-            val params = deferredElement { codeConverter ->
-                ExpressionList(codeConverter.convertExpressions(argumentList?.expressions ?: arrayOf<PsiExpression>())).assignPrototype(argumentList)
+            val params = if (argumentList != null && argumentList.expressions.isNotEmpty()) {
+                deferredElement { codeConverter -> codeConverter.convertArgumentList(argumentList) }
+            }
+            else {
+                null
             }
             val body = field.initializingClass?.let { convertAnonymousClassBody(it) }
             return EnumConstant(name, annotations, modifiers, params, body)

@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.j2k.append
 
 class NewClassExpression(
         val name: ReferenceElement?,
-        val arguments: List<Expression>,
+        val argumentList: ArgumentList,
         val qualifier: Expression = Expression.Empty,
         val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
@@ -40,7 +39,7 @@ class NewClassExpression(
         }
 
         if (anonymousClass == null || !anonymousClass.extendsInterface) {
-            builder.append("(").append(arguments, ", ").append(")")
+            builder.append(argumentList)
         }
 
         if (anonymousClass != null) {

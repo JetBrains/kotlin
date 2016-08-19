@@ -54,18 +54,18 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         val descriptionExpr = statement.assertDescription
         val condition = codeConverter.convertExpression(statement.assertCondition)
         if (descriptionExpr == null) {
-            result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition))
+            result = MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition))
         }
         else {
             val description = codeConverter.convertExpression(descriptionExpr)
             val lambda = LambdaExpression(null, Block.of(description).assignNoPrototype())
-            result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
+            result = MethodCallExpression.buildNonNull(null, "assert", ArgumentList.withNoPrototype(condition, lambda))
         }
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
         val block = codeConverter.convertBlock(statement.codeBlock)
-        result = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block).assignNoPrototype()), listOf(), false)
+        result = MethodCallExpression.buildNonNull(null, "run", ArgumentList.withNoPrototype(LambdaExpression(null, block).assignNoPrototype()))
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -218,7 +218,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             val parameter = LambdaParameter(Identifier.withNoPrototype(variable.name!!), null).assignNoPrototype()
             val parameterList = ParameterList(listOf(parameter), lPar = null, rPar = null).assignNoPrototype()
             val lambda = LambdaExpression(parameterList, block)
-            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.initializer), "use", listOf(lambda), listOf(), false)
+            expression = MethodCallExpression.buildNonNull(codeConverter.convertExpression(variable.initializer), "use", ArgumentList.withNoPrototype(lambda))
             expression.assignNoPrototype()
             block = Block.of(expression).assignNoPrototype()
         }

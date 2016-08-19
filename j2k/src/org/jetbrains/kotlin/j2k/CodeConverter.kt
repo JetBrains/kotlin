@@ -63,6 +63,16 @@ class CodeConverter(
     fun convertExpressions(expressions: List<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
+    fun convertArgumentList(list: PsiExpressionList): ArgumentList {
+        val lPar = list.node.findChildByType(JavaTokenType.LPARENTH)?.psi
+        val rPar = list.node.findChildByType(JavaTokenType.RPARENTH)?.psi
+        return ArgumentList(
+                convertExpressions(list.expressions),
+                LPar().assignPrototype(lPar, CommentsAndSpacesInheritance.LINE_BREAKS),
+                RPar().assignPrototype(rPar, CommentsAndSpacesInheritance.LINE_BREAKS)
+        ).assignPrototype(list)
+    }
+
     fun convertExpression(expression: PsiExpression?, shouldParenthesize: Boolean = false): Expression {
         if (expression == null) return Expression.Empty
 
@@ -127,7 +137,7 @@ class CodeConverter(
                     convertedExpression = LiteralExpression(text)
                 }
                 else if (expectedTypeStr == "char") {
-                    convertedExpression = MethodCallExpression.build(convertedExpression, "toChar", emptyList(), emptyList(), false)
+                    convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, "toChar")
                 }
             }
             else if (expression is PsiPrefixExpression && expression.isLiteralWithSign()) {
@@ -137,7 +147,7 @@ class CodeConverter(
             else {
                 val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedTypeStr]
                 if (conversion != null) {
-                    convertedExpression = MethodCallExpression.buildNotNull(convertedExpression, conversion)
+                    convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, conversion)
                 }
             }
         }
@@ -146,7 +156,7 @@ class CodeConverter(
     }
 
     fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
-        var convertedExpression = convertExpression(expression)
+        val convertedExpression = convertExpression(expression)
         val actualType = expression.type ?: return ErrorType()
         var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)
 

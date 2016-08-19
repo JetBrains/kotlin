@@ -19,11 +19,22 @@ package org.jetbrains.kotlin.j2k.ast
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 
-class ExpressionList(val expressions: List<Expression>) : Expression() {
+class ArgumentList(
+        val expressions: List<Expression>,
+        val lPar: LPar,
+        val rPar: RPar
+) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
+        builder.append(lPar)
         builder.append(expressions, ", ")
+        builder.append(rPar)
     }
 
-    override val isEmpty: Boolean
-        get() = expressions.isEmpty()
+    companion object {
+        fun withNoPrototype(arguments: List<Expression>): ArgumentList {
+            return ArgumentList(arguments, LPar().assignNoPrototype(), RPar().assignNoPrototype()).assignNoPrototype()
+        }
+
+        fun withNoPrototype(vararg arguments: Expression): ArgumentList = withNoPrototype(arguments.asList())
+    }
 }
