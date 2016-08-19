@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -32,14 +33,15 @@ interface IrModule : IrElement {
     }
 
     val descriptor: ModuleDescriptor
-
+    val irBuiltins: IrBuiltIns
     val files: List<IrFile>
 
     fun addFile(file: IrFile)
 }
 
 class IrModuleImpl(
-        override val descriptor: ModuleDescriptor
+        override val descriptor: ModuleDescriptor,
+        override val irBuiltins: IrBuiltIns
 ) : IrModule {
     override val files: MutableList<IrFile> = ArrayList()
 

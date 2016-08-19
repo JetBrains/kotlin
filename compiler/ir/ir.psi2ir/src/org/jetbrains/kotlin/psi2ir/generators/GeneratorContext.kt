@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,5 +31,6 @@ class GeneratorContext(
     val sourceManager = PsiSourceManager()
 
     val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
+    val irBuiltIns = IrBuiltIns(builtIns)
 }
 

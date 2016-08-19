@@ -24,7 +24,8 @@ class ModuleGenerator(override val context: GeneratorContext) : IrGenerator {
     fun generateModule(ktFiles: List<KtFile>): IrModule {
         val irDeclarationGenerator = DeclarationGenerator(context)
 
-        val irModule = IrModuleImpl(context.moduleDescriptor)
+        val irModule = IrModuleImpl(context.moduleDescriptor, context.irBuiltIns)
+
         for (ktFile in ktFiles) {
             val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
             val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
