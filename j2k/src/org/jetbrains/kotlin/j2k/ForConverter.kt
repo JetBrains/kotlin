@@ -178,7 +178,7 @@ class ForConverter(
 
                     val range = forIterationRange(start, right, reversed, inclusive).assignNoPrototype()
                     val explicitType = if (settings.specifyLocalVariableTypeByDefault)
-                        PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype()
+                        PrimitiveType(Identifier.withNoPrototype("Int")).assignNoPrototype()
                     else
                         null
                     return ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, codeConverter.convertStatementOrBlock(body), statement.isInSingleLine())
@@ -239,7 +239,7 @@ class ForConverter(
                     val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
                     val qualifierType = qualifier.type
                     if (qualifierType != null && collectionType.isAssignableFrom(qualifierType)) {
-                        indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
+                        indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false))
                     }
                 }
             }
@@ -249,7 +249,7 @@ class ForConverter(
             && collectionSize.referenceName == "length") {
             val qualifier = collectionSize.qualifierExpression
             if (qualifier is PsiReferenceExpression && qualifier.type is PsiArrayType) {
-                indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
+                indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false))
             }
         }
 

@@ -33,7 +33,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
             val methodExpr = methodCall.methodExpression
             val arguments = methodCall.argumentList.expressions
 
-            val propertyName = Identifier(propertyName, isNullable).assignNoPrototype()
+            val propertyName = Identifier.withNoPrototype(propertyName, isNullable)
             val propertyAccess = QualifiedExpression(codeConverter.convertExpression(methodExpr.qualifierExpression), propertyName).assignNoPrototype()
 
             if (accessorKind == AccessorKind.GETTER) {

@@ -44,13 +44,13 @@ class TypeVisitor(
             UnitType()
         }
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
-            PrimitiveType(Identifier(StringUtil.capitalize(name)).assignNoPrototype())
+            PrimitiveType(Identifier.withNoPrototype(StringUtil.capitalize(name)))
         }
         else if (name == "null") {
             NullType()
         }
         else {
-            PrimitiveType(Identifier(name).assignNoPrototype())
+            PrimitiveType(Identifier.withNoPrototype(name))
         }
     }
 
@@ -76,7 +76,7 @@ class TypeVisitor(
 
             if (inAnnotationType && javaClassName == "java.lang.Class") {
                 val fqName = FqName("kotlin.reflect.KClass")
-                val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
+                val identifier = Identifier.withNoPrototype(fqName.shortName().identifier, imports = listOf(fqName))
                 return ReferenceElement(identifier, typeArgs).assignNoPrototype()
             }
         }
@@ -85,7 +85,7 @@ class TypeVisitor(
             return converter.convertCodeReferenceElement(classType.reference, hasExternalQualifier = false, typeArgsConverted = typeArgs)
         }
 
-        return ReferenceElement(Identifier(classType.className ?: "").assignNoPrototype(), typeArgs).assignNoPrototype()
+        return ReferenceElement(Identifier.withNoPrototype(classType.className ?: ""), typeArgs).assignNoPrototype()
     }
 
     private fun convertTypeArgs(classType: PsiClassType): List<Type> {

@@ -139,7 +139,7 @@ fun Converter.convertToKotlinAnalog(classQualifiedName: String?, mutability: Mut
 
 fun Converter.convertToKotlinAnalogIdentifier(classQualifiedName: String?, mutability: Mutability): Identifier? {
     val kotlinClassName = convertToKotlinAnalog(classQualifiedName, mutability) ?: return null
-    return Identifier(kotlinClassName.substringAfterLast('.')).assignNoPrototype()
+    return Identifier.withNoPrototype(kotlinClassName.substringAfterLast('.'))
 }
 
 private val toKotlinTypesMap: Map<String, String> = mapOf(
