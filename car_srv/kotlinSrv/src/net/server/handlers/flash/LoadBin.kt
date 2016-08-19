@@ -24,7 +24,7 @@ class LoadBin : AbstractHandler {
     override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
-        fs.writeFile("./flash.bin", js("new Buffer(data)"), fun(err: dynamic) {
+        fs.writeFile("./flash.bin", js("new Buffer(data)"), { err, stdOut, stdErr ->
             if (err) {
                 println("error in save flash.bin file\n $err")
                 val responseMessage = toServerObjectBuilder.setResultCode(14).build()

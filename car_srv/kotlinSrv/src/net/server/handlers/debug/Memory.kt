@@ -1,12 +1,12 @@
 package net.server.handlers.debug
 
+import CodedInputStream
 import DebugRequest
 import DebugResponseMemoryStats
 import McState
 import encodeProtoBuf
 import mcTransport
 import net.server.handlers.AbstractHandler
-import CodedInputStream
 
 class Memory : AbstractHandler {
 
@@ -14,7 +14,7 @@ class Memory : AbstractHandler {
     val toServerObjectBuilder: DebugResponseMemoryStats.BuilderDebugResponseMemoryStats
 
     constructor() : super() {
-        fromServerObjectBuilder = DebugRequest.BuilderDebugRequest(DebugRequest.TYPE.MEMORYSTATS)
+        fromServerObjectBuilder = DebugRequest.BuilderDebugRequest(DebugRequest.Type.MEMORY_STATS)
         toServerObjectBuilder = DebugResponseMemoryStats.BuilderDebugResponseMemoryStats(0, 0, 0, 0)
     }
 

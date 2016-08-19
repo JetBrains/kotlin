@@ -1,8 +1,12 @@
 @native
 fun require(name: String): dynamic = noImpl
 
+@native
+fun setTimeout(callBack: () -> Unit, ms: Int): dynamic = noImpl
+
 fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
     val routeBytes: ByteArray
+    println(protoMessage.toString())
     if (protoMessage is LocationResponse) {
         val protoSize = protoMessage.getSizeNoTag()
         routeBytes = ByteArray(protoSize)
@@ -14,6 +18,11 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
         val codedOutput = CodedOutputStream(routeBytes)
         protoMessage.writeTo(codedOutput)
     } else if (protoMessage is DebugResponseMemoryStats) {
+        val protoSize = protoMessage.getSizeNoTag()
+        routeBytes = ByteArray(protoSize)
+        val codedOutput = CodedOutputStream(routeBytes)
+        protoMessage.writeTo(codedOutput)
+    }else if (protoMessage is DebugRequest) {
         val protoSize = protoMessage.getSizeNoTag()
         routeBytes = ByteArray(protoSize)
         val codedOutput = CodedOutputStream(routeBytes)

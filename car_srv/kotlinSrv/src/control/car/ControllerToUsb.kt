@@ -6,17 +6,17 @@ import mcTransport
 
 class ControllerToUsb : Controller {
 
-    override fun executeRoute(route: RouteRequest) {
+    override fun executeRoute(route: RouteRequest, callBack: (ByteArray) -> Unit) {
         println("Execute Route:")
 
         mcTransport.setCallBack { bytes ->
-            println("Read $bytes;")
+            callBack.invoke(bytes)
         }
 
         mcTransport.sendProtoBuf(route)
     }
 
-    override fun getSensorData(degrees: IntArray): IntArray {
-        return IntArray(0)//todo make after connect sensor to car
+    override fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit) {
+        //todo make after connect sensor to car
     }
 }

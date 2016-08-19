@@ -29,9 +29,7 @@ class SetRoute : AbstractHandler {
             callback.invoke(encodeProtoBuf(responseMessage))
             return
         }
-        controller.executeRoute(message)
-        val responseMessage = toServerObjectBuilder.setCode(0).build()
-        callback.invoke(encodeProtoBuf(responseMessage))
+        controller.executeRoute(message, callback)
     }
 
 }

@@ -4,8 +4,8 @@ import RouteRequest
 
 interface Controller {
 
-    fun executeRoute(route: RouteRequest)
+    fun executeRoute(route: RouteRequest, callBack: (ByteArray) -> Unit)
 
-    fun getSensorData(degrees: IntArray): IntArray
+    fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit)
 
 }

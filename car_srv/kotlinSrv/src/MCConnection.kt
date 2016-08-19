@@ -48,12 +48,14 @@ class McTransport() : MCConnectObserver<String> {
             var messageLength = getBodyLength(resultBytes)
 
             for (i in 0..data.length - 1) {
+                println("read byte :" + data[i])
                 resultBytes.add(data[i])
-                if (messageLength != -1 && messageLength + protoHeaderLength == resultBytes.size) {
-                    callback.invoke(resultBytes.toByteArray())
-                    resultBytes.clear()
-                } else if (messageLength == -1) {
+                if (messageLength == -1) {
                     messageLength = getBodyLength(resultBytes)
+                }
+                if (messageLength != -1 && messageLength + protoHeaderLength == resultBytes.size) {
+                    callback.invoke(resultBytes.drop(4).toByteArray())
+                    resultBytes.clear()
                 }
             }
         })

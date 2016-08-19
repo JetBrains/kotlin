@@ -1,12 +1,17 @@
 package control.emulator
 
+import CarState
 import RouteRequest
+import RouteResponse
 import control.Controller
+import encodeProtoBuf
+import setTimeout
+import kotlin.Pair
 
 class ControllerEmulator : Controller {
 
-    private val MOVE_VELOCITY = 0.3278
-    private val ROTATION_VELOCITY = 12.3
+    private val MOVE_VELOCITY = 32.78//sm/s
+    private val ROTATION_VELOCITY = 12.3//degrees/s
 
     enum class MoveDirection {
         LEFT,
@@ -16,7 +21,7 @@ class ControllerEmulator : Controller {
         ERROR
     }
 
-    override fun executeRoute(route: RouteRequest) {
+    override fun executeRoute(route: RouteRequest, callBack: (ByteArray) -> Unit) {
         val moveTimes = route.times
         val moveDirections = route.directions
         //list of move direction and time to this move in ms
@@ -34,75 +39,40 @@ class ControllerEmulator : Controller {
 
             commands.add(Pair(moveDirection, value))
         }
-
-        executeCommand(commands, 0)
+        executeCommand(commands, 0, callBack)
     }
 
-    override fun getSensorData(degrees: IntArray): IntArray {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit) {
+
+//        ByteArray
+
+        //calculate distance
     }
 
-    fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int) {
-//        if (currentCommandIdx == commands.size) {
-//            MicroController.instance.car.routeDone()
-//        }
-//        val currentCommand = commands.get(currentCommandIdx)
-//        MicroController.instance.car.move(currentCommand.first, currentCommand.second, {
-//            executeCommand(commands, currentCommandIdx + 1)
-//        })
+    fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
+        if (currentCommandIdx == commands.size) {
+            val responseMessage = RouteResponse.BuilderRouteResponse(0).build()
+            callBack.invoke(encodeProtoBuf(responseMessage))
+        }
+        val currentCommand = commands.get(currentCommandIdx)
+
+        //refresh car state
+        val carInstance = CarState.instance
+        val commandTime = currentCommand.second
+        when (currentCommand.first) {
+            MoveDirection.FORWARD -> carInstance.moving((commandTime * MOVE_VELOCITY).toInt() / 1000)
+            MoveDirection.BACKWARD -> carInstance.moving(-(commandTime * MOVE_VELOCITY).toInt() / 1000)
+            MoveDirection.RIGHT -> carInstance.rotate((commandTime * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.LEFT -> carInstance.rotate(-(commandTime * ROTATION_VELOCITY).toInt() / 1000)
+            else -> {
+            }
+        }
+
+        setTimeout({
+            executeCommand(commands, currentCommandIdx + 1, callBack)
+        }, currentCommand.second)
     }
 
-//    var moveDirection: MoveDirection = MoveDirection.STOP
-//
-//    fun stopCar() {
-//        move(MoveDirection.STOP, 0, {})
-//    }
-//
-//    fun refreshLocation(delta: Int) {
-//        val deltaSeconds = delta.toDouble() / 1000
-//        when (moveDirection) {
-//            MoveDirection.FORWARD -> {
-//                this.x += MOVE_VELOCITY * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
-//                this.y += MOVE_VELOCITY * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
-//            }
-//            MoveDirection.BACKWARD -> {
-//                this.x -= MOVE_VELOCITY * deltaSeconds * Math.cos(this.angle * Math.PI / 180);
-//                this.y -= MOVE_VELOCITY * deltaSeconds * Math.sin(this.angle * Math.PI / 180);
-//            }
-//            MoveDirection.LEFT -> this.angle += ROTATION_VELOCITY * deltaSeconds
-//            MoveDirection.RIGHT -> this.angle -= ROTATION_VELOCITY * deltaSeconds
-//            else -> {
-//
-//            }
-//        }
-////        println("x=$x; y=$y; angle=$angle")
-//    }
-//
-//    fun routeDone() {
-//        controller.stopCar()
-//    }
-//
-//    fun move(moveDirection: MoveDirection, value: Int, callBack: () -> Unit) {
-//        //value - angle for rotation command and distance for forward/backward command
-//        this.moveDirection = moveDirection
-//        when (moveDirection) {
-//            MoveDirection.STOP -> controller.stopCar()
-//            MoveDirection.FORWARD -> controller.moveCarForward()
-//            MoveDirection.BACKWARD -> controller.moveCarBackward()
-//            MoveDirection.LEFT -> controller.moveCarLeft()
-//            MoveDirection.RIGHT -> controller.moveCarRight()
-//        }
-//        if (moveDirection != MoveDirection.STOP) {
-//            if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
-//                controller.delay(getTimeForMoving(value, MOVE_VELOCITY), callBack)
-//            } else {
-//                controller.delay(getTimeForMoving(value, ROTATION_VELOCITY), callBack)
-//            }
-//        }
-//    }
-//
-//    fun getTimeForMoving(value: Int, velocity: Double): Int {
-//        return (1000 * Math.abs(value.toDouble()) / velocity).toInt()
-//    }
+
 
 }
