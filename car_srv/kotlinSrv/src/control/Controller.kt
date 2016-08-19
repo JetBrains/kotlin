@@ -2,11 +2,10 @@ package control
 
 import RouteRequest
 
-/**
- * Created by user on 7/27/16.
- */
-interface RouteExecutor {
+interface Controller {
 
     fun executeRoute(route: RouteRequest)
+
+    fun getSensorData(degrees: IntArray): IntArray
 
 }

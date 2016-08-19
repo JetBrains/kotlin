@@ -3,15 +3,9 @@ package net.server.handlers.rc
 import CodedInputStream
 import DirectionRequest
 import DirectionResponse
-import MicroController
-import control.emulator.RouteExecutorImpl.MoveDirection
-import encodeProtoBuf
-import exceptions.RcControlException
+import control.emulator.ControllerEmulator.MoveDirection
 import net.server.handlers.AbstractHandler
 
-/**
- * Created by user on 7/27/16.
- */
 class Control : AbstractHandler {
 
     val fromServerObjectBuilder: DirectionRequest.BuilderDirectionRequest
@@ -23,6 +17,7 @@ class Control : AbstractHandler {
     }
 
     override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
+        //TODO now this handler don't make nothing. need fix:)
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
         val commandNumber = message.command
@@ -45,13 +40,7 @@ class Control : AbstractHandler {
             }
             else -> MoveDirection.STOP
         }
-        val resultCode: Int
-        try {
-//            MicroController.instance.RcMove(command, sid)
-            resultCode = 0
-        } catch (e: RcControlException) {
-            resultCode = 12
-        }
+        val resultCode: Int = 0
         val resultMessage = toServerObjectBuilder.setCode(resultCode).build()
         callback.invoke(encodeProtoBuf(resultMessage))
     }

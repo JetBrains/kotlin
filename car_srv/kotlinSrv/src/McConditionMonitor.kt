@@ -2,7 +2,7 @@
  * Created by user on 7/27/16.
  * observable class, check mc condition and notify observers about changes
  */
-class McConditionMonitor private constructor() : MCConnectObservable<String> {
+class McConditionMonitor private constructor() {
 
     private val udev: dynamic = require("udev")
     private val exec: dynamic = require("child_process").execSync
@@ -25,12 +25,8 @@ class McConditionMonitor private constructor() : MCConnectObservable<String> {
         readFileIfMcConnected()
     }
 
-    override fun addObserver(MCConnectObserver: MCConnectObserver<String>) {
+    fun addObserver(MCConnectObserver: MCConnectObserver<String>) {
         observersList.add(MCConnectObserver)
-    }
-
-    override fun removeObserver(MCConnectObserver: MCConnectObserver<String>) {
-        observersList.remove(MCConnectObserver)
     }
 
     private fun notifyMCConnect(nodeName: String) {
@@ -46,9 +42,9 @@ class McConditionMonitor private constructor() : MCConnectObservable<String> {
     }
 
     private fun isOurMcDevice(device: dynamic): Boolean {
-        val microController = MicroController.instance
-        return (device.ID_VENDOR_ID == microController.vendorID)
-                && (device.ID_MODEL_ID == microController.modelID)
+        val mcState = McState.instance
+        return (device.ID_VENDOR_ID == mcState.VENDORID)
+                && (device.ID_MODEL_ID == mcState.MODELID)
                 && (device.SUBSYSTEM == "tty")
     }
 
@@ -59,8 +55,6 @@ class McConditionMonitor private constructor() : MCConnectObservable<String> {
 
     private fun connectDevice(device: dynamic) {
         val transportFile: String = device.DEVNAME
-        mcTransport.initStreams(transportFile)
-        McState.instance.connect()
         println("mc connected. transport file is " + transportFile)
         exec("stty -F $transportFile raw -echo -echoe -echok")
         notifyMCConnect(transportFile)

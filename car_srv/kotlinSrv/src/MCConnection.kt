@@ -1,34 +1,27 @@
-/**
- * Created by user on 8/16/16.
- */
-
-class McTransport() {
+class McTransport() : MCConnectObserver<String> {
 
     private var writeStream: dynamic = null
     private var readStream: dynamic = null
     private val resultBytes = arrayListOf<Byte>()
     private var callback: (bytes: ByteArray) -> Unit = {}
 
+    init {
+        McConditionMonitor.instance.addObserver(this)
+    }
+
     fun sendBytes(bytes: ByteArray) {
         val bytesHeader = encodeInt(bytes.size)
-        println("write: " + bytesHeader)
+        println("write: $bytesHeader")
         writeStream.write(js("new Buffer(bytesHeader)"))
-        println("write: " + bytes)
+        println("write: $bytes")
         writeStream.write(js("new Buffer(bytes)"))
     }
 
-    fun sendBytes(byte: Byte) {
-        sendBytes(ByteArray(1, { idx -> byte }))
-    }
-
-    fun initStreams(pathToFile: String) {
-        writeStream = fs.createWriteStream(pathToFile);
+    private fun initStreams(pathToFile: String) {
+        writeStream = fs.createWriteStream(pathToFile)
         readStream = fs.createReadStream(pathToFile)
         readStream.on("readable", fun() {
-            val data = readStream.read()
-            if (data == null) {
-                return
-            }
+            val data = readStream.read() ?: return
             var messageLength = getBodyLength(resultBytes)
 
             for (i in 0..data.length - 1) {
@@ -43,11 +36,19 @@ class McTransport() {
         })
     }
 
+    override fun connect(transportFileName: String) {
+        initStreams(transportFileName)
+    }
+
+    override fun disconnect() {
+        closeStreams()
+    }
+
     fun setCallBack(cb: (bytes: ByteArray) -> Unit) {
         this.callback = cb
     }
 
-    fun closeStreams() {
+    private fun closeStreams() {
         writeStream.end()
         writeStream = null
         readStream = null

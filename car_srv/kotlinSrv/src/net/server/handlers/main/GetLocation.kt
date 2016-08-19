@@ -1,13 +1,9 @@
 package net.server.handlers.main
 
+import CarState
 import LocationResponse
-import MicroController
-import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
-/**
- * Created by user on 7/28/16.
- */
 class GetLocation : AbstractHandler {
 
     val toServerObjectBuilder: LocationResponse.BuilderLocationResponse
@@ -18,8 +14,8 @@ class GetLocation : AbstractHandler {
     }
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
-        val car = MicroController.instance.car
-        val locationData = LocationResponse.LocationData.BuilderLocationData(car.x.toInt(), car.y.toInt(), car.angle.toInt()).build()
+        val carState = CarState.instance
+        val locationData = LocationResponse.LocationData.BuilderLocationData(carState.x.toInt(), carState.y.toInt(), carState.angle.toInt()).build()
         val responseMessage = toServerObjectBuilder.setLocationResponseData(locationData).build()
         callback.invoke(encodeProtoBuf(responseMessage))
     }

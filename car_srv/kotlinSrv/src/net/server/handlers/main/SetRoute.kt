@@ -1,31 +1,25 @@
 package net.server.handlers.main
 
 import CodedInputStream
-import MicroController
+import McState
 import RouteRequest
 import RouteResponse
-import control.RouteExecutor
-import CodedOutputStream
+import control.Controller
 import net.server.handlers.AbstractHandler
 
-/**
- * Created by user on 7/28/16.
- */
 class SetRoute : AbstractHandler {
 
     val fromServerObjectBuilder: RouteRequest.BuilderRouteRequest
     val toServerObjectBuilder: RouteResponse.BuilderRouteResponse
-    val routeExecutor: RouteExecutor
+    val controller: Controller
 
-    constructor(routeExecutor: RouteExecutor) : super() {
-        this.routeExecutor = routeExecutor
+    constructor(routeExecutor: Controller) : super() {
+        this.controller = routeExecutor
         this.fromServerObjectBuilder = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0))
         this.toServerObjectBuilder = RouteResponse.BuilderRouteResponse(0)
     }
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
-        println("set route handler")
-        val car = MicroController.instance.car
         val message = fromServerObjectBuilder.build()
         message.mergeFrom(CodedInputStream(data))
         if (!McState.instance.isConnected()) {
@@ -34,17 +28,9 @@ class SetRoute : AbstractHandler {
             callback.invoke(encodeProtoBuf(responseMessage))
             return
         }
-        routeExecutor.executeRoute(message)
+        controller.executeRoute(message)
         val responseMessage = toServerObjectBuilder.setCode(0).build()
         callback.invoke(encodeProtoBuf(responseMessage))
-    }
-
-    fun encodeProtoBuf(protoMessage: RouteResponse): ByteArray {
-        val protoSize = protoMessage.getSizeNoTag()
-        val routeBytes = ByteArray(protoSize)
-
-        protoMessage.writeTo(CodedOutputStream(routeBytes))
-        return routeBytes
     }
 
 }

@@ -1,47 +1,45 @@
 package control.emulator
 
 import RouteRequest
-import control.RouteExecutor
+import control.Controller
 
-/**
- * Created by user on 7/27/16.
- */
-class RouteExecutorImpl : RouteExecutor {
+class ControllerEmulator : Controller {
+
+    private val MOVE_VELOCITY = 0.3278
+    private val ROTATION_VELOCITY = 12.3
 
     enum class MoveDirection {
         LEFT,
         RIGHT,
         FORWARD,
         BACKWARD,
-        STOP
+        ERROR
     }
 
     override fun executeRoute(route: RouteRequest) {
-        val angles = route.angles
-        val distances = route.distances
+        val moveTimes = route.moveTime
+        val moveDirections = route.moveDirection
+        //list of move direction and time to this move in ms
         val commands: MutableList<Pair<MoveDirection, Int>> = mutableListOf()
-        for (i in 0..angles.size - 1) {
-            val angle: Int = angles[i]
-            val distance: Int = distances[i]
-            if (angle != 0) {
-                val command = if (angle > 180) {
-                    MoveDirection.RIGHT
-                } else {
-                    MoveDirection.LEFT
-                }
-                commands.add(Pair(command, angle))
-            }
-            if (distance != 0) {
-                val command = if (distance > 0) {
-                    MoveDirection.FORWARD
-                } else {
-                    MoveDirection.BACKWARD
-                }
-                commands.add(Pair(command, distance))
-            }
+
+        moveTimes.forEachIndexed { idx, value ->
+            val moveDirection =
+                    when (moveDirections[idx]) {
+                        0 -> MoveDirection.FORWARD
+                        1 -> MoveDirection.BACKWARD
+                        2 -> MoveDirection.LEFT
+                        3 -> MoveDirection.RIGHT
+                        else -> MoveDirection.ERROR
+                    }
+
+            commands.add(Pair(moveDirection, value))
         }
-        commands.add(Pair(MoveDirection.STOP, 0))
+
         executeCommand(commands, 0)
+    }
+
+    override fun getSensorData(degrees: IntArray): IntArray {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int) {

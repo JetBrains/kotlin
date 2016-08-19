@@ -1,9 +1,6 @@
-/**
- * Created by user on 8/18/16.
- */
-interface MCConnectObserver<V> {
+interface MCConnectObserver<in V> {
 
-    fun connect(vararg params: V)
+    fun connect(transportFileName: V)
     fun disconnect()
 
 }

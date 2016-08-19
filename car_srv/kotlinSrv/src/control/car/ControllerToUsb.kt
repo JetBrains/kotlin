@@ -1,12 +1,11 @@
 package control.car
 
-import RouteRequest
-import control.RouteExecutor
-import encodeProtoBuf
-import mcTransport
 import CodedOutputStream
+import RouteRequest
+import control.Controller
+import mcTransport
 
-class RouteExecutorToUsb : RouteExecutor {
+class ControllerToUsb : Controller {
 
     override fun executeRoute(route: RouteRequest) {
         println("Execute Route:")
@@ -20,5 +19,9 @@ class RouteExecutorToUsb : RouteExecutor {
         }
 
         mcTransport.sendBytes(routeBytes)
+    }
+
+    override fun getSensorData(degrees: IntArray): IntArray {
+        return IntArray(0)//todo make after connect sensor to car
     }
 }

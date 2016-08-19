@@ -1,6 +1,3 @@
-/**
- * Created by user on 8/16/16.
- */
 class Config(val configFileName: String = "config.cfg") {
 
 
@@ -10,7 +7,7 @@ class Config(val configFileName: String = "config.cfg") {
     fun loadConfig(): Boolean {
 
         try {
-            fs.accessSync(configFileName, fs.F_OK);
+            fs.accessSync(configFileName, fs.F_OK)
         } catch (e: dynamic) {
             // create it
             fs.openSync(configFileName, "w")

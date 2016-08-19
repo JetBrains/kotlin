@@ -3,14 +3,10 @@ package net.server.handlers.flash
 import CodedInputStream
 import Upload
 import UploadResult
-import encodeProtoBuf
 import mcTransport
 import net.server.handlers.AbstractHandler
 import require
 
-/**
- * Created by user on 7/27/16.
- */
 class LoadBin : AbstractHandler {
 
     val exec: dynamic

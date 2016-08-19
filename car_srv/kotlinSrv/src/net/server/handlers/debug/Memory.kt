@@ -3,13 +3,9 @@ package net.server.handlers.debug
 import DebugRequest
 import DebugResponseMemoryStats
 import McState
-import encodeProtoBuf
 import mcTransport
 import net.server.handlers.AbstractHandler
 
-/**
- * Created by user on 8/18/16.
- */
 class Memory : AbstractHandler {
 
     val fromServerObjectBuilder: DebugRequest.BuilderDebugRequest
