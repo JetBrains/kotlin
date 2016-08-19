@@ -121,7 +121,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         val names = parseValueArguments(targetCall!!.valueArguments, scopeDepth)
         val args = loadArgsIfRequired(names, constructorArguments)
-        return evaluateConstructorCallExpression(LLVMVariable(structCodegen.fullName + structCodegen.primaryConstructorIndex, structCodegen.type, scope = LLVMVariableScope()), args)
+        return evaluateConstructorCallExpression(LLVMVariable(structCodegen.fullName + LLVMType.mangleFunctionArguments(names), structCodegen.type, scope = LLVMVariableScope()), args)
     }
 
     private fun evaluateThisExpression(): LLVMSingleValue? {
@@ -246,7 +246,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         val function = selector.firstChild.firstChild.text
         val names = parseArgList(selector, scopeDepth)
-        val type = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
+        val type = if (names.size > 0) LLVMType.mangleFunctionArguments(names) else ""
         val extensionCodegen = state.extensionFunctions[standardType.toString()]?.get("$function$type") ?: throw UnexpectedException("$standardType:$function$type")
         val receiverExpression = receiverExpressionArgument ?: evaluateExpression(receiver, scopeDepth + 1)!!
 
@@ -280,7 +280,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         (call as? KtCallExpression) ?: throw UnexpectedException("$receiver:$selectorName")
         val names = parseArgList(call as KtCallExpression, scopeDepth)
         val typePath = type.location.joinToString(".")
-        val types = if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""
+        val types = if (names.size > 0) LLVMType.mangleFunctionArguments(names) else ""
         val methodName = "${if (typePath.length > 0) "$typePath." else ""}${clazz.structName}.${selectorName.substringBefore('(').trim()}$types"
 
         val method = clazz.methods[methodName] ?: throw UnexpectedException(methodName)
@@ -328,7 +328,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                         val targetClassName = (receiver.type as LLVMReferenceType).type
 
                         val names = parseValueArguments(callMaker.valueArguments, scope)
-                        val methodName = "$targetClassName.$arrayActionType${if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
+                        val methodName = "$targetClassName.$arrayActionType${if (names.size > 0) LLVMType.mangleFunctionArguments(names) else ""}"
                         val type = receiver.type as LLVMReferenceType
                         val clazz = resolveClassOrObjectLocation(type) ?: throw UnexpectedException(type.toString())
 
@@ -405,7 +405,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val names = parseArgList(expr, scopeDepth)
         var name = expr.firstChild.firstChild.text
         val external = state.externalFunctions.containsKey(name)
-        val function = "$name${if (names.size > 0 && !external) "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}" else ""}"
+        val function = "$name${if (names.size > 0 && !external) LLVMType.mangleFunctionArguments(names) else ""}"
 
         if (state.functions.containsKey(function) || state.externalFunctions.containsKey(function)) {
             val descriptor = state.functions[function] ?: state.externalFunctions[function] ?: return null

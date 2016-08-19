@@ -38,7 +38,7 @@ class FunctionCodegen(state: TranslationState,
             returnType!!.pointer = 2
         }
         external = isExternal()
-        name = "${function.fqName}${if (args.size > 0 && !external) "_${args.joinToString(separator = "_", transform = { it.type.mangle() })}" else ""}"
+        name = "${function.fqName}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
 
         if (isExtensionDeclaration) {
             val receiverType = descriptor.extensionReceiverParameter!!.type
