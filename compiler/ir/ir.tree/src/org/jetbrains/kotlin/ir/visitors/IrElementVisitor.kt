@@ -66,7 +66,12 @@ interface IrElementVisitor<out R, in D> {
     fun visitWhenExpression(expression: IrWhenExpression, data: D) = visitExpression(expression, data)
     fun visitBranch(branch: IrBranch, data: D): R = visitElement(branch, data)
 
+    fun visitLoop(loop: IrLoopExpression, data: D) = visitExpression(loop, data)
+    fun visitWhileLoop(loop: IrWhileLoopExpression, data: D) = visitLoop(loop, data)
+    fun visitDoWhileLoop(loop: IrDoWhileLoopExpression, data: D) = visitLoop(loop, data)
+
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
+
 }

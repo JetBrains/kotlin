@@ -44,8 +44,9 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 class StatementGenerator(
         override val context: GeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val temporaryVariableFactory: TemporaryVariableFactory
+        val functionBodyGenerator: FunctionBodyGenerator
 ) : KtVisitor<IrStatement, Nothing?>(), IrGenerator {
+    val temporaryVariableFactory: TemporaryVariableFactory = TemporaryVariableFactory(scopeOwner)
 
     fun generateExpression(ktExpression: KtExpression): IrExpression =
             ktExpression.genExpr()
@@ -292,4 +293,6 @@ class StatementGenerator(
 
     override fun visitWhenExpression(expression: KtWhenExpression, data: Nothing?): IrStatement =
             WhenExpressionGenerator(this).generate(expression)
+
+
 }

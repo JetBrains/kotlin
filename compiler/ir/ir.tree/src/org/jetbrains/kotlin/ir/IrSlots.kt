@@ -28,3 +28,5 @@ const val INITIALIZER_SLOT = 0
 const val WHEN_SUBJECT_VARIABLE_SLOT = -1
 const val WHEN_ELSE_EXPRESSION_SLOT = -2
 const val BRANCH_RESULT_SLOT = -1
+const val LOOP_BODY_SLOT = -1
+const val LOOP_CONDITION_SLOT = -2

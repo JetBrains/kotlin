@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator {
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
@@ -140,9 +136,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator
     }
 
     private fun generateExpressionWithinContext(ktExpression: KtExpression, scopeOwner: DeclarationDescriptor): IrExpression =
-            StatementGenerator(context, scopeOwner, TemporaryVariableFactory(scopeOwner))
-                    .generateExpression(ktExpression)
-                    .toExpectedType(getExpectedTypeForLastInferredCall(ktExpression))
+            FunctionBodyGenerator(context).generateFunctionBody(scopeOwner, ktExpression)
 
     private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody {
         val irRhs = generateExpressionWithinContext(ktBody, scopeOwner)
