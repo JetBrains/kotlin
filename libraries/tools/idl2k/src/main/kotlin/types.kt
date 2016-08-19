@@ -74,3 +74,15 @@ private fun <T: Type> T.withNullabilityImpl(nullable: Boolean): T = if (this.nul
 fun <T: Type> T.withNullability(nullable: Boolean): T = withNullabilityImpl(this.nullable or nullable)
 fun <T: Type> T.toNullable(): T = withNullabilityImpl(true)
 fun <T: Type> T.dropNullable(): T = withNullabilityImpl(false)
+
+@Suppress("UNCHECKED_CAST")
+fun <T: Type> T.toNullableIfNonPrimitive(): T = when (this) {
+    is UnitType -> UnitType
+    is DynamicType -> DynamicType
+
+    is SimpleType -> when (this.type) {
+        "Int", "Short", "Byte", "Float", "Double", "Boolean", "Long" -> this
+        else -> this.toNullable()
+    }
+    else -> this.toNullable()
+} as T
