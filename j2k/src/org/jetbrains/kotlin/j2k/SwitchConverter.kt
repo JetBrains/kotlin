@@ -108,7 +108,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         return if (statements.size == 1)
             statements.single()
         else
-            Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+            Block.of(statements).assignNoPrototype()
     }
 
     private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.labelIdentifier == null

@@ -698,7 +698,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         when (body) {
             is PsiExpression -> {
                 val convertedBody = codeConverter.convertExpression(body).assignPrototype(body)
-                result = LambdaExpression(convertedParameters, Block(listOf(convertedBody), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()))
+                result = LambdaExpression(convertedParameters, Block.of(convertedBody).assignNoPrototype())
             }
             is PsiCodeBlock -> {
                 val convertedBlock = codeConverter.withSpecialStatementConverter(object: SpecialStatementConverter {
@@ -812,12 +812,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     parameters.map { LambdaParameter(it.first, it.second).assignNoPrototype() }
                 }).assignNoPrototype()
 
-        val lambdaExpression = LambdaExpression(
-                lambdaParameterList,
-                Block(listOf(statement),
-                      LBrace().assignNoPrototype(),
-                      RBrace().assignNoPrototype()).assignNoPrototype()
-        ).assignNoPrototype()
+        val lambdaExpression = LambdaExpression(lambdaParameterList, Block.of(statement).assignNoPrototype()).assignNoPrototype()
 
         if (isKotlinFunctionType) {
             result = lambdaExpression

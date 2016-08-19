@@ -69,7 +69,7 @@ class ForConverter(
                         }
                     }
                     else {
-                        return Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
+                        return Block.of(statements)
                     }
                 }
             })
@@ -85,7 +85,7 @@ class ForConverter(
 
                 if (nameConflict) {
                     val statements = listOf(codeConverterToUse.convertStatement(body), updateConverted)
-                    Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+                    Block.of(statements).assignNoPrototype()
                 }
                 else {
                     val block = codeConverterToUse.convertBlock(body.codeBlock, true)
@@ -94,7 +94,7 @@ class ForConverter(
             }
             else {
                 val statements = listOf(codeConverterToUse.convertStatement(body), updateConverted)
-                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+                Block.of(statements).assignNoPrototype()
             }
         }
 
@@ -133,7 +133,7 @@ class ForConverter(
                 builder.append(statements, "\n")
             }
             else {
-                val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+                val block = Block.of(statements).assignNoPrototype()
                 if (kind == Kind.WITH_BLOCK) {
                     block.generateCode(builder)
                 }
