@@ -111,12 +111,11 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     private fun getCommentContents(line: String): String {
-        val comment = KotlinCommenter()
         return line.trim()
-                .replace(comment.documentationCommentPrefix!!, "")
-                .replace(comment.blockCommentPrefix!!, "")
-                .replace(comment.blockCommentSuffix!!, "")
-                .replace(comment.documentationCommentLinePrefix!!, "")
+                .replace("/**", "")
+                .replace("/*", "")
+                .replace("*/", "")
+                .replace("*", "")
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
