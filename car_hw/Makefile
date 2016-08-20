@@ -9,6 +9,7 @@ LIB_STM32F4D_DIR=$(LIB_DIR)/stm32f4d
 LIB_USB_DEV_DIR=$(LIB_DIR)/usb_device
 LIB_USB_OTG_DIR=$(LIB_DIR)/usb_otg
 LIB_USB_VCP_DIR=$(LIB_DIR)/usb_vcp
+LIB_USART_DIR=$(LIB_DIR)/usart
 
 LIB_CMSIS_OBJ=$(BIN_DIR)/libcmsis.o
 LIB_STDPERIPH_OBJ=$(BIN_DIR)/libstdperiph.o
@@ -16,6 +17,7 @@ LIB_STM32F4D_OBJ=$(BIN_DIR)/libstm32f4d.o
 LIB_USB_DEV_OBJ=$(BIN_DIR)/libusbdevice.o
 LIB_USB_OTG_OBJ=$(BIN_DIR)/libusbotg.o
 LIB_USB_VCP_OBJ=$(BIN_DIR)/libusbvcp.o
+LIB_USART_OBJ=$(BIN_DIR)/libusart.o
 
 CARHW_OBJ=$(BIN_DIR)/car_hw.o
 
@@ -32,6 +34,7 @@ INCLUDES=-I$(LIB_CMSIS_DIR) \
 		 -I$(LIB_USB_DEV_DIR) \
 		 -I$(LIB_USB_OTG_DIR) \
 		 -I$(LIB_USB_VCP_DIR) \
+		 -I$(LIB_USART_DIR) \
 		 -I$(USB_CONF_DIR) \
 		 -I$(SRC_DIR) \
 		 -I$(SRC_DIR)/include
@@ -57,7 +60,7 @@ CAR_OBJ_PREFIX=car_
 $(CARHW_OBJ): $(CAR_OBJ) $(LIB_STM32F4D_OBJ) \
 		$(LIB_CMSIS_OBJ) $(LIB_STDPERIPH_OBJ) \
 		$(LIB_USB_DEV_OBJ) $(LIB_USB_OTG_OBJ) \
-		$(LIB_USB_VCP_OBJ)
+		$(LIB_USB_VCP_OBJ) $(LIB_USART_OBJ)
 	$(LD) -r $^ -o $@
 
 $(CAR_OBJ): \
