@@ -21,6 +21,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -30,9 +32,12 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun canSelect(e: PsiElement?): Boolean {
         return e is KtTypeReference
+               && e.getStrictParentOfType<KtObjectDeclaration>() == null
+               && e.getStrictParentOfType<KtParameter>() == null
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
+        if (e.getStrictParentOfType<KtObjectDeclaration>() != null) return null
         val colonPosition = e.getStrictParentOfType<KtCallableDeclaration>()?.colon?.startOffset ?: return null
         return listOf(TextRange(colonPosition, e.endOffset))
     }

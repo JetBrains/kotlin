@@ -45,6 +45,10 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
 
     public void testValueParameters() { doTest(); }
 
+    public void testValueParameters2() {
+        doTest();
+    }
+
     public void testDocComment() { doTest(); }
 
     public void testFunctionWithLineCommentBefore() { doTest(); }
@@ -85,6 +89,10 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     }
 
     public void testDefiningMultipleSuperClass() {
+        doTest();
+    }
+
+    public void testObjectExpression() {
         doTest();
     }
 

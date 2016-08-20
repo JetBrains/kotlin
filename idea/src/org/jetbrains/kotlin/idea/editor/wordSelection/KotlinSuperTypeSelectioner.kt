@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinSuperTypeSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement?): Boolean {
-        return e is KtSuperTypeList
+        return e is KtSuperTypeList && e.getStrictParentOfType<KtObjectDeclaration>() == null
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
