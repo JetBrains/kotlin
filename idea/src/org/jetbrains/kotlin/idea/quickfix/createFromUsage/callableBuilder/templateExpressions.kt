@@ -32,9 +32,8 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import java.util.Collections
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.lang.AssertionError
+import java.util.*
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.
@@ -43,7 +42,7 @@ internal class ParameterNameExpression(
         private val names: Array<String>,
         private val parameterTypeToNamesMap: Map<String, Array<String>>) : Expression() {
     init {
-        assert(names.all { it.isNotEmpty() })
+        assert(names.all(String::isNotEmpty))
     }
 
     override fun calculateResult(context: ExpressionContext?): Result? {

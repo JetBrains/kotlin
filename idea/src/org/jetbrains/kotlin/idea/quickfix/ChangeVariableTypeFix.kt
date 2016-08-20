@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -42,7 +42,7 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinType) : 
     private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun getText(): String {
-        var propertyName = element.fqName?.asString() ?: element.name
+        val propertyName = element.fqName?.asString() ?: element.name
         return "Change '$propertyName' type to '$typePresentation'"
     }
 

@@ -19,15 +19,12 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.isBoolean

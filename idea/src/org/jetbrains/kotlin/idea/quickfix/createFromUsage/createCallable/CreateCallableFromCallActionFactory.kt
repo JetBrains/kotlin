@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import java.lang.AssertionError
 import java.util.*
 
 sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
