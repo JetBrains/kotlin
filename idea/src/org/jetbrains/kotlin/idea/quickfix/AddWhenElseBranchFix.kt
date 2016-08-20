@@ -43,7 +43,7 @@ class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtW
 
     companion object : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): AddWhenElseBranchFix? {
-            return diagnostic.psiElement.getNonStrictParentOfType<KtWhenExpression>()?.let { AddWhenElseBranchFix(it) }
+            return diagnostic.psiElement.getNonStrictParentOfType<KtWhenExpression>()?.let(::AddWhenElseBranchFix)
         }
     }
 }

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -214,7 +215,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let { AutoImportFix(it) }
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::AutoImportFix)
 
         override fun isApplicableForCodeFragment() = true
 
@@ -231,7 +232,7 @@ internal class MissingInvokeAutoImportFix(expression: KtExpression) : AutoImport
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtExpression)?.let { MissingInvokeAutoImportFix(it) }
+                (diagnostic.psiElement as? KtExpression)?.let(::MissingInvokeAutoImportFix)
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
     }
