@@ -1,6 +1,7 @@
 package foo
 
-import java.util.ArrayList
+
+// TODO: Isn't native anymore
 
 class N() : ArrayList<Any>() {
     override fun add(el: Any): Boolean {

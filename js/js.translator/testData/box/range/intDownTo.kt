@@ -1,9 +1,8 @@
 package foo
 
-import java.util.ArrayList
 
 fun testDownTo() {
-    var elems = ArrayList<Int>()
+    var elems = mutableListOf<Int>()
     for (i in 4 downTo 0) {
         elems.add(i)
     }

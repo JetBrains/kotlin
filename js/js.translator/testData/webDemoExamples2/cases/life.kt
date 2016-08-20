@@ -3,9 +3,6 @@
  * See http://en.wikipedia.org/wiki/Conway's_Game_of_Life
  */
 
-import java.util.*
-import java.util.Collections
-
 /*
  * A field where cells live. Effectively immutable
  */
@@ -123,16 +120,12 @@ fun printField(s: String, steps: Int) {
 fun makeField(s: String): Field {
     val lines: List<String> = s.split("\n")
 
-    val w = Collections.max<String>(lines.toList(), Comparator<String> { o1, o2 ->
-        val l1: Int = o1.length
-        val l2 = o2.length
-        l1 - l2
-    })!!
-    val data = Array(lines.size) { Array(w.length) { false } }
+    val w = lines.map { it.length }.max()!!
+    val data = Array(lines.size) { Array(w) { false } }
 
     // workaround
     for (i in data.indices) {
-        data[i] = Array(w.length) { false }
+        data[i] = Array(w) { false }
         for (j in data[i].indices)
             data[i][j] = false
     }
@@ -144,5 +137,5 @@ fun makeField(s: String): Field {
         }
     }
 
-    return Field(w.length, lines.size) { i, j -> data[i][j] }
+    return Field(w, lines.size) { i, j -> data[i][j] }
 }

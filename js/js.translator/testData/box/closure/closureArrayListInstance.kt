@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList
 
 fun test(f: () -> String): String {
     val funLit = { f() }

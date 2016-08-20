@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 fun main(args: Array<String>) {
     val x = parseInt(args[0])
@@ -13,7 +12,7 @@ fun main(args: Array<String>) {
 
     //Check if a number is out of range:
     println()
-    val array = ArrayList<String>();
+    val array = mutableListOf<String>()
 
     array.add("aaa")
     array.add("bbb")

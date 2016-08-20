@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList;
 
 fun <T> test(a: List<T>, b: List<T>, removed: Boolean, expected: List<T>): String? {
     val t = ArrayList<T>(a.size)

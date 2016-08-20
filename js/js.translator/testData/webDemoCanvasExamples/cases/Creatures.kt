@@ -4,7 +4,6 @@
 */
 package creatures
 
-import java.util.ArrayList
 import jquery.*
 import kotlin.browser.window
 import org.w3c.dom.*

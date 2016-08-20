@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList
 
 fun box(): String {
     val arr = ArrayList<Int>()

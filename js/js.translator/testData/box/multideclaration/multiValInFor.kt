@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList
 
 class A {
     operator fun component1(): Int = 1
@@ -8,7 +7,7 @@ class A {
 operator fun A.component2(): String = "n"
 
 fun box(): String {
-    val list = ArrayList<A>()
+    val list = mutableListOf<A>()
     list.add(A())
 
     var i = 0;

@@ -1,6 +1,5 @@
 package foo
 
-import java.util.*;
 
 val d = { a: Int -> a + 1 }
 val p = { a: Int -> a * 3 }

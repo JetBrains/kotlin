@@ -1,5 +1,3 @@
-import java.util.*
-import java.io.*
 
 class World() {
     public val items: ArrayList<Item> = ArrayList<Item>()

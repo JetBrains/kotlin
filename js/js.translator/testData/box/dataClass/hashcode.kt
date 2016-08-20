@@ -1,7 +1,5 @@
 package foo
 
-import java.util.ArrayList
-
 
 data class Holder<T>(val v: T)
 

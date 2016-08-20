@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList
 
 var baz = 0
 fun withSideEffect(v: Int): Int {

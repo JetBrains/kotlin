@@ -1,6 +1,5 @@
 package foo
 
-import java.util.*
 
 fun box(): String {
     val oneTwo = Array(2) {

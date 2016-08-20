@@ -1,6 +1,5 @@
 package foo
 
-import java.util.HashMap
 
 fun box(): String {
 

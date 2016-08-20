@@ -1,6 +1,5 @@
 package foo
 
-import java.util.*
 
 class A<T>(val list: MutableList<T>) {
     fun addAll(c: Collection<T>) {

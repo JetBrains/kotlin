@@ -1,6 +1,5 @@
 package foo
 
-import java.util.HashMap
 
 
 operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {

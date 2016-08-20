@@ -1,6 +1,5 @@
 package traffic
 
-import java.util.ArrayList
 import kotlin.browser.window
 import org.w3c.dom.*
 import jquery.*

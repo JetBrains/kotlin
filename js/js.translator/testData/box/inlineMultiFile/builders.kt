@@ -183,8 +183,6 @@ fun box(): String {
 // FILE: bar.kt
 package foo
 
-import java.util.ArrayList
-import java.util.HashMap
 
 abstract class Element {
     abstract fun render(builder: StringBuilder, indent: String)

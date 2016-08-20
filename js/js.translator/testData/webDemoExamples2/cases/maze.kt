@@ -18,7 +18,6 @@
  * I want to get the prize, and this program helps me do so as soon
  * as I possibly can by finding a shortest path through the maze.
  */
-import java.util.*
 
 /**
  * This function looks for a path from max.start to maze.end through

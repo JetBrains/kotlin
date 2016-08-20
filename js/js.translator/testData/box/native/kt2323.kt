@@ -1,6 +1,5 @@
 package foo
 
-import java.util.HashMap
 
 @native
 val classes: Map<String, Any> = noImpl

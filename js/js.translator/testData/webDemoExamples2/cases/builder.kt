@@ -7,7 +7,6 @@
  * See this page for details:
  * http://confluence.jetbrains.net/display/Kotlin/Type-safe+Groovy-style+builders
  */
-import java.util.*
 
 fun main(args: Array<String>) {
     val result =

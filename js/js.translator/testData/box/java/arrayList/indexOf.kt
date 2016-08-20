@@ -1,6 +1,5 @@
 package foo
 
-import java.util.ArrayList;
 
 fun <T> test(list: List<T>, elements: List<T>, expected: List<Int>, method: List<T>.(T) -> Int, methodName: String): String? {
     for (i in 0..elements.size - 1) {

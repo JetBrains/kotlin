@@ -1,6 +1,5 @@
 package foo
 
-import java.util.*
 
 operator fun <T> ArrayList<T>.plus(other: Collection<T>): List<T> {
     val c = ArrayList<T>()

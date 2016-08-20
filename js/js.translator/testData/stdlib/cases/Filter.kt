@@ -1,7 +1,7 @@
 package kotlin
 
 import java.util.*
-import java.lang.Iterable
+import java.lang.Iterable // WTF?
 
 /*
 Filters given iterator
