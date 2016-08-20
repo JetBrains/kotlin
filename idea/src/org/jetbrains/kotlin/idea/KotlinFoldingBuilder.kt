@@ -107,7 +107,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         val targetCommentLine = node.text.split("\n").firstOrNull {
             getCommentContents(it).isNotEmpty()
         } ?: return ""
-        return getCommentContents(targetCommentLine)
+        return " ${getCommentContents(targetCommentLine)} "
     }
 
     private fun getCommentContents(line: String): String {
@@ -116,6 +116,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
                 .replace("/*", "")
                 .replace("*/", "")
                 .replace("*", "")
+                .trim()
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
