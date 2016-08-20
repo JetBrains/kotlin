@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
+import java.lang.IllegalArgumentException
 
 fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
     if (type.isError) return
@@ -92,7 +93,7 @@ fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
     assignment = parent.addAfter(assignment, property) as KtBinaryExpression
     parent.addAfter(psiFactory.createNewLine(), property)
 
-    property.setInitializer(null)
+    property.initializer = null
 
     if (explicitTypeToSet != null) {
         property.setType(explicitTypeToSet)
