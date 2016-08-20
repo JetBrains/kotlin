@@ -73,8 +73,10 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.lang.AssertionError
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.util.*
-import kotlin.properties.Delegates
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
@@ -168,14 +170,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 override fun hashCode() = 0 // no good way to compute hashCode() that would agree with our equals()
             }
 
-            val newTypes = LinkedHashSet(types.map { EqWrapper(it) })
+            val newTypes = LinkedHashSet(types.map(::EqWrapper))
             for (substitution in substitutions) {
                 // each substitution can be applied or not, so we offer all options
                 val toAdd = newTypes.map { it._type.substitute(substitution, typeInfo.variance) }
                 // substitution.byType are type arguments, but they cannot already occur in the type before substitution
                 val toRemove = newTypes.filter { substitution.byType in it._type }
 
-                newTypes.addAll(toAdd.map { EqWrapper(it) })
+                newTypes.addAll(toAdd.map(::EqWrapper))
                 newTypes.removeAll(toRemove)
             }
 
@@ -514,7 +516,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 if (assignmentToReplace != null) {
-                    (declaration as KtProperty).setInitializer(assignmentToReplace.right)
+                    (declaration as KtProperty).initializer = assignmentToReplace.right
                     return assignmentToReplace.replace(declaration) as KtCallableDeclaration
                 }
 

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -34,7 +34,7 @@ class ClassUsageReplacementStrategy(
     private val typeReplacement = typeReplacement?.check { it.referenceExpression != null }
     private val typeReplacementQualifierAsExpression = typeReplacement?.qualifier?.let { factory.createExpression(it.text) }
 
-    private val constructorReplacementStrategy = constructorReplacement?.let { CallableUsageReplacementStrategy(it) }
+    private val constructorReplacementStrategy = constructorReplacement?.let(::CallableUsageReplacementStrategy)
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
         if (usage !is KtNameReferenceExpression) return null
