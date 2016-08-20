@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
 
 class ReplaceSubstringWithSubstringAfterIntention : ReplaceSubstringIntention("Replace 'substring' call with 'substringAfter' call") {
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {

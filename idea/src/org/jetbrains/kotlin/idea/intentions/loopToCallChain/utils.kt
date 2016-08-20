@@ -125,7 +125,7 @@ fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDe
 private fun KtLambdaExpression.findParameterUsages(lambdaParam: KtParameter, context: KtExpression): Collection<KtNameReferenceExpression> {
     val bindingContext = analyzeInContext(context)
     val lambdaParamDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, lambdaParam]
-    return collectDescendantsOfType<KtNameReferenceExpression> {
+    return collectDescendantsOfType {
         it.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == lambdaParamDescriptor
     }
 }
@@ -356,11 +356,11 @@ fun KtExpression.isStableInLoop(loop: KtLoopExpression, checkNoOtherUsagesInLoop
 }
 
 fun KtExpression.containsEmbeddedBreakOrContinue(): Boolean {
-    return anyDescendantOfType<KtExpressionWithLabel>(::isEmbeddedBreakOrContinue)
+    return anyDescendantOfType(::isEmbeddedBreakOrContinue)
 }
 
 fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
-    return collectDescendantsOfType<KtExpressionWithLabel>(::isEmbeddedBreakOrContinue).size
+    return collectDescendantsOfType(::isEmbeddedBreakOrContinue).size
 }
 
 private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {

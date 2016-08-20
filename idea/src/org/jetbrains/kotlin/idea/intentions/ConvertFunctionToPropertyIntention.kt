@@ -31,14 +31,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
-import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
-import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
-import org.jetbrains.kotlin.idea.refactoring.getContainingScope
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -182,7 +178,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
                     callables.forEach {
                         when (it) {
                             is KtNamedFunction -> convertFunction(it, psiFactory)
-                            is PsiMethod -> it.setName(newGetterName)
+                            is PsiMethod -> it.name = newGetterName
                         }
                     }
 

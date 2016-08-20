@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -152,9 +151,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
         val result = element.replace(whenExpression)
         (if (applyFullCommentSaver) fullCommentSaver else elementCommentSaver).restore(result)
-        toDelete.forEach {
-            it.delete()
-        }
+        toDelete.forEach(PsiElement::delete)
     }
 
     private fun MutableList<KtExpression>.addOrBranches(expression: KtExpression): List<KtExpression> {

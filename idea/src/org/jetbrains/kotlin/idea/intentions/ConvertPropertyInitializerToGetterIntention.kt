@@ -56,7 +56,7 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
                 property.add(getter)
             }
 
-            property.setInitializer(null)
+            property.initializer = null
         }
     }
 }

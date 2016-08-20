@@ -147,11 +147,11 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
                 val descriptorName = applicableUsage.descriptor.name.asString()
-                if (descriptorName.equals("key") || descriptorName.equals("getKey")) {
+                if (descriptorName == "key" || descriptorName == "getKey") {
                     process(0, applicableUsage)
                     return@forEach true
                 }
-                else if (descriptorName.equals("value") || descriptorName.equals("getValue")) {
+                else if (descriptorName == "value" || descriptorName == "getValue") {
                     process(1, applicableUsage)
                     return@forEach true
                 }
