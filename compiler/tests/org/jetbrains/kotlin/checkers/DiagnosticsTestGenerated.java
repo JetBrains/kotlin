@@ -13855,6 +13855,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/uselessElvisInCall.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("uselessElvisRightIsNull.kt")
+                public void testUselessElvisRightIsNull() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/uselessElvisRightIsNull.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes")

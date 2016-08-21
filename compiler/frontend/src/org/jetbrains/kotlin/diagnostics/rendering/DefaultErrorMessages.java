@@ -418,6 +418,7 @@ public class DefaultErrorMessages {
         MAP.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound");
         MAP.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);
         MAP.put(USELESS_ELVIS_ON_LAMBDA_EXPRESSION, "Left operand of elvis operator (?:) is a lambda expression");
+        MAP.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null");
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
 
         MAP.put(UNSUPPORTED_TYPEALIAS, "Type aliases are unsupported (min Kotlin language level: 1.1)");

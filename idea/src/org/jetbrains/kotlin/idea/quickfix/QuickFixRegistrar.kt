@@ -98,6 +98,7 @@ class QuickFixRegistrar : QuickFixContributor {
         WRONG_GETTER_RETURN_TYPE.registerFactory(ChangeAccessorTypeFix)
 
         USELESS_ELVIS.registerFactory(RemoveUselessElvisFix)
+        USELESS_ELVIS_RIGHT_IS_NULL.registerFactory(RemoveUselessElvisFix)
 
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)

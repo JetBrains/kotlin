@@ -686,6 +686,8 @@ public interface Errors {
 
     DiagnosticFactory1<KtBinaryExpression, KotlinType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
     DiagnosticFactory0<PsiElement> USELESS_ELVIS_ON_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtBinaryExpression> USELESS_ELVIS_RIGHT_IS_NULL =
+            DiagnosticFactory0.create(WARNING, PositioningStrategies.USELESS_ELVIS);
 
     // Compile-time values
 
