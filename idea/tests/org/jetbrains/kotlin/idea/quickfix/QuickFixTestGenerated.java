@@ -6174,9 +6174,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
-            @TestMetadata("operator.kt")
-            public void testOperator() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/operator.kt");
+            @TestMetadata("noComparison.kt")
+            public void testNoComparison() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/noComparison.kt");
                 doTest(fileName);
             }
 

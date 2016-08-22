@@ -91,8 +91,7 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
                 is KtBinaryExpression -> {
                     if (parent.left == null || parent.right == null) null
                     else {
-                        if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS &&
-                            parent.analyze()[BindingContext.EXPECTED_EXPRESSION_TYPE, parent]?.isBoolean() ?: false) null
+                        if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS) null
                         else ReplaceInfixOrOperatorCallFix(parent)
                     }
                 }
