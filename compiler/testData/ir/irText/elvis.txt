@@ -3,16 +3,12 @@ IrFile /elvis.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=ELVIS type=kotlin.Any related=null
-            GET_VAR a type=kotlin.Any? operator=null
-            GET_VAR b type=kotlin.Any operator=null
+          DUMMY elvis type=kotlin.Any
   IrFunction public fun test2(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.Any): kotlin.Any
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=ELVIS type=kotlin.Any related=null
-            GET_VAR a type=kotlin.String? operator=null
-            GET_VAR b type=kotlin.Any operator=null
+          DUMMY elvis type=kotlin.Any
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -27,8 +23,4 @@ IrFile /elvis.kt
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
         RETURN type=<no-type>
-          BINARY_OP operator=ELVIS type=kotlin.String related=null
-            TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String?
-              GET_VAR a type=kotlin.Any? operator=null
-            TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR b type=kotlin.Any? operator=null
+          DUMMY elvis type=kotlin.String

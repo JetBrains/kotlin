@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrBlockExpression
-import org.jetbrains.kotlin.ir.expressions.IrBlockExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -32,14 +32,14 @@ class InlineDesugaredBlocks : IrElementVisitor<Unit, Nothing?> {
         element.acceptChildren(this, data)
     }
 
-    override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?) {
-        val transformedBlock = IrBlockExpressionImpl(
+    override fun visitBlock(expression: IrBlock, data: Nothing?) {
+        val transformedBlock = IrBlockImpl(
                 expression.startOffset, expression.endOffset, expression.type,
                 expression.hasResult, expression.operator
         )
         for (statement in expression.statements) {
             statement.accept(this, data)
-            if (statement is IrBlockExpression && statement.operator != null) {
+            if (statement is IrBlock && statement.operator != null) {
                 statement.statements.forEach {
                     transformedBlock.addStatement(it.detach())
                 }

@@ -21,16 +21,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-interface IrStringConcatenationExpression : IrExpression {
+interface IrStringConcatenation : IrExpression {
     val arguments: List<IrExpression>
     fun addArgument(argument: IrExpression)
 }
 
-class IrStringConcatenationExpressionImpl(
+class IrStringConcatenationImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?
-) : IrExpressionBase(startOffset, endOffset, type), IrStringConcatenationExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
     override val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun addArgument(argument: IrExpression) {

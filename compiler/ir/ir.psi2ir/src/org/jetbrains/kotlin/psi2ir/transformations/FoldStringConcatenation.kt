@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrCallExpression
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationExpression
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -38,7 +38,7 @@ class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
         element.acceptChildren(this, data)
     }
 
-    override fun visitCallExpression(expression: IrCallExpression, data: Nothing?) {
+    override fun visitCall(expression: IrCall, data: Nothing?) {
         if (!isStringPlus(expression.descriptor)) {
             visitElement(expression, data)
             return
@@ -46,7 +46,7 @@ class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
 
         val arguments = ArrayList<IrExpression>()
         collectStringConcatenationArguments(expression, arguments)
-        val irStringConcatenation = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, expression.type)
+        val irStringConcatenation = IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type)
         arguments.forEach { irStringConcatenation.addArgument(it) }
 
         expression.replaceWith(irStringConcatenation)
@@ -54,11 +54,11 @@ class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
 
     private fun collectStringConcatenationArguments(expression: IrExpression, arguments: ArrayList<IrExpression>) {
         when {
-            expression is IrCallExpression && isStringPlus(expression.descriptor)-> {
+            expression is IrCall && isStringPlus(expression.descriptor)-> {
                 collectStringConcatenationArguments(expression.dispatchReceiver!!, arguments)
                 collectStringConcatenationArguments(expression.getArgument(0)!!, arguments)
             }
-            expression is IrStringConcatenationExpression -> {
+            expression is IrStringConcatenation -> {
                 arguments.addAll(expression.arguments)
                 expression.arguments.forEach { it.detach() }
             }

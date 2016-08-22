@@ -3,6 +3,6 @@ IrFile /implicitCastOnPlatformType.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          UNARY_OP operator=IMPLICIT_NOTNULL type=kotlin.String related=null
-            CALL .getProperty type=kotlin.String! operator=null
+          CALL .IMPLICIT_NOT_NULL type=kotlin.Any operator=IMPLICIT_NOTNULL
+            arg0: CALL .getProperty type=kotlin.String! operator=null
               p0: LITERAL String type=kotlin.String value='test'

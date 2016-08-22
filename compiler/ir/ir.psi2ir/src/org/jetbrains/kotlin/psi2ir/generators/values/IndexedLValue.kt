@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.load
+import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
+import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -51,10 +52,10 @@ class IndexedLValue(
 
     private fun generateGetOrSetCallAsDesugaredBlock(call: ResolvedCall<*>, irArgument: IrExpression? = null): IrExpression {
         val callGenerator = CallGenerator(statementGenerator)
-        setupCallGeneratorContext(callGenerator)
+        setupCallGeneratorContext(callGenerator.scope)
 
         if (irArgument != null) {
-            callGenerator.putValue(call.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irArgument))
+            callGenerator.scope.putValue(call.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irArgument))
         }
 
         return callGenerator.generateCall(ktArrayAccessExpression, call, irOperator)
@@ -69,18 +70,18 @@ class IndexedLValue(
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, true, irOperator)
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
-        callGenerator.putValue(operatorCallReceiver!!,
+        callGenerator.scope.putValue(operatorCallReceiver!!,
                                IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
-        val irTmp = statementGenerator.temporaryVariableFactory.createTemporaryVariable(
+        val irTmp = statementGenerator.scope.createTemporaryVariable(
                 callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator))
         irBlock.addStatement(irTmp)
 
-        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               VariableLValue(irTmp))
+        callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
+                               VariableLValue(statementGenerator, irTmp))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
-        irBlock.addStatement(irTmp.load())
+        irBlock.addStatement(irTmp.defaultLoad())
 
         return irBlock
     }
@@ -93,13 +94,13 @@ class IndexedLValue(
 
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, false, irOperator)
 
-        callGenerator.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irOperatorArgument))
+        callGenerator.scope.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irOperatorArgument))
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
-        callGenerator.putValue(operatorCallReceiver!!,
+        callGenerator.scope.putValue(operatorCallReceiver!!,
                                IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
 
-        callGenerator.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
+        callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
                                IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
@@ -112,32 +113,32 @@ class IndexedLValue(
             callGenerator: CallGenerator,
             hasResult: Boolean,
             operator: IrOperator?
-    ): IrBlockExpressionImpl {
+    ): IrBlockImpl {
         val irBlock = createDesugaredBlock(call, hasResult, operator)
-        defineTemporaryVariables(irBlock, callGenerator)
+        defineTemporaryVariables(irBlock, callGenerator.scope)
         return irBlock
     }
 
-    private fun createDesugaredBlock(call: ResolvedCall<*>, hasResult: Boolean, operator: IrOperator?): IrBlockExpressionImpl {
-        return IrBlockExpressionImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
-                                     if (hasResult) type else call.resultingDescriptor.returnType,
-                                     hasResult, operator)
+    private fun createDesugaredBlock(call: ResolvedCall<*>, hasResult: Boolean, operator: IrOperator?): IrBlockImpl {
+        return IrBlockImpl(ktArrayAccessExpression.startOffset, ktArrayAccessExpression.endOffset,
+                           if (hasResult) type else call.resultingDescriptor.returnType,
+                           hasResult, operator)
     }
 
-    private fun defineTemporaryVariables(irBlock: IrBlockExpressionImpl, callGenerator: CallGenerator) {
-        irBlock.addIfNotNull(callGenerator.introduceTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
+    private fun defineTemporaryVariables(irBlock: IrBlockImpl, scope: Scope) {
+        irBlock.addIfNotNull(scope.introduceTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
 
         var index = 0
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            irBlock.addIfNotNull(callGenerator.introduceTemporary(ktIndexExpression, irIndexValue, "index${index++}"))
+            irBlock.addIfNotNull(scope.introduceTemporary(ktIndexExpression, irIndexValue, "index${index++}"))
         }
     }
 
-    private fun setupCallGeneratorContext(callGenerator: CallGenerator) {
-        callGenerator.putValue(ktArrayAccessExpression.arrayExpression!!, IrSingleExpressionValue(irArray))
+    private fun setupCallGeneratorContext(scope: Scope) {
+        scope.putValue(ktArrayAccessExpression.arrayExpression!!, IrSingleExpressionValue(irArray))
 
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            callGenerator.putValue(ktIndexExpression, IrSingleExpressionValue(irIndexValue))
+            scope.putValue(ktIndexExpression, IrSingleExpressionValue(irIndexValue))
         }
     }
 }

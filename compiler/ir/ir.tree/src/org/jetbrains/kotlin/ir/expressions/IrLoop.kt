@@ -19,22 +19,22 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrLoopExpression : IrExpression {
+interface IrLoop : IrExpression {
     var body: IrExpression
 }
 
-interface IrConditionalLoopExpression : IrLoopExpression {
+interface IrConditionalLoop : IrLoop {
     var condition: IrExpression
 }
 
-interface IrWhileLoopExpression : IrConditionalLoopExpression
+interface IrWhileLoop : IrConditionalLoop
 
-interface IrDoWhileLoopExpression : IrConditionalLoopExpression
+interface IrDoWhileLoop : IrConditionalLoop
 
-abstract class IrLoopExpressionBase(
+abstract class IrLoopBase(
         startOffset: Int,
         endOffset: Int
-) : IrExpressionBase(startOffset, endOffset, null), IrLoopExpression {
+) : IrExpressionBase(startOffset, endOffset, null), IrLoop {
 
 
     private var bodyImpl: IrExpression? = null
@@ -60,10 +60,10 @@ abstract class IrLoopExpressionBase(
     }
 }
 
-abstract class IrConditionalLoopExpressionBase(
+abstract class IrConditionalLoopBase(
         startOffset: Int,
         endOffset: Int
-) : IrLoopExpressionBase(startOffset, endOffset), IrConditionalLoopExpression {
+) : IrLoopBase(startOffset, endOffset), IrConditionalLoop {
     private var conditionImpl: IrExpression? = null
     override var condition: IrExpression
         get() = conditionImpl!!
@@ -88,10 +88,10 @@ abstract class IrConditionalLoopExpressionBase(
     }
 }
 
-class IrWhileLoopExpressionImpl(
+class IrWhileLoopImpl(
         startOffset: Int,
         endOffset: Int
-) : IrConditionalLoopExpressionBase(startOffset, endOffset), IrWhileLoopExpression {
+) : IrConditionalLoopBase(startOffset, endOffset), IrWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -112,10 +112,10 @@ class IrWhileLoopExpressionImpl(
     }
 }
 
-class IrDoWhileLoopExpressionImpl(
+class IrDoWhileLoopImpl(
         startOffset: Int,
         endOffset: Int
-) : IrConditionalLoopExpressionBase(startOffset, endOffset), IrDoWhileLoopExpression {
+) : IrConditionalLoopBase(startOffset, endOffset), IrDoWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,

@@ -64,20 +64,6 @@ class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator
         return createFunction(ktNamedFunction, functionDescriptor, body)
     }
 
-    fun generateLocalVariable(scopeOwner: DeclarationDescriptor, ktProperty: KtProperty): IrVariable {
-        if (ktProperty.delegateExpression != null) TODO("Local delegated property")
-
-        val variableDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty)
-
-        val irLocalVariable = IrVariableImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOriginKind.DEFINED, variableDescriptor)
-
-        irLocalVariable.initializer = ktProperty.initializer?.let {
-            generateExpressionWithinContext(it, scopeOwner)
-        }
-
-        return irLocalVariable
-    }
-
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         if (ktProperty.hasDelegate()) TODO("handle delegated property")
@@ -135,22 +121,11 @@ class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator
         return propertyDescriptor
     }
 
-    private fun generateExpressionWithinContext(ktExpression: KtExpression, scopeOwner: DeclarationDescriptor): IrExpression =
-            FunctionBodyGenerator(context).generateFunctionBody(scopeOwner, ktExpression)
-
-    private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody {
-        val irRhs = generateExpressionWithinContext(ktBody, scopeOwner)
-        val irExpressionBody =
-                if (ktBody is KtBlockExpression)
-                    irRhs
-                else
-                    IrBlockExpressionImpl(ktBody.startOffset, ktBody.endOffset, null, false).apply {
-                        addStatement(IrReturnExpressionImpl(ktBody.startOffset, ktBody.endOffset, scopeOwner, irRhs))
-                    }
-        return IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset, irExpressionBody)
-    }
-
-    private fun generateInitializerBody(scopeOwner: DeclarationDescriptor, ktBody: KtExpression): IrBody =
+    private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
             IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
-                                 generateExpressionWithinContext(ktBody, scopeOwner))
+                                 ExoressionBodyGenerator(scopeOwner, context).generateFunctionBody(ktBody))
+
+    private fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
+            IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
+                                 ExoressionBodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody))
 }

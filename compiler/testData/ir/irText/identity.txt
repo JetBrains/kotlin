@@ -3,20 +3,21 @@ IrFile /identity.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=EQEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Int operator=null
-            GET_VAR b type=kotlin.Int operator=null
+          CALL .EQEQEQ type=kotlin.Boolean operator=EQEQEQ
+            arg0: GET_VAR a type=kotlin.Int operator=null
+            arg1: GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=EXCLEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Int operator=null
-            GET_VAR b type=kotlin.Int operator=null
+          CALL .NOT type=kotlin.Boolean operator=EXCL
+            arg0: CALL .EQEQEQ type=kotlin.Boolean operator=EXCLEQEQ
+              arg0: GET_VAR a type=kotlin.Int operator=null
+              arg1: GET_VAR b type=kotlin.Int operator=null
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=EQEQEQ type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Any? operator=null
-            GET_VAR b type=kotlin.Any? operator=null
+          CALL .EQEQEQ type=kotlin.Boolean operator=EQEQEQ
+            arg0: GET_VAR a type=kotlin.Any? operator=null
+            arg1: GET_VAR b type=kotlin.Any? operator=null

@@ -60,54 +60,44 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
             "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
 
-    override fun <T> visitConst(expression: IrConstExpression<T>, data: Nothing?): String =
+    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
             "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
-    override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
+    override fun visitBlock(expression: IrBlock, data: Nothing?): String =
             "BLOCK type=${expression.renderType()} hasResult=${expression.hasResult} operator=${expression.operator}"
 
-    override fun visitReturnExpression(expression: IrReturnExpression, data: Nothing?): String =
+    override fun visitReturn(expression: IrReturn, data: Nothing?): String =
             "RETURN type=${expression.renderType()}"
 
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiverExpression, data: Nothing?): String =
+    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?): String =
             "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name} type=${expression.renderType()}"
 
-    override fun visitThisExpression(expression: IrThisExpression, data: Nothing?): String =
+    override fun visitThisReference(expression: IrThisReference, data: Nothing?): String =
             "THIS ${expression.classDescriptor.render()} type=${expression.renderType()}"
 
-    override fun visitCallExpression(expression: IrCallExpression, data: Nothing?): String =
+    override fun visitCall(expression: IrCall, data: Nothing?): String =
             "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
             "type=${expression.renderType()} operator=${expression.operator}"
 
-    override fun visitGetVariable(expression: IrGetVariableExpression, data: Nothing?): String =
+    override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
 
-    override fun visitSetVariable(expression: IrSetVariableExpression, data: Nothing?): String =
+    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
             "SET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
 
-    override fun visitGetObjectValue(expression: IrGetObjectValueExpression, data: Nothing?): String =
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
             "GET_OBJECT ${expression.descriptor.name} type=${expression.renderType()}"
 
-    override fun visitGetEnumValue(expression: IrGetEnumValueExpression, data: Nothing?): String =
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
             "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.renderType()}"
 
-    override fun visitUnaryOperator(expression: IrUnaryOperatorExpression, data: Nothing?): String =
-            "UNARY_OP operator=${expression.operator} " +
-            "type=${expression.renderType()} " +
-            "related=${expression.relatedDescriptor?.render()}"
-
-    override fun visitBinaryOperator(expression: IrBinaryOperatorExpression, data: Nothing?): String =
-            "BINARY_OP operator=${expression.operator} " +
-            "type=${expression.renderType()} " +
-            "related=${expression.relatedDescriptor?.render()}"
-
-    override fun visitStringConcatenation(expression: IrStringConcatenationExpression, data: Nothing?): String =
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.renderType()}"
 
-    override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String =
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
             "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
-    override fun visitIf(expression: IrIfExpression, data: Nothing?): String =
+    override fun visitIf(expression: IrIfThenElse, data: Nothing?): String =
             "IF type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =

@@ -28,13 +28,13 @@ interface IrDeclarationReference : IrExpression {
     val descriptor: DeclarationDescriptor
 }
 
-interface IrGetSingletonValueExpression : IrDeclarationReference {
+interface IrGetSingletonValue : IrDeclarationReference {
     override val descriptor: ClassDescriptor
 }
 
-interface IrGetObjectValueExpression : IrGetSingletonValueExpression
+interface IrGetObjectValue : IrGetSingletonValue
 
-interface IrGetEnumValueExpression : IrGetSingletonValueExpression
+interface IrGetEnumValue : IrGetSingletonValue
 
 abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
         startOffset: Int,
@@ -60,22 +60,22 @@ abstract class IrTerminalDeclarationReferenceBase<out D : DeclarationDescriptor>
     }
 }
 
-class IrGetObjectValueExpressionImpl(
+class IrGetObjectValueImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         descriptor: ClassDescriptor
-) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValueExpression {
+) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetObjectValue {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetObjectValue(this, data)
 }
 
-class IrGetEnumValueExpressionImpl(
+class IrGetEnumValueImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         descriptor: ClassDescriptor
-) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValueExpression {
+) : IrTerminalDeclarationReferenceBase<ClassDescriptor>(startOffset, endOffset, type, descriptor), IrGetEnumValue {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetEnumValue(this, data)
     }

@@ -21,19 +21,16 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.load
-import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGenerator {
-    override val context: GeneratorContext get() = statementGenerator.context
-
+class WhenExpressionGenerator(statementGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(statementGenerator) {
     fun generate(expression: KtWhenExpression): IrExpression {
-        val conditionsGenerator = CallGenerator(statementGenerator)
+        val conditionsGenerator = CallGenerator(parentGenerator)
 
         val irSubject = expression.subjectExpression?.let {
-            conditionsGenerator.createTemporary(it, statementGenerator.generateExpression(it), "subject")
+            conditionsGenerator.scope.createTemporary(it, parentGenerator.generateExpression(it), "subject")
         }
 
         val resultType = getInferredTypeWithSmartcasts(expression)
@@ -43,7 +40,7 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
-                irElseExpression = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
+                irElseExpression = parentGenerator.generateExpressionWithExpectedType(ktEntry.expression!!, resultType)
                 break
             }
 
@@ -54,11 +51,11 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
                             generateWhenConditionWithSubject(ktCondition, conditionsGenerator, irSubject)
                         else
                             generateWhenConditionNoSubject(ktCondition)
-                irBranchCondition = irBranchCondition?.let { IrIfExpressionImpl.whenComma(it, irCondition) } ?: irCondition
+                irBranchCondition = irBranchCondition?.let { IrIfThenElseImpl.whenComma(it, irCondition) } ?: irCondition
 
             }
 
-            val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
+            val irBranchResult = parentGenerator.generateExpressionWithExpectedType(ktEntry.expression!!, resultType)
             irBranches.add(Pair(irBranchCondition!!, irBranchResult))
         }
 
@@ -67,32 +64,32 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
         irBranches.reverse()
 
         val (irLastCondition, irLastResult) = irBranches[0]
-        var irTopBranch = IrIfExpressionImpl(irLastCondition.startOffset, irLastCondition.endOffset, resultType,
-                                             irLastCondition, irLastResult, irElseExpression, IrOperator.WHEN)
+        var irTopBranch = IrIfThenElseImpl(irLastCondition.startOffset, irLastCondition.endOffset, resultType,
+                                           irLastCondition, irLastResult, irElseExpression, IrOperator.WHEN)
 
         for ((irBranchCondition, irBranchResult) in irBranches.subList(1, irBranches.size)) {
-            irTopBranch = IrIfExpressionImpl(irBranchCondition.startOffset, irBranchCondition.endOffset, resultType,
-                                             irBranchCondition, irBranchResult, irTopBranch, IrOperator.WHEN)
+            irTopBranch = IrIfThenElseImpl(irBranchCondition.startOffset, irBranchCondition.endOffset, resultType,
+                                           irBranchCondition, irBranchResult, irTopBranch, IrOperator.WHEN)
         }
 
         return generateWhenBody(expression, irSubject, irTopBranch)
     }
 
-    private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irTopBranch: IrIfExpression? = null): IrExpression {
+    private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irTopBranch: IrIfThenElse? = null): IrExpression {
         if (irSubject == null) {
             if (irTopBranch == null)
-                return IrBlockExpressionImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+                return IrBlockImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
             else
                 return irTopBranch
         }
         else {
             if (irTopBranch == null) {
-                val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
                 irBlock.addStatement(irSubject)
                 return irBlock
             }
             else {
-                val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, irTopBranch.type, true, IrOperator.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irTopBranch.type, true, IrOperator.WHEN)
                 irBlock.addStatement(irSubject)
                 irBlock.addStatement(irTopBranch)
                 return irBlock
@@ -101,8 +98,8 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
     }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
-            statementGenerator.generateExpression((ktCondition as KtWhenConditionWithExpression).expression!!)
-                    .toExpectedType(context.builtIns.booleanType)
+            parentGenerator.generateExpressionWithExpectedType((ktCondition as KtWhenConditionWithExpression).expression!!,
+                                                               context.builtIns.booleanType)
 
     private fun generateWhenConditionWithSubject(
             ktCondition: KtWhenCondition,
@@ -123,9 +120,9 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
 
     private fun generateIsPatternCondition(irSubject: IrVariable, ktCondition: KtWhenConditionIsPattern): IrExpression {
         val isType = getOrFail(BindingContext.TYPE, ktCondition.typeReference)
-        return IrTypeOperatorExpressionImpl(
+        return IrTypeOperatorCallImpl(
                 ktCondition.startOffset, ktCondition.endOffset, context.builtIns.booleanType,
-                IrTypeOperator.INSTANCEOF, isType, irSubject.load()
+                IrTypeOperator.INSTANCEOF, isType, irSubject.defaultLoad()
         )
     }
 
@@ -136,16 +133,15 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
         return when (inOperator) {
             IrOperator.IN -> irInCall
             IrOperator.NOT_IN ->
-                IrUnaryOperatorExpressionImpl(ktCondition.startOffset, ktCondition.endOffset, context.builtIns.booleanType,
-                                              IrOperator.EXCL, null, irInCall)
+                IrUnaryOperatorImpl(ktCondition.startOffset, ktCondition.endOffset, IrOperator.EXCL, context.irBuiltIns.booleanNot, irInCall)
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }
 
-    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryOperatorExpressionImpl =
-            IrBinaryOperatorExpressionImpl(
+    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryOperatorImpl =
+            IrBinaryOperatorImpl(
                     ktCondition.startOffset, ktCondition.endOffset,
-                    context.builtIns.booleanType, IrOperator.EQEQ, null,
-                    irSubject.load(), statementGenerator.generateExpression(ktCondition.expression!!)
+                    IrOperator.EQEQ, context.irBuiltIns.eqeq,
+                    irSubject.defaultLoad(), parentGenerator.generateExpression(ktCondition.expression!!)
             )
 }

@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrThisExpression : IrExpression {
-    val classDescriptor: ClassDescriptor
+interface IrGetExtensionReceiver : IrDeclarationReference {
+    override val descriptor: ReceiverParameterDescriptor
 }
 
-class IrThisExpressionImpl(
+class IrGetExtensionReceiverImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        override val classDescriptor: ClassDescriptor
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisExpression {
+        descriptor: ReceiverParameterDescriptor
+) : IrTerminalDeclarationReferenceBase<ReceiverParameterDescriptor>(startOffset, endOffset, type, descriptor), IrGetExtensionReceiver {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitThisExpression(this, data)
+            visitor.visitGetExtensionReceiver(this, data)
 }

@@ -27,25 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 class TemporaryVariableFactory(val scopeOwner: DeclarationDescriptor) {
-    private var lastTemporaryIndex = 0
-    private fun nextTemporaryIndex() = lastTemporaryIndex++
 
-    private fun createDescriptorForTemporaryVariable(type: KotlinType, nameHint: String? = null): IrTemporaryVariableDescriptor =
-            IrTemporaryVariableDescriptorImpl(
-                    scopeOwner,
-                    Name.identifier(
-                            if (nameHint != null)
-                                "tmp${nextTemporaryIndex()}_$nameHint"
-                            else
-                                "tmp${nextTemporaryIndex()}"
-                    ),
-                    type)
 
-    fun createTemporaryVariable(irExpression: IrExpression, nameHint: String? = null): IrVariable =
-            IrVariableImpl(irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
-                           createDescriptorForTemporaryVariable(
-                                   irExpression.type ?: throw AssertionError("No type for $irExpression"),
-                                   nameHint
-                           ),
-                           irExpression)
 }

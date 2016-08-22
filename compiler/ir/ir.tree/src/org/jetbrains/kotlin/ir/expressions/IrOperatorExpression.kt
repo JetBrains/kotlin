@@ -17,46 +17,78 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrOperatorExpression : IrExpression {
-    val operator: IrOperator
-    val relatedDescriptor: CallableDescriptor?
-}
-
-interface IrUnaryOperatorExpression : IrOperatorExpression {
-    override val operator: IrOperator
-    var argument: IrExpression
-}
-
-interface IrBinaryOperatorExpression : IrOperatorExpression {
-    override val operator: IrOperator
-    var argument0: IrExpression
-    var argument1: IrExpression
-}
-
-class IrUnaryOperatorExpressionImpl(
+abstract class IrOperatorCallBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
         override val operator: IrOperator,
-        override val relatedDescriptor: CallableDescriptor?
-) : IrExpressionBase(startOffset, endOffset, type), IrUnaryOperatorExpression {
+        override val descriptor: CallableDescriptor
+) : IrExpressionBase(startOffset, endOffset, descriptor.returnType), IrCall {
+    override val superQualifier: ClassDescriptor? get() = null
+    override var dispatchReceiver: IrExpression?
+        get() = null
+        set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")
+
+    override val isSafe: Boolean get() = false
+
+    override var extensionReceiver: IrExpression?
+        get() = null
+        set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")
+
+    override fun getArgument(index: Int): IrExpression? = getChild(index)?.assertCast()
+
+    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+        replaceChild(index, valueArgument ?: throw AssertionError("Operator call expression can't have a default argument"))
+    }
+
+    override fun removeArgument(index: Int) {
+        throw AssertionError("Operator call expression can't have a default argument")
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitCall(this, data)
+    }
+}
+
+class IrNullaryOperatorImpl constructor(
+        startOffset: Int,
+        endOffset: Int,
+        operator: IrOperator,
+        descriptor: CallableDescriptor
+) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
+    override fun getChild(slot: Int): IrElement? = null
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        // no children
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+}
+
+class IrUnaryOperatorImpl private constructor(
+        startOffset: Int,
+        endOffset: Int,
+        operator: IrOperator,
+        descriptor: CallableDescriptor
+) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
             operator: IrOperator,
-            relatedDescriptor: CallableDescriptor?,
+            descriptor: CallableDescriptor,
             argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
+    ) : this(startOffset, endOffset, operator, descriptor) {
         this.argument = argument
     }
 
     private var argumentImpl: IrExpression? = null
-    override var argument: IrExpression
+    var argument: IrExpression
         get() = argumentImpl!!
         set(value) {
             value.assertDetached()
@@ -78,37 +110,31 @@ class IrUnaryOperatorExpressionImpl(
         }
     }
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitUnaryOperator(this, data)
-    }
-
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)
     }
 }
 
-class IrBinaryOperatorExpressionImpl(
+class IrBinaryOperatorImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
-        override val operator: IrOperator,
-        override val relatedDescriptor: CallableDescriptor?
-) : IrExpressionBase(startOffset, endOffset, type), IrBinaryOperatorExpression {
+        operator: IrOperator,
+        descriptor: CallableDescriptor
+) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
             operator: IrOperator,
-            relatedDescriptor: CallableDescriptor?,
+            descriptor: CallableDescriptor,
             argument0: IrExpression,
             argument1: IrExpression
-    ) : this(startOffset, endOffset, type, operator, relatedDescriptor) {
+    ) : this(startOffset, endOffset, operator, descriptor) {
         this.argument0 = argument0
         this.argument1 = argument1
     }
 
     private var argument0Impl: IrExpression? = null
-    override var argument0: IrExpression
+    var argument0: IrExpression
         get() = argument0Impl!!
         set(value) {
             value.assertDetached()
@@ -118,7 +144,7 @@ class IrBinaryOperatorExpressionImpl(
         }
 
     private var argument1Impl: IrExpression? = null
-    override var argument1: IrExpression
+    var argument1: IrExpression
         get() = argument1Impl!!
         set(value) {
             value.assertDetached()
@@ -143,7 +169,7 @@ class IrBinaryOperatorExpressionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBinaryOperator(this, data)
+            visitor.visitCall(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument0.accept(visitor, data)

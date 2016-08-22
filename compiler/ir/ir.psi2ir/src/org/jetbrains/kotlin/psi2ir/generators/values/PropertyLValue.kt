@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.psi2ir.generators.IrBodyGenerator
+import org.jetbrains.kotlin.psi2ir.generators.toExpectedType
 import org.jetbrains.kotlin.types.KotlinType
 
 class PropertyLValue(
+        val irBodyGenerator: IrBodyGenerator,
         val ktElement: KtElement,
         val irOperator: IrOperator?,
         val descriptor: PropertyDescriptor,
@@ -37,7 +39,7 @@ class PropertyLValue(
 
     override fun load(): IrExpression {
         val getter = descriptor.getter!!
-        return IrGetterCallExpressionImpl(
+        return IrGetterCallImpl(
                 ktElement.startOffset, ktElement.endOffset,
                 getter.returnType, getter, isSafe,
                 dispatchReceiver, extensionReceiver, IrOperator.GET_PROPERTY
@@ -46,10 +48,10 @@ class PropertyLValue(
 
     override fun store(irExpression: IrExpression): IrExpression {
         val setter = descriptor.setter!!
-        val irArgument = irExpression.toExpectedType(descriptor.type)
-        val irCall = IrSetterCallExpressionImpl(ktElement.startOffset, ktElement.endOffset,
-                                                setter.returnType, setter, isSafe,
-                                                dispatchReceiver, extensionReceiver, irArgument, irOperator)
+        val irArgument = irBodyGenerator.toExpectedType(irExpression, descriptor.type)
+        val irCall = IrSetterCallImpl(ktElement.startOffset, ktElement.endOffset,
+                                      setter.returnType, setter, isSafe,
+                                      dispatchReceiver, extensionReceiver, irArgument, irOperator)
         return irCall
     }
 }

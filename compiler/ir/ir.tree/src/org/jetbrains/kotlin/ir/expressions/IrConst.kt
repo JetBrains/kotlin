@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrConstExpression<out T> : IrExpression {
+interface IrConst<out T> : IrExpression {
     val kind: IrLiteralKind<T>
     val value: T
 }
 
 sealed class IrLiteralKind<out T>(val asString: kotlin.String)  {
     @Suppress("UNCHECKED_CAST")
-    fun valueOf(aConst: IrConstExpression<*>) =
-            (aConst as IrConstExpression<T>).value
+    fun valueOf(aConst: IrConst<*>) =
+            (aConst as IrConst<T>).value
 
     object Null : IrLiteralKind<Nothing?>("Null")
     object Boolean : IrLiteralKind<kotlin.Boolean>("Boolean")
@@ -42,33 +42,33 @@ sealed class IrLiteralKind<out T>(val asString: kotlin.String)  {
     override fun toString() = asString
 }
 
-class IrConstExpressionImpl<out T> (
+class IrConstImpl<out T> (
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         override val kind: IrLiteralKind<T>,
         override val value: T
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrConstExpression<T> {
+) : IrTerminalExpressionBase(startOffset, endOffset, type), IrConst<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitConst(this, data)
 
     companion object {
-        fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrConstExpressionImpl<String> =
-                IrConstExpressionImpl(startOffset, endOffset, type, IrLiteralKind.String, value)
+        fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrConstImpl<String> =
+                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.String, value)
 
-        fun int(startOffset: Int, endOffset: Int, type: KotlinType, value: Int): IrConstExpressionImpl<Int> =
-                IrConstExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Int, value)
+        fun int(startOffset: Int, endOffset: Int, type: KotlinType, value: Int): IrConstImpl<Int> =
+                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Int, value)
 
-        fun constNull(startOffset: Int, endOffset: Int, type: KotlinType): IrConstExpressionImpl<Nothing?> =
-                IrConstExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Null, null)
+        fun constNull(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Nothing?> =
+                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Null, null)
 
-        fun boolean(startOffset: Int, endOffset: Int, type: KotlinType, value: Boolean): IrConstExpressionImpl<Boolean> =
-                IrConstExpressionImpl(startOffset, endOffset, type, IrLiteralKind.Boolean, value)
+        fun boolean(startOffset: Int, endOffset: Int, type: KotlinType, value: Boolean): IrConstImpl<Boolean> =
+                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Boolean, value)
 
-        fun constTrue(startOffset: Int, endOffset: Int, type: KotlinType): IrConstExpressionImpl<Boolean> =
+        fun constTrue(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Boolean> =
                 boolean(startOffset, endOffset, type, true)
 
-        fun constFalse(startOffset: Int, endOffset: Int, type: KotlinType): IrConstExpressionImpl<Boolean> =
+        fun constFalse(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Boolean> =
                 boolean(startOffset, endOffset, type, false)
     }
 }

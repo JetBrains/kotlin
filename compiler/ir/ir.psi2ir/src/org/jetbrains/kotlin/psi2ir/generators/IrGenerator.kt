@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
+import java.lang.AssertionError
+import java.lang.RuntimeException
 
 interface IrGenerator {
     val context: GeneratorContext

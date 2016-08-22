@@ -3,16 +3,18 @@ IrFile /booleanOperators.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=ANDAND type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Boolean operator=null
-            GET_VAR b type=kotlin.Boolean operator=null
+          IF type=kotlin.Boolean operator=ANDAND
+            if: GET_VAR a type=kotlin.Boolean operator=null
+            then: GET_VAR b type=kotlin.Boolean operator=null
+            else: LITERAL Boolean type=kotlin.Boolean value='false'
   IrFunction public fun test2(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BINARY_OP operator=OROR type=kotlin.Boolean related=null
-            GET_VAR a type=kotlin.Boolean operator=null
-            GET_VAR b type=kotlin.Boolean operator=null
+          IF type=kotlin.Boolean operator=OROR
+            if: GET_VAR a type=kotlin.Boolean operator=null
+            then: LITERAL Boolean type=kotlin.Boolean value='true'
+            else: GET_VAR b type=kotlin.Boolean operator=null
   IrFunction public fun test1x(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null

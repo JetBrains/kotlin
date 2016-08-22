@@ -19,29 +19,32 @@ package org.jetbrains.kotlin.psi2ir.generators.values
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetVariableExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
-import org.jetbrains.kotlin.ir.expressions.IrSetVariableExpressionImpl
-import org.jetbrains.kotlin.psi2ir.toExpectedType
+import org.jetbrains.kotlin.ir.expressions.IrSetVariableImpl
+import org.jetbrains.kotlin.psi2ir.generators.IrBodyGenerator
+import org.jetbrains.kotlin.psi2ir.generators.toExpectedType
 import org.jetbrains.kotlin.types.KotlinType
 
 class VariableLValue(
+        val irBodyGenerator: IrBodyGenerator,
         val startOffset: Int,
         val endOffset: Int,
         val descriptor: VariableDescriptor,
         val irOperator: IrOperator? = null
 ) : IrLValue {
     constructor(
+            irBodyGenerator: IrBodyGenerator,
             irVariable: IrVariable,
             irOperator: IrOperator? = null
-    ) : this(irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
+    ) : this(irBodyGenerator, irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
 
     override val type: KotlinType? get() = descriptor.type
 
     override fun load(): IrExpression =
-            IrGetVariableExpressionImpl(startOffset, endOffset, descriptor, irOperator)
+            IrGetVariableImpl(startOffset, endOffset, descriptor, irOperator)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableExpressionImpl(startOffset, endOffset, descriptor,
-                                        irExpression.toExpectedType(descriptor.type), irOperator)
+            IrSetVariableImpl(startOffset, endOffset, descriptor,
+                              irBodyGenerator.toExpectedType(irExpression, descriptor.type), irOperator)
 }

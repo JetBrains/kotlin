@@ -4,13 +4,15 @@ IrFile /ifElseIf.kt
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           IF type=kotlin.Int operator=IF
-            if: BINARY_OP operator=GT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-              GET_VAR i type=kotlin.Int operator=null
-              LITERAL Int type=kotlin.Int value='0'
+            if: CALL .GT0 type=kotlin.Boolean operator=GT
+              arg0: CALL .compareTo type=kotlin.Int operator=GT
+                $this: GET_VAR i type=kotlin.Int operator=null
+                other: LITERAL Int type=kotlin.Int value='0'
             then: LITERAL Int type=kotlin.Int value='1'
             else: IF type=kotlin.Int operator=IF
-              if: BINARY_OP operator=LT type=kotlin.Boolean related=public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-                GET_VAR i type=kotlin.Int operator=null
-                LITERAL Int type=kotlin.Int value='0'
+              if: CALL .LT0 type=kotlin.Boolean operator=LT
+                arg0: CALL .compareTo type=kotlin.Int operator=LT
+                  $this: GET_VAR i type=kotlin.Int operator=null
+                  other: LITERAL Int type=kotlin.Int value='0'
               then: DUMMY MINUS type=kotlin.Int
               else: LITERAL Int type=kotlin.Int value='0'

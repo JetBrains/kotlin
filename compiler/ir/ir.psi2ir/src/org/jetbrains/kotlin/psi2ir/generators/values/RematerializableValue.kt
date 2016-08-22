@@ -28,30 +28,30 @@ interface IrRematerializableValue : IrValue {
 
 fun createRematerializableValue(irExpression: IrExpression): IrRematerializableValue? =
         when (irExpression) {
-            is IrConstExpression<*> -> IrRematerializableLiteralValue(irExpression)
-            is IrGetVariableExpression -> IrRematerializableVariableValue(irExpression)
-            is IrGetExtensionReceiverExpression -> IrRematerializableExtensionReceiverValue(irExpression)
-            is IrThisExpression -> IrRematerializableThisValue(irExpression)
+            is IrConst<*> -> IrRematerializableLiteralValue(irExpression)
+            is IrGetVariable -> IrRematerializableVariableValue(irExpression)
+            is IrGetExtensionReceiver -> IrRematerializableExtensionReceiverValue(irExpression)
+            is IrThisReference -> IrRematerializableThisValue(irExpression)
             else -> null
         }
 
-class IrRematerializableLiteralValue(override val irExpression: IrConstExpression<*>): IrRematerializableValue {
+class IrRematerializableLiteralValue(override val irExpression: IrConst<*>): IrRematerializableValue {
     override fun load(): IrExpression =
-            IrConstExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type,
-                                  irExpression.kind, irExpression.kind.valueOf(irExpression))
+            IrConstImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type,
+                        irExpression.kind, irExpression.kind.valueOf(irExpression))
 }
 
-class IrRematerializableVariableValue(override val irExpression: IrGetVariableExpression) : IrRematerializableValue {
+class IrRematerializableVariableValue(override val irExpression: IrGetVariable) : IrRematerializableValue {
     override fun load(): IrExpression =
-            IrGetVariableExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.descriptor)
+            IrGetVariableImpl(irExpression.startOffset, irExpression.endOffset, irExpression.descriptor)
 }
 
-class IrRematerializableExtensionReceiverValue(override val irExpression: IrGetExtensionReceiverExpression) : IrRematerializableValue {
+class IrRematerializableExtensionReceiverValue(override val irExpression: IrGetExtensionReceiver) : IrRematerializableValue {
     override fun load(): IrExpression =
-            IrGetExtensionReceiverExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.descriptor)
+            IrGetExtensionReceiverImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.descriptor)
 }
 
-class IrRematerializableThisValue(override val irExpression: IrThisExpression): IrRematerializableValue {
+class IrRematerializableThisValue(override val irExpression: IrThisReference): IrRematerializableValue {
     override fun load(): IrExpression =
-            IrThisExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.classDescriptor)
+            IrThisReferenceImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type, irExpression.classDescriptor)
 }

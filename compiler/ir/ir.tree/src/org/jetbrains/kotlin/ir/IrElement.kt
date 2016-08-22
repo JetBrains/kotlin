@@ -50,6 +50,7 @@ fun <T : IrElement?> T.detach(): T {
 }
 
 fun IrElement.replaceWith(otherElement: IrElement) {
+    if (otherElement == this) return
     val parent = this.parent ?: throw AssertionError("Can't replace a non-root element $this")
     parent.replaceChild(slot, otherElement.detach())
 }

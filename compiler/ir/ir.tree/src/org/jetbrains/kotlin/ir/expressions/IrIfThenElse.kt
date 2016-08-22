@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
-interface IrIfExpression : IrExpression {
+interface IrIfThenElse : IrExpression {
     val operator: IrOperator?
     var condition: IrExpression
     var thenBranch: IrExpression
     var elseBranch: IrExpression?
 }
 
-class IrIfExpressionImpl(
+class IrIfThenElseImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         override val operator: IrOperator? = null
-) : IrExpressionBase(startOffset, endOffset, type), IrIfExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrIfThenElse {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -109,18 +109,25 @@ class IrIfExpressionImpl(
 
     companion object {
         // a || b == if (a) true else b
-        fun oror(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrIfExpression =
-                IrIfExpressionImpl(b.startOffset, b.endOffset, b.type!!,
-                                   a, IrConstExpressionImpl.constTrue(b.startOffset, b.endOffset, b.type!!), b,
-                                   operator)
+        fun oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrIfThenElse =
+                IrIfThenElseImpl(startOffset, endOffset, b.type!!,
+                                 a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type!!), b,
+                                 operator)
+
+        fun oror(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrIfThenElse =
+                oror(b.startOffset, b.endOffset, a, b, operator)
+
+        fun whenComma(a: IrExpression, b: IrExpression): IrIfThenElse =
+                oror(a, b, IrOperator.WHEN_COMMA)
 
         // a && b == if (a) b else false
-        fun andand(a: IrExpression, b: IrExpression): IrIfExpression =
-                IrIfExpressionImpl(b.startOffset, b.endOffset, b.type!!,
-                                   a, b, IrConstExpressionImpl.constFalse(b.startOffset, b.endOffset, b.type!!),
-                                   IrOperator.OROR)
+        fun andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrIfThenElse =
+                IrIfThenElseImpl(startOffset, endOffset, b.type!!,
+                                 a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type!!),
+                                 operator)
 
-        fun whenComma(a: IrExpression, b: IrExpression): IrIfExpression =
-                oror(a, b, IrOperator.WHEN_COMMA)
+        fun andand(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrIfThenElse =
+                andand(b.startOffset, b.endOffset, a, b, operator)
+
     }
 }

@@ -16,54 +16,58 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 
-interface IrBlockExpression : IrExpression {
-    val hasResult: Boolean
-    val operator: IrOperator?
-
-    val statements: List<IrStatement>
+interface IrReturn : IrExpression {
+    var value: IrExpression?
+    val returnTarget: CallableDescriptor
 }
 
-fun IrBlockExpressionImpl.addIfNotNull(statement: IrStatement?) {
-    if (statement != null) addStatement(statement)
-}
-
-class IrBlockExpressionImpl(
+class IrReturnImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
-        override val hasResult: Boolean,
-        override val operator: IrOperator? = null
-) : IrExpressionBase(startOffset, endOffset, type), IrBlockExpression {
-    override val statements: MutableList<IrStatement> = ArrayList()
-
-    fun addStatement(statement: IrStatement) {
-        statement.assertDetached()
-        statement.setTreeLocation(this, statements.size)
-        statements.add(statement)
+        override val returnTarget: CallableDescriptor
+) : IrExpressionBase(startOffset, endOffset, null), IrReturn {
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            returnTarget: CallableDescriptor,
+            value: IrExpression?
+    ) : this(startOffset, endOffset, returnTarget) {
+        this.value = value
     }
 
+    override var value: IrExpression? = null
+        set(newValue) {
+            newValue?.assertDetached()
+            field?.detach()
+            field = newValue
+            newValue?.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
+        }
+
     override fun getChild(slot: Int): IrElement? =
-            statements.getOrNull(slot)
+            when (slot) {
+                CHILD_EXPRESSION_SLOT -> value
+                else -> null
+            }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
-        if (0 <= slot && slot < statements.size) {
-            statements[slot].detach()
-            statements[slot] = newChild.assertCast()
-            newChild.setTreeLocation(this, slot)
+        when (slot) {
+            CHILD_EXPRESSION_SLOT -> value = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBlockExpression(this, data)
+            visitor.visitReturn(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        statements.forEach { it.accept(visitor, data) }
+        value?.accept(visitor, data)
     }
+
+
 }

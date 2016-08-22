@@ -28,19 +28,19 @@ enum class IrTypeOperator {
     NOT_INSTANCEOF;
 }
 
-interface IrTypeOperatorExpression : IrExpression {
+interface IrTypeOperatorCall : IrExpression {
     val operator: IrTypeOperator
     var argument: IrExpression
     val typeOperand: KotlinType
 }
 
-class IrTypeOperatorExpressionImpl(
+class IrTypeOperatorCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
         override val operator: IrTypeOperator,
         override val typeOperand: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorExpression {
+) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -76,7 +76,7 @@ class IrTypeOperatorExpressionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitTypeOperatorExpression(this, data)
+            visitor.visitTypeOperator(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)

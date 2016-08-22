@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCallExpression
-import org.jetbrains.kotlin.ir.expressions.IrIfExpression
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrIfThenElse
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -44,7 +44,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         element.dumpLabeledSubTree(data)
     }
 
-    override fun visitCallExpression(expression: IrCallExpression, data: String) {
+    override fun visitCall(expression: IrCall, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
@@ -54,7 +54,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitIf(expression: IrIfExpression, data: String) {
+    override fun visitIf(expression: IrIfThenElse, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.condition.accept(this, "if")
             expression.thenBranch.accept(this, "then")

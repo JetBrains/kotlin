@@ -23,24 +23,5 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 
-fun IrExpression.toExpectedType(expectedType: KotlinType?): IrExpression {
-    if (expectedType == null) return this
-    if (KotlinBuiltIns.isUnit(expectedType)) return this // TODO expose coercion to Unit in IR?
-
-    val valueType = type ?: throw AssertionError("expectedType != null, valueType == null: $this")
-
-    if (valueType.isNullabilityFlexible() && !expectedType.isMarkedNullable) {
-        return IrUnaryOperatorExpressionImpl(startOffset, endOffset, expectedType,
-                                             IrOperator.IMPLICIT_NOTNULL, null, this)
-    }
-
-    if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
-        return IrTypeOperatorExpressionImpl(startOffset, endOffset, expectedType,
-                                            IrTypeOperator.IMPLICIT_CAST, expectedType, this)
-    }
-
-    return this
-}
-
-fun IrVariable.load(): IrExpression =
-        IrGetVariableExpressionImpl(startOffset, endOffset, descriptor)
+fun IrVariable.defaultLoad(): IrExpression =
+        IrGetVariableImpl(startOffset, endOffset, descriptor)

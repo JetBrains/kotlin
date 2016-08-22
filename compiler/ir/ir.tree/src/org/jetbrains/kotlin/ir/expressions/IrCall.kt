@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrCallExpression : IrMemberAccessExpression {
+interface IrCall : IrMemberAccessExpression {
     val superQualifier: ClassDescriptor?
     val operator: IrOperator?
     override val descriptor: CallableDescriptor
@@ -32,7 +32,7 @@ interface IrCallExpression : IrMemberAccessExpression {
     fun removeArgument(index: Int)
 }
 
-class IrCallExpressionImpl(
+class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
@@ -40,7 +40,7 @@ class IrCallExpressionImpl(
         isSafe: Boolean,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCallExpression {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCall {
     private val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
@@ -76,7 +76,7 @@ class IrCallExpressionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitCallExpression(this, data)
+            visitor.visitCall(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         super.acceptChildren(visitor, data)
@@ -84,7 +84,7 @@ class IrCallExpressionImpl(
     }
 }
 
-abstract class IrPropertyAccessorCallExpressionBase(
+abstract class IrPropertyAccessorCallBase(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
@@ -92,13 +92,13 @@ abstract class IrPropertyAccessorCallExpressionBase(
         isSafe: Boolean,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCallExpression {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitCallExpression(this, data)
+        return visitor.visitCall(this, data)
     }
 }
 
-class IrGetterCallExpressionImpl(
+class IrGetterCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
@@ -106,7 +106,7 @@ class IrGetterCallExpressionImpl(
         isSafe: Boolean,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallExpressionBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCallExpression {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -133,7 +133,7 @@ class IrGetterCallExpressionImpl(
     }
 }
 
-class IrSetterCallExpressionImpl(
+class IrSetterCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
@@ -141,7 +141,7 @@ class IrSetterCallExpressionImpl(
         isSafe: Boolean,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallExpressionBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCallExpression {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCall {
     constructor(
             startOffset: Int,
             endOffset: Int,

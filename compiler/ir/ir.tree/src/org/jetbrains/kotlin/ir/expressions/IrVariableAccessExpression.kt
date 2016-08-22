@@ -26,29 +26,29 @@ interface IrVariableAccessExpression : IrDeclarationReference {
     val operator: IrOperator?
 }
 
-interface IrGetVariableExpression : IrVariableAccessExpression
+interface IrGetVariable : IrVariableAccessExpression
 
-interface IrSetVariableExpression : IrVariableAccessExpression {
+interface IrSetVariable : IrVariableAccessExpression {
     val value: IrExpression
 
 }
 
-class IrGetVariableExpressionImpl(
+class IrGetVariableImpl(
         startOffset: Int,
         endOffset: Int,
         descriptor: VariableDescriptor,
         override val operator: IrOperator? = null
-) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetVariableExpression {
+) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetVariable {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetVariable(this, data)
 }
 
-class IrSetVariableExpressionImpl(
+class IrSetVariableImpl(
         startOffset: Int,
         endOffset: Int,
         override val descriptor: VariableDescriptor,
         override val operator: IrOperator?
-) : IrExpressionBase(startOffset, endOffset, null), IrSetVariableExpression {
+) : IrExpressionBase(startOffset, endOffset, null), IrSetVariable {
     constructor(
             startOffset: Int,
             endOffset: Int,

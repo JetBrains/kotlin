@@ -8,14 +8,14 @@ IrFile /when.kt
             VAR val tmp0_subject: kotlin.Any?
               GET_VAR x type=kotlin.Any? operator=null
             IF type=kotlin.String operator=WHEN
-              if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                GET_VAR tmp0_subject type=kotlin.Any? operator=null
-                LITERAL Null type=kotlin.Nothing? value='null'
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
+                arg1: LITERAL Null type=kotlin.Nothing? value='null'
               then: LITERAL String type=kotlin.String value='null'
               else: IF type=kotlin.String operator=WHEN
-                if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                  GET_VAR tmp0_subject type=kotlin.Any? operator=null
-                  GET_OBJECT A type=A
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
+                  arg1: GET_OBJECT A type=A
                 then: LITERAL String type=kotlin.String value='A'
                 else: IF type=kotlin.String operator=WHEN
                   if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
@@ -33,14 +33,14 @@ IrFile /when.kt
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           IF type=kotlin.String operator=WHEN
-            if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open operator fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-              GET_VAR x type=kotlin.Any? operator=null
-              LITERAL Null type=kotlin.Nothing? value='null'
+            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR x type=kotlin.Any? operator=null
+              arg1: LITERAL Null type=kotlin.Nothing? value='null'
             then: LITERAL String type=kotlin.String value='null'
             else: IF type=kotlin.String operator=WHEN
-              if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=public open operator fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                GET_VAR x type=kotlin.Any? operator=null
-                GET_OBJECT A type=A
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR x type=kotlin.Any? operator=null
+                arg1: GET_OBJECT A type=A
               then: LITERAL String type=kotlin.String value='A'
               else: IF type=kotlin.String operator=WHEN
                 if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
@@ -64,45 +64,45 @@ IrFile /when.kt
               if: IF type=kotlin.Boolean operator=WHEN_COMMA
                 if: IF type=kotlin.Boolean operator=WHEN_COMMA
                   if: IF type=kotlin.Boolean operator=WHEN_COMMA
-                    if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='1'
+                    if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='1'
                     then: LITERAL Boolean type=kotlin.Boolean value='true'
-                    else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='2'
+                    else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='2'
                   then: LITERAL Boolean type=kotlin.Boolean value='true'
-                  else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                    GET_VAR tmp0_subject type=kotlin.Int operator=null
-                    LITERAL Int type=kotlin.Int value='3'
+                  else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                    arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                    arg1: LITERAL Int type=kotlin.Int value='3'
                 then: LITERAL Boolean type=kotlin.Boolean value='true'
-                else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                  GET_VAR tmp0_subject type=kotlin.Int operator=null
-                  LITERAL Int type=kotlin.Int value='4'
+                else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                  arg1: LITERAL Int type=kotlin.Int value='4'
               then: LITERAL String type=kotlin.String value='1234'
               else: IF type=kotlin.String operator=WHEN
                 if: IF type=kotlin.Boolean operator=WHEN_COMMA
                   if: IF type=kotlin.Boolean operator=WHEN_COMMA
-                    if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='5'
+                    if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='5'
                     then: LITERAL Boolean type=kotlin.Boolean value='true'
-                    else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='6'
+                    else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='6'
                   then: LITERAL Boolean type=kotlin.Boolean value='true'
-                  else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                    GET_VAR tmp0_subject type=kotlin.Int operator=null
-                    LITERAL Int type=kotlin.Int value='7'
+                  else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                    arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                    arg1: LITERAL Int type=kotlin.Int value='7'
                 then: LITERAL String type=kotlin.String value='567'
                 else: IF type=kotlin.String operator=WHEN
                   if: IF type=kotlin.Boolean operator=WHEN_COMMA
-                    if: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='8'
+                    if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='8'
                     then: LITERAL Boolean type=kotlin.Boolean value='true'
-                    else: BINARY_OP operator=EQEQ type=kotlin.Boolean related=null
-                      GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      LITERAL Int type=kotlin.Int value='9'
+                    else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                      arg1: LITERAL Int type=kotlin.Int value='9'
                   then: LITERAL String type=kotlin.String value='89'
                   else: LITERAL String type=kotlin.String value='?'
