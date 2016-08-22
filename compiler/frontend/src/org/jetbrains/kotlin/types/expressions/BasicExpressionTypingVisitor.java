@@ -1198,6 +1198,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;
         boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         KotlinType rightType = rightTypeInfo.getType();
+        if (rightType != null && KtPsiUtil.isNullConstant(right)) {
+            context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
+        }
 
         // Only left argument DFA is taken into account here: we cannot be sure that right argument is joined
         // (we merge it with right DFA if right argument contains no jump outside)
