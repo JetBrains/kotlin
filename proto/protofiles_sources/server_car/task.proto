@@ -8,5 +8,6 @@ message TaskRequest {
     enum Type {
         DEBUG = 0;
         ROUTE = 1;
+        SONAR = 2;
     }
 }
