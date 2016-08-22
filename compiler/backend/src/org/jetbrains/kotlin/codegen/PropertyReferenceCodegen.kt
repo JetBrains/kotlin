@@ -101,12 +101,12 @@ class PropertyReferenceCodegen(
     private fun generateAccessors() {
         val getFunction = findGetFunction(localVariableDescriptorForReference)
         val getImpl = createFakeOpenDescriptor(getFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, element, state))
 
         if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
         val setFunction = localVariableDescriptorForReference.type.memberScope.getContributedFunctions(OperatorNameConventions.SET, NoLookupLocation.FROM_BACKEND).single()
         val setImpl = createFakeOpenDescriptor(setFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, element, state))
     }
 
     private fun generateMethod(debugString: String, access: Int, method: Method, generate: InstructionAdapter.() -> Unit) {
@@ -175,6 +175,7 @@ class PropertyReferenceCodegen(
             val originalFunctionDesc: FunctionDescriptor,
             val target: VariableDescriptor,
             val asmType: Type,
+            val expression: KtElement,
             state: GenerationState
     ) :
             FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, originalFunctionDesc) {
@@ -193,6 +194,7 @@ class PropertyReferenceCodegen(
 
             val value = codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
 
+            codegen.markStartLineNumber(expression)
             if (isGetter) {
                 value.put(OBJECT_TYPE, v)
             }
