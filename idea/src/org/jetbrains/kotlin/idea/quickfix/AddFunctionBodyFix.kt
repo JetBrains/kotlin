@@ -41,7 +41,7 @@ class AddFunctionBodyFix(element: KtFunction) : KotlinQuickFixAction<KtFunction>
 
     companion object : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): AddFunctionBodyFix? {
-            return diagnostic.psiElement.getNonStrictParentOfType<KtFunction>()?.let { AddFunctionBodyFix(it) }
+            return diagnostic.psiElement.getNonStrictParentOfType<KtFunction>()?.let(::AddFunctionBodyFix)
         }
     }
 }

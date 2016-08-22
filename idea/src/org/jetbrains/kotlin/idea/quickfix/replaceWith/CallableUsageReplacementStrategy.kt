@@ -161,7 +161,7 @@ private fun performCallReplacement(
     }
 
     val wrappedExpression = callKindHandler.wrapGeneratedExpression(wrapper.expression)
-    var result = elementToBeReplaced.replace(wrappedExpression) as KtElement
+    val result = elementToBeReplaced.replace(wrappedExpression) as KtElement
 
     val file = result.getContainingKtFile()
     replacement.fqNamesToImport

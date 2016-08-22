@@ -404,5 +404,7 @@ class QuickFixRegistrar : QuickFixContributor {
         WRONG_LONG_SUFFIX.registerFactory(WrongLongSuffixFix)
 
         REIFIED_TYPE_PARAMETER_NO_INLINE.registerFactory(AddInlineToFunctionWithReifiedFix)
+
+        VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.registerFactory(AddTypeAnnotationToValueParameterFix)
     }
 }

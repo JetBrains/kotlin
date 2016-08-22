@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import java.lang.AssertionError
 import java.util.*
 
 sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
@@ -296,8 +297,8 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             if ((klass !is KtClass && klass !is PsiClass) || !klass.canRefactor()) return null
 
             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, expression.getQualifiedExpressionForSelectorOrThis()]
-                               ?: classDescriptor!!.builtIns.nullableAnyType
-            if (!classDescriptor!!.defaultType.isSubtypeOf(expectedType)) return null
+                               ?: classDescriptor.builtIns.nullableAnyType
+            if (!classDescriptor.defaultType.isSubtypeOf(expectedType)) return null
 
             val parameters = expression.getParameterInfos()
 

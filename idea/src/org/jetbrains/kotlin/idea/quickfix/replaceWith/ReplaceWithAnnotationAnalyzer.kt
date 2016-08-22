@@ -225,9 +225,9 @@ object ReplaceWithAnnotationAnalyzer {
     private fun importFqNames(annotation: ReplaceWith): List<FqName> {
         return annotation.imports
                 .filter { FqNameUnsafe.isValid(it) }
-                .map { FqNameUnsafe(it) }
-                .filter { it.isSafe }
-                .map { it.toSafe() }
+                .map(::FqNameUnsafe)
+                .filter(FqNameUnsafe::isSafe)
+                .map(FqNameUnsafe::toSafe)
     }
 
     private fun analyzeInContext(
