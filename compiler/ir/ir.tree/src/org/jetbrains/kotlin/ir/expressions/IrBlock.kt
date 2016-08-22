@@ -48,6 +48,15 @@ class IrBlockImpl(
         statements.add(statement)
     }
 
+    fun addAll(statements: List<IrStatement>) {
+        statements.forEach { it.assertDetached() }
+        val originalSize = statements.size
+        this.statements.addAll(statements)
+        statements.forEachIndexed { i, irStatement ->
+            irStatement.setTreeLocation(this, originalSize + i)
+        }
+    }
+
     override fun getChild(slot: Int): IrElement? =
             statements.getOrNull(slot)
 
@@ -65,5 +74,15 @@ class IrBlockImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
+    }
+}
+
+fun IrBlockImpl.inlineStatement(statement: IrStatement) {
+    if (statement is IrBlock) {
+        statement.statements.forEach { it.detach() }
+        addAll(statement.statements)
+    }
+    else {
+        addStatement(statement)
     }
 }

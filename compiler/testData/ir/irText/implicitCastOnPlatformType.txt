@@ -3,13 +3,6 @@ IrFile /implicitCastOnPlatformType.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BLOCK type=kotlin.String hasResult=true operator=IMPLICIT_NOTNULL
-            VAR val tmp0: kotlin.String!
-              CALL .getProperty type=kotlin.String! operator=null
-                p0: CONST String type=kotlin.String value='test'
-            WHEN type=kotlin.String operator=IMPLICIT_NOTNULL
-              if: CALL .EQEQ type=kotlin.Boolean operator=IMPLICIT_NOTNULL
-                arg0: GET_VAR tmp0 type=kotlin.String! operator=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CALL .THROW_NPE type=kotlin.Nothing operator=IMPLICIT_NOTNULL
-              else: GET_VAR tmp0 type=kotlin.String! operator=null
+          TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL .getProperty type=kotlin.String! operator=null
+              p0: CONST String type=kotlin.String value='test'

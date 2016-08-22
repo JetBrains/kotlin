@@ -31,6 +31,8 @@ interface IrWhen : IrExpression {
     var elseBranch: IrExpression?
 }
 
+val IrWhen.branchIndices: IntRange get() = 0 ..branchesCount - 1
+
 class IrWhenImpl(
         startOffset: Int,
         endOffset: Int,
@@ -175,29 +177,5 @@ class IrIfThenElseImpl(
         condition.accept(visitor, data)
         thenBranch.accept(visitor, data)
         elseBranch?.accept(visitor, data)
-    }
-
-    companion object {
-        // a || b == if (a) true else b
-        fun oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
-                IrIfThenElseImpl(startOffset, endOffset, b.type!!,
-                                 a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type!!), b,
-                                 operator)
-
-        fun oror(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
-                oror(b.startOffset, b.endOffset, a, b, operator)
-
-        fun whenComma(a: IrExpression, b: IrExpression): IrWhen =
-                oror(a, b, IrOperator.WHEN_COMMA)
-
-        // a && b == if (a) b else false
-        fun andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =
-                IrIfThenElseImpl(startOffset, endOffset, b.type!!,
-                                 a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type!!),
-                                 operator)
-
-        fun andand(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =
-                andand(b.startOffset, b.endOffset, a, b, operator)
-
     }
 }

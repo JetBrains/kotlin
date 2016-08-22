@@ -26,11 +26,12 @@ interface IrVariableAccessExpression : IrDeclarationReference {
     val operator: IrOperator?
 }
 
-interface IrGetVariable : IrVariableAccessExpression
+interface IrGetVariable : IrVariableAccessExpression, IrExpressionWithCopy {
+    override fun copy(): IrGetVariable
+}
 
 interface IrSetVariable : IrVariableAccessExpression {
-    val value: IrExpression
-
+    var value: IrExpression
 }
 
 class IrGetVariableImpl(
@@ -41,6 +42,9 @@ class IrGetVariableImpl(
 ) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetVariable {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetVariable(this, data)
+
+    override fun copy(): IrGetVariable =
+            IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
 }
 
 class IrSetVariableImpl(

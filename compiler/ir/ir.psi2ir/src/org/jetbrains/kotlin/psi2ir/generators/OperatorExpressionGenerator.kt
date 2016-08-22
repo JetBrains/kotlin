@@ -25,15 +25,19 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
-import org.jetbrains.kotlin.psi2ir.generators.operators.*
-import org.jetbrains.kotlin.psi2ir.generators.values.*
+import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import java.lang.AssertionError
 
 
+class OperatorExpressionGenerator(
+        val statementGenerator: StatementGenerator
+) : BodyGenerator {
+    override val scope: Scope get() = statementGenerator.scope 
+    override val context: GeneratorContext get() = statementGenerator.context
 
-class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
     fun generatePrefixExpression(expression: KtPrefixExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
         val irOperator = getPrefixOperator(ktOperator)
@@ -72,7 +76,7 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
         }
 
         return IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
-                                      parentGenerator.generateExpression(expression.left))
+                                      statementGenerator.generateExpression(expression.left))
     }
 
     fun generateInstanceOfExpression(expression: KtIsExpression): IrStatement {
@@ -81,7 +85,7 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
         val againstType = getOrFail(BindingContext.TYPE, expression.typeReference)
 
         return IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
-                                      againstType, parentGenerator.generateExpression(expression.leftHandSide))
+                                      againstType, statementGenerator.generateExpression(expression.leftHandSide))
     }
 
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {
@@ -110,25 +114,28 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
         val specialCallForElvis = getResolvedCall(expression)!!
         val returnType = specialCallForElvis.resultingDescriptor.returnType!!
-        val irArgument0 = parentGenerator.generateExpressionWithExpectedType(expression.left!!, returnType.makeNullable())
-        val irArgument1 = parentGenerator.generateExpressionWithExpectedType(expression.right!!, returnType)
-        return block(expression, IrOperator.ELVIS) {
-            add(scope.introduceTemporary(irArgument0))
-            result(ifThenElse(returnType,
-                              equalsNull(scope.valueOf(irArgument0)!!),
-                              irArgument1,
-                              scope.valueOf(irArgument0)!!))
-        }
+        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
+        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
+
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, true, IrOperator.ELVIS)
+        val irArgument0Value = createRematerializableOrTemporary(scope, irArgument0, irBlock, "elvis_lhs")
+        irBlock.addStatement(IrIfThenElseImpl(
+                expression.startOffset, expression.endOffset, returnType,
+                equalsNull(expression.startOffset, expression.endOffset, irArgument0Value.load()),
+                irArgument1,
+                irArgument0Value.load()
+        ))
+        return irBlock
     }
 
     private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
-        val irArgument0 = parentGenerator.generateExpressionWithExpectedType(expression.left!!, context.builtIns.booleanType)
-        val irArgument1 = parentGenerator.generateExpressionWithExpectedType(expression.right!!, context.builtIns.booleanType)
+        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
+        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
         return when (irOperator) {
             IrOperator.OROR ->
-                IrIfThenElseImpl.oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
+                oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
             IrOperator.ANDAND ->
-                IrIfThenElseImpl.andand(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
+                andand(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
             else ->
                 throw AssertionError("Unexpected binary boolean operator $irOperator")
         }
@@ -137,7 +144,7 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
     private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val containsCall = getResolvedCall(expression)!!
 
-        val irContainsCall = CallGenerator(parentGenerator).generateCall(expression, containsCall, irOperator)
+        val irContainsCall = CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(containsCall), irOperator)
 
         return when (irOperator) {
             IrOperator.IN ->
@@ -152,8 +159,8 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
     }
 
     private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
-        val irArgument0 = parentGenerator.generateExpression(expression.left!!)
-        val irArgument1 = parentGenerator.generateExpression(expression.right!!)
+        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
+        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
 
         val irIdentityEquals = IrBinaryOperatorImpl(expression.startOffset, expression.endOffset, irOperator, context.irBuiltIns.eqeqeq,
@@ -172,8 +179,8 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
     }
 
     private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
-        val irArgument0 = parentGenerator.generateExpression(expression.left!!)
-        val irArgument1 = parentGenerator.generateExpression(expression.right!!)
+        val irArgument0 = statementGenerator.generateExpression(expression.left!!)
+        val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
         val irEquals = IrBinaryOperatorImpl(expression.startOffset, expression.endOffset,
                                             irOperator, context.irBuiltIns.eqeq, irArgument0, irArgument1)
@@ -193,8 +200,7 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
     private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val compareToCall = getResolvedCall(expression)!!
 
-        val irCallGenerator = CallGenerator(parentGenerator)
-        val irCompareToCall = irCallGenerator.generateCall(expression, compareToCall, irOperator)
+        val irCompareToCall = CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), irOperator)
 
         val compareToZeroDescriptor = when (irOperator) {
             IrOperator.LT -> context.irBuiltIns.lt0
@@ -210,99 +216,102 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
 
     private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
-        return CallGenerator(parentGenerator).generateCall(expression, operatorCall, irOperator)
+        return CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
     }
 
     private fun generatePrefixIncrementDecrementOperator(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
+        val opResolvedCall = getResolvedCall(expression)!!
         val ktBaseExpression = expression.baseExpression!!
-        val irLValue = generateLValue(ktBaseExpression, irOperator)
-        val operatorCall = getResolvedCall(expression)!!
+        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
-        if (irLValue is IrLValueWithAugmentedStore) {
-            return irLValue.prefixAugmentedStore(operatorCall, irOperator)
+        return irAssignmentReceiver.assign { irLValue ->
+            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
+
+            // VAR tmp = [lhs].inc()
+            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+            opCall.setExplicitReceiverValue(irLValue)
+            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
+            val irTmp = statementGenerator.scope.createTemporaryVariable(irOpCall)
+            irBlock.addStatement(irTmp)
+
+            // [lhs] = tmp
+            irBlock.addStatement(irLValue.store(irTmp.defaultLoad()))
+
+            // ^ tmp
+            irBlock.addStatement(irTmp.defaultLoad())
+
+            irBlock
         }
-
-        val opCallGenerator = CallGenerator(parentGenerator).apply { scope.putValue(ktBaseExpression, irLValue) }
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
-        val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
-        val irTmp = parentGenerator.scope.createTemporaryVariable(irOpCall)
-        irBlock.addStatement(irTmp)
-        irBlock.addStatement(irLValue.store(irTmp.defaultLoad()))
-        irBlock.addStatement(irTmp.defaultLoad())
-        return irBlock
     }
 
     private fun generatePostfixIncrementDecrementOperator(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
+        val opResolvedCall = getResolvedCall(expression)!!
         val ktBaseExpression = expression.baseExpression!!
-        val irLValue = generateLValue(ktBaseExpression, irOperator)
-        val operatorCall = getResolvedCall(expression)!!
+        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
-        if (irLValue is IrLValueWithAugmentedStore) {
-            return irLValue.postfixAugmentedStore(operatorCall, irOperator)
+        return irAssignmentReceiver.assign { irLValue ->
+            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
+
+            // VAR tmp = [lhs]
+            val irTmp = scope.createTemporaryVariable(irLValue.load())
+            irBlock.addStatement(irTmp)
+
+            // [lhs] = tmp.inc()
+            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+            opCall.setExplicitReceiverValue(VariableLValue(irTmp))
+            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
+            irBlock.addStatement(irLValue.store(irOpCall))
+
+            // ^ tmp
+            irBlock.addStatement(irTmp.defaultLoad())
+
+            irBlock
         }
-
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
-        val opCallGenerator = CallGenerator(parentGenerator)
-
-        val irTmp = parentGenerator.scope.createTemporaryVariable(irLValue.load())
-        irBlock.addStatement(irTmp)
-
-        opCallGenerator.scope.putValue(ktBaseExpression, VariableLValue(this, irTmp, irOperator))
-        val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
-        irBlock.addStatement(irLValue.store(irOpCall))
-
-        irBlock.addStatement(irTmp.defaultLoad())
-
-        return irBlock
     }
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
-        return CallGenerator(parentGenerator).generateCall(expression, resolvedCall, irOperator)
+        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), irOperator)
     }
 
     private fun generateAugmentedAssignment(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
-        val ktLeft = expression.left!!
-        val irLValue = generateLValue(ktLeft, irOperator)
-        val operatorCall = getResolvedCall(expression)!!
-
+        val opResolvedCall = getResolvedCall(expression)!!
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
+        val ktLeft = expression.left!!
+        val ktRight = expression.right!!
+        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, irOperator)
 
-        if (isSimpleAssignment && irLValue is IrLValueWithAugmentedStore) {
-            return irLValue.augmentedStore(operatorCall, irOperator, parentGenerator.generateExpression(expression.right!!))
-        }
+        return irAssignmentReceiver.assign { irLValue ->
+            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+            opCall.setExplicitReceiverValue(irLValue)
+            opCall.irValueArgumentsByIndex[0] = statementGenerator.generateExpression(ktRight)
+            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
 
-        val opCallGenerator = CallGenerator(parentGenerator).apply { scope.putValue(ktLeft, irLValue) }
-        val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
-
-        return if (isSimpleAssignment) {
-            // Set( Op( Get(), RHS ) )
-            irLValue.store(irOpCall)
-        }
-        else {
-            // Op( Get(), RHS )
-            irOpCall
+            if (isSimpleAssignment) {
+                // Set( Op( Get(), RHS ) )
+                irLValue.store(irOpCall)
+            }
+            else {
+                // Op( Get(), RHS )
+                irOpCall
+            }
         }
     }
 
     private fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
-        val ktRight = expression.right!!
-        val irLValue = generateLValue(ktLeft, IrOperator.EQ)
-        return irLValue.store(parentGenerator.generateExpression(ktRight))
+        val irRhs = statementGenerator.generateExpression(expression.right!!)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrOperator.EQ)
+
+        return if (irAssignmentReceiver is IntermediateReference)
+            irAssignmentReceiver.store(irRhs)
+        else
+            irAssignmentReceiver.assign { irLValue -> irLValue.store(irRhs) }
     }
 
-    private fun generateLValue(ktLeft: KtExpression, irOperator: IrOperator?): IrLValue {
+    private fun generateAssignmentReceiver(ktLeft: KtExpression, irOperator: IrOperator): AssignmentReceiver {
         if (ktLeft is KtArrayAccessExpression) {
-            val irArrayValue = parentGenerator.generateExpression(ktLeft.arrayExpression!!)
-            val indexExpressions = ktLeft.indexExpressions.map { it to parentGenerator.generateExpression(it) }
-            val indexedGetCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
-            val indexedSetCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
-            val type = indexedGetCall?.run { resultingDescriptor.returnType }
-                       ?: indexedSetCall?.run { resultingDescriptor.valueParameters.last().type }
-                       ?: throw AssertionError("Either 'get' or 'set' call should be present for an indexed LValue: ${ktLeft.text}")
-            return IndexedLValue(parentGenerator, ktLeft, irOperator,
-                                 irArrayValue, type, indexExpressions, indexedGetCall, indexedSetCall)
+            return generateArrayAccessAssignmentReceiver(ktLeft, irOperator)
         }
 
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
@@ -313,20 +322,31 @@ class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChild
                 if (descriptor.isDelegated)
                     TODO("Delegated local variable")
                 else
-                    VariableLValue(this, ktLeft.startOffset, ktLeft.endOffset, descriptor, irOperator)
-            is PropertyDescriptor ->
-                CallGenerator(parentGenerator).run {
-                    PropertyLValue(
-                            this,
-                            ktLeft, irOperator, descriptor,
-                            generateReceiver(ktLeft, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter),
-                            generateReceiver(ktLeft, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter),
-                            resolvedCall.call.isSafeCall()
-                    )
-                }
+                    VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, irOperator)
+            is PropertyDescriptor -> {
+                val propertyReceiver = statementGenerator.generateCallReceiver(
+                        ktLeft, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.call.isSafeCall()
+                )
+                SimplePropertyLValue(scope, ktLeft.startOffset, ktLeft.endOffset, irOperator, descriptor, propertyReceiver)
+            }
             else ->
                 TODO("Other cases of LHS")
         }
+    }
+
+    private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, irOperator: IrOperator): ArrayAccessAssignmentReceiver {
+        val irArray = statementGenerator.generateExpression(ktLeft.arrayExpression!!)
+        val irIndexExpressions = ktLeft.indexExpressions.map { statementGenerator.generateExpression(it) }
+
+        val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
+        val indexedGetCall = indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
+
+        val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
+        val indexedSetCall = indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
+
+        return ArrayAccessAssignmentReceiver(irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
+                                             CallGenerator(statementGenerator),
+                                             ktLeft.startOffset, ktLeft.endOffset, irOperator)
     }
 
 }

@@ -9,6 +9,13 @@ IrFile /dotQualified.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          CALL ?.<get-length> type=kotlin.Int? operator=GET_PROPERTY
-            $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
+          BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
+            VAR val tmp0_safe_receiver: kotlin.String?
               GET_VAR s type=kotlin.String? operator=null
+            WHEN type=kotlin.Int? operator=SAFE_CALL
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: CONST Null type=kotlin.Nothing? value='null'
+              else: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+                $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null

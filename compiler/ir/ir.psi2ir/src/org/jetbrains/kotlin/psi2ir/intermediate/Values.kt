@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir
+package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.psi2ir.containsNull
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isNullabilityFlexible
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.upperIfFlexible
 
-fun IrVariable.defaultLoad(): IrExpression =
-        IrGetVariableImpl(startOffset, endOffset, descriptor)
+interface IntermediateValue {
+    fun load(): IrExpression
+    val type: KotlinType?
+}
 
+interface IntermediateReference : IntermediateValue {
+    fun store(irExpression: IrExpression): IrExpression
+}
+
+interface AssignmentReceiver {
+    fun assign(withLValue: (IntermediateReference) -> IrExpression): IrExpression
+}
+
+interface CallReceiver {
+    fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression
+}

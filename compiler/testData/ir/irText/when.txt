@@ -21,8 +21,7 @@ IrFile /when.kt
               then: CONST String type=kotlin.String value='String'
               if: CALL .contains type=kotlin.Boolean operator=IN
                 $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
-                element: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Any
-                  GET_VAR tmp0_subject type=kotlin.Any? operator=null
+                element: GET_VAR tmp0_subject type=kotlin.Any? operator=null
               then: CONST String type=kotlin.String value='nothingness?'
               else: CONST String type=kotlin.String value='something'
   IrFunction public fun test(/*0*/ x: kotlin.Any?): kotlin.String
@@ -43,8 +42,7 @@ IrFile /when.kt
             then: CONST String type=kotlin.String value='String'
             if: CALL .contains type=kotlin.Boolean operator=IN
               $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
-              element: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Any
-                GET_VAR x type=kotlin.Any? operator=null
+              element: GET_VAR x type=kotlin.Any? operator=null
             then: CONST String type=kotlin.String value='nothingness?'
             else: CONST String type=kotlin.String value='something'
   IrFunction public fun testComma(/*0*/ x: kotlin.Int): kotlin.String

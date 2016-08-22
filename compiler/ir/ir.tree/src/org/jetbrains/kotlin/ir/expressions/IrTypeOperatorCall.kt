@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 enum class IrTypeOperator {
     CAST,
     IMPLICIT_CAST,
+    IMPLICIT_NOTNULL,
     SAFE_CAST,
     INSTANCEOF,
     NOT_INSTANCEOF;

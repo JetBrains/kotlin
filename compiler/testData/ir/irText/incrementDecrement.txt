@@ -5,7 +5,8 @@ IrFile /incrementDecrement.kt
   IrProperty public val arr: kotlin.IntArray getter=null setter=null
     IrExpressionBody
       CALL .intArrayOf type=kotlin.IntArray operator=null
-        elements: DUMMY vararg type=kotlin.Int
+        elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
+          DUMMY vararg type=kotlin.Int
   IrFunction public fun testVarPrefix(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -38,7 +39,7 @@ IrFile /incrementDecrement.kt
               GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
             SET_VAR x type=<no-type> operator=POSTFIX_INCR
               CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-                $this: GET_VAR tmp0 type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=null
             GET_VAR tmp0 type=kotlin.Int operator=null
         VAR val x2: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_DECR
@@ -46,7 +47,7 @@ IrFile /incrementDecrement.kt
               GET_VAR x type=kotlin.Int operator=POSTFIX_DECR
             SET_VAR x type=<no-type> operator=POSTFIX_DECR
               CALL .dec type=kotlin.Int operator=POSTFIX_DECR
-                $this: GET_VAR tmp1 type=kotlin.Int operator=POSTFIX_DECR
+                $this: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
   IrFunction public fun testPropPrefix(): kotlin.Unit
     IrExpressionBody
@@ -55,7 +56,7 @@ IrFile /incrementDecrement.kt
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_INCR
             VAR val tmp0: kotlin.Int
               CALL .inc type=kotlin.Int operator=PREFIX_INCR
-                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_INCR
             CALL .<set-p> type=kotlin.Unit operator=PREFIX_INCR
               <set-?>: GET_VAR tmp0 type=kotlin.Int operator=null
             GET_VAR tmp0 type=kotlin.Int operator=null
@@ -63,7 +64,7 @@ IrFile /incrementDecrement.kt
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
             VAR val tmp1: kotlin.Int
               CALL .dec type=kotlin.Int operator=PREFIX_DECR
-                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
             CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
               <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
@@ -73,16 +74,16 @@ IrFile /incrementDecrement.kt
         VAR val p1: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
             VAR val tmp0: kotlin.Int
-              CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+              CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
             CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
               <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-                $this: GET_VAR tmp0 type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=null
             GET_VAR tmp0 type=kotlin.Int operator=null
         VAR val p2: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
             VAR val tmp1: kotlin.Int
               CALL .dec type=kotlin.Int operator=PREFIX_DECR
-                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
             CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
               <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null

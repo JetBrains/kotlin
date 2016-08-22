@@ -22,16 +22,17 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
-import org.jetbrains.kotlin.psi2ir.generators.operators.getInfixOperator
+import org.jetbrains.kotlin.psi2ir.generators.getInfixOperator
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.lang.AssertionError
 
-class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
-    fun generate(expression: KtWhenExpression): IrExpression {
-        val conditionsGenerator = CallGenerator(parentGenerator)
+class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : BodyGenerator {
+    override val scope: Scope get() = statementGenerator.scope
+    override val context: GeneratorContext get() = statementGenerator.context
 
+    fun generate(expression: KtWhenExpression): IrExpression {
         val irSubject = expression.subjectExpression?.let {
-            conditionsGenerator.scope.createTemporary(it, parentGenerator.generateExpression(it), "subject")
+            scope.createTemporaryVariable(statementGenerator.generateExpression(it), "subject")
         }
 
         val resultType = getInferredTypeWithSmartcasts(expression)
@@ -40,7 +41,7 @@ class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBody
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
-                irWhen.elseBranch = parentGenerator.generateExpressionWithExpectedType(ktEntry.expression!!, resultType)
+                irWhen.elseBranch = statementGenerator.generateExpression(ktEntry.expression!!)
                 break
             }
 
@@ -48,14 +49,14 @@ class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBody
             for (ktCondition in ktEntry.conditions) {
                 val irCondition =
                         if (irSubject != null)
-                            generateWhenConditionWithSubject(ktCondition, conditionsGenerator, irSubject)
+                            generateWhenConditionWithSubject(ktCondition, irSubject)
                         else
                             generateWhenConditionNoSubject(ktCondition)
-                irBranchCondition = irBranchCondition?.let { IrIfThenElseImpl.whenComma(it, irCondition) } ?: irCondition
+                irBranchCondition = irBranchCondition?.let { whenComma(it, irCondition) } ?: irCondition
 
             }
 
-            val irBranchResult = parentGenerator.generateExpressionWithExpectedType(ktEntry.expression!!, resultType)
+            val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!)
             irWhen.addBranch(irBranchCondition!!, irBranchResult)
         }
 
@@ -85,19 +86,14 @@ class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBody
     }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
-            parentGenerator.generateExpressionWithExpectedType((ktCondition as KtWhenConditionWithExpression).expression!!,
-                                                               context.builtIns.booleanType)
+            statementGenerator.generateExpression((ktCondition as KtWhenConditionWithExpression).expression!!)
 
-    private fun generateWhenConditionWithSubject(
-            ktCondition: KtWhenCondition,
-            conditionsGenerator: CallGenerator,
-            irSubject: IrVariable
-    ): IrExpression {
+    private fun generateWhenConditionWithSubject(ktCondition: KtWhenCondition, irSubject: IrVariable): IrExpression {
         return when (ktCondition) {
             is KtWhenConditionWithExpression ->
                 generateEqualsCondition(irSubject, ktCondition)
             is KtWhenConditionInRange ->
-                generateInRangeCondition(conditionsGenerator, ktCondition)
+                generateInRangeCondition(irSubject, ktCondition)
             is KtWhenConditionIsPattern ->
                 generateIsPatternCondition(irSubject, ktCondition)
             else ->
@@ -113,10 +109,11 @@ class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBody
         )
     }
 
-    private fun generateInRangeCondition(conditionsGenerator: CallGenerator, ktCondition: KtWhenConditionInRange): IrExpression {
-        val inResolvedCall = getResolvedCall(ktCondition.operationReference)!!
+    private fun generateInRangeCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange): IrExpression {
+        val inCall = statementGenerator.pregenerateCall(getResolvedCall(ktCondition.operationReference)!!)
+        inCall.irValueArgumentsByIndex[0] = irSubject.defaultLoad()
         val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
-        val irInCall = conditionsGenerator.generateCall(ktCondition, inResolvedCall, inOperator)
+        val irInCall = CallGenerator(statementGenerator).generateCall(ktCondition, inCall, inOperator)
         return when (inOperator) {
             IrOperator.IN -> irInCall
             IrOperator.NOT_IN ->
@@ -129,6 +126,6 @@ class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBody
             IrBinaryOperatorImpl(
                     ktCondition.startOffset, ktCondition.endOffset,
                     IrOperator.EQEQ, context.irBuiltIns.eqeq,
-                    irSubject.defaultLoad(), parentGenerator.generateExpression(ktCondition.expression!!)
+                    irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)
             )
 }

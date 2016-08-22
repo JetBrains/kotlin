@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.psi2ir.transformations.foldStringConcatenation
 import org.jetbrains.kotlin.psi2ir.transformations.inlineDesugaredBlocks
+import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
@@ -39,8 +39,9 @@ class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
         return irModule
     }
 
-    private fun postprocess(irElement: IrElement) {
-        if (configuration.shouldInlineDesugaredBlocks) inlineDesugaredBlocks(irElement)
-        if (configuration.shouldFoldStringConcatenation) foldStringConcatenation(irElement)
+    private fun postprocess(irModule: IrModule) {
+        insertImplicitCasts(irModule.irBuiltins.builtIns, irModule)
+        if (configuration.shouldInlineDesugaredBlocks) inlineDesugaredBlocks(irModule)
+        if (configuration.shouldFoldStringConcatenation) foldStringConcatenation(irModule)
     }
 }

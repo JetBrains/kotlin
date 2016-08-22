@@ -51,7 +51,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
             "IrPropertySetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
-    override fun visitLocalVariable(declaration: IrVariable, data: Nothing?): String =
+    override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
@@ -76,7 +76,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "THIS ${expression.classDescriptor.render()} type=${expression.renderType()}"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-            "CALL ${if (expression.isSafe) "?." else "."}${expression.descriptor.name} " +
+            "CALL .${expression.descriptor.name} " +
             "type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =

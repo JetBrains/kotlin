@@ -28,7 +28,7 @@ IrFile /callWithReorderedArguments.kt
         CALL .foo type=kotlin.Unit operator=null
           a: CALL .noReorder1 type=kotlin.Int operator=null
           b: CALL .noReorder2 type=kotlin.Int operator=null
-        BLOCK type=kotlin.Unit hasResult=false operator=SYNTHETIC_BLOCK
+        BLOCK type=kotlin.Unit hasResult=true operator=SYNTHETIC_BLOCK
           VAR val tmp0_b: kotlin.Int
             CALL .reordered1 type=kotlin.Int operator=null
           VAR val tmp1_a: kotlin.Int
@@ -36,7 +36,7 @@ IrFile /callWithReorderedArguments.kt
           CALL .foo type=kotlin.Unit operator=null
             a: GET_VAR tmp1_a type=kotlin.Int operator=null
             b: GET_VAR tmp0_b type=kotlin.Int operator=null
-        BLOCK type=kotlin.Unit hasResult=false operator=SYNTHETIC_BLOCK
+        BLOCK type=kotlin.Unit hasResult=true operator=SYNTHETIC_BLOCK
           VAR val tmp2_a: kotlin.Int
             CALL .reordered2 type=kotlin.Int operator=null
           CALL .foo type=kotlin.Unit operator=null

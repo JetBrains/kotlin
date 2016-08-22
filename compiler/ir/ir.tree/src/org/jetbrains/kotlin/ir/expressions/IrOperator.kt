@@ -20,6 +20,8 @@ interface IrOperator {
     abstract class IrOperatorImpl(val debugName: String): IrOperator {
         override fun toString(): String = debugName
     }
+
+    object SAFE_CALL : IrOperatorImpl("SAFE_CALL")
     
     object UMINUS : IrOperatorImpl("UMINUS")
     object UPLUS : IrOperatorImpl("UPLUS")
@@ -88,3 +90,12 @@ interface IrOperator {
     }
 
 }
+
+fun IrOperator.isAssignmentOperatorWithResult() =
+        when (this) {
+            IrOperator.PREFIX_INCR, IrOperator.PREFIX_DECR,
+            IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR ->
+                true
+            else ->
+                false
+        }

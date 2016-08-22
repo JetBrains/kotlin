@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrConst<out T> : IrExpression {
+interface IrConst<out T> : IrExpression, IrExpressionWithCopy {
     val kind: IrConstKind<T>
     val value: T
+
+    override fun copy(): IrConst<T>
 }
 
 sealed class IrConstKind<out T>(val asString: kotlin.String)  {
@@ -51,6 +53,9 @@ class IrConstImpl<out T> (
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrConst<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitConst(this, data)
+
+    override fun copy(): IrConst<T> =
+            IrConstImpl(startOffset, endOffset, type, kind, value)
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrConstImpl<String> =

@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir
+package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-fun KtElement.deparenthesize(): KtElement =
-        if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this
-
+class SimpleCallReceiver(
+        val dispatchReceiverValue: IntermediateValue?,
+        val extensionReceiverValue: IntermediateValue?
+) : CallReceiver {
+    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+        return withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
+    }
+}

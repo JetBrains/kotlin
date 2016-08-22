@@ -24,11 +24,14 @@ class IrDummyExpression(
         endOffset: Int,
         type: KotlinType?,
         val description: String
-) : IrTerminalExpressionBase(startOffset, endOffset, type) {
+) : IrTerminalExpressionBase(startOffset, endOffset, type), IrExpressionWithCopy {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitDummyExpression(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children
     }
+
+    override fun copy(): IrDummyExpression =
+            IrDummyExpression(startOffset, endOffset, type, description)
 }

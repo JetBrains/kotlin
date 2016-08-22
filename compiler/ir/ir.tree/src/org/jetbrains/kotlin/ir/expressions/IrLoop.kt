@@ -21,22 +21,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrLoop : IrExpression {
     var body: IrExpression
-}
-
-interface IrConditionalLoop : IrLoop {
     var condition: IrExpression
 }
 
-interface IrWhileLoop : IrConditionalLoop
+interface IrWhileLoop : IrLoop
 
-interface IrDoWhileLoop : IrConditionalLoop
+interface IrDoWhileLoop : IrLoop
 
 abstract class IrLoopBase(
         startOffset: Int,
         endOffset: Int
 ) : IrExpressionBase(startOffset, endOffset, null), IrLoop {
-
-
     private var bodyImpl: IrExpression? = null
     override var body: IrExpression
         get() = bodyImpl!!
@@ -63,7 +58,7 @@ abstract class IrLoopBase(
 abstract class IrConditionalLoopBase(
         startOffset: Int,
         endOffset: Int
-) : IrLoopBase(startOffset, endOffset), IrConditionalLoop {
+) : IrLoopBase(startOffset, endOffset) {
     private var conditionImpl: IrExpression? = null
     override var condition: IrExpression
         get() = conditionImpl!!

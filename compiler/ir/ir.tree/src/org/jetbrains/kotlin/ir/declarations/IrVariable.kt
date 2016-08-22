@@ -68,7 +68,7 @@ class IrVariableImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitLocalVariable(this, data)
+        return visitor.visitVariable(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

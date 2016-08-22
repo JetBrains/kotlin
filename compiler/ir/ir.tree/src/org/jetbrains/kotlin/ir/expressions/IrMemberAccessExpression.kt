@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.types.KotlinType
 interface IrMemberAccessExpression : IrDeclarationReference {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
-    val isSafe: Boolean
 }
 
 abstract class IrMemberAccessExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
-        override val isSafe: Boolean
+        type: KotlinType?
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null
         set(newReceiver) {

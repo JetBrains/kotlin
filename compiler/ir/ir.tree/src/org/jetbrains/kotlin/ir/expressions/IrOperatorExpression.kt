@@ -33,8 +33,6 @@ abstract class IrOperatorCallBase(
         get() = null
         set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")
 
-    override val isSafe: Boolean get() = false
-
     override var extensionReceiver: IrExpression?
         get() = null
         set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")

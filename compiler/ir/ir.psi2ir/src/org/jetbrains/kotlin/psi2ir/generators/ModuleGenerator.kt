@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class ModuleGenerator(override val context: GeneratorContext) : IrGenerator {
+class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateModule(ktFiles: List<KtFile>): IrModule {
         val irDeclarationGenerator = DeclarationGenerator(context)
 

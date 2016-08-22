@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.generators.values.VariableLValue
+import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -41,14 +42,14 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.constant
+import java.lang.AssertionError
 
 class StatementGenerator(
         override val context: GeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val expressionBodyGenerator: ExpressionBodyGenerator,
+        @Suppress("unused") val expressionBodyGenerator: ExpressionBodyGenerator,
         override val scope: Scope
-) : KtVisitor<IrStatement, Nothing?>(), IrBodyGenerator {
+) : KtVisitor<IrStatement, Nothing?>(), BodyGenerator {
     fun generateExpression(ktExpression: KtExpression): IrExpression =
             ktExpression.genExpr()
 
@@ -67,10 +68,7 @@ class StatementGenerator(
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
         val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOriginKind.DEFINED, variableDescriptor)
-        irLocalVariable.initializer = property.initializer?.let {
-            toExpectedType(it.genExpr(), variableDescriptor.type)
-        }
-
+        irLocalVariable.initializer = property.initializer?.genExpr()
         return irLocalVariable
     }
 
@@ -79,16 +77,19 @@ class StatementGenerator(
 
         val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null, false, IrOperator.SYNTHETIC_BLOCK)
         val ktInitializer = multiDeclaration.initializer!!
-        val irTmpInitializer = scope.createTemporaryVariable(ktInitializer.genExpr())
-        irBlock.addStatement(irTmpInitializer)
+        val irTmpInitializerValue = createRematerializableOrTemporary(scope, ktInitializer.genExpr(), irBlock, "container")
 
         val irCallGenerator = CallGenerator(this)
-        irCallGenerator.scope.putValue(ktInitializer, VariableLValue(this, irTmpInitializer))
 
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
+
+            val componentSubstitutedCall = pregenerateCall(componentResolvedCall)
+            componentSubstitutedCall.setExplicitReceiverValue(irTmpInitializerValue)
+
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
-            val irComponentCall = irCallGenerator.generateCall(ktEntry, componentResolvedCall, IrOperator.COMPONENT_N.withIndex(index + 1))
+            val irComponentCall = irCallGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
+                                                               IrOperator.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOriginKind.DEFINED,
                                                 componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
@@ -106,13 +107,8 @@ class StatementGenerator(
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
-        val irReturnedExpression = expression.returnedExpression?.let {
-            toExpectedType(it.genExpr(), returnTarget.returnType)
-        }
-        return IrReturnImpl(
-                expression.startOffset, expression.endOffset,
-                returnTarget, irReturnedExpression
-        )
+        val irReturnedExpression = expression.returnedExpression?.genExpr()
+        return IrReturnImpl(expression.startOffset, expression.endOffset, returnTarget, irReturnedExpression)
     }
 
     private fun getReturnExpressionTarget(expression: KtReturnExpression): CallableDescriptor =
@@ -137,7 +133,7 @@ class StatementGenerator(
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
                                   ?: error("KtConstantExpression was not evaluated: ${expression.text}")
-        val constantValue = compileTimeConstant.toConstantValue(getInferredTypeWithSmarcastsOrFail(expression))
+        val constantValue = compileTimeConstant.toConstantValue(getInferredTypeWithSmartcastsOrFail(expression))
         val constantType = constantValue.type
 
         return when (constantValue) {
@@ -163,7 +159,7 @@ class StatementGenerator(
                     return entry0.genExpr()
                 }
             }
-            entries.size == 0 -> return IrConstImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmarcastsOrFail(expression), "")
+            entries.size == 0 -> return IrConstImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcastsOrFail(expression), "")
         }
 
         val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression))
@@ -191,19 +187,19 @@ class StatementGenerator(
                 is FakeCallableDescriptorForObject ->
                     generateExpressionForReferencedDescriptor(descriptor.getReferencedDescriptor(), expression, resolvedCall)
                 is ClassDescriptor ->
-                    if (DescriptorUtils.isObject(descriptor))
-                        IrGetObjectValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
-                    else if (DescriptorUtils.isEnumEntry(descriptor))
-                        IrGetEnumValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
-                    else {
-                        val companionObjectDescriptor = descriptor.companionObjectDescriptor
-                                                        ?: error("Class value without companion object: $descriptor")
-                        IrGetObjectValueImpl(expression.startOffset, expression.endOffset,
-                                             descriptor.classValueType,
-                                             companionObjectDescriptor)
+                    when {
+                        DescriptorUtils.isObject(descriptor) ->
+                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                        DescriptorUtils.isEnumEntry(descriptor) ->
+                            IrGetEnumValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                        else -> {
+                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType,
+                                                 descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
+                        }
                     }
                 is PropertyDescriptor -> {
-                    CallGenerator(this).generateCall(expression, resolvedCall)
+                    // TODO safe calls
+                    CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
                 }
                 is VariableDescriptor ->
                     IrGetVariableImpl(expression.startOffset, expression.endOffset, descriptor)
@@ -221,7 +217,9 @@ class StatementGenerator(
             TODO("VariableAsFunctionResolvedCall = variable call + invoke call")
         }
 
-        return CallGenerator(this).generateCall(expression, resolvedCall)
+        // TODO safe calls
+
+        return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
@@ -275,8 +273,8 @@ class StatementGenerator(
         var irElseBranch: IrExpression? = null
 
         whenBranches@while (true) {
-            val irCondition = generateExpressionWithExpectedType(ktLastIf.condition!!, context.builtIns.booleanType)
-            val irThenBranch = generateExpressionWithExpectedType(ktLastIf.then!!, resultType)
+            val irCondition = ktLastIf.condition!!.genExpr()
+            val irThenBranch = ktLastIf.then!!.genExpr()
             irBranches.add(Pair(irCondition, irThenBranch))
 
             val ktElse = ktLastIf.`else`?.deparenthesize()
@@ -284,7 +282,7 @@ class StatementGenerator(
                 null -> break@whenBranches
                 is KtIfExpression -> ktLastIf = ktElse
                 is KtExpression -> {
-                    irElseBranch = generateExpressionWithExpectedType(ktElse, resultType)
+                    irElseBranch = ktElse.genExpr()
                     break@whenBranches
                 }
                 else -> throw AssertionError("Unexpected else expression: ${ktElse.text}")
@@ -312,3 +310,5 @@ class StatementGenerator(
 
 
 }
+
+

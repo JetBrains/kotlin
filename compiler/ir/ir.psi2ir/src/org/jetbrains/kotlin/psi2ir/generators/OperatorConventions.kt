@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators.operators
+package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.ir.expressions.IrOperator

@@ -32,21 +32,21 @@ IrFile /augmentedAssignment1.kt
       BLOCK type=kotlin.Int hasResult=true operator=null
         CALL .<set-p> type=kotlin.Unit operator=PLUSEQ
           <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
-            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            $this: CALL .<get-p> type=kotlin.Int operator=PLUSEQ
             other: CONST Int type=kotlin.Int value='1'
         CALL .<set-p> type=kotlin.Unit operator=MINUSEQ
           <set-?>: CALL .minus type=kotlin.Int operator=MINUSEQ
-            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            $this: CALL .<get-p> type=kotlin.Int operator=MINUSEQ
             other: CONST Int type=kotlin.Int value='2'
         CALL .<set-p> type=kotlin.Unit operator=MULTEQ
           <set-?>: CALL .times type=kotlin.Int operator=MULTEQ
-            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            $this: CALL .<get-p> type=kotlin.Int operator=MULTEQ
             other: CONST Int type=kotlin.Int value='3'
         CALL .<set-p> type=kotlin.Unit operator=DIVEQ
           <set-?>: CALL .div type=kotlin.Int operator=DIVEQ
-            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            $this: CALL .<get-p> type=kotlin.Int operator=DIVEQ
             other: CONST Int type=kotlin.Int value='4'
         CALL .<set-p> type=kotlin.Unit operator=PERCEQ
           <set-?>: CALL .mod type=kotlin.Int operator=PERCEQ
-            $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            $this: CALL .<get-p> type=kotlin.Int operator=PERCEQ
             other: CONST Int type=kotlin.Int value='5'

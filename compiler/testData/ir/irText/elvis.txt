@@ -11,22 +11,24 @@ IrFile /elvis.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          WHEN type=kotlin.Any operator=ELVIS
-            if: CALL .EQEQ type=kotlin.Boolean operator=ELVIS
-              arg0: GET_VAR a type=kotlin.Any? operator=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR b type=kotlin.Any operator=null
-            else: GET_VAR a type=kotlin.Any? operator=null
+          BLOCK type=kotlin.Any hasResult=true operator=ELVIS
+            WHEN type=kotlin.Any operator=null
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR a type=kotlin.Any? operator=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: GET_VAR b type=kotlin.Any operator=null
+              else: GET_VAR a type=kotlin.Any? operator=null
   IrFunction public fun test2(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.Any): kotlin.Any
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          WHEN type=kotlin.Any operator=ELVIS
-            if: CALL .EQEQ type=kotlin.Boolean operator=ELVIS
-              arg0: GET_VAR a type=kotlin.String? operator=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR b type=kotlin.Any operator=null
-            else: GET_VAR a type=kotlin.String? operator=null
+          BLOCK type=kotlin.Any hasResult=true operator=ELVIS
+            WHEN type=kotlin.Any operator=null
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR a type=kotlin.String? operator=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: GET_VAR b type=kotlin.Any operator=null
+              else: GET_VAR a type=kotlin.String? operator=null
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -42,39 +44,37 @@ IrFile /elvis.kt
             CONST String type=kotlin.String value=''
         RETURN type=<no-type>
           BLOCK type=kotlin.String hasResult=true operator=ELVIS
-            VAR val tmp0: kotlin.String?
-              TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String?
-                GET_VAR a type=kotlin.Any? operator=null
-            WHEN type=kotlin.String operator=ELVIS
-              if: CALL .EQEQ type=kotlin.Boolean operator=ELVIS
-                arg0: GET_VAR tmp0 type=kotlin.String? operator=null
+            WHEN type=kotlin.String operator=null
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR a type=kotlin.Any? operator=null
                 arg1: CONST Null type=kotlin.Nothing? value='null'
               then: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
                 GET_VAR b type=kotlin.Any? operator=null
-              else: GET_VAR tmp0 type=kotlin.String? operator=null
+              else: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
+                GET_VAR a type=kotlin.Any? operator=null
   IrFunction public fun test4(/*0*/ x: kotlin.Any): kotlin.Any
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BLOCK type=kotlin.Any hasResult=true operator=ELVIS
-            VAR val tmp0: kotlin.Any?
+            VAR val tmp0_elvis_lhs: kotlin.Any?
               CALL .<get-p> type=kotlin.Any? operator=GET_PROPERTY
-            WHEN type=kotlin.Any operator=ELVIS
-              if: CALL .EQEQ type=kotlin.Boolean operator=ELVIS
-                arg0: GET_VAR tmp0 type=kotlin.Any? operator=null
+            WHEN type=kotlin.Any operator=null
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
                 arg1: CONST Null type=kotlin.Nothing? value='null'
               then: GET_VAR x type=kotlin.Any operator=null
-              else: GET_VAR tmp0 type=kotlin.Any? operator=null
+              else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
   IrFunction public fun test5(/*0*/ x: kotlin.Any): kotlin.Any
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
           BLOCK type=kotlin.Any hasResult=true operator=ELVIS
-            VAR val tmp0: kotlin.Any?
+            VAR val tmp0_elvis_lhs: kotlin.Any?
               CALL .foo type=kotlin.Any? operator=null
-            WHEN type=kotlin.Any operator=ELVIS
-              if: CALL .EQEQ type=kotlin.Boolean operator=ELVIS
-                arg0: GET_VAR tmp0 type=kotlin.Any? operator=null
+            WHEN type=kotlin.Any operator=null
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
                 arg1: CONST Null type=kotlin.Nothing? value='null'
               then: GET_VAR x type=kotlin.Any operator=null
-              else: GET_VAR tmp0 type=kotlin.Any? operator=null
+              else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null

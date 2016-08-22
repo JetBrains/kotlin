@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrThisReference : IrExpression {
+interface IrThisReference : IrExpression, IrExpressionWithCopy {
     val classDescriptor: ClassDescriptor
+    override fun copy(): IrThisReference
 }
 
 class IrThisReferenceImpl(
@@ -32,4 +33,8 @@ class IrThisReferenceImpl(
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitThisReference(this, data)
+
+    override fun copy(): IrThisReference =
+            IrThisReferenceImpl(startOffset, endOffset, type, classDescriptor)
+
 }

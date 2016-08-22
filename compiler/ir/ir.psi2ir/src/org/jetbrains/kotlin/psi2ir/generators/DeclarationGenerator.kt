@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator {
+class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
         // TODO create IrAnnotation's for each KtAnnotationEntry
     }

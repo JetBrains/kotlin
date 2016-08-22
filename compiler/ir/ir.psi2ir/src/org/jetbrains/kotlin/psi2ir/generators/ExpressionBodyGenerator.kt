@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class ExpressionBodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): IrBodyGenerator {
-    override val scope = Scope.rootScope(scopeOwner, this)
+class ExpressionBodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): BodyGenerator {
+    override val scope = Scope(scopeOwner)
 
     fun generateFunctionBody(ktBody: KtExpression): IrExpression {
         resetInternalContext()
 
-        val irBodyExpression = createStatementGenerator().generateExpressionWithExpectedType(ktBody, scopeOwner.returnType)
+        val irBodyExpression = createStatementGenerator().generateExpression(ktBody)
 
         val irBodyExpressionAsBlock =
                 if (ktBody is KtBlockExpression)
@@ -52,7 +52,7 @@ class ExpressionBodyGenerator(val scopeOwner: CallableDescriptor, override val c
     }
 
     fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpression =
-            createStatementGenerator().generateExpressionWithExpectedType(ktInitializer, scopeOwner.returnType!!)
+            createStatementGenerator().generateExpression(ktInitializer)
 
     private fun createStatementGenerator() =
             StatementGenerator(context, scopeOwner, this, scope)

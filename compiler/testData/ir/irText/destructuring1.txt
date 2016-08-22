@@ -2,13 +2,13 @@ IrFunction public fun B.test(): kotlin.Unit
   IrExpressionBody
     BLOCK type=<no-type> hasResult=false operator=null
       BLOCK type=<no-type> hasResult=false operator=SYNTHETIC_BLOCK
-        VAR val tmp0: A
+        VAR val tmp0_container: A
           GET_OBJECT A type=A
         VAR val x: kotlin.Int
           CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
             $this: $RECEIVER of: test type=B
-            $receiver: GET_VAR tmp0 type=A operator=null
+            $receiver: GET_VAR tmp0_container type=A operator=null
         VAR val y: kotlin.Int
           CALL .component2 type=kotlin.Int operator=COMPONENT_N(index=2)
             $this: $RECEIVER of: test type=B
-            $receiver: GET_VAR tmp0 type=A operator=null
+            $receiver: GET_VAR tmp0_container type=A operator=null

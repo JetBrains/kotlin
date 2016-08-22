@@ -27,6 +27,10 @@ interface IrExpression : IrStatement {
     val type: KotlinType?
 }
 
+interface IrExpressionWithCopy : IrExpression {
+    fun copy(): IrExpression
+}
+
 abstract class IrExpressionBase(
         startOffset: Int,
         endOffset: Int,

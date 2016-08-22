@@ -16,109 +16,104 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
-import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.psi2ir.intermediate.PregeneratedCall
+import org.jetbrains.kotlin.psi2ir.intermediate.getValueArgumentsInParameterOrder
+import org.jetbrains.kotlin.psi2ir.intermediate.isValueArgumentReorderingRequired
+import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
+import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class CallGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
+class CallGenerator(
+        override val context: GeneratorContext,
+        override val scope: Scope
+) : BodyGenerator {
+
+    constructor(parent: BodyGenerator) : this(parent.context, parent.scope)
+
     fun generateCall(
-            ktElement: KtElement,
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            operator: IrOperator? = null,
-            superQualifier: ClassDescriptor? = null
+            startOffset: Int,
+            endOffset: Int,
+            call: PregeneratedCall,
+            operator: IrOperator? = null
     ): IrExpression {
-        val descriptor = resolvedCall.resultingDescriptor
+        val descriptor = call.descriptor
 
         return when (descriptor) {
             is PropertyDescriptor ->
-                generatePropertyGetterCall(descriptor, ktElement, resolvedCall)
+                generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is FunctionDescriptor ->
-                generateFunctionCall(descriptor, ktElement, operator, resolvedCall, superQualifier)
+                generateFunctionCall(descriptor, startOffset, endOffset, operator, call)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
     }
 
-    private fun CallGenerator.generatePropertyGetterCall(
+    private fun generatePropertyGetterCall(
             descriptor: PropertyDescriptor,
-            ktElement: KtElement,
-            resolvedCall: ResolvedCall<*>
-    ): IrGetterCallImpl {
-        val returnType = getReturnType(resolvedCall)
-        val dispatchReceiver = generateReceiver(ktElement, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter)
-        val extensionReceiver = generateReceiver(ktElement, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter)
-        return IrGetterCallImpl(ktElement.startOffset, ktElement.endOffset,
-                                returnType, descriptor.getter!!, resolvedCall.call.isSafeCall(),
-                                dispatchReceiver, extensionReceiver, IrOperator.GET_PROPERTY)
-    }
-
-    private fun ResolvedCall<*>.requiresArgumentReordering(): Boolean {
-        var lastValueParameterIndex = -1
-        for (valueArgument in call.valueArguments) {
-            val argumentMapping = getArgumentMapping(valueArgument)
-            if (argumentMapping !is ArgumentMatch || argumentMapping.isError()) {
-                error("Value argument in function call is mapped with error")
-            }
-            val argumentIndex = argumentMapping.valueParameter.index
-            if (argumentIndex < lastValueParameterIndex) return true
-            lastValueParameterIndex = argumentIndex
+            startOffset: Int,
+            endOffset: Int,
+            call: PregeneratedCall
+    ): IrExpression {
+        return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+            IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!,
+                             dispatchReceiverValue?.load(),
+                             extensionReceiverValue?.load(),
+                             IrOperator.GET_PROPERTY)
         }
-        return false
     }
 
     private fun generateFunctionCall(
             descriptor: FunctionDescriptor,
-            ktElement: KtElement,
+            startOffset: Int,
+            endOffset: Int,
             operator: IrOperator?,
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            superQualifier: ClassDescriptor?
+            call: PregeneratedCall
     ): IrExpression {
         val returnType = descriptor.returnType
 
-        val irCall = IrCallImpl(
-                ktElement.startOffset, ktElement.endOffset, returnType,
-                descriptor, resolvedCall.call.isSafeCall(), operator, superQualifier
-        )
-        irCall.dispatchReceiver = generateReceiver(ktElement, resolvedCall.dispatchReceiver, descriptor.dispatchReceiverParameter)
-        irCall.extensionReceiver = generateReceiver(ktElement, resolvedCall.extensionReceiver, descriptor.extensionReceiverParameter)
+        return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
+            irCall.dispatchReceiver = dispatchReceiverValue?.load()
+            irCall.extensionReceiver = extensionReceiverValue?.load()
 
-        return if (resolvedCall.requiresArgumentReordering()) {
-            generateCallWithArgumentReordering(irCall, ktElement, resolvedCall, returnType)
-        }
-        else {
-            val valueArguments = resolvedCall.valueArgumentsByIndex
-            for (index in valueArguments!!.indices) {
-                val valueArgument = valueArguments[index]
-                val valueParameter = descriptor.valueParameters[index]
-                val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
-                irCall.putArgument(index, irArgument)
-            }
-            irCall
+            val irCallWithReordering =
+                    if (call.isValueArgumentReorderingRequired()) {
+                        generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, returnType)
+                    }
+                    else {
+                        val valueArguments = call.getValueArgumentsInParameterOrder()
+                        for ((index, valueArgument) in valueArguments.withIndex()) {
+                            irCall.putArgument(index, valueArgument)
+                        }
+                        irCall
+                    }
+
+            irCallWithReordering
         }
     }
 
     private fun generateCallWithArgumentReordering(
             irCall: IrCall,
-            ktElement: KtElement,
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
+            startOffset: Int,
+            endOffset: Int,
+            call: PregeneratedCall,
             resultType: KotlinType?
     ): IrExpression {
-        // TODO use IrLetExpression?
+        val resolvedCall = call.original
 
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
-        val hasResult = isUsedAsExpression(ktElement)
-        val irBlock = IrBlockImpl(ktElement.startOffset, ktElement.endOffset, resultType, hasResult,
-                                  IrOperator.SYNTHETIC_BLOCK)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, true, IrOperator.SYNTHETIC_BLOCK)
 
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
@@ -126,86 +121,28 @@ class CallGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorB
             valueArgumentsToValueParameters[valueArgument] = valueParameter
         }
 
-        val reorderingScope = Scope(this.scope)
+        val irArgumentValues = HashMap<ValueParameterDescriptor, IntermediateValue>()
 
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
-            val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
-            val irTmpArg = reorderingScope.introduceTemporary(valueParameter, irArgument)
-            irBlock.addIfNotNull(irTmpArg)
+            val irArgument = call.getValueArgument(valueParameter) ?: continue
+            val irArgumentValue = createRematerializableOrTemporary(scope, irArgument, irBlock, valueParameter.name.asString())
+            irArgumentValues[valueParameter] = irArgumentValue
         }
 
-        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
+        resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
             val valueParameter = valueParameters[index]
-            val irGetTemporary = reorderingScope.valueOf(valueParameter)!!
-            irCall.putArgument(index, toExpectedType(irGetTemporary, valueParameter.type))
+            irCall.putArgument(index, irArgumentValues[valueParameter]?.load())
         }
 
         irBlock.addStatement(irCall)
 
         return irBlock
     }
-
-    fun generateReceiver(ktElement: KtElement, receiver: ReceiverValue?, receiverParameterDescriptor: ReceiverParameterDescriptor?) =
-            generateReceiver(ktElement, receiver, receiverParameterDescriptor?.type)
-
-    fun generateReceiver(ktElement: KtElement, receiver: ReceiverValue?, expectedType: KotlinType?) =
-            toExpectedTypeOrNull(generateReceiver(ktElement, receiver), expectedType)
-
-    fun generateReceiver(ktElement: KtElement, receiver: ReceiverValue?): IrExpression? =
-            if (receiver == null)
-                null
-            else
-                scope.valueOf(receiver) ?: doGenerateReceiver(ktElement, receiver)
-
-    fun doGenerateReceiver(ktElement: KtElement, receiver: ReceiverValue?): IrExpression? =
-            when (receiver) {
-                is ImplicitClassReceiver ->
-                    IrThisReferenceImpl(ktElement.startOffset, ktElement.startOffset, receiver.type, receiver.classDescriptor)
-                is ThisClassReceiver ->
-                    (receiver as? ExpressionReceiver)?.expression?.let { receiverExpression ->
-                        IrThisReferenceImpl(receiverExpression.startOffset, receiverExpression.endOffset, receiver.type, receiver.classDescriptor)
-                    } ?: TODO("Non-implicit ThisClassReceiver should be an expression receiver")
-                is ExpressionReceiver ->
-                    generateExpression(receiver.expression)
-                is ClassValueReceiver ->
-                    IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
-                                         receiver.classQualifier.descriptor)
-                is ExtensionReceiver ->
-                    IrGetExtensionReceiverImpl(ktElement.startOffset, ktElement.startOffset, receiver.type,
-                                               receiver.declarationDescriptor.extensionReceiverParameter!!)
-                null ->
-                    null
-                else ->
-                    TODO("Receiver: ${receiver.javaClass.simpleName}")
-            }
-
-    fun generateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
-            generateValueArgument(valueArgument, valueParameterDescriptor, valueParameterDescriptor.type)
-
-    fun generateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor, expectedType: KotlinType): IrExpression? =
-            if (valueParameterDescriptor.varargElementType != null)
-                doGenerateValueArgument(valueArgument, valueParameterDescriptor)
-            else
-                toExpectedTypeOrNull(doGenerateValueArgument(valueArgument, valueParameterDescriptor), expectedType)
-
-    private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument, valueParameterDescriptor: ValueParameterDescriptor): IrExpression? =
-            if (valueArgument is DefaultValueArgument)
-                null
-            else
-                scope.valueOf(valueParameterDescriptor) ?: doGenerateValueArgument(valueArgument)
-
-    private fun doGenerateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? =
-            when (valueArgument) {
-                is ExpressionValueArgument ->
-                    generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
-                is VarargValueArgument ->
-                    createDummyExpression(valueArgument.arguments[0].getArgumentExpression()!!, "vararg")
-                else ->
-                    TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
-            }
-
-    private fun generateExpression(ktExpression: KtExpression): IrExpression =
-            scope.valueOf(ktExpression) ?: parentGenerator.generateExpression(ktExpression)
-
 }
+
+fun CallGenerator.generateCall(ktElement: KtElement, call: PregeneratedCall, operator: IrOperator? = null) =
+        generateCall(ktElement.startOffset, ktElement.endOffset, call, operator)
+
+fun CallGenerator.generateCall(irExpression: IrExpression, call: PregeneratedCall, operator: IrOperator? = null) =
+        generateCall(irExpression.startOffset, irExpression.endOffset, call, operator)

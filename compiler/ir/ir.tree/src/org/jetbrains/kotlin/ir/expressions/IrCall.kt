@@ -37,10 +37,9 @@ class IrCallImpl(
         endOffset: Int,
         type: KotlinType?,
         override val descriptor: CallableDescriptor,
-        isSafe: Boolean,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type), IrCall {
     private val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
@@ -87,12 +86,10 @@ class IrCallImpl(
 abstract class IrPropertyAccessorCallBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
         override val descriptor: CallableDescriptor,
-        isSafe: Boolean,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, isSafe), IrCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCall(this, data)
     }
@@ -101,23 +98,19 @@ abstract class IrPropertyAccessorCallBase(
 class IrGetterCallImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
         descriptor: CallableDescriptor,
-        isSafe: Boolean,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
             descriptor: CallableDescriptor,
-            isSafe: Boolean,
             dispatchReceiver: IrExpression?,
             extensionReceiver: IrExpression?,
             operator: IrOperator? = null,
             superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier) {
+    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
     }
@@ -136,24 +129,20 @@ class IrGetterCallImpl(
 class IrSetterCallImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
         descriptor: CallableDescriptor,
-        isSafe: Boolean,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
             descriptor: CallableDescriptor,
-            isSafe: Boolean,
             dispatchReceiver: IrExpression?,
             extensionReceiver: IrExpression?,
             argument: IrExpression,
             operator: IrOperator? = null,
             superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, type, descriptor, isSafe, operator, superQualifier) {
+    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
         putArgument(SETTER_ARGUMENT_INDEX, argument)
