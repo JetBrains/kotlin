@@ -199,6 +199,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val receiverName = receiverExpr.text
         var receiver = when (receiverExpr) {
             is KtCallExpression,
+            is KtPrefixExpression,
+            is KtPostfixExpression,
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             is KtDotQualifiedExpression -> {
                 val location = receiverName.split(".")
