@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.elements
 
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTypesUtil
@@ -46,7 +47,7 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
     override fun getTypeParameters() = psi.typeParameters.map { JeTypeParameterElement(it, this) }
 
     override fun getNestingKind() = when {
-        ClassUtil.isTopLevelClass(psi) -> NestingKind.TOP_LEVEL
+        isTopLevelClass(psi) -> NestingKind.TOP_LEVEL
         psi.parent is PsiClass -> NestingKind.MEMBER
         psi is PsiAnonymousClass -> NestingKind.ANONYMOUS
         else -> NestingKind.LOCAL
@@ -94,4 +95,23 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
     override fun hashCode() = psi.hashCode()
 
     override fun toString() = psi.qualifiedName ?: "<anonymous> extends " + psi.superClass?.qualifiedName ?: "<unnamed>"
+
+    // Copied from ClassUtil.java (not present in 143 branch)
+    private fun isTopLevelClass(aClass: PsiClass): Boolean {
+        if (aClass.containingClass != null) {
+            return false
+        }
+
+        if (aClass is PsiAnonymousClass) {
+            return false
+        }
+
+        val parent = aClass.parent
+        if (parent is PsiDeclarationStatement && parent.getParent() is PsiCodeBlock) {
+            return false
+        }
+
+        val parentFile = aClass.containingFile
+        return parentFile != null && parentFile.language === JavaLanguage.INSTANCE  // do not select JspClass
+    }
 }
