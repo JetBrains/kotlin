@@ -97,10 +97,26 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
-        node.elementType == KtTokens.BLOCK_COMMENT -> "/.../"
-        node.elementType == KDocTokens.KDOC -> "/**...*/"
+        node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
+        node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
         node.psi is KtImportList -> "..."
         else ->  "{...}"
+    }
+
+    private fun getFirstLineOfComment(node: ASTNode): String {
+        val targetCommentLine = node.text.split("\n").firstOrNull {
+            getCommentContents(it).isNotEmpty()
+        } ?: return ""
+        return " ${getCommentContents(targetCommentLine)} "
+    }
+
+    private fun getCommentContents(line: String): String {
+        return line.trim()
+                .replace("/**", "")
+                .replace("/*", "")
+                .replace("*/", "")
+                .replace("*", "")
+                .trim()
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
