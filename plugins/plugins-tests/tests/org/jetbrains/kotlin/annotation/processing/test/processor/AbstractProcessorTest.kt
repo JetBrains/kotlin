@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessingExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
-import java.nio.file.Files
 import javax.annotation.processing.Completion
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -44,7 +44,7 @@ class AnnotationProcessingExtensionForTests(
     override fun loadAnnotationProcessors() = processors
     
     private companion object {
-        fun createTempDir(): File = Files.createTempDirectory("ap-test").toFile().apply {
+        fun createTempDir(): File = FileUtil.createTempDirectory("ap-test", null).apply {
             deleteOnExit()
         }
     }
