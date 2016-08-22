@@ -7,15 +7,17 @@
  * http://www.dfrobot.com/wiki/index.php?title=URM37_V4.0_Ultrasonic_Sensor_(SKU:SEN0001)
  */
 
+#define FRONT_ANGLE 1
+#define BACK_ANGLE 40
+#define MAX_DEGREE 180
+
 static uint8_t sonar_degree(uint8_t degree)
 {
-    // urm37 accepts values [0;46]
-    // so we have 47 steps.
-    // But we don't use the last 46 value.
-    // It gives us angle > 180.
-    if (degree > 180)
-        degree = 180;
-    return degree / 4;
+   if (degree > MAX_DEGREE)
+        degree = MAX_DEGREE;
+
+    float factor = 1.0 * (BACK_ANGLE - FRONT_ANGLE) / MAX_DEGREE;
+    return factor * degree + FRONT_ANGLE;
 }
 
 #define SONAR_CMD_GET_DIST 0x22
