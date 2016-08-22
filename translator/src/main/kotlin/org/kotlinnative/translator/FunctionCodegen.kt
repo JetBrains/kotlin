@@ -1,9 +1,15 @@
 package org.kotlinnative.translator
 
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMFunctionType
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
@@ -26,6 +32,7 @@ class FunctionCodegen(state: TranslationState,
     val fullName: String
         get() = functionNamePrefix + name
     val external: Boolean
+    val defaultValues: List<KtExpression?>
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
@@ -48,6 +55,19 @@ class FunctionCodegen(state: TranslationState,
             val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
             extensionFunctionsOfThisType.put(name, this)
             state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
+        }
+
+        defaultValues = mutableListOf()
+        val valueParameters = descriptor.valueParameters
+        for (index in valueParameters.indices) {
+            val parameterDescriptor = valueParameters[index]
+            if (parameterDescriptor.declaresDefaultValue()) {
+                val initializer = (parameterDescriptor.source as KotlinSourceElement).psi
+                val defaultValue = (initializer as KtParameter).defaultValue
+                defaultValues.add(defaultValue!!)
+            } else {
+                defaultValues.add(null)
+            }
         }
 
         val retType = returnType!!.type

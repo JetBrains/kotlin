@@ -39,7 +39,10 @@ abstract class LLVMType() : Cloneable {
 
     companion object {
         fun mangleFunctionArguments(names: List<LLVMSingleValue>) =
-                "_${names.joinToString(separator = "_", transform = { it.type!!.mangle() })}"
+                mangleFunctionTypes(names.map { it.type!! })
+
+        fun mangleFunctionTypes(names: List<LLVMType>) =
+                if (names.size > 0) "_${names.joinToString(separator = "_", transform = { it.mangle() })}" else ""
     }
 
 }
