@@ -136,4 +136,8 @@ public class EvaluationOrderTest extends AbstractExpressionTest {
     public void testCastWithBreakContinueReturn() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testReassignmentLhsCaching() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

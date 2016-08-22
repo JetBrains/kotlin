@@ -21,16 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-
-import java.util.Collections;
-import java.util.List;
 
 public class VariableAccessTranslator extends AbstractTranslator implements AccessTranslator {
     public static VariableAccessTranslator newInstance(
@@ -74,35 +70,24 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
 
     @NotNull
     @Override
-    public CachedAccessTranslator getCached() {
-        TemporaryVariable temporaryVariable = receiver == null ? null : context().declareTemporary(receiver);
-        return new CachedVariableAccessTranslator(context(), resolvedCall, temporaryVariable);
+    public AccessTranslator getCached() {
+        JsExpression cachedReceiver = receiver != null ? context().cacheExpressionIfNeeded(receiver) : null;
+        return new CachedVariableAccessTranslator(context(), resolvedCall, cachedReceiver);
     }
 
-    private static class CachedVariableAccessTranslator extends VariableAccessTranslator implements CachedAccessTranslator {
-        @Nullable
-        private final TemporaryVariable cachedReceiver;
-
+    private static class CachedVariableAccessTranslator extends VariableAccessTranslator implements AccessTranslator {
         public CachedVariableAccessTranslator(
                 @NotNull TranslationContext context,
                 @NotNull  ResolvedCall<? extends VariableDescriptor> resolvedCall,
-                @Nullable TemporaryVariable cachedReceiver
+                @Nullable JsExpression cachedReceiver
         ) {
-            super(context, resolvedCall, cachedReceiver == null ? null : cachedReceiver.reference());
-            this.cachedReceiver = cachedReceiver;
+            super(context, resolvedCall, cachedReceiver);
         }
 
         @NotNull
         @Override
-        public List<TemporaryVariable> declaredTemporaries() {
-            return cachedReceiver == null ? Collections.<TemporaryVariable>emptyList() : Collections.singletonList(cachedReceiver);
-        }
-
-        @NotNull
-        @Override
-        public CachedAccessTranslator getCached() {
+        public AccessTranslator getCached() {
             return this;
         }
     }
-
 }

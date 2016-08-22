@@ -19,19 +19,15 @@ package org.jetbrains.kotlin.js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsLocalNameReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
-public final class ReferenceAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public final class ReferenceAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     @NotNull
     /*package*/ static ReferenceAccessTranslator newInstance(@NotNull KtSimpleNameExpression expression,
@@ -63,13 +59,7 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
 
     @NotNull
     @Override
-    public CachedAccessTranslator getCached() {
+    public AccessTranslator getCached() {
         return this;
-    }
-
-    @NotNull
-    @Override
-    public List<TemporaryVariable> declaredTemporaries() {
-        return Collections.emptyList();
     }
 }

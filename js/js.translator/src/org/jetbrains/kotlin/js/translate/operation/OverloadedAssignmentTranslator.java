@@ -22,13 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
-    private boolean forceOrderOfEvaluation;
-
     @NotNull
     public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context) {
@@ -49,22 +48,22 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
         if (isVariableReassignment) {
             return reassignment();
         }
-        return overloadedMethodInvocation();
+        return overloadedMethodInvocation(createAccessTranslator(expression.getLeft(), false));
     }
 
     @NotNull
     private JsExpression reassignment() {
-        JsExpression newValue = overloadedMethodInvocation();
-        return createAccessTranslator(expression.getLeft(), forceOrderOfEvaluation).translateAsSet(newValue);
+        AccessTranslator accessTranslator = createAccessTranslator(expression.getLeft(), false).getCached();
+        JsExpression newValue = overloadedMethodInvocation(accessTranslator);
+        return accessTranslator.translateAsSet(newValue);
     }
 
     @NotNull
-    private JsExpression overloadedMethodInvocation() {
+    private JsExpression overloadedMethodInvocation(AccessTranslator accessTranslator) {
         JsBlock innerBlock = new JsBlock();
         TranslationContext innerContext = context().innerBlock(innerBlock);
-        JsExpression oldValue = createAccessTranslator(expression.getLeft(), false).translateAsGet();
+        JsExpression oldValue = accessTranslator.translateAsGet();
         JsExpression result = CallTranslator.translate(innerContext, resolvedCall, oldValue);
-        forceOrderOfEvaluation = !innerBlock.isEmpty();
         context().addStatementsToCurrentBlockFrom(innerBlock);
         return result;
     }
