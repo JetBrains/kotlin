@@ -1,18 +1,7 @@
-import Exceptions.InactiveCarException
-import car.client.Client
 import io.netty.bootstrap.ServerBootstrap
-import io.netty.buffer.Unpooled
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
-import io.netty.handler.codec.http.*
-import objects.Car
-import java.io.ByteArrayOutputStream
-import java.util.*
 import kotlin.concurrent.thread
-
-/**
- * Created by user on 7/6/16.
- */
 
 val timeDeltaToDrop = 600000//time in ms. if car is inactive more than this time, server drop session with car
 val carServerPort: Int = 7925
