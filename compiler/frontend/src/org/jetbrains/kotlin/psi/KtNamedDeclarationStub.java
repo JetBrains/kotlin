@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -117,7 +118,14 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             }
         }
 
-        return super.getUseScope();
+        SearchScope scope = super.getUseScope();
+
+        KtClassOrObject classOrObject = KtPsiUtilKt.getContainingClassOrObject(this);
+        if (classOrObject != null) {
+            scope = scope.intersectWith(classOrObject.getUseScope());
+        }
+
+        return scope;
     }
 
     @Nullable
