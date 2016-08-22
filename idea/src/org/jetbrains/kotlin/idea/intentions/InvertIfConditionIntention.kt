@@ -113,14 +113,21 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
                         val last = afterIfInBlock.last()
                         // build new then branch from statements after if (we will add exit statement if necessary later)
                         //TODO: no block if single?
-                        val newThenRange = PsiChildRange(first, last).trimWhiteSpaces()
+                        val newThenRange = if (isEmptyReturn(lastThenStatement) && isEmptyReturn(lastStatementInBlock)) {
+                            PsiChildRange(first, lastStatementInBlock.prevSibling).trimWhiteSpaces()
+                        }
+                        else {
+                            PsiChildRange(first, last).trimWhiteSpaces()
+                        }
                         val newIf = factory.createExpressionByPattern("if ($0) { $1 }", newCondition, newThenRange) as KtIfExpression
 
                         // remove statements after if as they are moving under if
                         block.deleteChildRange(first, last)
 
-                        if (lastThenStatement is KtReturnExpression && lastThenStatement.returnedExpression == null) {
-                            lastThenStatement.delete()
+                        if (isEmptyReturn(lastThenStatement)) {
+                            if (block.parent is KtDeclarationWithBody && block.parent !is KtFunctionLiteral) {
+                                lastThenStatement.delete()
+                            }
                         }
                         val updatedIf = copyThenBranchAfter(ifExpression)
 
@@ -147,6 +154,9 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         val newIf = factory.createExpressionByPattern("if ($0) $1", newCondition, exitStatement)
         return updatedIf.replace(newIf) as KtIfExpression
     }
+
+    private fun isEmptyReturn(statement: KtExpression) =
+            statement is KtReturnExpression && statement.returnedExpression == null && statement.labeledExpression == null
 
     private fun copyThenBranchAfter(ifExpression: KtIfExpression): KtIfExpression {
         val factory = KtPsiFactory(ifExpression)
