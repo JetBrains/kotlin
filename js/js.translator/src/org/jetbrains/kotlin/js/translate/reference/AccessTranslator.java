@@ -32,5 +32,5 @@ public interface AccessTranslator {
 
     //TODO: remove that method
     @NotNull
-    CachedAccessTranslator getCached();
+    AccessTranslator getCached();
 }
