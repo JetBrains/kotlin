@@ -27,9 +27,11 @@ interface IrBodyGenerator : IrGenerator {
     val scope: Scope
 }
 
-abstract class IrChildBodyGeneratorBase<out T : IrBodyGenerator>(val parentGenerator: T) : IrBodyGenerator {
+abstract class IrChildBodyGeneratorBase<out T : IrBodyGenerator>(
+        val parentGenerator: T
+) : IrBodyGenerator {
     override val context: GeneratorContext get() = parentGenerator.context
-    override val scope: Scope get() = parentGenerator.scope
+    override val scope: Scope = Scope(parentGenerator.scope)
 }
 
 fun IrBodyGenerator.toExpectedType(irExpression: IrExpression, expectedType: KotlinType?): IrExpression {
@@ -41,9 +43,13 @@ fun IrBodyGenerator.toExpectedType(irExpression: IrExpression, expectedType: Kot
     val valueType = irExpression.type ?: throw AssertionError("expectedType != null, valueType == null: $this")
 
     if (valueType.isNullabilityFlexible() && !expectedType.isMarkedNullable) {
-        return IrUnaryOperatorImpl(irExpression.startOffset, irExpression.endOffset, IrOperator.IMPLICIT_NOTNULL,
-                                   context.irBuiltIns.implicitNotNull,
-                                   irExpression)
+        return block(irExpression, IrOperator.IMPLICIT_NOTNULL) {
+            add(scope.introduceTemporary(irExpression))
+            result(ifThenElse(expectedType,
+                              equalsNull(scope.valueOf(irExpression)!!),
+                              op0(context.irBuiltIns.throwNpe),
+                              scope.valueOf(irExpression)!!))
+        }
     }
 
     if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
@@ -59,3 +65,4 @@ fun StatementGenerator.generateExpressionWithExpectedType(ktExpression: KtExpres
 
 fun IrBodyGenerator.toExpectedTypeOrNull(irExpression: IrExpression?, expectedType: KotlinType?): IrExpression? =
         irExpression?.let { toExpectedType(it, expectedType) }
+

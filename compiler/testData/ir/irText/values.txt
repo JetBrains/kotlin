@@ -3,7 +3,7 @@ IrFile /values.kt
   DUMMY A
   IrProperty public val a: kotlin.Int = 0 getter=null setter=null
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='0'
+      CONST Int type=kotlin.Int value='0'
   DUMMY Z
   IrFunction public fun test1(): Enum
     IrExpressionBody

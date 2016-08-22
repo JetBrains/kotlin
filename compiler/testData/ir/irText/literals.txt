@@ -1,0 +1,20 @@
+IrFile /literals.kt
+  IrProperty public val test1: kotlin.Int = 1 getter=null setter=null
+    IrExpressionBody
+      CONST Int type=kotlin.Int value='1'
+  IrProperty public val test2: kotlin.Int = -1 getter=null setter=null
+    IrExpressionBody
+      CALL .unaryMinus type=kotlin.Int operator=UMINUS
+        $this: CONST Int type=kotlin.Int value='1'
+  IrProperty public val test3: kotlin.Boolean = true getter=null setter=null
+    IrExpressionBody
+      CONST Boolean type=kotlin.Boolean value='true'
+  IrProperty public val test4: kotlin.Boolean = false getter=null setter=null
+    IrExpressionBody
+      CONST Boolean type=kotlin.Boolean value='false'
+  IrProperty public val test5: kotlin.String = "abc" getter=null setter=null
+    IrExpressionBody
+      CONST String type=kotlin.String value='abc'
+  IrProperty public val test6: kotlin.Nothing? = null getter=null setter=null
+    IrExpressionBody
+      CONST Null type=kotlin.Nothing? value='null'

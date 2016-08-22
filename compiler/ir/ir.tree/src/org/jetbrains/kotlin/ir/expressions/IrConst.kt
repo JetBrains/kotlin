@@ -20,24 +20,24 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrConst<out T> : IrExpression {
-    val kind: IrLiteralKind<T>
+    val kind: IrConstKind<T>
     val value: T
 }
 
-sealed class IrLiteralKind<out T>(val asString: kotlin.String)  {
+sealed class IrConstKind<out T>(val asString: kotlin.String)  {
     @Suppress("UNCHECKED_CAST")
     fun valueOf(aConst: IrConst<*>) =
             (aConst as IrConst<T>).value
 
-    object Null : IrLiteralKind<Nothing?>("Null")
-    object Boolean : IrLiteralKind<kotlin.Boolean>("Boolean")
-    object Byte : IrLiteralKind<kotlin.Byte>("Byte")
-    object Short : IrLiteralKind<kotlin.Short>("Short")
-    object Int : IrLiteralKind<kotlin.Int>("Int")
-    object Long : IrLiteralKind<kotlin.Long>("Long")
-    object String : IrLiteralKind<kotlin.String>("String")
-    object Float : IrLiteralKind<kotlin.Float>("Float")
-    object Double : IrLiteralKind<kotlin.Double>("Double")
+    object Null : IrConstKind<Nothing?>("Null")
+    object Boolean : IrConstKind<kotlin.Boolean>("Boolean")
+    object Byte : IrConstKind<kotlin.Byte>("Byte")
+    object Short : IrConstKind<kotlin.Short>("Short")
+    object Int : IrConstKind<kotlin.Int>("Int")
+    object Long : IrConstKind<kotlin.Long>("Long")
+    object String : IrConstKind<kotlin.String>("String")
+    object Float : IrConstKind<kotlin.Float>("Float")
+    object Double : IrConstKind<kotlin.Double>("Double")
 
     override fun toString() = asString
 }
@@ -46,7 +46,7 @@ class IrConstImpl<out T> (
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        override val kind: IrLiteralKind<T>,
+        override val kind: IrConstKind<T>,
         override val value: T
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrConst<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -54,16 +54,16 @@ class IrConstImpl<out T> (
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: KotlinType, value: String): IrConstImpl<String> =
-                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.String, value)
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
 
         fun int(startOffset: Int, endOffset: Int, type: KotlinType, value: Int): IrConstImpl<Int> =
-                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Int, value)
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, value)
 
         fun constNull(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Nothing?> =
-                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Null, null)
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Null, null)
 
         fun boolean(startOffset: Int, endOffset: Int, type: KotlinType, value: Boolean): IrConstImpl<Boolean> =
-                IrConstImpl(startOffset, endOffset, type, IrLiteralKind.Boolean, value)
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
 
         fun constTrue(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Boolean> =
                 boolean(startOffset, endOffset, type, true)

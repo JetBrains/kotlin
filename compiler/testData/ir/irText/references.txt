@@ -1,7 +1,7 @@
 IrFile /references.kt
   IrProperty public val ok: kotlin.String = "OK" getter=null setter=null
     IrExpressionBody
-      LITERAL String type=kotlin.String value='OK'
+      CONST String type=kotlin.String value='OK'
   IrProperty public val ok2: kotlin.String = "OK" getter=null setter=null
     IrExpressionBody
       CALL .<get-ok> type=kotlin.String operator=GET_PROPERTY
@@ -10,7 +10,7 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL String type=kotlin.String value='OK'
+          CONST String type=kotlin.String value='OK'
   IrFunction public fun test1(): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -25,7 +25,7 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         VAR val x: kotlin.String = "OK"
-          LITERAL String type=kotlin.String value='OK'
+          CONST String type=kotlin.String value='OK'
         RETURN type=<no-type>
           GET_VAR x type=kotlin.String operator=null
   IrFunction public fun test4(): kotlin.String
@@ -38,7 +38,7 @@ IrFile /references.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL String type=kotlin.String value='OK'
+          CONST String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null

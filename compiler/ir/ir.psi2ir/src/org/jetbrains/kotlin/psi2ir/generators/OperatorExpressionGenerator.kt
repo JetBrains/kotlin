@@ -25,27 +25,36 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
+import org.jetbrains.kotlin.psi2ir.generators.operators.*
 import org.jetbrains.kotlin.psi2ir.generators.values.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import java.lang.AssertionError
 
 
-class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(statementGenerator) {
+
+class OperatorExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
     fun generatePrefixExpression(expression: KtPrefixExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
-        val irOperator = getIrPrefixOperator(ktOperator)
+        val irOperator = getPrefixOperator(ktOperator)
 
         return when (irOperator) {
-            null -> createDummyExpression(expression, ktOperator.toString())
-            in PREFIX_INCREMENT_DECREMENT_OPERATORS -> generatePrefixIncrementDecrementOperator(expression, irOperator)
+            null -> throw AssertionError("Unexpected prefix operator: $ktOperator")
+            in INCREMENT_DECREMENT_OPERATORS -> generatePrefixIncrementDecrementOperator(expression, irOperator)
+            in OPERATORS_DESUGARED_TO_CALLS -> generatePrefixOperatorAsCall(expression, irOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
     }
 
     fun generatePostfixExpression(expression: KtPostfixExpression): IrExpression {
-        TODO("not implemented")
+        val ktOperator = expression.operationReference.getReferencedNameElementType()
+        val irOperator = getPostfixOperator(ktOperator)
+
+        return when (irOperator) {
+            null -> throw AssertionError("Unexpected postfix operator: $ktOperator")
+            in INCREMENT_DECREMENT_OPERATORS -> generatePostfixIncrementDecrementOperator(expression, irOperator)
+            else -> createDummyExpression(expression, ktOperator.toString())
+        }
     }
 
     fun generateCastExpression(expression: KtBinaryExpressionWithTypeRHS): IrExpression {
@@ -78,17 +87,17 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : IrCh
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
         if (ktOperator == KtTokens.IDENTIFIER) {
-            return generateBinaryOperatorWithConventionalCall(expression, null)
+            return generateBinaryOperatorAsCall(expression, null)
         }
 
-        val irOperator = getIrBinaryOperator(ktOperator)
+        val irOperator = getInfixOperator(ktOperator)
 
         return when (irOperator) {
-            null -> createDummyExpression(expression, ktOperator.toString())
+            null -> throw AssertionError("Unexpected infix operator: $ktOperator")
             IrOperator.EQ -> generateAssignment(expression)
             IrOperator.ELVIS -> generateElvis(expression)
             in AUGMENTED_ASSIGNMENTS -> generateAugmentedAssignment(expression, irOperator)
-            in BINARY_OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorWithConventionalCall(expression, irOperator)
+            in OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorAsCall(expression, irOperator)
             in COMPARISON_OPERATORS -> generateComparisonOperator(expression, irOperator)
             in EQUALITY_OPERATORS -> generateEqualityOperator(expression, irOperator)
             in IDENTITY_OPERATORS -> generateIdentityOperator(expression, irOperator)
@@ -99,21 +108,22 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : IrCh
     }
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
-        // TODO desugar '?:' to 'if'
         val specialCallForElvis = getResolvedCall(expression)!!
         val returnType = specialCallForElvis.resultingDescriptor.returnType!!
-        val irArgument0 = toExpectedType(parentGenerator.generateExpression(expression.left!!), returnType.makeNullable())
-        val irArgument1 = toExpectedType(parentGenerator.generateExpression(expression.right!!), returnType)
-//        return IrBinaryOperatorImpl(
-//                expression.startOffset, expression.endOffset, returnType,
-//                IrOperator.ELVIS, null, irArgument0, irArgument1
-//        )
-        return createDummyExpression(expression, "elvis")
+        val irArgument0 = parentGenerator.generateExpressionWithExpectedType(expression.left!!, returnType.makeNullable())
+        val irArgument1 = parentGenerator.generateExpressionWithExpectedType(expression.right!!, returnType)
+        return block(expression, IrOperator.ELVIS) {
+            add(scope.introduceTemporary(irArgument0))
+            result(ifThenElse(returnType,
+                              equalsNull(scope.valueOf(irArgument0)!!),
+                              irArgument1,
+                              scope.valueOf(irArgument0)!!))
+        }
     }
 
     private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
-        val irArgument0 = toExpectedType(parentGenerator.generateExpression(expression.left!!), context.builtIns.booleanType)
-        val irArgument1 = toExpectedType(parentGenerator.generateExpression(expression.right!!), context.builtIns.booleanType)
+        val irArgument0 = parentGenerator.generateExpressionWithExpectedType(expression.left!!, context.builtIns.booleanType)
+        val irArgument1 = parentGenerator.generateExpressionWithExpectedType(expression.right!!, context.builtIns.booleanType)
         return when (irOperator) {
             IrOperator.OROR ->
                 IrIfThenElseImpl.oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
@@ -198,7 +208,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : IrCh
     }
 
 
-    private fun generateBinaryOperatorWithConventionalCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
         return CallGenerator(parentGenerator).generateCall(expression, operatorCall, irOperator)
     }
@@ -220,6 +230,35 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : IrCh
         irBlock.addStatement(irLValue.store(irTmp.defaultLoad()))
         irBlock.addStatement(irTmp.defaultLoad())
         return irBlock
+    }
+
+    private fun generatePostfixIncrementDecrementOperator(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
+        val ktBaseExpression = expression.baseExpression!!
+        val irLValue = generateLValue(ktBaseExpression, irOperator)
+        val operatorCall = getResolvedCall(expression)!!
+
+        if (irLValue is IrLValueWithAugmentedStore) {
+            return irLValue.postfixAugmentedStore(operatorCall, irOperator)
+        }
+
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
+        val opCallGenerator = CallGenerator(parentGenerator)
+
+        val irTmp = parentGenerator.scope.createTemporaryVariable(irLValue.load())
+        irBlock.addStatement(irTmp)
+
+        opCallGenerator.scope.putValue(ktBaseExpression, VariableLValue(this, irTmp, irOperator))
+        val irOpCall = opCallGenerator.generateCall(expression, operatorCall, irOperator)
+        irBlock.addStatement(irLValue.store(irOpCall))
+
+        irBlock.addStatement(irTmp.defaultLoad())
+
+        return irBlock
+    }
+
+    private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
+        val resolvedCall = getResolvedCall(expression)!!
+        return CallGenerator(parentGenerator).generateCall(expression, resolvedCall, irOperator)
     }
 
     private fun generateAugmentedAssignment(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {

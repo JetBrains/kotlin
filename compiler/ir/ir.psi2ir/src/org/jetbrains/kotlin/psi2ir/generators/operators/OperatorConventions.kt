@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.psi2ir.generators.operators
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.ir.expressions.IrOperator
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
-fun getIrBinaryOperator(ktOperator: IElementType): IrOperator? =
+fun getInfixOperator(ktOperator: IElementType): IrOperator? =
         when (ktOperator) {
             KtTokens.EQ -> IrOperator.EQ
             KtTokens.PLUSEQ -> IrOperator.PLUSEQ
@@ -52,16 +52,17 @@ fun getIrBinaryOperator(ktOperator: IElementType): IrOperator? =
             else -> null
         }
 
-fun getIrPrefixOperator(ktOperator: IElementType): IrOperator? =
+fun getPrefixOperator(ktOperator: IElementType): IrOperator? =
         when (ktOperator) {
             KtTokens.PLUSPLUS -> IrOperator.PREFIX_INCR
             KtTokens.MINUSMINUS -> IrOperator.PREFIX_DECR
             KtTokens.EXCL -> IrOperator.EXCL
             KtTokens.MINUS -> IrOperator.UMINUS
+            KtTokens.PLUS -> IrOperator.UPLUS
             else -> null
         }
 
-fun getIrPostfixOperator(ktOperator: IElementType): IrOperator? =
+fun getPostfixOperator(ktOperator: IElementType): IrOperator? =
         when (ktOperator) {
             KtTokens.PLUSPLUS -> IrOperator.POSTFIX_INCR
             KtTokens.MINUSMINUS -> IrOperator.POSTFIX_DECR
@@ -81,8 +82,9 @@ fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
 val AUGMENTED_ASSIGNMENTS =
         setOf(IrOperator.PLUSEQ, IrOperator.MINUSEQ, IrOperator.MULTEQ, IrOperator.DIVEQ, IrOperator.PERCEQ)
 
-val BINARY_OPERATORS_DESUGARED_TO_CALLS =
-        setOf(IrOperator.PLUS, IrOperator.MINUS, IrOperator.MUL, IrOperator.DIV, IrOperator.PERC, IrOperator.RANGE)
+val OPERATORS_DESUGARED_TO_CALLS =
+        setOf(IrOperator.PLUS, IrOperator.MINUS, IrOperator.MUL, IrOperator.DIV, IrOperator.PERC, IrOperator.RANGE,
+              IrOperator.EXCL, IrOperator.UMINUS, IrOperator.UPLUS)
 
 val COMPARISON_OPERATORS =
         setOf(IrOperator.LT, IrOperator.LTEQ, IrOperator.GT, IrOperator.GTEQ)
@@ -99,8 +101,8 @@ val IN_OPERATORS =
 val BINARY_BOOLEAN_OPERATORS =
         setOf(IrOperator.ANDAND, IrOperator.OROR)
 
-val PREFIX_INCREMENT_DECREMENT_OPERATORS =
-        setOf(IrOperator.PREFIX_INCR, IrOperator.PREFIX_DECR)
+val INCREMENT_DECREMENT_OPERATORS =
+        setOf(IrOperator.PREFIX_INCR, IrOperator.PREFIX_DECR, IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR)
 
 val POSTFIX_INCREMENT_DECREMENT_OPERATORS =
         setOf(IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR)

@@ -4,7 +4,7 @@ IrFile /extensionPropertyGetterCall.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL String type=kotlin.String value='OK'
+          CONST String type=kotlin.String value='OK'
   IrFunction public fun kotlin.String.test5(): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null

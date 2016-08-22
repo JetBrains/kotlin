@@ -43,78 +43,82 @@ class Scope private constructor(val scopeOwner: DeclarationDescriptor, val paren
     private var lastTemporaryIndex: Int = parent?.lastTemporaryIndex ?: 0
     private fun nextTemporaryIndex(): Int = parent?.nextTemporaryIndex() ?: lastTemporaryIndex++
 
-    private val expressionValues = HashMap<KtExpression, IrValue>()
-    private val receiverValues = HashMap<ReceiverValue, IrValue>()
-    private val valueArgumentValues = HashMap<ValueParameterDescriptor, IrValue>()
+    private val values = HashMap<Any, IrValue>()
+
+    private inline fun introduceTemporary(irExpression: IrExpression, nameHint: String?, register: (IrValue) -> Unit): IrVariable? {
+        val rematerializable = createRematerializableValue(irExpression)
+        return if (rematerializable != null) {
+            register(rematerializable)
+            null
+        }
+        else {
+            createTemporary(irExpression, nameHint, register)
+        }
+    }
+
+    private inline fun createTemporary(irExpression: IrExpression, nameHint: String?, register: (IrValue) -> Unit): IrVariable {
+        val irTemporary = createTemporaryVariable(irExpression, nameHint)
+        register(VariableLValue(generator, irTemporary))
+        return irTemporary
+    }
 
     private fun createDescriptorForTemporaryVariable(type: KotlinType, nameHint: String? = null): IrTemporaryVariableDescriptor =
-            IrTemporaryVariableDescriptorImpl(
-                    scopeOwner,
-                    Name.identifier(
-                            if (nameHint != null)
-                                "tmp${nextTemporaryIndex()}_$nameHint"
-                            else
-                                "tmp${nextTemporaryIndex()}"
-                    ),
-                    type)
+            IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier(getNameForTemporary(nameHint)), type)
+
+    private fun getNameForTemporary(nameHint: String?): String {
+        val index = nextTemporaryIndex()
+        return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
+    }
 
     fun createTemporaryVariable(irExpression: IrExpression, nameHint: String? = null): IrVariable =
-            IrVariableImpl(irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
-                           createDescriptorForTemporaryVariable(
-                                   irExpression.type ?: throw AssertionError("No type for $irExpression"),
-                                   nameHint
-                           ),
-                           irExpression)
+            IrVariableImpl(
+                    irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+                    createDescriptorForTemporaryVariable(
+                            irExpression.type ?: throw AssertionError("No type for $irExpression"),
+                            nameHint
+                    ),
+                    irExpression
+            )
 
-    fun introduceTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String? = null): IrVariable? {
-        val rematerializable = createRematerializableValue(irExpression)
-        if (rematerializable != null) {
-            putValue(ktExpression, rematerializable)
-            return null
-        }
+    fun introduceTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String? = null): IrVariable? =
+            introduceTemporary(irExpression, nameHint) { putValue(ktExpression, it) }
 
-        return createTemporary(ktExpression, irExpression, nameHint)
-    }
+    fun introduceTemporary(valueParameterDescriptor: ValueParameterDescriptor, irExpression: IrExpression): IrVariable? =
+            introduceTemporary(irExpression, valueParameterDescriptor.name.asString()) { putValue(valueParameterDescriptor, it) }
 
-    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String?): IrVariable {
-        val irTmpVar = createTemporaryVariable(irExpression, nameHint)
-        putValue(ktExpression, VariableLValue(generator, irTmpVar))
-        return irTmpVar
-    }
+    fun introduceTemporary(irExpression: IrExpression): IrVariable? =
+            introduceTemporary(irExpression, null) { putValue(irExpression, it) }
 
-    fun createTemporary(irExpression: IrExpression, nameHint: String?): IrVariable =
-            createTemporaryVariable(irExpression, nameHint)
-
-    fun introduceTemporary(valueParameterDescriptor: ValueParameterDescriptor, irExpression: IrExpression): IrVariable? {
-        val rematerializable = createRematerializableValue(irExpression)
-        if (rematerializable != null) {
-            putValue(valueParameterDescriptor, rematerializable)
-            return null
-        }
-
-        val irTmpVar = createTemporaryVariable(irExpression, valueParameterDescriptor.name.asString())
-        putValue(valueParameterDescriptor, VariableLValue(generator, irTmpVar))
-        return irTmpVar
-    }
+    fun createTemporary(ktExpression: KtExpression, irExpression: IrExpression, nameHint: String?): IrVariable =
+            createTemporary(irExpression, nameHint) { putValue(ktExpression, it) }
 
     fun putValue(ktExpression: KtExpression, irValue: IrValue) {
-        expressionValues[ktExpression] = irValue
+        values[ktExpression] = irValue
     }
 
     fun putValue(receiver: ReceiverValue, irValue: IrValue) {
-        receiverValues[receiver] = irValue
+        values[receiver] = irValue
     }
 
     fun putValue(parameter: ValueParameterDescriptor, irValue: IrValue) {
-        valueArgumentValues[parameter] = irValue
+        values[parameter] = irValue
+    }
+
+    fun putValue(irExpression: IrExpression, irValue: IrValue) {
+        values[irExpression] = irValue
     }
 
     fun valueOf(ktExpression: KtExpression): IrExpression? =
-            expressionValues[ktExpression]?.load() ?: parent?.valueOf(ktExpression)
+            values[ktExpression]?.load() ?: parent?.valueOf(ktExpression)
+
     fun valueOf(receiver: ReceiverValue): IrExpression? =
-            receiverValues[receiver]?.load() ?: parent?.valueOf(receiver)
+            values[receiver]?.load() ?: parent?.valueOf(receiver)
+
     fun valueOf(parameter: ValueParameterDescriptor): IrExpression? =
-            valueArgumentValues[parameter]?.load() ?: parent?.valueOf(parameter)
+            values[parameter]?.load() ?: parent?.valueOf(parameter)
+
+    fun valueOf(irExpression: IrExpression): IrExpression? =
+            values[irExpression]?.load() ?: parent?.valueOf(irExpression)
 
     companion object {
         fun rootScope(scopeOwner: DeclarationDescriptor, generator: IrBodyGenerator): Scope {

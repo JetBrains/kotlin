@@ -27,7 +27,7 @@ interface IrValue {
     val type: KotlinType?
 }
 
-class IrSingleExpressionValue(val irExpression: IrExpression) : IrValue {
+class SingleExpressionValue(val irExpression: IrExpression) : IrValue {
     init {
         irExpression.assertDetached()
     }
@@ -50,6 +50,7 @@ interface IrLValue : IrValue {
 }
 
 interface IrLValueWithAugmentedStore : IrLValue {
+    fun postfixAugmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator): IrExpression
     fun prefixAugmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator): IrExpression
     fun augmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator, irOperatorArgument: IrExpression): IrExpression
 }

@@ -161,6 +161,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("literals.kt")
+    public void testLiterals() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/literals.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("primitiveComparisons.kt")
     public void testPrimitiveComparisons() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/primitiveComparisons.kt");
@@ -176,6 +182,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
     @TestMetadata("simpleOperators.kt")
     public void testSimpleOperators() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/simpleOperators.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleUnaryOperators.kt")
+    public void testSimpleUnaryOperators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/simpleUnaryOperators.kt");
         doTest(fileName);
     }
 

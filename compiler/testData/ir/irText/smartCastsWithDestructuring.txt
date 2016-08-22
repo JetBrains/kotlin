@@ -5,12 +5,12 @@ IrFile /smartCastsWithDestructuring.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='1'
+          CONST Int type=kotlin.Int value='1'
   IrFunction public operator fun I2.component2(): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL String type=kotlin.String value=''
+          CONST String type=kotlin.String value=''
   IrFunction public fun test(/*0*/ x: I1): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null

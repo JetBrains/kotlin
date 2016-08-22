@@ -1,16 +1,16 @@
 IrFile /incrementDecrement.kt
   IrProperty public var p: kotlin.Int getter=null setter=null
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='0'
+      CONST Int type=kotlin.Int value='0'
   IrProperty public val arr: kotlin.IntArray getter=null setter=null
     IrExpressionBody
       CALL .intArrayOf type=kotlin.IntArray operator=null
         elements: DUMMY vararg type=kotlin.Int
-  IrFunction public fun testVar(): kotlin.Unit
+  IrFunction public fun testVarPrefix(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         VAR var x: kotlin.Int
-          LITERAL Int type=kotlin.Int value='0'
+          CONST Int type=kotlin.Int value='0'
         VAR val x1: kotlin.Int
           BLOCK type=kotlin.Int hasResult=true operator=PREFIX_INCR
             VAR val tmp0: kotlin.Int
@@ -27,7 +27,28 @@ IrFile /incrementDecrement.kt
             SET_VAR x type=<no-type> operator=PREFIX_DECR
               GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
-  IrFunction public fun testProp(): kotlin.Unit
+  IrFunction public fun testVarPostfix(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        VAR var x: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        VAR val x1: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp0: kotlin.Int
+              GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
+            SET_VAR x type=<no-type> operator=POSTFIX_INCR
+              CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=POSTFIX_INCR
+            GET_VAR tmp0 type=kotlin.Int operator=null
+        VAR val x2: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_DECR
+            VAR val tmp1: kotlin.Int
+              GET_VAR x type=kotlin.Int operator=POSTFIX_DECR
+            SET_VAR x type=<no-type> operator=POSTFIX_DECR
+              CALL .dec type=kotlin.Int operator=POSTFIX_DECR
+                $this: GET_VAR tmp1 type=kotlin.Int operator=POSTFIX_DECR
+            GET_VAR tmp1 type=kotlin.Int operator=null
+  IrFunction public fun testPropPrefix(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         VAR val p1: kotlin.Int
@@ -46,7 +67,26 @@ IrFile /incrementDecrement.kt
             CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
               <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
-  IrFunction public fun testArray(): kotlin.Unit
+  IrFunction public fun testPropPostfix(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        VAR val p1: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp0: kotlin.Int
+              CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
+              <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=POSTFIX_INCR
+            GET_VAR tmp0 type=kotlin.Int operator=null
+        VAR val p2: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=PREFIX_DECR
+            VAR val tmp1: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
+              <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
+  IrFunction public fun testArrayPrefix(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         VAR val a1: kotlin.Int
@@ -57,10 +97,10 @@ IrFile /incrementDecrement.kt
               CALL .inc type=kotlin.Int operator=PREFIX_INCR
                 $this: CALL .get type=kotlin.Int operator=PREFIX_INCR
                   $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-                  index: LITERAL Int type=kotlin.Int value='0'
+                  index: CONST Int type=kotlin.Int value='0'
             CALL .set type=kotlin.Unit operator=PREFIX_INCR
               $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-              index: LITERAL Int type=kotlin.Int value='0'
+              index: CONST Int type=kotlin.Int value='0'
               value: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
         VAR val a2: kotlin.Int
@@ -71,9 +111,40 @@ IrFile /incrementDecrement.kt
               CALL .dec type=kotlin.Int operator=PREFIX_DECR
                 $this: CALL .get type=kotlin.Int operator=PREFIX_DECR
                   $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
-                  index: LITERAL Int type=kotlin.Int value='0'
+                  index: CONST Int type=kotlin.Int value='0'
             CALL .set type=kotlin.Unit operator=PREFIX_DECR
               $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
-              index: LITERAL Int type=kotlin.Int value='0'
+              index: CONST Int type=kotlin.Int value='0'
               value: GET_VAR tmp3 type=kotlin.Int operator=null
+            GET_VAR tmp3 type=kotlin.Int operator=null
+  IrFunction public fun testArrayPostfix(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        VAR val a1: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp0_array: kotlin.IntArray
+              CALL .<get-arr> type=kotlin.IntArray operator=GET_PROPERTY
+            VAR val tmp1: kotlin.Int
+              CALL .get type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+                index: CONST Int type=kotlin.Int value='0'
+            CALL .set type=kotlin.Unit operator=POSTFIX_INCR
+              $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+              index: CONST Int type=kotlin.Int value='0'
+              value: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
+        VAR val a2: kotlin.Int
+          BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_DECR
+            VAR val tmp2_array: kotlin.IntArray
+              CALL .<get-arr> type=kotlin.IntArray operator=GET_PROPERTY
+            VAR val tmp3: kotlin.Int
+              CALL .get type=kotlin.Int operator=POSTFIX_DECR
+                $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
+                index: CONST Int type=kotlin.Int value='0'
+            CALL .set type=kotlin.Unit operator=POSTFIX_DECR
+              $this: GET_VAR tmp2_array type=kotlin.IntArray operator=null
+              index: CONST Int type=kotlin.Int value='0'
+              value: CALL .dec type=kotlin.Int operator=POSTFIX_DECR
+                $this: GET_VAR tmp3 type=kotlin.Int operator=null
             GET_VAR tmp3 type=kotlin.Int operator=null

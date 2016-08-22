@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 class StatementGenerator(
         override val context: GeneratorContext,
@@ -145,6 +147,8 @@ class StatementGenerator(
                 IrConstImpl.int(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is NullValue ->
                 IrConstImpl.constNull(expression.startOffset, expression.endOffset, constantType)
+            is BooleanValue ->
+                IrConstImpl.boolean(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
@@ -171,7 +175,7 @@ class StatementGenerator(
             IrConstImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
-        val resolvedCall = getResolvedCall(expression)!!
+        val resolvedCall = getResolvedCall(expression) ?: throw AssertionError("No resolved call for ${expression.text}")
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             TODO("Unexpected VariableAsFunctionResolvedCall")
@@ -271,8 +275,8 @@ class StatementGenerator(
         var irElseBranch: IrExpression? = null
 
         whenBranches@while (true) {
-            val irCondition = generateExpressionWithExpectedType(expression.condition!!, context.builtIns.booleanType)
-            val irThenBranch = generateExpressionWithExpectedType(expression.then!!, resultType)
+            val irCondition = generateExpressionWithExpectedType(ktLastIf.condition!!, context.builtIns.booleanType)
+            val irThenBranch = generateExpressionWithExpectedType(ktLastIf.then!!, resultType)
             irBranches.add(Pair(irCondition, irThenBranch))
 
             val ktElse = ktLastIf.`else`?.deparenthesize()

@@ -6,22 +6,22 @@ IrFile /callWithReorderedArguments.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='1'
+          CONST Int type=kotlin.Int value='1'
   IrFunction public fun noReorder2(): kotlin.Int
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='2'
+          CONST Int type=kotlin.Int value='2'
   IrFunction public fun reordered1(): kotlin.Int
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='1'
+          CONST Int type=kotlin.Int value='1'
   IrFunction public fun reordered2(): kotlin.Int
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='2'
+          CONST Int type=kotlin.Int value='2'
   IrFunction public fun test(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -41,4 +41,4 @@ IrFile /callWithReorderedArguments.kt
             CALL .reordered2 type=kotlin.Int operator=null
           CALL .foo type=kotlin.Unit operator=null
             a: GET_VAR tmp2_a type=kotlin.Int operator=null
-            b: LITERAL Int type=kotlin.Int value='1'
+            b: CONST Int type=kotlin.Int value='1'

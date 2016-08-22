@@ -44,7 +44,7 @@ IrFile /smartCasts.kt
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
-            LITERAL String type=kotlin.String value=''
+            CONST String type=kotlin.String value=''
         RETURN type=<no-type>
           CALL .overloaded type=kotlin.String operator=null
             s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
@@ -56,7 +56,7 @@ IrFile /smartCasts.kt
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
-            LITERAL String type=kotlin.String value=''
+            CONST String type=kotlin.String value=''
         RETURN type=<no-type>
           TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null

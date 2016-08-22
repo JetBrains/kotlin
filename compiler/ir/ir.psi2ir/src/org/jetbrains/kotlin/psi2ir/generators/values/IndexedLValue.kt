@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
 class IndexedLValue(
-        var statementGenerator: StatementGenerator,
+        val statementGenerator: StatementGenerator,
         val ktArrayAccessExpression: KtArrayAccessExpression,
         val irOperator: IrOperator?,
         val irArray: IrExpression,
@@ -55,7 +55,7 @@ class IndexedLValue(
         setupCallGeneratorContext(callGenerator.scope)
 
         if (irArgument != null) {
-            callGenerator.scope.putValue(call.resultingDescriptor.valueParameters.last(), IrSingleExpressionValue(irArgument))
+            callGenerator.scope.putValue(call.resultingDescriptor.valueParameters.last(), SingleExpressionValue(irArgument))
         }
 
         return callGenerator.generateCall(ktArrayAccessExpression, call, irOperator)
@@ -70,16 +70,40 @@ class IndexedLValue(
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, true, irOperator)
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
-        callGenerator.scope.putValue(operatorCallReceiver!!,
-                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
-        val irTmp = statementGenerator.scope.createTemporaryVariable(
-                callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator))
+        val irGetCall = callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)
+        callGenerator.scope.putValue(operatorCallReceiver!!, SingleExpressionValue(irGetCall))
+
+        val irOpCall = callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)
+        val irTmp = callGenerator.scope.createTemporaryVariable(irOpCall)
         irBlock.addStatement(irTmp)
 
-        callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               VariableLValue(statementGenerator, irTmp))
+        callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(), VariableLValue(callGenerator, irTmp))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
+
+        irBlock.addStatement(irTmp.defaultLoad())
+
+        return irBlock
+    }
+
+    override fun postfixAugmentedStore(operatorCall: ResolvedCall<*>, irOperator: IrOperator): IrExpression {
+        if (indexedGetCall == null) throw AssertionError("Indexed LValue has no 'get' call: ${ktArrayAccessExpression.text}")
+        if (indexedSetCall == null) throw AssertionError("Indexed LValue has no 'set' call: ${ktArrayAccessExpression.text}")
+
+        val callGenerator = CallGenerator(statementGenerator)
+
+        val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, true, irOperator)
+
+        val irGetCall = callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)
+        val irTmp = callGenerator.scope.createTemporaryVariable(irGetCall)
+        irBlock.addStatement(irTmp)
+
+        val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
+        callGenerator.scope.putValue(operatorCallReceiver!!, VariableLValue(callGenerator, irTmp))
+        val irOpCall = callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)
+        callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(), SingleExpressionValue(irOpCall))
+        val irSetCall = callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator)
+        irBlock.addStatement(irSetCall)
 
         irBlock.addStatement(irTmp.defaultLoad())
 
@@ -94,14 +118,14 @@ class IndexedLValue(
 
         val irBlock = createDesugaredBlockWithTemporaries(indexedSetCall, callGenerator, false, irOperator)
 
-        callGenerator.scope.putValue(operatorCall.resultingDescriptor.valueParameters[0], IrSingleExpressionValue(irOperatorArgument))
+        callGenerator.scope.putValue(operatorCall.resultingDescriptor.valueParameters[0], SingleExpressionValue(irOperatorArgument))
 
         val operatorCallReceiver = operatorCall.extensionReceiver ?: operatorCall.dispatchReceiver
         callGenerator.scope.putValue(operatorCallReceiver!!,
-                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
+                                     SingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, indexedGetCall, irOperator)))
 
         callGenerator.scope.putValue(indexedSetCall.resultingDescriptor.valueParameters.last(),
-                               IrSingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)))
+                                     SingleExpressionValue(callGenerator.generateCall(ktArrayAccessExpression, operatorCall, irOperator)))
 
         irBlock.addStatement(callGenerator.generateCall(ktArrayAccessExpression, indexedSetCall, irOperator))
 
@@ -135,10 +159,10 @@ class IndexedLValue(
     }
 
     private fun setupCallGeneratorContext(scope: Scope) {
-        scope.putValue(ktArrayAccessExpression.arrayExpression!!, IrSingleExpressionValue(irArray))
+        scope.putValue(ktArrayAccessExpression.arrayExpression!!, SingleExpressionValue(irArray))
 
         for ((ktIndexExpression, irIndexValue) in indexValues) {
-            scope.putValue(ktIndexExpression, IrSingleExpressionValue(irIndexValue))
+            scope.putValue(ktIndexExpression, SingleExpressionValue(irIndexValue))
         }
     }
 }

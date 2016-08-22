@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class CallGenerator(statementGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(statementGenerator) {
+class CallGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
     fun generateCall(
             ktElement: KtElement,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
@@ -94,15 +94,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : IrChildBodyGenerat
             generateCallWithArgumentReordering(irCall, ktElement, resolvedCall, returnType)
         }
         else {
-            irCall.apply {
-                val valueArguments = resolvedCall.valueArgumentsByIndex
-                for (index in valueArguments!!.indices) {
-                    val valueArgument = valueArguments[index]
-                    val valueParameter = descriptor.valueParameters[index]
-                    val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
-                    irCall.putArgument(index, irArgument)
-                }
+            val valueArguments = resolvedCall.valueArgumentsByIndex
+            for (index in valueArguments!!.indices) {
+                val valueArgument = valueArguments[index]
+                val valueParameter = descriptor.valueParameters[index]
+                val irArgument = generateValueArgument(valueArgument, valueParameter) ?: continue
+                irCall.putArgument(index, irArgument)
             }
+            irCall
         }
     }
 

@@ -22,6 +22,7 @@ interface IrOperator {
     }
     
     object UMINUS : IrOperatorImpl("UMINUS")
+    object UPLUS : IrOperatorImpl("UPLUS")
     object EXCL : IrOperatorImpl("EXCL")
     object EXCLEXCL : IrOperatorImpl("EXCLEXCL")
 

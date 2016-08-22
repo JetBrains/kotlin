@@ -61,7 +61,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
-            "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
+            "CONST ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
             "BLOCK type=${expression.renderType()} hasResult=${expression.hasResult} operator=${expression.operator}"

@@ -9,7 +9,7 @@ IrFile /arrayAugmentedAssignment1.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL Int type=kotlin.Int value='42'
+          CONST Int type=kotlin.Int value='42'
   IrFunction public fun testVariable(): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -18,23 +18,23 @@ IrFile /arrayAugmentedAssignment1.kt
         BLOCK type=kotlin.Unit hasResult=false operator=PLUSEQ
           CALL .set type=kotlin.Unit operator=PLUSEQ
             $this: GET_VAR x type=kotlin.IntArray operator=null
-            index: LITERAL Int type=kotlin.Int value='0'
+            index: CONST Int type=kotlin.Int value='0'
             value: CALL .plus type=kotlin.Int operator=PLUSEQ
               $this: CALL .get type=kotlin.Int operator=PLUSEQ
                 $this: GET_VAR x type=kotlin.IntArray operator=null
-                index: LITERAL Int type=kotlin.Int value='0'
-              other: LITERAL Int type=kotlin.Int value='1'
+                index: CONST Int type=kotlin.Int value='0'
+              other: CONST Int type=kotlin.Int value='1'
         BLOCK type=kotlin.Unit hasResult=false operator=MULTEQ
           VAR val tmp0_array: kotlin.IntArray
             CALL .foo type=kotlin.IntArray operator=null
           CALL .set type=kotlin.Unit operator=MULTEQ
             $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-            index: LITERAL Int type=kotlin.Int value='0'
+            index: CONST Int type=kotlin.Int value='0'
             value: CALL .times type=kotlin.Int operator=MULTEQ
               $this: CALL .get type=kotlin.Int operator=MULTEQ
                 $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-                index: LITERAL Int type=kotlin.Int value='0'
-              other: LITERAL Int type=kotlin.Int value='2'
+                index: CONST Int type=kotlin.Int value='0'
+              other: CONST Int type=kotlin.Int value='2'
         BLOCK type=kotlin.Unit hasResult=false operator=MINUSEQ
           VAR val tmp1_array: kotlin.IntArray
             CALL .foo type=kotlin.IntArray operator=null
@@ -47,4 +47,4 @@ IrFile /arrayAugmentedAssignment1.kt
               $this: CALL .get type=kotlin.Int operator=MINUSEQ
                 $this: GET_VAR tmp1_array type=kotlin.IntArray operator=null
                 index: GET_VAR tmp2_index0 type=kotlin.Int operator=null
-              other: LITERAL Int type=kotlin.Int value='1'
+              other: CONST Int type=kotlin.Int value='1'

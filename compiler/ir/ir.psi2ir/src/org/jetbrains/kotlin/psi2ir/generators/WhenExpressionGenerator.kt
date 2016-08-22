@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
+import org.jetbrains.kotlin.psi2ir.generators.operators.getInfixOperator
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.*
+import java.lang.AssertionError
 
-class WhenExpressionGenerator(statementGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(statementGenerator) {
+class WhenExpressionGenerator(parentGenerator: StatementGenerator) : IrChildBodyGeneratorBase<StatementGenerator>(parentGenerator) {
     fun generate(expression: KtWhenExpression): IrExpression {
         val conditionsGenerator = CallGenerator(parentGenerator)
 
@@ -114,7 +115,7 @@ class WhenExpressionGenerator(statementGenerator: StatementGenerator) : IrChildB
 
     private fun generateInRangeCondition(conditionsGenerator: CallGenerator, ktCondition: KtWhenConditionInRange): IrExpression {
         val inResolvedCall = getResolvedCall(ktCondition.operationReference)!!
-        val inOperator = getIrBinaryOperator(ktCondition.operationReference.getReferencedNameElementType())
+        val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
         val irInCall = conditionsGenerator.generateCall(ktCondition, inResolvedCall, inOperator)
         return when (inOperator) {
             IrOperator.IN -> irInCall

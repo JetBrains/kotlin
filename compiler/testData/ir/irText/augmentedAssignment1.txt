@@ -1,52 +1,52 @@
 IrFile /augmentedAssignment1.kt
   IrProperty public var p: kotlin.Int getter=null setter=null
     IrExpressionBody
-      LITERAL Int type=kotlin.Int value='0'
+      CONST Int type=kotlin.Int value='0'
   IrFunction public fun testVariable(): kotlin.Unit
     IrExpressionBody
       BLOCK type=kotlin.Int hasResult=true operator=null
         VAR var x: kotlin.Int
-          LITERAL Int type=kotlin.Int value='0'
+          CONST Int type=kotlin.Int value='0'
         SET_VAR x type=<no-type> operator=PLUSEQ
           CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: GET_VAR x type=kotlin.Int operator=PLUSEQ
-            other: LITERAL Int type=kotlin.Int value='1'
+            other: CONST Int type=kotlin.Int value='1'
         SET_VAR x type=<no-type> operator=MINUSEQ
           CALL .minus type=kotlin.Int operator=MINUSEQ
             $this: GET_VAR x type=kotlin.Int operator=MINUSEQ
-            other: LITERAL Int type=kotlin.Int value='2'
+            other: CONST Int type=kotlin.Int value='2'
         SET_VAR x type=<no-type> operator=MULTEQ
           CALL .times type=kotlin.Int operator=MULTEQ
             $this: GET_VAR x type=kotlin.Int operator=MULTEQ
-            other: LITERAL Int type=kotlin.Int value='3'
+            other: CONST Int type=kotlin.Int value='3'
         SET_VAR x type=<no-type> operator=DIVEQ
           CALL .div type=kotlin.Int operator=DIVEQ
             $this: GET_VAR x type=kotlin.Int operator=DIVEQ
-            other: LITERAL Int type=kotlin.Int value='4'
+            other: CONST Int type=kotlin.Int value='4'
         SET_VAR x type=<no-type> operator=PERCEQ
           CALL .mod type=kotlin.Int operator=PERCEQ
             $this: GET_VAR x type=kotlin.Int operator=PERCEQ
-            other: LITERAL Int type=kotlin.Int value='5'
+            other: CONST Int type=kotlin.Int value='5'
   IrFunction public fun testProperty(): kotlin.Unit
     IrExpressionBody
       BLOCK type=kotlin.Int hasResult=true operator=null
         CALL .<set-p> type=kotlin.Unit operator=PLUSEQ
           <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-            other: LITERAL Int type=kotlin.Int value='1'
+            other: CONST Int type=kotlin.Int value='1'
         CALL .<set-p> type=kotlin.Unit operator=MINUSEQ
           <set-?>: CALL .minus type=kotlin.Int operator=MINUSEQ
             $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-            other: LITERAL Int type=kotlin.Int value='2'
+            other: CONST Int type=kotlin.Int value='2'
         CALL .<set-p> type=kotlin.Unit operator=MULTEQ
           <set-?>: CALL .times type=kotlin.Int operator=MULTEQ
             $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-            other: LITERAL Int type=kotlin.Int value='3'
+            other: CONST Int type=kotlin.Int value='3'
         CALL .<set-p> type=kotlin.Unit operator=DIVEQ
           <set-?>: CALL .div type=kotlin.Int operator=DIVEQ
             $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-            other: LITERAL Int type=kotlin.Int value='4'
+            other: CONST Int type=kotlin.Int value='4'
         CALL .<set-p> type=kotlin.Unit operator=PERCEQ
           <set-?>: CALL .mod type=kotlin.Int operator=PERCEQ
             $this: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-            other: LITERAL Int type=kotlin.Int value='5'
+            other: CONST Int type=kotlin.Int value='5'

@@ -3,4 +3,4 @@ IrFile /boxOk.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          LITERAL String type=kotlin.String value='OK'
+          CONST String type=kotlin.String value='OK'

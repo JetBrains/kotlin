@@ -8,9 +8,9 @@ IrFile /arrayAugmentedAssignment2.kt
           CALL .set type=kotlin.Unit operator=PLUSEQ
             $this: $RECEIVER of: test type=IB
             $receiver: GET_VAR a type=IA operator=null
-            index: LITERAL String type=kotlin.String value=''
+            index: CONST String type=kotlin.String value=''
             value: CALL .plus type=kotlin.Int operator=PLUSEQ
               $this: CALL .get type=kotlin.Int operator=PLUSEQ
                 $this: GET_VAR a type=IA operator=null
-                index: LITERAL String type=kotlin.String value=''
-              other: LITERAL Int type=kotlin.Int value='42'
+                index: CONST String type=kotlin.String value=''
+              other: CONST Int type=kotlin.Int value='42'
