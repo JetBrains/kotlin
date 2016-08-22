@@ -141,7 +141,7 @@ data class VariableInitialization(
         val initializer: KtExpression)
 
 //TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
-fun KtExpression?.isVariableInitializedBeforeLoop(
+fun KtExpression?.findVariableInitializationBeforeLoop(
         loop: KtForExpression,
         checkNoOtherUsagesInLoop: Boolean
 ): VariableInitialization? {

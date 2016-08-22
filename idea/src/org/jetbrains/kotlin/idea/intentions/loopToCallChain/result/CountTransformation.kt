@@ -74,7 +74,7 @@ class CountTransformation(
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
             val operand = state.statements.singleOrNull()?.isPlusPlusOf() ?: return null
-            val initialization = operand.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
+            val initialization = operand.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
 
             if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
 
