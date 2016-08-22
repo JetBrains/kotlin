@@ -101,7 +101,7 @@ class MaxOrMinTransformation(
             val assignment = state.statements.singleOrNull() as? KtBinaryExpression ?: return null
             if (assignment.operationToken != KtTokens.EQ) return null
 
-            val variableInitialization = assignment.left.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
+            val variableInitialization = assignment.left.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
                                          ?: return null
 
             return matchMathMaxOrMin(variableInitialization, assignment, state, isMax = true)
@@ -159,7 +159,7 @@ class MaxOrMinTransformation(
                 return null
             }
 
-            val variableInitialization = otherHand.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = false)
+            val variableInitialization = otherHand.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = false)
                                          ?: return null
 
             if (!assignmentTarget.isVariableReference(variableInitialization.variable)) return null

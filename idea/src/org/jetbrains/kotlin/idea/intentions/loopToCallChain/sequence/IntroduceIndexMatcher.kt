@@ -55,7 +55,7 @@ object IntroduceIndexMatcher : TransformationMatcher {
     private fun checkIndexCandidate(incrementExpression: KtUnaryExpression, state: MatchingState): TransformationMatch.Sequence? {
         val operand = incrementExpression.isPlusPlusOf() ?: return null
 
-        val variableInitialization = operand.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
+        val variableInitialization = operand.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
                                      ?: return null
         if ((variableInitialization.initializer as? KtConstantExpression)?.text != "0") return null
 

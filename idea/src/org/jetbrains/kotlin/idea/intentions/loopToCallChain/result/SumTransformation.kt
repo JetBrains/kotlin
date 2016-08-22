@@ -61,7 +61,7 @@ abstract class SumTransformationBase(
             val statement = state.statements.singleOrNull() as? KtBinaryExpression ?: return null
             if (statement.operationToken != KtTokens.PLUSEQ) return null
 
-            val variableInitialization = statement.left.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true)
+            val variableInitialization = statement.left.findVariableInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true)
                                          ?: return null
 
             val value = statement.right ?: return null
