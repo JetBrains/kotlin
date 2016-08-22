@@ -6,6 +6,6 @@ interface Controller {
 
     fun executeRoute(route: RouteRequest, callBack: (ByteArray) -> Unit)
 
-    fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit)
+    fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit)
 
 }

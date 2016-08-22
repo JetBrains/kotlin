@@ -16,7 +16,7 @@ class ControllerToUsb : Controller {
         mcTransport.sendProtoBuf(route)
     }
 
-    override fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit) {
+    override fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit) {
         //todo make after connect sensor to car
     }
 }

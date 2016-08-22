@@ -5,6 +5,8 @@ import RouteRequest
 import RouteResponse
 import control.Controller
 import encodeProtoBuf
+import room.Data
+import room.Line
 import setTimeout
 import kotlin.Pair
 
@@ -42,11 +44,58 @@ class ControllerEmulator : Controller {
         executeCommand(commands, 0, callBack)
     }
 
-    override fun executeRequestSensorData(degrees: IntArray, callBack: (ByteArray) -> Unit) {
-
-//        ByteArray
+    override fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit) {
 
         //calculate distance
+
+        val xSensor0 = CarState.instance.x
+        val ySensor0 = CarState.instance.y
+        val carAngle = CarState.instance.angle
+
+        val distances = arrayListOf<Int>()
+        angles.forEach { angle ->
+            val angleFinal = ((carAngle - angle) % 360)
+            //tg can be equal to inf if angle = 90. it vertical line and x1 = x0, y1 = y0+[any number. eg 1]
+
+            val xSensor1: Int
+            val ySensor1: Double
+            if (angleFinal == 90) {
+                xSensor1 = xSensor0
+                ySensor1 = (ySensor0 + 1).toDouble()
+            } else {
+                xSensor1 = xSensor0 + 1
+                ySensor1 = xSensor1 * Math.tan(angleFinal.toDouble())
+            }
+            val sensorLine = Line(ySensor0 - ySensor1, xSensor1.toDouble() - xSensor0, xSensor0 * ySensor1 - ySensor0 * xSensor1)
+
+            for (wall in Data.walls) {
+                val wallLine = wall.line
+                val coef = sensorLine.A * wallLine.B - sensorLine.B * wallLine.A
+                if (Math.abs(coef) < 0.01) {
+                    //line is parallel.
+                    continue
+                }
+                //sensor line is A1
+                //x=(B1*C2 - B2*C1)/coef   y = (C1A2-C2A1)/coef
+                val xIntersection = (sensorLine.B * wallLine.C - wallLine.B * sensorLine.C) / coef
+                val yIntersection = (sensorLine.C * wallLine.A - wallLine.C * sensorLine.A) / coef
+
+                //filter by direction
+                if (angle > 90 && angle < 270) {
+                    //negative direction for OX
+                    if (xIntersection >= xSensor0) {
+                        continue
+                    }
+                } else {
+                    if (xIntersection < xSensor0) {
+                        continue
+                    }
+                }
+
+            }
+
+        }
+
     }
 
     fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
@@ -72,7 +121,6 @@ class ControllerEmulator : Controller {
             executeCommand(commands, currentCommandIdx + 1, callBack)
         }, currentCommand.second)
     }
-
 
 
 }
