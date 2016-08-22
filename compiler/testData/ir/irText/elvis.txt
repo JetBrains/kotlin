@@ -12,12 +12,12 @@ IrFile /elvis.kt
   IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        IF type=kotlin.Unit operator=IF
+        WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR b type=kotlin.Any? operator=null
           then: RETURN type=<no-type>
             LITERAL String type=kotlin.String value=''
-        IF type=kotlin.Unit operator=IF
+        WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR a type=kotlin.Any? operator=null
           then: RETURN type=<no-type>

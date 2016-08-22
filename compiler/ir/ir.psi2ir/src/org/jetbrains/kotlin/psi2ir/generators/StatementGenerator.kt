@@ -39,11 +39,12 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.SmartList
 
 class StatementGenerator(
         override val context: GeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val declarationBodyGenerator: ExoressionBodyGenerator,
+        val expressionBodyGenerator: ExpressionBodyGenerator,
         override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(), IrBodyGenerator {
     fun generateExpression(ktExpression: KtExpression): IrExpression =
@@ -264,11 +265,42 @@ class StatementGenerator(
 
     override fun visitIfExpression(expression: KtIfExpression, data: Nothing?): IrStatement {
         val resultType = getInferredTypeWithSmartcasts(expression)
-        val irCondition = toExpectedType(expression.condition!!.genExpr(), context.builtIns.booleanType)
-        val irThenBranch = toExpectedType(expression.then!!.genExpr(), resultType)
-        val irElseBranch = toExpectedTypeOrNull(expression.`else`?.genExpr(), resultType)
-        return IrIfThenElseImpl(expression.startOffset, expression.endOffset, resultType,
-                                irCondition, irThenBranch, irElseBranch, IrOperator.IF)
+
+        var ktLastIf: KtIfExpression = expression
+        val irBranches = SmartList<Pair<IrExpression, IrExpression>>()
+        var irElseBranch: IrExpression? = null
+
+        whenBranches@while (true) {
+            val irCondition = generateExpressionWithExpectedType(expression.condition!!, context.builtIns.booleanType)
+            val irThenBranch = generateExpressionWithExpectedType(expression.then!!, resultType)
+            irBranches.add(Pair(irCondition, irThenBranch))
+
+            val ktElse = ktLastIf.`else`?.deparenthesize()
+            when (ktElse) {
+                null -> break@whenBranches
+                is KtIfExpression -> ktLastIf = ktElse
+                is KtExpression -> {
+                    irElseBranch = generateExpressionWithExpectedType(ktElse, resultType)
+                    break@whenBranches
+                }
+                else -> throw AssertionError("Unexpected else expression: ${ktElse.text}")
+            }
+        }
+
+        return if (irBranches.size == 1) {
+            val (irCondition, irThenBranch) = irBranches[0]
+            IrIfThenElseImpl(expression.startOffset, expression.endOffset, resultType,
+                             irCondition, irThenBranch, irElseBranch, IrOperator.IF)
+        }
+        else {
+            val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrOperator.WHEN)
+            for ((irCondition, irThenBranch) in irBranches) {
+                irWhen.addBranch(irCondition, irThenBranch)
+            }
+            irWhen.elseBranch = irElseBranch
+            irWhen
+        }
+
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression, data: Nothing?): IrStatement =

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrIfThenElse
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -54,10 +54,12 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitIf(expression: IrIfThenElse, data: String) {
+    override fun visitWhen(expression: IrWhen, data: String) {
         expression.dumpLabeledElementWith(data) {
-            expression.condition.accept(this, "if")
-            expression.thenBranch.accept(this, "then")
+            for (i in 0 .. expression.branchesCount - 1) {
+                expression.getNthCondition(i)!!.accept(this, "if")
+                expression.getNthResult(i)!!.accept(this, "then")
+            }
             expression.elseBranch?.accept(this, "else")
         }
     }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class ExoressionBodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): IrBodyGenerator {
+class ExpressionBodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): IrBodyGenerator {
     override val scope = Scope.rootScope(scopeOwner, this)
 
     fun generateFunctionBody(ktBody: KtExpression): IrExpression {

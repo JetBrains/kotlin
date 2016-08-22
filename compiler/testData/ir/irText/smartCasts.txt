@@ -18,7 +18,7 @@ IrFile /smartCasts.kt
   IrFunction public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        IF type=kotlin.Unit operator=IF
+        WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
@@ -40,7 +40,7 @@ IrFile /smartCasts.kt
   IrFunction public fun test2(/*0*/ x: kotlin.Any): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        IF type=kotlin.Unit operator=IF
+        WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>
@@ -52,7 +52,7 @@ IrFile /smartCasts.kt
   IrFunction public fun test3(/*0*/ x: kotlin.Any): kotlin.String
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        IF type=kotlin.Unit operator=IF
+        WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
           then: RETURN type=<no-type>

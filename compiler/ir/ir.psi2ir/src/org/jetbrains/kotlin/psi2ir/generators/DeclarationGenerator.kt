@@ -123,9 +123,9 @@ class DeclarationGenerator(override val context: GeneratorContext) : IrGenerator
 
     private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
             IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
-                                 ExoressionBodyGenerator(scopeOwner, context).generateFunctionBody(ktBody))
+                                 ExpressionBodyGenerator(scopeOwner, context).generateFunctionBody(ktBody))
 
     private fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
             IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
-                                 ExoressionBodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody))
+                                 ExpressionBodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody))
 }

@@ -56,7 +56,7 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitTypeOperator(expression: IrTypeOperatorCall, data: D) = visitExpression(expression, data)
 
-    fun visitIf(expression: IrIfThenElse, data: D) = visitExpression(expression, data)
+    fun visitWhen(expression: IrWhen, data: D) = visitExpression(expression, data)
     fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
     fun visitWhileLoop(loop: IrWhileLoop, data: D) = visitLoop(loop, data)
     fun visitDoWhileLoop(loop: IrDoWhileLoop, data: D) = visitLoop(loop, data)

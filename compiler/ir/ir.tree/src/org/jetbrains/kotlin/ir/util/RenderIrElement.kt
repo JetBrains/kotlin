@@ -97,8 +97,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
             "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
-    override fun visitIf(expression: IrIfThenElse, data: Nothing?): String =
-            "IF type=${expression.type.render()} operator=${expression.operator}"
+    override fun visitWhen(expression: IrWhen, data: Nothing?): String =
+            "WHEN type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"
