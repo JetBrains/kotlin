@@ -27,10 +27,11 @@ val debugMemoryUrl = "/debug/memory"
 fun main(args: Array<String>) {
 
     val carServer = getCarServerThread()
-//    val webServer = getWebServerThread()
+    val webServer = getWebServerThread()
     val carsDestroy = getCarsDestroyThread()
     carServer.start()
     carsDestroy.start()
+    webServer.start()
 
     //CL user interface
     DebugClInterface().run()
