@@ -1,0 +1,14 @@
+inline fun call(f: () -> Unit) = f()
+
+fun bar() {}
+
+fun foo(arg: Boolean) {
+    call {
+        if (arg) {
+            bar()
+            return
+        }
+        return@call
+    }
+    bar()
+}
