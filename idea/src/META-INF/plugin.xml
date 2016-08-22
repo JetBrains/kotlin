@@ -622,6 +622,7 @@
 
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
+    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleScriptAdvertiser"/>
 
     <attachSourcesProvider implementation="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaActionProvider"/>
 
