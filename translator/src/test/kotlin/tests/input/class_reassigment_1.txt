@@ -1,1 +1,0 @@
-class_reassigment_1() == 567

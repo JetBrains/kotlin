@@ -26,6 +26,7 @@ import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.rmi.UnexpectedException
 import java.util.*
+import javax.lang.model.type.ReferenceType
 import kotlin.comparisons.compareBy
 
 
@@ -647,6 +648,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 return oldValue
             }
             KtTokens.EXCLEXCL -> {
+                codeBuilder.addComment("start EXCLEXCL")
                 val nullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
                 val notNullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
                 val nullCheck = codeBuilder.nullCheck(firstOp)
@@ -656,6 +658,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 codeBuilder.addExceptionCall("KotlinNullPointerException")
                 codeBuilder.addUnconditionalJump(notNullLabel)
                 codeBuilder.markWithLabel(notNullLabel)
+                codeBuilder.addComment("end EXCLEXCL")
                 return firstOp
             }
             else -> throw UnsupportedOperationException()
@@ -1040,27 +1043,22 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val expectedExpressionType = LLVMMapStandardType(variable.type, state)
         val assignExpressionType = assignExpression?.type
 
+        val isPrimitive = LLVMMapStandardType(variable.type, state) !is LLVMReferred
         when (assignExpression) {
             null,
             is LLVMVariable -> {
-                if (variable.type.isPrimitiveNumberType() || (assignExpression == null)) {
-                    val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType, LLVMRegisterScope(), pointer =
-                    if (variable.type.isPrimitiveNumberType()) 0 else 1)
-                    codeBuilder.allocStackVar(allocVar)
-                    allocVar.pointer++
-                    allocVar.kotlinName = identifier
+                val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType, LLVMRegisterScope(), pointer =
+                if (isPrimitive) 0 else 1)
+                codeBuilder.allocStackVar(allocVar)
+                allocVar.pointer++
+                allocVar.kotlinName = identifier
 
-                    variableManager.addVariable(identifier, allocVar, scopeDepth)
-                    if (assignExpression != null) {
-                        if (assignExpression.type is LLVMReferenceType) {
-                            throw UnexpectedException(element.text)
-                        }
-
-                        addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
+                variableManager.addVariable(identifier, allocVar, scopeDepth)
+                if (assignExpression != null) {
+                    if ((isPrimitive) && (assignExpression.type is LLVMReferenceType)) {
+                        throw UnexpectedException(element.text)
                     }
-                } else {
-                    (assignExpression as LLVMVariable).kotlinName = identifier
-                    variableManager.addVariable(identifier, assignExpression, scopeDepth)
+                    addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
                 }
             }
             is LLVMConstant -> {
