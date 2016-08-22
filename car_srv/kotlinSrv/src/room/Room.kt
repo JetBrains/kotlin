@@ -1,6 +1,6 @@
 package room
 
-object Data {
+object Room {
 
     val upLine = Line(0.0, 1.0, -300.0)
     val leftLine = Line(1.0, 0.0, 150.0)
