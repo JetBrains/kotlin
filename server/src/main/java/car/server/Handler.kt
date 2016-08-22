@@ -15,9 +15,6 @@ import io.netty.handler.codec.http.*
 import objects.Environment
 import routeDoneUrl
 
-/**
- * Created by user on 7/6/16.
- */
 class Handler : SimpleChannelInboundHandler<Any>() {
 
     var url: String = ""

@@ -9,6 +9,8 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
+import sonarUrl
+import java.util.*
 
 /**
  * Created by user on 7/8/16.
@@ -46,6 +48,11 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
                 println("heapDynamicTail ${response.heapDynamicTail}")
                 println("heapDynamicTotalBytes ${response.heapDynamicTotalBytes}")
                 println("heapStaticTail ${response.heapStaticTail}")
+            }
+            sonarUrl -> {
+                val sonarDistances = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
+                sonarDistances.mergeFrom(CodedInputStream(contentBytes))
+                println("distances from sonar: ${Arrays.toString(sonarDistances.distances)}")
             }
             else -> {
 

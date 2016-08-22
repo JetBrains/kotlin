@@ -12,6 +12,7 @@ val routeDoneUrl = "/routeDone"
 val setRouteUrl = "/route"
 val connectUrl = "/connect"
 val debugMemoryUrl = "/debug/memory"
+val sonarUrl = "/sonar"
 
 fun main(args: Array<String>) {
 

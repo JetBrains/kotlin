@@ -15,11 +15,13 @@ class DebugClInterface {
                 "cars - get list of connected cars\n" +
                 "route [car_id] - setting a route for car with car id.\n" +
                 "refloc - refresh all car locations\n" +
+                "sonar [car_id] - get sonar data\n" +
                 "dbinfo [car_id] [type] - refresh all car locations\n." +
                 "type is string name of value or int value. available values: MEMORYSTATS - 0"
         //        "stop - exit from this interface and stop all servers\n"//todo sometimes server not completed. some threads dont stop
         println(helpString)
         val routeRegex = Regex("route [0-9]{1,10}")
+        val sonarRegex = Regex("sonar [0-9]{1,10}")
         val environment = objects.Environment.instance
         while (true) {
             val readedString = readLine()
@@ -77,7 +79,7 @@ class DebugClInterface {
                                 distance = wayPointData[0].toInt()
                                 angle = wayPointData[1].toInt()
                             } catch (e: NumberFormatException) {
-                                println("error in convertion angle or distance to int. try again")
+                                println("error in converting angle or distance to int. try again")
                                 continue
                             } catch (e: IndexOutOfBoundsException) {
                                 println("format error, u must print two number separated by spaces. Try again")
@@ -109,6 +111,57 @@ class DebugClInterface {
                 })
             } else if (readedString.equals("stop")) {
                 break
+            } else if (sonarRegex.matches(readedString)) {
+                val id: Int
+                try {
+                    id = readedString.split(" ")[1].toInt()
+                } catch (e: NumberFormatException) {
+                    e.printStackTrace()
+                    println("error in converting id to int type")
+                    println(helpString)
+                    continue
+                }
+                val car: Car? =
+                        synchronized(environment, {
+                            environment.map.get(id)
+                        })
+                if (car == null) {
+                    println("car with id=$id not found")
+                    continue
+                }
+                println("print angles, after printing all angles print done")
+                val angles = arrayListOf<Int>()
+                while (true) {
+                    val command = readLine()!!
+                    if (command.equals("done", true)) {
+                        val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray())
+                        val requestObject = sonarBuilder.build()
+                        val requestBytes = ByteArray(requestObject.getSizeNoTag())
+                        requestObject.writeTo(CodedOutputStream(requestBytes))
+                        val request = getDefaultHttpRequest(car.host, sonarUrl, requestBytes)
+                        try {
+                            Client.sendRequest(request, car.host, car.port, id)
+                        } catch (e: InactiveCarException) {
+                            synchronized(environment, {
+                                environment.map.remove(id)
+                            })
+                        }
+                        break
+                    } else {
+                        try {
+                            val angle = command.toInt()
+                            if (angle < 0 || angle > 180) {
+                                println("incorrect angle $angle. angle must be in [0,180] and div on 4")
+                                continue
+                            }
+                            angles.add(angle)
+                        } catch (e: NumberFormatException) {
+                            println("error in converting angle to int. try again")
+                            continue
+                        }
+                    }
+                }
+
             } else if (readedString.contains("dbinfo")) {
                 val params = readedString.split(" ")
                 if (!params[0].equals("dbinfo")) {
