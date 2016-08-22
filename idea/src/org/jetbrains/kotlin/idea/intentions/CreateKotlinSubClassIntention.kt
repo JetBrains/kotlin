@@ -24,19 +24,21 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.JavaDirectoryService
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.ClassHeaderBuilder
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifiersChecker
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 
 private const val IMPL_SUFFIX = "Impl"
 
@@ -131,7 +133,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             val dlg = chooseSubclassToCreate(baseClass, baseName) ?: return
             val targetName = dlg.className
             val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
-            val builder = buildClassHeader(targetName, baseClass, "${baseClass.fqName!!.asString()}")
+            val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
             file.add(factory.createClass(builder.asString()))
             val klass = file.getChildOfType<KtClass>()!!
             ShortenReferences.DEFAULT.process(klass)

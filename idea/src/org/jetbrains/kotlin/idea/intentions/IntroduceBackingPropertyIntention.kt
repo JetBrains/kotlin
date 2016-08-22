@@ -74,7 +74,7 @@ class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(Kt
                 }
             }
 
-            property.setInitializer(null)
+            property.initializer = null
         }
 
         private fun createGetter(element: KtProperty) {

@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 class ReplaceSubstringWithTakeIntention : ReplaceSubstringIntention("Replace 'substring' call with 'take' call") {
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {

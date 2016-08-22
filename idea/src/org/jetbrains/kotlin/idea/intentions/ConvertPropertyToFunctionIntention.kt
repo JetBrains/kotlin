@@ -171,7 +171,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                     callables.forEach {
                         when (it) {
                             is KtProperty -> convertProperty(it, kotlinPsiFactory)
-                            is PsiMethod -> it.setName(newName)
+                            is PsiMethod -> it.name = newName
                         }
                     }
                 }

@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -107,16 +109,20 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
+        val dotQualified = calleeExpression.parent?.parent as? KtDotQualifiedExpression ?: return null
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
-                val prefixExpression = calleeExpression.parent?.parent?.getWrappingPrefixExpressionIfAny()
+                val resolvedCall = dotQualified.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
+                val overriddenDescriptors = resolvedCall.resultingDescriptor.findOriginalTopMostOverriddenDescriptors()
+                if (overriddenDescriptors.none { it.fqNameUnsafe.asString() == "kotlin.Any.equals" }) return null
+
+                val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
                 else KtTokens.EQEQ
             }
             OperatorNameConventions.COMPARE_TO -> {
                 // callee -> call -> DotQualified -> Binary
-                val dotQualified = calleeExpression.parent?.parent
-                val binaryParent = dotQualified?.parent as? KtBinaryExpression ?: return null
+                val binaryParent = dotQualified.parent as? KtBinaryExpression ?: return null
                 val notZero = when {
                     binaryParent.right?.text == "0" -> binaryParent.left
                     binaryParent.left?.text == "0" -> binaryParent.right
