@@ -31,5 +31,4 @@ class SetRoute : AbstractHandler {
         }
         controller.executeRoute(message, callback)
     }
-
 }

@@ -10,6 +10,7 @@ import room.Data
 import room.Line
 import setTimeout
 import kotlin.Pair
+import SonarRequest
 
 class ControllerEmulator : Controller {
 
@@ -45,8 +46,9 @@ class ControllerEmulator : Controller {
         executeCommand(commands, 0, callBack)
     }
 
-    override fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit) {
+    override fun executeRequestSensorData(sonarRequest: SonarRequest, callBack: (ByteArray) -> Unit) {
 
+        val angles = sonarRequest.angles
         val xSensor0 = CarState.instance.x
         val ySensor0 = CarState.instance.y
         val carAngle = CarState.instance.angle
@@ -103,11 +105,12 @@ class ControllerEmulator : Controller {
                     distance = currentDistance
                 }
             }
+            println("dist " + distance.toString())
             //Math.random() return double in [0,1)
             val delta = getRandomIntFrom(IntArray(5, { x -> x - 2 }))//return one of -2 -1 0 1 or 2
             distances.add(distance + delta)
         }
-        val responseMessage = SonarResponse.BuilderSonarResponse(distances.toIntArray())
+        val responseMessage = SonarResponse.BuilderSonarResponse(distances.toIntArray()).build()
         val bytesMessage = encodeProtoBuf(responseMessage)
         callBack.invoke(bytesMessage)
     }

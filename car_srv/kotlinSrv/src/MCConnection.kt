@@ -24,6 +24,12 @@ class McTransport() : MCConnectObserver<String> {
         sendBytes(encodeProtoBuf(message))
     }
 
+    fun sendProtoBuf(message: SonarRequest) {
+        val typeMessage = getProtoBufTypeMessage(TaskRequest.Type.SONAR)
+        sendProtoBufType(typeMessage)
+        sendBytes(encodeProtoBuf(message))
+    }
+
     fun sendProtoBuf(message: RouteRequest) {
         val typeMessage = getProtoBufTypeMessage(TaskRequest.Type.ROUTE)
         sendProtoBufType(typeMessage)

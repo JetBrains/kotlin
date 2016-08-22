@@ -1,4 +1,5 @@
 import control.car.ControllerToUsb
+import control.emulator.ControllerEmulator
 import net.Client
 import net.server.handlers.AbstractHandler
 import net.server.handlers.debug.Memory
@@ -21,6 +22,7 @@ fun main(args: Array<String>) {
     val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
 
     val carController = ControllerToUsb()
+
     handlers.put("/rc/control", Control())
     handlers.put("/loadBin", LoadBin())
     handlers.put("/sonar", GetSonarData(carController))

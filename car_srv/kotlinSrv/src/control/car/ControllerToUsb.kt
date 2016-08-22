@@ -3,6 +3,7 @@ package control.car
 import RouteRequest
 import control.Controller
 import mcTransport
+import SonarRequest
 
 class ControllerToUsb : Controller {
 
@@ -16,7 +17,11 @@ class ControllerToUsb : Controller {
         mcTransport.sendProtoBuf(route)
     }
 
-    override fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit) {
-        //todo make after connect sensor to car
+    override fun executeRequestSensorData(sonarRequest: SonarRequest, callBack: (ByteArray) -> Unit) {
+        println("sonar data")
+        mcTransport.setCallBack { bytes ->
+            callBack.invoke(bytes)
+        }
+        mcTransport.sendProtoBuf(sonarRequest)
     }
 }

@@ -14,7 +14,6 @@ class Config(val configFileName: String = "config.cfg") {
         }
 
         val data: String = fs.readFileSync(configFileName, "utf8")
-        println("reader $data")
         data.split("\n").forEach { line ->
             val keyValue = line.split(":")
             if (!line.equals("")) {
