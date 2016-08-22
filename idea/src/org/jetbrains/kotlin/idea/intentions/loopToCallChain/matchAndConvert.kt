@@ -246,6 +246,7 @@ private fun isExpressionTypeSupported(expression: KtExpression): Boolean {
 private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchResult): Boolean {
     val bindingContext = loop.analyze(BodyResolveMode.FULL)
 
+    // we declare these keys locally to avoid possible race-condition problems if this code is executed in 2 threads simultaneously
     val SMARTCAST_KEY = Key<KotlinType>("SMARTCAST_KEY")
     val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<KotlinType>("IMPLICIT_RECEIVER_SMARTCAST")
 
