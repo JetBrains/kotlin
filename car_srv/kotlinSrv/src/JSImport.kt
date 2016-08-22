@@ -22,7 +22,7 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
         routeBytes = ByteArray(protoSize)
         val codedOutput = CodedOutputStream(routeBytes)
         protoMessage.writeTo(codedOutput)
-    }else if (protoMessage is DebugRequest) {
+    } else if (protoMessage is DebugRequest) {
         val protoSize = protoMessage.getSizeNoTag()
         routeBytes = ByteArray(protoSize)
         val codedOutput = CodedOutputStream(routeBytes)
@@ -48,6 +48,11 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
         val codedOutput = CodedOutputStream(routeBytes)
         protoMessage.writeTo(codedOutput)
     } else if (protoMessage is RouteDoneRequest) {
+        val protoSize = protoMessage.getSizeNoTag()
+        routeBytes = ByteArray(protoSize)
+        val codedOutput = CodedOutputStream(routeBytes)
+        protoMessage.writeTo(codedOutput)
+    } else if (protoMessage is SonarResponse) {
         val protoSize = protoMessage.getSizeNoTag()
         routeBytes = ByteArray(protoSize)
         val codedOutput = CodedOutputStream(routeBytes)

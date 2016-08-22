@@ -3,6 +3,7 @@ package control.emulator
 import CarState
 import RouteRequest
 import RouteResponse
+import SonarResponse
 import control.Controller
 import encodeProtoBuf
 import room.Data
@@ -46,8 +47,6 @@ class ControllerEmulator : Controller {
 
     override fun executeRequestSensorData(angles: IntArray, callBack: (ByteArray) -> Unit) {
 
-        //calculate distance
-
         val xSensor0 = CarState.instance.x
         val ySensor0 = CarState.instance.y
         val carAngle = CarState.instance.angle
@@ -55,10 +54,9 @@ class ControllerEmulator : Controller {
         val distances = arrayListOf<Int>()
         angles.forEach { angle ->
             val angleFinal = ((carAngle - angle) % 360)
-            //tg can be equal to inf if angle = 90. it vertical line and x1 = x0, y1 = y0+[any number. eg 1]
-
             val xSensor1: Int
             val ySensor1: Double
+            //tg can be equal to inf if angle = 90. it vertical line. x1 = x0, y1 = y0+[any number. eg 1]
             if (angleFinal == 90) {
                 xSensor1 = xSensor0
                 ySensor1 = (ySensor0 + 1).toDouble()
@@ -68,6 +66,7 @@ class ControllerEmulator : Controller {
             }
             val sensorLine = Line(ySensor0 - ySensor1, xSensor1.toDouble() - xSensor0, xSensor0 * ySensor1 - ySensor0 * xSensor1)
 
+            var distance = Int.MAX_VALUE
             for (wall in Data.walls) {
                 val wallLine = wall.line
                 val coef = sensorLine.A * wallLine.B - sensorLine.B * wallLine.A
@@ -80,7 +79,8 @@ class ControllerEmulator : Controller {
                 val xIntersection = (sensorLine.B * wallLine.C - wallLine.B * sensorLine.C) / coef
                 val yIntersection = (sensorLine.C * wallLine.A - wallLine.C * sensorLine.A) / coef
 
-                //filter by direction
+
+                //filters by direction and intersection position
                 if (angle > 90 && angle < 270) {
                     //negative direction for OX
                     if (xIntersection >= xSensor0) {
@@ -91,12 +91,34 @@ class ControllerEmulator : Controller {
                         continue
                     }
                 }
-
+                if (Math.min(wall.xTo, wall.xFrom) > xIntersection
+                        || Math.max(wall.xTo, wall.xFrom) < xIntersection
+                        || Math.min(wall.yFrom, wall.yTo) > yIntersection
+                        || Math.max(wall.yFrom, wall.yTo) < yIntersection) {
+                    continue
+                }
+                val currentDistance = Math.sqrt(Math.pow(xIntersection - xSensor0, 2.0)
+                        + Math.pow(yIntersection - ySensor0, 2.0)).toInt()
+                if (currentDistance < distance) {
+                    distance = currentDistance
+                }
             }
-
+            //Math.random() return double in [0,1)
+            val delta = getRandomIntFrom(IntArray(5, { x -> x - 2 }))//return one of -2 -1 0 1 or 2
+            distances.add(distance + delta)
         }
-
+        val responseMessage = SonarResponse.BuilderSonarResponse(distances.toIntArray())
+        val bytesMessage = encodeProtoBuf(responseMessage)
+        callBack.invoke(bytesMessage)
     }
+
+    //return random int from array
+    private fun getRandomIntFrom(values: IntArray): Int {
+        val randomValue = (Math.random() * 1000).toInt()//value in [0,999]
+        val randomArrayIdx = randomValue * values.size / 1000//index in [0, values.size-1]
+        return values[randomArrayIdx]
+    }
+
 
     fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
         if (currentCommandIdx == commands.size) {
@@ -108,11 +130,13 @@ class ControllerEmulator : Controller {
         //refresh car state
         val carInstance = CarState.instance
         val commandTime = currentCommand.second
+        val delta = Math.random() * 0.2 + 0.9// delta in [0.9, 1.1)
+        val commandTimeIncludeRandom = (commandTime * delta).toInt()
         when (currentCommand.first) {
-            MoveDirection.FORWARD -> carInstance.moving((commandTime * MOVE_VELOCITY).toInt() / 1000)
-            MoveDirection.BACKWARD -> carInstance.moving(-(commandTime * MOVE_VELOCITY).toInt() / 1000)
-            MoveDirection.RIGHT -> carInstance.rotate((commandTime * ROTATION_VELOCITY).toInt() / 1000)
-            MoveDirection.LEFT -> carInstance.rotate(-(commandTime * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.FORWARD -> carInstance.moving((commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
+            MoveDirection.BACKWARD -> carInstance.moving(-(commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
+            MoveDirection.RIGHT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.LEFT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
             else -> {
             }
         }
