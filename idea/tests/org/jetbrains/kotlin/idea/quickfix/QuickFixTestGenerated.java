@@ -6928,6 +6928,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("importEnumValues.kt")
+        public void testImportEnumValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/importEnumValues.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notTriangle.kt")
         public void testNotTriangle() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/notTriangle.kt");
