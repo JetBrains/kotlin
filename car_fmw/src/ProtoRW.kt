@@ -14,7 +14,12 @@ object Reader {
         return DebugRequest.BuilderDebugRequest(DebugRequest.Type.MEMORY_STATS).parseFrom(stream).build()
     }
 
-    fun getInputStream(): CodedInputStream {
+    fun readSonar(): SonarRequest {
+        val stream = getInputStream()
+        return SonarRequest.BuilderSonarRequest(IntArray(0)).parseFrom(stream).build()
+    }
+
+    private fun getInputStream(): CodedInputStream {
         val buffer = Connection.receiveByteArray()
         return CodedInputStream(buffer)
     }
@@ -22,18 +27,24 @@ object Reader {
 
 object Writer {
     fun writeRoute(route: RouteResponse) {
-        val stream = makeOutputStream(route.getSizeNoTag())
+        val stream = getOutputStream(route.getSizeNoTag())
         route.writeTo(stream)
         Connection.sendByteArray(stream.buffer)
     }
 
     fun writeMemoryStats(stats: DebugResponseMemoryStats) {
-        val stream = makeOutputStream(stats.getSizeNoTag())
+        val stream = getOutputStream(stats.getSizeNoTag())
         stats.writeTo(stream)
         Connection.sendByteArray(stream.buffer)
     }
 
-    fun makeOutputStream(size: Int): CodedOutputStream {
+    fun writeSonar(response: SonarResponse) {
+        val stream = getOutputStream(response.getSizeNoTag())
+        response.writeTo(stream)
+        Connection.sendByteArray(stream.buffer)
+    }
+
+    private fun getOutputStream(size: Int): CodedOutputStream {
         val buffer = ByteArray(size)
         return CodedOutputStream(buffer)
     }

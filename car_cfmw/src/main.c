@@ -95,7 +95,11 @@ int main(void)
     car_conn_init();
     car_sonar_init();
 
-    sonar_prog_rotate();
-    //sonar_prog_dist_to_conn();
+    car_sonar_get_dist(0);
+	car_time_wait(3000);
+    car_sonar_get_dist(180);
+	car_time_wait(3000);
+    /* sonar_prog_rotate(); */
+    sonar_prog_dist_to_conn();
     // Also we can run usart test from here
 }

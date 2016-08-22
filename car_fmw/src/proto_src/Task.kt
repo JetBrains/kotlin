@@ -8,13 +8,15 @@ class TaskRequest private constructor (var type: TaskRequest.Type) {
   enum class Type(val id: Int) {
     DEBUG (0),
     ROUTE (1),
-    Unexpected(2);
+    SONAR (2),
+    Unexpected(3);
 
     companion object {
       fun fromIntToType (ord: Int): Type {
         return when (ord) {
           0 -> Type.DEBUG
           1 -> Type.ROUTE
+          2 -> Type.SONAR
           else -> Unexpected
         }
       }
