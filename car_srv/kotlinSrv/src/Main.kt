@@ -6,6 +6,7 @@ import net.server.handlers.debug.Memory
 import net.server.handlers.flash.LoadBin
 import net.server.handlers.main.GetLocation
 import net.server.handlers.main.GetSonarData
+import net.server.handlers.main.SetRoute
 import net.server.handlers.rc.Control
 
 val carServerPort: Int = 8888
@@ -21,11 +22,12 @@ fun main(args: Array<String>) {
 
     val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
 
-    val carController = ControllerToUsb()
+    val carController = ControllerEmulator()
 
     handlers.put("/rc/control", Control())
     handlers.put("/loadBin", LoadBin())
     handlers.put("/sonar", GetSonarData(carController))
+    handlers.put("/route", SetRoute(carController))
     handlers.put("/getLocation", GetLocation())
     handlers.put("/debug/memory", Memory())
 
