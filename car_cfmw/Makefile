@@ -5,7 +5,7 @@ CAR_FMW_OBJ=$(BIN_DIR)/car_fmw.o
 CAR_FMW_ELF=$(BIN_DIR)/car_fmw.elf
 CAR_FMW_BIN=$(BIN_DIR)/car_fmw.bin
 
-LIB_CARHW_DIR=../car_hw/
+LIB_CARHW_DIR=../car_hw
 LIB_CARHW_OBJ=$(LIB_CARHW_DIR)/bin/car_hw.o
 LIB_CARHW_LIB_DIR=$(LIB_CARHW_DIR)/src/lib/
 
@@ -44,7 +44,7 @@ CARFMW_OBJ_PREFIX=carfmw_
 $(CAR_FMW_BIN): $(CAR_FMW_ELF) $(BIN_DIR)
 	$(OBJ_COPY) -O binary $< $@
 
-$(CAR_FMW_ELF): $(CAR_FMW_OBJ) $(LIB_CARHW_OBJ)
+$(CAR_FMW_ELF): $(LIB_CARHW_OBJ) $(CAR_FMW_OBJ)
 	$(CC) $(CFLAGS) $^ -T $(SRC_DIR)/stm32_flash.ld -o $@
 
 $(CAR_FMW_OBJ): \
@@ -63,6 +63,7 @@ $(BIN_DIR):
 
 clean:
 	rm -rf bin/*
+	make -C $(LIB_CARHW_DIR) clean
 
 tags:
 	ctags -R * $(LIB_CARHW_DIR)

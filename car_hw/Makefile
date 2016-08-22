@@ -72,7 +72,7 @@ $(BIN_DIR)/$(CAR_OBJ_PREFIX)%.o: $(SRC_DIR)/%.c \
 	$(CC_ALL_DEPS)
 
 clean:
-	rm $(BIN_DIR)/*
+	rm -rf $(BIN_DIR)/*
 
 tags:
 	ctags -R *
