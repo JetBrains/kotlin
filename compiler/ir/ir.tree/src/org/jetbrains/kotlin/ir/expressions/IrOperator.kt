@@ -70,6 +70,10 @@ interface IrOperator {
     object GET_PROPERTY : IrOperatorImpl("GET_PROPERTY")
     object SET_PROPERTY : IrOperatorImpl("SET_PROPERTY")
 
+    object IF : IrOperatorImpl("IF")
+    object WHEN : IrOperatorImpl("WHEN")
+    object WHEN_COMMA : IrOperatorImpl("WHEN_COMMA")
+
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }
@@ -81,4 +85,5 @@ interface IrOperator {
                         COMPONENT_N(index)
         }
     }
+
 }

@@ -14,7 +14,7 @@ IrFile /smartCastsWithDestructuring.kt
   IrFunction public fun test(/*0*/ x: I1): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        WHEN subject=null type=kotlin.Unit
+        IF type=kotlin.Unit operator=IF
           if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=I2
             GET_VAR x type=I1 operator=null
           then: RETURN type=<no-type>

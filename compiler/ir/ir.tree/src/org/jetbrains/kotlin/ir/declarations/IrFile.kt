@@ -26,8 +26,6 @@ interface IrFile : IrElement {
     val fileEntry: SourceLocationManager.FileEntry
     val packageFragmentDescriptor: PackageFragmentDescriptor
     val declarations: List<IrDeclaration>
-
-    fun addDeclaration(declaration: IrDeclaration)
 }
 
 class IrFileImpl(
@@ -37,7 +35,7 @@ class IrFileImpl(
 ) : IrElementBase(0, fileEntry.maxOffset), IrFile {
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
-    override fun addDeclaration(declaration: IrDeclaration) {
+    fun addDeclaration(declaration: IrDeclaration) {
         declaration.assertDetached()
         declaration.setTreeLocation(this, declarations.size)
         declarations.add(declaration)

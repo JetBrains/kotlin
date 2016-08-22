@@ -189,7 +189,7 @@ class OperatorExpressionGenerator(val statementGenerator: StatementGenerator): I
             IrBinaryOperatorExpressionImpl(
                     expression.startOffset, expression.endOffset, context.builtIns.booleanType,
                     irOperator, null, irCompareToCall,
-                    IrLiteralExpressionImpl.int(expression.startOffset, expression.endOffset, context.builtIns.intType, 0)
+                    IrConstExpressionImpl.int(expression.startOffset, expression.endOffset, context.builtIns.intType, 0)
             )
         }
     }

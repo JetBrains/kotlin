@@ -17,3 +17,11 @@ fun test(x: Any?) =
             x in setOf<Nothing>() -> "nothingness?"
             else -> "something"
         }
+
+fun testComma(x: Int) =
+        when (x) {
+            1, 2, 3, 4 -> "1234"
+            5, 6, 7 -> "567"
+            8, 9 -> "89"
+            else -> "?"
+        }

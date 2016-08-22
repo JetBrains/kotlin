@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.load
 import org.jetbrains.kotlin.psi2ir.toExpectedType
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.*
 
 class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGenerator {
     override val context: GeneratorContext get() = statementGenerator.context
@@ -37,31 +38,66 @@ class WhenExpressionGenerator(val statementGenerator: StatementGenerator) : IrGe
 
         val resultType = getInferredTypeWithSmartcasts(expression)
 
-        val irWhen = IrWhenExpressionImpl(expression.startOffset, expression.endOffset, resultType, irSubject)
+        val irBranches = ArrayList<Pair<IrExpression, IrExpression>>(expression.entries.size)
+        var irElseExpression: IrExpression? = null
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
-                irWhen.elseExpression = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
-                continue
+                irElseExpression = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
+                break
             }
 
-            val irBranch = IrBranchImpl(ktEntry.startOffset, ktEntry.endOffset)
-
+            var irBranchCondition: IrExpression? = null
             for (ktCondition in ktEntry.conditions) {
                 val irCondition =
                         if (irSubject != null)
                             generateWhenConditionWithSubject(ktCondition, conditionsGenerator, irSubject)
                         else
                             generateWhenConditionNoSubject(ktCondition)
-                irBranch.addCondition(irCondition)
+                irBranchCondition = irBranchCondition?.let { IrIfExpressionImpl.whenComma(it, irCondition) } ?: irCondition
+
             }
 
-            irBranch.result = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
-
-            irWhen.addBranch(irBranch)
+            val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!).toExpectedType(resultType)
+            irBranches.add(Pair(irBranchCondition!!, irBranchResult))
         }
 
-        return irWhen
+        if (irBranches.isEmpty()) return generateWhenBody(expression, irSubject)
+
+        irBranches.reverse()
+
+        val (irLastCondition, irLastResult) = irBranches[0]
+        var irTopBranch = IrIfExpressionImpl(irLastCondition.startOffset, irLastCondition.endOffset, resultType,
+                                             irLastCondition, irLastResult, irElseExpression, IrOperator.WHEN)
+
+        for ((irBranchCondition, irBranchResult) in irBranches.subList(1, irBranches.size)) {
+            irTopBranch = IrIfExpressionImpl(irBranchCondition.startOffset, irBranchCondition.endOffset, resultType,
+                                             irBranchCondition, irBranchResult, irTopBranch, IrOperator.WHEN)
+        }
+
+        return generateWhenBody(expression, irSubject, irTopBranch)
+    }
+
+    private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irTopBranch: IrIfExpression? = null): IrExpression {
+        if (irSubject == null) {
+            if (irTopBranch == null)
+                return IrBlockExpressionImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+            else
+                return irTopBranch
+        }
+        else {
+            if (irTopBranch == null) {
+                val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+                irBlock.addStatement(irSubject)
+                return irBlock
+            }
+            else {
+                val irBlock = IrBlockExpressionImpl(expression.startOffset, expression.endOffset, irTopBranch.type, true, IrOperator.WHEN)
+                irBlock.addStatement(irSubject)
+                irBlock.addStatement(irTopBranch)
+                return irBlock
+            }
+        }
     }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =

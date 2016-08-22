@@ -28,17 +28,17 @@ interface IrRematerializableValue : IrValue {
 
 fun createRematerializableValue(irExpression: IrExpression): IrRematerializableValue? =
         when (irExpression) {
-            is IrLiteralExpression<*> -> IrRematerializableLiteralValue(irExpression)
+            is IrConstExpression<*> -> IrRematerializableLiteralValue(irExpression)
             is IrGetVariableExpression -> IrRematerializableVariableValue(irExpression)
             is IrGetExtensionReceiverExpression -> IrRematerializableExtensionReceiverValue(irExpression)
             is IrThisExpression -> IrRematerializableThisValue(irExpression)
             else -> null
         }
 
-class IrRematerializableLiteralValue(override val irExpression: IrLiteralExpression<*>): IrRematerializableValue {
+class IrRematerializableLiteralValue(override val irExpression: IrConstExpression<*>): IrRematerializableValue {
     override fun load(): IrExpression =
-            IrLiteralExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type,
-                                    irExpression.kind, irExpression.kind.valueOf(irExpression))
+            IrConstExpressionImpl(irExpression.startOffset, irExpression.endOffset, irExpression.type,
+                                  irExpression.kind, irExpression.kind.valueOf(irExpression))
 }
 
 class IrRematerializableVariableValue(override val irExpression: IrGetVariableExpression) : IrRematerializableValue {

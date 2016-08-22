@@ -35,8 +35,6 @@ interface IrModule : IrElement {
     val descriptor: ModuleDescriptor
     val irBuiltins: IrBuiltIns
     val files: List<IrFile>
-
-    fun addFile(file: IrFile)
 }
 
 class IrModuleImpl(
@@ -45,7 +43,7 @@ class IrModuleImpl(
 ) : IrModule {
     override val files: MutableList<IrFile> = ArrayList()
 
-    override fun addFile(file: IrFile) {
+    fun addFile(file: IrFile) {
         file.assertDetached()
         file.setTreeLocation(this, files.size)
         files.add(file)

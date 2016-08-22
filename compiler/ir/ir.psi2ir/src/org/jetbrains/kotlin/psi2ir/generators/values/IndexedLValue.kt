@@ -124,7 +124,7 @@ class IndexedLValue(
                                      hasResult, operator)
     }
 
-    private fun defineTemporaryVariables(irBlock: IrBlockExpression, callGenerator: CallGenerator) {
+    private fun defineTemporaryVariables(irBlock: IrBlockExpressionImpl, callGenerator: CallGenerator) {
         irBlock.addIfNotNull(callGenerator.introduceTemporary(ktArrayAccessExpression.arrayExpression!!, irArray, "array"))
 
         var index = 0

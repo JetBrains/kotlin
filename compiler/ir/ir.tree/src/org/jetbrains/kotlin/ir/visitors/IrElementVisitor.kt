@@ -35,12 +35,11 @@ interface IrElementVisitor<out R, in D> {
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
     fun visitLocalVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
 
-
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
 
     fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
-    fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: D): R = visitExpression(expression, data)
+    fun <T> visitConst(expression: IrConstExpression<T>, data: D): R = visitExpression(expression, data)
     fun visitReturnExpression(expression: IrReturnExpression, data: D): R = visitExpression(expression, data)
     fun visitBlockExpression(expression: IrBlockExpression, data: D): R = visitExpression(expression, data)
     fun visitStringConcatenation(expression: IrStringConcatenationExpression, data: D) = visitExpression(expression, data)
@@ -60,9 +59,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitBinaryOperator(expression: IrBinaryOperatorExpression, data: D) = visitOperatorExpression(expression, data)
     fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: D) = visitExpression(expression, data)
 
-    fun visitWhenExpression(expression: IrWhenExpression, data: D) = visitExpression(expression, data)
-    fun visitBranch(branch: IrBranch, data: D): R = visitElement(branch, data)
-
+    fun visitIf(expression: IrIfExpression, data: D) = visitExpression(expression, data)
     fun visitLoop(loop: IrLoopExpression, data: D) = visitExpression(loop, data)
     fun visitWhileLoop(loop: IrWhileLoopExpression, data: D) = visitLoop(loop, data)
     fun visitDoWhileLoop(loop: IrDoWhileLoopExpression, data: D) = visitLoop(loop, data)

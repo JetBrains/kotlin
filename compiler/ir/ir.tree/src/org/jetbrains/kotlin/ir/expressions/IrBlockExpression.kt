@@ -27,10 +27,9 @@ interface IrBlockExpression : IrExpression {
     val operator: IrOperator?
 
     val statements: List<IrStatement>
-    fun addStatement(statement: IrStatement)
 }
 
-fun IrBlockExpression.addIfNotNull(statement: IrStatement?) {
+fun IrBlockExpressionImpl.addIfNotNull(statement: IrStatement?) {
     if (statement != null) addStatement(statement)
 }
 
@@ -43,7 +42,7 @@ class IrBlockExpressionImpl(
 ) : IrExpressionBase(startOffset, endOffset, type), IrBlockExpression {
     override val statements: MutableList<IrStatement> = ArrayList()
 
-    override fun addStatement(statement: IrStatement) {
+    fun addStatement(statement: IrStatement) {
         statement.assertDetached()
         statement.setTreeLocation(this, statements.size)
         statements.add(statement)

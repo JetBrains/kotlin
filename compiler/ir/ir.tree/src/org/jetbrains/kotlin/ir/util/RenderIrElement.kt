@@ -60,7 +60,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
             "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
 
-    override fun <T> visitLiteral(expression: IrLiteralExpression<T>, data: Nothing?): String =
+    override fun <T> visitConst(expression: IrConstExpression<T>, data: Nothing?): String =
             "LITERAL ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlockExpression(expression: IrBlockExpression, data: Nothing?): String =
@@ -107,11 +107,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitTypeOperatorExpression(expression: IrTypeOperatorExpression, data: Nothing?): String =
             "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
-    override fun visitWhenExpression(expression: IrWhenExpression, data: Nothing?): String =
-            "WHEN subject=${expression.subject?.descriptor?.name} type=${expression.type.render()}"
-
-    override fun visitBranch(branch: IrBranch, data: Nothing?): String =
-            "BRANCH"
+    override fun visitIf(expression: IrIfExpression, data: Nothing?): String =
+            "IF type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"

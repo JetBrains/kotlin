@@ -141,11 +141,11 @@ class StatementGenerator(
 
         return when (constantValue) {
             is StringValue ->
-                IrLiteralExpressionImpl.string(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+                IrConstExpressionImpl.string(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is IntValue ->
-                IrLiteralExpressionImpl.int(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+                IrConstExpressionImpl.int(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is NullValue ->
-                IrLiteralExpressionImpl.nullLiteral(expression.startOffset, expression.endOffset, constantType)
+                IrConstExpressionImpl.constNull(expression.startOffset, expression.endOffset, constantType)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
@@ -160,7 +160,7 @@ class StatementGenerator(
                     return entry0.genExpr()
                 }
             }
-            entries.size == 0 -> return IrLiteralExpressionImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmarcastsOrFail(expression), "")
+            entries.size == 0 -> return IrConstExpressionImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmarcastsOrFail(expression), "")
         }
 
         val irStringTemplate = IrStringConcatenationExpressionImpl(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression))
@@ -169,7 +169,7 @@ class StatementGenerator(
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrStatement =
-            IrLiteralExpressionImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
+            IrConstExpressionImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
@@ -266,29 +266,11 @@ class StatementGenerator(
 
     override fun visitIfExpression(expression: KtIfExpression, data: Nothing?): IrStatement {
         val resultType = getInferredTypeWithSmartcasts(expression)
-        val irWhen = IrWhenExpressionImpl(expression.startOffset, expression.endOffset, resultType)
-
-        var ktBranch: KtIfExpression? = expression
-        branches@while (ktBranch != null) {
-            val irBranch = IrBranchImpl(ktBranch.startOffset, ktBranch.endOffset,
-                                        ktBranch.condition!!.genExpr().toExpectedType(context.builtIns.booleanType),
-                                        ktBranch.then!!.genExpr().toExpectedType(resultType))
-            irWhen.addBranch(irBranch)
-
-            val ktElse = ktBranch.`else`
-
-            ktBranch = when (ktElse) {
-                is KtIfExpression -> ktElse
-                null ->
-                    break@branches
-                else -> {
-                    irWhen.elseExpression = ktElse.genExpr().toExpectedType(resultType)
-                    break@branches
-                }
-            }
-        }
-
-        return irWhen
+        val irCondition = expression.condition!!.genExpr().toExpectedType(context.builtIns.booleanType)
+        val irThenBranch = expression.then!!.genExpr().toExpectedType(resultType)
+        val irElseBranch = expression.`else`?.let { it.genExpr().toExpectedType(resultType) }
+        return IrIfExpressionImpl(expression.startOffset, expression.endOffset, resultType,
+                                  irCondition, irThenBranch, irElseBranch, IrOperator.IF)
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression, data: Nothing?): IrStatement =
