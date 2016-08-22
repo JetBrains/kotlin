@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
@@ -27,20 +26,16 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.js.translate.reference.CachedAccessTranslator;
+import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
-import java.util.List;
-
-import static org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils.getCachedAccessTranslator;
+import static org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils.getAccessTranslator;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newSequence;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isPrefix;
-import static org.jetbrains.kotlin.js.translate.utils.TemporariesUtils.temporariesInitialization;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 
 // TODO: provide better increment translator logic
@@ -63,23 +58,18 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     protected final KtUnaryExpression expression;
     @NotNull
-    protected final CachedAccessTranslator accessTranslator;
+    protected final AccessTranslator accessTranslator;
 
     protected IncrementTranslator(@NotNull KtUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         KtExpression baseExpression = getBaseExpression(expression);
-        this.accessTranslator = getCachedAccessTranslator(baseExpression, context());
+        this.accessTranslator = getAccessTranslator(baseExpression, context()).getCached();
     }
 
     @NotNull
     protected JsExpression translateIncrementExpression() {
-        return withTemporariesInitialized(doTranslateIncrementExpression());
-    }
-
-    @NotNull
-    private JsExpression doTranslateIncrementExpression() {
         if (isPrefix(expression)) {
             return asPrefix();
         }
@@ -113,14 +103,6 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
         JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
         return accessTranslator.translateAsSet(overloadedMethodCallOnPropertyGetter);
-    }
-
-    @NotNull
-    private JsExpression withTemporariesInitialized(@NotNull JsExpression expression) {
-        List<TemporaryVariable> temporaries = accessTranslator.declaredTemporaries();
-        List<JsExpression> expressions = Lists.newArrayList(temporariesInitialization(temporaries));
-        expressions.add(expression);
-        return newSequence(expressions);
     }
 
     @NotNull
