@@ -136,12 +136,12 @@ class PropertyReferenceCodegen(
     private fun generateAccessors() {
         val getFunction = findGetFunction(localVariableDescriptorForReference)
         val getImpl = createFakeOpenDescriptor(getFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, receiverType, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, receiverType, element, state))
 
         if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
         val setFunction = localVariableDescriptorForReference.type.memberScope.getContributedFunctions(OperatorNameConventions.SET, NoLookupLocation.FROM_BACKEND).single()
         val setImpl = createFakeOpenDescriptor(setFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, receiverType, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, receiverType, element, state))
     }
 
 
@@ -223,6 +223,7 @@ class PropertyReferenceCodegen(
             val target: VariableDescriptor,
             val asmType: Type,
             val receiverType: Type?,
+            val expression: KtElement,
             state: GenerationState
     ) :
             FunctionGenerationStrategy.CodegenBased(state) {
@@ -251,6 +252,7 @@ class PropertyReferenceCodegen(
             else
                 codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
 
+            codegen.markStartLineNumber(expression)
             if (isGetter) {
                 value.put(OBJECT_TYPE, v)
             }

@@ -241,9 +241,21 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/functionReference.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("inlineOnly.kt")
         public void testInlineOnly() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/inlineOnly.kt");
+            doStepIntoTest(fileName);
+        }
+
+        @TestMetadata("propertyReference.kt")
+        public void testPropertyReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/propertyReference.kt");
             doStepIntoTest(fileName);
         }
 
