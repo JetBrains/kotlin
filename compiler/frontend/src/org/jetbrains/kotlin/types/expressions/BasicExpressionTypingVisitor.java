@@ -1190,6 +1190,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
+        else if (KtPsiUtil.isNullConstant(right)) {
+            context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
+        }
         KotlinTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
         if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralArgument(right, context)) {
             // the type is computed later in call completer according to the '?:' semantics as a function
@@ -1198,9 +1201,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;
         boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         KotlinType rightType = rightTypeInfo.getType();
-        if (rightType != null && KtPsiUtil.isNullConstant(right)) {
-            context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
-        }
 
         // Only left argument DFA is taken into account here: we cannot be sure that right argument is joined
         // (we merge it with right DFA if right argument contains no jump outside)
