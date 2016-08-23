@@ -158,8 +158,8 @@ class ControllerEmulator : Controller {
         when (currentCommand.first) {
             MoveDirection.FORWARD -> carInstance.moving((commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
             MoveDirection.BACKWARD -> carInstance.moving(-(commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
-            MoveDirection.RIGHT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
-            MoveDirection.LEFT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.RIGHT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.LEFT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
             else -> {
             }
         }

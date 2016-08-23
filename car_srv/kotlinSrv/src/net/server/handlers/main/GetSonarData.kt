@@ -30,7 +30,6 @@ class GetSonarData : AbstractHandler {
             callback.invoke(encodeProtoBuf(responseMessage))
             return
         }
-        println("sonar")
         controller.executeRequestSensorData(message, callback)
     }
 }
