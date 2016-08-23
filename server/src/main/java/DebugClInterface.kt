@@ -50,6 +50,7 @@ class DebugClInterface {
             "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
+            "alg" -> RoomBypassingAlgorithm.iterate()
             else -> printNotSupportedCommand(readString)
         }
     }
@@ -261,7 +262,7 @@ class DebugClInterface {
     }
 
 
-    fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
+    private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
         val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, url, Unpooled.copiedBuffer(bytes))
         request.headers().set(HttpHeaderNames.HOST, host)
         request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
