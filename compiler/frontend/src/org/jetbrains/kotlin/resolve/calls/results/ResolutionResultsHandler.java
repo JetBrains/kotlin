@@ -41,7 +41,7 @@ public class ResolutionResultsHandler {
             @NotNull KotlinBuiltIns builtIns,
             @NotNull TypeSpecificityComparator specificityComparator
     ) {
-        overloadingConflictResolver = FlatSignatureSpecificityKt.createOverloadingConflictResolver(builtIns, specificityComparator);
+        overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(builtIns, specificityComparator);
     }
 
     @NotNull

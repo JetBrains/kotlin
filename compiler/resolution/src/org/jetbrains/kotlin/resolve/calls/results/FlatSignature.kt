@@ -16,20 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.extensionReceiverTypeOrEmpty
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import java.util.*
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
@@ -42,6 +34,34 @@ interface TypeSpecificityComparator {
         override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
     }
 }
+
+class FlatSignature<out T>(
+        val origin: T,
+        val typeParameters: Collection<TypeParameterDescriptor>,
+        val valueParameterTypes: List<KotlinType?>,
+        val hasExtensionReceiver: Boolean,
+        val hasVarargs: Boolean,
+        val numDefaults: Int
+) {
+    val isGeneric = typeParameters.isNotEmpty()
+
+    companion object {
+        fun <D : CallableDescriptor> createFromCallableDescriptor(descriptor: D): FlatSignature<D> =
+                FlatSignature(descriptor,
+                              descriptor.typeParameters,
+                              valueParameterTypes = descriptor.extensionReceiverTypeOrEmpty() + descriptor.valueParameters.map { it.argumentValueType },
+                              hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
+                              hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                              numDefaults = 0)
+
+        val ValueParameterDescriptor.argumentValueType: KotlinType
+            get() = varargElementType ?: type
+
+        fun CallableDescriptor.extensionReceiverTypeOrEmpty() =
+                extensionReceiverParameter?.type.singletonOrEmptyList()
+    }
+}
+
 
 interface SimpleConstraintSystem {
     fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
@@ -84,44 +104,3 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     return !hasContradiction()
 }
 
-
-fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
-    val originalDescriptor = candidateDescriptor.original
-    val originalValueParameters = originalDescriptor.valueParameters
-
-    var numDefaults = 0
-    val valueArgumentToParameterType = HashMap<ValueArgument, KotlinType>()
-    for ((valueParameter, resolvedValueArgument) in valueArguments.entries) {
-        if (resolvedValueArgument is DefaultValueArgument) {
-            numDefaults++
-        }
-        else {
-            val originalValueParameter = originalValueParameters[valueParameter.index]
-            val parameterType = originalValueParameter.argumentValueType
-            for (valueArgument in resolvedValueArgument.arguments) {
-                valueArgumentToParameterType[valueArgument] = parameterType
-            }
-        }
-    }
-
-    return FlatSignature(this,
-                         originalDescriptor.typeParameters,
-                         valueParameterTypes = originalDescriptor.extensionReceiverTypeOrEmpty() +
-                                               call.valueArguments.map { valueArgumentToParameterType[it] },
-                         hasExtensionReceiver = originalDescriptor.extensionReceiverParameter != null,
-                         hasVarargs = originalDescriptor.valueParameters.any { it.varargElementType != null },
-                         numDefaults = numDefaults)
-}
-
-fun createOverloadingConflictResolver(
-        builtIns: KotlinBuiltIns,
-        specificityComparator: TypeSpecificityComparator
-) = OverloadingConflictResolver(
-        builtIns,
-        specificityComparator,
-        MutableResolvedCall<*>::getResultingDescriptor,
-        ConstraintSystemBuilderImpl.Companion::forSpecificity,
-        MutableResolvedCall<*>::createFlatSignature,
-        { (it as? VariableAsFunctionResolvedCallImpl)?.variableCall },
-        { DescriptorToSourceUtils.descriptorToDeclaration(it) != null}
-)
