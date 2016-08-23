@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -160,7 +160,7 @@ class OverloadingConflictResolver(
             if (isGeneric1 && isGeneric2) return false
         }
 
-        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator, call1.callHandle())
+        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
     }
 
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
@@ -254,43 +254,34 @@ class OverloadingConflictResolver(
             tryCompareDescriptorsFromScripts(f, g) ?:
             isNotLessSpecificCallableReferenceDescriptor(f, g)
 
-    companion object {
-        // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
-        private fun <D : CallableDescriptor> uniquifyCandidatesSet(candidates: Collection<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> =
-                THashSet<MutableResolvedCall<D>>(candidates.size, getCallHashingStrategy<MutableResolvedCall<D>>()).apply { addAll(candidates) }
+    // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
+    private fun <D : CallableDescriptor> uniquifyCandidatesSet(candidates: Collection<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> =
+            THashSet<MutableResolvedCall<D>>(candidates.size, getCallHashingStrategy<MutableResolvedCall<D>>()).apply { addAll(candidates) }
 
-        private fun <C> newResolvedCallSet(expectedSize: Int): MutableSet<C> =
-                THashSet<C>(expectedSize, getCallHashingStrategy<C>())
+    private fun <C> newResolvedCallSet(expectedSize: Int): MutableSet<C> =
+            THashSet<C>(expectedSize, getCallHashingStrategy<C>())
 
-        private object ResolvedCallHashingStrategy : TObjectHashingStrategy<ResolvedCall<*>> {
-            override fun equals(call1: ResolvedCall<*>?, call2: ResolvedCall<*>?): Boolean =
-                    if (call1 != null && call2 != null)
-                        call1.resultingDescriptor == call2.resultingDescriptor
-                    else
-                        call1 == call2
+    private object ResolvedCallHashingStrategy : TObjectHashingStrategy<ResolvedCall<*>> {
+        override fun equals(call1: ResolvedCall<*>?, call2: ResolvedCall<*>?): Boolean =
+                if (call1 != null && call2 != null)
+                    call1.resultingDescriptor == call2.resultingDescriptor
+                else
+                    call1 == call2
 
-            override fun computeHashCode(call: ResolvedCall<*>?): Int =
-                    call?.resultingDescriptor?.hashCode() ?: 0
-        }
-
-        private val MutableResolvedCall<*>.resultingVariableDescriptor: VariableDescriptor
-            get() = (this as VariableAsFunctionResolvedCall).variableCall.resultingDescriptor
-
-        @Suppress("UNCHECKED_CAST")
-        private fun <C> getCallHashingStrategy() =
-                ResolvedCallHashingStrategy as TObjectHashingStrategy<C>
-
+        override fun computeHashCode(call: ResolvedCall<*>?): Int =
+                call?.resultingDescriptor?.hashCode() ?: 0
     }
+
+    private val MutableResolvedCall<*>.resultingVariableDescriptor: VariableDescriptor
+        get() = (this as VariableAsFunctionResolvedCall).variableCall.resultingDescriptor
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <C> getCallHashingStrategy() =
+            ResolvedCallHashingStrategy as TObjectHashingStrategy<C>
+
+    private fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.candidateDescriptor() =
+            origin.resultingDescriptor.original
+
+    private fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.descriptorVisibility() =
+            candidateDescriptor().visibility
 }
-
-internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.candidateDescriptor() =
-        origin.candidateDescriptor.original
-
-internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.callHandle() =
-        origin.call.toHandle()
-
-internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.descriptorVisibility() =
-        candidateDescriptor().visibility
-
-internal fun CallableDescriptor.varargParameterPosition() =
-        valueParameters.indexOfFirst { it.varargElementType != null }
