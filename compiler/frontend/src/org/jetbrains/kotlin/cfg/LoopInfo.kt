@@ -14,44 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.psi.KtLoopExpression;
+import org.jetbrains.kotlin.psi.KtLoopExpression
 
-public class LoopInfo extends BreakableBlockInfo {
-    private final Label bodyEntryPoint;
-    private final Label bodyExitPoint;
-    private final Label conditionEntryPoint;
+class LoopInfo(
+        loopExpression: KtLoopExpression,
+        entryPoint: Label,
+        exitPoint: Label,
+        val bodyEntryPoint: Label,
+        val bodyExitPoint: Label,
+        val conditionEntryPoint: Label
+) : BreakableBlockInfo(loopExpression, entryPoint, exitPoint) {
 
-    public LoopInfo(
-            KtLoopExpression loopExpression,
-            Label entryPoint,
-            Label exitPoint,
-            Label bodyEntryPoint,
-            Label bodyExitPoint,
-            Label conditionEntryPoint
-    ) {
-        super(loopExpression, entryPoint, exitPoint);
-        this.bodyEntryPoint = bodyEntryPoint;
-        this.bodyExitPoint = bodyExitPoint;
-        this.conditionEntryPoint = conditionEntryPoint;
-        markReferablePoints(bodyEntryPoint, bodyExitPoint, conditionEntryPoint);
+    init {
+        markReferablePoints(bodyEntryPoint, bodyExitPoint, conditionEntryPoint)
     }
 
-    @Override
-    public KtLoopExpression getElement() {
-        return (KtLoopExpression) super.getElement();
-    }
-
-    public Label getBodyEntryPoint() {
-        return bodyEntryPoint;
-    }
-
-    public Label getBodyExitPoint() {
-        return bodyExitPoint;
-    }
-
-    public Label getConditionEntryPoint() {
-        return conditionEntryPoint;
+    override fun getElement(): KtLoopExpression {
+        return super.getElement() as KtLoopExpression
     }
 }
