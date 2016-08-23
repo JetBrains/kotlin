@@ -89,7 +89,10 @@ class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapte
 
     override fun buildFinished(result: BuildResult) {
         val gradle = result.gradle!!
-        val kotlinCompilerCalled = gradle.rootProject.allprojects.flatMap { it.tasks }.any { it is AbstractKotlinCompile<*> && it.compilerCalled }
+        val kotlinCompilerCalled = gradle.rootProject
+                .allprojects
+                .flatMap { it.tasks }
+                .any { it is AbstractKotlinCompile<*> && it.compilerCalled }
 
         if (kotlinCompilerCalled) {
             log.kotlinDebug("Cleanup after kotlin")

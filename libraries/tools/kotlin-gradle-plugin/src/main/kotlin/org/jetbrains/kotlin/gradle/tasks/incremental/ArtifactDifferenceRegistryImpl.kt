@@ -42,7 +42,7 @@ internal class ArtifactDifferenceRegistryImpl(
             value.sortedBy { it.buildTS }.joinToString(separator = ",\n\t") { diff ->
                 "{ " +
                         "timestamp: ${diff.buildTS}, " +
-                        "lookup symbols: [${diff.dirtyData.dirtyLookupSymbols.dumpLookupSymbols()}], "  +
+                        "lookup symbols: [${diff.dirtyData.dirtyLookupSymbols.dumpLookupSymbols()}], " +
                         "fq names: [${diff.dirtyData.dirtyClassesFqNames.dumpFqNames()}]"
                 "}"
             }
@@ -86,7 +86,7 @@ private object ArtifactDifferenceCollectionExternalizer : DataExternalizer<Colle
     }
 }
 
-private inline fun <T> DataInput.readCollectionTo(col: MutableCollection<T>, readT: DataInput.()->T): Collection<T> {
+private inline fun <T> DataInput.readCollectionTo(col: MutableCollection<T>, readT: DataInput.() -> T): Collection<T> {
     val size = readInt()
 
     repeat(size) {
@@ -96,7 +96,7 @@ private inline fun <T> DataInput.readCollectionTo(col: MutableCollection<T>, rea
     return col
 }
 
-private inline fun <T> DataOutput.writeCollection(col: Collection<T>, writeT: DataOutput.(T)->Unit) {
+private inline fun <T> DataOutput.writeCollection(col: Collection<T>, writeT: DataOutput.(T) -> Unit) {
     writeInt(col.size)
     col.forEach { writeT(it) }
 }
