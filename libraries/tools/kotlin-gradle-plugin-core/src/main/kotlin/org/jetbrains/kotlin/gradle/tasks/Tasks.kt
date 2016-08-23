@@ -600,6 +600,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>() {
         args.outputPostfix = kotlinOptions.outputPostfix
         args.metaInfo = kotlinOptions.metaInfo
         args.kjsm = kotlinOptions.kjsm
+        args.moduleKind = kotlinOptions.moduleKind
 
         val kotlinJsLibsFromDependencies =
                 project.configurations.getByName("compile")
