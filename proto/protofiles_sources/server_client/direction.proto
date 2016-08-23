@@ -1,0 +1,18 @@
+syntax = "proto3";
+package carkot;
+
+message DirectionRequest {
+    enum Command {
+        STOP = 0;
+        FORWARD = 1;
+        BACKWARD = 2;
+        LEFT = 3;
+        RIGHT = 4;
+    }
+    Command command = 1;
+    int32 sid = 2;
+}
+
+message DirectionResponse {
+    int32 code = 1;
+}
