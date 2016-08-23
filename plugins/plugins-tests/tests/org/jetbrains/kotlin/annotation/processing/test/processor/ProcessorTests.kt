@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.jetbrains.kotlin.java.model.elements.*
+import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
 
@@ -110,5 +111,12 @@ class ProcessorTests : AbstractProcessorTest() {
         assertTrue(anno2.getParam("c") is JePrimitiveAnnotationValue)
         assertTrue(anno2.getParam("d") is JeTypeAnnotationValue)
         assertTrue((anno2.getParam("e") as JeArrayAnnotationValue).value.first() is JeTypeAnnotationValue)
+    }
+    
+    fun testStringArray() = test("StringArray", "*") { set, roundEnv, env ->
+        val testClass = env.findClass("Test")
+        val suppress = testClass.getAnnotation(Suppress::class.java)
+        assertNotNull(suppress)
+        assertEquals(listOf("Tom", "Mary"), suppress!!.names.toList())
     }
 }
