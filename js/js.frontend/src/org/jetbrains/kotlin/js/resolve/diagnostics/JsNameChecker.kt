@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 object JsNameChecker : SimpleDeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
@@ -36,12 +36,10 @@ object JsNameChecker : SimpleDeclarationChecker {
             }
         }
 
-        if (AnnotationsUtils.getJsName(descriptor) == null) return
-        val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration, descriptor) ?: return
+        val jsName = AnnotationsUtils.getJsNameAnnotation(descriptor) ?: return
+        val jsNamePsi = jsName.source.getPsi() ?: declaration
 
-        if (AnnotationsUtils.isNativeObject(descriptor) &&
-            AnnotationsUtils.getNameForAnnotatedObject(descriptor, PredefinedAnnotation.NATIVE) != null
-        ) {
+        if (AnnotationsUtils.getNameForAnnotatedObject(descriptor, PredefinedAnnotation.NATIVE) != null) {
             diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE.on(jsNamePsi))
         }
 

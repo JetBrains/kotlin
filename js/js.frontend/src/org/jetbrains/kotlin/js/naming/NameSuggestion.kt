@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.js.naming
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.descriptorUtils.isEnumValueOfMethod
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEnumValueOfMethod
 import java.util.*
 
 /**
@@ -32,7 +32,7 @@ import java.util.*
  * to check whether names clash, by the code generator to place declarations to corresponding scopes and to produce
  * fully-qualified names for static declarations.
  *
- * A new instance of this class can be created for each request, however, it's recommended to use shared instance, since
+ * A new instance of this class can be created for each request, however, it's recommended to use stable instance, since
  * [NameSuggestion] supports caching.
  */
 class NameSuggestion {
@@ -70,7 +70,7 @@ class NameSuggestion {
             is ModuleDescriptor -> return null
 
             is PackageFragmentDescriptor -> {
-                return if (!descriptor.name.isSpecial) {
+                return if (!descriptor.fqName.isRoot) {
                     SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
                                   descriptor.containingDeclaration)
                 }
@@ -102,7 +102,7 @@ class NameSuggestion {
     }
 
     private fun generateDefault(descriptor: DeclarationDescriptor): SuggestedName {
-        // Dynamic declarations always require shared names as defined in Kotlin source code
+        // Dynamic declarations always require stable names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
             return SuggestedName(listOf(descriptor.name.asString()), true, descriptor, descriptor.containingDeclaration!!)
         }
@@ -167,7 +167,7 @@ class NameSuggestion {
     }
 
     companion object {
-        @JvmStatic private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): Pair<String, Boolean> {
+        private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): Pair<String, Boolean> {
             // If we have a callable descriptor (property or method) it can override method in a parent class.
             // Traverse to the topmost overridden method.
             // It does not matter which path to choose during traversal, since front-end must ensure
@@ -193,7 +193,7 @@ class NameSuggestion {
             return Pair(finalName, stable)
         }
 
-        @JvmStatic fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
+        private fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
             val argTypes = StringBuilder()
 
             val receiverParameter = descriptor.extensionReceiverParameter
@@ -206,7 +206,7 @@ class NameSuggestion {
             return argTypes.toString()
         }
 
-        @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
+        fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
             val suffix = if (forCalculateId.isEmpty()) "" else "_${mangledId(forCalculateId)}\$"
             return suggestedName + suffix
         }
@@ -227,9 +227,7 @@ class NameSuggestion {
                 is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
                 is ClassDescriptor -> {
                     // Open (abstract) public methods of classes or final public methods of open (abstract) classes should be stable
-                    if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT ||
-                        containingDeclaration.modality == Modality.OPEN || containingDeclaration.modality == Modality.ABSTRACT
-                    ) {
+                    if (containingDeclaration.modality == Modality.OPEN || containingDeclaration.modality == Modality.ABSTRACT) {
                         return descriptor.visibility.isPublicAPI
                     }
 
@@ -255,7 +253,7 @@ class NameSuggestion {
             }
         }
 
-        @JvmStatic fun mangledId(forCalculateId: String): String {
+        private fun mangledId(forCalculateId: String): String {
             val absHashCode = Math.abs(forCalculateId.hashCode())
             return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
         }
