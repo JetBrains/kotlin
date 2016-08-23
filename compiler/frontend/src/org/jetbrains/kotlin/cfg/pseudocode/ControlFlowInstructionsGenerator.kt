@@ -166,9 +166,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentSubroutine: KtElement
             get() = pseudocode.correspondingElement
 
-        override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label {
-            val blockInfo = elementToLoopInfo[loop] ?: error("expected LoopInfo for ${loop.text}")
-            return blockInfo.conditionEntryPoint
+        override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
+            return elementToLoopInfo[loop]?.conditionEntryPoint
         }
 
         override fun getLoopExitPoint(loop: KtLoopExpression): Label? {

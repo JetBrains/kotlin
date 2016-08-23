@@ -127,7 +127,7 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         return delegateBuilder.getSubroutineExitPoint(labelElement)
     }
 
-    override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label {
+    override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
         return delegateBuilder.getLoopConditionEntryPoint(loop)
     }
 
