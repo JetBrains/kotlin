@@ -27,9 +27,9 @@ val b = null ?: ( l() ?: false)
 
 val bb = null ?: ( l() ?: null!!)
 
-val bbb = null ?: ( l() ?: null)
+val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
-val bbbb = ( l() ?: null) ?: ( l() ?: null)
+val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 fun f(x : Long?): Long {
     var a = x ?: (<!TYPE_MISMATCH!>fun() {}<!> <!USELESS_ELVIS!><!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> <!TYPE_MISMATCH!>fun() {}<!><!>)
