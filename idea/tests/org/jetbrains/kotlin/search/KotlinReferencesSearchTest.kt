@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.search
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
@@ -49,12 +50,25 @@ class KotlinReferencesSearchTest(): AbstractSearcherTest() {
         Assert.assertTrue(refs[2] is KtDestructuringDeclarationReference)
     }
 
+    fun testComponentFun() {
+        val refs = doTest<KtFunction>()
+        Assert.assertEquals(2, refs.size)
+        Assert.assertEquals("component1", refs[0].canonicalText)
+        Assert.assertTrue(refs[1] is KtDestructuringDeclarationReference)
+    }
+
     // workaround for KT-9788 AssertionError from backand when we read field from inline function
     private val myFixtureProxy: JavaCodeInsightTestFixture get() = myFixture
 
     private inline fun <reified T: PsiElement> doTest(): List<PsiReference> {
-        myFixtureProxy.configureByFile(fileName)
+        val psiFile = myFixtureProxy.configureByFile(fileName)
         val func = myFixtureProxy.elementAtCaret.getParentOfType<T>(false)!!
-        return ReferencesSearch.search(func).findAll().sortedBy { it.element.textRange.startOffset }
+        val refs = ReferencesSearch.search(func).findAll().sortedBy { it.element.textRange.startOffset }
+
+        // check that local references search gives the same result
+        val localRefs = ReferencesSearch.search(func, LocalSearchScope(psiFile)).findAll()
+        Assert.assertEquals(refs.size, localRefs.size)
+
+        return refs
     }
 }

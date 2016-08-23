@@ -199,7 +199,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
     companion object {
         fun getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic: Diagnostic): KtDestructuringDeclarationEntry {
             val componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).a
-            val componentIndex = getComponentIndex(componentName)
+            val componentIndex = getComponentIndex(componentName.asString())
             val multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java) ?: error("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration")
             return multiDeclaration.entries[componentIndex - 1]
         }

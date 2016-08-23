@@ -1,0 +1,3 @@
+Value read 17 val (x, y) = f()
+Value read 18 val (x1, y1) = g()
+Value read 19 val (x2, y2) = h()

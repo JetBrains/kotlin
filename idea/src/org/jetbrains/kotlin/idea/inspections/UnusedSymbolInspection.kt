@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -158,10 +159,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is KtProperty && declaration.isLocal) return
                 if (declaration is KtParameter && (declaration.getParent()?.parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
-                if (declaration is KtNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks
-                declaration.resolveToDescriptorIfAny() ?: return
+                val descriptor = declaration.resolveToDescriptorIfAny() ?: return
+                if (descriptor is FunctionDescriptor && descriptor.isOperator) return
                 if (isEntryPoint(declaration)) return
                 if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
                 if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
@@ -203,11 +204,6 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return hasTextUsages
-    }
-
-    private fun isConventionalName(namedDeclaration: KtNamedDeclaration): Boolean {
-        val name = namedDeclaration.nameAsName
-        return name!!.getOperationSymbolsToSearch().first.isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration): Boolean {
