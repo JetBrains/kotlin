@@ -16,24 +16,19 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtAnnotated;
-import org.jetbrains.kotlin.psi.KtAnnotationEntry;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-
-import java.util.List;
-import java.util.Set;
 
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
@@ -128,7 +123,7 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    private static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
+    public static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
         AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
         if (annotation == null) return null;
 
@@ -139,22 +134,6 @@ public final class AnnotationsUtils {
         }
 
         return annotation;
-    }
-
-    @Nullable
-    public static KtAnnotationEntry getJsNameAnnotationPsi(@NotNull BindingContext context, @NotNull KtAnnotated annotated,
-            @NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = getJsNameAnnotation(descriptor);
-        if (annotation == null) return null;
-
-        for (KtAnnotationEntry entry : annotated.getAnnotationEntries()) {
-            AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, entry);
-            if (annotationDescriptor == annotation) {
-                return entry;
-            }
-        }
-
-        return null;
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {

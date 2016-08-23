@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -185,15 +184,6 @@ object CodegenUtil {
 
     private fun rawTypeMatches(type: KotlinType, classifier: ClassifierDescriptor): Boolean =
             type.constructor == classifier.typeConstructor
-
-    @JvmStatic
-    fun isEnumValueOfMethod(functionDescriptor: FunctionDescriptor): Boolean {
-        val methodTypeParameters = functionDescriptor.valueParameters
-        val nullableString = TypeUtils.makeNullable(functionDescriptor.builtIns.stringType)
-        return DescriptorUtils.ENUM_VALUE_OF == functionDescriptor.name
-               && methodTypeParameters.size == 1
-               && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
-    }
 
     @JvmStatic
     fun getLineNumberForElement(statement: PsiElement, markEndOffset: Boolean): Int? {

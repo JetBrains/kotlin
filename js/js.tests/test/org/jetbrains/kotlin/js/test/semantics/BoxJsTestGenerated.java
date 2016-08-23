@@ -4747,6 +4747,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("jsName.kt")
+        public void testJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/jsName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNamePropertyAccessors.kt")
+        public void testJsNamePropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/jsNamePropertyAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overriddenMethod.kt")
         public void testOverriddenMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/overriddenMethod.kt");
@@ -5236,18 +5248,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inheritanceFromNativeTrait.kt")
         public void testInheritanceFromNativeTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceFromNativeTrait.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsName.kt")
-        public void testJsName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsNamePropertyAccessors.kt")
-        public void testJsNamePropertyAccessors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsNamePropertyAccessors.kt");
             doTest(fileName);
         }
 

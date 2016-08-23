@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
@@ -309,3 +307,11 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
 
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
         generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())
+
+fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
+    val methodTypeParameters = valueParameters
+    val nullableString = TypeUtils.makeNullable(builtIns.stringType)
+    return DescriptorUtils.ENUM_VALUE_OF == name
+           && methodTypeParameters.size == 1
+           && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
+}
