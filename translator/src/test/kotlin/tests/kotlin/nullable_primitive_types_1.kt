@@ -30,3 +30,15 @@ fun nullable_primitive_types_1_if_not_null(): Int {
         return 2245
     }
 }
+
+fun nullable_primitive_types_1_reassignment():Int{
+    var z:Int? = 32
+    z = null
+    var r = z
+    if (r == null){
+        return 5678
+    }
+    else{
+        return 13
+    }
+}
