@@ -7,7 +7,7 @@ fun numeric_literals_1_LL(): Long {
     return k
 }
 
-fun numeric_literals_1_Binary(): Int{
+fun numeric_literals_1_Binary(): Int {
     val k = 0b01111111
     return k
 }

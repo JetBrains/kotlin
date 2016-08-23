@@ -40,6 +40,6 @@ fun dfs_1(searchObject: Int): Int {
     if (result == null) {
         return -101
     } else {
-        return result!!.value
+        return result.value
     }
 }

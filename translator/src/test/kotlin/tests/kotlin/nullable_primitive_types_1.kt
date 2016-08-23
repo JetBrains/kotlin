@@ -5,7 +5,7 @@ fun nullable_primitive_types_1_small(): Int {
     return art!!
 }
 
-fun nullable_primitive_types_1_extern(x:  Int): Int {
+fun nullable_primitive_types_1_extern(x: Int): Int {
     val variable: Int? = x
     val art: Int? = variable!! + 8
     return art!!
@@ -13,32 +13,29 @@ fun nullable_primitive_types_1_extern(x:  Int): Int {
 
 fun nullable_primitive_types_1_if_null(): Int {
     val variable: Int? = null
-    if (variable == null){
+    if (variable == null) {
         return 11
-    }
-    else{
+    } else {
         return 2245
     }
 }
 
 fun nullable_primitive_types_1_if_not_null(): Int {
     val variable: Int? = null
-    if (variable != null){
+    if (variable != null) {
         return 11
-    }
-    else{
+    } else {
         return 2245
     }
 }
 
-fun nullable_primitive_types_1_reassignment():Int{
-    var z:Int? = 32
+fun nullable_primitive_types_1_reassignment(): Int {
+    var z: Int? = 32
     z = null
     var r = z
-    if (r == null){
+    if (r == null) {
         return 5678
-    }
-    else{
+    } else {
         return 13
     }
 }
