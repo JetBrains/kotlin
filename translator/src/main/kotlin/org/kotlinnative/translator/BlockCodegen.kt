@@ -1048,55 +1048,28 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     }
 
     private fun evaluateValExpression(element: KtProperty, scopeDepth: Int): LLVMVariable? {
-
         val variable = state.bindingContext.get(BindingContext.VARIABLE, element)!!
         val identifier = variable.name.toString()
 
         val assignExpression = evaluateExpression(element.delegateExpressionOrInitializer, scopeDepth)
         val expectedExpressionType = LLVMInstanceOfStandardType("", variable.type, state = state)
-        val assignExpressionType = assignExpression?.type
 
         val primitivePointer = LLVMMapStandardType(variable.type, state) !is LLVMReferred
-        when (assignExpression) {
-            null,
-            is LLVMVariable -> {
-                val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType.type, LLVMRegisterScope(), pointer =
-                expectedExpressionType.pointer)
-                codeBuilder.allocStackVar(allocVar)
-                allocVar.pointer++
-                allocVar.kotlinName = identifier
 
-                variableManager.addVariable(identifier, allocVar, scopeDepth)
-                if (assignExpression != null) {
-                    if ((primitivePointer) && (assignExpression.type is LLVMReferenceType)) {
-                        throw UnexpectedException(element.text)
-                    }
-                    addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
-                }
+        val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType.type, LLVMRegisterScope(), pointer =
+        expectedExpressionType.pointer)
+        codeBuilder.allocStackVar(allocVar)
+        allocVar.pointer++
+        allocVar.kotlinName = identifier
+
+        variableManager.addVariable(identifier, allocVar, scopeDepth)
+        if (assignExpression != null) {
+            if ((primitivePointer) && (assignExpression.type is LLVMReferenceType)) {
+                throw UnexpectedException(element.text)
             }
-            is LLVMConstant -> {
-                if (assignExpressionType!! is LLVMNullType) {
-                    val reference = LLVMInstanceOfStandardType(identifier, variable.type, state = state)
-                    if (state.classes.containsKey(variable.type.toString().dropLast(1))) {
-                        (reference.type as LLVMReferenceType).prefix = "class"
-                    }
-
-                    codeBuilder.allocStaticVar(reference)
-                    reference.pointer++
-
-                    codeBuilder.storeNull(reference)
-                    variableManager.addVariable(identifier, reference, scopeDepth)
-                    return null
-                }
-
-                val newVar = variableManager.receiveVariable(identifier, assignExpressionType, LLVMRegisterScope(), pointer = 1)
-                codeBuilder.addConstant(newVar, assignExpression)
-                variableManager.addVariable(identifier, newVar, scopeDepth)
-            }
-            else -> {
-                throw UnsupportedOperationException()
-            }
+            addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
         }
+
         return null
     }
 
