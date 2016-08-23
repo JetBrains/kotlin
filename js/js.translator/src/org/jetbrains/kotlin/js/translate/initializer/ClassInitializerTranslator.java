@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.UsageTracker;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -76,19 +77,24 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), declaration);
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
-        Name name = classDescriptor.getName();
+        String functionName = AnnotationsUtils.getJsName(classDescriptor);
+        if (functionName == null) {
+            Name name = classDescriptor.getName();
+            if (!name.isSpecial()) {
+                functionName = name.asString();
+            }
+        }
 
         JsFunction ctorFunction;
         if (primaryConstructor != null) {
             ctorFunction = context.getFunctionObject(primaryConstructor);
         }
         else {
-            ctorFunction = new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + name.asString());
+            ctorFunction = new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + functionName);
         }
 
-        // TODO use name from JsName when class annotated by that
-        if (!name.isSpecial()) {
-            ctorFunction.setName(ctorFunction.getScope().declareName(name.asString()));
+        if (functionName != null) {
+            ctorFunction.setName(ctorFunction.getScope().declareName(functionName));
         }
 
         return ctorFunction;

@@ -8,6 +8,7 @@ fun testWithInstance() {
     assertEquals("Y", E.Y.jsClass.name)
 // TODO uncomment after KT-13338 is fixed
 //    assertEquals("E", E.Z.jsClass.name)
+    assertEquals("Q", R().jsClass.name)
 }
 
 fun testWithClassReference() {
@@ -16,6 +17,7 @@ fun testWithClassReference() {
     assertEquals("O", jsClass<O>().name)
     assertEquals("I", jsClass<I>().name)
     assertEquals("E", jsClass<E>().name)
+    assertEquals("Q", jsClass<R>().name)
 }
 
 fun box(): String {
