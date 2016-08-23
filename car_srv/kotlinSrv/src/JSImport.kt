@@ -6,7 +6,6 @@ fun setTimeout(callBack: () -> Unit, ms: Int): dynamic = noImpl
 
 fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
     val routeBytes: ByteArray
-    println(protoMessage.toString())
     when (protoMessage) {
         is LocationResponse -> {
             val protoSize = protoMessage.getSizeNoTag()

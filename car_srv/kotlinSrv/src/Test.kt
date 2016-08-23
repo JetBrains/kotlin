@@ -49,11 +49,14 @@ private fun testCarEmulator() {
     })
 }
 
+private var testNum = 1
 
 private fun eq(value1: Double, value2: Double, msg: String, eps: Double) {
     if (Math.abs(value1 - value2) > eps) {
         println("test failed! $msg")
         println("returned: $value1")
         println("waited: $value2")
+    } else {
+        println("test ${testNum++} ok!")
     }
 }

@@ -20,10 +20,29 @@ fun main(args: Array<String>) {
         js("process.exit(1)")
     }
 
+
+    val clArgs = js("process.argv")
+    var runAsEmulator = false
+    var runTests = false
+    for (arg in clArgs) {
+        when (arg) {
+            "-t" -> runTests = true
+            "-e" -> runAsEmulator = true
+        }
+    }
+    val carController =
+            if (runAsEmulator) {
+                McState.instance.connect("")
+                ControllerEmulator()
+            } else {
+                ControllerToUsb()
+            }
+
+    if (runTests) {
+        runTests()
+    }
+
     val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
-
-    val carController = ControllerEmulator()
-
     handlers.put("/rc/control", Control())
     handlers.put("/loadBin", LoadBin())
     handlers.put("/sonar", GetSonarData(carController))

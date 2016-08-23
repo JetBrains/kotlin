@@ -146,6 +146,7 @@ class ControllerEmulator : Controller {
         if (currentCommandIdx == commands.size) {
             val responseMessage = RouteResponse.BuilderRouteResponse(0).build()
             callBack.invoke(encodeProtoBuf(responseMessage))
+            return
         }
         val currentCommand = commands.get(currentCommandIdx)
 

@@ -3,11 +3,20 @@ package net.server.handlers
 abstract class AbstractHandler {
 
     fun execute(data: List<Byte>, response: dynamic) {
-        getBytesResponse(data.toByteArray(), { resultBytes ->
+
+        val callBack = { resultBytes: ByteArray ->
             val resultBuffer = js("new Buffer(resultBytes)")
             response.write(resultBuffer)
             response.end()
-        })
+        }
+
+        try {
+            getBytesResponse(data.toByteArray(), callBack)
+        } catch (e: dynamic) {
+            println("error in executing handler!")
+            println(e.toString())
+            callBack.invoke(ByteArray(0))
+        }
     }
 
 
