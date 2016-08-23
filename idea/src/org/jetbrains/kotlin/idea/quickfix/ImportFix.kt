@@ -29,7 +29,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -244,7 +244,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
 
         override fun isApplicableForCodeFragment() = true
 
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -260,7 +260,7 @@ internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtExpression)?.let { InvokeImportFix(it) }
 
-        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -294,7 +294,7 @@ internal open class ArrayAccessorImportFix(element: KtArrayAccessExpression, ove
             return null
         }
 
-        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -336,7 +336,7 @@ internal class DelegateAccessorsImportFix(
             return (element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) }.singletonOrEmptyList()
         }
 
-        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -371,7 +371,7 @@ internal class ComponentsImportFix(element: KtExpression, override val importNam
             return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
         }
 
-        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -392,7 +392,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
                 val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
                 indicesHelper.getKotlinCallablesByName(name)
-                        .filter { it.canBeReferencedViaImport() && it.containingDeclaration !is PackageFragmentDescriptor }
+                        .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
                         .filterTo(result, filterByCallType)
 
                 if (!ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
@@ -411,15 +411,10 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
         if (element.getIdentifier() != null) {
             val name = element.getReferencedName()
             if (Name.isValidIdentifier(name)) {
-                Name.identifier(name).singletonList()
-            }
-            else {
-                emptyList<Name>()
+                return@run Name.identifier(name).singletonList()
             }
         }
-        else {
-            emptyList<Name>()
-        }
+        return@run emptyList<Name>()
     }
 
     override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
@@ -430,7 +425,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
 
         override fun isApplicableForCodeFragment() = true
 
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 
 }
