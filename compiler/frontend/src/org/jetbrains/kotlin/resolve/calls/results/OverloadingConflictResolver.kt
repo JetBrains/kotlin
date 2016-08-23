@@ -34,6 +34,7 @@ class OverloadingConflictResolver<C : Any>(
         private val builtIns: KotlinBuiltIns,
         private val specificityComparator: TypeSpecificityComparator,
         private val getResultingDescriptor: (C) -> CallableDescriptor,
+        private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
         private val createFlatSignature: (C) -> FlatSignature<C>,
         private val getVariableCandidates: (C) -> C?, // vor variable WithInvoke
         private val isFromSources: (CallableDescriptor) -> Boolean
@@ -235,7 +236,7 @@ class OverloadingConflictResolver<C : Any>(
             if (isGeneric1 && isGeneric2) return false
         }
 
-        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
+        return createEmptyConstraintSystem().isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
     }
 
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
@@ -321,7 +322,7 @@ class OverloadingConflictResolver<C : Any>(
 
         val fSignature = FlatSignature.createFromCallableDescriptor(f)
         val gSignature = FlatSignature.createFromCallableDescriptor(g)
-        return isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics, specificityComparator)
+        return createEmptyConstraintSystem().isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics, specificityComparator)
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
+import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
 
-class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuilderImpl.Mode.INFERENCE) : ConstraintSystem.Builder {
+open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuilderImpl.Mode.INFERENCE) : ConstraintSystem.Builder {
     enum class Mode {
         INFERENCE,
         SPECIFICITY
@@ -409,7 +410,20 @@ class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuild
     }
 
     companion object {
-        fun forSpecificity() = ConstraintSystemBuilderImpl(Mode.SPECIFICITY)
+        fun forSpecificity(): SimpleConstraintSystem = object : ConstraintSystemBuilderImpl(Mode.SPECIFICITY), SimpleConstraintSystem {
+            var counter = 0
+
+            override fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>) =
+                    registerTypeVariables(CallHandle.NONE, typeParameters)
+
+            override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType) =
+                    addSubtypeConstraint(subType, superType, ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(counter++))
+
+            override fun hasContradiction(): Boolean {
+                fixVariables()
+                return build().status.hasContradiction()
+            }
+        }
     }
 }
 

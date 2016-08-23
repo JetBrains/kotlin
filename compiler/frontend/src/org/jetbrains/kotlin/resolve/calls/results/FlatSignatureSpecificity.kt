@@ -17,21 +17,17 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.valueParameterPosition
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.extensionReceiverTypeOrEmpty
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
@@ -47,21 +43,24 @@ interface TypeSpecificityComparator {
     }
 }
 
-fun <T> isSignatureNotLessSpecific(
+interface SimpleConstraintSystem {
+    fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
+    fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType)
+    fun hasContradiction(): Boolean
+}
+
+fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
         specific: FlatSignature<T>,
         general: FlatSignature<T>,
         callbacks: SpecificityComparisonCallbacks,
-        specificityComparator: TypeSpecificityComparator,
-        callHandle: CallHandle = CallHandle.NONE
+        specificityComparator: TypeSpecificityComparator
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
 
     val typeParameters = general.typeParameters
-    val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl.forSpecificity()
-    val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(callHandle, typeParameters)
+    val typeSubstitutor = registerTypeVariables(typeParameters)
 
-    var numConstraints = 0
     for ((specificType, generalType) in specific.valueParameterTypes.zip(general.valueParameterTypes)) {
         if (specificType == null || generalType == null) continue
 
@@ -78,13 +77,11 @@ fun <T> isSignatureNotLessSpecific(
         }
         else {
             val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
-            constraintSystemBuilder.addSubtypeConstraint(specificType, substitutedGeneralType, valueParameterPosition(numConstraints++))
+            addSubtypeConstraint(specificType.unwrap(), substitutedGeneralType.unwrap())
         }
     }
 
-    constraintSystemBuilder.fixVariables()
-    val constraintSystem = constraintSystemBuilder.build()
-    return !constraintSystem.status.hasContradiction()
+    return !hasContradiction()
 }
 
 
@@ -123,6 +120,7 @@ fun createOverloadingConflictResolver(
         builtIns,
         specificityComparator,
         MutableResolvedCall<*>::getResultingDescriptor,
+        ConstraintSystemBuilderImpl.Companion::forSpecificity,
         MutableResolvedCall<*>::createFlatSignature,
         { (it as? VariableAsFunctionResolvedCallImpl)?.variableCall },
         { DescriptorToSourceUtils.descriptorToDeclaration(it) != null}
