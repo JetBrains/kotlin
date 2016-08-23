@@ -15,7 +15,8 @@ class DebugClInterface {
             "refloc - refresh all car locations\n" +
             "sonar [car_id] - get sonar data\n" +
             "dbinfo [car_id] [type] - refresh all car locations\n." +
-            "type is string name of value or int value. available values: MEMORYSTATS - 0"
+            "type is string name of value or int value. available values: MEMORYSTATS - 0\n" +
+            "stop - exit from this interface and stop all threads\n"
 
     fun run() {
 

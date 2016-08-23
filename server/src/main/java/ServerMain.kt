@@ -1,4 +1,5 @@
 import car.Dropper
+import car.client.Client
 
 val carServerPort: Int = 7925
 val webServerPort: Int = 7926
@@ -23,4 +24,5 @@ fun main(args: Array<String>) {
     carsDestroy.interrupt()
     carServer.interrupt()
     webServer.interrupt()
+    Client.shutDownClient()
 }
