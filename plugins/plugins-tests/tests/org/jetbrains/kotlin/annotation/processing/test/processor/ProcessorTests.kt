@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.TypeMirror
+import javax.lang.model.type.TypeVariable
 
 class ProcessorTests : AbstractProcessorTest() {
     override val testDataDir = "plugins/annotation-processing/testData/processors"
@@ -127,5 +130,27 @@ class ProcessorTests : AbstractProcessorTest() {
 
         assertTrue(superB.typeArguments.size == 1)
         assertTrue(interfaceC.typeArguments.size == 1)
+    }
+    
+    fun testTypeArguments2() = test("TypeArguments2", "*") { set, roundEnv, env ->
+        val b = env.findClass("B")
+        val bSuperTypes = env.typeUtils.directSupertypes(b.asType())
+        assertEquals(1, bSuperTypes.size)
+        val bASuperTypes = env.typeUtils.directSupertypes(bSuperTypes.first())
+        assertEquals(2, bASuperTypes.size) // Object and I
+        
+        fun List<TypeMirror>.iInterface() = first { it.toString().matches("I(<.*>)?".toRegex()) } as DeclaredType
+        
+        val bai = bASuperTypes.iInterface()
+        assertEquals(1, bai.typeArguments.size)
+        assertEquals("java.lang.String", bai.typeArguments.first().toString())
+        
+        val c = env.findClass("C")
+        val cSuperTypes = env.typeUtils.directSupertypes(c.asType())
+        assertEquals(1, cSuperTypes.size)
+        val cai = env.typeUtils.directSupertypes(cSuperTypes.first()).iInterface()
+        assertEquals(1, cai.typeArguments.size)
+        val typeArg = cai.typeArguments.first()
+        assertTrue(typeArg is TypeVariable)
     }
 }

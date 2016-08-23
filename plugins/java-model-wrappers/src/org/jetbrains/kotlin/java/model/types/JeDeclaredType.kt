@@ -49,10 +49,22 @@ class JeDeclaredType(
         get() = psiClass.manager
 
     override fun getTypeArguments(): List<TypeMirror> {
-        if (psiType.isRaw) return emptyList()
-        
         return when (psiType) {
-            is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
+            is PsiClassType -> {
+                val substitutor = psiType.resolveGenerics().substitutor
+                val psiClass = psiType.resolve() ?: return psiType.parameters.map { it.toJeType(psiManager) }
+
+                val args = mutableListOf<TypeMirror>()
+                for (typeParameter in psiClass.typeParameters) {
+                    val substitutedParameter = substitutor.substitute(typeParameter)
+                    if (substitutedParameter != null)
+                        args += substitutedParameter.toJeType(psiManager)
+                    else
+                        args += JeTypeVariableType(PsiTypesUtil.getClassType(typeParameter), typeParameter)
+                }
+
+                args
+            }
             else -> emptyList()
         }
     }
