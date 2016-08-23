@@ -129,7 +129,7 @@ class KotlinElements(val javaPsiFacade: JavaPsiFacade, val scope: GlobalSearchSc
         return annotations
     }
 
-    override fun isFunctionalInterface(type: TypeElement): Boolean {
+    fun isFunctionalInterface(type: TypeElement): Boolean {
         val jeTypeElement = type as? JeTypeElement ?: return false
         if (!jeTypeElement.psi.isInterface) return false
         if (jeTypeElement.psi.allMethods.count { it.hasModifierProperty(PsiModifier.ABSTRACT) } != 1) return false

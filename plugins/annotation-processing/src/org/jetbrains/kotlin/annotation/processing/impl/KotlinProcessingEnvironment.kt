@@ -37,7 +37,7 @@ class KotlinProcessingEnvironment(
     override fun getTypeUtils() = types
     override fun getMessager() = messager
     override fun getLocale() = Locale.getDefault()
-    override fun getSourceVersion() = SourceVersion.RELEASE_8
+    override fun getSourceVersion() = SourceVersion.RELEASE_6
     override fun getOptions() = options
     override fun getFiler() = filer
 }

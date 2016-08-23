@@ -38,7 +38,7 @@ class JeMethodExecutableTypeMirror(
 
     override fun getReturnType() = (returnType ?: psi.returnType)?.let { it.toJeType(psi.manager) } ?: JeVoidType
 
-    override fun getReceiverType() = psi.getReceiverTypeMirror()
+    fun getReceiverType() = psi.getReceiverTypeMirror()
 
     override fun getThrownTypes() = psi.throwsList.referencedTypes.map { it.toJeType(psi.manager) }
 

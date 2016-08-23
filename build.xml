@@ -1142,11 +1142,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"

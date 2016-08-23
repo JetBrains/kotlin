@@ -21,12 +21,12 @@ import javax.lang.model.type.TypeMirror
 
 //TODO support type annotations
 interface JeTypeMirror : TypeMirror {
-    override fun getAnnotationMirrors() = emptyList<AnnotationMirror>()
+    fun getAnnotationMirrors() = emptyList<AnnotationMirror>()
 
-    override fun <A : Annotation> getAnnotation(annotationClass: Class<A>?) = null
+    fun <A : Annotation> getAnnotation(annotationClass: Class<A>?) = null
 
     @Suppress("UNCHECKED_CAST")
-    override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
+    fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
         return java.lang.reflect.Array.newInstance(annotationType, 0) as Array<A>
     }
 }

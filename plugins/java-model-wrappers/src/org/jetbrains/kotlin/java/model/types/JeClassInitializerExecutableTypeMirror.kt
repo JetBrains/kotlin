@@ -31,7 +31,7 @@ class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitialize
 
     override fun getReturnType() = JeVoidType
 
-    override fun getReceiverType() = JeNoneType
+    fun getReceiverType() = JeNoneType
 
     override fun getThrownTypes() = emptyList<TypeMirror>()
 

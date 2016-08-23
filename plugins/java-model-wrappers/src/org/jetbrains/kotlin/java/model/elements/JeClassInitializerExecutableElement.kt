@@ -43,11 +43,11 @@ class JeClassInitializerExecutableElement(override val psi: PsiClassInitializer)
 
     override fun getReturnType() = JeNoneType
 
-    override fun getReceiverType() = JeNoneType
+    fun getReceiverType() = JeNoneType
 
     override fun isVarArgs() = false
 
-    override fun isDefault() = false
+    fun isDefault() = false
 
     override fun getKind() = if (isStaticInitializer) ElementKind.STATIC_INIT else ElementKind.INSTANCE_INIT
 

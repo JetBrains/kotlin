@@ -18,18 +18,18 @@ package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiIntersectionType
 import com.intellij.psi.PsiManager
-import javax.lang.model.type.IntersectionType
+import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
 class JeIntersectionType(
         override val psiType: PsiIntersectionType, 
         override val psiManager: PsiManager
-) : JePsiType(), JeTypeWithManager, IntersectionType {
-    override fun getKind() = TypeKind.INTERSECTION
-    override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitIntersection(this, p)
+) : JePsiType(), JeTypeWithManager, NoType {
+    override fun getKind() = TypeKind.NONE
+    override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitNoType(this, p)
 
-    override fun getBounds() = psiType.superTypes.map { it.toJeType(psiManager) }
+    fun getBounds() = psiType.superTypes.map { it.toJeType(psiManager) }
 
     override fun equals(other: Any?): Boolean{
         if (this === other) return true

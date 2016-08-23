@@ -48,11 +48,11 @@ class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement, Execut
 
     override fun getReturnType() = psi.returnType?.let { it.toJeType(psi.manager) } ?: JeNoneType
 
-    override fun getReceiverType() = psi.getReceiverTypeMirror()
+    fun getReceiverType() = psi.getReceiverTypeMirror()
     
     override fun isVarArgs() = psi.isVarArgs
 
-    override fun isDefault() = psi.hasModifierProperty(PsiModifier.DEFAULT)
+    fun isDefault() = psi.hasModifierProperty(PsiModifier.DEFAULT)
 
     override fun getKind() = when {
         psi.isConstructor -> ElementKind.CONSTRUCTOR

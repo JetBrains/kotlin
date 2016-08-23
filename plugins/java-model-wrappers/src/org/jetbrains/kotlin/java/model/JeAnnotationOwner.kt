@@ -35,7 +35,7 @@ interface JeAnnotationOwner : JeElement {
     }
     
     @Suppress("UNCHECKED_CAST")
-    override fun <A : Annotation> getAnnotationsByType(annotationClass: Class<A>): Array<A> {
+    fun <A : Annotation> getAnnotationsByType(annotationClass: Class<A>): Array<A> {
         val annotations = getAnnotationsByType(annotationClass, onlyFirst = false)
         
         return (RArray.newInstance(annotationClass, annotations.size) as Array<A>).apply {
@@ -76,7 +76,7 @@ interface JeNoAnnotations : Element {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
+    fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>): Array<A> {
         return RArray.newInstance(annotationType, 0) as Array<A>
     }
 }

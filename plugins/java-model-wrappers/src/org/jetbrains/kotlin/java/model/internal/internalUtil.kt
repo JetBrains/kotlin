@@ -44,7 +44,7 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
         check(VOLATILE, Modifier.VOLATILE)
         
         if (HAS_DEFAULT) {
-            check(DEFAULT, Modifier.DEFAULT)
+            // Do nothing (NO JDK1.8)
         }
     }
 }
