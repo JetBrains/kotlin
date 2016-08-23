@@ -21,28 +21,105 @@ import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import java.util.*
 
-class OverloadingConflictResolver(
+class OverloadingConflictResolver<C : Any>(
         private val builtIns: KotlinBuiltIns,
-        private val specificityComparator: TypeSpecificityComparator
+        private val specificityComparator: TypeSpecificityComparator,
+        private val getResultingDescriptor: (C) -> CallableDescriptor,
+        private val createFlatSignature: (C) -> FlatSignature<C>,
+        private val getVariableCandidates: (C) -> C?, // vor variable WithInvoke
+        private val isFromSources: (CallableDescriptor) -> Boolean
 ) {
 
-    fun <D : CallableDescriptor> findMaximallySpecific(
-            candidates: Set<MutableResolvedCall<D>>,
+    private val resolvedCallHashingStrategy = object : TObjectHashingStrategy<C> {
+        override fun equals(call1: C?, call2: C?): Boolean =
+                if (call1 != null && call2 != null)
+                    call1.resultingDescriptor == call2.resultingDescriptor
+                else
+                    call1 == call2
+
+        override fun computeHashCode(call: C?): Int =
+                call?.resultingDescriptor?.hashCode() ?: 0
+    }
+
+    private val C.resultingDescriptor: CallableDescriptor get() = getResultingDescriptor(this)
+
+    // if result contains only one element -- it is maximally specific; otherwise we have ambiguity
+    fun chooseMaximallySpecificCandidates(
+            candidates: Set<C>,
             checkArgumentsMode: CheckArgumentTypesMode,
             discriminateGenerics: Boolean,
             isDebuggerContext: Boolean
-    ): MutableResolvedCall<D>? =
+    ): Set<C> {
+        if (candidates.size == 1) return candidates
+
+        val fixedCandidates = if (getVariableCandidates(candidates.first()) != null) {
+            findMaximallySpecificVariableAsFunctionCalls(candidates) ?: return candidates
+        }
+        else {
+            candidates
+        }
+
+        val noEquivalentCalls = filterOutEquivalentCalls(fixedCandidates)
+        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { it.resultingDescriptor }
+        if (noOverrides.size == 1) {
+            return noOverrides
+        }
+
+        val maximallySpecific = findMaximallySpecific(noOverrides, checkArgumentsMode, false, isDebuggerContext)
+        if (maximallySpecific != null) {
+            return setOf(maximallySpecific)
+        }
+
+        if (discriminateGenerics) {
+            val maximallySpecificGenericsDiscriminated = findMaximallySpecific(noOverrides, checkArgumentsMode, true, isDebuggerContext)
+            if (maximallySpecificGenericsDiscriminated != null) {
+                return setOf(maximallySpecificGenericsDiscriminated)
+            }
+        }
+
+        return noOverrides
+    }
+
+    // Sometimes we should compare "copies" from sources and from binary files.
+    // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
+    // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
+    private fun filterOutEquivalentCalls(
+            candidates: Set<C>): Set<C> {
+        if (candidates.size <= 1) return candidates
+
+        val fromSourcesGoesFirst = candidates.sortedBy { if (isFromSources(it.resultingDescriptor)) 0 else 1 }
+
+        val result = LinkedHashSet<C>()
+        outerLoop@ for (meD in fromSourcesGoesFirst) {
+            for (otherD in result) {
+                val me = meD.resultingDescriptor
+                val other = otherD.resultingDescriptor
+                val ignoreReturnType = isFromSources(me) != isFromSources(other)
+                if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(me, other, ignoreReturnType)) {
+                    continue@outerLoop
+                }
+            }
+            result.add(meD)
+        }
+
+        return result
+    }
+
+    private fun findMaximallySpecific(
+            candidates: Set<C>,
+            checkArgumentsMode: CheckArgumentTypesMode,
+            discriminateGenerics: Boolean,
+            isDebuggerContext: Boolean
+    ): C? =
             if (candidates.size <= 1)
                 candidates.firstOrNull()
             else when (checkArgumentsMode) {
@@ -58,33 +135,31 @@ class OverloadingConflictResolver(
                     findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
             }
 
-    fun <D : CallableDescriptor> findMaximallySpecificVariableAsFunctionCalls(candidates: Set<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> {
-        val variableCalls = candidates.mapTo(newResolvedCallSet<MutableResolvedCall<VariableDescriptor>>(candidates.size)) {
-            if (it is VariableAsFunctionMutableResolvedCall)
-                it.variableCall
-            else
-                throw AssertionError("Regular call among variable-as-function calls: $it")
+    // null means ambiguity between variables
+    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Set<C>): Set<C>? {
+        val variableCalls = candidates.mapTo(newResolvedCallSet(candidates.size)) {
+            getVariableCandidates(it) ?: throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
-        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false, false) ?: return emptySet()
+        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false, false) ?: return null
 
-        return candidates.filterTo(newResolvedCallSet<MutableResolvedCall<D>>(2)) {
-            it.resultingVariableDescriptor == maxSpecificVariableCall.resultingDescriptor
+        return candidates.filterTo(newResolvedCallSet(2)) {
+            getVariableCandidates(it)!!.resultingDescriptor == maxSpecificVariableCall.resultingDescriptor
         }
     }
 
-    private fun <D : CallableDescriptor> findMaximallySpecificCall(
-            candidates: Set<MutableResolvedCall<D>>,
+    private fun findMaximallySpecificCall(
+            candidates: Set<C>,
             discriminateGenerics: Boolean,
             isDebuggerContext: Boolean
-    ): MutableResolvedCall<D>? {
+    ): C? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
         if (filteredCandidates.size <= 1) return filteredCandidates.singleOrNull()
 
         val conflictingCandidates = filteredCandidates.map {
             candidateCall ->
-            FlatSignature.createFromResolvedCall(candidateCall)
+            createFlatSignature(candidateCall)
         }
 
         val bestCandidatesByParameterTypes = conflictingCandidates.filter {
@@ -132,9 +207,9 @@ class OverloadingConflictResolver(
     /**
      * `call1` is not less specific than `call2`
      */
-    private fun <D : CallableDescriptor> isNotLessSpecificCallWithArgumentMapping(
-            call1: FlatSignature<MutableResolvedCall<D>>,
-            call2: FlatSignature<MutableResolvedCall<D>>,
+    private fun isNotLessSpecificCallWithArgumentMapping(
+            call1: FlatSignature<C>,
+            call2: FlatSignature<C>,
             discriminateGenerics: Boolean
     ): Boolean {
         return tryCompareDescriptorsFromScripts(call1.candidateDescriptor(), call2.candidateDescriptor()) ?:
@@ -145,9 +220,9 @@ class OverloadingConflictResolver(
      * Returns `true` if `d1` is definitely not less specific than `d2`,
      * `false` otherwise.
      */
-    private fun <D : CallableDescriptor> compareCallsByUsedArguments(
-            call1: FlatSignature<MutableResolvedCall<D>>,
-            call2: FlatSignature<MutableResolvedCall<D>>,
+    private fun compareCallsByUsedArguments(
+            call1: FlatSignature<C>,
+            call2: FlatSignature<C>,
             discriminateGenerics: Boolean
     ): Boolean {
         if (discriminateGenerics) {
@@ -188,9 +263,9 @@ class OverloadingConflictResolver(
         }
     }
 
-    private fun <D: CallableDescriptor> isOfNotLessSpecificShape(
-            call1: FlatSignature<MutableResolvedCall<D>>,
-            call2: FlatSignature<MutableResolvedCall<D>>
+    private fun isOfNotLessSpecificShape(
+            call1: FlatSignature<C>,
+            call2: FlatSignature<C>
     ): Boolean {
         val hasVarargs1 = call1.hasVarargs
         val hasVarargs2 = call2.hasVarargs
@@ -204,9 +279,9 @@ class OverloadingConflictResolver(
         return true
     }
 
-    private fun <D: CallableDescriptor> isOfNotLessSpecificVisibilityForDebugger(
-            call1: FlatSignature<MutableResolvedCall<D>>,
-            call2: FlatSignature<MutableResolvedCall<D>>,
+    private fun isOfNotLessSpecificVisibilityForDebugger(
+            call1: FlatSignature<C>,
+            call2: FlatSignature<C>,
             isDebuggerContext: Boolean
     ): Boolean {
         if (isDebuggerContext) {
@@ -254,34 +329,16 @@ class OverloadingConflictResolver(
             tryCompareDescriptorsFromScripts(f, g) ?:
             isNotLessSpecificCallableReferenceDescriptor(f, g)
 
-    // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
-    private fun <D : CallableDescriptor> uniquifyCandidatesSet(candidates: Collection<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> =
-            THashSet<MutableResolvedCall<D>>(candidates.size, getCallHashingStrategy<MutableResolvedCall<D>>()).apply { addAll(candidates) }
+    // Different smart casts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
+    private fun uniquifyCandidatesSet(candidates: Collection<C>): Set<C> =
+            THashSet(candidates.size, resolvedCallHashingStrategy).apply { addAll(candidates) }
 
-    private fun <C> newResolvedCallSet(expectedSize: Int): MutableSet<C> =
-            THashSet<C>(expectedSize, getCallHashingStrategy<C>())
+    private fun newResolvedCallSet(expectedSize: Int): MutableSet<C> =
+            THashSet(expectedSize, resolvedCallHashingStrategy)
 
-    private object ResolvedCallHashingStrategy : TObjectHashingStrategy<ResolvedCall<*>> {
-        override fun equals(call1: ResolvedCall<*>?, call2: ResolvedCall<*>?): Boolean =
-                if (call1 != null && call2 != null)
-                    call1.resultingDescriptor == call2.resultingDescriptor
-                else
-                    call1 == call2
-
-        override fun computeHashCode(call: ResolvedCall<*>?): Int =
-                call?.resultingDescriptor?.hashCode() ?: 0
-    }
-
-    private val MutableResolvedCall<*>.resultingVariableDescriptor: VariableDescriptor
-        get() = (this as VariableAsFunctionResolvedCall).variableCall.resultingDescriptor
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <C> getCallHashingStrategy() =
-            ResolvedCallHashingStrategy as TObjectHashingStrategy<C>
-
-    private fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.candidateDescriptor() =
+    private fun FlatSignature<C>.candidateDescriptor() =
             origin.resultingDescriptor.original
 
-    private fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.descriptorVisibility() =
+    private fun FlatSignature<C>.descriptorVisibility() =
             candidateDescriptor().visibility
 }
