@@ -805,7 +805,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
                 if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
-                    builder.jump(builder.getLoopConditionEntryPoint(loop), expression)
+                    builder.getLoopConditionEntryPoint(loop)?.let { builder.jump(it, expression) }
                 }
             }
         }
