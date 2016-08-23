@@ -7,6 +7,8 @@ fun main() {
     Sonar.init()
     Connection.init()
 
+    Leds.set(Leds.GREEN, true)
+
     /* car task */
     Control.run()
 }
