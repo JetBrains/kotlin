@@ -119,4 +119,13 @@ class ProcessorTests : AbstractProcessorTest() {
         assertNotNull(suppress)
         assertEquals(listOf("Tom", "Mary"), suppress!!.names.toList())
     }
+
+    fun testTypeArguments() = test("TypeArguments", "*") { set, roundEnv, env ->
+        val classA = env.findClass("A")
+        val superB = classA.superclass as JeDeclaredType
+        val interfaceC = classA.interfaces[0] as JeDeclaredType
+
+        assertTrue(superB.typeArguments.size == 1)
+        assertTrue(interfaceC.typeArguments.size == 1)
+    }
 }
