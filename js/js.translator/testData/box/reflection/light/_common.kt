@@ -18,3 +18,5 @@ enum class E {
     Z {}
 }
 
+@JsName("Q")
+class R
