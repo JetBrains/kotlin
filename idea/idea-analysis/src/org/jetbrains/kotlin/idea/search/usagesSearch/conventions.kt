@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
+import org.jetbrains.kotlin.idea.references.KtForLoopInReference
+import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -56,8 +58,6 @@ fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>?> {
         in DELEGATE_ACCESSOR_NAMES -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
     }
-
-    if (isComponentLike(this)) return setOf(KtTokens.LPAR) to KtDestructuringDeclarationReference::class.java
 
     val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
     if (unaryOp != null) return setOf(unaryOp) to KtSimpleNameReference::class.java

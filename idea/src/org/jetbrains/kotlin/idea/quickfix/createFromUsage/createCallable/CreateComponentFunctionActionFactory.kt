@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.Variance
@@ -40,7 +40,7 @@ object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFacto
         val name = diagnosticWithParameters.a
         if (!isComponentLike(name)) return null
 
-        val componentNumber = getComponentIndex(name) - 1
+        val componentNumber = getComponentIndex(name.asString()) - 1
 
         val ownerType = element.initializer?.let { TypeInfo(it, Variance.IN_VARIANCE) }
                         ?: TypeInfo(diagnosticWithParameters.b, Variance.IN_VARIANCE)

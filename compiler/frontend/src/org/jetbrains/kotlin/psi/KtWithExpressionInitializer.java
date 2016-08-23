@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-public interface KtWithExpressionInitializer extends PsiElement {
+public interface KtWithExpressionInitializer extends KtDeclaration {
     @Nullable
     KtExpression getInitializer();
 
