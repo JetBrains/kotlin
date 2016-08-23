@@ -52,8 +52,4 @@ internal class BuildCacheStorage(workingDir: File) : BasicMapsOwner() {
         super.close()
         version.saveIfNeeded()
     }
-
-    override fun flush(memoryCachesOnly: Boolean) {
-        super.flush(memoryCachesOnly)
-    }
 }

@@ -10,6 +10,7 @@ import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.Before
 import java.io.File
+import java.util.regex.Pattern
 import kotlin.test.*
 
 private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
@@ -162,7 +163,7 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertSubstringCount(substring: String, expectedCount: Int) {
-        val actualCount = substring.toRegex().findAll(output).count()
+        val actualCount = Pattern.quote(substring).toRegex().findAll(output).count()
         assertEquals(expectedCount, actualCount, "Number of occurrences in output for substring '$substring'")
     }
 

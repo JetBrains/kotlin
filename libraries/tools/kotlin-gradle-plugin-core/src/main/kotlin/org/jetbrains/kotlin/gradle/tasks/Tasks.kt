@@ -283,20 +283,20 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             symbols
         }
 
-        fun getClasspathChanges(modifiedClasspath: List<File>): DirtyData? {
+        fun getClasspathChanges(modifiedClasspath: List<File>): ChangesEither {
             if (modifiedClasspath.isEmpty()) {
                 logger.kotlinDebug { "No classpath changes" }
-                return DirtyData()
+                return ChangesEither.Known()
             }
             if (artifactDifferenceRegistry == null) {
                 logger.kotlinDebug { "No artifact history provider" }
-                return null
+                return ChangesEither.Unknown()
             }
 
             val lastBuildTS = lastBuildInfo?.startTS
             if (lastBuildTS == null) {
                 logger.kotlinDebug { "Could not determine last build timestamp" }
-                return null
+                return ChangesEither.Unknown()
             }
 
             val symbols = HashSet<LookupSymbol>()
@@ -305,13 +305,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 val diffs = artifactDifferenceRegistry!![file]
                 if (diffs == null) {
                     logger.kotlinDebug { "Could not get changes for file: $file" }
-                    return null
+                    return ChangesEither.Unknown()
                 }
 
                 val (beforeLastBuild, afterLastBuild) = diffs.partition { it.buildTS < lastBuildTS }
                 if (beforeLastBuild.isEmpty()) {
                     logger.kotlinDebug { "No known build preceding timestamp $lastBuildTS for file $file" }
-                    return null
+                    return ChangesEither.Unknown()
                 }
 
                 afterLastBuild.forEach {
@@ -320,7 +320,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 }
             }
 
-            return DirtyData(symbols, fqNames)
+            return ChangesEither.Known(symbols, fqNames)
         }
 
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
@@ -344,12 +344,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             val modifiedClasspathEntries = modified.filter { it in classpath }
             val classpathChanges = getClasspathChanges(modifiedClasspathEntries)
-                    ?: return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
+            if (classpathChanges is ChangesEither.Unknown) {
+                return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
+            }
+            if (classpathChanges !is ChangesEither.Known) {
+                throw AssertionError("Unknown implementation of ChangesEither: ${classpathChanges.javaClass}")
+            }
 
             val dirtyFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
             val lookupSymbols = HashSet<LookupSymbol>()
             lookupSymbols.addAll(dirtyJavaLookupSymbols.value)
-            lookupSymbols.addAll(classpathChanges.dirtyLookupSymbols)
+            lookupSymbols.addAll(classpathChanges.lookupSymbols)
 
             if (lookupSymbols.any()) {
                 val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, ::projectRelativePath)
@@ -357,7 +362,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
 
             val allCaches = targets.map(::getIncrementalCache)
-            val dirtyClassesFqNames = classpathChanges.dirtyClassesFqNames.flatMap { withSubtypes(it, allCaches) }
+            val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, allCaches) }
             if (dirtyClassesFqNames.any()) {
                 val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(allCaches, dirtyClassesFqNames, logAction, ::projectRelativePath)
                 dirtyFiles.addAll(dirtyFilesFromFqNames)
