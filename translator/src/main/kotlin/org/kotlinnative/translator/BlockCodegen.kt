@@ -648,18 +648,21 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 return oldValue
             }
             KtTokens.EXCLEXCL -> {
+                var result = firstOp
                 codeBuilder.addComment("start EXCLEXCL")
                 val nullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
                 val notNullLabel = codeBuilder.getNewLabel(prefix = "nullCheck")
                 val nullCheck = codeBuilder.nullCheck(firstOp)
                 codeBuilder.addCondition(nullCheck, nullLabel, notNullLabel)
-
                 codeBuilder.markWithLabel(nullLabel)
                 codeBuilder.addExceptionCall("KotlinNullPointerException")
                 codeBuilder.addUnconditionalJump(notNullLabel)
                 codeBuilder.markWithLabel(notNullLabel)
+                if (firstOp.type.isPrimitive()) {
+                    result = codeBuilder.downLoadArgument(firstOp, 0) as LLVMVariable
+                }
                 codeBuilder.addComment("end EXCLEXCL")
-                return firstOp
+                return result
             }
             else -> throw UnsupportedOperationException()
         }
