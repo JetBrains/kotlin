@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.incremental.android.ArtifactDifferenceRegistryAndroidWrapper
 import org.jetbrains.kotlin.gradle.tasks.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
@@ -141,9 +142,27 @@ class Kotlin2JvmSourceSetProcessor(
                 kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
                 configureJavaTask(kotlinTask, javaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
-                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask, artifactDifferenceRegistry)
+                val artifactFile = project.tryGetSingleArtifact()
+                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                        artifactDifferenceRegistry, artifactFile)
             }
         }
+    }
+
+    private fun Project.tryGetSingleArtifact(): File? {
+        val log = logger
+        log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+        val archives = configurations.findByName("archives")
+        if (archives == null) {
+            log.kotlinDebug { "Could not find 'archives' configuration for project $path" }
+            return null
+        }
+
+        val artifacts = archives.artifacts.files.files
+        log.kotlinDebug { "All artifacts for project $path: [${artifacts.joinToString()}]" }
+
+        return if (artifacts.size == 1) artifacts.first() else null
     }
 }
 
@@ -242,7 +261,8 @@ open class Kotlin2JsPlugin(
 open class KotlinAndroidPlugin(
         val tasksProvider: KotlinTasksProvider,
         private val kotlinSourceSetProvider: KotlinSourceSetProvider,
-        private val kotlinPluginVersion: String
+        private val kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
 ) : Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
@@ -363,6 +383,10 @@ open class KotlinAndroidPlugin(
 
             configureJavaTask(kotlinTask, javaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
+            val artifactFile = project.tryGetSingleArtifact(variantData)
+            val artifactDifferenceRegistryWrapper = ArtifactDifferenceRegistryAndroidWrapper(artifactDifferenceRegistry, variantData)
+            configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                    artifactDifferenceRegistryWrapper, artifactFile)
         }
     }
 
@@ -378,6 +402,19 @@ open class KotlinAndroidPlugin(
             kotlinTask.source(javaSrcDir)
             logger.kotlinDebug("Source directory $javaSrcDir was added to kotlin source for ${kotlinTask.name}")
         }
+    }
+
+    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
+        val log = logger
+        log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+        val outputs = variantData.outputs
+        if (outputs.size != 1) {
+            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString() }" }
+            return null
+        }
+
+        return variantData.outputs.first().outputFile
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>

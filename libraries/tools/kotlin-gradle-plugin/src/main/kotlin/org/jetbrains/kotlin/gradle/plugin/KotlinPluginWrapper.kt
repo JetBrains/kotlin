@@ -36,7 +36,8 @@ open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): 
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion,
+                    kotlinGradleBuildServices.artifactDifferenceRegistry)
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {

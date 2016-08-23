@@ -10,7 +10,14 @@ import java.io.File
 class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
     companion object {
         private val GRADLE_VERSION = "2.10"
+        private val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
     }
+
+    private fun androidBuildOptions() =
+            BuildOptions(withDaemon = true,
+                    androidHome = File("../../../dependencies/android-sdk-for-tests"),
+                    androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
+                    incremental = true)
 
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
@@ -183,6 +190,25 @@ open class A {
             val affectedSources = File(project.projectDir, "app").allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
+        }
+    }
+
+    @Test
+    fun testAndroid() {
+        val project = Project("AndroidProject", GRADLE_VERSION)
+        val options = androidBuildOptions()
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        val libUtilKt = project.projectDir.getFileByName("libUtil.kt")
+        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): Any") }
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libUtil.kt", "MainActivity2.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
         }
     }
 }
