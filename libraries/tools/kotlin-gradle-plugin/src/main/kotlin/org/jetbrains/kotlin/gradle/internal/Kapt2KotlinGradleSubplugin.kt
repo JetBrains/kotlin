@@ -73,7 +73,7 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
 
         fun handleSourceSet(sourceSetName: String) {
             val kapt2Configuration = project.findKaptConfiguration(sourceSetName)
-            if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 0) {
+            if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 1) {
                 javaCompile.dependsOn(kapt2Configuration.buildDependencies)
                 kaptClasspath.addAll(kapt2Configuration.resolve())
             }
