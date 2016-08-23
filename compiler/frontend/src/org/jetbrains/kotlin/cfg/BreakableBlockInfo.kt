@@ -14,44 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import com.google.common.collect.Sets;
-import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtElement
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Collections
 
-public abstract class BreakableBlockInfo extends BlockInfo {
-    private final KtElement element;
-    private final Label entryPoint;
-    private final Label exitPoint;
-    private final Set<Label> referablePoints = Sets.newHashSet();
+abstract class BreakableBlockInfo(open val element: KtElement, val entryPoint: Label, val exitPoint: Label) : BlockInfo() {
+    val referablePoints: MutableSet<Label> = hashSetOf()
 
-    public BreakableBlockInfo(KtElement element, Label entryPoint, Label exitPoint) {
-        this.element = element;
-        this.entryPoint = entryPoint;
-        this.exitPoint = exitPoint;
-        markReferablePoints(entryPoint, exitPoint);
+    init {
+        markReferablePoints(entryPoint, exitPoint)
     }
 
-    protected void markReferablePoints(Label... labels) {
-        Collections.addAll(referablePoints, labels);
-    }
-
-    public KtElement getElement() {
-        return element;
-    }
-
-    public Label getEntryPoint() {
-        return entryPoint;
-    }
-
-    public Label getExitPoint() {
-        return exitPoint;
-    }
-
-    public Set<Label> getReferablePoints() {
-        return referablePoints;
+    protected fun markReferablePoints(vararg labels: Label) {
+        Collections.addAll(referablePoints, *labels)
     }
 }
