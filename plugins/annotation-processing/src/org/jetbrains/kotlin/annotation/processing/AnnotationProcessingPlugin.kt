@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
@@ -81,16 +82,28 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
 }
 
 class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
+    private companion object {
+        private val JVM_CLASSPATH_ROOT = "org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot"
+        private val JAVA_SOURCE_ROOT = "org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot"
+        
+        private val CLASSPATH_ROOTS = listOf(JVM_CLASSPATH_ROOT, JAVA_SOURCE_ROOT)
+    }
+    
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val generatedOutputDir = configuration.get(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR) ?: return
-        val classpath = configuration.get(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH) ?: return
+        val apClasspath = configuration.get(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
 
         val generatedOutputDirFile = File(generatedOutputDir)
         generatedOutputDirFile.mkdirs()
+
+        val contentRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
         
-        val javaRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS]
-                ?.filter { it.javaClass.canonicalName == "org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot" }
-                ?.map { it.javaClass.getMethod("getFile")(it) as File } ?: emptyList()
+        fun ContentRoot.jvmRootFile() = javaClass.getMethod("getFile")(this) as File
+        
+        val compileClasspath = contentRoots.filter { it.javaClass.canonicalName in CLASSPATH_ROOTS }.map { it.jvmRootFile() }
+        val classpath = apClasspath + compileClasspath
+
+        val javaRoots = contentRoots.filter { it.javaClass.canonicalName == JAVA_SOURCE_ROOT }.map { it.jvmRootFile() }
         
         val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
