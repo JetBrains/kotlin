@@ -64,6 +64,8 @@ class KotlinAnnotationProxyMaker(val annotation: PsiAnnotation, val annotationCl
     }
 }
 
+private val JAVA_LANG_STRING = "java.lang.String"
+
 private fun getConstantValue(
         psiValue: PsiAnnotationMemberValue,
         returnType: PsiType,
@@ -74,7 +76,7 @@ private fun getConstantValue(
     
     when {
         returnType == PsiType.NULL || returnType == PsiType.VOID -> unexpectedType("void")
-        returnType.fqName == "java.lang.String" -> return (psiValue as? PsiExpression)?.calcConstantValue(evaluator)
+        returnType.fqName == JAVA_LANG_STRING -> return (psiValue as? PsiExpression)?.calcConstantValue(evaluator)
         jReturnType.isAnnotation -> {
             if (psiValue !is PsiAnnotation) error("psiValue is not a PsiAnnotation")
             val annotationClass = PsiTypesUtil.getPsiClass(returnType) ?: error("Can't resolve type $returnType")
@@ -91,16 +93,16 @@ private fun getConstantValue(
                 else -> listOf(psiValue)
             }
             
-            if (!jComponentType.isPrimitive && !jComponentType.isAnnotation) {
-                val typeMirrors = arrayValues.map { getObjectType(it).toJeType(manager) }
-                return MirroredTypesExceptionProxy(Collections.unmodifiableList(typeMirrors))
-            } else {
+            if (jComponentType.isPrimitive || jComponentType.isAnnotation || jComponentType.canonicalName == JAVA_LANG_STRING) {
                 val arr = Array.newInstance(jComponentType, arrayValues.size)
-                arrayValues.forEachIndexed { i, componentPsiValue -> 
+                arrayValues.forEachIndexed { i, componentPsiValue ->
                     val componentValue = getConstantValue(componentPsiValue, returnType.componentType, jComponentType, evaluator)
                     try { Array.set(arr, i, componentValue) } catch (e: IllegalArgumentException) { return null }
                 }
                 return arr
+            } else {
+                val typeMirrors = arrayValues.map { getObjectType(it).toJeType(manager) }
+                return MirroredTypesExceptionProxy(Collections.unmodifiableList(typeMirrors))
             }
         }
         jReturnType.isEnum -> {

@@ -2,12 +2,15 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
 import org.junit.AfterClass
+import org.junit.Assert
 import org.junit.Before
 import java.io.File
+import java.util.regex.Pattern
 import kotlin.test.*
 
 private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
@@ -93,11 +96,6 @@ abstract class BaseGradleIT {
         fun relativize(vararg files: File): List<String> =
                 files.map { it.relativeTo(projectDir).path }
 
-        fun relativizeToSubproject(subproject: String, vararg files: File): List<String> {
-            val subprojectSir = File(projectDir, subproject)
-            return files.map { it.relativeTo(subprojectSir).path }
-        }
-
         fun performModifications() {
             for (file in projectDir.walk()) {
                 if (!file.isFile) continue
@@ -164,6 +162,16 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertSubstringCount(substring: String, expectedCount: Int) {
+        val actualCount = Pattern.quote(substring).toRegex().findAll(output).count()
+        assertEquals(expectedCount, actualCount, "Number of occurrences in output for substring '$substring'")
+    }
+
+    fun CompiledProject.checkKotlinGradleBuildServices() {
+        assertSubstringCount(KotlinGradleBuildServices.INIT_MESSAGE, expectedCount = 1)
+        assertSubstringCount(KotlinGradleBuildServices.DISPOSE_MESSAGE, expectedCount = 1)
+    }
+
     fun CompiledProject.assertNotContains(vararg expected: String): CompiledProject {
         for (str in expected) {
             assertFalse(output.contains(str.normalize()), "Output should not contain '$str'")
@@ -205,10 +213,10 @@ abstract class BaseGradleIT {
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 
-    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        val expectedSet = expected.toSortedSet()
-        val actualSet = actual.toSortedSet()
-        assertTrue(actualSet == expectedSet, messagePrefix + "expected files: ${expectedSet.joinToString()}\n  != actual files: ${actualSet.joinToString()}")
+    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String): CompiledProject {
+        val expectedSet = expected.toSortedSet().joinToString("\n")
+        val actualSet = actual.toSortedSet().joinToString("\n")
+        Assert.assertEquals(messagePrefix, expectedSet, actualSet)
         return this
     }
 
