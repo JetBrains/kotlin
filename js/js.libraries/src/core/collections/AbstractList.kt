@@ -37,10 +37,10 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
     }
 
     override fun addAll(index: Int, elements: Collection<E>): Boolean {
-        var index = index
+        var _index = index
         var changed = false
         for (e in elements) {
-            add(index++, e)
+            add(_index++, e)
             changed = true
         }
         return changed
@@ -54,32 +54,32 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
     override fun iterator(): MutableIterator<E> = IteratorImpl()
 
     override fun indexOf(element: E): Int {
-        for (i in 0..lastIndex) {
-            if (get(i) == element) {
-                return i
+        for (index in 0..lastIndex) {
+            if (get(index) == element) {
+                return index
             }
         }
         return -1
     }
 
     override fun lastIndexOf(element: E): Int {
-        for (i in lastIndex downTo 0) {
-            if (get(i) == element) {
-                return i
+        for (index in lastIndex downTo 0) {
+            if (get(index) == element) {
+                return index
             }
         }
         return -1
     }
 
     override fun listIterator(): MutableListIterator<E> = listIterator(0)
-    override fun listIterator(from: Int): MutableListIterator<E> = ListIteratorImpl(from)
+    override fun listIterator(index: Int): MutableListIterator<E> = ListIteratorImpl(index)
 
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = SubList(this, fromIndex, toIndex)
 
-    protected open fun removeRange(fromIndex: Int, endIndex: Int) {
+    protected open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
-        for (i in fromIndex..endIndex - 1) {
+        repeat(toIndex - fromIndex) {
             iterator.next()
             iterator.remove()
         }
@@ -102,25 +102,29 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
     }
 
     override fun hashCode(): Int {
-        return Collections_hashCode(this)
+        var hashCode = 1
+        for (e in this) {
+            hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
+            hashCode = hashCode or 0 // make sure we don't overflow
+        }
+        return hashCode
     }
 
 
     private open inner class IteratorImpl : MutableIterator<E> {
-        /*
-     * i is the index of the item that will be returned on the next call to
-     * next() last is the index of the item that was returned on the previous
-     * call to next() or previous (for ListIterator), -1 if no such item exists.
-     */
+        /** the index of the item that will be returned on the next call to [next]`()` */
+        protected var index = 0
+        /** the index of the item that was returned on the previous call to [next]`()`
+         * or [ListIterator.previous]`()` (for `ListIterator`),
+         * -1 if no such item exists
+         */
+        protected var last = -1
 
-        internal var i = 0
-        internal var last = -1
-
-        override fun hasNext(): Boolean = i < size
+        override fun hasNext(): Boolean = index < size
 
         override fun next(): E {
             if (!hasNext()) throw NoSuchElementException()
-            last = i++
+            last = index++
             return get(last)
         }
 
@@ -128,78 +132,71 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
             check(last != -1)
 
             removeAt(last)
-            i = last
+            index = last
             last = -1
         }
     }
 
     /**
-     * Implementation of `ListIterator` for abstract lists.
+     * Implementation of `MutableListIterator` for abstract lists.
      */
-    private inner class ListIteratorImpl(start: Int) : IteratorImpl(), MutableListIterator<E> {
-        /*
-     * i is the index of the item that will be returned on the next call to
-     * next() last is the index of the item that was returned on the previous
-     * call to next() or previous (for ListIterator), -1 if no such item exists.
-     */
+    private inner class ListIteratorImpl(index: Int) : IteratorImpl(), MutableListIterator<E> {
 
         init {
-            checkPositionIndex(start, this@AbstractList.size)
-
-            i = start
+            checkPositionIndex(index, this@AbstractList.size)
+            this.index = index
         }
 
-        override fun add(o: E) {
-            add(i, o)
-            i++
-            last = -1
-        }
+        override fun hasPrevious(): Boolean = index > 0
 
-        override fun hasPrevious(): Boolean = i > 0
-
-        override fun nextIndex(): Int = i
+        override fun nextIndex(): Int = index
 
         override fun previous(): E {
             if (!hasPrevious()) throw NoSuchElementException()
 
-            last = --i
+            last = --index
             return get(last)
         }
 
-        override fun previousIndex(): Int = i - 1
+        override fun previousIndex(): Int = index - 1
 
-        override fun set(o: E) {
+        override fun add(element: E) {
+            add(index, element)
+            index++
+            last = -1
+        }
+
+        override fun set(element: E) {
             require(last != -1)
-
-            this@AbstractList[last] = o
+            this@AbstractList[last] = element
         }
     }
 
-    private class SubList<E>(private val wrapped: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>() {
+    private class SubList<E>(private val list: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>() {
         private var _size: Int = 0
 
         init {
-            checkCriticalPositionIndexes(fromIndex, toIndex, wrapped.size)
+            checkRangeIndexes(fromIndex, toIndex, list.size)
             this._size = toIndex - fromIndex
         }
 
         override fun add(index: Int, element: E) {
             checkPositionIndex(index, _size)
 
-            wrapped.add(fromIndex + index, element)
+            list.add(fromIndex + index, element)
             _size++
         }
 
         override fun get(index: Int): E {
             checkElementIndex(index, _size)
 
-            return wrapped[fromIndex + index]
+            return list[fromIndex + index]
         }
 
         override fun removeAt(index: Int): E {
             checkElementIndex(index, _size)
 
-            val result = wrapped.removeAt(fromIndex + index)
+            val result = list.removeAt(fromIndex + index)
             _size--
             return result
         }
@@ -207,7 +204,7 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
         override fun set(index: Int, element: E): E {
             checkElementIndex(index, _size)
 
-            return wrapped.set(fromIndex + index, element)
+            return list.set(fromIndex + index, element)
         }
 
         override val size: Int get() = _size
@@ -216,32 +213,23 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
     companion object {
         internal fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {
-                throw IndexOutOfBoundsException("Index: $index, Size: $size")
+                throw IndexOutOfBoundsException("index: $index, size: $size")
             }
         }
 
         internal fun checkPositionIndex(index: Int, size: Int) {
             if (index < 0 || index > size) {
-                throw IndexOutOfBoundsException("Index: $index, Size: $size")
+                throw IndexOutOfBoundsException("index: $index, size: $size")
             }
         }
 
-        internal fun checkCriticalPositionIndexes(start: Int, end: Int, size: Int) {
+        internal fun checkRangeIndexes(start: Int, end: Int, size: Int) {
             if (start < 0 || end > size) {
                 throw IndexOutOfBoundsException("fromIndex: $start, toIndex: $end, size: $size")
             }
             if (start > end) {
                 throw IllegalArgumentException("fromIndex: $start > toIndex: $end")
             }
-        }
-
-        internal fun <T> Collections_hashCode(list: List<T>): Int {
-            var hashCode = 1
-            for (e in list) {
-                hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
-                hashCode = hashCode or 0 // make sure we don't overflow
-            }
-            return hashCode
         }
     }
 
