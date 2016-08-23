@@ -71,4 +71,16 @@ public class DefaultArgumentsTest extends SingleFileTranslationTest {
     public void testDefaultArgumentsInFunctionWithExpressionAsBody() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testPrimarySuperConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testSecondarySuperConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testEnumSuperConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

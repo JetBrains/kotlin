@@ -29,6 +29,7 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
@@ -40,11 +41,16 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -57,6 +63,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -154,7 +161,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is KtNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks
-                if (declaration.resolveToDescriptorIfAny() == null) return
+                declaration.resolveToDescriptorIfAny() ?: return
                 if (isEntryPoint(declaration)) return
                 if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
                 if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
@@ -232,8 +239,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
                hasReferences(declaration, useScope) ||
-               hasOverrides(declaration, useScope)
-
+               hasOverrides(declaration, useScope) ||
+               hasFakeOverrides(declaration, useScope)
     }
 
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
@@ -270,6 +277,37 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
         return DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null
+    }
+
+    private fun hasFakeOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
+        val ownerClass = declaration.containingClassOrObject as? KtClass ?: return false
+        if (!ownerClass.isInheritable()) return false
+        val descriptor = declaration.toDescriptor() as? CallableMemberDescriptor ?: return false
+        if (descriptor.modality == Modality.ABSTRACT) return false
+        val lightMethods = declaration.toLightMethods()
+        return DefinitionsScopedSearch.search(ownerClass, useScope).any {
+            element: PsiElement ->
+
+            when (element) {
+                is KtLightClass -> {
+                    val memberBySignature =
+                            (element.kotlinOrigin?.toDescriptor() as? ClassDescriptor)?.findCallableMemberBySignature(descriptor)
+                    memberBySignature != null &&
+                    !memberBySignature.kind.isReal &&
+                    memberBySignature.overriddenDescriptors.any { it != descriptor }
+                }
+                is PsiClass ->
+                    lightMethods.any {
+                        lightMethod ->
+
+                        val sameMethods = element.findMethodsBySignature(lightMethod, true)
+                        sameMethods.all { it.containingClass != element } &&
+                        sameMethods.any { it.containingClass != lightMethod.containingClass }
+                    }
+                else ->
+                    false
+            }
+        }
     }
 
     override fun createOptionsPanel(): JComponent? {

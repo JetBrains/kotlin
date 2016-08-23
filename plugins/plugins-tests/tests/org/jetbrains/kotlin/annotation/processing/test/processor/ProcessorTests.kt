@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
-import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
-import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
-import org.jetbrains.kotlin.java.model.elements.JeTypeElement
-import org.jetbrains.kotlin.java.model.elements.JeVariableElement
+import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import javax.lang.model.element.AnnotationMirror
 
 class ProcessorTests : AbstractProcessorTest() {
     override val testDataDir = "plugins/annotation-processing/testData/processors"
@@ -97,5 +95,20 @@ class ProcessorTests : AbstractProcessorTest() {
         val implAnnotations = annotatedElements.first { it.simpleName.toString() == "Impl" }.annotationMirrors
         assertEquals(1, implAnnotations.size)
         assertEquals("Tom", implAnnotations.first().elementValues.values.first().value)
+    }
+    
+    fun testNested() = test("Nested", "Anno") { set, roundEnv, env ->
+        assertEquals(1, set.size)
+        val annotatedElements = roundEnv.getElementsAnnotatedWith(set.first())
+        assertEquals(1, annotatedElements.size)
+        val test = annotatedElements.first()
+        val anno2 = test.annotationMirrors.first { it is JeAnnotationMirror && it.psi.qualifiedName == "Anno" }
+        
+        fun AnnotationMirror.getParam(name: String) = elementValues.entries.first { it.key.simpleName.toString() == name }.value
+        assertTrue(anno2.getParam("a") is JeAnnotationAnnotationValue)
+        assertTrue((anno2.getParam("b") as JeArrayAnnotationValue).value.first() is JeAnnotationAnnotationValue)
+        assertTrue(anno2.getParam("c") is JePrimitiveAnnotationValue)
+        assertTrue(anno2.getParam("d") is JeTypeAnnotationValue)
+        assertTrue((anno2.getParam("e") as JeArrayAnnotationValue).value.first() is JeTypeAnnotationValue)
     }
 }

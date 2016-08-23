@@ -404,11 +404,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                                mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath, excludes = sourcesToCompile)
 
             if (currentRemoved.any()) {
+                anyClassesCompiled = true
                 currentRemoved = listOf()
             }
         }
 
-        anyClassesCompiled = allGeneratedFiles.isNotEmpty()
+        anyClassesCompiled = anyClassesCompiled || allGeneratedFiles.isNotEmpty()
         processCompilerExitCode(exitCode)
     }
 
@@ -606,6 +607,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>() {
         args.outputPostfix = kotlinOptions.outputPostfix
         args.metaInfo = kotlinOptions.metaInfo
         args.kjsm = kotlinOptions.kjsm
+        args.moduleKind = kotlinOptions.moduleKind
 
         val kotlinJsLibsFromDependencies =
                 project.configurations.getByName("compile")

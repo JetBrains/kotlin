@@ -6192,9 +6192,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
-            @TestMetadata("operator.kt")
-            public void testOperator() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/operator.kt");
+            @TestMetadata("noComparison.kt")
+            public void testNoComparison() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/noComparison.kt");
                 doTest(fileName);
             }
 
@@ -6923,6 +6923,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class RemoveUnused extends AbstractQuickFixTest {
         public void testAllFilesPresentInRemoveUnused() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnused"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("deledage.kt")
+        public void testDeledage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/deledage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notTriangle.kt")
+        public void testNotTriangle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/notTriangle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("triangle.kt")
+        public void testTriangle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/triangle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("triangle2.kt")
+        public void testTriangle2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/triangle2.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("unusedClass.kt")
