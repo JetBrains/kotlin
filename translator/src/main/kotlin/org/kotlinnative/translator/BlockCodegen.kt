@@ -844,12 +844,9 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.EQ -> {
                 codeBuilder.addComment("start variable assignment")
                 if (secondOp.type is LLVMNullType) {
-                    val result = codeBuilder.getNewVariable(firstOp.type!!, firstOp.pointer)
-                    codeBuilder.allocStackVar(result)
-                    result.pointer++
-
-                    codeBuilder.storeNull(result)
-                    return result
+                    codeBuilder.storeNull(firstOp as LLVMVariable)
+                    codeBuilder.addComment("end null variable assignment")
+                    return firstOp
                 }
 
 
@@ -991,6 +988,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     }
 
     private fun evaluateIfOperator(element: KtIfExpression, scopeDepth: Int, isExpression: Boolean = true): LLVMVariable? {
+        codeBuilder.addComment("begin evaluate if")
         val conditionResult = evaluateExpression(element.condition, scopeDepth)!!
         val conditionNativeResult = codeBuilder.downLoadArgument(conditionResult, 0)
 
@@ -1005,6 +1003,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val expressionType = LLVMInstanceOfStandardType("type", kotlinType, LLVMVariableScope(), state).type
         val resultVariable = codeBuilder.getNewVariable(expressionType, pointer = 1)
 
+        codeBuilder.addComment("start if expression")
         when (resultVariable.type) {
             is LLVMReferenceType -> codeBuilder.allocStaticVar(resultVariable, asValue = true)
             else -> codeBuilder.allocStackVar(resultVariable, asValue = true)
@@ -1026,6 +1025,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         codeBuilder.storeVariable(resultVariable, elseResultNativeExpression)
         codeBuilder.addUnconditionalJump(endLabel)
         codeBuilder.markWithLabel(endLabel)
+        codeBuilder.addComment("end if expression")
         return resultVariable
     }
 
@@ -1034,6 +1034,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val elseLabel = codeBuilder.getNewLabel(prefix = "if")
         val endLabel = codeBuilder.getNewLabel(prefix = "if")
 
+        codeBuilder.addComment("start if operator")
         codeBuilder.addCondition(conditionResult, thenLabel, if (elseExpression != null) elseLabel else endLabel)
 
         evaluateCodeBlock(thenExpression, thenLabel, endLabel, endLabel, scopeDepth + 1)
@@ -1042,7 +1043,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         }
 
         codeBuilder.markWithLabel(endLabel)
-
+        codeBuilder.addComment("end if operator")
         return null
     }
 
