@@ -1,10 +1,15 @@
 package org.kotlinnative.translator.llvm.types
 
+import org.kotlinnative.translator.TranslationState
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 import java.util.*
 
-class LLVMReferenceType(val type: String, var prefix: String = "", override var align: Int = 4, override var size: Int = 4, var byRef: Boolean = true) : LLVMReferred, LLVMType() {
+class LLVMReferenceType(val type: String,
+                        var prefix: String = "",
+                        override var align: Int = TranslationState.pointerAlign,
+                        override var size: Int = TranslationState.pointerSize,
+                        var byRef: Boolean = true) : LLVMReferred, LLVMType() {
 
     override val defaultValue: String = "null"
 
