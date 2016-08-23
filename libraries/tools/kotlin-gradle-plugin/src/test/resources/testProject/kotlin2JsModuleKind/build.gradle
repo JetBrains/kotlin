@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "file://" + pathToKotlinPlugin
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
+    }
+}
+
+apply plugin: "kotlin2js"
+apply plugin: 'java'
+
+def outDir = "${buildDir}/kotlin2js/main/"
+compileKotlin2Js.kotlinOptions.moduleKind = "amd"
+compileKotlin2Js.kotlinOptions.outputFile = outDir + "app.js"
+
+repositories {
+    maven {
+        url "file://" + pathToKotlinPlugin
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:1.1-SNAPSHOT"
+    compile "org.mozilla:rhino:1.7.7.1"
+}
+
+task runRhino(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = "${buildDir}/kotlin2js/main/"
+    main = 'org.mozilla.javascript.tools.shell.Main'
+    args = ["-opt", "-1", "-f", "amd.js", "-f", "kotlin.js", "-f", "app.js", "-f", "check.js"]
+}
+
+build.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${buildDir}/kotlin2js/main/"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+    copy {
+        from "."
+        include "amd.js"
+        include "check.js"
+        into "${buildDir}/kotlin2js/main/"
+    }
+}
+
+runRhino.dependsOn build

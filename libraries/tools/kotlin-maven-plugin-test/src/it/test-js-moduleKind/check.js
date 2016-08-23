@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package foo
-
-fun bar() = "OK"
+define("check", ["test-js-moduleKind"], function(app) {
+    if (app.foo.bar() != "OK") {
+        throw new Error("Unexpected result");
+    }
+});
