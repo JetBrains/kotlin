@@ -8,9 +8,6 @@ import io.netty.handler.codec.http.HttpRequest
 import io.netty.util.AttributeKey
 import java.net.ConnectException
 
-/**
- * Created by user on 7/8/16.
- */
 object Client {
 
     val bootstrap: Bootstrap = makeBootstrap()
@@ -24,18 +21,19 @@ object Client {
         return b
     }
 
-    fun sendRequest(request: HttpRequest, host: String, port: Int, carUid: Int) {
+    fun <T> sendRequest(request: HttpRequest, host: String, port: Int, options: Map<String, T>) {
         try {
             bootstrap.attr(AttributeKey.valueOf<String>("url"), request.uri())
-            bootstrap.attr(AttributeKey.valueOf<Int>("uid"), carUid)
+            for ((key, value) in options) {
+                bootstrap.attr(AttributeKey.valueOf<T>(key), value)
+            }
             val ch = bootstrap.connect(host, port).sync().channel()
             ch.writeAndFlush(request)
-            ch.closeFuture().sync()//wait for answer
+//            ch.closeFuture().sync()//wait for answer
         } catch (e: InterruptedException) {
 
         } catch (e: ConnectException) {
             throw InactiveCarException()
         }
     }
-
 }
