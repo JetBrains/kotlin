@@ -404,11 +404,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                                mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath, excludes = sourcesToCompile)
 
             if (currentRemoved.any()) {
+                anyClassesCompiled = true
                 currentRemoved = listOf()
             }
         }
 
-        anyClassesCompiled = allGeneratedFiles.isNotEmpty()
+        anyClassesCompiled = anyClassesCompiled || allGeneratedFiles.isNotEmpty()
         processCompilerExitCode(exitCode)
     }
 
