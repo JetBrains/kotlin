@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.reference;
-
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import org.jetbrains.annotations.NotNull;
-
-/**
- * Abstract entity for language constructs that you can get/set.
- */
-public interface AccessTranslator {
-
-    @NotNull
-    JsExpression translateAsGet();
-
-    @NotNull
-    JsExpression translateAsSet(@NotNull JsExpression setTo);
-
-    //TODO: remove that method
-    @NotNull
-    AccessTranslator getCached();
-}
+define("check", ["test-js-moduleKind"], function(app) {
+    if (app.foo.bar() != "OK") {
+        throw new Error("Unexpected result");
+    }
+});

@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
+import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
-
     @NotNull
     public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context) {
@@ -47,16 +48,23 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
         if (isVariableReassignment) {
             return reassignment();
         }
-        return overloadedMethodInvocation();
+        return overloadedMethodInvocation(createAccessTranslator(expression.getLeft(), false));
     }
 
     @NotNull
     private JsExpression reassignment() {
-        return accessTranslator.translateAsSet(overloadedMethodInvocation());
+        AccessTranslator accessTranslator = createAccessTranslator(expression.getLeft(), false).getCached();
+        JsExpression newValue = overloadedMethodInvocation(accessTranslator);
+        return accessTranslator.translateAsSet(newValue);
     }
 
     @NotNull
-    private JsExpression overloadedMethodInvocation() {
-        return CallTranslator.translate(context(), resolvedCall, accessTranslator.translateAsGet());
+    private JsExpression overloadedMethodInvocation(AccessTranslator accessTranslator) {
+        JsBlock innerBlock = new JsBlock();
+        TranslationContext innerContext = context().innerBlock(innerBlock);
+        JsExpression oldValue = accessTranslator.translateAsGet();
+        JsExpression result = CallTranslator.translate(innerContext, resolvedCall, oldValue);
+        context().addStatementsToCurrentBlockFrom(innerBlock);
+        return result;
     }
 }

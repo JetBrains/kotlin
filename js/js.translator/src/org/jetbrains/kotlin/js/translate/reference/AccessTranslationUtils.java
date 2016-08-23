@@ -74,12 +74,6 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static CachedAccessTranslator getCachedAccessTranslator(@NotNull KtExpression referenceExpression,
-                                                                   @NotNull TranslationContext context) {
-        return getAccessTranslator(referenceExpression, context).getCached();
-    }
-
-    @NotNull
     public static JsExpression translateAsGet(@NotNull KtExpression expression,
                                               @NotNull TranslationContext context) {
         return (getAccessTranslator(expression, context)).translateAsGet();

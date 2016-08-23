@@ -56,22 +56,21 @@ fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
     return visitor.matched
 }
 
-fun JsExpression.toInvocationWith(leadingExtraArgs: List<JsExpression>, thisExpr: JsExpression): JsExpression {
+fun JsExpression.toInvocationWith(leadingExtraArgs: List<JsExpression>, parameterCount: Int, thisExpr: JsExpression): JsExpression {
     val qualifier: JsExpression
-    val arguments: MutableList<JsExpression>
+    fun padArguments(arguments: List<JsExpression>) = arguments + (1..(parameterCount - arguments.size))
+            .map { Namer.getUndefinedExpression() }
 
     when (this) {
         is JsNew -> {
             qualifier = Namer.getFunctionCallRef(constructorExpression)
-            arguments = getArguments()
             // `new A(a, b, c)` -> `A.call($this, a, b, c)`
             return JsInvocation(qualifier, listOf(thisExpr) + leadingExtraArgs + arguments)
         }
         is JsInvocation -> {
             qualifier = getQualifier()
-            arguments = getArguments()
             // `A(a, b, c)` -> `A(a, b, c, $this)`
-            return JsInvocation(qualifier, leadingExtraArgs + arguments + thisExpr)
+            return JsInvocation(qualifier, leadingExtraArgs + padArguments(arguments) + thisExpr)
         }
         else -> throw IllegalStateException("Unexpected node type: " + javaClass)
     }

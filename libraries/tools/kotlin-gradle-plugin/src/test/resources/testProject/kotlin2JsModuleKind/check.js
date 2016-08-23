@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.reference;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
-
-import java.util.List;
-
-/**
- * Represents a translator which guaranties that all expression will be computed only once.
- */
-public interface CachedAccessTranslator extends AccessTranslator {
-    @NotNull
-    List<TemporaryVariable> declaredTemporaries();
-}
+define("check", ["app"], function(app) {
+    if (app.foo.bar() != "OK") {
+        throw new Error("Unexpected result");
+    }
+});
