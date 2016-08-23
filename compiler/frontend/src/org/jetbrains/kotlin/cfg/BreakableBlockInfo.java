@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtElement;
 import java.util.Collections;
 import java.util.Set;
 
-public class BreakableBlockInfo extends BlockInfo {
+public abstract class BreakableBlockInfo extends BlockInfo {
     private final KtElement element;
     private final Label entryPoint;
     private final Label exitPoint;

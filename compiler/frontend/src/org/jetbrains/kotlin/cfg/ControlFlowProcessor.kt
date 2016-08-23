@@ -797,7 +797,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
                 if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
-                    builder.getExitPoint(loop)?.let { builder.jump(it, expression) }
+                    builder.getLoopExitPoint(loop)?.let { builder.jump(it, expression) }
                 }
             }
         }
@@ -806,7 +806,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
                 if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
-                    builder.jump(builder.getConditionEntryPoint(loop), expression)
+                    builder.jump(builder.getLoopConditionEntryPoint(loop), expression)
                 }
             }
         }
@@ -824,7 +824,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
-        private fun getCorrespondingLoop(expression: KtExpressionWithLabel): KtElement? {
+        private fun getCorrespondingLoop(expression: KtExpressionWithLabel): KtLoopExpression? {
             val labelName = expression.getLabelName()
             val loop: KtLoopExpression?
             if (labelName != null) {
@@ -860,14 +860,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             return loop
         }
 
-        private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtElement): Boolean {
+        private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
 
             val labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
             val labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
-                if (builder.getExitPoint(jumpTarget) != null ||
+                if (builder.getLoopExitPoint(jumpTarget) != null ||
                     // Local class secondary constructors are handled differently
                     // They are the only local class element NOT included in owner pseudocode
                     // See generateInitializersForScriptClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
