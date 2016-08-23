@@ -31,10 +31,10 @@ class LLVMBooleanType() : LLVMType() {
             LLVMExpression(LLVMBooleanType(), "icmp sge i1 $firstOp, $secondOp")
 
     override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMBooleanType(), "icmp eq i1 $firstOp, $secondOp")
+            LLVMExpression(LLVMBooleanType(), "icmp eq i1" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMBooleanType(), "icmp ne i1 $firstOp, $secondOp")
+            LLVMExpression(LLVMBooleanType(), "icmp ne i1" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
     override fun operatorOr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "or i1 $firstOp, $secondOp")

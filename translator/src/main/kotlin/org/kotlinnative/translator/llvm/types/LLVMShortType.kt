@@ -17,10 +17,10 @@ class LLVMShortType() : LLVMType() {
             LLVMExpression(LLVMBooleanType(), "icmp sge i16 $firstOp, $secondOp")
 
     override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMBooleanType(), "icmp eq i16 $firstOp, $secondOp")
+            LLVMExpression(LLVMBooleanType(), "icmp eq i16" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
     override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMBooleanType(), "icmp ne i16 $firstOp, $secondOp")
+            LLVMExpression(LLVMBooleanType(), "icmp ne i16" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
     override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMShortType(), "srem i16 $firstOp, $secondOp")
