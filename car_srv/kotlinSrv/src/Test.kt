@@ -1,9 +1,6 @@
 import control.emulator.ControllerEmulator
 import room.Room
 
-/**
- * Created by user on 8/22/16.
- */
 fun runTests() {
     testCarEmulator()
 }

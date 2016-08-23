@@ -148,7 +148,7 @@ class ControllerEmulator : Controller {
             callBack.invoke(encodeProtoBuf(responseMessage))
             return
         }
-        val currentCommand = commands.get(currentCommandIdx)
+        val currentCommand = commands[currentCommandIdx]
 
         //refresh car state
         val carInstance = CarState.instance
