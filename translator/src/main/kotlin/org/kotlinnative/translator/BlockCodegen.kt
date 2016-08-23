@@ -785,6 +785,13 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 codeBuilder.storeVariable(firstOp, resultOp)
                 return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
             }
+            ".." -> {
+                val descriptor = state.classes["IntRange"]
+                val arguments = listOf(firstOp, secondNativeOp)
+                val detectedConstructor = LLVMType.mangleFunctionTypes(arguments.map { it.type!! })
+                val result = evaluateConstructorCallExpression(LLVMVariable(descriptor!!.fullName + detectedConstructor, descriptor.type, scope = LLVMVariableScope()), arguments)
+                return LLVMExpression(result!!.type!!, "load ${descriptor.type}** $result, align ${descriptor.type.align}", pointer = 1)
+            }
             else -> throw UnsupportedOperationException("Unknown binary operator: $operator(${firstNativeOp.type}, ${secondNativeOp.type})")
         }
     }
@@ -863,7 +870,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
             else -> addPrimitiveReferenceOperation(referenceName!!, firstOp, secondNativeOp)
         }
-        val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType)
+        val resultOp = codeBuilder.getNewVariable(llvmExpression.variableType, pointer = llvmExpression.pointer)
         codeBuilder.addAssignment(resultOp, llvmExpression)
         return resultOp
     }
