@@ -1,6 +1,15 @@
 import java.io.*;
+import org.mozilla.javascript.tools.shell.Main;
 
-File file = new File(basedir, "target/js/test-js-extraArguments.js");
+File file = new File(basedir, "target/js/test-js-moduleKind.js");
 if (!file.exists() || !file.isFile()) {
     throw new FileNotFoundException("Could not find generated JS    : " + file);
 }
+
+String basePath = basedir.getPath();
+Main.main(new String[] {
+        "-O", "-1",
+        "-f", basePath + "/amd.js",
+        "-f", basePath + "/target/js/kotlin.js",
+        "-f", basePath + "/target/js/test-js-moduleKind.js",
+        "-f", basePath + "/check.js"})
