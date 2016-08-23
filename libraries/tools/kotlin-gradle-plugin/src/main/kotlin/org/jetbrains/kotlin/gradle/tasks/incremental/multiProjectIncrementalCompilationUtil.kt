@@ -8,24 +8,24 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.tryGetSingleArtifact
 import java.io.File
 
 fun configureMultiProjectIncrementalCompilation(
         project: Project,
         kotlinTask: KotlinCompile,
-        javaTask: JavaCompile,
+        javaTask: AbstractCompile,
         kotlinAfterJavaTask: KotlinCompile?,
-        artifactDifferenceRegistry: ArtifactDifferenceRegistry
+        artifactDifferenceRegistry: ArtifactDifferenceRegistry,
+        artifactFile: File?
 ) {
     val log = kotlinTask.logger
     log.kotlinDebug { "Configuring multi-project incremental compilation for project ${project.path}" }
 
-    fun cannotPerformMultiProjectIC(artifact: File, reason: String) {
+    fun cannotPerformMultiProjectIC(reason: String) {
         log.kotlinDebug {
-            "Multi-project kotlin incremental compilation cannot be performed for project ${project.path}: $reason"
+            "Multi-project kotlin incremental compilation won't be performed for projects that depend on ${project.path}: $reason"
         }
-        artifactDifferenceRegistry.remove(artifact)
+        artifactFile?.let { artifactDifferenceRegistry.remove(it) }
     }
 
     fun isUnknownTaskOutputtingToJavaDestination(task: Task): Boolean {
@@ -35,17 +35,17 @@ fun configureMultiProjectIncrementalCompilation(
                 FileUtil.isAncestor(javaTask.destinationDir, task.destinationDir, /* strict = */ false)
     }
 
-    val artifact = project.tryGetSingleArtifact() ?: return
     if (!kotlinTask.incremental) {
-        return cannotPerformMultiProjectIC(artifact, reason = "incremental compilation is not enabled")
+        return cannotPerformMultiProjectIC(reason = "incremental compilation is not enabled")
     }
 
+    // todo: split registry for reading and writing changes
     val illegalTask = project.tasks.find(::isUnknownTaskOutputtingToJavaDestination)
     if (illegalTask != null) {
-        return cannotPerformMultiProjectIC(artifact,
-                reason = "unknown task outputs to java destination dir ${illegalTask.path} $(${illegalTask.javaClass})")
+        return cannotPerformMultiProjectIC(reason = "unknown task outputs to java destination dir ${illegalTask.path} $(${illegalTask.javaClass})")
     }
 
     val kotlinCompile = kotlinAfterJavaTask ?: kotlinTask
     kotlinCompile.artifactDifferenceRegistry = artifactDifferenceRegistry
+    kotlinCompile.artifactFile = artifactFile
 }

@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.apache.commons.io.FilenameUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -177,6 +176,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     val kaptOptions = KaptOptions()
     val pluginOptions = CompilerPluginOptions()
     var artifactDifferenceRegistry: ArtifactDifferenceRegistry? = null
+    var artifactFile: File? = null
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
@@ -435,7 +435,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             kaptAnnotationsFileUpdater = null
         }
 
-        val artifactFile = project.tryGetSingleArtifact()
         logger.kotlinDebug { "Artifact to register difference for task $path: $artifactFile" }
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
@@ -506,7 +505,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         if (artifactFile != null && artifactDifferenceRegistry != null) {
             val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
             val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
-            artifactDifferenceRegistry!!.add(artifactFile, artifactDifference)
+            artifactDifferenceRegistry!!.add(artifactFile!!, artifactDifference)
             logger.kotlinDebug {
                 val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
                 "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
@@ -800,22 +799,6 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
             }
         }
     }
-}
-
-fun Project.tryGetSingleArtifact(): File? {
-    val log = logger
-    log.kotlinDebug { "Trying to determine single artifact for project $path" }
-
-    val archives = configurations.findByName("archives")
-    if (archives == null) {
-        log.kotlinDebug { "Could not find 'archives' configuration for project $path" }
-        return null
-    }
-
-    val artifacts = archives.artifacts.files.files
-    log.kotlinDebug { "All artifacts for project $path: [${artifacts.joinToString()}]" }
-
-    return if (artifacts.size == 1) artifacts.first() else null
 }
 
 internal fun Logger.kotlinInfo(message: String) {

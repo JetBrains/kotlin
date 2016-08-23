@@ -7,12 +7,14 @@ import android.view.Menu
 import android.view.View
 import android.widget.Button
 import org.jetbrains.kotlin.gradle.test.androidalfa.R
+import lib.*
 
 open class MainActivity2: Activity() {
 
     protected override fun onCreate(savedInstanceState: Bundle?): Unit {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        libUtil()
 
         var next: Button = findViewById(R.id.Button02) as Button
         next.setOnClickListener(object: View.OnClickListener {
