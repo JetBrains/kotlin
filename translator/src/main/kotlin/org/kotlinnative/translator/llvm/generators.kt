@@ -15,26 +15,30 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
             "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).byRef) "byval" else ""} %${s.label}"
         }?.joinToString()}) #0"
 
-fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope(), state: TranslationState): LLVMVariable = when {
-    type.isFunctionTypeOrSubtype -> LLVMVariable(name, LLVMFunctionType(type, state), name, scope, pointer = 1)
-    type.toString() == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope)
-    type.toString() == "Byte" -> LLVMVariable(name, LLVMByteType(), name, scope)
-    type.toString() == "Char" -> LLVMVariable(name, LLVMCharType(), name, scope)
-    type.toString() == "Short" -> LLVMVariable(name, LLVMShortType(), name, scope)
-    type.toString() == "Int" -> LLVMVariable(name, LLVMIntType(), name, scope)
-    type.toString() == "Long" -> LLVMVariable(name, LLVMLongType(), name, scope)
-    type.toString() == "Float" -> LLVMVariable(name, LLVMFloatType(), name, scope)
-    type.toString() == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope)
-    type.toString() == "String" -> LLVMVariable(name, LLVMStringType(0), name, scope)
-    type.nameIfStandardType.toString() == "Nothing" -> LLVMVariable(name, LLVMNullType(), name, scope)
-    type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
-    type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(type.toString().dropLast(1), prefix = "class"), name, scope, pointer = 1)
-    else -> {
-        val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(type.toString(), align = state.pointerAlign, prefix = "class")
+fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope(), state: TranslationState): LLVMVariable {
+    val typeName = type.toString().dropLastWhile { it == '?' }
+    val pointerMark = if (type.toString().last() == '?') 1 else 0
+    return when {
+        type.isFunctionTypeOrSubtype -> LLVMVariable(name, LLVMFunctionType(type, state), name, scope, pointer = 1)
+        typeName == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope, pointerMark)
+        typeName == "Byte" -> LLVMVariable(name, LLVMByteType(), name, scope, pointerMark)
+        typeName == "Char" -> LLVMVariable(name, LLVMCharType(), name, scope, pointerMark)
+        typeName == "Short" -> LLVMVariable(name, LLVMShortType(), name, scope, pointerMark)
+        typeName == "Int" -> LLVMVariable(name, LLVMIntType(), name, scope, pointerMark)
+        typeName == "Long" -> LLVMVariable(name, LLVMLongType(), name, scope, pointerMark)
+        typeName == "Float" -> LLVMVariable(name, LLVMFloatType(), name, scope, pointerMark)
+        typeName == "Double" -> LLVMVariable(name, LLVMDoubleType(), name, scope, pointerMark)
+        typeName == "String" -> LLVMVariable(name, LLVMStringType(0), name, scope, pointerMark)
+        type.nameIfStandardType.toString() == "Nothing" -> LLVMVariable(name, LLVMNullType(), name, scope)
+        type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
+        type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(typeName, prefix = "class"), name, scope, pointer = pointerMark)
+        else -> {
+            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(typeName, align = state.pointerAlign, prefix = "class")
 
-        val result = LLVMVariable(name, refType, name, scope, pointer = 1)
-        refType.location.addAll(type.getSubtypesPredicate().toString().split(".").dropLast(1))
-        result
+            val result = LLVMVariable(name, refType, name, scope, pointer = 1)
+            refType.location.addAll(type.getSubtypesPredicate().toString().split(".").dropLast(1))
+            result
+        }
     }
 }
 

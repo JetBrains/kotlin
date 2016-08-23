@@ -76,8 +76,9 @@ class LLVMBuilder(val arm: Boolean = false) {
         var result = value
 
         while (argument.pointer < result.pointer) {
-            result = getNewVariable(argument.type, pointer = result.pointer - 1)
-            loadVariable(result, value as LLVMVariable)
+            val currentArgument = getNewVariable(result.type!!, pointer = result.pointer - 1)
+            loadVariable(currentArgument, result as LLVMVariable)
+            result = currentArgument
         }
 
         when (value.type) {

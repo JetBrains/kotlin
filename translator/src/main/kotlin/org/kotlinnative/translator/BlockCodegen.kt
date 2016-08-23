@@ -849,8 +849,16 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                     return result
                 }
 
+
                 val result = firstOp as LLVMVariable
-                val sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
+                val sourceArgument: LLVMSingleValue
+                if (secondOp.type!!.isPrimitive() && (secondOp.pointer == 0) && (firstOp.pointer == 2)) {
+                    sourceArgument = codeBuilder.getNewVariable(secondOp.type!!, 1)
+                    codeBuilder.allocStaticVar(sourceArgument, true)
+                    codeBuilder.storeVariable(sourceArgument, secondOp)
+                } else {
+                    sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
+                }
                 codeBuilder.storeVariable(result, sourceArgument)
                 codeBuilder.addComment("end variable assignment")
                 return result
@@ -1036,26 +1044,27 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     }
 
     private fun evaluateValExpression(element: KtProperty, scopeDepth: Int): LLVMVariable? {
+
         val variable = state.bindingContext.get(BindingContext.VARIABLE, element)!!
         val identifier = variable.name.toString()
 
         val assignExpression = evaluateExpression(element.delegateExpressionOrInitializer, scopeDepth)
-        val expectedExpressionType = LLVMMapStandardType(variable.type, state)
+        val expectedExpressionType = LLVMInstanceOfStandardType("", variable.type, state = state)
         val assignExpressionType = assignExpression?.type
 
-        val isPrimitive = LLVMMapStandardType(variable.type, state) !is LLVMReferred
+        val primitivePointer = LLVMMapStandardType(variable.type, state) !is LLVMReferred
         when (assignExpression) {
             null,
             is LLVMVariable -> {
-                val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType, LLVMRegisterScope(), pointer =
-                if (isPrimitive) 0 else 1)
+                val allocVar = variableManager.receiveVariable(identifier, expectedExpressionType.type, LLVMRegisterScope(), pointer =
+                expectedExpressionType.pointer)
                 codeBuilder.allocStackVar(allocVar)
                 allocVar.pointer++
                 allocVar.kotlinName = identifier
 
                 variableManager.addVariable(identifier, allocVar, scopeDepth)
                 if (assignExpression != null) {
-                    if ((isPrimitive) && (assignExpression.type is LLVMReferenceType)) {
+                    if ((primitivePointer) && (assignExpression.type is LLVMReferenceType)) {
                         throw UnexpectedException(element.text)
                     }
                     addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, assignExpression)
