@@ -1,5 +1,7 @@
 package room
 
+import geometry.Line
+
 object Room {
 
     val upLine = Line(0.0, 1.0, -300.0)
