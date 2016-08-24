@@ -1,0 +1,5 @@
+-LocalElements.kt
+ -foo(): Unit
+  bar(): Unit
+  -X
+   xyzzy(): Unit

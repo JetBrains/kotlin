@@ -113,6 +113,12 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         doTest(fileName);
     }
 
+    @TestMetadata("LocalElements.kt")
+    public void testLocalElements() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/LocalElements.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Render.kt")
     public void testRender() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/Render.kt");
