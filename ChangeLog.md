@@ -5,6 +5,10 @@
 
 ## 1.0.5
 
+### Compiler
+
+- [`KT-13565`](https://youtrack.jetbrains.com/issue/KT-13565) Remove net/sf/cglib/core/* classes from compiler jars
+
 ### IDE
 
 #### Debugger
