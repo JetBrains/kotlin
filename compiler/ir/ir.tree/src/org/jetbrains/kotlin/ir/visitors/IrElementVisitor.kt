@@ -37,10 +37,9 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
-
     fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
     fun <T> visitConst(expression: IrConst<T>, data: D): R = visitExpression(expression, data)
-    fun visitReturn(expression: IrReturn, data: D): R = visitExpression(expression, data)
+
     fun visitBlock(expression: IrBlock, data: D): R = visitExpression(expression, data)
     fun visitStringConcatenation(expression: IrStringConcatenation, data: D) = visitExpression(expression, data)
     fun visitThisReference(expression: IrThisReference, data: D) = visitExpression(expression, data)
@@ -64,6 +63,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitBreakContinue(jump: IrBreakContinue, data: D) = visitExpression(jump, data)
     fun visitBreak(jump: IrBreak, data: D) = visitBreakContinue(jump, data)
     fun visitContinue(jump: IrContinue, data: D) = visitBreakContinue(jump, data)
+
+    fun visitReturn(expression: IrReturn, data: D): R = visitExpression(expression, data)
+    fun visitThrow(expression: IrThrow, data: D): R = visitExpression(expression, data)
 
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)

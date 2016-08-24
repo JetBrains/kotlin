@@ -112,6 +112,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitContinue(jump: IrContinue, data: Nothing?): String =
             "CONTINUE loop.operator=${jump.loop.operator} depth=${jump.getDepth()}"
 
+    override fun visitThrow(expression: IrThrow, data: Nothing?): String =
+            "THROW type=${expression.renderType()}"
+
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"
 

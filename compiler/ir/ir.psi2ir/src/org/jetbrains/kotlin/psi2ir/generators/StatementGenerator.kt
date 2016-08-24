@@ -135,6 +135,10 @@ class StatementGenerator(
                 }
             }
 
+    override fun visitThrowExpression(expression: KtThrowExpression, data: Nothing?): IrStatement {
+        return IrThrowImpl(expression.startOffset, expression.endOffset, expression.thrownExpression!!.genExpr())
+    }
+
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
                                   ?: error("KtConstantExpression was not evaluated: ${expression.text}")

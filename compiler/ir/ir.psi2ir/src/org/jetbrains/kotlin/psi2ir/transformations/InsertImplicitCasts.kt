@@ -97,6 +97,12 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
         loop.condition.replaceWithCast(builtIns.booleanType)
     }
 
+    override fun visitThrow(expression: IrThrow, data: Nothing?) {
+        expression.acceptChildren(this, null)
+
+        expression.value.replaceWithCast(builtIns.throwable.defaultType)
+    }
+
     private fun IrExpression.replaceWithCast(expectedType: KotlinType?) {
         replaceWith { it.wrapWithImplicitCast(expectedType) }
     }
