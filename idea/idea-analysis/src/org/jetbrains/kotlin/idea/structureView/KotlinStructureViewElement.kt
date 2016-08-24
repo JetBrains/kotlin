@@ -88,7 +88,7 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
     private val childrenDeclarations: List<KtDeclaration>
         get() = when (element) {
             is KtFile -> element.declarations
-            is KtClass -> element.getPrimaryConstructorParameters().filter { it.hasValOrVar() } + element.declarations
+            is KtClass -> element.getStructureDeclarations()
             is KtClassOrObject -> element.declarations
             is KtFunction, is KtClassInitializer -> element.collectLocalDeclarations()
             else -> emptyList()
@@ -110,3 +110,6 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
         return result
     }
 }
+
+fun KtClassOrObject.getStructureDeclarations() = getPrimaryConstructorParameters().filter { it.hasValOrVar() } + declarations
+
