@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.annotations.NotNull;
-
-public interface Label {
-    @NotNull
-    String getName();
+interface Label {
+    val name: String
 }
