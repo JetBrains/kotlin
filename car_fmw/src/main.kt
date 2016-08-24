@@ -11,4 +11,7 @@ fun main() {
 
     /* car task */
     Control.run()
+
+    /* Voyager */
+    Voyager.run()
 }

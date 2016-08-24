@@ -1,11 +1,4 @@
 
-enum class RouteType(val id: Int) {
-    FORWARD(0),
-    BACKWARD(1),
-    LEFT(2),
-    RIGHT(3);
-}
-
 object Control {
     val BLINK_DURATION = 1000
 
@@ -51,15 +44,10 @@ object Control {
             val time = times[i]
             val direction = directions[i]
 
-            when (direction) {
-                RouteType.FORWARD.id -> Engine.forward()
-                RouteType.BACKWARD.id -> Engine.backward()
-                RouteType.LEFT.id -> Engine.left()
-                RouteType.RIGHT.id -> Engine.right()
-            }
-
+            Engine.drive(direction)
             Time.wait(time)
             Engine.stop()
+
             i++
         }
 

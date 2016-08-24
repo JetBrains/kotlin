@@ -6,6 +6,13 @@ external fun car_engine_backward()
 external fun car_engine_turn_left()
 external fun car_engine_turn_right()
 
+enum class RouteType(val id: Int) {
+    FORWARD(0),
+    BACKWARD(1),
+    LEFT(2),
+    RIGHT(3);
+}
+
 object Engine {
     fun init() {
         car_engine_init()
@@ -29,5 +36,14 @@ object Engine {
 
     fun right() {
         car_engine_turn_right()
+    }
+
+    fun drive(direction: Int) {
+        when (direction) {
+            RouteType.FORWARD.id -> forward()
+            RouteType.BACKWARD.id -> backward()
+            RouteType.LEFT.id -> left()
+            RouteType.RIGHT.id -> right()
+        }
     }
 }

@@ -13,8 +13,10 @@
 
 static uint8_t sonar_degree(uint8_t degree)
 {
-   if (degree > MAX_DEGREE)
+    if (degree > MAX_DEGREE)
         degree = MAX_DEGREE;
+
+    degree = MAX_DEGREE - degree;
 
     float factor = 1.0 * (BACK_ANGLE - FRONT_ANGLE) / MAX_DEGREE;
     return factor * degree + FRONT_ANGLE;
