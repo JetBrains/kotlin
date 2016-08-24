@@ -1,4 +1,5 @@
 buildscript {
+    ext.kotlin_version = '0.1-SNAPSHOT'
     repositories {
         mavenCentral()
         maven {
@@ -7,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -26,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-js-library:1.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
     compile "org.mozilla:rhino:1.7.7.1"
 }
 
