@@ -43,7 +43,7 @@ class PseudocodeLabel internal constructor(
         return instructionList[index]
     }
 
-    fun copy(newLabelIndex: Int): PseudocodeLabel {
-        return PseudocodeLabel(pseudocode, "L" + newLabelIndex, "copy of $name, $comment")
+    fun copy(newPseudocode: PseudocodeImpl, newLabelIndex: Int): PseudocodeLabel {
+        return PseudocodeLabel(newPseudocode, "L" + newLabelIndex, "copy of $name, $comment")
     }
 }
