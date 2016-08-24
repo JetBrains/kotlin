@@ -1068,16 +1068,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         }
 
-        if (!paramsFound) {
-            if (preferBlock) {
-                literal.drop();
-                parseStatements();
-                expect(RBRACE, "Expecting '}'");
-                literalExpression.done(BLOCK);
-                myBuilder.restoreNewlinesState();
+        if (!paramsFound && preferBlock) {
+            literal.drop();
+            parseStatements();
+            expect(RBRACE, "Expecting '}'");
+            literalExpression.done(BLOCK);
+            myBuilder.restoreNewlinesState();
 
-                return;
-            }
+            return;
         }
 
         PsiBuilder.Marker body = mark();
