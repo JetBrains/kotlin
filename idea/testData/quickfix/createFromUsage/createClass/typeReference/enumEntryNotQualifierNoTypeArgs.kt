@@ -5,6 +5,7 @@
 // ACTION: Create enum 'A'
 // ACTION: Convert to block body
 // ACTION: Remove explicit type specification
+// ACTION: Create type parameter 'A' in function 'foo'
 // ERROR: Unresolved reference: A
 package p
 

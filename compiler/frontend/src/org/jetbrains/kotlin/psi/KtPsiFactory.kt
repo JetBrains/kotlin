@@ -90,6 +90,8 @@ class KtPsiFactory(private val project: Project) {
         return (property.getInitializer() as KtCallExpression).typeArgumentList!!
     }
 
+    fun createTypeArgument(text: String) = createTypeArguments("<$text>").arguments.first()
+
     fun createType(type: String): KtTypeReference {
         val typeReference = createTypeIfPossible(type)
         if (typeReference == null || typeReference.text != type) {
@@ -304,6 +306,10 @@ class KtPsiFactory(private val project: Project) {
     fun createParameterList(text: String): KtParameterList {
         return createFunction("fun foo$text{}").getValueParameterList()!!
     }
+
+    fun createTypeParameterList(text: String) = createClass("class Foo$text").typeParameterList!!
+
+    fun createTypeParameter(text: String) = createTypeParameterList("<$text>").parameters.first()!!
 
     fun createFunctionLiteralParameterList(text: String): KtParameterList {
         return (createExpression("{ $text -> 0}") as KtLambdaExpression).functionLiteral.valueParameterList!!

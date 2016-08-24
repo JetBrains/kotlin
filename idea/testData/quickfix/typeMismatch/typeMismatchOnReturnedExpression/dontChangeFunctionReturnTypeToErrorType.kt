@@ -4,6 +4,7 @@
 // ACTION: Create enum 'NoSuchType'
 // ACTION: Create interface 'NoSuchType'
 // ACTION: Remove explicit lambda parameter types (may break code)
+// ACTION: Create type parameter 'NoSuchType' in function 'foo'
 // ERROR: Type mismatch: inferred type is ([ERROR : NoSuchType]) -> Int but Int was expected
 // ERROR: Unresolved reference: NoSuchType
 

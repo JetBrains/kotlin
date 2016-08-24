@@ -1,0 +1,13 @@
+// "Create type parameter 'X' in class 'Foo'" "true"
+open class Foo<X>(x: X)
+
+class Bar : Foo<Any?>(1)
+
+fun test() {
+    Foo(1)
+    Foo("2")
+
+    object : Foo<Any?>("2") {
+
+    }
+}
