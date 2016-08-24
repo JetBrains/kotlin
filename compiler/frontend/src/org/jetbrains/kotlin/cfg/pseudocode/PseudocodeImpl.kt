@@ -192,6 +192,11 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
     }
 
     fun bindLabel(label: PseudocodeLabel) {
+        assert(this == label.pseudocode) {
+            "Attempt to bind label $label to instruction from different pseudocode: " +
+            "\nowner pseudocode = ${label.pseudocode.mutableInstructionList}, " +
+            "\nbound pseudocode = ${this.mutableInstructionList}"
+        }
         label.targetInstructionIndex = mutableInstructionList.size
     }
 
@@ -380,7 +385,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             if (label === startLabel || label === finishLabel) continue
 
             if (startIndex <= index && index <= finishIndex) {
-                originalToCopy.put(label, label.copy(labelCount++))
+                originalToCopy.put(label, label.copy(this, labelCount++))
                 originalLabelsForInstruction.put(getJumpTarget(label), label)
             }
         }

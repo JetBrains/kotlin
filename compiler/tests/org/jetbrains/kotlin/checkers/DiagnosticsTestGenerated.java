@@ -3564,6 +3564,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nonLocalReturnWithFinally.kt")
+            public void testNonLocalReturnWithFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nonLocalReturnWithFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("privateSetter.kt")
             public void testPrivateSetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/privateSetter.kt");
