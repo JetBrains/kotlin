@@ -373,6 +373,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("asIterableInFor.kt")
+        public void testAsIterableInFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/asIterableInFor.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("dexInlineInClass.kt")
         public void testDexInlineInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/dexInlineInClass.kt");
@@ -400,6 +406,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("ifCapturedVariableKt9118.kt")
         public void testIfCapturedVariableKt9118() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/ifCapturedVariableKt9118.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("inlineCallInForRangeExpression.kt")
+        public void testInlineCallInForRangeExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/inlineCallInForRangeExpression.kt");
             doStepOverTest(fileName);
         }
 
