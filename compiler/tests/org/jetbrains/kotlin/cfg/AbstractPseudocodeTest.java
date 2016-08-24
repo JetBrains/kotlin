@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeLabel;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl;
@@ -183,12 +184,12 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
     ) {
         List<Instruction> instructions = pseudocode.getInstructionsIncludingDeadCode();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
-        List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
+        List<PseudocodeLabel> labels = pseudocode.getLabels();
         int instructionColumnWidth = countInstructionColumnWidth(instructions);
 
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
-            for (PseudocodeImpl.PseudocodeLabel label: labels) {
+            for (PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
                     out.append(label).append(":\n");
                 }
