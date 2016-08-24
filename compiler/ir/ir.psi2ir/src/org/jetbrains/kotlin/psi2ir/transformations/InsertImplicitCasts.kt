@@ -53,6 +53,16 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
         }
     }
 
+    override fun visitBlock(expression: IrBlock, data: Nothing?) {
+        expression.acceptChildren(this, null)
+        if (!expression.hasResult || expression.type == null) return
+
+        val lastStatement = expression.statements.last()
+        if (lastStatement is IrExpression) {
+            lastStatement.wrapWithImplicitCast(expression.type)
+        }
+    }
+
     override fun visitReturn(expression: IrReturn, data: Nothing?) {
         expression.acceptChildren(this, null)
 

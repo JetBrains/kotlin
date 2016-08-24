@@ -28,8 +28,6 @@ interface IrOperator {
     object EXCL : IrOperatorImpl("EXCL")
     object EXCLEXCL : IrOperatorImpl("EXCLEXCL")
 
-    object IMPLICIT_NOTNULL : IrOperatorImpl("IMPLICIT_NOTNULL")
-
     object ELVIS : IrOperatorImpl("ELVIS")
 
     object LT : IrOperatorImpl("LT")

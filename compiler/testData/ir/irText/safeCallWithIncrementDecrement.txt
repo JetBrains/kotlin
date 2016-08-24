@@ -33,7 +33,7 @@ IrFile /safeCallWithIncrementDecrement.kt
       BLOCK type=<no-type> hasResult=false operator=null
   IrFunction public fun testProperty(/*0*/ nc: test.C?): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Int? hasResult=true operator=null
+      BLOCK type=<no-type> hasResult=false operator=null
         BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
           VAR val tmp0_safe_receiver: test.C?
             GET_VAR nc type=test.C? operator=null
@@ -51,3 +51,28 @@ IrFile /safeCallWithIncrementDecrement.kt
                 value: CALL .inc type=kotlin.Int? operator=POSTFIX_INCR
                   $receiver: GET_VAR tmp1 type=kotlin.Int operator=null
               GET_VAR tmp1 type=kotlin.Int operator=null
+  IrFunction public fun testArrayAccess(/*0*/ nc: test.C?): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+          VAR val tmp3_array: kotlin.Int?
+            BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
+              VAR val tmp0_safe_receiver: test.C?
+                GET_VAR nc type=test.C? operator=null
+              WHEN type=kotlin.Int? operator=SAFE_CALL
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR tmp0_safe_receiver type=test.C? operator=null
+                  arg1: CONST Null type=kotlin.Nothing? value='null'
+                then: CONST Null type=kotlin.Nothing? value='null'
+                else: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+                  $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
+          VAR val tmp4: kotlin.Int
+            CALL .get type=kotlin.Int operator=POSTFIX_INCR
+              $receiver: GET_VAR tmp3_array type=kotlin.Int? operator=null
+              index: CONST Int type=kotlin.Int value='0'
+          CALL .set type=kotlin.Unit operator=POSTFIX_INCR
+            $receiver: GET_VAR tmp3_array type=kotlin.Int? operator=null
+            index: CONST Int type=kotlin.Int value='0'
+            value: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR tmp4 type=kotlin.Int operator=null
+          GET_VAR tmp4 type=kotlin.Int operator=null

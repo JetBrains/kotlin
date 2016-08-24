@@ -99,8 +99,10 @@ class StatementGenerator(
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset,
-                                  getReturnType(expression), isUsedAsExpression(expression))
+        val isBlockBody = expression.parent is KtNamedFunction
+        val hasResult = if (isBlockBody) false else isUsedAsExpression(expression)
+        val returnType = if (isBlockBody || !hasResult) null else getReturnType(expression)
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, hasResult)
         expression.statements.forEach { irBlock.addStatement(it.genStmt()) }
         return irBlock
     }

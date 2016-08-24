@@ -44,7 +44,7 @@ IrFile /arrayAugmentedAssignment1.kt
               other: CONST Int type=kotlin.Int value='2'
   IrFunction public fun testMember(/*0*/ c: C): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Int hasResult=true operator=null
+      BLOCK type=<no-type> hasResult=false operator=null
         BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
           VAR val tmp0_array: kotlin.IntArray
             CALL .<get-x> type=kotlin.IntArray operator=GET_PROPERTY

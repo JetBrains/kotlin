@@ -4,7 +4,7 @@ IrFile /augmentedAssignment1.kt
       CONST Int type=kotlin.Int value='0'
   IrFunction public fun testVariable(): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Int hasResult=true operator=null
+      BLOCK type=<no-type> hasResult=false operator=null
         VAR var x: kotlin.Int
           CONST Int type=kotlin.Int value='0'
         SET_VAR x type=<no-type> operator=PLUSEQ
@@ -29,7 +29,7 @@ IrFile /augmentedAssignment1.kt
             other: CONST Int type=kotlin.Int value='5'
   IrFunction public fun testProperty(): kotlin.Unit
     IrExpressionBody
-      BLOCK type=kotlin.Int hasResult=true operator=null
+      BLOCK type=<no-type> hasResult=false operator=null
         CALL .<set-p> type=kotlin.Unit operator=PLUSEQ
           <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: CALL .<get-p> type=kotlin.Int operator=PLUSEQ
