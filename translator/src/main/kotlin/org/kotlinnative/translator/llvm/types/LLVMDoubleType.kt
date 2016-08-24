@@ -22,7 +22,7 @@ class LLVMDoubleType() : LLVMType() {
             LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, 1.0")
 
     override fun operatorDiv(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
-            LLVMExpression(LLVMDoubleType(), "fdiv double $firstOp, 1.0")
+            LLVMExpression(LLVMDoubleType(), "fdiv double $firstOp, $secondOp")
 
     override fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMDoubleType(), "fsub double $firstOp, 1.0")
