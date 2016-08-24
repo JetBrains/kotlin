@@ -198,6 +198,15 @@ private class Processor(
                                     return true
                                 }
                             }
+
+                            is KtIsExpression -> {
+                                return true //TODO!
+                            }
+
+                            is KtBinaryExpressionWithTypeRHS -> {
+                                processSuspiciousExpression(typeRefParent)
+                                return true
+                            }
                         }
                     }
 

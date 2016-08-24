@@ -20,3 +20,14 @@ fun g() = A()
 fun h() = g()
 
 fun listOfA() = listOf<A>(A(1, "", ""))
+
+fun x(o: Any) {
+    if (o is A) {
+        val (x, y) = o
+    }
+}
+
+fun y(o: Any) {
+    val list = o as List<A>
+    val (x, y) = list[0]
+}
