@@ -24,6 +24,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.idea.structureView.getStructureDeclarations
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
@@ -34,7 +35,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
 
     override fun getChildrenImpl(): Collection<AbstractTreeNode<*>>? {
         if (value != null && settings.isShowMembers) {
-            return value.declarations.map { declaration ->
+            return value.getStructureDeclarations().map { declaration ->
                 if (declaration is KtClassOrObject)
                     KtClassOrObjectTreeNode(project, declaration, settings)
                 else
