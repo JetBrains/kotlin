@@ -25,6 +25,9 @@ class LLVMShortType() : LLVMType() {
     override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMShortType(), "srem i16 $firstOp, $secondOp")
 
+    override fun operatorDiv(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMShortType(), "sdiv i16 $firstOp, $secondOp")
+
     override fun equals(other: Any?): Boolean {
         return other is LLVMShortType
     }

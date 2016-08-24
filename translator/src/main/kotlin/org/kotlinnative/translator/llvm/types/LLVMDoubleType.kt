@@ -21,6 +21,9 @@ class LLVMDoubleType() : LLVMType() {
     override fun operatorInc(firstOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMDoubleType(), "fadd double $firstOp, 1.0")
 
+    override fun operatorDiv(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMDoubleType(), "fdiv double $firstOp, 1.0")
+
     override fun operatorDec(firstOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMDoubleType(), "fsub double $firstOp, 1.0")
 

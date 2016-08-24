@@ -37,6 +37,9 @@ class LLVMIntType() : LLVMType() {
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, $secondOp")
 
+    override fun operatorDiv(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+            LLVMExpression(LLVMIntType(), "sdiv i32 $firstOp, $secondOp")
+
     override fun operatorInc(firstOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "add nsw i32 $firstOp, 1")
 
