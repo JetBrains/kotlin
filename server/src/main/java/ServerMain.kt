@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     webServer.start()
 
     //CL user interface
-    DebugClInterface().run()
+    DebugClInterface.run()
 
     carsDestroy.interrupt()
     carServer.interrupt()

@@ -1,10 +1,16 @@
 import Exceptions.InactiveCarException
+import algorithm.AbstractAlgorithm
+import algorithm.RoomBypassingAlgorithm
 import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
+import java.util.concurrent.Exchanger
 
-class DebugClInterface {
+object DebugClInterface {
+
+    val exchanger = Exchanger<IntArray>()
+    var algorithm: AbstractAlgorithm? = null
 
     private val routeRegex = Regex("route [0-9]{1,10}")
     private val sonarRegex = Regex("sonar [0-9]{1,10}")
@@ -50,7 +56,12 @@ class DebugClInterface {
             "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
-            "alg" -> RoomBypassingAlgorithm.iterate()
+            "alg" -> {
+                if (algorithm == null) {
+                    algorithm = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+                }
+                algorithm!!.iterate()
+            }
             else -> printNotSupportedCommand(readString)
         }
     }

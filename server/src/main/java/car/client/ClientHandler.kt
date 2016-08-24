@@ -1,6 +1,7 @@
 package car.client
 
 import CodedInputStream
+import DebugClInterface
 import DebugResponseMemoryStats
 import LocationResponse
 import SonarResponse
@@ -11,8 +12,10 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
+import setRouteUrl
 import sonarUrl
-import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class ClientHandler : SimpleChannelInboundHandler<Any> {
 
@@ -40,6 +43,16 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
                 response.mergeFrom(CodedInputStream(contentBytes))
                 val angles = ctx.channel().attr(AttributeKey.valueOf<IntArray>("angles")).get()
                 handlerSonarResponse(response, angles)
+            }
+            setRouteUrl -> {
+                try {
+                    DebugClInterface.exchanger.exchange(IntArray(0), 20, TimeUnit.SECONDS)
+                } catch (e: InterruptedException) {
+                    println("interrupted before sending datas to algorithm!")
+                } catch (e: TimeoutException) {
+                    e.printStackTrace()
+                    println("timeout")
+                }
             }
             else -> {
 
@@ -71,8 +84,16 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     }
 
     private fun handlerSonarResponse(message: SonarResponse, angles: IntArray) {
-        println("request angles: ${Arrays.toString(angles)}")
-        println("distances from sonar: ${Arrays.toString(message.distances)}")
+//        println("request angles: ${Arrays.toString(angles)}")
+//        println("distances from sonar: ${Arrays.toString(message.distances)}")
+        try {
+            DebugClInterface.exchanger.exchange(message.distances, 20, TimeUnit.SECONDS)
+        } catch (e: InterruptedException) {
+            println("interrupted before sending datas to algorithm!")
+        } catch (e: TimeoutException) {
+            e.printStackTrace()
+            println("timeout")
+        }
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: Any?) {
