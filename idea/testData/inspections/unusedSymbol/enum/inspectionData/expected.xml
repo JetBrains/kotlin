@@ -10,15 +10,6 @@
 
     <problem>
         <file>usedViaMemberImport.kt</file>
-        <line>16</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="usedViaMemberImport.kt" />
-        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
-        <description>Class 'E3' is never used</description>
-    </problem>
-
-    <problem>
-        <file>usedViaMemberImport.kt</file>
         <line>20</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="usedViaMemberImport.kt" />
