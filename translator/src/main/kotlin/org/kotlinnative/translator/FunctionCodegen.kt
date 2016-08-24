@@ -132,7 +132,7 @@ class FunctionCodegen(state: TranslationState,
 
         actualArgs.addAll(args)
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName, actualArgs, actualReturnType, external, state.arm))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName, actualArgs, actualReturnType, external))
     }
 
     private fun generateLoadArguments() {

@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.rmi.UnexpectedException
 import java.util.*
-import javax.lang.model.type.ReferenceType
 import kotlin.comparisons.compareBy
 
 
@@ -787,7 +785,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 codeBuilder.storeVariable(firstOp, resultOp)
                 return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
             }
-            else -> throw UnsupportedOperationException("Unknown binary operator")
+            else -> throw UnsupportedOperationException("Unknown binary operator: $operator(${firstNativeOp.type}, ${secondNativeOp.type})")
         }
     }
 

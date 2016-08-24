@@ -153,7 +153,7 @@ abstract class StructCodegen(val state: TranslationState,
         argFields.addAll(secondaryConstructorArguments)
         val currentConstructorIndex = LLVMType.mangleFunctionArguments(secondaryConstructorArguments)
         constructorFields.put(currentConstructorIndex, argFields)
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + currentConstructorIndex, argFields, LLVMVoidType(), arm = state.arm))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + currentConstructorIndex, argFields, LLVMVoidType()))
 
         codeBuilder.addStartExpression()
 
@@ -180,7 +180,7 @@ abstract class StructCodegen(val state: TranslationState,
         argFields.add(classVal)
         argFields.addAll(constructorFields[primaryConstructorIndex]!!)
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + primaryConstructorIndex, argFields, LLVMVoidType(), arm = state.arm))
+        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + primaryConstructorIndex, argFields, LLVMVoidType()))
 
         codeBuilder.addStartExpression()
         generateLoadArguments(classVal)

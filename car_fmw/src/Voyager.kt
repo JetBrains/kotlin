@@ -17,13 +17,13 @@ object Voyager {
     }
 
     private fun rotate(degree: Int) {
-        val time = (degree / VELOCITY_DRIVE).toInt()
+        val time = (degree.toDouble() / VELOCITY_DRIVE).toInt()
         Engine.left()
         Time.wait(time)
     }
 
     private fun drive(direction: RouteType, distance: Int) {
-        val time = (distance / VELOCITY_DRIVE).toInt()
+        val time = (distance.toDouble() / VELOCITY_DRIVE).toInt()
         Engine.drive(direction.id)
         Time.wait(time)
     }
