@@ -163,9 +163,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }
-    val isCacheFormatUpToDate: Boolean by lazy {
-        cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
-    }
+    val isCacheFormatUpToDate: Boolean
+        get() {
+            if (!incremental) return true
+
+            return cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
+        }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
     private val additionalClasspath = arrayListOf<File>()
