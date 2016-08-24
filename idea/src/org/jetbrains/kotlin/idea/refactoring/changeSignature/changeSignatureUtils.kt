@@ -16,19 +16,30 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.CallerUsageInfo
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.DeferredJavaMethodKotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JavaMethodKotlinUsageWithDelegate
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -94,4 +105,17 @@ private object ForceTypeCopySubstitution : TypeSubstitution() {
             }
 
     override fun isEmpty() = false
+}
+
+fun suggestReceiverNames(project: Project, descriptor: CallableDescriptor): List<String> {
+    val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? KtCallableDeclaration ?: return emptyList()
+    val bodyScope = (callable as? KtFunction)?.bodyExpression?.let { it.getResolutionScope(it.analyze(), it.getResolutionFacade()) }
+    val paramNames = descriptor.valueParameters.map { it.name.asString() }
+    val validator = bodyScope?.let { bodyScope ->
+        CollectingNameValidator(paramNames) {
+            bodyScope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
+        }
+    } ?: CollectingNameValidator(paramNames)
+    val receiverType = descriptor.extensionReceiverParameter?.type ?: return emptyList()
+    return KotlinNameSuggester.suggestNamesByType(receiverType, validator, "receiver")
 }
