@@ -10,7 +10,7 @@ fun main() {
     Leds.set(Leds.GREEN, true)
 
     /* car task */
-    Control.run()
+//    Control.run()
 
     /* Voyager */
     Voyager.run()
