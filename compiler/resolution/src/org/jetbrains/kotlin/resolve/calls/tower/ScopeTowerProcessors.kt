@@ -165,6 +165,39 @@ fun <C : Candidate<VariableDescriptor>> createVariableAndObjectProcessor(
         createSimpleProcessor(context, explicitReceiver, classValueReceiver, ScopeTowerLevel::getObjects)
 )
 
-fun <C : Candidate<FunctionDescriptor>> createFunctionProcessor(
+fun <C : Candidate<FunctionDescriptor>> createSimpleFunctionProcessor(
         context: TowerContext<FunctionDescriptor, C>, explicitReceiver: Receiver?, classValueReceiver: Boolean = true
 ) = createSimpleProcessor(context, explicitReceiver, classValueReceiver, ScopeTowerLevel::getFunctions)
+
+
+fun <F: Candidate<FunctionDescriptor>, V: Candidate<VariableDescriptor>> createFunctionProcessor(
+        simpleContext: TowerContext<FunctionDescriptor, F>,
+        invokeContext: InvokeTowerContext<F, V>,
+        explicitReceiver: Receiver?
+): CompositeScopeTowerProcessor<F> {
+
+    // a.foo() -- simple function call
+    val simpleFunction = createSimpleFunctionProcessor(simpleContext, explicitReceiver)
+
+    // a.foo() -- property a.foo + foo.invoke()
+    val invokeProcessor = InvokeTowerProcessor(invokeContext, explicitReceiver)
+
+    // a.foo() -- property foo is extension function with receiver a -- a.invoke()
+    val invokeExtensionProcessor = createProcessorWithReceiverValueOrEmpty(explicitReceiver) { InvokeExtensionTowerProcessor(invokeContext, it) }
+
+    return CompositeScopeTowerProcessor(simpleFunction, invokeProcessor, invokeExtensionProcessor)
+}
+
+
+fun <D : CallableDescriptor, C: Candidate<D>> createProcessorWithReceiverValueOrEmpty(
+        explicitReceiver: Receiver?,
+        create: (ReceiverValue?) -> ScopeTowerProcessor<C>
+): ScopeTowerProcessor<C> {
+    return if (explicitReceiver is QualifierReceiver) {
+        explicitReceiver.classValueReceiver?.let(create)
+        ?: KnownResultProcessor<C>(listOf())
+    }
+    else {
+        create(explicitReceiver as ReceiverValue?)
+    }
+}

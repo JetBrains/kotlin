@@ -73,7 +73,7 @@ class NewResolutionOldInference(
                     scopeTower: ScopeTower, explicitReceiver: Receiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
                 val functionContext = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
-                return outer.createFunctionTowerProcessor(functionContext, explicitReceiver)
+                return createFunctionProcessor(functionContext, outer.InvokeContext(functionContext), explicitReceiver)
             }
         }
 
@@ -95,7 +95,7 @@ class NewResolutionOldInference(
                 val simpleContextF = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
                 val simpleContextV = outer.SimpleContext<VariableDescriptor>(scopeTower, name, context, tracing)
                 return CompositeScopeTowerProcessor(
-                        createFunctionProcessor(simpleContextF, explicitReceiver, classValueReceiver = false),
+                        createSimpleFunctionProcessor(simpleContextF, explicitReceiver, classValueReceiver = false),
                         createVariableProcessor(simpleContextV, explicitReceiver, classValueReceiver = false)
                 )
             }
@@ -111,7 +111,7 @@ class NewResolutionOldInference(
                 val call = (context.call as? CallTransformer.CallForImplicitInvoke).sure {
                     "Call should be CallForImplicitInvoke, but it is: ${context.call}"
                 }
-                return outer.createProcessorWithReceiverValueOrEmpty(explicitReceiver) {
+                return createProcessorWithReceiverValueOrEmpty(explicitReceiver) {
                     createCallTowerProcessorForExplicitInvoke(functionContext, call.dispatchReceiver, it)
                 }
             }
@@ -188,38 +188,6 @@ class NewResolutionOldInference(
             = OverloadResolutionResultsImpl.nameNotFound<D>().apply {
         this.allCandidates = allCandidates.map { it.resolvedCall }
     }
-
-    private fun <D : CallableDescriptor> createProcessorWithReceiverValueOrEmpty(
-            explicitReceiver: Receiver?,
-            create: (ReceiverValue?) -> ScopeTowerProcessor<MyCandidate<D>>
-    ): ScopeTowerProcessor<MyCandidate<D>> {
-        return if (explicitReceiver is QualifierReceiver) {
-            (explicitReceiver as? ClassQualifier)?.classValueReceiver?.let(create)
-            ?: KnownResultProcessor<MyCandidate<D>>(listOf())
-        }
-        else {
-            create(explicitReceiver as ReceiverValue?)
-        }
-    }
-
-    private fun createFunctionTowerProcessor(
-            simpleContext: SimpleContext<FunctionDescriptor>,
-            explicitReceiver: Receiver?
-    ): CompositeScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
-        val invokeContext = InvokeContext(simpleContext)
-
-        // a.foo() -- simple function call
-        val simpleFunction = createFunctionProcessor(simpleContext, explicitReceiver)
-
-        // a.foo() -- property a.foo + foo.invoke()
-        val invokeProcessor = InvokeTowerProcessor(invokeContext, explicitReceiver)
-
-        // a.foo() -- property foo is extension function with receiver a -- a.invoke()
-        val invokeExtensionProcessor = createProcessorWithReceiverValueOrEmpty(explicitReceiver) { InvokeExtensionTowerProcessor(invokeContext, it) }
-
-        return CompositeScopeTowerProcessor(simpleFunction, invokeProcessor, invokeExtensionProcessor)
-    }
-
 
     private fun <D : CallableDescriptor> convertToOverloadResults(
             candidates: Collection<MyCandidate<D>>,
