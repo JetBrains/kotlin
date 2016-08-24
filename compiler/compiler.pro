@@ -16,6 +16,7 @@
 !org/apache/log4j/or/jms/MessageRenderer*,
 !org/jdom/xpath/Jaxen*,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
+!net/sf/cglib/**,
 !META-INF/maven**,
 **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
