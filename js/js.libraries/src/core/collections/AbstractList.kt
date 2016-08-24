@@ -93,27 +93,11 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false
-        if (size != other.size) return false
 
-        val otherIterator = other.iterator()
-        for (elem in this) {
-            val elemOther = otherIterator.next()
-            if (elem != elemOther) {
-                return false
-            }
-        }
-
-        return true
+        return orderedEquals(this, other)
     }
 
-    override fun hashCode(): Int {
-        var hashCode = 1
-        for (e in this) {
-            hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
-            hashCode = hashCode or 0 // make sure we don't overflow
-        }
-        return hashCode
-    }
+    override fun hashCode(): Int = orderedHashCode(this)
 
 
     private open inner class IteratorImpl : MutableIterator<E> {
@@ -235,6 +219,28 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
             if (start > end) {
                 throw IllegalArgumentException("fromIndex: $start > toIndex: $end")
             }
+        }
+
+        internal fun orderedHashCode(c: Collection<*>): Int {
+            var hashCode = 1
+            for (e in c) {
+                hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
+                hashCode = hashCode or 0 // make sure we don't overflow
+            }
+            return hashCode
+        }
+
+        internal fun orderedEquals(c: Collection<*>, other: Collection<*>): Boolean {
+            if (c.size != other.size) return false
+
+            val otherIterator = other.iterator()
+            for (elem in c) {
+                val elemOther = otherIterator.next()
+                if (elem != elemOther) {
+                    return false
+                }
+            }
+            return true
         }
     }
 
