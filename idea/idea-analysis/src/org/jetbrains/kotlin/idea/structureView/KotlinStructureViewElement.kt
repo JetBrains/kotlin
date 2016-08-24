@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.ui.Queryable
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -89,11 +90,11 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
             is KtFile -> element.declarations
             is KtClass -> element.getPrimaryConstructorParameters().filter { it.hasValOrVar() } + element.declarations
             is KtClassOrObject -> element.declarations
-            is KtFunction -> element.collectLocalDeclarations()
+            is KtFunction, is KtClassInitializer -> element.collectLocalDeclarations()
             else -> emptyList()
         }
 
-    private fun KtFunction.collectLocalDeclarations(): List<KtDeclaration> {
+    private fun PsiElement.collectLocalDeclarations(): List<KtDeclaration> {
         val result = mutableListOf<KtDeclaration>()
 
         acceptChildren(object : KtTreeVisitorVoid() {
