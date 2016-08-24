@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider<KtSimpleNameExpression>(factory = ::KtSimpleNameReference)
+            registerProvider(factory = ::KtSimpleNameReference)
 
             registerMultiProvider<KtNameReferenceExpression> {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
@@ -41,19 +40,19 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
                 }
             }
 
-            registerProvider<KtConstructorDelegationReferenceExpression>(factory = ::KtConstructorDelegationReference)
+            registerProvider(factory = ::KtConstructorDelegationReference)
 
-            registerProvider<KtCallExpression>(factory = ::KtInvokeFunctionReference)
+            registerProvider(factory = ::KtInvokeFunctionReference)
 
-            registerProvider<KtArrayAccessExpression>(factory = ::KtArrayAccessReference)
+            registerProvider(factory = ::KtArrayAccessReference)
 
-            registerProvider<KtForExpression>(factory = ::KtForLoopInReference)
+            registerProvider(factory = ::KtForLoopInReference)
 
-            registerProvider<KtPropertyDelegate>(factory = ::KtPropertyDelegationMethodsReference)
+            registerProvider(factory = ::KtPropertyDelegationMethodsReference)
 
-            registerProvider<KtDestructuringDeclarationEntry>(factory = ::KtDestructuringDeclarationReference)
+            registerProvider(factory = ::KtDestructuringDeclarationReference)
 
-            registerProvider<KDocName>(factory = ::KDocReference)
+            registerProvider(factory = ::KDocReference)
         }
     }
 }
