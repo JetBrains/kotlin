@@ -34,7 +34,7 @@ import java.lang.AssertionError
 
 class OperatorExpressionGenerator(
         val statementGenerator: StatementGenerator
-) : BodyGenerator {
+) : GeneratorWithScope {
     override val scope: Scope get() = statementGenerator.scope 
     override val context: GeneratorContext get() = statementGenerator.context
 

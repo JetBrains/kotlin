@@ -40,7 +40,7 @@ interface Generator {
     val context: GeneratorContext
 }
 
-interface BodyGenerator : Generator {
+interface GeneratorWithScope : Generator {
     val scope: Scope
 }
 

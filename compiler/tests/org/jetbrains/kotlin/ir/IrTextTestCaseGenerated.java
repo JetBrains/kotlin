@@ -250,4 +250,10 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/when.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("whileDoWhile.kt")
+    public void testWhileDoWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/whileDoWhile.kt");
+        doTest(fileName);
+    }
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrLoop : IrExpression {
+    val operator: IrOperator?
     var body: IrExpression
     var condition: IrExpression
 }
@@ -30,8 +31,19 @@ interface IrDoWhileLoop : IrLoop
 
 abstract class IrLoopBase(
         startOffset: Int,
-        endOffset: Int
+        endOffset: Int,
+        override val operator: IrOperator?
 ) : IrExpressionBase(startOffset, endOffset, null), IrLoop {
+    private var conditionImpl: IrExpression? = null
+    override var condition: IrExpression
+        get() = conditionImpl!!
+        set(value) {
+            value.assertDetached()
+            conditionImpl?.detach()
+            conditionImpl = value
+            value.setTreeLocation(this, LOOP_CONDITION_SLOT)
+        }
+
     private var bodyImpl: IrExpression? = null
     override var body: IrExpression
         get() = bodyImpl!!
@@ -45,54 +57,30 @@ abstract class IrLoopBase(
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
                 LOOP_BODY_SLOT -> body
+                LOOP_CONDITION_SLOT -> condition
                 else -> null
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             LOOP_BODY_SLOT -> body = newChild.assertCast()
-        }
-    }
-}
-
-abstract class IrConditionalLoopBase(
-        startOffset: Int,
-        endOffset: Int
-) : IrLoopBase(startOffset, endOffset) {
-    private var conditionImpl: IrExpression? = null
-    override var condition: IrExpression
-        get() = conditionImpl!!
-        set(value) {
-            value.assertDetached()
-            conditionImpl?.detach()
-            conditionImpl = value
-            value.setTreeLocation(this, LOOP_CONDITION_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                LOOP_CONDITION_SLOT -> condition
-                else -> super.getChild(slot)
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
             LOOP_CONDITION_SLOT -> condition = newChild.assertCast()
-            else -> super.replaceChild(slot, newChild)
         }
     }
 }
 
 class IrWhileLoopImpl(
         startOffset: Int,
-        endOffset: Int
-) : IrConditionalLoopBase(startOffset, endOffset), IrWhileLoop {
+        endOffset: Int,
+        operator: IrOperator?
+) : IrLoopBase(startOffset, endOffset, operator), IrWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            operator: IrOperator?,
             condition: IrExpression,
             body: IrExpression
-    ) : this(startOffset, endOffset) {
+    ) : this(startOffset, endOffset, operator) {
         this.condition = condition
         this.body = body
     }
@@ -109,14 +97,16 @@ class IrWhileLoopImpl(
 
 class IrDoWhileLoopImpl(
         startOffset: Int,
-        endOffset: Int
-) : IrConditionalLoopBase(startOffset, endOffset), IrDoWhileLoop {
+        endOffset: Int,
+        operator: IrOperator?
+) : IrLoopBase(startOffset, endOffset, operator), IrDoWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            operator: IrOperator?,
             body: IrExpression,
             condition: IrExpression
-    ) : this(startOffset, endOffset) {
+    ) : this(startOffset, endOffset, operator) {
         this.condition = condition
         this.body = body
     }

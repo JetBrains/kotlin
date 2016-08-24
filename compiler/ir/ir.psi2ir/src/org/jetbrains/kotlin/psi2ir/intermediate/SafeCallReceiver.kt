@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
-import org.jetbrains.kotlin.psi2ir.generators.BodyGenerator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.psi2ir.generators.constNull
 import org.jetbrains.kotlin.psi2ir.generators.equalsNull
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 
 class SafeCallReceiver(
-        val generator: BodyGenerator,
+        val generator: GeneratorWithScope,
         val startOffset: Int,
         val endOffset: Int,
         val explicitReceiver: IrExpression,

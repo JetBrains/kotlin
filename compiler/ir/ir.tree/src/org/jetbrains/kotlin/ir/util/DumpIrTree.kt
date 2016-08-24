@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -61,6 +63,20 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
                 expression.getNthResult(i)!!.accept(this, "then")
             }
             expression.elseBranch?.accept(this, "else")
+        }
+    }
+
+    override fun visitWhileLoop(loop: IrWhileLoop, data: String) {
+        loop.dumpLabeledElementWith(data) {
+            loop.condition.accept(this, "condition")
+            loop.body.accept(this, "body")
+        }
+    }
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) {
+        loop.dumpLabeledElementWith(data) {
+            loop.body.accept(this, "body")
+            loop.condition.accept(this, "condition")
         }
     }
 

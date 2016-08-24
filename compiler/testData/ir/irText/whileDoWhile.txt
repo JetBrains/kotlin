@@ -1,0 +1,73 @@
+IrFile /whileDoWhile.kt
+  IrFunction public fun test(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        VAR var x: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        WHILE operator=WHILE_LOOP
+          condition: CALL .LT0 type=kotlin.Boolean operator=LT
+            arg0: CALL .compareTo type=kotlin.Int operator=LT
+              $this: GET_VAR x type=kotlin.Int operator=null
+              other: CONST Int type=kotlin.Int value='5'
+          body: BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp0: kotlin.Int
+              GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
+            SET_VAR x type=<no-type> operator=POSTFIX_INCR
+              CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=null
+            GET_VAR tmp0 type=kotlin.Int operator=null
+        WHILE operator=WHILE_LOOP
+          condition: CALL .LT0 type=kotlin.Boolean operator=LT
+            arg0: CALL .compareTo type=kotlin.Int operator=LT
+              $this: GET_VAR x type=kotlin.Int operator=null
+              other: CONST Int type=kotlin.Int value='10'
+          body: BLOCK type=kotlin.Int hasResult=true operator=null
+            BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+              VAR val tmp1: kotlin.Int
+                GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
+              SET_VAR x type=<no-type> operator=POSTFIX_INCR
+                CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                  $this: GET_VAR tmp1 type=kotlin.Int operator=null
+              GET_VAR tmp1 type=kotlin.Int operator=null
+        DO_WHILE operator=DO_WHILE_LOOP
+          body: BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp2: kotlin.Int
+              GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
+            SET_VAR x type=<no-type> operator=POSTFIX_INCR
+              CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp2 type=kotlin.Int operator=null
+            GET_VAR tmp2 type=kotlin.Int operator=null
+          condition: CALL .LT0 type=kotlin.Boolean operator=LT
+            arg0: CALL .compareTo type=kotlin.Int operator=LT
+              $this: GET_VAR x type=kotlin.Int operator=null
+              other: CONST Int type=kotlin.Int value='15'
+        DO_WHILE operator=DO_WHILE_LOOP
+          body: BLOCK type=kotlin.Int hasResult=true operator=null
+            BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+              VAR val tmp3: kotlin.Int
+                GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
+              SET_VAR x type=<no-type> operator=POSTFIX_INCR
+                CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                  $this: GET_VAR tmp3 type=kotlin.Int operator=null
+              GET_VAR tmp3 type=kotlin.Int operator=null
+          condition: CALL .LT0 type=kotlin.Boolean operator=LT
+            arg0: CALL .compareTo type=kotlin.Int operator=LT
+              $this: GET_VAR x type=kotlin.Int operator=null
+              other: CONST Int type=kotlin.Int value='20'
+  IrFunction public fun testSmartcastInCondition(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        VAR val a: kotlin.Any? = null
+          CONST Null type=kotlin.Nothing? value='null'
+        WHEN type=kotlin.Unit operator=IF
+          if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.Boolean
+            GET_VAR a type=kotlin.Any? operator=null
+          then: BLOCK type=<no-type> hasResult=false operator=null
+            WHILE operator=WHILE_LOOP
+              condition: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                GET_VAR a type=kotlin.Any? operator=null
+              body: BLOCK type=<no-type> hasResult=false operator=null
+            DO_WHILE operator=DO_WHILE_LOOP
+              body: BLOCK type=<no-type> hasResult=false operator=null
+              condition: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                GET_VAR a type=kotlin.Any? operator=null

@@ -35,9 +35,9 @@ import java.util.*
 class CallGenerator(
         override val context: GeneratorContext,
         override val scope: Scope
-) : BodyGenerator {
+) : GeneratorWithScope {
 
-    constructor(parent: BodyGenerator) : this(parent.context, parent.scope)
+    constructor(parent: GeneratorWithScope) : this(parent.context, parent.scope)
 
     fun generateCall(
             startOffset: Int,

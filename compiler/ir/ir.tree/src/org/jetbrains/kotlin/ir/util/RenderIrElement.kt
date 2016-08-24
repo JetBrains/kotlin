@@ -100,6 +100,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitWhen(expression: IrWhen, data: Nothing?): String =
             "WHEN type=${expression.type.render()} operator=${expression.operator}"
 
+    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
+            "WHILE operator=${loop.operator}"
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
+            "DO_WHILE operator=${loop.operator}"
+
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"
 

@@ -74,6 +74,8 @@ interface IrOperator {
     object IF : IrOperatorImpl("IF")
     object WHEN : IrOperatorImpl("WHEN")
     object WHEN_COMMA : IrOperatorImpl("WHEN_COMMA")
+    object WHILE_LOOP : IrOperatorImpl("WHILE_LOOP")
+    object DO_WHILE_LOOP : IrOperatorImpl("DO_WHILE_LOOP")
 
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {
@@ -86,6 +88,8 @@ interface IrOperator {
                         COMPONENT_N(index)
         }
     }
+
+
 
 }
 
