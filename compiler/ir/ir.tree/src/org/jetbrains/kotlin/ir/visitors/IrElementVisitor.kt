@@ -59,6 +59,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
     fun visitWhileLoop(loop: IrWhileLoop, data: D) = visitLoop(loop, data)
     fun visitDoWhileLoop(loop: IrDoWhileLoop, data: D) = visitLoop(loop, data)
+    fun visitTryCatch(tryCatch: IrTryCatch, data: D) = visitExpression(tryCatch, data)
 
     fun visitBreakContinue(jump: IrBreakContinue, data: D) = visitExpression(jump, data)
     fun visitBreak(jump: IrBreak, data: D) = visitBreakContinue(jump, data)

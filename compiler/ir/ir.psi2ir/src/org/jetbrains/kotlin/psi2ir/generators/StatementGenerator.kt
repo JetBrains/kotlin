@@ -294,6 +294,9 @@ class StatementGenerator(
 
     override fun visitContinueExpression(expression: KtContinueExpression, data: Nothing?): IrStatement =
             LoopExpressionGenerator(this).generateContinue(expression)
+
+    override fun visitTryExpression(expression: KtTryExpression, data: Nothing?): IrStatement =
+            TryCatchExpressionGenerator(this).generateTryCatch(expression)
 }
 
 

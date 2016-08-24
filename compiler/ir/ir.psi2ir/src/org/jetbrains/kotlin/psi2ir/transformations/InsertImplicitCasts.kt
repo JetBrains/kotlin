@@ -103,6 +103,17 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
         expression.value.replaceWithCast(builtIns.throwable.defaultType)
     }
 
+    override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?) {
+        tryCatch.acceptChildren(this, null)
+
+        val resultType = tryCatch.type
+
+        tryCatch.tryResult.replaceWithCast(resultType)
+        for (catchClauseIndex in tryCatch.catchClauseIndices) {
+            tryCatch.getNthCatchResult(catchClauseIndex)!!.replaceWithCast(resultType)
+        }
+    }
+
     private fun IrExpression.replaceWithCast(expectedType: KotlinType?) {
         replaceWith { it.wrapWithImplicitCast(expectedType) }
     }

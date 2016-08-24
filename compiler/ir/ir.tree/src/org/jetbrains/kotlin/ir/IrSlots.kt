@@ -31,3 +31,5 @@ const val IF_ELSE_SLOT = -1
 const val LOOP_BODY_SLOT = -1
 const val LOOP_CONDITION_SLOT = -2
 const val SETTER_ARGUMENT_INDEX = 0
+const val TRY_RESULT_SLOT = -1
+const val FINALLY_EXPRESSION_SLOT = -2

@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -75,6 +73,14 @@ fun Generator.getReturnType(key: KtExpression): KotlinType? {
     if (key is KtBlockExpression) {
         if (!isUsedAsExpression(key)) return null
         return getReturnType(key.statements.last())
+    }
+
+    if (key is KtConstantExpression) {
+        return getInferredTypeWithSmartcasts(key)
+    }
+
+    if (key is KtStringTemplateExpression) {
+        return context.builtIns.stringType
     }
 
     throw AssertionError("Unexpected expression: $key")

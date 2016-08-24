@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
-import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -77,6 +74,17 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         loop.dumpLabeledElementWith(data) {
             loop.body.accept(this, "body")
             loop.condition.accept(this, "condition")
+        }
+    }
+
+    override fun visitTryCatch(tryCatch: IrTryCatch, data: String) {
+        tryCatch.dumpLabeledElementWith(data) {
+            tryCatch.tryResult.accept(this, "try")
+            for (i in 0 .. tryCatch.catchClausesCount - 1) {
+                val catchClauseParameter = tryCatch.getNthCatchParameter(i)!!
+                tryCatch.getNthCatchResult(i)!!.accept(this, "catch ${catchClauseParameter.name}")
+            }
+            tryCatch.finallyExpression?.accept(this, "finally")
         }
     }
 
