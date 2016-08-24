@@ -41,40 +41,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
 
 class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode {
 
-    inner class PseudocodeLabel internal constructor(private val name: String, private val comment: String?) : Label {
-        var targetInstructionIndex: Int? = null
-            private set
-
-        override fun getName(): String {
-            return name
-        }
-
-        override fun toString(): String {
-            return if (comment == null) name else "$name [$comment]"
-        }
-
-        fun setTargetInstructionIndex(targetInstructionIndex: Int) {
-            this.targetInstructionIndex = targetInstructionIndex
-        }
-
-        fun resolveToInstruction(): Instruction {
-            val index = targetInstructionIndex
-            if (index == null || index >= mutableInstructionList.size) {
-                error("resolveToInstruction: incorrect index $index for label $name " +
-                      "in subroutine ${correspondingElement.text} with instructions $mutableInstructionList")
-            }
-            return mutableInstructionList[index]
-        }
-
-        fun copy(newLabelIndex: Int): PseudocodeLabel {
-            return PseudocodeLabel("L" + newLabelIndex, "copy of $name, $comment")
-        }
-
-        val pseudocode: PseudocodeImpl
-            get() = this@PseudocodeImpl
-    }
-
-    private val mutableInstructionList = ArrayList<Instruction>()
+    internal val mutableInstructionList = ArrayList<Instruction>()
     override val instructions = ArrayList<Instruction>()
 
     private val elementsToValues = BidirectionalMap<KtElement, PseudoValue>()
@@ -133,7 +100,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         }
 
     fun createLabel(name: String, comment: String?): PseudocodeLabel {
-        val label = PseudocodeLabel(name, comment)
+        val label = PseudocodeLabel(this, name, comment)
         labels.add(label)
         return label
     }
@@ -224,8 +191,8 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         elementsToValues.put(element, value)
     }
 
-    fun bindLabel(label: Label) {
-        (label as PseudocodeLabel).setTargetInstructionIndex(mutableInstructionList.size)
+    fun bindLabel(label: PseudocodeLabel) {
+        label.targetInstructionIndex = mutableInstructionList.size
     }
 
     private fun getMergedValues(value: PseudoValue) = mergedValues[value] ?: emptySet()
@@ -364,7 +331,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
     }
 
     private fun getJumpTarget(targetLabel: Label): Instruction {
-        return (targetLabel as PseudocodeLabel).resolveToInstruction()
+        return targetLabel.resolveToInstruction()
     }
 
     private fun getNextPosition(currentPosition: Int): Instruction {
@@ -385,7 +352,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
     }
 
     fun repeatPart(startLabel: Label, finishLabel: Label, labelCount: Int): Int {
-        return repeatInternal((startLabel as PseudocodeLabel).pseudocode, startLabel, finishLabel, labelCount)
+        return repeatInternal(startLabel.pseudocode as PseudocodeImpl, startLabel, finishLabel, labelCount)
     }
 
     private fun repeatInternal(
@@ -393,17 +360,19 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             startLabel: Label?, finishLabel: Label?,
             labelCountArg: Int): Int {
         var labelCount = labelCountArg
-        val startIndex = (if (startLabel != null) (startLabel as PseudocodeLabel).targetInstructionIndex else Integer.valueOf(0))!!
-        val finishIndex = (if (finishLabel != null)
-            (finishLabel as PseudocodeLabel).targetInstructionIndex
+        val startIndex = if (startLabel != null) startLabel.targetInstructionIndex else 0
+        val finishIndex = if (finishLabel != null)
+            finishLabel.targetInstructionIndex
         else
-            Integer.valueOf(originalPseudocode.mutableInstructionList.size))!!
+            originalPseudocode.mutableInstructionList.size
 
-        val originalToCopy = Maps.newLinkedHashMap<Label, Label>()
+        val originalToCopy = Maps.newLinkedHashMap<Label, PseudocodeLabel>()
         val originalLabelsForInstruction = HashMultimap.create<Instruction, Label>()
         for (label in originalPseudocode.labels) {
-            val index = label.targetInstructionIndex ?: continue
+            val index = label.targetInstructionIndex
             //label is not bounded yet
+            if (index < 0) continue
+
             if (label === startLabel || label === finishLabel) continue
 
             if (startIndex <= index && index <= finishIndex) {
@@ -412,7 +381,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             }
         }
         for (label in originalToCopy.values) {
-            labels.add(label as PseudocodeLabel)
+            labels.add(label)
         }
         for (index in startIndex..finishIndex - 1) {
             val originalInstruction = originalPseudocode.mutableInstructionList[index]
@@ -439,14 +408,14 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
 
     private fun repeatLabelsBindingForInstruction(
             originalInstruction: Instruction,
-            originalToCopy: Map<Label, Label>,
+            originalToCopy: Map<Label, PseudocodeLabel>,
             originalLabelsForInstruction: Multimap<Instruction, Label>) {
         for (originalLabel in originalLabelsForInstruction.get(originalInstruction)) {
             bindLabel(originalToCopy[originalLabel]!!)
         }
     }
 
-    private fun copyInstruction(instruction: Instruction, originalToCopy: Map<Label, Label>): Instruction {
+    private fun copyInstruction(instruction: Instruction, originalToCopy: Map<Label, PseudocodeLabel>): Instruction {
         if (instruction is AbstractJumpInstruction) {
             val originalTarget = instruction.targetLabel
             if (originalToCopy.containsKey(originalTarget)) {
@@ -461,7 +430,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         return (instruction as InstructionImpl).copy()
     }
 
-    private fun copyLabels(labels: Collection<Label>, originalToCopy: Map<Label, Label>): MutableList<Label> {
+    private fun copyLabels(labels: Collection<Label>, originalToCopy: Map<Label, PseudocodeLabel>): MutableList<Label> {
         val newLabels = Lists.newArrayList<Label>()
         for (label in labels) {
             val newLabel = originalToCopy[label]

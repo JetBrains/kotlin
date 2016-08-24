@@ -16,6 +16,15 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+
 interface Label {
+    val pseudocode: Pseudocode
+
     val name: String
+
+    val targetInstructionIndex: Int
+
+    fun resolveToInstruction(): Instruction
 }

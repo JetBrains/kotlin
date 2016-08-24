@@ -302,7 +302,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun bindLabel(label: Label) {
-            pseudocode.bindLabel(label)
+            pseudocode.bindLabel(label as PseudocodeLabel)
         }
 
         override fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?) {
