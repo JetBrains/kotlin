@@ -89,6 +89,23 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
             is KtFile -> element.declarations
             is KtClass -> element.getPrimaryConstructorParameters().filter { it.hasValOrVar() } + element.declarations
             is KtClassOrObject -> element.declarations
+            is KtFunction -> element.collectLocalDeclarations()
             else -> emptyList()
         }
+
+    private fun KtFunction.collectLocalDeclarations(): List<KtDeclaration> {
+        val result = mutableListOf<KtDeclaration>()
+
+        acceptChildren(object : KtTreeVisitorVoid() {
+            override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+                result.add(classOrObject)
+            }
+
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                result.add(function)
+            }
+        })
+
+        return result
+    }
 }
