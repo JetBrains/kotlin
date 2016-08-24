@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
-public interface Label {
-    @NotNull
-    String getName();
+interface Label {
+    val pseudocode: Pseudocode
+
+    val name: String
+
+    val targetInstructionIndex: Int
+
+    fun resolveToInstruction(): Instruction
 }

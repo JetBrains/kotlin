@@ -54,7 +54,7 @@ L0:
     jmp?(L2)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() }), mark({ if (n < 0) return 0 n.let { return it } })]
   3 mark({ if (n < 0) return 0 n.let { return it } })
     mark(if (n < 0) return 0)
-    r(n) -> <v1>                                                                                                          PREV:[mark(if (n < 0) return 0), jmp(L15)]
+    r(n) -> <v1>
     r(0) -> <v2>
     mark(n < 0)
     call(n < 0, compareTo|<v1>, <v2>) -> <v3>
@@ -62,7 +62,7 @@ L0:
     r(0) -> <v4>
 L4 [start finally]:
   4 mark({ for (i in 1..2) { } return bar() })
-  5 r(1) -> <v5>                                                                                                          PREV:[mark({ for (i in 1..2) { } return bar() }), jmp?(L16)]
+  5 r(1) -> <v5>
     r(2) -> <v6>
     mark(1..2)
     call(1..2, rangeTo|<v5>, <v6>) -> <v7>
@@ -149,7 +149,7 @@ L29 [copy of L8, body exit point]:
     ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
 - 2 merge(try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }|<v15>) -> <v16>    PREV:[]
 L1:
-  1 <END>                                                                                                                 NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v9>) L1, ret(*|<v9>) L1, ret(*|<v9>) L1]
+  1 <END>                                                                                                                 NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v9>) L1, ret(*|<v9>) L1, ret(*|<v9>) L1, ret(*|<v9>) L1]
 error:
     <ERROR>                                                                                                               PREV:[]
 sink:
@@ -170,24 +170,24 @@ L13:
     v(i)
 L15 [copy of L5, loop entry point]:
 L19 [copy of L9, condition entry point]:
-    jmp?(L16)                                         NEXT:[r(1) -> <v5>, magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]
+    jmp?(L16)                                         NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]    PREV:[v(i), jmp(L15)]
     magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
     w(i|<v8>)
     mark(for (i in 1..2) { })
 L17 [copy of L7, body entry point]:
   6 mark({ })
     read (Unit)
-  5 jmp(L15)                                          NEXT:[r(n) -> <v1>]
+  5 jmp(L15)                                          NEXT:[jmp?(L16)]
 L16 [copy of L6, loop exit point]:
 L18 [copy of L8, body exit point]:
--   read (Unit)                                       PREV:[]
-- 4 mark(bar())                                       PREV:[]
--   call(bar(), bar) -> <v9>                          PREV:[]
--   ret(*|<v9>) L1                                    NEXT:[<END>]                                                           PREV:[]
-- 5 ret(*|<v0>) L1                                    NEXT:[<END>]                                                           PREV:[]
+    read (Unit)                                       PREV:[jmp?(L16)]
+  4 mark(bar())
+    call(bar(), bar) -> <v9>
+    ret(*|<v9>) L1                                    NEXT:[<END>]
+- 5 ret(*|<v0>) L1                                    NEXT:[<END>]                                                          PREV:[]
 - 4 ret(*|!<v1>) L14                                  PREV:[]
 L14:
-    <END>                                             NEXT:[<SINK>]                                                          PREV:[]
+    <END>                                             NEXT:[<SINK>]                                                         PREV:[]
 error:
     <ERROR>                                           PREV:[]
 sink:

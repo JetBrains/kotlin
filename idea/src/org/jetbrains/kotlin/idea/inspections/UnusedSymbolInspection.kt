@@ -263,8 +263,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                     }
                     else {
                         if (import.importedFqName != declaration.fqName) {
-                            val importedDeclaration = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
-                            return importedDeclaration == null || !hasNonTrivialUsages(importedDeclaration)
+                            val importedDeclaration =
+                                    import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
+                                    ?: return true
+                            return declaration !in importedDeclaration.parentsWithSelf && !hasNonTrivialUsages(importedDeclaration)
                         }
                     }
                 }

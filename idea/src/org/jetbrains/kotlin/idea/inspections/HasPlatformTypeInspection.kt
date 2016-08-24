@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.idea.intentions.isFlexibleRecursive
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.TypeUtils
 import javax.swing.JComponent
 
 class HasPlatformTypeInspection(
@@ -51,9 +52,10 @@ class HasPlatformTypeInspection(
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
         val type = SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null
 
-        if (type.isNullabilityFlexible()) {
+        if (TypeUtils.isNullableType(type)) {
             val expression = element.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()
-            if (expression != null) {
+            if (expression != null &&
+                (!reportPlatformArguments || !TypeUtils.makeNotNullable(type).isFlexibleRecursive())) {
                 return listOf(IntentionWrapper(AddExclExclCallFix(expression), element.containingFile))
             }
         }

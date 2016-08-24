@@ -40,7 +40,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
     private val loopInfo = Stack<LoopInfo>()
     private val blockScopes = Stack<BlockScope>()
-    private val elementToBlockInfo = HashMap<KtElement, BreakableBlockInfo>()
+    private val elementToLoopInfo = HashMap<KtLoopExpression, LoopInfo>()
+    private val elementToSubroutineInfo = HashMap<KtElement, SubroutineInfo>()
     private var labelCount = 0
 
     private val builders = Stack<ControlFlowInstructionsGeneratorWorker>()
@@ -130,12 +131,12 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
                     createUnboundLabel("body exit point"),
                     createUnboundLabel("condition entry point"))
             bindLabel(info.entryPoint)
-            elementToBlockInfo.put(expression, info)
+            elementToLoopInfo.put(expression, info)
             return info
         }
 
         override fun enterLoopBody(expression: KtLoopExpression) {
-            val info = elementToBlockInfo[expression] as LoopInfo
+            val info = elementToLoopInfo[expression]!!
             bindLabel(info.bodyEntryPoint)
             loopInfo.push(info)
             allBlocks.push(info)
@@ -143,7 +144,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun exitLoopBody(expression: KtLoopExpression) {
             val info = loopInfo.pop()
-            elementToBlockInfo.remove(expression)
+            elementToLoopInfo.remove(expression)
             allBlocks.pop()
             bindLabel(info.bodyExitPoint)
         }
@@ -152,11 +153,11 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
         override fun enterSubroutine(subroutine: KtElement) {
-            val blockInfo = BreakableBlockInfo(
+            val blockInfo = SubroutineInfo(
                     subroutine,
                     /* entry point */ createUnboundLabel(),
                     /* exit point  */ createUnboundLabel())
-            elementToBlockInfo.put(subroutine, blockInfo)
+            elementToSubroutineInfo.put(subroutine, blockInfo)
             allBlocks.push(blockInfo)
             bindLabel(blockInfo.entryPoint)
             add(SubroutineEnterInstruction(subroutine, currentScope))
@@ -165,15 +166,18 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentSubroutine: KtElement
             get() = pseudocode.correspondingElement
 
-        override fun getConditionEntryPoint(labelElement: KtElement): Label {
-            val blockInfo = elementToBlockInfo[labelElement]
-            assert(blockInfo is LoopInfo) { "expected LoopInfo for " + labelElement.text }
-            return (blockInfo as LoopInfo).conditionEntryPoint
+        override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
+            return elementToLoopInfo[loop]?.conditionEntryPoint
         }
 
-        override fun getExitPoint(labelElement: KtElement): Label? {
+        override fun getLoopExitPoint(loop: KtLoopExpression): Label? {
+            // It's quite possible to have null here, see testBreakInsideLocal
+            return elementToLoopInfo[loop]?.exitPoint
+        }
+
+        override fun getSubroutineExitPoint(labelElement: KtElement): Label? {
             // It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
-            return elementToBlockInfo[labelElement]?.exitPoint
+            return elementToSubroutineInfo[labelElement]?.exitPoint
         }
 
         private val currentScope: BlockScope
@@ -214,13 +218,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-            getExitPoint(subroutine)?.let { bindLabel(it) }
+            getSubroutineExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
             pseudocode.addErrorInstruction(SubroutineExitInstruction(subroutine, currentScope, true))
             bindLabel(sink)
             pseudocode.addSinkInstruction(SubroutineSinkInstruction(subroutine, currentScope, "<SINK>"))
-            elementToBlockInfo.remove(subroutine)
+            elementToSubroutineInfo.remove(subroutine)
             allBlocks.pop()
             return pseudocode
         }
@@ -242,13 +246,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
-            val exitPoint = getExitPoint(subroutine) ?: return
+            val exitPoint = getSubroutineExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
             add(ReturnValueInstruction(returnExpression, currentScope, exitPoint, returnValue))
         }
 
         override fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement) {
-            val exitPoint = getExitPoint(subroutine) ?: return
+            val exitPoint = getSubroutineExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
             add(ReturnNoValueInstruction(returnExpression, currentScope, exitPoint))
         }
@@ -298,7 +302,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun bindLabel(label: Label) {
-            pseudocode.bindLabel(label)
+            pseudocode.bindLabel(label as PseudocodeLabel)
         }
 
         override fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?) {
