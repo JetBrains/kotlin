@@ -158,13 +158,13 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
         return when (inOperator) {
             IrOperator.IN -> irInCall
             IrOperator.NOT_IN ->
-                IrUnaryOperatorImpl(ktCondition.startOffset, ktCondition.endOffset, IrOperator.EXCL, context.irBuiltIns.booleanNot, irInCall)
+                IrUnaryPrimitiveImpl(ktCondition.startOffset, ktCondition.endOffset, IrOperator.EXCL, context.irBuiltIns.booleanNot, irInCall)
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }
 
-    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryOperatorImpl =
-            IrBinaryOperatorImpl(
+    private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryPrimitiveImpl =
+            IrBinaryPrimitiveImpl(
                     ktCondition.startOffset, ktCondition.endOffset,
                     IrOperator.EQEQ, context.irBuiltIns.eqeq,
                     irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)

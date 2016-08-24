@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 
 fun primitiveOp1(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, irOperator: IrOperator,
                  argument: IrExpression): IrExpression =
-        IrUnaryOperatorImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument)
+        IrUnaryPrimitiveImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument)
 
 fun primitiveOp2(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, irOperator: IrOperator,
                  argument1: IrExpression, argument2: IrExpression): IrExpression =
-        IrBinaryOperatorImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument1, argument2)
+        IrBinaryPrimitiveImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument1, argument2)
 
 fun Generator.constNull(startOffset: Int, endOffset: Int): IrExpression =
         IrConstImpl.constNull(startOffset, endOffset, context.builtIns.nullableNothingType)

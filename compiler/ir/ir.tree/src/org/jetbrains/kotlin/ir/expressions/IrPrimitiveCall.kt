@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrOperatorCallBase(
+abstract class IrPrimitiveCallBase(
         startOffset: Int,
         endOffset: Int,
         override val operator: IrOperator,
@@ -52,12 +52,12 @@ abstract class IrOperatorCallBase(
     }
 }
 
-class IrNullaryOperatorImpl constructor(
+class IrNullaryPrimitiveImpl constructor(
         startOffset: Int,
         endOffset: Int,
         operator: IrOperator,
         descriptor: CallableDescriptor
-) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
+) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
     override fun getChild(slot: Int): IrElement? = null
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
@@ -69,12 +69,12 @@ class IrNullaryOperatorImpl constructor(
     }
 }
 
-class IrUnaryOperatorImpl private constructor(
+class IrUnaryPrimitiveImpl private constructor(
         startOffset: Int,
         endOffset: Int,
         operator: IrOperator,
         descriptor: CallableDescriptor
-) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
+) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -113,12 +113,12 @@ class IrUnaryOperatorImpl private constructor(
     }
 }
 
-class IrBinaryOperatorImpl(
+class IrBinaryPrimitiveImpl(
         startOffset: Int,
         endOffset: Int,
         operator: IrOperator,
         descriptor: CallableDescriptor
-) : IrOperatorCallBase(startOffset, endOffset, operator, descriptor) {
+) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
     constructor(
             startOffset: Int,
             endOffset: Int,
