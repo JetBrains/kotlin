@@ -6934,6 +6934,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("importObjectFun.kt")
+        public void testImportObjectFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/importObjectFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notTriangle.kt")
         public void testNotTriangle() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/notTriangle.kt");

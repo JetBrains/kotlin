@@ -265,8 +265,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                         if (import.importedFqName != declaration.fqName) {
                             val importedDeclaration =
                                     import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
-                            return importedDeclaration == null ||
-                                   (importedDeclaration != declaration && !hasNonTrivialUsages(importedDeclaration))
+                                    ?: return true
+                            return declaration !in importedDeclaration.parentsWithSelf && !hasNonTrivialUsages(importedDeclaration)
                         }
                     }
                 }
