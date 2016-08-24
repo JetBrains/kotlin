@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
+import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
 import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -76,25 +77,28 @@ class StatementGenerator(
 
         val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null, false, IrOperator.SYNTHETIC_BLOCK)
         val ktInitializer = multiDeclaration.initializer!!
-        val irTmpInitializerValue = createRematerializableOrTemporary(scope, ktInitializer.genExpr(), irBlock, "container")
+        val containerValue = createRematerializableOrTemporary(scope, ktInitializer.genExpr(), irBlock, "container")
 
-        val irCallGenerator = CallGenerator(this)
+        declareComponentVariablesInBlock(multiDeclaration, irBlock, containerValue)
 
+        return irBlock
+    }
+
+    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrBlockImpl, containerValue: IntermediateValue) {
+        val callGenerator = CallGenerator(this)
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
 
             val componentSubstitutedCall = pregenerateCall(componentResolvedCall)
-            componentSubstitutedCall.setExplicitReceiverValue(irTmpInitializerValue)
+            componentSubstitutedCall.setExplicitReceiverValue(containerValue)
 
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
-            val irComponentCall = irCallGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
-                                                               IrOperator.COMPONENT_N.withIndex(index + 1))
+            val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
+                                                             IrOperator.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOriginKind.DEFINED,
                                                 componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
         }
-
-        return irBlock
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
@@ -273,16 +277,19 @@ class StatementGenerator(
             BranchingExpressionGenerator(this).generateWhenExpression(expression)
 
     override fun visitWhileExpression(expression: KtWhileExpression, data: Nothing?): IrStatement =
-            LoopExpressionGenerator(this).generateWhileExpression(expression)
+            LoopExpressionGenerator(this).generateWhileLoop(expression)
 
     override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Nothing?): IrStatement =
-            LoopExpressionGenerator(this).generateDoWhileExpression(expression)
+            LoopExpressionGenerator(this).generateDoWhileLoop(expression)
+
+    override fun visitForExpression(expression: KtForExpression, data: Nothing?): IrStatement =
+            LoopExpressionGenerator(this).generateForLoop(expression)
 
     override fun visitBreakExpression(expression: KtBreakExpression, data: Nothing?): IrStatement =
-            LoopExpressionGenerator(this).generateBreakExpression(expression)
+            LoopExpressionGenerator(this).generateBreak(expression)
 
     override fun visitContinueExpression(expression: KtContinueExpression, data: Nothing?): IrStatement =
-            LoopExpressionGenerator(this).generateContinueExpression(expression)
+            LoopExpressionGenerator(this).generateContinue(expression)
 }
 
 

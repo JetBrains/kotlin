@@ -76,6 +76,11 @@ interface IrOperator {
     object WHEN_COMMA : IrOperatorImpl("WHEN_COMMA")
     object WHILE_LOOP : IrOperatorImpl("WHILE_LOOP")
     object DO_WHILE_LOOP : IrOperatorImpl("DO_WHILE_LOOP")
+    object FOR_LOOP : IrOperatorImpl("FOR_LOOP")
+    object FOR_LOOP_ITERATOR : IrOperatorImpl("FOR_LOOP_ITERATOR")
+    object FOR_LOOP_INNER_WHILE : IrOperatorImpl("FOR_LOOP_INNER_WHILE")
+    object FOR_LOOP_HAS_NEXT : IrOperatorImpl("FOR_LOOP_HAS_NEXT")
+    object FOR_LOOP_NEXT : IrOperatorImpl("FOR_LOOP_NEXT")
 
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {

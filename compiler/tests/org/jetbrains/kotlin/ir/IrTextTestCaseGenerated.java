@@ -137,6 +137,24 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("for.kt")
+    public void testFor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/for.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("forWithBreakContinue.kt")
+    public void testForWithBreakContinue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/forWithBreakContinue.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("forWithImplicitReceivers.kt")
+    public void testForWithImplicitReceivers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/forWithImplicitReceivers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("identity.kt")
     public void testIdentity() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/identity.kt");

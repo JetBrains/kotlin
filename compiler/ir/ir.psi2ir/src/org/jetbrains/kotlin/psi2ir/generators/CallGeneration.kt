@@ -29,6 +29,10 @@ fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, recei
         receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue {
+    if (receiver is TransientReceiver) {
+        return TransientReceiverValue(ktDefaultElement.text, receiver.type)
+    }
+
     val receiverExpression = when (receiver) {
         is ImplicitClassReceiver ->
             IrThisReferenceImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.type, receiver.classDescriptor)
