@@ -216,3 +216,5 @@ fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
     if (left?.mustBeParenthesizedInInitializerPosition() ?: false) return true
     return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
 }
+
+fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDeclaration || (e is KtClass && !e.isInner())

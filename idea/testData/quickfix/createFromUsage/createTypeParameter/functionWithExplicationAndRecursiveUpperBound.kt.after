@@ -1,0 +1,14 @@
+// "Create type parameter 'X' in function 'foo'" "true"
+// ERROR: Unresolved reference: _
+class A<T : List<T>>
+
+interface I : List<I>
+
+fun <X : List<X>> foo(x: A<X>) {
+
+}
+
+fun test() {
+    foo<List<_>>(A())
+    foo(A<I>())
+}

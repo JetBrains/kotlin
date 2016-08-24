@@ -1,0 +1,15 @@
+// "Create type parameter 'X' in class 'Foo'" "true"
+class A<T : List<Int>>
+
+open class Foo<X : List<Int>>(x: A<X>)
+
+class Bar : Foo<List<Int>>(A())
+
+fun test() {
+    Foo<List<Int>>(A())
+    Foo(A<List<Int>>())
+
+    object : Foo<List<Int>>(A<List<Int>>()) {
+
+    }
+}

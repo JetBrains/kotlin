@@ -16,44 +16,20 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeAlias
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.getTypeConstraintInfo
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
 import org.jetbrains.kotlin.types.typeUtil.containsError
 
 object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActionFactoryWithDelegate<KtUserType, TypeAliasInfo>(IntentionActionPriority.LOW) {
     override fun getElementOfInterest(diagnostic: Diagnostic) = CreateClassFromTypeReferenceActionFactory.getElementOfInterest(diagnostic)
-
-    data class TypeConstraintInfo(val typeParameter: TypeParameterDescriptor, val upperBound: KotlinType)
-
-    private fun getTypeConstraintInfo(element: KtUserType): TypeConstraintInfo? {
-        val context = element.analyze(BodyResolveMode.PARTIAL)
-        val containingTypeArg = (element.parent as? KtTypeReference)?.parent as? KtTypeProjection ?: return null
-        val argumentList = containingTypeArg.parent as? KtTypeArgumentList ?: return null
-        val containingTypeRef = (argumentList.parent as? KtTypeElement)?.parent as? KtTypeReference ?: return null
-        val containingType = containingTypeRef.getAbbreviatedTypeOrType(context) ?: return null
-        val baseType = containingType.constructor.declarationDescriptor?.defaultType ?: return null
-        val typeParameter = containingType.constructor.parameters.getOrNull(argumentList.arguments.indexOf(containingTypeArg))
-        val upperBound = typeParameter?.upperBounds?.singleOrNull() ?: return null
-        val substitution = getTypeSubstitution(baseType, containingType) ?: return null
-        val substitutedUpperBound = TypeSubstitutor.create(substitution).substitute(upperBound, Variance.INVARIANT) ?: return null
-        if (substitutedUpperBound.containsError()) return null
-        return TypeConstraintInfo(typeParameter, substitutedUpperBound)
-    }
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): TypeAliasInfo? {
         if (element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } != null) return null

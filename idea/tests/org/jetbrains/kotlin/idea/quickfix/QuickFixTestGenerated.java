@@ -3050,6 +3050,81 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateTypeParameter extends AbstractQuickFixTest {
+            public void testAllFilesPresentInCreateTypeParameter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("classNoExplication.kt")
+            public void testClassNoExplication() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/classNoExplication.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classWithExplication.kt")
+            public void testClassWithExplication() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/classWithExplication.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classWithExplicationAndRecursiveUpperBound.kt")
+            public void testClassWithExplicationAndRecursiveUpperBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/classWithExplicationAndRecursiveUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classWithExplicationAndUpperBound.kt")
+            public void testClassWithExplicationAndUpperBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/classWithExplicationAndUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionNoExplication.kt")
+            public void testFunctionNoExplication() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/functionNoExplication.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionWithExplication.kt")
+            public void testFunctionWithExplication() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/functionWithExplication.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionWithExplicationAndRecursiveUpperBound.kt")
+            public void testFunctionWithExplicationAndRecursiveUpperBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/functionWithExplicationAndRecursiveUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionWithExplicationAndUpperBound.kt")
+            public void testFunctionWithExplicationAndUpperBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/functionWithExplicationAndUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifiedType.kt")
+            public void testQualifiedType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/qualifiedType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeQualifier.kt")
+            public void testTypeQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/typeQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withTypeArguments.kt")
+            public void testWithTypeArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/withTypeArguments.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

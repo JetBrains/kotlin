@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
@@ -31,17 +32,18 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.contai
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
 import java.lang.AssertionError
+import java.util.*
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
 internal fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
@@ -130,3 +132,38 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
         override fun getText(): String = "Create package '$fullName'"
     }
 }
+
+data class UnsubstitutedTypeConstraintInfo(
+        val typeParameter: TypeParameterDescriptor,
+        private val originalSubstitution: Map<TypeConstructor, TypeProjection>,
+        val upperBound: KotlinType
+) {
+    fun performSubstitution(vararg substitution: Pair<TypeConstructor, TypeProjection>): TypeConstraintInfo? {
+        val currentSubstitution = LinkedHashMap<TypeConstructor, TypeProjection>().apply {
+            this.putAll(originalSubstitution)
+            this.putAll(substitution)
+        }
+        val substitutedUpperBound = TypeSubstitutor.create(currentSubstitution).substitute(upperBound, Variance.INVARIANT) ?: return null
+        return TypeConstraintInfo(typeParameter, substitutedUpperBound)
+    }
+}
+
+data class TypeConstraintInfo(
+        val typeParameter: TypeParameterDescriptor,
+        val upperBound: KotlinType
+)
+
+fun getUnsubstitutedTypeConstraintInfo(element: KtTypeElement): UnsubstitutedTypeConstraintInfo? {
+    val context = element.analyze(BodyResolveMode.PARTIAL)
+    val containingTypeArg = (element.parent as? KtTypeReference)?.parent as? KtTypeProjection ?: return null
+    val argumentList = containingTypeArg.parent as? KtTypeArgumentList ?: return null
+    val containingTypeRef = (argumentList.parent as? KtTypeElement)?.parent as? KtTypeReference ?: return null
+    val containingType = containingTypeRef.getAbbreviatedTypeOrType(context) ?: return null
+    val baseType = containingType.constructor.declarationDescriptor?.defaultType ?: return null
+    val typeParameter = containingType.constructor.parameters.getOrNull(argumentList.arguments.indexOf(containingTypeArg))
+    val upperBound = typeParameter?.upperBounds?.singleOrNull() ?: return null
+    val substitution = getTypeSubstitution(baseType, containingType) ?: return null
+    return UnsubstitutedTypeConstraintInfo(typeParameter, substitution, upperBound)
+}
+
+fun getTypeConstraintInfo(element: KtTypeElement) = getUnsubstitutedTypeConstraintInfo(element)?.performSubstitution()

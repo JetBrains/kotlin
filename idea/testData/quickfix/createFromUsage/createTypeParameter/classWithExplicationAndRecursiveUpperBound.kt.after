@@ -1,0 +1,21 @@
+// "Create type parameter 'X' in class 'Foo'" "true"
+// ERROR: Unresolved reference: _
+// ERROR: Unresolved reference: _
+// ERROR: Unresolved reference: _
+// ERROR: Type mismatch: inferred type is A<I> but A<List<[ERROR : _]>> was expected
+class A<T : List<T>>
+
+interface I : List<I>
+
+open class Foo<X : List<X>>(x: A<X>)
+
+class Bar : Foo<List<_>>(A())
+
+fun test() {
+    Foo<List<_>>(A())
+    Foo(A<I>())
+
+    object : Foo<List<_>>(A<I>()) {
+
+    }
+}
