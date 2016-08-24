@@ -14,82 +14,69 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.projectView;
+package org.jetbrains.kotlin.idea.projectView
 
-import com.intellij.ide.projectView.PresentationData;
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.kotlin.idea.KotlinIconProvider;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtPsiUtil;
+import com.intellij.ide.projectView.PresentationData
+import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
-import java.util.Collection;
+class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObject, viewSettings: ViewSettings)
+    : AbstractPsiBasedNode<KtClassOrObject>(project, ktClassOrObject, viewSettings) {
 
-import static org.jetbrains.kotlin.idea.projectView.KotlinProjectViewUtil.canRepresentPsiElement;
-import static org.jetbrains.kotlin.idea.projectView.KotlinProjectViewUtil.getClassOrObjectChildren;
-
-public class KtClassOrObjectTreeNode extends AbstractPsiBasedNode<KtClassOrObject> {
-    protected KtClassOrObjectTreeNode(Project project, KtClassOrObject ktClassOrObject, ViewSettings viewSettings) {
-        super(project, ktClassOrObject, viewSettings);
+    override fun extractPsiFromValue(): PsiElement? {
+        return value
     }
 
-    @Override
-    protected PsiElement extractPsiFromValue() {
-        return getValue();
+    override fun getChildrenImpl(): Collection<AbstractTreeNode<*>>? {
+        return getClassOrObjectChildren(value, project, settings)
     }
 
-    @Override
-    protected Collection<AbstractTreeNode> getChildrenImpl() {
-        return getClassOrObjectChildren(getValue(), getProject(), getSettings());
-    }
-
-    private void update(AbstractTreeNode node) {
-        Project project = getProject();
+    private fun update(node: AbstractTreeNode<*>) {
+        val project = project
         if (project != null) {
-            ProjectView.getInstance(project).getCurrentProjectViewPane().getTreeBuilder().addSubtreeToUpdateByElement(node);
+            ProjectView.getInstance(project).currentProjectViewPane.treeBuilder.addSubtreeToUpdateByElement(node)
         }
     }
 
-    @Override
-    protected void updateImpl(PresentationData data) {
-        KtClassOrObject classOrObject = getValue();
+    override fun updateImpl(data: PresentationData) {
+        val classOrObject = value
         if (classOrObject != null) {
-            data.setPresentableText(classOrObject.getName());
+            data.setPresentableText(classOrObject.name)
 
-            AbstractTreeNode parent = getParent();
-            if (KotlinIconProvider.Companion.getMainClass(classOrObject.getContainingKtFile()) != null) {
-                if (parent instanceof KtFileTreeNode) {
-                    update(parent.getParent());
+            val parent = parent
+            if (KotlinIconProvider.getMainClass(classOrObject.getContainingKtFile()) != null) {
+                if (parent is KtFileTreeNode) {
+                    update(parent.getParent())
                 }
             }
             else {
-                if (!(parent instanceof KtClassOrObjectTreeNode) && !(parent instanceof KtFileTreeNode)) {
-                    update(parent);
+                if (parent !is KtClassOrObjectTreeNode && parent !is KtFileTreeNode) {
+                    update(parent)
                 }
             }
         }
     }
 
-    @Override
-    protected boolean isDeprecated() {
-        return KtPsiUtil.isDeprecated(getValue());
+    override fun isDeprecated(): Boolean {
+        return KtPsiUtil.isDeprecated(value)
     }
 
-    @Override
-    public boolean canRepresent(Object element) {
-        if (!isValid()) {
-            return false;
+    override fun canRepresent(element: Any?): Boolean {
+        if (!isValid) {
+            return false
         }
 
-        return super.canRepresent(element) || canRepresentPsiElement(getValue(), element, getSettings());
+        return super.canRepresent(element) || canRepresentPsiElement(value, element, settings)
     }
 
-    @Override
-    public int getWeight() {
-        return 20;
+    override fun getWeight(): Int {
+        return 20
     }
 }

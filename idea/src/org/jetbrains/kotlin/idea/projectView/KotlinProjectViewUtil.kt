@@ -14,71 +14,59 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.projectView;
+package org.jetbrains.kotlin.idea.projectView
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-public final class KotlinProjectViewUtil {
-
-    private KotlinProjectViewUtil() {
-    }
-
-    public static Collection<AbstractTreeNode> getClassOrObjectChildren(
-            KtClassOrObject classOrObject, Project project,
-                                                                        ViewSettings settings) {
-        if (classOrObject != null && settings.isShowMembers()) {
-            Collection<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-            List<KtDeclaration> declarations = classOrObject.getDeclarations();
-            for (KtDeclaration declaration : declarations) {
-                if (declaration instanceof KtClassOrObject) {
-                    result.add(new KtClassOrObjectTreeNode(project, (KtClassOrObject) declaration, settings));
-                }
-                else {
-                    result.add(new KtDeclarationTreeNode(project, declaration, settings));
-                }
+fun getClassOrObjectChildren(
+        classOrObject: KtClassOrObject?, project: Project?,
+        settings: ViewSettings): Collection<AbstractTreeNode<*>> {
+    if (classOrObject != null && settings.isShowMembers) {
+        val result = ArrayList<AbstractTreeNode<*>>()
+        val declarations = classOrObject.declarations
+        for (declaration in declarations) {
+            if (declaration is KtClassOrObject) {
+                result.add(KtClassOrObjectTreeNode(project, declaration, settings))
             }
-
-            return result;
-        }
-        else {
-            return Collections.emptyList();
-        }
-    }
-
-    public static boolean canRepresentPsiElement(PsiElement value, Object element, ViewSettings settings) {
-        if (value == null || !value.isValid()) {
-            return false;
-        }
-
-        PsiFile file = value.getContainingFile();
-        if (file != null && (file == element || file.getVirtualFile() == element)) {
-            return true;
-        }
-
-        if (value == element) {
-            return true;
-        }
-
-        if (!settings.isShowMembers()) {
-            if (element instanceof PsiElement && ((PsiElement) element).getContainingFile() != null) {
-                PsiFile elementFile = ((PsiElement) element).getContainingFile();
-                if (elementFile != null && file != null) {
-                    return elementFile.equals(file);
-                }
+            else {
+                result.add(KtDeclarationTreeNode(project, declaration, settings))
             }
         }
 
-        return false;
+        return result
     }
+    else {
+        return emptyList()
+    }
+}
+
+fun canRepresentPsiElement(value: PsiElement?, element: Any?, settings: ViewSettings): Boolean {
+    if (value == null || !value.isValid) {
+        return false
+    }
+
+    val file = value.containingFile
+    if (file != null && (file === element || file.virtualFile === element)) {
+        return true
+    }
+
+    if (value === element) {
+        return true
+    }
+
+    if (!settings.isShowMembers) {
+        if (element is PsiElement && element.containingFile != null) {
+            val elementFile = element.containingFile
+            if (elementFile != null && file != null) {
+                return elementFile == file
+            }
+        }
+    }
+
+    return false
 }
