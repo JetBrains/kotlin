@@ -811,6 +811,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.PLUS -> firstOp.type!!.operatorPlus(firstNativeOp, secondNativeOp)
             KtTokens.MINUS -> firstOp.type!!.operatorMinus(firstNativeOp, secondNativeOp)
             KtTokens.MUL -> firstOp.type!!.operatorTimes(firstNativeOp, secondNativeOp)
+            KtTokens.DIV -> firstOp.type!!.operatorDiv(firstNativeOp, secondNativeOp)
             KtTokens.LT -> firstOp.type!!.operatorLt(firstNativeOp, secondNativeOp)
             KtTokens.GT -> firstOp.type!!.operatorGt(firstNativeOp, secondNativeOp)
             KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
@@ -896,8 +897,54 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             KtTokens.RETURN_KEYWORD -> evaluateReturnInstruction(element, scopeDepth)
             KtTokens.IF_KEYWORD -> evaluateIfOperator(element.context as KtIfExpression, scopeDepth, isExpression = false)
             KtTokens.WHILE_KEYWORD -> evaluateWhileOperator(element.context as KtWhileExpression, scopeDepth)
+            KtTokens.FOR_KEYWORD -> evaluateForOperator(element.context as KtForExpression, scopeDepth)
             else -> null
         }
+    }
+
+    private fun evaluateForOperator(expr: KtForExpression, scopeDepth: Int): LLVMVariable? {
+        val range = evaluateExpression(expr.loopRange, scopeDepth + 1)!!
+        val conditionLabel = codeBuilder.getNewLabel(prefix = "for_condition")
+        val bodyLabel = codeBuilder.getNewLabel(prefix = "for_body")
+        val exitLabel = codeBuilder.getNewLabel(prefix = "for_exit")
+        val rangeTypeName = (range.type as LLVMReferenceType).type
+
+        val descriptor = state.classes[rangeTypeName]
+        val method = descriptor!!.methods["$rangeTypeName.iterator"] ?: throw UnexpectedException("$rangeTypeName.iterator")
+        val returnType = method.returnType!!.type
+        val returnTypeName = (returnType as LLVMReferenceType).type
+        val iteratorDescriptor = state.classes[returnTypeName]
+        val nextDescriptor = iteratorDescriptor!!.methods["$returnTypeName.nextInt"] ?: throw UnexpectedException("$returnTypeName.hasNext")
+
+        val conditionIterator = evaluateFunctionCallExpression(LLVMVariable("$rangeTypeName.iterator", returnType, scope = LLVMVariableScope()), listOf(range))!!
+        val iteratorThisArgument = codeBuilder.loadArgumentIfRequired(conditionIterator, LLVMVariable("type", descriptor.type, pointer = 1))
+        codeBuilder.addUnconditionalJump(conditionLabel)
+        codeBuilder.markWithLabel(conditionLabel)
+        var conditionResult = evaluateFunctionCallExpression(LLVMVariable("$returnTypeName.hasNext", LLVMBooleanType(), scope = LLVMVariableScope()), listOf(iteratorThisArgument))!!
+
+        while (conditionResult.pointer > 0) {
+            conditionResult = codeBuilder.loadAndGetVariable(conditionResult as LLVMVariable)
+        }
+
+        codeBuilder.addCondition(conditionResult, bodyLabel, exitLabel)
+
+        codeBuilder.addUnconditionalJump(bodyLabel)
+        codeBuilder.markWithLabel(bodyLabel)
+        val currentParameter = evaluateFunctionCallExpression(LLVMVariable("$returnTypeName.nextInt", LLVMIntType(), scope = LLVMVariableScope()), listOf(iteratorThisArgument))!!
+
+        val allocVar = variableManager.receiveVariable(expr.loopParameter!!.name!!, nextDescriptor.returnType!!.type, LLVMRegisterScope(), pointer =
+        nextDescriptor.returnType!!.pointer)
+        variableManager.addVariable(expr.loopParameter!!.name!!, allocVar, scopeDepth + 1)
+        codeBuilder.allocStackVar(allocVar)
+        allocVar.pointer++
+        allocVar.kotlinName = expr.loopParameter!!.name!!
+
+        addPrimitiveBinaryOperation(KtTokens.EQ, null, allocVar, currentParameter)
+
+        evaluateCodeBlock(expr.body, null, conditionLabel, exitLabel, scopeDepth + 1)
+        codeBuilder.markWithLabel(exitLabel)
+
+        return null
     }
 
     private fun evaluateWhenItem(item: KtWhenEntry, target: LLVMSingleValue, resultVariable: LLVMVariable, elseLabel: LLVMLabel, endLabel: LLVMLabel, isElse: Boolean, scopeDepth: Int) {
