@@ -33,7 +33,7 @@ public class KotlinStructureViewModel extends StructureViewModelBase {
     private static final Sorter[] sorters = new Sorter[] {Sorter.ALPHA_SORTER};
 
     public KotlinStructureViewModel(@NotNull KtFile jetFile) {
-        super(jetFile, new KotlinStructureViewElement(jetFile));
+        super(jetFile, new KotlinStructureViewElement(jetFile, false));
         withSuitableClasses(KtDeclaration.class);
     }
 
