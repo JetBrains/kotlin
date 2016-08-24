@@ -1,0 +1,60 @@
+IrFile /breakContinue.kt
+  IrFunction public fun test1(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            BREAK loop.operator=WHILE_LOOP depth=0
+        DO_WHILE operator=DO_WHILE_LOOP
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            BREAK loop.operator=DO_WHILE_LOOP depth=0
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            CONTINUE loop.operator=WHILE_LOOP depth=0
+        DO_WHILE operator=DO_WHILE_LOOP
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            CONTINUE loop.operator=DO_WHILE_LOOP depth=0
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+  IrFunction public fun test2(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            WHILE operator=WHILE_LOOP
+              condition: CONST Boolean type=kotlin.Boolean value='true'
+              body: BLOCK type=<no-type> hasResult=false operator=null
+                BREAK loop.operator=WHILE_LOOP depth=0
+                BREAK loop.operator=WHILE_LOOP depth=1
+            BREAK loop.operator=WHILE_LOOP depth=0
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            WHILE operator=WHILE_LOOP
+              condition: CONST Boolean type=kotlin.Boolean value='true'
+              body: BLOCK type=<no-type> hasResult=false operator=null
+                CONTINUE loop.operator=WHILE_LOOP depth=0
+                CONTINUE loop.operator=WHILE_LOOP depth=1
+            CONTINUE loop.operator=WHILE_LOOP depth=0
+  IrFunction public fun test3(): kotlin.Unit
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            WHILE operator=WHILE_LOOP
+              condition: CONST Boolean type=kotlin.Boolean value='true'
+              body: BLOCK type=<no-type> hasResult=false operator=null
+                BREAK loop.operator=WHILE_LOOP depth=0
+            BREAK loop.operator=WHILE_LOOP depth=0
+        WHILE operator=WHILE_LOOP
+          condition: CONST Boolean type=kotlin.Boolean value='true'
+          body: BLOCK type=<no-type> hasResult=false operator=null
+            WHILE operator=WHILE_LOOP
+              condition: CONST Boolean type=kotlin.Boolean value='true'
+              body: BLOCK type=<no-type> hasResult=false operator=null
+                CONTINUE loop.operator=WHILE_LOOP depth=0
+            CONTINUE loop.operator=WHILE_LOOP depth=0

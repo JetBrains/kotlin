@@ -83,6 +83,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("breakContinue.kt")
+    public void testBreakContinue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/breakContinue.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("callWithReorderedArguments.kt")
     public void testCallWithReorderedArguments() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/callWithReorderedArguments.kt");

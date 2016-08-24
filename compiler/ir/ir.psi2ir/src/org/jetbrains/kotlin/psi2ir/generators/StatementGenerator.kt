@@ -277,6 +277,12 @@ class StatementGenerator(
 
     override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Nothing?): IrStatement =
             LoopExpressionGenerator(this).generateDoWhileExpression(expression)
+
+    override fun visitBreakExpression(expression: KtBreakExpression, data: Nothing?): IrStatement =
+            LoopExpressionGenerator(this).generateBreakExpression(expression)
+
+    override fun visitContinueExpression(expression: KtContinueExpression, data: Nothing?): IrStatement =
+            LoopExpressionGenerator(this).generateContinueExpression(expression)
 }
 
 

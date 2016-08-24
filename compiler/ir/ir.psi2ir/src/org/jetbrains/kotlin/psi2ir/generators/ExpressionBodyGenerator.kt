@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrReturnImpl
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtWhileExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
@@ -62,5 +64,8 @@ class ExpressionBodyGenerator(val scopeOwner: CallableDescriptor, override val c
     fun putLoop(expression: KtExpression, irLoop: IrLoop) {
         loopTable[expression] = irLoop
     }
+
+    fun getLoop(expression: KtExpression): IrLoop? =
+            loopTable[expression]
 }
 

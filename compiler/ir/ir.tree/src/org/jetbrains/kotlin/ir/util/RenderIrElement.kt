@@ -106,6 +106,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
             "DO_WHILE operator=${loop.operator}"
 
+    override fun visitBreak(jump: IrBreak, data: Nothing?): String =
+            "BREAK loop.operator=${jump.loop.operator} depth=${jump.getDepth()}"
+
+    override fun visitContinue(jump: IrContinue, data: Nothing?): String =
+            "CONTINUE loop.operator=${jump.loop.operator} depth=${jump.getDepth()}"
+
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.name}"
 
