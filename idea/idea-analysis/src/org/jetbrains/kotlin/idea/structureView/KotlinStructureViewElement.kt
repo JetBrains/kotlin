@@ -14,159 +14,124 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.structureView;
+package org.jetbrains.kotlin.idea.structureView
 
-import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.ui.Queryable;
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.ide.structureView.StructureViewTreeElement
+import com.intellij.ide.util.treeView.smartTree.TreeElement
+import com.intellij.navigation.ItemPresentation
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.ui.Queryable
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.NavigatablePsiElement
+import com.intellij.util.ArrayUtil
+import com.intellij.util.Function
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.psi.*
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+class KotlinStructureViewElement : StructureViewTreeElement, Queryable {
+    val element: NavigatablePsiElement
+    val isInherited: Boolean
 
-public class KotlinStructureViewElement implements StructureViewTreeElement, Queryable {
-    private final NavigatablePsiElement element;
-    private final boolean isInherited;
+    private var presentation: KotlinStructureElementPresentation? = null
 
-    private KotlinStructureElementPresentation presentation;
+    constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) {
+        this.element = element
+        this.isInherited = isInherited
 
-    public KotlinStructureViewElement(@NotNull NavigatablePsiElement element, @NotNull DeclarationDescriptor descriptor, boolean isInherited) {
-        this.element = element;
-        this.isInherited = isInherited;
-
-        if (!(element instanceof KtElement)) {
+        if (element !is KtElement) {
             // Avoid storing descriptor in fields
-            presentation = new KotlinStructureElementPresentation(isInherited(), element, descriptor);
+            presentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
         }
     }
 
-    public KotlinStructureViewElement(@NotNull NavigatablePsiElement element, boolean isInherited) {
-        this.element = element;
-        this.isInherited = isInherited;
+    constructor(element: NavigatablePsiElement, isInherited: Boolean) {
+        this.element = element
+        this.isInherited = isInherited
     }
 
-    public KotlinStructureViewElement(@NotNull KtFile fileElement) {
-        element = fileElement;
-        isInherited = false;
+    constructor(fileElement: KtFile) {
+        element = fileElement
+        isInherited = false
     }
 
-    @NotNull
-    public NavigatablePsiElement getElement() {
-        return element;
+    override fun getValue(): Any {
+        return element
     }
 
-    @Override
-    public Object getValue() {
-        return element;
+    override fun navigate(requestFocus: Boolean) {
+        element.navigate(requestFocus)
     }
 
-    @Override
-    public void navigate(boolean requestFocus) {
-        element.navigate(requestFocus);
+    override fun canNavigate(): Boolean {
+        return element.canNavigate()
     }
 
-    @Override
-    public boolean canNavigate() {
-        return element.canNavigate();
+    override fun canNavigateToSource(): Boolean {
+        return element.canNavigateToSource()
     }
 
-    @Override
-    public boolean canNavigateToSource() {
-        return element.canNavigateToSource();
-    }
-
-    @NotNull
-    @Override
-    public ItemPresentation getPresentation() {
+    override fun getPresentation(): ItemPresentation {
         if (presentation == null) {
-            presentation = new KotlinStructureElementPresentation(isInherited(), element, getDescriptor());
+            presentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
         }
 
-        return presentation;
+        return presentation!!
     }
 
-    @NotNull
-    @Override
-    public TreeElement[] getChildren() {
-        List<KtDeclaration> childrenDeclarations = getChildrenDeclarations();
-        return ArrayUtil.toObjectArray(ContainerUtil.map(childrenDeclarations, new Function<KtDeclaration, TreeElement>() {
-            @Override
-            public TreeElement fun(KtDeclaration declaration) {
-                return new KotlinStructureViewElement(declaration, false);
-            }
-        }), TreeElement.class);
+    override fun getChildren(): Array<TreeElement> {
+        val childrenDeclarations = childrenDeclarations
+        return ArrayUtil.toObjectArray(ContainerUtil.map(childrenDeclarations, Function<org.jetbrains.kotlin.psi.KtDeclaration, com.intellij.ide.util.treeView.smartTree.TreeElement> { declaration -> KotlinStructureViewElement(declaration, false) }), TreeElement::class.java)
     }
 
     @TestOnly
-    @Override
-    public void putInfo(@NotNull Map<String, String> info) {
-        info.put("text", getPresentation().getPresentableText());
-        info.put("location", getPresentation().getLocationString());
+    override fun putInfo(info: MutableMap<String, String>) {
+        info.put("text", getPresentation().presentableText!!)
+        info.put("location", getPresentation().locationString!!)
     }
 
-    public boolean isInherited() {
-        return isInherited;
-    }
+    private val descriptor: DeclarationDescriptor?
+        get() {
+            if (!(element.isValid && element is KtDeclaration)) {
+                return null
+            }
 
-    @Nullable
-    private DeclarationDescriptor getDescriptor() {
-        if (!(element.isValid() && element instanceof KtDeclaration)) {
-            return null;
-        }
+            if (element is KtAnonymousInitializer) {
+                return null
+            }
 
-        final KtDeclaration declaration = (KtDeclaration) element;
-        if (declaration instanceof KtAnonymousInitializer) {
-            return null;
-        }
-
-        return ApplicationManager.getApplication().runReadAction(new Computable<DeclarationDescriptor>() {
-            @Override
-            public DeclarationDescriptor compute() {
+            return ApplicationManager.getApplication().runReadAction(Computable<org.jetbrains.kotlin.descriptors.DeclarationDescriptor> {
                 if (!DumbService.isDumb(element.getProject())) {
-                    return ResolutionUtils.resolveToDescriptor(declaration);
+                    return@Computable element.resolveToDescriptor()
                 }
 
-                return null;
-            }
-        });
-    }
-
-    @NotNull
-    private List<KtDeclaration> getChildrenDeclarations() {
-        if (element instanceof KtFile) {
-            KtFile jetFile = (KtFile) element;
-            return jetFile.getDeclarations();
+                null
+            })
         }
-        else if (element instanceof KtClass) {
-            KtClass ktClass = (KtClass) element;
-            List<KtDeclaration> declarations = new ArrayList<KtDeclaration>();
-            for (KtParameter parameter : ktClass.getPrimaryConstructorParameters()) {
-                if (parameter.hasValOrVar()) {
-                    declarations.add(parameter);
+
+    private val childrenDeclarations: List<KtDeclaration>
+        get() {
+            if (element is KtFile) {
+                return element.declarations
+            }
+            else if (element is KtClass) {
+                val declarations = ArrayList<KtDeclaration>()
+                for (parameter in element.getPrimaryConstructorParameters()) {
+                    if (parameter.hasValOrVar()) {
+                        declarations.add(parameter)
+                    }
                 }
+                declarations.addAll(element.declarations)
+                return declarations
             }
-            declarations.addAll(ktClass.getDeclarations());
-            return declarations;
-        }
-        else if (element instanceof KtClassOrObject) {
-            return ((KtClassOrObject) element).getDeclarations();
-        }
+            else if (element is KtClassOrObject) {
+                return element.declarations
+            }
 
-        return Collections.emptyList();
-    }
+            return emptyList()
+        }
 }
