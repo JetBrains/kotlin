@@ -30,12 +30,20 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObject, viewSettings: ViewSettings)
     : AbstractPsiBasedNode<KtClassOrObject>(project, ktClassOrObject, viewSettings) {
 
-    override fun extractPsiFromValue(): PsiElement? {
-        return value
-    }
+    override fun extractPsiFromValue(): PsiElement? = value
 
     override fun getChildrenImpl(): Collection<AbstractTreeNode<*>>? {
-        return getClassOrObjectChildren(value, project, settings)
+        if (value != null && settings.isShowMembers) {
+            return value.declarations.map { declaration ->
+                if (declaration is KtClassOrObject)
+                    KtClassOrObjectTreeNode(project, declaration, settings)
+                else
+                    KtDeclarationTreeNode(project, declaration, settings)
+            }
+        }
+        else {
+            return emptyList()
+        }
     }
 
     private fun update(node: AbstractTreeNode<*>) {
@@ -48,7 +56,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
     override fun updateImpl(data: PresentationData) {
         val classOrObject = value
         if (classOrObject != null) {
-            data.setPresentableText(classOrObject.name)
+            data.presentableText = classOrObject.name
 
             val parent = parent
             if (KotlinIconProvider.getMainClass(classOrObject.getContainingKtFile()) != null) {
@@ -64,9 +72,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
         }
     }
 
-    override fun isDeprecated(): Boolean {
-        return KtPsiUtil.isDeprecated(value)
-    }
+    override fun isDeprecated() = KtPsiUtil.isDeprecated(value)
 
     override fun canRepresent(element: Any?): Boolean {
         if (!isValid) {
@@ -76,7 +82,31 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
         return super.canRepresent(element) || canRepresentPsiElement(value, element, settings)
     }
 
-    override fun getWeight(): Int {
-        return 20
+    private fun canRepresentPsiElement(value: PsiElement?, element: Any?, settings: ViewSettings): Boolean {
+        if (value == null || !value.isValid) {
+            return false
+        }
+
+        val file = value.containingFile
+        if (file != null && (file === element || file.virtualFile === element)) {
+            return true
+        }
+
+        if (value === element) {
+            return true
+        }
+
+        if (!settings.isShowMembers) {
+            if (element is PsiElement && element.containingFile != null) {
+                val elementFile = element.containingFile
+                if (elementFile != null && file != null) {
+                    return elementFile == file
+                }
+            }
+        }
+
+        return false
     }
+
+    override fun getWeight() = 20
 }
