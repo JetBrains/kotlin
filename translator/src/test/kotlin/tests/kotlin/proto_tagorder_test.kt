@@ -264,7 +264,7 @@ class TagOrder private constructor (var sint: Int, var int: Int, var slong_array
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
+                            val tmp = LongArray(1)
                             tmp[0] = input.readSInt64NoTag()
                             newArray = newArray.plus(tmp)
                             readSize += WireFormat.getSInt64SizeNoTag(tmp[0])
@@ -623,7 +623,7 @@ class TagOrderShuffled private constructor (var sint: Int, var int: Int, var slo
                     do {
                         var i = 0
                         while(readSize < expectedByteSize) {
-                            var tmp = LongArray(1)
+                            val tmp = LongArray(1)
                             tmp[0] = input.readSInt64NoTag()
                             newArray = newArray.plus(tmp)
                             readSize += WireFormat.getSInt64SizeNoTag(tmp[0])

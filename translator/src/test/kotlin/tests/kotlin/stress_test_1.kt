@@ -252,7 +252,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
           do {
             var i = 0
             while(readSize < expectedByteSize) {
-              var tmp = IntArray(1)
+              val tmp = IntArray(1)
               tmp[0] = input.readInt32NoTag()
               newArray = newArray.plus(tmp)
               readSize += WireFormat.getInt32SizeNoTag(tmp[0])
@@ -271,7 +271,7 @@ class RouteRequest private constructor (var distances: IntArray, var angles: Int
           do {
             var i = 0
             while(readSize < expectedByteSize) {
-              var tmp = IntArray(1)
+              val tmp = IntArray(1)
               tmp[0] = input.readInt32NoTag()
               newArray = newArray.plus(tmp)
               readSize += WireFormat.getInt32SizeNoTag(tmp[0])

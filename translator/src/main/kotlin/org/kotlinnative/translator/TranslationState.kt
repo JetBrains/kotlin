@@ -25,7 +25,7 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import java.util.*
 
-class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val arm: Boolean) {
+class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, arm: Boolean) {
     companion object {
         var pointerAlign = 4
         var pointerSize = 4
@@ -45,6 +45,7 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     val codeBuilder = LLVMBuilder(arm)
 
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
+
 }
 
 fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = false): TranslationState {
@@ -98,7 +99,7 @@ fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
             val files = environment.configuration.jvmClasspathRoots
             val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
             collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
-            println(runtimes.joinToString { it.toString() })
+            System.err.println(runtimes.joinToString { it.toString() })
         }
     })
 

@@ -2,7 +2,6 @@ package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.kotlinnative.translator.exceptions.TranslationException
 import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.LLVMVariableScope
@@ -14,8 +13,7 @@ class ObjectCodegen(state: TranslationState,
                     val objectDeclaration: KtObjectDeclaration,
                     codeBuilder: LLVMBuilder,
                     parentCodegen: StructCodegen? = null) :
-        StructCodegen(state, variableManager, objectDeclaration, state.bindingContext.get(BindingContext.CLASS, objectDeclaration) ?: throw TranslationException(),
-                codeBuilder, parentCodegen = parentCodegen) {
+        StructCodegen(state, variableManager, objectDeclaration, codeBuilder, parentCodegen = parentCodegen) {
     override var size: Int = 0
     override val structName: String = objectDeclaration.name!!
     override val type: LLVMReferenceType

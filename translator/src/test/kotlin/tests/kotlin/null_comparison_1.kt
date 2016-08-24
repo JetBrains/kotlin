@@ -23,7 +23,7 @@ fun null_comparison_1_reassigned(): Int {
 }
 
 fun null_comparison_1_declaration(): Int {
-    var a: null_comparison_1_class?
+    val a: null_comparison_1_class?
     a = null_comparison_1_getClass()
     if (a == null) {
         return 87

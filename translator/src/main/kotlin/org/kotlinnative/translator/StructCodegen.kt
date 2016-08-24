@@ -1,7 +1,6 @@
 package org.kotlinnative.translator
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -16,7 +15,6 @@ import java.util.*
 abstract class StructCodegen(val state: TranslationState,
                              val variableManager: VariableManager,
                              val classOrObject: KtClassOrObject,
-                             val classDescriptor: ClassDescriptor,
                              val codeBuilder: LLVMBuilder,
                              val parentCodegen: StructCodegen? = null) {
 
@@ -219,13 +217,13 @@ abstract class StructCodegen(val state: TranslationState,
                     codeBuilder.storeVariable(classField, argument)
                 }
             }
-
         }
 
         val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
         val receiverThis = LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1)
         codeBuilder.addComment("field initilizers starts")
         variableManager.addVariable("this", receiverThis, 2)
+
         for ((variable, initializer) in initializedFields) {
             val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevel, call = null)!!
             codeBuilder.addComment("left expression")
@@ -234,6 +232,7 @@ abstract class StructCodegen(val state: TranslationState,
             blockCodegen.executeBinaryExpression(KtTokens.EQ, referenceName = null, left = left, right = right)
             codeBuilder.addComment("next initializer")
         }
+
         variableManager.pullOneUpwardLevelVariable("this")
         codeBuilder.addComment("field initilizers ends")
     }
@@ -249,7 +248,6 @@ abstract class StructCodegen(val state: TranslationState,
 
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
-
         val result = LLVMInstanceOfStandardType(field.name!!, ktType, LLVMRegisterScope(), state = state)
 
         if (result.type is LLVMReferenceType) {
@@ -261,7 +259,6 @@ abstract class StructCodegen(val state: TranslationState,
         if (state.classes.containsKey(field.name!!)) {
             return LLVMClassVariable(result.label, state.classes[field.name!!]!!.type, result.pointer)
         }
-
 
         if (annotations.contains("Plain")) {
             result.pointer = 0
@@ -292,6 +289,5 @@ abstract class StructCodegen(val state: TranslationState,
             }
             blockCodegen.generate(init.body)
         }
-
     }
 }

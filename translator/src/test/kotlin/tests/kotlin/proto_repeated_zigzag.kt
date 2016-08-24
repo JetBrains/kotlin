@@ -259,7 +259,7 @@ class MessageRepeatedZigZag private constructor (var int: IntArray, var long: Lo
                             readSize += WireFormat.getSInt32SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = IntArray(arraySize)
+                    val newArray = IntArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -288,7 +288,7 @@ class MessageRepeatedZigZag private constructor (var int: IntArray, var long: Lo
                             readSize += WireFormat.getSInt64SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = LongArray(arraySize)
+                    val newArray = LongArray(arraySize)
                     input.reset()
                     do {
                         var i = 0

@@ -72,6 +72,11 @@ class LLVMBuilder(val arm: Boolean = false) {
         else -> throw UnsupportedOperationException()
     }
 
+    fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
+            names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
+                return loadArgumentIfRequired(value, args[i])
+            }).toList()
+
     fun loadArgumentIfRequired(value: LLVMSingleValue, argument: LLVMVariable): LLVMSingleValue {
         var result = value
 
@@ -236,11 +241,6 @@ class LLVMBuilder(val arm: Boolean = false) {
         if (store) {
             localCode.appendln("store ${sourceVariable.getType()} $sourceVariable, ${targetVariable.getType()} $targetVariable, align ${targetVariable.type.align}")
         }
-    }
-
-    fun addConstant(allocVariable: LLVMVariable, constantValue: LLVMConstant) {
-        localCode.appendln("$allocVariable = alloca ${allocVariable.type}, align ${allocVariable.type.align}")
-        localCode.appendln("store ${allocVariable.type} $constantValue, ${allocVariable.getType()} $allocVariable, align ${allocVariable.type.align}")
     }
 
     fun defineGlobalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) {

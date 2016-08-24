@@ -32,7 +32,7 @@ fun nullable_primitive_types_1_if_not_null(): Int {
 fun nullable_primitive_types_1_reassignment(): Int {
     var z: Int? = 32
     z = null
-    var r = z
+    val r = z
     if (r == null) {
         return 5678
     } else {

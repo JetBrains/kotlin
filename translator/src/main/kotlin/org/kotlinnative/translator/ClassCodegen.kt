@@ -16,8 +16,7 @@ class ClassCodegen(state: TranslationState,
                    val clazz: KtClass,
                    codeBuilder: LLVMBuilder,
                    parentCodegen: StructCodegen? = null) :
-
-        StructCodegen(state, variableManager, clazz, state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException(), codeBuilder, parentCodegen) {
+        StructCodegen(state, variableManager, clazz, codeBuilder, parentCodegen) {
 
     val annotation: Boolean
     val enum: Boolean

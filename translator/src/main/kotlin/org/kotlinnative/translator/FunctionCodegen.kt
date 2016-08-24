@@ -1,6 +1,5 @@
 package org.kotlinnative.translator
 
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -8,8 +7,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMFunctionType
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType

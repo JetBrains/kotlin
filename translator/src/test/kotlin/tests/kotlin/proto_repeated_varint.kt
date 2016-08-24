@@ -724,7 +724,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getInt32SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = IntArray(arraySize)
+                    val newArray = IntArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -753,7 +753,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getInt64SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = LongArray(arraySize)
+                    val newArray = LongArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -782,7 +782,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getSInt32SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = IntArray(arraySize)
+                    val newArray = IntArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -811,7 +811,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getSInt64SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = LongArray(arraySize)
+                    val newArray = LongArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -840,7 +840,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getBoolSizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = BooleanArray(arraySize)
+                    val newArray = BooleanArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -869,7 +869,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getUInt32SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = IntArray(arraySize)
+                    val newArray = IntArray(arraySize)
                     input.reset()
                     do {
                         var i = 0
@@ -898,7 +898,7 @@ class MessageRepeatedVarints private constructor (var int: IntArray, var long: L
                             readSize += WireFormat.getUInt64SizeNoTag(tmp)
                         }
                     } while (false)
-                    var newArray = LongArray(arraySize)
+                    val newArray = LongArray(arraySize)
                     input.reset()
                     do {
                         var i = 0

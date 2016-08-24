@@ -299,7 +299,7 @@ class CrossBranch private constructor () {
             }
 
             fun getSizeNoTag(): Int {
-                var size = 0
+                val size = 0
                 return size
             }
 
@@ -352,7 +352,7 @@ class CrossBranch private constructor () {
                 }
 
                 fun getSizeNoTag(): Int {
-                    var size = 0
+                    val size = 0
                     return size
                 }
 
@@ -955,7 +955,7 @@ class CrossBranch private constructor () {
     }
 
     fun getSizeNoTag(): Int {
-        var size = 0
+        val size = 0
         return size
     }
 
@@ -1008,7 +1008,7 @@ class CrossBranch private constructor () {
         }
 
         fun getSizeNoTag(): Int {
-            var size = 0
+            val size = 0
             return size
         }
 
