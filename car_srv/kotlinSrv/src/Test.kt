@@ -18,6 +18,17 @@ private fun testCarEmulator() {
     })
 
     println("--------------------")
+    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { 120 + 60 * it })).build()
+    sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
+    controller.executeRequestSensorData(sonarRequest, { bytes ->
+        sonarResponse.mergeFrom(CodedInputStream(bytes))
+        val dist120 = sonarResponse.distances[0]
+        val dist180 = sonarResponse.distances[1]
+        eq(dist120.toDouble(), 23.094, "check angle 120", 2.5)
+        eq(dist180.toDouble(), 150.0, "check angle 180", 2.5)
+    })
+
+    println("--------------------")
     CarState.instance.x = 50
     CarState.instance.y = 50
     CarState.instance.angle = 90

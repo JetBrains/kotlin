@@ -69,6 +69,10 @@ class ControllerEmulator : Controller {
                     xSensor1 = xSensor0
                     ySensor1 = (ySensor0 - 1).toDouble()
                 }
+                in (90..270) -> {
+                    xSensor1 = xSensor0 - 1
+                    ySensor1 = ySensor0 + (xSensor1 - xSensor0) * Math.tan(angleFinal * Math.PI / 180)
+                }
                 else -> {
                     xSensor1 = xSensor0 + 1
                     ySensor1 = ySensor0 + (xSensor1 - xSensor0) * Math.tan(angleFinal * Math.PI / 180)
@@ -164,9 +168,9 @@ class ControllerEmulator : Controller {
             }
         }
 
-        setTimeout({
+//        setTimeout({
             executeCommand(commands, currentCommandIdx + 1, callBack)
-        }, currentCommand.second)
+//        }, currentCommand.second)
     }
 
 
