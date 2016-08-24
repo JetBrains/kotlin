@@ -286,3 +286,10 @@ fun KtTypeParameterListOwner.addTypeParameter(typeParameter: KtTypeParameter): K
     } ?: return null
     return (addAfter(list, leftAnchor) as KtTypeParameterList).parameters.first()
 }
+
+fun KtNamedFunction.getOrCreateValueParameterList(): KtParameterList {
+    valueParameterList?.let { return it }
+    val parameterList = KtPsiFactory(this).createParameterList("()")
+    val anchor = nameIdentifier ?: funKeyword!!
+    return addAfter(parameterList, anchor) as KtParameterList
+}

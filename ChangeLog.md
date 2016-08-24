@@ -31,6 +31,8 @@
 
 #### Intention actions, inspections and quickfixes
 
+- [`KT-9490`](https://youtrack.jetbrains.com/issue/KT-9490) Convert receiver to parameter: use template instead of the dialog
+
 ##### New features
 
 - [`KT-11525`](https://youtrack.jetbrains.com/issue/KT-11525) Implement "Create type parameter" quickfix
