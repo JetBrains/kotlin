@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
+import java.util.*
 
 interface ScopeTower {
     /**
@@ -46,13 +46,20 @@ interface ScopeTower {
     val isDebuggerContext: Boolean
 }
 
-interface DataFlowDecorator {
-    fun getDataFlowValue(receiver: ReceiverValue): DataFlowValue
+abstract class DataFlowDecorator() {
+    private val cache = HashMap<ReceiverValue, SmartCastInfo>()
 
-    fun isStableReceiver(receiver: ReceiverValue): Boolean
-
+    fun isStableReceiver(receiver: ReceiverValue): Boolean = getSmartCastInfo(receiver).isStable
     // doesn't include receiver.type
-    fun getSmartCastTypes(receiver: ReceiverValue): Set<KotlinType>
+    fun getSmartCastTypes(receiver: ReceiverValue): Set<KotlinType> = getSmartCastInfo(receiver).possibleTypes
+
+
+    private fun getSmartCastInfo(receiver: ReceiverValue): SmartCastInfo
+            = cache.getOrPut(receiver) { calculateSmartCastInfo(receiver) }
+
+    protected data class SmartCastInfo(val isStable: Boolean, val possibleTypes: Set<KotlinType>)
+
+    protected abstract fun calculateSmartCastInfo(receiver: ReceiverValue): SmartCastInfo
 }
 
 interface ScopeTowerLevel {

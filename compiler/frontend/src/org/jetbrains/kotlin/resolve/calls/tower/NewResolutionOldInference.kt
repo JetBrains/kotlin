@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
@@ -28,23 +29,25 @@ import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CandidateResolveMode
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
@@ -229,6 +232,27 @@ class NewResolutionOldInference(
         }
 
         return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls)
+    }
+
+    private class ScopeTowerImpl(
+            val resolutionContext: ResolutionContext<*>,
+            override val dynamicScope: MemberScope,
+            override val syntheticScopes: SyntheticScopes,
+            override val location: LookupLocation
+    ): ScopeTower {
+        override val dataFlowInfo: DataFlowDecorator = object : DataFlowDecorator() {
+            override fun calculateSmartCastInfo(receiver: ReceiverValue): SmartCastInfo {
+                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, resolutionContext)
+                return SmartCastInfo(dataFlowValue.isStable, resolutionContext.dataFlowInfo.getCollectedTypes(dataFlowValue))
+            }
+        }
+
+        override val lexicalScope: LexicalScope get() = resolutionContext.scope
+
+        override val implicitReceivers = resolutionContext.scope.getImplicitReceiversHierarchy().
+                mapNotNull { it.value.check { !it.type.containsError() } }
+
+        override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
     }
 
     internal data class MyCandidate<out D: CallableDescriptor>(
