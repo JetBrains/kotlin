@@ -3,6 +3,14 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.0.5
+
+### IDE
+
+#### Debugger
+
+- [`KT-7549`](https://youtrack.jetbrains.com/issue/KT-7549) Allow to evaluate kotlin expressions in Java files
+
 ## 1.0.4
 
 ### Compiler

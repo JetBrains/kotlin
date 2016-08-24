@@ -347,10 +347,25 @@ fun getStepOverPosition(
         }
     }
 
+    fun isBackEdgeLocation(): Boolean {
+        val previousSuitableLocation = computedReferenceType.allLineLocations().reversed()
+                .dropWhile { it != location }
+                .drop(1)
+                .filter(::isLocationSuitable)
+                .dropWhile { it.lineNumber() == location.lineNumber() }
+                .firstOrNull()
+
+        return previousSuitableLocation != null && previousSuitableLocation.lineNumber() > location.lineNumber()
+    }
+
+    if (isBackEdgeLocation()) {
+        return Action.STEP_OVER()
+    }
+
     val locations = computedReferenceType.allLineLocations()
             .dropWhile { it != location }
             .drop(1)
-            .filter { isLocationSuitable(it) }
+            .filter(::isLocationSuitable)
             .dropWhile { it.lineNumber() == location.lineNumber() }
 
     for (locationAtLine in locations) {
@@ -378,7 +393,7 @@ fun getStepOverPosition(
     return Action.STEP_OVER()
 }
 
-fun getStepOutPosition(
+fun getStepOutAction(
         location: Location,
         suspendContext: SuspendContextImpl,
         inlineFunctions: List<KtNamedFunction>,
