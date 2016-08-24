@@ -51,7 +51,16 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             val result = DoubleArray(angles.size)
             for (i in 0..result.size - 1) {
                 //todo sonar can send -1!!!
-                result[i] = distances.drop(i * copyElemCount).take(copyElemCount).sum().toDouble() / copyElemCount
+                val distancesOnCurrentAngle = distances.drop(i * copyElemCount).take(copyElemCount)
+                var sum = 0
+                for (distance in distancesOnCurrentAngle) {
+                    if (distance != -1) {
+                        sum += distance
+                    }
+                }
+                if (sum != 0) {
+                    result[i] = sum.toDouble() / copyElemCount
+                }
             }
             return result
         } catch (e: InterruptedException) {
@@ -90,6 +99,9 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         }
         val anglesDistances = mutableMapOf<Int, Double>()
         for (i in 0..angles.size - 1) {
+            if (Math.abs(distances[i]) < 0.01) {
+                continue
+            }
             anglesDistances.put(angles[i], distances[i])
         }
 
