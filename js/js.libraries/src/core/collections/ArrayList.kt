@@ -16,8 +16,6 @@
 
 package kotlin.collections
 
-//TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
-
 public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractList<E>(), RandomAccess {
 
     public constructor(capacity: Int = 0) : this(emptyArray()) {}
@@ -55,8 +53,12 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
 
         if (index == size) return addAll(elements)
         if (elements.isEmpty()) return false
+        when (index) {
+            size -> return addAll(elements)
+            0 -> array = elements.toTypedArray<Any?>() + array
+            else -> array = array.copyOfRange(0, index).asDynamic().concat(elements.toTypedArray<Any?>(), array.copyOfRange(index, size))
+        }
 
-        array = array.copyOfRange(0, index) + elements.toTypedArray<Any?>() + array.copyOfRange(index, size)
         modCount++
         return true
     }
@@ -64,7 +66,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
     override fun removeAt(index: Int): E {
         rangeCheck(index)
         modCount++
-        return if (index == size)
+        return if (index == lastIndex)
             array.asDynamic().pop()
         else
             array.asDynamic().splice(index, 1)[0]
@@ -91,7 +93,6 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
         modCount++
     }
 
-    override fun contains(element: E): Boolean = indexOf(element) >= 0
 
     override fun indexOf(element: E): Int = array.indexOf(element)
 
@@ -100,13 +101,12 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
     override fun toString() = arrayToString(array)
     override fun toArray(): Array<Any?> = array.copyOf()
 
+
     private fun rangeCheck(index: Int) = index.apply {
-        if (index !in array.indices)
-            throw IndexOutOfBoundsException("Index: $index, Size: $size")
+        checkElementIndex(index, size)
     }
 
     private fun insertionRangeCheck(index: Int) = index.apply {
-        if (index !in 0..size)
-            throw IndexOutOfBoundsException("Index: $index, Size: $size")
+        checkPositionIndex(index, size)
     }
 }

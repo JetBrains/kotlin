@@ -50,8 +50,13 @@ public abstract class AbstractList<E> protected constructor() : AbstractCollecti
         removeRange(0, size)
     }
 
+    override fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
+    override fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
+
 
     override fun iterator(): MutableIterator<E> = IteratorImpl()
+
+    override fun contains(element: E): Boolean = indexOf(element) >= 0
 
     override fun indexOf(element: E): Int {
         for (index in 0..lastIndex) {
