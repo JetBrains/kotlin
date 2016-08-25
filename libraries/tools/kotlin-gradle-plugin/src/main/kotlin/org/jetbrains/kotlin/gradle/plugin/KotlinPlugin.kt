@@ -383,10 +383,14 @@ open class KotlinAndroidPlugin(
 
             configureJavaTask(kotlinTask, javaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
-            val artifactFile = project.tryGetSingleArtifact(variantData)
-            val artifactDifferenceRegistryWrapper = ArtifactDifferenceRegistryAndroidWrapper(artifactDifferenceRegistry, variantData)
-            configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
-                    artifactDifferenceRegistryWrapper, artifactFile)
+
+            if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
+                val jarToAarMapping = AndroidGradleWrapper.getJarToAarMapping(variantData)
+                val artifactFile = project.tryGetSingleArtifact(variantData)
+                val artifactDifferenceRegistryWrapper = ArtifactDifferenceRegistryAndroidWrapper(artifactDifferenceRegistry, jarToAarMapping)
+                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                        artifactDifferenceRegistryWrapper, artifactFile)
+            }
         }
     }
 
