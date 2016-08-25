@@ -20,10 +20,7 @@ import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtStatementExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,7 +32,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filterNot { it.shouldSkip() }.toList()
 
     private fun KtExpression.shouldSkip(): Boolean {
-        return this is KtStatementExpression && this !is KtFunction
+        return this is KtStatementExpression && this !is KtFunction && this !is KtProperty
     }
 
     override fun getInformationHint(element: KtExpression): String {
