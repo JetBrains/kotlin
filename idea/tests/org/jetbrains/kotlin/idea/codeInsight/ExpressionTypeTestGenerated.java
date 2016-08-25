@@ -41,6 +41,42 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("MultiDeclaration.kt")
+    public void testMultiDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiDeclarationInLambda.kt")
+    public void testMultiDeclarationInLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclarationInLambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiDeclarationInLoop.kt")
+    public void testMultiDeclarationInLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclarationInLoop.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropertyAccessor.kt")
+    public void testPropertyAccessor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/PropertyAccessor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCast.kt")
+    public void testSmartCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SmartCast.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SoftSmartCast.kt")
+    public void testSoftSmartCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
