@@ -39,14 +39,6 @@ import java.util.Arrays
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
-    val LONG_EQUALS_ANY = pattern("Long.equals")
-
-    private object LONG_EQUALS_ANY_INTRINSIC : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-            val invokeEquals = JsAstUtils.equalsForObject(left, right)
-            return if (expression.isNegated()) JsAstUtils.not(invokeEquals) else invokeEquals
-        }
-    }
 
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
@@ -92,8 +84,6 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
     override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
             when {
-                (LONG_EQUALS_ANY.apply(descriptor)) -> LONG_EQUALS_ANY_INTRINSIC
-
                 DescriptorUtils.isEnumClass(descriptor.containingDeclaration) -> EnumEqualsIntrinsic
 
                 JsDescriptorUtils.isBuiltin(descriptor) ||
