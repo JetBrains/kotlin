@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
+import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
@@ -70,10 +71,7 @@ fun findDestructuringDeclarationUsages(
 ) {
     // for local scope it's faster to use plain search
     if (scope is LocalSearchScope) {
-        val unwrappedElement = ktDeclaration.namedUnwrappedElement ?: return
-        val resultProcessor = KotlinRequestResultProcessor(unwrappedElement,
-                                                           filter = { ref -> ref is KtDestructuringDeclarationReference })
-        optimizer.searchWord("(", scope.restrictToKotlinSources(), UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
+        doPlainSearch(ktDeclaration, scope, optimizer)
         return
     }
 
@@ -89,18 +87,32 @@ fun findDestructuringDeclarationUsages(
         classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
     }
 
-    Processor(dataType, ktDeclaration, scope, consumer).run()
+    Processor(dataType,
+              ktDeclaration,
+              scope,
+              consumer,
+              plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) }
+    ).run()
+}
+
+private fun doPlainSearch(ktDeclaration: KtDeclaration, scope: SearchScope, optimizer: SearchRequestCollector) {
+    val unwrappedElement = ktDeclaration.namedUnwrappedElement ?: return
+    val resultProcessor = KotlinRequestResultProcessor(unwrappedElement,
+                                                       filter = { ref -> ref is KtDestructuringDeclarationReference })
+    optimizer.searchWord("(", scope.restrictToKotlinSources(), UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
 }
 
 private class Processor(
         private val dataType: FuzzyType,
         private val target: KtDeclaration,
         private val searchScope: SearchScope,
-        private val consumer: Processor<PsiReference>
+        private val consumer: Processor<PsiReference>,
+        private val plainSearchHandler: (SearchScope) -> Unit
 ) {
     private val project = target.project
     private val declarationsToSearch = ArrayList<PsiElement>()
     private val declarationsToSearchSet = HashSet<PsiElement>()
+    private var scopeToUsePlainSearch: SearchScope = LocalSearchScope.EMPTY
 
     fun run() {
         val dataClassDescriptor = dataType.type.constructor.declarationDescriptor ?: return
@@ -135,6 +147,8 @@ private class Processor(
             val declaration = declarationsToSearch[index++]
             processDeclarationOfTypeWithDataClass(declaration)
         }
+
+        plainSearchHandler(scopeToUsePlainSearch)
     }
 
     //TODO: check if it's operator (too expensive)
@@ -200,7 +214,9 @@ private class Processor(
                             }
 
                             is KtIsExpression -> {
-                                return true //TODO!
+                                val scopeOfPossibleSmartCast = typeRefParent.getParentOfType<KtDeclarationWithBody>(true)
+                                scopeOfPossibleSmartCast?.let { usePlainSearch(it) }
+                                return true
                             }
 
                             is KtBinaryExpressionWithTypeRHS -> {
@@ -321,6 +337,11 @@ private class Processor(
         }
     }
 
+    private fun usePlainSearch(scopeElement: KtElement) {
+        scopeToUsePlainSearch = LocalSearchScope(scopeElement)
+                .intersectWith(searchScope)
+                .unionSafe(scopeToUsePlainSearch)
+    }
 
     private fun PsiModifierListOwner.isPrivateOrLocal(): Boolean {
         return hasModifierProperty(PsiModifier.PRIVATE) || parents.any { it is PsiCodeBlock }

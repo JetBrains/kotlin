@@ -24,6 +24,7 @@ fun listOfA() = listOf<A>(A(1, "", ""))
 fun x(o: Any) {
     if (o is A) {
         val (x, y) = o
+        val (x1, y1) = A(1, "", "")
     }
 }
 
