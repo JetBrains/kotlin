@@ -16,33 +16,28 @@
 
 package org.jetbrains.kotlin.idea.actions
 
+import com.intellij.ide.actions.JavaQualifiedNameProvider
 import com.intellij.ide.actions.QualifiedNameProvider
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun adjustElementToCopy(element: PsiElement?) = null
 
-    override fun getQualifiedName(element: PsiElement?): String? {
-        when (element) {
-            is KtClassOrObject -> return element.fqName?.asString()
-            is KtNamedFunction, is KtProperty -> {
-                val descriptor = (element as KtDeclaration).resolveToDescriptor()
-                val fqNameUnsafe = DescriptorUtils.getFqName(descriptor)
-                if (fqNameUnsafe.isSafe) {
-                    return fqNameUnsafe.asString()
-                }
-            }
-        }
-        return null
+    override fun getQualifiedName(element: PsiElement?) = when(element) {
+        is KtClassOrObject -> element.fqName?.asString()
+        is KtNamedFunction -> getJavaQualifiedName(LightClassUtil.getLightClassMethod(element))
+        is KtProperty -> getJavaQualifiedName(LightClassUtil.getLightClassPropertyMethods(element).getter)
+        else -> null
     }
+
+    private fun getJavaQualifiedName(method: PsiMethod?) = method?.let { JavaQualifiedNameProvider().getQualifiedName(method) }
 
     override fun qualifiedNameToElement(fqn: String?, project: Project?) = null
 
