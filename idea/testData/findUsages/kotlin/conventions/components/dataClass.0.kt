@@ -2,7 +2,13 @@
 // OPTIONS: usages
 package pack
 
-data class A(val <caret>n: Int, val s: String, val o: Any)
+data class A(val <caret>n: Int, val s: String, val o: Any) {
+    fun f() {
+        "a".apply {
+            this@A.toString()
+        }
+    }
+}
 
 fun A.ext1() {
     val (x, y) = getThis()
