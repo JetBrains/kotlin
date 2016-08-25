@@ -1,6 +1,8 @@
 FILE /arrayAugmentedAssignment2.kt
   CLASS INTERFACE IA
+    FUN public abstract operator fun get(/*0*/ index: kotlin.String): kotlin.Int
   CLASS INTERFACE IB
+    FUN public abstract operator fun IA.set(/*0*/ index: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Unit
   FUN public fun IB.test(/*0*/ a: IA): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ

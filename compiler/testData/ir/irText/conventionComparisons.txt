@@ -1,6 +1,7 @@
 FILE /conventionComparisons.kt
   CLASS INTERFACE IA
   CLASS INTERFACE IB
+    FUN public abstract operator fun IA.compareTo(/*0*/ other: IA): kotlin.Int
   FUN public fun IB.test1(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing

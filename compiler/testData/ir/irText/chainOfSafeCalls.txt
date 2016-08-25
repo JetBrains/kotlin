@@ -1,5 +1,13 @@
 FILE /chainOfSafeCalls.kt
   CLASS CLASS C
+    FUN public final fun foo(): C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          THIS public final class C type=C
+    FUN public final fun bar(): C?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          THIS public final class C type=C
   FUN public fun test(/*0*/ nc: C?): C?
     BLOCK_BODY
       RETURN type=kotlin.Nothing

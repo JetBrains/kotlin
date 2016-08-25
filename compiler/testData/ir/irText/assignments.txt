@@ -1,5 +1,6 @@
 FILE /assignments.kt
   CLASS CLASS Ref
+    PROPERTY public final var x: kotlin.Int getter=null setter=null
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

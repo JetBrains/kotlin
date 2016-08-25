@@ -31,6 +31,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitFunction(declaration: IrFunction, data: D): R = visitDeclaration(declaration, data)
     fun visitPropertyGetter(declaration: IrPropertyGetter, data: D): R = visitFunction(declaration, data)
     fun visitPropertySetter(declaration: IrPropertySetter, data: D): R = visitFunction(declaration, data)
+    fun visitConstructor(declaration: IrConstructor, data: D): R = visitFunction(declaration, data)
     fun visitProperty(declaration: IrProperty, data: D): R = visitDeclaration(declaration, data)
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)

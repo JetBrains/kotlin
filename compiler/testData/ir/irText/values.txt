@@ -1,10 +1,12 @@
 FILE /values.kt
   CLASS ENUM_CLASS Enum
+    CLASS ENUM_ENTRY A
   CLASS OBJECT A
   PROPERTY public val a: kotlin.Int = 0 getter=null setter=null
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   CLASS CLASS Z
+    CLASS OBJECT Companion
   FUN public fun test1(): Enum
     BLOCK_BODY
       RETURN type=kotlin.Nothing

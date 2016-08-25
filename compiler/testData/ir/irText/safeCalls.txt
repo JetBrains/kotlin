@@ -1,6 +1,12 @@
 FILE /safeCalls.kt
   CLASS CLASS Ref
+    PROPERTY public final var value: kotlin.Int getter=null setter=null
   CLASS INTERFACE IHost
+    FUN public open fun kotlin.String.extLength(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+            $this: $RECEIVER of: extLength type=kotlin.String
   FUN public fun test1(/*0*/ x: kotlin.String?): kotlin.Int?
     BLOCK_BODY
       RETURN type=kotlin.Nothing

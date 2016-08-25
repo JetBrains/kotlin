@@ -1,7 +1,33 @@
 FILE /forWithImplicitReceivers.kt
   CLASS OBJECT FiveTimes
   CLASS CLASS IntCell
+    PROPERTY public final var value: kotlin.Int getter=null setter=null
   CLASS INTERFACE IReceiver
+    FUN public open operator fun FiveTimes.iterator(): IntCell
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CALL .<init> type=IntCell operator=null
+            value: CONST Int type=kotlin.Int value='5'
+    FUN public open operator fun IntCell.hasNext(): kotlin.Boolean
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CALL .GT0 type=kotlin.Boolean operator=GT
+            arg0: CALL .compareTo type=kotlin.Int operator=GT
+              $this: CALL .<get-value> type=kotlin.Int operator=GET_PROPERTY
+                $this: $RECEIVER of: hasNext type=IntCell
+              other: CONST Int type=kotlin.Int value='0'
+    FUN public open operator fun IntCell.next(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          BLOCK type=kotlin.Int operator=POSTFIX_DECR
+            VAR val tmp0: kotlin.Int
+              CALL .<get-value> type=kotlin.Int operator=POSTFIX_DECR
+                $this: $RECEIVER of: next type=IntCell
+            CALL .<set-value> type=kotlin.Unit operator=POSTFIX_DECR
+              $this: $RECEIVER of: next type=IntCell
+              <set-?>: CALL .dec type=kotlin.Int operator=POSTFIX_DECR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=null
+            GET_VAR tmp0 type=kotlin.Int operator=null
   FUN public fun IReceiver.test(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
