@@ -103,6 +103,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-9285`](https://youtrack.jetbrains.com/issue/KT-9285) Rename: Optimize search of private class members
 - [`KT-13589`](https://youtrack.jetbrains.com/issue/KT-13589) Use TODO() consistently in implementation stubs
 - [`KT-13630`](https://youtrack.jetbrains.com/issue/KT-13630) Do not show Change Signature dialog when applying "Remove parameter" quick-fix
+- Re-highlight only single function after local modifications
 
 #### Intention actions, inspections and quickfixes
 
