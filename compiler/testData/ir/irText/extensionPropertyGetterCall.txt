@@ -1,13 +1,11 @@
-IrFile /extensionPropertyGetterCall.kt
-  IrProperty public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
-  IrPropertyGetter public fun kotlin.String.<get-okext>(): kotlin.String property=okext
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CONST String type=kotlin.String value='OK'
-  IrFunction public fun kotlin.String.test5(): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .<get-okext> type=kotlin.String operator=GET_PROPERTY
-            $receiver: $RECEIVER of: test5 type=kotlin.String
+FILE /extensionPropertyGetterCall.kt
+  PROPERTY public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
+  PROPERTY_GETTER public fun kotlin.String.<get-okext>(): kotlin.String property=okext
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CONST String type=kotlin.String value='OK'
+  FUN public fun kotlin.String.test5(): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .<get-okext> type=kotlin.String operator=GET_PROPERTY
+          $receiver: $RECEIVER of: test5 type=kotlin.String

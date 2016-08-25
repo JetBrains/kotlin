@@ -68,19 +68,17 @@ fun StatementGenerator.generateCallReceiver(
     val dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
     val extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
 
-    if (!isSafe) {
-        return SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
-    }
-    else if (extensionReceiverValue != null) {
-        return SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
-                                extensionReceiverValue.load(), dispatchReceiverValue)
-    }
-    else if (dispatchReceiverValue != null) {
-        return SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
-                                dispatchReceiverValue.load(), null)
-    }
-    else {
-        return throw AssertionError("Safe call should have an explicit receiver: ${ktDefaultElement.text}")
+    return when {
+        !isSafe ->
+            SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
+        extensionReceiverValue != null ->
+            SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
+                             extensionReceiverValue.load(), dispatchReceiverValue)
+        dispatchReceiverValue != null ->
+            SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
+                             dispatchReceiverValue.load(), null)
+        else ->
+            throw AssertionError("Safe call should have an explicit receiver: ${ktDefaultElement.text}")
     }
 }
 

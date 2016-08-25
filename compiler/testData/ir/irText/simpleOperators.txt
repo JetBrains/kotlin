@@ -1,78 +1,67 @@
-IrFile /simpleOperators.kt
-  IrFunction public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .plus type=kotlin.Int operator=PLUS
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .minus type=kotlin.Int operator=MINUS
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test3(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .times type=kotlin.Int operator=MUL
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test4(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .div type=kotlin.Int operator=DIV
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test5(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .mod type=kotlin.Int operator=PERC
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test6(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.ranges.IntRange
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .rangeTo type=kotlin.ranges.IntRange operator=RANGE
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test1x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .plus type=kotlin.Int operator=null
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test2x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .minus type=kotlin.Int operator=null
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test3x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .times type=kotlin.Int operator=null
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test4x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .div type=kotlin.Int operator=null
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test5x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .mod type=kotlin.Int operator=null
-            $this: GET_VAR a type=kotlin.Int operator=null
-            other: GET_VAR b type=kotlin.Int operator=null
+FILE /simpleOperators.kt
+  FUN public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .plus type=kotlin.Int operator=PLUS
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .minus type=kotlin.Int operator=MINUS
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test3(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .times type=kotlin.Int operator=MUL
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test4(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .div type=kotlin.Int operator=DIV
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test5(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .mod type=kotlin.Int operator=PERC
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test6(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.ranges.IntRange
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .rangeTo type=kotlin.ranges.IntRange operator=RANGE
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test1x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .plus type=kotlin.Int operator=null
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test2x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .minus type=kotlin.Int operator=null
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test3x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .times type=kotlin.Int operator=null
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test4x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .div type=kotlin.Int operator=null
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test5x(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .mod type=kotlin.Int operator=null
+          $this: GET_VAR a type=kotlin.Int operator=null
+          other: GET_VAR b type=kotlin.Int operator=null

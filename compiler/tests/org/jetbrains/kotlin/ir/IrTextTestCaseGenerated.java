@@ -281,6 +281,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("tryCatchWithImplicitCast.kt")
+    public void testTryCatchWithImplicitCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/tryCatchWithImplicitCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("typeOperators.kt")
     public void testTypeOperators() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/typeOperators.kt");

@@ -1,38 +1,33 @@
-IrFile /variableAsFunctionCall.kt
-  IrFunction public fun kotlin.String.k(): () -> kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          DUMMY KtLambdaExpression type=() -> kotlin.String
-  IrFunction public fun test1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .invoke type=kotlin.Unit operator=INVOKE
-            $this: GET_VAR f type=() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
-  IrFunction public fun test2(/*0*/ f: kotlin.String.() -> kotlin.Unit): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .invoke type=kotlin.Unit operator=INVOKE
-            $this: GET_VAR f type=kotlin.String.() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
+FILE /variableAsFunctionCall.kt
+  FUN public fun kotlin.String.k(): () -> kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        DUMMY KtLambdaExpression type=() -> kotlin.String
+  FUN public fun test1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .invoke type=kotlin.Unit operator=INVOKE
+          $this: GET_VAR f type=() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
+  FUN public fun test2(/*0*/ f: kotlin.String.() -> kotlin.Unit): kotlin.Unit
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .invoke type=kotlin.Unit operator=INVOKE
+          $this: GET_VAR f type=kotlin.String.() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
+          $receiver: CONST String type=kotlin.String value='hello'
+  FUN public fun test3(): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .invoke type=kotlin.String operator=null
+          $this: CALL .k type=() -> kotlin.String operator=null
             $receiver: CONST String type=kotlin.String value='hello'
-  IrFunction public fun test3(): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .invoke type=kotlin.String operator=null
+  FUN public fun test4(/*0*/ ns: kotlin.String?): kotlin.String?
+    BLOCK_BODY
+      RETURN type=<no-type>
+        WHEN type=kotlin.String? operator=SAFE_CALL
+          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+            arg0: GET_VAR ns type=kotlin.String? operator=null
+            arg1: CONST Null type=kotlin.Nothing? value='null'
+          then: CONST Null type=kotlin.Nothing? value='null'
+          else: CALL .invoke type=kotlin.String operator=null
             $this: CALL .k type=() -> kotlin.String operator=null
-              $receiver: CONST String type=kotlin.String value='hello'
-  IrFunction public fun test4(/*0*/ ns: kotlin.String?): kotlin.String?
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          WHEN type=kotlin.String? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR ns type=kotlin.String? operator=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .invoke type=kotlin.String operator=null
-              $this: CALL .k type=() -> kotlin.String operator=null
-                $this: GET_VAR ns type=kotlin.String? operator=null
+              $this: GET_VAR ns type=kotlin.String? operator=null

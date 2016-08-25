@@ -1,23 +1,20 @@
-IrFile /equality.kt
-  IrFunction public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+FILE /equality.kt
+  FUN public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+          arg0: GET_VAR a type=kotlin.Int operator=null
+          arg1: GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .NOT type=kotlin.Boolean operator=EXCLEQ
+          arg0: CALL .EQEQ type=kotlin.Boolean operator=EXCLEQ
             arg0: GET_VAR a type=kotlin.Int operator=null
             arg1: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .NOT type=kotlin.Boolean operator=EXCLEQ
-            arg0: CALL .EQEQ type=kotlin.Boolean operator=EXCLEQ
-              arg0: GET_VAR a type=kotlin.Int operator=null
-              arg1: GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-            arg0: GET_VAR a type=kotlin.Any? operator=null
-            arg1: GET_VAR b type=kotlin.Any? operator=null
+  FUN public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+          arg0: GET_VAR a type=kotlin.Any? operator=null
+          arg1: GET_VAR b type=kotlin.Any? operator=null

@@ -1,37 +1,31 @@
-IrFile /simpleUnaryOperators.kt
-  IrFunction public fun test1(/*0*/ x: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .unaryMinus type=kotlin.Int operator=UMINUS
-            $this: GET_VAR x type=kotlin.Int operator=null
-  IrFunction public fun test2(): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .unaryMinus type=kotlin.Int operator=UMINUS
-            $this: CONST Int type=kotlin.Int value='42'
-  IrFunction public fun test3(/*0*/ x: kotlin.Int): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .unaryPlus type=kotlin.Int operator=UPLUS
-            $this: GET_VAR x type=kotlin.Int operator=null
-  IrFunction public fun test4(): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .unaryPlus type=kotlin.Int operator=UPLUS
-            $this: CONST Int type=kotlin.Int value='42'
-  IrFunction public fun test5(/*0*/ x: kotlin.Boolean): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .not type=kotlin.Boolean operator=EXCL
-            $this: GET_VAR x type=kotlin.Boolean operator=null
-  IrFunction public fun test6(): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .not type=kotlin.Boolean operator=EXCL
-            $this: CONST Boolean type=kotlin.Boolean value='true'
+FILE /simpleUnaryOperators.kt
+  FUN public fun test1(/*0*/ x: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .unaryMinus type=kotlin.Int operator=UMINUS
+          $this: GET_VAR x type=kotlin.Int operator=null
+  FUN public fun test2(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .unaryMinus type=kotlin.Int operator=UMINUS
+          $this: CONST Int type=kotlin.Int value='42'
+  FUN public fun test3(/*0*/ x: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .unaryPlus type=kotlin.Int operator=UPLUS
+          $this: GET_VAR x type=kotlin.Int operator=null
+  FUN public fun test4(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .unaryPlus type=kotlin.Int operator=UPLUS
+          $this: CONST Int type=kotlin.Int value='42'
+  FUN public fun test5(/*0*/ x: kotlin.Boolean): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .not type=kotlin.Boolean operator=EXCL
+          $this: GET_VAR x type=kotlin.Boolean operator=null
+  FUN public fun test6(): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .not type=kotlin.Boolean operator=EXCL
+          $this: CONST Boolean type=kotlin.Boolean value='true'

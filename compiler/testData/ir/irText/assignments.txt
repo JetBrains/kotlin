@@ -1,19 +1,17 @@
-IrFile /assignments.kt
+FILE /assignments.kt
   DUMMY Ref
-  IrFunction public fun test1(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        VAR var x: kotlin.Int
-          CONST Int type=kotlin.Int value='0'
-        SET_VAR x type=<no-type> operator=EQ
-          CONST Int type=kotlin.Int value='1'
-        SET_VAR x type=<no-type> operator=EQ
-          CALL .plus type=kotlin.Int operator=PLUS
-            $this: GET_VAR x type=kotlin.Int operator=null
-            other: CONST Int type=kotlin.Int value='1'
-  IrFunction public fun test2(/*0*/ r: Ref): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        CALL .<set-x> type=kotlin.Unit operator=EQ
-          $this: GET_VAR r type=Ref operator=null
-          <set-?>: CONST Int type=kotlin.Int value='0'
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      VAR var x: kotlin.Int
+        CONST Int type=kotlin.Int value='0'
+      SET_VAR x type=<no-type> operator=EQ
+        CONST Int type=kotlin.Int value='1'
+      SET_VAR x type=<no-type> operator=EQ
+        CALL .plus type=kotlin.Int operator=PLUS
+          $this: GET_VAR x type=kotlin.Int operator=null
+          other: CONST Int type=kotlin.Int value='1'
+  FUN public fun test2(/*0*/ r: Ref): kotlin.Unit
+    BLOCK_BODY
+      CALL .<set-x> type=kotlin.Unit operator=EQ
+        $this: GET_VAR r type=Ref operator=null
+        <set-?>: CONST Int type=kotlin.Int value='0'

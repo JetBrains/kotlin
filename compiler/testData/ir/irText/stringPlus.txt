@@ -1,27 +1,24 @@
-IrFile /stringPlus.kt
-  IrFunction public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          STRING_CONCATENATION type=kotlin.String
-            GET_VAR a type=kotlin.String operator=null
-            GET_VAR b type=kotlin.Any operator=null
-  IrFunction public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          STRING_CONCATENATION type=kotlin.String
-            GET_VAR a type=kotlin.String operator=null
-            CONST String type=kotlin.String value='+'
-            GET_VAR b type=kotlin.Int operator=null
-  IrFunction public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          STRING_CONCATENATION type=kotlin.String
-            GET_VAR a type=kotlin.String operator=null
-            CONST String type=kotlin.String value='+'
-            CALL .plus type=kotlin.Int operator=PLUS
-              $this: GET_VAR b type=kotlin.Int operator=null
-              other: CONST Int type=kotlin.Int value='1'
-            GET_VAR a type=kotlin.String operator=null
+FILE /stringPlus.kt
+  FUN public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR a type=kotlin.String operator=null
+          GET_VAR b type=kotlin.Any operator=null
+  FUN public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR a type=kotlin.String operator=null
+          CONST String type=kotlin.String value='+'
+          GET_VAR b type=kotlin.Int operator=null
+  FUN public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR a type=kotlin.String operator=null
+          CONST String type=kotlin.String value='+'
+          CALL .plus type=kotlin.Int operator=PLUS
+            $this: GET_VAR b type=kotlin.Int operator=null
+            other: CONST Int type=kotlin.Int value='1'
+          GET_VAR a type=kotlin.String operator=null

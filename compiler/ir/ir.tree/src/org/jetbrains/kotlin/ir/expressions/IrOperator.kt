@@ -68,7 +68,8 @@ interface IrOperator {
     object DIVEQ : IrOperatorImpl("DIVEQ")
     object PERCEQ : IrOperatorImpl("PERCEQ")
 
-    object SYNTHETIC_BLOCK : IrOperatorImpl("SYNTHETIC_BLOCK")
+    object ARGUMENTS_REORDERING_FOR_CALL : IrOperatorImpl("ARGUMENTS_REORDERING_FOR_CALL")
+    object DESTRUCTURING_DECLARATION : IrOperatorImpl("DESTRUCTURING_DECLARATION")
     
     object GET_PROPERTY : IrOperatorImpl("GET_PROPERTY")
     object SET_PROPERTY : IrOperatorImpl("SET_PROPERTY")

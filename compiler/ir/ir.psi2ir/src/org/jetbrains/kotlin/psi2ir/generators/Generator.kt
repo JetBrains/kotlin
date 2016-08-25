@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -58,9 +60,6 @@ fun Generator.getInferredTypeWithSmartcasts(key: KtExpression): KotlinType? =
 fun Generator.getInferredTypeWithSmartcastsOrFail(key: KtExpression): KotlinType =
         getInferredTypeWithSmartcasts(key) ?: throw AssertionError("No type for expression: ${key.text}")
 
-fun Generator.isUsedAsExpression(ktElement: KtElement) =
-        get(BindingContext.USED_AS_EXPRESSION, ktElement) ?: false
-
 fun Generator.getResolvedCall(key: KtExpression): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)
 
@@ -70,20 +69,17 @@ fun Generator.getReturnType(key: KtExpression): KotlinType? {
         return getReturnType(resolvedCall)
     }
 
-    if (key is KtBlockExpression) {
-        if (!isUsedAsExpression(key)) return null
-        return getReturnType(key.statements.last())
+    return when (key) {
+        is KtBlockExpression ->
+            getReturnType(key.statements.last())
+        is KtConstantExpression ->
+            getInferredTypeWithSmartcasts(key)
+        is KtStringTemplateExpression ->
+            context.builtIns.stringType
+        else ->
+            throw AssertionError("Unexpected expression: $key")
     }
 
-    if (key is KtConstantExpression) {
-        return getInferredTypeWithSmartcasts(key)
-    }
-
-    if (key is KtStringTemplateExpression) {
-        return context.builtIns.stringType
-    }
-
-    throw AssertionError("Unexpected expression: $key")
 }
 
 fun getReturnType(resolvedCall: ResolvedCall<*>): KotlinType {

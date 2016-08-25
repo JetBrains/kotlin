@@ -38,7 +38,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
             generateConditionalLoop(ktDoWhile, IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset, IrOperator.DO_WHILE_LOOP))
 
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
-        statementGenerator.expressionBodyGenerator.putLoop(ktLoop, irLoop)
+        statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
         irLoop.body = statementGenerator.generateExpression(ktLoop.body!!)
         irLoop.label = getLoopLabel(ktLoop)
@@ -89,7 +89,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
     }
 
     private fun getLoop(ktLoop: KtLoopExpression): IrLoop {
-        return statementGenerator.expressionBodyGenerator.getLoop(ktLoop) ?:
+        return statementGenerator.bodyGenerator.getLoop(ktLoop) ?:
                throw AssertionError("Loop was not visited:\n${ktLoop.text}")
     }
 
@@ -108,7 +108,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
 
         val callGenerator = CallGenerator(statementGenerator)
 
-        val irForBlock = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, false, IrOperator.FOR_LOOP)
+        val irForBlock = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP)
 
         val iteratorCall = statementGenerator.pregenerateCall(iteratorResolvedCall)
         val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrOperator.FOR_LOOP_ITERATOR)
@@ -118,7 +118,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
 
         val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, IrOperator.FOR_LOOP_INNER_WHILE)
         irInnerWhile.label = getLoopLabel(ktFor)
-        statementGenerator.expressionBodyGenerator.putLoop(ktFor, irInnerWhile)
+        statementGenerator.bodyGenerator.putLoop(ktFor, irInnerWhile)
         irForBlock.addStatement(irInnerWhile)
 
         val hasNextCall = statementGenerator.pregenerateCall(hasNextResolvedCall)
@@ -126,7 +126,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
         val irHasNextCall = callGenerator.generateCall(ktLoopRange, hasNextCall, IrOperator.FOR_LOOP_HAS_NEXT)
         irInnerWhile.condition = irHasNextCall
 
-        val irInnerBody = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, false, IrOperator.FOR_LOOP_INNER_WHILE)
+        val irInnerBody = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP_INNER_WHILE)
         irInnerWhile.body = irInnerBody
 
         val nextCall = statementGenerator.pregenerateCall(nextResolvedCall)

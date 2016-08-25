@@ -1,16 +1,15 @@
-IrFile /arrayAugmentedAssignment2.kt
+FILE /arrayAugmentedAssignment2.kt
   DUMMY IA
   DUMMY IB
-  IrFunction public fun IB.test(/*0*/ a: IA): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        BLOCK type=kotlin.Unit hasResult=false operator=PLUSEQ
-          CALL .set type=kotlin.Unit operator=PLUSEQ
-            $this: $RECEIVER of: test type=IB
-            $receiver: GET_VAR a type=IA operator=null
-            index: CONST String type=kotlin.String value=''
-            value: CALL .plus type=kotlin.Int operator=PLUSEQ
-              $this: CALL .get type=kotlin.Int operator=PLUSEQ
-                $this: GET_VAR a type=IA operator=null
-                index: CONST String type=kotlin.String value=''
-              other: CONST Int type=kotlin.Int value='42'
+  FUN public fun IB.test(/*0*/ a: IA): kotlin.Unit
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit operator=PLUSEQ
+        CALL .set type=kotlin.Unit operator=PLUSEQ
+          $this: $RECEIVER of: test type=IB
+          $receiver: GET_VAR a type=IA operator=null
+          index: CONST String type=kotlin.String value=''
+          value: CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: CALL .get type=kotlin.Int operator=PLUSEQ
+              $this: GET_VAR a type=IA operator=null
+              index: CONST String type=kotlin.String value=''
+            other: CONST Int type=kotlin.Int value='42'

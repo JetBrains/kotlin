@@ -1,43 +1,41 @@
-IrFile /for.kt
-  IrFunction public fun testIterable(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP
-          VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
-            CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-              $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-          WHILE label=null operator=FOR_LOOP_INNER_WHILE
-            condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-              $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
-            body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
-              VAR val s: kotlin.String
-                CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                  $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
-              BLOCK type=<no-type> hasResult=false operator=null
-                CALL .println type=kotlin.Unit operator=null
-                  message: GET_VAR s type=kotlin.String operator=null
-  IrFunction public fun testDestructuring(/*0*/ pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP
-          VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>>
-            CALL .iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=FOR_LOOP_ITERATOR
-              $this: GET_VAR pp type=kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
-          WHILE label=null operator=FOR_LOOP_INNER_WHILE
-            condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-              $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
-            body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
-              VAR val tmp1_loop_parameter: kotlin.Pair<kotlin.Int, kotlin.String>
-                CALL .next type=kotlin.Pair<kotlin.Int, kotlin.String> operator=FOR_LOOP_NEXT
-                  $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
-              VAR val i: kotlin.Int
-                CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
-                  $this: GET_VAR tmp1_loop_parameter type=kotlin.Pair<kotlin.Int, kotlin.String> operator=null
-              VAR val s: kotlin.String
-                CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
-                  $this: GET_VAR tmp1_loop_parameter type=kotlin.Pair<kotlin.Int, kotlin.String> operator=null
-              BLOCK type=<no-type> hasResult=false operator=null
-                CALL .println type=kotlin.Unit operator=null
-                  message: GET_VAR i type=kotlin.Int operator=null
-                CALL .println type=kotlin.Unit operator=null
-                  message: GET_VAR s type=kotlin.String operator=null
+FILE /for.kt
+  FUN public fun testIterable(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit operator=FOR_LOOP
+        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+        WHILE label=null operator=FOR_LOOP_INNER_WHILE
+          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
+            VAR val s: kotlin.String
+              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+            BLOCK type=kotlin.Unit operator=null
+              CALL .println type=kotlin.Unit operator=null
+                message: GET_VAR s type=kotlin.String operator=null
+  FUN public fun testDestructuring(/*0*/ pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>): kotlin.Unit
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit operator=FOR_LOOP
+        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>>
+          CALL .iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR pp type=kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
+        WHILE label=null operator=FOR_LOOP_INNER_WHILE
+          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
+          body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
+            VAR val tmp1_loop_parameter: kotlin.Pair<kotlin.Int, kotlin.String>
+              CALL .next type=kotlin.Pair<kotlin.Int, kotlin.String> operator=FOR_LOOP_NEXT
+                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
+            VAR val i: kotlin.Int
+              CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
+                $this: GET_VAR tmp1_loop_parameter type=kotlin.Pair<kotlin.Int, kotlin.String> operator=null
+            VAR val s: kotlin.String
+              CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
+                $this: GET_VAR tmp1_loop_parameter type=kotlin.Pair<kotlin.Int, kotlin.String> operator=null
+            BLOCK type=kotlin.Unit operator=null
+              CALL .println type=kotlin.Unit operator=null
+                message: GET_VAR i type=kotlin.Int operator=null
+              CALL .println type=kotlin.Unit operator=null
+                message: GET_VAR s type=kotlin.String operator=null

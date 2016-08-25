@@ -51,7 +51,7 @@ class SafeCallReceiver(
         val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
         val resultType = irResult.type?.makeNullable()
 
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, resultType != null, IrOperator.SAFE_CALL)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrOperator.SAFE_CALL)
 
         irBlock.addStatement(irTmp)
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.*
 
 interface IrBody : IrElement
 
@@ -25,15 +26,12 @@ interface IrExpressionBody : IrBody {
     var expression: IrExpression
 }
 
-class IrExpressionBodyImpl(
-        startOffset: Int,
-        endOffset: Int
-) : IrElementBase(startOffset, endOffset), IrExpressionBody {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            expression: IrExpression
-    ) : this(startOffset, endOffset) {
+interface IrBlockBody : IrBody {
+    val statements: List<IrStatement>
+}
+
+class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrExpressionBody {
+    constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset) {
         this.expression = expression
     }
 
@@ -65,4 +63,36 @@ class IrExpressionBodyImpl(
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
+}
+
+class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrBlockBody {
+    override val statements: MutableList<IrStatement> = ArrayList()
+
+    fun addStatement(statement: IrStatement) {
+        statement.assertDetached()
+        statement.setTreeLocation(this, statements.size)
+        statements.add(statement)
+    }
+
+    override fun getChild(slot: Int): IrElement? =
+            statements.getOrNull(slot)
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
+
+        newChild.assertDetached()
+        statements[slot].detach()
+        statements[slot] = newChild.assertCast()
+        newChild.setTreeLocation(this, slot)
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitBlockBody(this, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+    }
+
+
 }

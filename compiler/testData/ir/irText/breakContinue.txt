@@ -1,60 +1,57 @@
-IrFile /breakContinue.kt
-  IrFunction public fun test1(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHILE label=null operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            BREAK label=null depth=0
-        DO_WHILE label=null operator=DO_WHILE_LOOP
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            BREAK label=null depth=0
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-        WHILE label=null operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            CONTINUE label=null depth=0
-        DO_WHILE label=null operator=DO_WHILE_LOOP
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            CONTINUE label=null depth=0
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-  IrFunction public fun test2(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHILE label=OUTER operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            WHILE label=INNER operator=WHILE_LOOP
-              condition: CONST Boolean type=kotlin.Boolean value='true'
-              body: BLOCK type=<no-type> hasResult=false operator=null
-                BREAK label=INNER depth=0
-                BREAK label=OUTER depth=1
-            BREAK label=OUTER depth=0
-        WHILE label=OUTER operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            WHILE label=INNER operator=WHILE_LOOP
-              condition: CONST Boolean type=kotlin.Boolean value='true'
-              body: BLOCK type=<no-type> hasResult=false operator=null
-                CONTINUE label=INNER depth=0
-                CONTINUE label=OUTER depth=1
-            CONTINUE label=OUTER depth=0
-  IrFunction public fun test3(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHILE label=L operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            WHILE label=L operator=WHILE_LOOP
-              condition: CONST Boolean type=kotlin.Boolean value='true'
-              body: BLOCK type=<no-type> hasResult=false operator=null
-                BREAK label=L depth=0
-            BREAK label=L depth=0
-        WHILE label=L operator=WHILE_LOOP
-          condition: CONST Boolean type=kotlin.Boolean value='true'
-          body: BLOCK type=<no-type> hasResult=false operator=null
-            WHILE label=L operator=WHILE_LOOP
-              condition: CONST Boolean type=kotlin.Boolean value='true'
-              body: BLOCK type=<no-type> hasResult=false operator=null
-                CONTINUE label=L depth=0
-            CONTINUE label=L depth=0
+FILE /breakContinue.kt
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=null operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          BREAK label=null depth=0
+      DO_WHILE label=null operator=DO_WHILE_LOOP
+        body: BLOCK type=kotlin.Unit operator=null
+          BREAK label=null depth=0
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+      WHILE label=null operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          CONTINUE label=null depth=0
+      DO_WHILE label=null operator=DO_WHILE_LOOP
+        body: BLOCK type=kotlin.Unit operator=null
+          CONTINUE label=null depth=0
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+  FUN public fun test2(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=OUTER operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          WHILE label=INNER operator=WHILE_LOOP
+            condition: CONST Boolean type=kotlin.Boolean value='true'
+            body: BLOCK type=kotlin.Nothing operator=null
+              BREAK label=INNER depth=0
+              BREAK label=OUTER depth=1
+          BREAK label=OUTER depth=0
+      WHILE label=OUTER operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          WHILE label=INNER operator=WHILE_LOOP
+            condition: CONST Boolean type=kotlin.Boolean value='true'
+            body: BLOCK type=kotlin.Nothing operator=null
+              CONTINUE label=INNER depth=0
+              CONTINUE label=OUTER depth=1
+          CONTINUE label=OUTER depth=0
+  FUN public fun test3(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=L operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          WHILE label=L operator=WHILE_LOOP
+            condition: CONST Boolean type=kotlin.Boolean value='true'
+            body: BLOCK type=kotlin.Nothing operator=null
+              BREAK label=L depth=0
+          BREAK label=L depth=0
+      WHILE label=L operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          WHILE label=L operator=WHILE_LOOP
+            condition: CONST Boolean type=kotlin.Boolean value='true'
+            body: BLOCK type=kotlin.Nothing operator=null
+              CONTINUE label=L depth=0
+          CONTINUE label=L depth=0

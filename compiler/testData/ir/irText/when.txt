@@ -1,98 +1,95 @@
-IrFile /when.kt
+FILE /when.kt
   DUMMY A
-  IrFunction public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          BLOCK type=kotlin.String hasResult=true operator=WHEN
-            VAR val tmp0_subject: kotlin.Any?
-              GET_VAR x type=kotlin.Any? operator=null
-            WHEN type=kotlin.String operator=WHEN
-              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST String type=kotlin.String value='null'
-              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
-                arg1: GET_OBJECT A type=A
-              then: CONST String type=kotlin.String value='A'
-              if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
-                GET_VAR tmp0_subject type=kotlin.Any? operator=null
-              then: CONST String type=kotlin.String value='String'
-              if: CALL .contains type=kotlin.Boolean operator=IN
-                $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
-                element: GET_VAR tmp0_subject type=kotlin.Any? operator=null
-              then: CONST String type=kotlin.String value='nothingness?'
-              else: CONST String type=kotlin.String value='something'
-  IrFunction public fun test(/*0*/ x: kotlin.Any?): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
+  FUN public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        BLOCK type=kotlin.String operator=WHEN
+          VAR val tmp0_subject: kotlin.Any?
+            GET_VAR x type=kotlin.Any? operator=null
           WHEN type=kotlin.String operator=WHEN
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR x type=kotlin.Any? operator=null
+              arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST String type=kotlin.String value='null'
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR x type=kotlin.Any? operator=null
+              arg0: GET_VAR tmp0_subject type=kotlin.Any? operator=null
               arg1: GET_OBJECT A type=A
             then: CONST String type=kotlin.String value='A'
             if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
-              GET_VAR x type=kotlin.Any? operator=null
+              GET_VAR tmp0_subject type=kotlin.Any? operator=null
             then: CONST String type=kotlin.String value='String'
             if: CALL .contains type=kotlin.Boolean operator=IN
               $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
-              element: GET_VAR x type=kotlin.Any? operator=null
+              element: GET_VAR tmp0_subject type=kotlin.Any? operator=null
             then: CONST String type=kotlin.String value='nothingness?'
             else: CONST String type=kotlin.String value='something'
-  IrFunction public fun testComma(/*0*/ x: kotlin.Int): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          BLOCK type=kotlin.String hasResult=true operator=WHEN
-            VAR val tmp0_subject: kotlin.Int
-              GET_VAR x type=kotlin.Int operator=null
-            WHEN type=kotlin.String operator=WHEN
-              if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
-                if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
-                  if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
-                    if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      arg1: CONST Int type=kotlin.Int value='1'
-                    then: CONST Boolean type=kotlin.Boolean value='true'
-                    else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                      arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                      arg1: CONST Int type=kotlin.Int value='2'
-                  then: CONST Boolean type=kotlin.Boolean value='true'
-                  else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                    arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                    arg1: CONST Int type=kotlin.Int value='3'
-                then: CONST Boolean type=kotlin.Boolean value='true'
-                else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                  arg1: CONST Int type=kotlin.Int value='4'
-              then: CONST String type=kotlin.String value='1234'
+  FUN public fun test(/*0*/ x: kotlin.Any?): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        WHEN type=kotlin.String operator=WHEN
+          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+            arg0: GET_VAR x type=kotlin.Any? operator=null
+            arg1: CONST Null type=kotlin.Nothing? value='null'
+          then: CONST String type=kotlin.String value='null'
+          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+            arg0: GET_VAR x type=kotlin.Any? operator=null
+            arg1: GET_OBJECT A type=A
+          then: CONST String type=kotlin.String value='A'
+          if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any? operator=null
+          then: CONST String type=kotlin.String value='String'
+          if: CALL .contains type=kotlin.Boolean operator=IN
+            $receiver: CALL .setOf type=kotlin.collections.Set<kotlin.Nothing> operator=null
+            element: GET_VAR x type=kotlin.Any? operator=null
+          then: CONST String type=kotlin.String value='nothingness?'
+          else: CONST String type=kotlin.String value='something'
+  FUN public fun testComma(/*0*/ x: kotlin.Int): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        BLOCK type=kotlin.String operator=WHEN
+          VAR val tmp0_subject: kotlin.Int
+            GET_VAR x type=kotlin.Int operator=null
+          WHEN type=kotlin.String operator=WHEN
+            if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
               if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
                 if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
                   if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
                     arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                    arg1: CONST Int type=kotlin.Int value='5'
+                    arg1: CONST Int type=kotlin.Int value='1'
                   then: CONST Boolean type=kotlin.Boolean value='true'
                   else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
                     arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                    arg1: CONST Int type=kotlin.Int value='6'
+                    arg1: CONST Int type=kotlin.Int value='2'
                 then: CONST Boolean type=kotlin.Boolean value='true'
                 else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
                   arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                  arg1: CONST Int type=kotlin.Int value='7'
-              then: CONST String type=kotlin.String value='567'
+                  arg1: CONST Int type=kotlin.Int value='3'
+              then: CONST Boolean type=kotlin.Boolean value='true'
+              else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                arg1: CONST Int type=kotlin.Int value='4'
+            then: CONST String type=kotlin.String value='1234'
+            if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
               if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
                 if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
                   arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                  arg1: CONST Int type=kotlin.Int value='8'
+                  arg1: CONST Int type=kotlin.Int value='5'
                 then: CONST Boolean type=kotlin.Boolean value='true'
                 else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
                   arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
-                  arg1: CONST Int type=kotlin.Int value='9'
-              then: CONST String type=kotlin.String value='89'
-              else: CONST String type=kotlin.String value='?'
+                  arg1: CONST Int type=kotlin.Int value='6'
+              then: CONST Boolean type=kotlin.Boolean value='true'
+              else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                arg1: CONST Int type=kotlin.Int value='7'
+            then: CONST String type=kotlin.String value='567'
+            if: WHEN type=kotlin.Boolean operator=WHEN_COMMA
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                arg1: CONST Int type=kotlin.Int value='8'
+              then: CONST Boolean type=kotlin.Boolean value='true'
+              else: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR tmp0_subject type=kotlin.Int operator=null
+                arg1: CONST Int type=kotlin.Int value='9'
+            then: CONST String type=kotlin.String value='89'
+            else: CONST String type=kotlin.String value='?'

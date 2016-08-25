@@ -25,10 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
-    fun generateAnnotationEntries(annotationEntries: List<KtAnnotationEntry>) {
-        // TODO create IrAnnotation's for each KtAnnotationEntry
-    }
-
     fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
             when (ktDeclaration) {
                 is KtNamedFunction ->
@@ -122,10 +118,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     }
 
     private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
-            IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
-                                 ExpressionBodyGenerator(scopeOwner, context).generateFunctionBody(ktBody))
+            BodyGenerator(scopeOwner, context).generateFunctionBody(ktBody)
 
     private fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
-            IrExpressionBodyImpl(ktBody.startOffset, ktBody.endOffset,
-                                 ExpressionBodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody))
+            BodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody)
 }

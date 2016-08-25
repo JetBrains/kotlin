@@ -1,58 +1,51 @@
-IrFile /augmentedAssignment2.kt
+FILE /augmentedAssignment2.kt
   DUMMY A
-  IrFunction public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public operator fun A.minusAssign(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public operator fun A.timesAssign(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public operator fun A.divAssign(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public operator fun A.modAssign(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrProperty public val p: A getter=null setter=null
-    IrExpressionBody
+  FUN public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  FUN public operator fun A.minusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  FUN public operator fun A.timesAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  FUN public operator fun A.divAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  FUN public operator fun A.modAssign(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  PROPERTY public val p: A getter=null setter=null
+    EXPRESSION_BODY
       CALL .<init> type=A operator=null
-  IrFunction public fun testVariable(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        VAR val a: A
-          CALL .<init> type=A operator=null
-        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-          $receiver: GET_VAR a type=A operator=PLUSEQ
-          s: CONST String type=kotlin.String value='+='
-        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-          $receiver: GET_VAR a type=A operator=MINUSEQ
-          s: CONST String type=kotlin.String value='-='
-        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-          $receiver: GET_VAR a type=A operator=MULTEQ
-          s: CONST String type=kotlin.String value='*='
-        CALL .divAssign type=kotlin.Unit operator=DIVEQ
-          $receiver: GET_VAR a type=A operator=DIVEQ
-          s: CONST String type=kotlin.String value='/='
-        CALL .modAssign type=kotlin.Unit operator=PERCEQ
-          $receiver: GET_VAR a type=A operator=PERCEQ
-          s: CONST String type=kotlin.String value='*='
-  IrFunction public fun testProperty(): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-          $receiver: CALL .<get-p> type=A operator=PLUSEQ
-          s: CONST String type=kotlin.String value='+='
-        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-          $receiver: CALL .<get-p> type=A operator=MINUSEQ
-          s: CONST String type=kotlin.String value='-='
-        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-          $receiver: CALL .<get-p> type=A operator=MULTEQ
-          s: CONST String type=kotlin.String value='*='
-        CALL .divAssign type=kotlin.Unit operator=DIVEQ
-          $receiver: CALL .<get-p> type=A operator=DIVEQ
-          s: CONST String type=kotlin.String value='/='
-        CALL .modAssign type=kotlin.Unit operator=PERCEQ
-          $receiver: CALL .<get-p> type=A operator=PERCEQ
-          s: CONST String type=kotlin.String value='%='
+  FUN public fun testVariable(): kotlin.Unit
+    BLOCK_BODY
+      VAR val a: A
+        CALL .<init> type=A operator=null
+      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+        $receiver: GET_VAR a type=A operator=PLUSEQ
+        s: CONST String type=kotlin.String value='+='
+      CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
+        $receiver: GET_VAR a type=A operator=MINUSEQ
+        s: CONST String type=kotlin.String value='-='
+      CALL .timesAssign type=kotlin.Unit operator=MULTEQ
+        $receiver: GET_VAR a type=A operator=MULTEQ
+        s: CONST String type=kotlin.String value='*='
+      CALL .divAssign type=kotlin.Unit operator=DIVEQ
+        $receiver: GET_VAR a type=A operator=DIVEQ
+        s: CONST String type=kotlin.String value='/='
+      CALL .modAssign type=kotlin.Unit operator=PERCEQ
+        $receiver: GET_VAR a type=A operator=PERCEQ
+        s: CONST String type=kotlin.String value='*='
+  FUN public fun testProperty(): kotlin.Unit
+    BLOCK_BODY
+      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+        $receiver: CALL .<get-p> type=A operator=PLUSEQ
+        s: CONST String type=kotlin.String value='+='
+      CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
+        $receiver: CALL .<get-p> type=A operator=MINUSEQ
+        s: CONST String type=kotlin.String value='-='
+      CALL .timesAssign type=kotlin.Unit operator=MULTEQ
+        $receiver: CALL .<get-p> type=A operator=MULTEQ
+        s: CONST String type=kotlin.String value='*='
+      CALL .divAssign type=kotlin.Unit operator=DIVEQ
+        $receiver: CALL .<get-p> type=A operator=DIVEQ
+        s: CONST String type=kotlin.String value='/='
+      CALL .modAssign type=kotlin.Unit operator=PERCEQ
+        $receiver: CALL .<get-p> type=A operator=PERCEQ
+        s: CONST String type=kotlin.String value='%='

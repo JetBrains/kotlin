@@ -6,10 +6,7 @@ var testVarWithAccessors: Int
     get() = 42
     set(v) {}
 
-// 1 IrFunction public fun testFun
-// 1 IrProperty public val testSimpleVal
-// 1 IrProperty public val testValWithGetter
-// 2 IrPropertyGetter
-// 1 IrPropertySetter
-// 1 IrProperty public var testSimpleVar
-// 1 IrProperty public var testVarWithAccessors
+// 1 FUN public fun testFun
+// 1 PROPERTY public val testSimpleVal
+// 2 PROPERTY_GETTER
+// 1 PROPERTY_SETTER

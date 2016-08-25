@@ -40,14 +40,16 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import java.lang.AssertionError
 
 class StatementGenerator(
         override val context: GeneratorContext,
         val scopeOwner: DeclarationDescriptor,
-        val expressionBodyGenerator: ExpressionBodyGenerator,
+        val bodyGenerator: BodyGenerator,
         override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(), GeneratorWithScope {
+    fun generateStatement(ktElement: KtElement): IrStatement =
+            ktElement.genStmt()
+
     fun generateExpression(ktExpression: KtExpression): IrExpression =
             ktExpression.genExpr()
 
@@ -73,7 +75,8 @@ class StatementGenerator(
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         // TODO use some special form that introduces multiple declarations into surrounding scope?
 
-        val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset, null, false, IrOperator.SYNTHETIC_BLOCK)
+        val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
+                                  context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
         val ktInitializer = multiDeclaration.initializer!!
         val containerValue = createRematerializableOrTemporary(scope, ktInitializer.genExpr(), irBlock, "container")
 
@@ -100,11 +103,16 @@ class StatementGenerator(
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression, data: Nothing?): IrStatement {
-        val isBlockBody = expression.parent is KtNamedFunction
-        val hasResult = if (isBlockBody) false else isUsedAsExpression(expression)
-        val returnType = if (isBlockBody || !hasResult) null else getReturnType(expression)
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, hasResult)
-        expression.statements.forEach { irBlock.addStatement(it.genStmt()) }
+        val isBlockBody = expression.parent is KtDeclarationWithBody && expression.parent !is KtFunctionLiteral
+        if (isBlockBody) throw AssertionError("Use IrBlockBody and corresponding body generator to generate blocks as function bodies")
+
+        val returnType = getInferredTypeWithSmartcasts(expression) ?: context.builtIns.unitType
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType)
+
+        expression.statements.forEach {
+            irBlock.addStatement(it.genStmt())
+        }
+
         return irBlock
     }
 

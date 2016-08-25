@@ -1,33 +1,29 @@
-IrFile /stringComparisons.kt
-  IrFunction public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .GT0 type=kotlin.Boolean operator=GT
-            arg0: CALL .compareTo type=kotlin.Int operator=GT
-              $this: GET_VAR a type=kotlin.String operator=null
-              other: GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .LT0 type=kotlin.Boolean operator=LT
-            arg0: CALL .compareTo type=kotlin.Int operator=LT
-              $this: GET_VAR a type=kotlin.String operator=null
-              other: GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .GTEQ0 type=kotlin.Boolean operator=GTEQ
-            arg0: CALL .compareTo type=kotlin.Int operator=GTEQ
-              $this: GET_VAR a type=kotlin.String operator=null
-              other: GET_VAR b type=kotlin.String operator=null
-  IrFunction public fun test4(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CALL .LTEQ0 type=kotlin.Boolean operator=LTEQ
-            arg0: CALL .compareTo type=kotlin.Int operator=LTEQ
-              $this: GET_VAR a type=kotlin.String operator=null
-              other: GET_VAR b type=kotlin.String operator=null
+FILE /stringComparisons.kt
+  FUN public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .GT0 type=kotlin.Boolean operator=GT
+          arg0: CALL .compareTo type=kotlin.Int operator=GT
+            $this: GET_VAR a type=kotlin.String operator=null
+            other: GET_VAR b type=kotlin.String operator=null
+  FUN public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .LT0 type=kotlin.Boolean operator=LT
+          arg0: CALL .compareTo type=kotlin.Int operator=LT
+            $this: GET_VAR a type=kotlin.String operator=null
+            other: GET_VAR b type=kotlin.String operator=null
+  FUN public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .GTEQ0 type=kotlin.Boolean operator=GTEQ
+          arg0: CALL .compareTo type=kotlin.Int operator=GTEQ
+            $this: GET_VAR a type=kotlin.String operator=null
+            other: GET_VAR b type=kotlin.String operator=null
+  FUN public fun test4(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String): kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CALL .LTEQ0 type=kotlin.Boolean operator=LTEQ
+          arg0: CALL .compareTo type=kotlin.Int operator=LTEQ
+            $this: GET_VAR a type=kotlin.String operator=null
+            other: GET_VAR b type=kotlin.String operator=null

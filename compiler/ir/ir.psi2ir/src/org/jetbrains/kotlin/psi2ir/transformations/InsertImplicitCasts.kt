@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
-import java.lang.AssertionError
 
 fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
     element.accept(InsertImplicitCasts(builtIns), null)
@@ -55,11 +54,13 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
 
     override fun visitBlock(expression: IrBlock, data: Nothing?) {
         expression.acceptChildren(this, null)
-        if (!expression.hasResult || expression.type == null) return
+        val type = expression.type
+        if (type == null || KotlinBuiltIns.isUnit(type)) return
+        if (expression.statements.isEmpty()) return
 
         val lastStatement = expression.statements.last()
         if (lastStatement is IrExpression) {
-            lastStatement.wrapWithImplicitCast(expression.type)
+            lastStatement.replaceWithCast(type)
         }
     }
 
@@ -119,12 +120,12 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
     }
 
     private fun IrExpression.wrapWithImplicitCast(expectedType: KotlinType?): IrExpression {
-        if (this is IrBlock && !this.hasResult) return this
+        if (this is IrBlock && this.type == null) return this
         if (expectedType == null) return this
         if (expectedType.isError) return this
         if (KotlinBuiltIns.isUnit(expectedType)) return this // TODO expose coercion to Unit in IR?
 
-        val valueType = this.type ?: throw AssertionError("expectedType != null, valueType == null: $this")
+        val valueType = this.type ?: return this
 
         if (valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull()) {
             val nonNullValueType = valueType.upperIfFlexible().makeNotNullable();

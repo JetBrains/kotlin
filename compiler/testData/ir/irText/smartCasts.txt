@@ -1,62 +1,55 @@
-IrFile /smartCasts.kt
-  IrFunction public fun expectsString(/*0*/ s: kotlin.String): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public fun expectsInt(/*0*/ i: kotlin.Int): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-  IrFunction public fun overloaded(/*0*/ s: kotlin.String): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          GET_VAR s type=kotlin.String operator=null
-  IrFunction public fun overloaded(/*0*/ x: kotlin.Any): kotlin.Any
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
+FILE /smartCasts.kt
+  FUN public fun expectsString(/*0*/ s: kotlin.String): kotlin.Unit
+    BLOCK_BODY
+  FUN public fun expectsInt(/*0*/ i: kotlin.Int): kotlin.Unit
+    BLOCK_BODY
+  FUN public fun overloaded(/*0*/ s: kotlin.String): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        GET_VAR s type=kotlin.String operator=null
+  FUN public fun overloaded(/*0*/ x: kotlin.Any): kotlin.Any
+    BLOCK_BODY
+      RETURN type=<no-type>
+        GET_VAR x type=kotlin.Any operator=null
+  FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
+    BLOCK_BODY
+      WHEN type=kotlin.Unit operator=IF
+        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR x type=kotlin.Any operator=null
-  IrFunction public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHEN type=kotlin.Unit operator=IF
-          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+        then: RETURN type=<no-type>
+      CALL .println type=kotlin.Unit operator=null
+        message: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+          $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
-          then: RETURN type=<no-type>
-        CALL .println type=kotlin.Unit operator=null
-          message: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
-            $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR x type=kotlin.Any operator=null
-        CALL .expectsString type=kotlin.Unit operator=null
+      CALL .expectsString type=kotlin.Unit operator=null
+        s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR x type=kotlin.Any operator=null
+      CALL .expectsInt type=kotlin.Unit operator=null
+        i: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+          $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
+            GET_VAR x type=kotlin.Any operator=null
+      CALL .expectsString type=kotlin.Unit operator=null
+        s: CALL .overloaded type=kotlin.String operator=null
           s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
-        CALL .expectsInt type=kotlin.Unit operator=null
-          i: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
-            $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR x type=kotlin.Any operator=null
-        CALL .expectsString type=kotlin.Unit operator=null
-          s: CALL .overloaded type=kotlin.String operator=null
-            s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR x type=kotlin.Any operator=null
-  IrFunction public fun test2(/*0*/ x: kotlin.Any): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHEN type=kotlin.Unit operator=IF
-          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+  FUN public fun test2(/*0*/ x: kotlin.Any): kotlin.String
+    BLOCK_BODY
+      WHEN type=kotlin.Unit operator=IF
+        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+          GET_VAR x type=kotlin.Any operator=null
+        then: RETURN type=<no-type>
+          CONST String type=kotlin.String value=''
+      RETURN type=<no-type>
+        CALL .overloaded type=kotlin.String operator=null
+          s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
-          then: RETURN type=<no-type>
-            CONST String type=kotlin.String value=''
-        RETURN type=<no-type>
-          CALL .overloaded type=kotlin.String operator=null
-            s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR x type=kotlin.Any operator=null
-  IrFunction public fun test3(/*0*/ x: kotlin.Any): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHEN type=kotlin.Unit operator=IF
-          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
-          then: RETURN type=<no-type>
-            CONST String type=kotlin.String value=''
-        RETURN type=<no-type>
-          TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
+  FUN public fun test3(/*0*/ x: kotlin.Any): kotlin.String
+    BLOCK_BODY
+      WHEN type=kotlin.Unit operator=IF
+        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
+          GET_VAR x type=kotlin.Any operator=null
+        then: RETURN type=<no-type>
+          CONST String type=kotlin.String value=''
+      RETURN type=<no-type>
+        TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR x type=kotlin.Any operator=null

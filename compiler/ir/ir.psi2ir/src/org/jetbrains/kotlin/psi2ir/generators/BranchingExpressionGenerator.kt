@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.generators.getInfixOperator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 import java.lang.AssertionError
@@ -107,18 +106,18 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
         if (irSubject == null) {
             if (irWhen.branchesCount == 0)
-                return IrBlockImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+                return IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrOperator.WHEN)
             else
                 return irWhen
         }
         else {
             if (irWhen.branchesCount == 0) {
-                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, null, false, IrOperator.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrOperator.WHEN)
                 irBlock.addStatement(irSubject)
                 return irBlock
             }
             else {
-                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, true, IrOperator.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, IrOperator.WHEN)
                 irBlock.addStatement(irSubject)
                 irBlock.addStatement(irWhen)
                 return irBlock

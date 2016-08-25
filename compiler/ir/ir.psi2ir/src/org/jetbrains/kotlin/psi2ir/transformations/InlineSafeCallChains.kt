@@ -55,7 +55,7 @@ class InlineSafeCallChains(val context: GeneratorContext) : IrElementVisitor<Uni
         if (innerNestedCallReturnType.containsNull()) return
 
         outer.root.replaceWith {
-            val newBlock = IrBlockImpl(it.startOffset, it.endOffset, it.type, it.hasResult, IrOperator.SAFE_CALL)
+            val newBlock = IrBlockImpl(it.startOffset, it.endOffset, it.type, IrOperator.SAFE_CALL)
             newBlock.addStatement(inner.receiverVariable.detach())
 
             val replaceWithValue = OnceExpressionValue(inner.nestedCall.detach())

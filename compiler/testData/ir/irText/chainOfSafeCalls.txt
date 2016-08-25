@@ -1,24 +1,23 @@
-IrFile /chainOfSafeCalls.kt
+FILE /chainOfSafeCalls.kt
   DUMMY C
-  IrFunction public fun test(/*0*/ nc: C?): C?
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          BLOCK type=C? hasResult=true operator=SAFE_CALL
-            VAR val tmp2_safe_receiver: C?
-              WHEN type=C? operator=SAFE_CALL
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR nc type=C? operator=null
-                  arg1: CONST Null type=kotlin.Nothing? value='null'
-                then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL .bar type=C? operator=null
-                  $this: CALL .foo type=C operator=null
-                    $this: GET_VAR nc type=C? operator=null
+  FUN public fun test(/*0*/ nc: C?): C?
+    BLOCK_BODY
+      RETURN type=<no-type>
+        BLOCK type=C? operator=SAFE_CALL
+          VAR val tmp2_safe_receiver: C?
             WHEN type=C? operator=SAFE_CALL
               if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR tmp2_safe_receiver type=C? operator=null
+                arg0: GET_VAR nc type=C? operator=null
                 arg1: CONST Null type=kotlin.Nothing? value='null'
               then: CONST Null type=kotlin.Nothing? value='null'
-              else: CALL .foo type=C operator=null
+              else: CALL .bar type=C? operator=null
                 $this: CALL .foo type=C operator=null
-                  $this: GET_VAR tmp2_safe_receiver type=C? operator=null
+                  $this: GET_VAR nc type=C? operator=null
+          WHEN type=C? operator=SAFE_CALL
+            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR tmp2_safe_receiver type=C? operator=null
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: CONST Null type=kotlin.Nothing? value='null'
+            else: CALL .foo type=C operator=null
+              $this: CALL .foo type=C operator=null
+                $this: GET_VAR tmp2_safe_receiver type=C? operator=null

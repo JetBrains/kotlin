@@ -117,7 +117,7 @@ class OperatorExpressionGenerator(
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, true, IrOperator.ELVIS)
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, IrOperator.ELVIS)
         val irArgument0Value = createRematerializableOrTemporary(scope, irArgument0, irBlock, "elvis_lhs")
         irBlock.addStatement(IrIfThenElseImpl(
                 expression.startOffset, expression.endOffset, returnType,
@@ -225,7 +225,7 @@ class OperatorExpressionGenerator(
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
         return irAssignmentReceiver.assign { irLValue ->
-            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
+            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, irOperator)
 
             // VAR tmp = [lhs].inc()
             val opCall = statementGenerator.pregenerateCall(opResolvedCall)
@@ -250,7 +250,7 @@ class OperatorExpressionGenerator(
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
         return irAssignmentReceiver.assign { irLValue ->
-            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, true, irOperator)
+            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, irOperator)
 
             // VAR tmp = [lhs]
             val irTmp = scope.createTemporaryVariable(irLValue.load())

@@ -118,7 +118,7 @@ class CallGenerator(
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, true, IrOperator.SYNTHETIC_BLOCK)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrOperator.ARGUMENTS_REORDERING_FOR_CALL)
 
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {

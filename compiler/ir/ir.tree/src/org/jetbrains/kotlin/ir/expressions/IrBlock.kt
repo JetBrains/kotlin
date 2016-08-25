@@ -23,7 +23,6 @@ import java.util.*
 
 
 interface IrBlock : IrExpression {
-    val hasResult: Boolean
     val operator: IrOperator?
 
     val statements: List<IrStatement>
@@ -37,7 +36,6 @@ class IrBlockImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType?,
-        override val hasResult: Boolean,
         override val operator: IrOperator? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrBlock {
     override val statements: MutableList<IrStatement> = ArrayList()

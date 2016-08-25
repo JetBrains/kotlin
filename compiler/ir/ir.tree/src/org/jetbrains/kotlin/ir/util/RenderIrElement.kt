@@ -37,25 +37,28 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "? ${declaration.javaClass.simpleName} ${declaration.descriptor?.name}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
-            "IrFile ${declaration.name}"
+            "FILE ${declaration.name}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-            "IrFunction ${declaration.descriptor.render()}"
+            "FUN ${declaration.descriptor.render()}"
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-            "IrProperty ${declaration.descriptor.render()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
+            "PROPERTY ${declaration.descriptor.render()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
 
     override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?): String =
-            "IrPropertyGetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
+            "PROPERTY_GETTER ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
-            "IrPropertySetter ${declaration.descriptor.render()} property=${declaration.property?.name()}"
+            "PROPERTY_SETTER ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
-            "IrExpressionBody"
+            "EXPRESSION_BODY"
+
+    override fun visitBlockBody(body: IrBlockBody, data: Nothing?): String =
+            "BLOCK_BODY"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
             "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
@@ -64,7 +67,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "CONST ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-            "BLOCK type=${expression.renderType()} hasResult=${expression.hasResult} operator=${expression.operator}"
+            "BLOCK type=${expression.renderType()} operator=${expression.operator}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
             "RETURN type=${expression.renderType()}"

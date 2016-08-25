@@ -30,8 +30,6 @@ interface IrClass : IrDeclaration {
     override val descriptor: ClassDescriptor
 
     val children: List<IrClassElement>
-
-    fun addChild(child: IrClassElement)
 }
 
 class IrClassImpl(
@@ -42,7 +40,7 @@ class IrClassImpl(
 ) : IrDeclarationBase(startOffset, endOffset, originKind), IrClass {
     override val children: MutableList<IrClassElement> = ArrayList()
 
-    override fun addChild(child: IrClassElement) {
+    fun addElement(child: IrClassElement) {
         child.assertDetached()
         child.setTreeLocation(this, children.size)
         children.add(child)

@@ -33,10 +33,7 @@ class InlineDesugaredBlocks : IrElementVisitor<Unit, Nothing?> {
     }
 
     override fun visitBlock(expression: IrBlock, data: Nothing?) {
-        val transformedBlock = IrBlockImpl(
-                expression.startOffset, expression.endOffset, expression.type,
-                expression.hasResult, expression.operator
-        )
+        val transformedBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.operator)
         for (statement in expression.statements) {
             statement.accept(this, data)
             if (statement is IrBlock && statement.operator != null) {

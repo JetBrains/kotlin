@@ -38,7 +38,7 @@ class ArrayAccessAssignmentReceiver(
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         val hasResult = operator.isAssignmentOperatorWithResult()
         val resultType = if (hasResult) type else callGenerator.context.builtIns.unitType
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, hasResult, operator)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, operator)
 
         val irArrayValue = createRematerializableOrTemporary(callGenerator.scope, irArray, irBlock, "array")
 

@@ -1,28 +1,25 @@
-IrFile /smartCastsWithDestructuring.kt
+FILE /smartCastsWithDestructuring.kt
   DUMMY I1
   DUMMY I2
-  IrFunction public operator fun I1.component1(): kotlin.Int
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CONST Int type=kotlin.Int value='1'
-  IrFunction public operator fun I2.component2(): kotlin.String
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        RETURN type=<no-type>
-          CONST String type=kotlin.String value=''
-  IrFunction public fun test(/*0*/ x: I1): kotlin.Unit
-    IrExpressionBody
-      BLOCK type=<no-type> hasResult=false operator=null
-        WHEN type=kotlin.Unit operator=IF
-          if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=I2
-            GET_VAR x type=I1 operator=null
-          then: RETURN type=<no-type>
-        BLOCK type=<no-type> hasResult=false operator=SYNTHETIC_BLOCK
-          VAR val c1: kotlin.Int
-            CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
-              $receiver: GET_VAR x type=I1 operator=null
-          VAR val c2: kotlin.String
-            CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
-              $receiver: TYPE_OP operator=IMPLICIT_CAST typeOperand=I2
-                GET_VAR x type=I1 operator=null
+  FUN public operator fun I1.component1(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CONST Int type=kotlin.Int value='1'
+  FUN public operator fun I2.component2(): kotlin.String
+    BLOCK_BODY
+      RETURN type=<no-type>
+        CONST String type=kotlin.String value=''
+  FUN public fun test(/*0*/ x: I1): kotlin.Unit
+    BLOCK_BODY
+      WHEN type=kotlin.Unit operator=IF
+        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=I2
+          GET_VAR x type=I1 operator=null
+        then: RETURN type=<no-type>
+      BLOCK type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
+        VAR val c1: kotlin.Int
+          CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
+            $receiver: GET_VAR x type=I1 operator=null
+        VAR val c2: kotlin.String
+          CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
+            $receiver: TYPE_OP operator=IMPLICIT_CAST typeOperand=I2
+              GET_VAR x type=I1 operator=null
