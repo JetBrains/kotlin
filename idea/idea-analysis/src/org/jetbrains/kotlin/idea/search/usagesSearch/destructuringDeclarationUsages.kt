@@ -257,6 +257,12 @@ private class Processor(
                             return true
                         }
                     }
+
+                    is KtContainerNode -> {
+                        if (parent.node.elementType == KtNodeTypes.LABEL_QUALIFIER) {
+                            return true // this@ClassName - it will be handled anyway because members and extensions are processed with plain search
+                        }
+                    }
                 }
 
                 if (element.getStrictParentOfType<KtImportDirective>() != null) return true // ignore usage in import

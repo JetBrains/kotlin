@@ -1,5 +1,5 @@
-[dataClass.0.kt] Value read 16 val (x, y) = get(0)
-[dataClass.0.kt] Value read 8 val (x, y) = getThis()
+[dataClass.0.kt] Value read 14 val (x, y) = getThis()
+[dataClass.0.kt] Value read 22 val (x, y) = get(0)
 [dataClass.1.kt] Value read 4 for ((x, y, z) in arrayOf<A>()) {
 [dataClass.1.kt] Value read 8 val (x, y) = a
 [dataClass.2.kt] Function call 6 a.component1()
