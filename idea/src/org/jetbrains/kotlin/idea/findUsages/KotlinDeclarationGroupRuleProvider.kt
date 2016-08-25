@@ -16,33 +16,36 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
-import com.intellij.usages.rules.PsiElementUsage
-import com.intellij.usages.UsageGroup
-import com.intellij.usages.Usage
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.usages.rules.UsageGroupingRule
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import com.intellij.usages.PsiNamedElementUsageGroupBase
-import org.jetbrains.kotlin.psi.KtFile
-import com.intellij.usages.impl.FileStructureGroupRuleProvider
 import com.intellij.openapi.project.Project
+import com.intellij.usages.PsiNamedElementUsageGroupBase
+import com.intellij.usages.Usage
+import com.intellij.usages.UsageGroup
+import com.intellij.usages.impl.FileStructureGroupRuleProvider
+import com.intellij.usages.rules.PsiElementUsage
+import com.intellij.usages.rules.UsageGroupingRule
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
-class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider {
-    class KotlinDeclarationGroupingRule : UsageGroupingRule {
-        override fun groupUsage(usage: Usage): UsageGroup? {
-            val element = (usage as? PsiElementUsage)?.element
-            if (element == null) return null
+class KotlinDeclarationGroupingRule(val level: Int) : UsageGroupingRule {
+    override fun groupUsage(usage: Usage): UsageGroup? {
+        val element = (usage as? PsiElementUsage)?.element ?: return null
 
-            val containingFile = element.containingFile
-            if (containingFile !is KtFile) return null
+        val containingFile = element.containingFile
+        if (containingFile !is KtFile) return null
 
-            return PsiTreeUtil.getTopmostParentOfType(element, KtNamedDeclaration::class.java)?.let { container ->
-                PsiNamedElementUsageGroupBase(container)
-            }
+        val parentList = element.parents.filterIsInstance<KtNamedDeclaration>().toList()
+        if (parentList.size <= level) {
+            return null
         }
+        return PsiNamedElementUsageGroupBase(parentList[parentList.size - level - 1])
     }
-
-    override fun getUsageGroupingRule(project: Project): UsageGroupingRule = KotlinDeclarationGroupingRule()
 }
 
+class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider {
+    override fun getUsageGroupingRule(project: Project): UsageGroupingRule = KotlinDeclarationGroupingRule(0)
+}
 
+class KotlinDeclarationSecondLevelGroupRuleProvider : FileStructureGroupRuleProvider {
+    override fun getUsageGroupingRule(project: Project): UsageGroupingRule = KotlinDeclarationGroupingRule(1)
+}
