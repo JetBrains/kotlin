@@ -56,7 +56,7 @@ void car_engine_backward(void)
     GPIO_SetBits(CAR_ENGINE_GPIO_PORT, CAR_ENGINE_RWHEEL_BKWD_PIN);
 }
 
-void car_engine_turn_left(void)
+void car_engine_turn_right(void)
 {
     car_engine_stop();
     GPIO_SetBits(CAR_ENGINE_GPIO_PORT, CAR_ENGINE_ENABLE_PIN);
@@ -64,7 +64,7 @@ void car_engine_turn_left(void)
     GPIO_SetBits(CAR_ENGINE_GPIO_PORT, CAR_ENGINE_RWHEEL_FWD_PIN);
 }
 
-void car_engine_turn_right(void)
+void car_engine_turn_left(void)
 {
     car_engine_stop();
     GPIO_SetBits(CAR_ENGINE_GPIO_PORT, CAR_ENGINE_ENABLE_PIN);
