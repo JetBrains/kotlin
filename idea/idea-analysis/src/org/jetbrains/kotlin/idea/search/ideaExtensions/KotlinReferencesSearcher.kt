@@ -128,7 +128,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 }
 
                 is KtParameter -> {
-                    val componentFunctionDescriptor = element.dataClassComponentFunction()
+                    val componentFunctionDescriptor = runReadAction { element.dataClassComponentFunction() }
                     if (componentFunctionDescriptor != null) {
                         val containingClass = element.getStrictParentOfType<KtClassOrObject>()?.toLightClass()
                         searchDataClassComponentUsages(queryParameters, containingClass, componentFunctionDescriptor, consumer)
@@ -136,7 +136,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 }
 
                 is KtLightParameter -> {
-                    val componentFunctionDescriptor = element.kotlinOrigin?.dataClassComponentFunction()
+                    val componentFunctionDescriptor = runReadAction { element.kotlinOrigin?.dataClassComponentFunction() }
                     if (componentFunctionDescriptor != null) {
                         searchDataClassComponentUsages(queryParameters, element.method.containingClass, componentFunctionDescriptor, consumer)
                     }
