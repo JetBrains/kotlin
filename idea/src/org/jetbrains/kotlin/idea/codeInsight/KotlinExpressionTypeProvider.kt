@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
@@ -39,27 +38,27 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     }
 
     override fun getInformationHint(element: KtExpression): String {
-        val type = typeByExpression(element) ?: return "Type is unknown"
-        return renderTypeHint(type)
+        val bindingContext = element.analyze()
+
+        return "<html>${renderExpressionType(element, bindingContext)}</html>"
+    }
+
+    private fun renderExpressionType(element: KtExpression, bindingContext: BindingContext): String {
+        if (element is KtCallableDeclaration) {
+            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor
+            if (descriptor != null) {
+                return descriptor.returnType?.let { DescriptorRenderer.HTML.renderType(it) } ?: "Type is unknown"
+            }
+        }
+
+        val expressionType = element.getType(bindingContext) ?: return "Type is unknown"
+        val result = DescriptorRenderer.HTML.renderType(expressionType)
+        val smartCast = bindingContext[BindingContext.SMARTCAST, element]
+        if (smartCast != null) {
+            return result + " (smart cast)"
+        }
+        return result
     }
 
     override fun getErrorHint(): String = "No expression found"
-
-    companion object {
-        fun renderTypeHint(type: KotlinType) = "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>"
-
-        fun typeByExpression(expression: KtExpression): KotlinType? {
-            val bindingContext = expression.analyze()
-
-            if (expression is KtCallableDeclaration) {
-                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
-                if (descriptor != null) {
-                    return descriptor.returnType
-                }
-            }
-
-            return expression.getType(bindingContext)
-        }
-    }
 }
-
