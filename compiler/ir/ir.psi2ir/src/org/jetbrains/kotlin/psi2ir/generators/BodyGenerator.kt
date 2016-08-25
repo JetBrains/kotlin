@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
 class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): GeneratorWithScope {
     override val scope = Scope(scopeOwner)
-    private val loopTable = HashMap<KtExpression, IrLoop>()
+    private val loopTable = HashMap<KtLoopExpression, IrLoop>()
 
     fun generateFunctionBody(ktBody: KtExpression): IrBody {
         resetInternalContext()
@@ -64,7 +65,7 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
     private fun createStatementGenerator() =
             StatementGenerator(context, scopeOwner, this, scope)
 
-    fun putLoop(expression: KtExpression, irLoop: IrLoop) {
+    fun putLoop(expression: KtLoopExpression, irLoop: IrLoop) {
         loopTable[expression] = irLoop
     }
 

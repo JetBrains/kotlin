@@ -1,4 +1,17 @@
 FILE /for.kt
+  FUN public fun testEmpty(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit operator=FOR_LOOP
+        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+        WHILE label=null operator=FOR_LOOP_INNER_WHILE
+          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
+            VAR val s: kotlin.String
+              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
   FUN public fun testIterable(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP

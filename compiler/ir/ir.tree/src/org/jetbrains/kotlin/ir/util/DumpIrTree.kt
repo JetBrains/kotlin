@@ -66,13 +66,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     override fun visitWhileLoop(loop: IrWhileLoop, data: String) {
         loop.dumpLabeledElementWith(data) {
             loop.condition.accept(this, "condition")
-            loop.body.accept(this, "body")
+            loop.body?.accept(this, "body")
         }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) {
         loop.dumpLabeledElementWith(data) {
-            loop.body.accept(this, "body")
+            loop.body?.accept(this, "body")
             loop.condition.accept(this, "condition")
         }
     }

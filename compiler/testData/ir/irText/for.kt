@@ -1,3 +1,7 @@
+fun testEmpty(ss: List<String>) {
+    for (s in ss);
+}
+
 fun testIterable(ss: List<String>) {
     for (s in ss) {
         println(s)

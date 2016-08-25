@@ -7,6 +7,11 @@ FILE /whileDoWhile.kt
         condition: CALL .LT0 type=kotlin.Boolean operator=LT
           arg0: CALL .compareTo type=kotlin.Int operator=LT
             $this: GET_VAR x type=kotlin.Int operator=null
+            other: CONST Int type=kotlin.Int value='0'
+      WHILE label=null operator=WHILE_LOOP
+        condition: CALL .LT0 type=kotlin.Boolean operator=LT
+          arg0: CALL .compareTo type=kotlin.Int operator=LT
+            $this: GET_VAR x type=kotlin.Int operator=null
             other: CONST Int type=kotlin.Int value='5'
         body: BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp0: kotlin.Int
@@ -28,6 +33,11 @@ FILE /whileDoWhile.kt
               CALL .inc type=kotlin.Int operator=POSTFIX_INCR
                 $this: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
+      DO_WHILE label=null operator=DO_WHILE_LOOP
+        condition: CALL .LT0 type=kotlin.Boolean operator=LT
+          arg0: CALL .compareTo type=kotlin.Int operator=LT
+            $this: GET_VAR x type=kotlin.Int operator=null
+            other: CONST Int type=kotlin.Int value='0'
       DO_WHILE label=null operator=DO_WHILE_LOOP
         body: BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp2: kotlin.Int

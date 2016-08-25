@@ -44,7 +44,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
         statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
-        irLoop.body = statementGenerator.generateExpression(ktLoop.body!!)
+        irLoop.body = ktLoop.body?.let { statementGenerator.generateExpression(ktLoop.body!!) }
         irLoop.label = getLoopLabel(ktLoop)
         return irLoop
     }
@@ -105,7 +105,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
         }
 
         val ktLoopRange = ktFor.loopRange!!
-        val ktForBody = ktFor.body!!
+        val ktForBody = ktFor.body
         val iteratorResolvedCall = getOrFail(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, ktLoopRange)
         val hasNextResolvedCall = getOrFail(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, ktLoopRange)
         val nextResolvedCall = getOrFail(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, ktLoopRange)
@@ -150,7 +150,9 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
             statementGenerator.declareComponentVariablesInBlock(ktLoopDestructuringParameter, irInnerBody, VariableLValue(irLoopParameter))
         }
 
-        irInnerBody.addStatement(statementGenerator.generateExpression(ktForBody))
+        if (ktForBody != null) {
+            irInnerBody.addStatement(statementGenerator.generateExpression(ktForBody))
+        }
 
         return irForBlock
     }

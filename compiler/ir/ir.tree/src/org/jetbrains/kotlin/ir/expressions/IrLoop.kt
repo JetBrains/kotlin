@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrLoop : IrExpression {
     val operator: IrOperator?
-    var body: IrExpression
+    var body: IrExpression?
     var condition: IrExpression
     val label: String?
 }
@@ -49,14 +49,12 @@ abstract class IrLoopBase(
             value.setTreeLocation(this, LOOP_CONDITION_SLOT)
         }
 
-    private var bodyImpl: IrExpression? = null
-    override var body: IrExpression
-        get() = bodyImpl!!
+    override var body: IrExpression? = null
         set(value) {
-            value.assertDetached()
-            bodyImpl?.detach()
-            bodyImpl = value
-            value.setTreeLocation(this, LOOP_BODY_SLOT)
+            value?.assertDetached()
+            field?.detach()
+            field = value
+            value?.setTreeLocation(this, LOOP_BODY_SLOT)
         }
 
     override fun getChild(slot: Int): IrElement? =
@@ -98,7 +96,7 @@ class IrWhileLoopImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         condition.accept(visitor, data)
-        body.accept(visitor, data)
+        body?.accept(visitor, data)
     }
 }
 
@@ -125,7 +123,7 @@ class IrDoWhileLoopImpl(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        body.accept(visitor, data)
+        body?.accept(visitor, data)
         condition.accept(visitor, data)
     }
 }
