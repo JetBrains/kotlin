@@ -3258,6 +3258,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("assignedInFinally.kt")
+            public void testAssignedInFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("backingFieldInsideGetter.kt")
             public void testBackingFieldInsideGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
