@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.isValidOperator
@@ -278,7 +279,21 @@ private class Processor(
         //TODO: what about Scala and other JVM-languages?
         val declarationUsageScope = GlobalSearchScope.projectScope(declaration.project).restrictToKotlinSources()
         ReferencesSearch.search(declaration, declarationUsageScope).forEach { reference ->
-            (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+            if (reference is KtDestructuringDeclarationReference) { // declaration usage in form of destructuring declaration
+                val entries = reference.element.entries
+                val componentIndex = when (declaration) {
+                    is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
+                    is KtFunction -> declaration.name?.let { getComponentIndex(it) }
+                    //TODO: java component functions (see KT-13605)
+                    else -> null
+                }
+                if (componentIndex != null && componentIndex <= entries.size) {
+                    processDeclarationOfTypeWithDataClass(entries[componentIndex - 1])
+                }
+            }
+            else {
+                (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+            }
         }
     }
 
@@ -313,8 +328,6 @@ private class Processor(
                         }
                     }
                 }
-
-            //TODO: entry of data type
             }
         }
     }
