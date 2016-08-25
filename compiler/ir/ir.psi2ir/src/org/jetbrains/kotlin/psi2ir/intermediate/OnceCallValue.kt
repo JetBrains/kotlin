@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.types.KotlinType
 
 class OnceCallValue(
-        val statementGenerator: StatementGenerator,
-        val call: CallBuilder,
         val startOffset: Int,
         val endOffset: Int,
+        val statementGenerator: StatementGenerator,
+        val call: CallBuilder,
         val operator: IrOperator? = null
 ): Value {
     private var instantiated = false

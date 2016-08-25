@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.intermediate.Value
-import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
-import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
+import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -183,7 +181,8 @@ class StatementGenerator(
         val resolvedCall = getResolvedCall(expression) ?: throw AssertionError("No resolved call for ${expression.text}")
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
-            TODO("Unexpected VariableAsFunctionResolvedCall")
+            val variableCall = pregenerateCall(resolvedCall.variableCall)
+            return CallGenerator(this).generateCall(expression, variableCall, IrOperator.VARIABLE_AS_FUNCTION)
         }
 
         val descriptor = resolvedCall.resultingDescriptor
@@ -222,7 +221,8 @@ class StatementGenerator(
         val resolvedCall = getResolvedCall(expression) ?: TODO("No resolved call for call expression")
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
-            TODO("VariableAsFunctionResolvedCall = variable call + invoke call")
+            val functionCall = pregenerateCall(resolvedCall.functionCall)
+            return CallGenerator(this).generateCall(expression, functionCall, IrOperator.INVOKE)
         }
 
         return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))

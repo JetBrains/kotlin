@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -50,6 +51,10 @@ class CallGenerator(
         return when (descriptor) {
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
+            is VariableDescriptor ->
+                call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+                    IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
+                }
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, operator, call)
             else ->

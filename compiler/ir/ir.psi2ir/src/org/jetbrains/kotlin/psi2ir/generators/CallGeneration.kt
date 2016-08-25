@@ -109,8 +109,10 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
 fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = CallBuilder(resolvedCall)
 
-    val ktDefaultCallElement = resolvedCall.call.callElement
-    call.callReceiver = generateCallReceiver(ktDefaultCallElement, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.call.isSafeCall())
+    call.callReceiver = generateCallReceiver(resolvedCall.call.callElement,
+                                             resolvedCall.dispatchReceiver,
+                                             resolvedCall.extensionReceiver,
+                                             resolvedCall.call.isSafeCall())
 
     return call
 }
