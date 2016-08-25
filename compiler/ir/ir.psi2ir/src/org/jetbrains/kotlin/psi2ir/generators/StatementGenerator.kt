@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
+import org.jetbrains.kotlin.psi2ir.intermediate.Value
 import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -84,7 +84,7 @@ class StatementGenerator(
         return irBlock
     }
 
-    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrBlockImpl, containerValue: IntermediateValue) {
+    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrBlockImpl, containerValue: Value) {
         val callGenerator = CallGenerator(this)
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)

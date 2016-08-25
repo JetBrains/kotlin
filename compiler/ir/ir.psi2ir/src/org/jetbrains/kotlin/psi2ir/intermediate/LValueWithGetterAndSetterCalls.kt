@@ -31,7 +31,7 @@ class LValueWithGetterAndSetterCalls(
         val startOffset: Int,
         val endOffset: Int,
         val operator: IrOperator? = null
-) : IntermediateReference {
+) : LValue {
     private val descriptor: CallableDescriptor =
             getterCall?.descriptor ?: setterCall?.descriptor ?:
             throw AssertionError("Call-based LValue should have either a getter or a setter call")

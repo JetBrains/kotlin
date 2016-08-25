@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
-class OnceExpressionValue(val irExpression: IrExpression) : IntermediateValue {
+class OnceExpressionValue(val irExpression: IrExpression) : Value {
     init {
         irExpression.assertDetached()
     }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.psi2ir.intermediate.getValueArgumentsInParameterOrder
 import org.jetbrains.kotlin.psi2ir.intermediate.isValueArgumentReorderingRequired
-import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
+import org.jetbrains.kotlin.psi2ir.intermediate.Value
 import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.types.KotlinType
@@ -121,7 +121,7 @@ class CallGenerator(
             valueArgumentsToValueParameters[valueArgument] = valueParameter
         }
 
-        val irArgumentValues = HashMap<ValueParameterDescriptor, IntermediateValue>()
+        val irArgumentValues = HashMap<ValueParameterDescriptor, Value>()
 
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!

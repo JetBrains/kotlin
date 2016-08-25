@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-class TransientReceiverValue(val description: String, override val type: KotlinType?): IntermediateValue {
+class TransientReceiverValue(val description: String, override val type: KotlinType?): Value {
     override fun load(): IrExpression {
         throw AssertionError("Transient receiver should not be instantiated: $description")
     }

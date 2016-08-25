@@ -302,11 +302,7 @@ class OperatorExpressionGenerator(
         val ktLeft = expression.left!!
         val irRhs = statementGenerator.generateExpression(expression.right!!)
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrOperator.EQ)
-
-        return if (irAssignmentReceiver is IntermediateReference)
-            irAssignmentReceiver.store(irRhs)
-        else
-            irAssignmentReceiver.assign { irLValue -> irLValue.store(irRhs) }
+        return irAssignmentReceiver.assign(irRhs)
     }
 
     private fun generateAssignmentReceiver(ktLeft: KtExpression, irOperator: IrOperator): AssignmentReceiver {

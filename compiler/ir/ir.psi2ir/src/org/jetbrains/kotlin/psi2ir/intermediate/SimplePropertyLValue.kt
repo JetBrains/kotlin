@@ -30,7 +30,7 @@ class SimplePropertyLValue(
         val irOperator: IrOperator?,
         val descriptor: PropertyDescriptor,
         val callReceiver: CallReceiver
-) : IntermediateReference, AssignmentReceiver {
+) : LValue, AssignmentReceiver {
     override val type: KotlinType?
         get() = descriptor.type
 
@@ -54,7 +54,7 @@ class SimplePropertyLValue(
         }
     }
 
-    override fun assign(withLValue: (IntermediateReference) -> IrExpression): IrExpression {
+    override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val variablesForReceivers = SmartList<IrVariable>()
 

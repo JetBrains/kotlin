@@ -41,6 +41,12 @@ class CallBuilder(val original: ResolvedCall<*>) {
 val CallBuilder.argumentsCount: Int get() =
         irValueArgumentsByIndex.size
 
+var CallBuilder.lastArgument: IrExpression?
+    get() = irValueArgumentsByIndex.last()
+    set(value) {
+        irValueArgumentsByIndex[argumentsCount - 1] = value
+    }
+
 fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
         descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
@@ -65,10 +71,10 @@ val CallBuilder.explicitReceiverParameter: ReceiverParameterDescriptor? get() =
 val CallBuilder.explicitReceiverType: KotlinType? get() =
         explicitReceiverParameter?.type
 
-fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
+fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: Value) {
     val previousCallReceiver = callReceiver
     callReceiver = object : CallReceiver {
-        override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+        override fun call(withDispatchAndExtensionReceivers: (Value?, Value?) -> IrExpression): IrExpression {
             return previousCallReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 val newDispatchReceiverValue = if (hasExtensionReceiver) dispatchReceiverValue else explicitReceiverValue
                 val newExtensionReceiverValue = if (hasExtensionReceiver) explicitReceiverValue else null

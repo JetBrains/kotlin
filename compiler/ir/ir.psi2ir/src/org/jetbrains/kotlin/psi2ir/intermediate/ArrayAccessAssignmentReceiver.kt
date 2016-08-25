@@ -35,7 +35,7 @@ class ArrayAccessAssignmentReceiver(
                                    indexedSetCall?.let { it.descriptor.valueParameters.last().type } ?:
                                    throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
-    override fun assign(withLValue: (IntermediateReference) -> IrExpression): IrExpression {
+    override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         val hasResult = operator.isAssignmentOperatorWithResult()
         val resultType = if (hasResult) type else callGenerator.context.builtIns.unitType
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, hasResult, operator)
@@ -54,7 +54,17 @@ class ArrayAccessAssignmentReceiver(
         return irBlock
     }
 
-    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {
+    override fun assign(value: IrExpression): IrExpression {
+        if (indexedSetCall == null) throw AssertionError("Array access without indexed-get call")
+        indexedSetCall.setExplicitReceiverValue(OnceExpressionValue(irArray))
+        irIndices.forEachIndexed { i, irIndex ->
+            indexedSetCall.irValueArgumentsByIndex[i] = irIndex
+        }
+        indexedSetCall.lastArgument = value
+        return callGenerator.generateCall(startOffset, endOffset, indexedSetCall, IrOperator.EQ)
+    }
+
+    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: Value, indexValues: List<Value>) {
         setExplicitReceiverValue(arrayValue)
         indexValues.forEachIndexed { i, irIndexValue ->
             irValueArgumentsByIndex[i] = irIndexValue.load()

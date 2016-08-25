@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 
-fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
+fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): Value? =
         receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
-fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue {
+fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): Value {
     if (receiver is TransientReceiver) {
         return TransientReceiverValue(ktDefaultElement.text, receiver.type)
     }

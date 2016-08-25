@@ -29,7 +29,7 @@ class VariableLValue(
         val endOffset: Int,
         val descriptor: VariableDescriptor,
         val irOperator: IrOperator? = null
-) : IntermediateReference, AssignmentReceiver {
+) : LValue, AssignmentReceiver {
     constructor(irVariable: IrVariable, irOperator: IrOperator? = null) :
     this(irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
 
@@ -41,6 +41,6 @@ class VariableLValue(
     override fun store(irExpression: IrExpression): IrExpression =
             IrSetVariableImpl(startOffset, endOffset, descriptor, irExpression, irOperator)
 
-    override fun assign(withLValue: (IntermediateReference) -> IrExpression): IrExpression =
+    override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)
 }
