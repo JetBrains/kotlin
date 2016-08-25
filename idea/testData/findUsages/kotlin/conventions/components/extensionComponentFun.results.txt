@@ -1,1 +1,2 @@
-Value read 13 val (x, y) = f()
+Value read 15 val (x, y) = f()
+Value read 19 val (a, b) = this

@@ -4,10 +4,19 @@
 open class X {
     operator fun <caret>component1(): Int = 0
     operator fun component2(): Int = 1
+
+    fun foo() {
+        val (x, y) = this
+    }
 }
 
 open class Y : X()
-open class Z : Y()
+
+open class Z : Y() {
+    fun bar() {
+        val (x, y) = this
+    }
+}
 
 fun f() = X()
 fun g() = Y()
