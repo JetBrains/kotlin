@@ -41,6 +41,18 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("MultiDeclaration.kt")
+    public void testMultiDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MultiDeclarationInLoop.kt")
+    public void testMultiDeclarationInLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclarationInLoop.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");

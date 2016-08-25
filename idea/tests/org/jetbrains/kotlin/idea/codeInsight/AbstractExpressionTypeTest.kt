@@ -18,18 +18,21 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractExpressionTypeTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getBasePath() = PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/expressionType"
 
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
     protected fun doTest(path: String) {
         myFixture.configureByFile(path)
         val expressionTypeProvider = KotlinExpressionTypeProvider()
         val expressions = expressionTypeProvider.getExpressionsAt(myFixture.elementAtCaret)
         val types = expressions.map { "${it.text.replace('\n', ' ')} -> ${expressionTypeProvider.getInformationHint(it)}" }
-        val expectedTypes = InTextDirectivesUtils.findListWithPrefixes(myFixture.file.text, "// TYPE: ")
-        UsefulTestCase.assertSameElements(types, expectedTypes)
+        val expectedTypes = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// TYPE: ")
+        UsefulTestCase.assertOrderedEquals(types, expectedTypes)
     }
 }

@@ -33,8 +33,8 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
     private fun KtExpression.shouldShowType() = when(this) {
         is KtFunction -> !hasBlockBody() && !hasDeclaredReturnType()
-        is KtProperty -> true
-        is KtStatementExpression -> false
+        is KtProperty, is KtDestructuringDeclarationEntry -> true
+        is KtStatementExpression, is KtDestructuringDeclaration -> false
         else -> true
     }
 
