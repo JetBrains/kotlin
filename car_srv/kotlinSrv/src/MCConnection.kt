@@ -36,6 +36,12 @@ class McTransport() : MCConnectObserver<String> {
         sendBytes(encodeProtoBuf(message))
     }
 
+    fun sendProtoBuf(request: RouteMetricRequest) {
+        val typeMessage = getProtoBufTypeMessage(TaskRequest.Type.ROUTE_METRIC)
+        sendProtoBufType(typeMessage)
+        sendBytes(encodeProtoBuf(request))
+    }
+
     private fun sendProtoBufType(messageType: TaskRequest) {
         val typeBytes = encodeProtoBuf(messageType)
         sendBytes(typeBytes)

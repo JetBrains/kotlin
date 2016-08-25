@@ -53,6 +53,12 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
             val codedOutput = CodedOutputStream(routeBytes)
             protoMessage.writeTo(codedOutput)
         }
+        is RouteMetricRequest -> {
+            val protoSize = protoMessage.getSizeNoTag()
+            routeBytes = ByteArray(protoSize)
+            val codedOutput = CodedOutputStream(routeBytes)
+            protoMessage.writeTo(codedOutput)
+        }
 
         is TaskRequest -> {
             val protoSize = protoMessage.getSizeNoTag()

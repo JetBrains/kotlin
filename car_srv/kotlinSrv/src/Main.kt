@@ -7,6 +7,7 @@ import net.server.handlers.flash.LoadBin
 import net.server.handlers.main.GetLocation
 import net.server.handlers.main.GetSonarData
 import net.server.handlers.main.SetRoute
+import net.server.handlers.main.SetRouteMetric
 import net.server.handlers.rc.Control
 
 val carServerPort: Int = 8888
@@ -19,7 +20,6 @@ fun main(args: Array<String>) {
         println("incorrect config format!")
         js("process.exit(1)")
     }
-
 
     val clArgs = js("process.argv")
     var runAsEmulator = false
@@ -42,11 +42,12 @@ fun main(args: Array<String>) {
         runTests()
     }
 
-    val handlers: MutableMap<String, AbstractHandler> = mutableMapOf()
+    val handlers = mutableMapOf<String, AbstractHandler>()
     handlers.put("/rc/control", Control())
     handlers.put("/loadBin", LoadBin())
     handlers.put("/sonar", GetSonarData(carController))
     handlers.put("/route", SetRoute(carController))
+    handlers.put("/routeMetric", SetRouteMetric(carController))
     handlers.put("/getLocation", GetLocation())
     handlers.put("/debug/memory", Memory())
 

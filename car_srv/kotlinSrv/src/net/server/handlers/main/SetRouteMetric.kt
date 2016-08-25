@@ -2,14 +2,14 @@ package net.server.handlers.main
 
 import CodedInputStream
 import McState
-import RouteRequest
 import RouteResponse
 import control.Controller
 import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
-class SetRoute(var controller: Controller) : AbstractHandler() {
-    val requestBuilder = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0))
+
+class SetRouteMetric(val controller: Controller) : AbstractHandler() {
+    val requestBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
     val responseBuilder = RouteResponse.BuilderRouteResponse(0)
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {
@@ -17,7 +17,7 @@ class SetRoute(var controller: Controller) : AbstractHandler() {
         message.mergeFrom(CodedInputStream(data))
 
         if (McState.instance.isConnected()) {
-            controller.executeRoute(message, callback)
+            controller.executeMetricRoute(message, callback)
             return
         }
 

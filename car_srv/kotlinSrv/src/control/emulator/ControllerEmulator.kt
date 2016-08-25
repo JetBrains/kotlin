@@ -1,6 +1,7 @@
 package control.emulator
 
 import CarState
+import RouteMetricRequest
 import RouteRequest
 import RouteResponse
 import SonarRequest
@@ -10,11 +11,8 @@ import encodeProtoBuf
 import geometry.Line
 import geometry.Vector
 import room.Room
-import setTimeout
-import kotlin.Pair
 
 class ControllerEmulator : Controller {
-
     private val MOVE_VELOCITY = 32.78//sm/s
     private val ROTATION_VELOCITY = 12.3//degrees/s
 
@@ -26,7 +24,7 @@ class ControllerEmulator : Controller {
         ERROR
     }
 
-    override fun executeRoute(route: RouteRequest, callBack: (ByteArray) -> Unit) {
+    override fun executeRoute(route: RouteRequest, callback: (ByteArray) -> Unit) {
         val moveTimes = route.times
         val moveDirections = route.directions
         //list of move direction and time to this move in ms
@@ -44,11 +42,14 @@ class ControllerEmulator : Controller {
 
             commands.add(Pair(moveDirection, value))
         }
-        executeCommand(commands, 0, callBack)
+        executeCommand(commands, 0, callback)
     }
 
-    override fun executeRequestSensorData(sonarRequest: SonarRequest, callBack: (ByteArray) -> Unit) {
+    override fun executeMetricRoute(request: RouteMetricRequest, callback: (ByteArray) -> Unit) {
+        throw UnsupportedOperationException()
+    }
 
+    override fun executeRequestSensorData(sonarRequest: SonarRequest, callback: (ByteArray) -> Unit) {
         val angles = sonarRequest.angles
         val xSensor0 = CarState.instance.x
         val ySensor0 = CarState.instance.y
@@ -92,7 +93,7 @@ class ControllerEmulator : Controller {
         }
         val responseMessage = SonarResponse.BuilderSonarResponse(distances.toIntArray()).build()
         val bytesMessage = encodeProtoBuf(responseMessage)
-        callBack.invoke(bytesMessage)
+        callback.invoke(bytesMessage)
     }
 
     private fun getDistance(xSensor0: Int, ySensor0: Int, sensorLine: Line, sensorVector: Vector): Int {
@@ -169,7 +170,7 @@ class ControllerEmulator : Controller {
         }
 
 //        setTimeout({
-            executeCommand(commands, currentCommandIdx + 1, callBack)
+        executeCommand(commands, currentCommandIdx + 1, callBack)
 //        }, currentCommand.second)
     }
 
