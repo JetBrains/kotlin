@@ -11,7 +11,7 @@ FILE /arrayAugmentedAssignment1.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
-  DUMMY C
+  CLASS CLASS C
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.IntArray

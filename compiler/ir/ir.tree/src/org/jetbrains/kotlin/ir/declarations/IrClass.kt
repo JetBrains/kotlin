@@ -21,38 +21,36 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-interface IrClassElement : IrElement
-
 interface IrClass : IrDeclaration {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.CLASS
 
     override val descriptor: ClassDescriptor
 
-    val children: List<IrClassElement>
+    val members: List<IrDeclaration>
 }
 
 class IrClassImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: ClassDescriptor
-) : IrDeclarationBase(startOffset, endOffset, originKind), IrClass {
-    override val children: MutableList<IrClassElement> = ArrayList()
+) : IrDeclarationBase(startOffset, endOffset, origin), IrClass {
+    override val members: MutableList<IrDeclaration> = ArrayList()
 
-    fun addElement(child: IrClassElement) {
-        child.assertDetached()
-        child.setTreeLocation(this, children.size)
-        children.add(child)
+    fun addMember(member: IrDeclaration) {
+        member.assertDetached()
+        member.setTreeLocation(this, members.size)
+        members.add(member)
     }
 
     override fun getChild(slot: Int): IrElement? =
-            children.getOrNull(slot)
+            members.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         newChild.assertDetached()
-        children.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        children[slot] = newChild.assertCast()
+        members.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
+        members[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)
     }
 
@@ -60,7 +58,7 @@ class IrClassImpl(
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        children.forEach { it.accept(visitor, data) }
+        members.forEach { it.accept(visitor, data) }
     }
 
 }

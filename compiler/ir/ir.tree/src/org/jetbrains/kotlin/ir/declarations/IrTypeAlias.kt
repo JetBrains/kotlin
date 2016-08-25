@@ -16,20 +16,25 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrDummyDeclaration(
+interface IrTypeAlias : IrDeclaration {
+    override val descriptor: TypeAliasDescriptor
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.TYPEALIAS
+}
+
+class IrTypeAliasImpl(
         startOffset: Int,
         endOffset: Int,
-        override val descriptor: DeclarationDescriptor
-) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED) {
-    override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.DUMMY
-
+        origin: IrDeclarationOrigin,
+        override val descriptor: TypeAliasDescriptor
+) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeAlias {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitDummyDeclaration(this, data)
+        return visitor.visitTypeAlias(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
@@ -38,5 +43,7 @@ class IrDummyDeclaration(
 
     override fun getChild(slot: Int): IrElement? = null
 
-    override fun replaceChild(slot: Int, newChild: IrElement) = throwNoSuchSlot(slot)
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        // no children
+    }
 }

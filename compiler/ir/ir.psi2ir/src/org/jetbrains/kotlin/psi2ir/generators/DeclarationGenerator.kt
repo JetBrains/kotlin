@@ -42,17 +42,12 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     )
             }
 
-    fun generateClassOrObjectDeclaration(ktDeclaration: KtClassOrObject): IrDeclaration =
-            IrDummyDeclaration(
-                    ktDeclaration.startOffset, ktDeclaration.endOffset,
-                    getOrFail(BindingContext.CLASS, ktDeclaration)
-            )
+    fun generateClassOrObjectDeclaration(ktClassOrObject: KtClassOrObject): IrClass =
+            ClassGenerator(this).generateClass(ktClassOrObject)
 
     fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
-            IrDummyDeclaration(
-                    ktDeclaration.startOffset, ktDeclaration.endOffset,
-                    getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
-            )
+            IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
+                            getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
 
     fun generateFunctionDeclaration(ktNamedFunction: KtNamedFunction): IrFunction {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktNamedFunction)
@@ -85,11 +80,11 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun createFunction(ktFunction: KtFunction, functionDescriptor: FunctionDescriptor, body: IrBody): IrFunction =
             IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset,
-                           IrDeclarationOriginKind.DEFINED, functionDescriptor, body)
+                           IrDeclarationOrigin.DEFINED, functionDescriptor, body)
 
     fun createSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor, valueInitializer: IrBody?): IrSimpleProperty =
             IrSimplePropertyImpl(ktProperty.startOffset, ktProperty.endOffset,
-                                 IrDeclarationOriginKind.DEFINED, propertyDescriptor, valueInitializer)
+                                 IrDeclarationOrigin.DEFINED, propertyDescriptor, valueInitializer)
 
     fun createPropertyGetter(
             ktPropertyAccessor: KtPropertyAccessor,
@@ -98,7 +93,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             getterBody: IrBody
     ): IrPropertyGetter =
             IrPropertyGetterImpl(ktPropertyAccessor.startOffset, ktPropertyAccessor.endOffset,
-                                 IrDeclarationOriginKind.DEFINED, getterDescriptor, getterBody)
+                                 IrDeclarationOrigin.DEFINED, getterDescriptor, getterBody)
                     .apply { irProperty.getter = this }
 
     fun createPropertySetter(
@@ -108,7 +103,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             setterBody: IrBody
     ) : IrPropertySetter =
             IrPropertySetterImpl(ktPropertyAccessor.startOffset, ktPropertyAccessor.endOffset,
-                                 IrDeclarationOriginKind.DEFINED, setterDescriptor, setterBody)
+                                 IrDeclarationOrigin.DEFINED, setterDescriptor, setterBody)
                     .apply { irProperty.setter = this }
 
     private fun getPropertyDescriptor(ktProperty: KtProperty): PropertyDescriptor {

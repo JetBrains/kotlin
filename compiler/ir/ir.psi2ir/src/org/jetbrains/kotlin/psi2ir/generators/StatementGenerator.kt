@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginKind
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
@@ -67,7 +67,7 @@ class StatementGenerator(
 
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
-        val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOriginKind.DEFINED, variableDescriptor)
+        val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOrigin.DEFINED, variableDescriptor)
         irLocalVariable.initializer = property.initializer?.genExpr()
         return irLocalVariable
     }
@@ -96,7 +96,7 @@ class StatementGenerator(
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
             val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
                                                              IrOperator.COMPONENT_N.withIndex(index + 1))
-            val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOriginKind.DEFINED,
+            val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
                                                 componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
         }

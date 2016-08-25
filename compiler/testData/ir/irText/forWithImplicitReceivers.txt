@@ -1,7 +1,7 @@
 FILE /forWithImplicitReceivers.kt
-  DUMMY FiveTimes
-  DUMMY IntCell
-  DUMMY IReceiver
+  CLASS OBJECT FiveTimes
+  CLASS CLASS IntCell
+  CLASS INTERFACE IReceiver
   FUN public fun IReceiver.test(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP

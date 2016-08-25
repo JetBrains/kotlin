@@ -1,6 +1,6 @@
 FILE /safeCalls.kt
-  DUMMY Ref
-  DUMMY IHost
+  CLASS CLASS Ref
+  CLASS INTERFACE IHost
   FUN public fun test1(/*0*/ x: kotlin.String?): kotlin.Int?
     BLOCK_BODY
       RETURN type=kotlin.Nothing

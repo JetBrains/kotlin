@@ -32,9 +32,9 @@ interface IrFunction : IrDeclaration {
 abstract class IrFunctionBase(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         body: IrBody? = null
-) : IrDeclarationBase(startOffset, endOffset, originKind), IrFunction {
+) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     init {
         body?.setTreeLocation(this, FUNCTION_BODY_SLOT)
     }
@@ -70,10 +70,10 @@ abstract class IrFunctionBase(
 class IrFunctionImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: FunctionDescriptor,
         body: IrBody
-) : IrFunctionBase(startOffset, endOffset, originKind, body) {
+) : IrFunctionBase(startOffset, endOffset, origin, body) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunction(this, data)
 }

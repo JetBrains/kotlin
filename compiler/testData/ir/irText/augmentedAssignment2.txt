@@ -1,5 +1,5 @@
 FILE /augmentedAssignment2.kt
-  DUMMY A
+  CLASS CLASS A
   FUN public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
     BLOCK_BODY
   FUN public operator fun A.minusAssign(/*0*/ s: kotlin.String): kotlin.Unit

@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 
-interface IrDeclaration : IrStatement, IrClassElement {
+interface IrDeclaration : IrStatement {
     val descriptor: DeclarationDescriptor?
     val declarationKind: IrDeclarationKind
-    val originKind: IrDeclarationOriginKind
+    val origin: IrDeclarationOrigin
 }
 
 enum class IrDeclarationKind {
@@ -32,13 +32,15 @@ enum class IrDeclarationKind {
     FUNCTION,
     PROPERTY_GETTER,
     PROPERTY_SETTER,
+    CONSTRUCTOR,
     PROPERTY,
     VARIABLE,
     CLASS,
+    TYPEALIAS,
     DUMMY;
 }
 
-enum class IrDeclarationOriginKind {
+enum class IrDeclarationOrigin {
     DEFINED,
     IR_TEMPORARY_VARIABLE,
 }
@@ -46,5 +48,5 @@ enum class IrDeclarationOriginKind {
 abstract class IrDeclarationBase(
         startOffset: Int,
         endOffset: Int,
-        override val originKind: IrDeclarationOriginKind
+        override val origin: IrDeclarationOrigin
 ) : IrElementBase(startOffset, endOffset), IrDeclaration

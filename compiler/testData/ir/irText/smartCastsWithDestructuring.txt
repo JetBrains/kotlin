@@ -1,6 +1,6 @@
 FILE /smartCastsWithDestructuring.kt
-  DUMMY I1
-  DUMMY I2
+  CLASS INTERFACE I1
+  CLASS INTERFACE I2
   FUN public operator fun I1.component1(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing

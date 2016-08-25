@@ -44,19 +44,19 @@ interface IrPropertySetter : IrPropertyAccessor {
 abstract class IrPropertyAccessorBase(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         body: IrBody
-) : IrFunctionBase(startOffset, endOffset, originKind, body), IrPropertyAccessor {
+) : IrFunctionBase(startOffset, endOffset, origin, body), IrPropertyAccessor {
     override var property: IrProperty? = null
 }
 
 class IrPropertyGetterImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: PropertyGetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(startOffset, endOffset, originKind, body), IrPropertyGetter {
+) : IrPropertyAccessorBase(startOffset, endOffset, origin, body), IrPropertyGetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertyGetter(this, data)
 }
@@ -64,10 +64,10 @@ class IrPropertyGetterImpl(
 class IrPropertySetterImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: PropertySetterDescriptor,
         body: IrBody
-) : IrPropertyAccessorBase(startOffset, endOffset, originKind, body), IrPropertySetter {
+) : IrPropertyAccessorBase(startOffset, endOffset, origin, body), IrPropertySetter {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitPropertySetter(this, data)
 }

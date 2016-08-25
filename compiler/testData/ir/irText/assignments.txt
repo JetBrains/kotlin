@@ -1,5 +1,5 @@
 FILE /assignments.kt
-  DUMMY Ref
+  CLASS CLASS Ref
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

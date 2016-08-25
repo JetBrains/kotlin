@@ -1,5 +1,5 @@
 FILE /typeOperators.kt
-  DUMMY IThing
+  CLASS INTERFACE IThing
   FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing

@@ -33,16 +33,16 @@ interface IrVariable : IrDeclaration {
 class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: VariableDescriptor
-) : IrDeclarationBase(startOffset, endOffset, originKind), IrVariable {
+) : IrDeclarationBase(startOffset, endOffset, origin), IrVariable {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            originKind: IrDeclarationOriginKind,
+            origin: IrDeclarationOrigin,
             descriptor: VariableDescriptor,
             initializer: IrExpression
-    ) : this(startOffset, endOffset, originKind, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }
 

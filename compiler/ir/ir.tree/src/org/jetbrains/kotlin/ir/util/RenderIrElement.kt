@@ -51,6 +51,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
             "PROPERTY_SETTER ${declaration.descriptor.render()} property=${declaration.property?.name()}"
 
+    override fun visitClass(declaration: IrClass, data: Nothing?): String =
+            "CLASS ${declaration.descriptor.kind} ${declaration.descriptor.name}"
+
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
+            "TYPEALIAS ${declaration.descriptor.name} type=${declaration.descriptor.underlyingType.render()}"
+
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
 

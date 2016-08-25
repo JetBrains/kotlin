@@ -44,9 +44,9 @@ interface IrDelegatedProperty : IrProperty {
 abstract class IrPropertyBase(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         override val descriptor: PropertyDescriptor
-) : IrDeclarationBase(startOffset, endOffset, originKind), IrProperty {
+) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
             newGetter?.run { assert(property == null) { "$newGetter: should not have a property" } }
@@ -70,10 +70,10 @@ abstract class IrPropertyBase(
 class IrSimplePropertyImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
         valueInitializer: IrBody? = null
-) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrSimpleProperty {
+) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrSimpleProperty {
     override var valueInitializer: IrBody? = valueInitializer
         set(value) {
             value?.assertDetached()
@@ -106,10 +106,10 @@ class IrSimplePropertyImpl(
 class IrDelegatedPropertyImpl(
         startOffset: Int,
         endOffset: Int,
-        originKind: IrDeclarationOriginKind,
+        origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
         delegateInitializer: IrBody
-) : IrPropertyBase(startOffset, endOffset, originKind, descriptor), IrDelegatedProperty {
+) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrDelegatedProperty {
     override var delegateInitializer: IrBody = delegateInitializer
         set(value) {
             value.assertDetached()

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginKind
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
@@ -40,7 +40,7 @@ class Scope(val scopeOwner: DeclarationDescriptor) {
 
     fun createTemporaryVariable(irExpression: IrExpression, nameHint: String? = null): IrVariable =
             IrVariableImpl(
-                    irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
+                    irExpression.startOffset, irExpression.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
                     createDescriptorForTemporaryVariable(irExpression.type, nameHint),
                     irExpression
             )

@@ -1,6 +1,6 @@
 FILE /arrayAugmentedAssignment2.kt
-  DUMMY IA
-  DUMMY IB
+  CLASS INTERFACE IA
+  CLASS INTERFACE IB
   FUN public fun IB.test(/*0*/ a: IA): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ

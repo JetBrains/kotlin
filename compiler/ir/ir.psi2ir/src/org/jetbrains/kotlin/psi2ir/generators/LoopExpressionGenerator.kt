@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginKind
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
@@ -138,7 +138,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
         val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrOperator.FOR_LOOP_NEXT)
         val irLoopParameter = if (ktLoopParameter != null) {
             val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-            IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOriginKind.DEFINED,
+            IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
                            loopParameterDescriptor, irNextCall)
         }
         else {

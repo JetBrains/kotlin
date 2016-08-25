@@ -1,5 +1,5 @@
 FILE /chainOfSafeCalls.kt
-  DUMMY C
+  CLASS CLASS C
   FUN public fun test(/*0*/ nc: C?): C?
     BLOCK_BODY
       RETURN type=kotlin.Nothing
