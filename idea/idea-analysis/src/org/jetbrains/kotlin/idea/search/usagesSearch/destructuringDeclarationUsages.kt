@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
@@ -179,7 +180,6 @@ private class Processor(
 
     private fun processKotlinDataClassUsage(element: PsiElement): Boolean {
         //TODO: type aliases
-        //TODO: doc-comments
 
         when (element) {
             is KtReferenceExpression -> {
@@ -242,6 +242,8 @@ private class Processor(
 
                 if (element.getStrictParentOfType<KtImportDirective>() != null) return true // ignore usage in import
             }
+
+            is KDocName -> return true // ignore usage in doc-comment
         }
 
         return false // unsupported type of reference

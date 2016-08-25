@@ -8,6 +8,10 @@ fun A.ext1() {
     val (x, y) = getThis()
 }
 
+/**
+ * Doc-comment reference 1: [A]
+ * Doc-comment reference 2: [ext1]
+ */
 fun List<A>.ext1() {
     val (x, y) = get(0)
 }
