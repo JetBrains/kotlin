@@ -327,6 +327,7 @@
     <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.KtStringTemplateExpression"
                              implementationClass="org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider"/>
+    <fileStructureGroupRuleProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationSecondLevelGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.KotlinImportFilteringRule"/>
     <lang.refactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider"/>
     <lang.surroundDescriptor language="kotlin"
