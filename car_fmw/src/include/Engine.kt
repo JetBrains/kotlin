@@ -14,6 +14,9 @@ enum class RouteType(val id: Int) {
 }
 
 object Engine {
+    val VELOCITY_DRIVE: Double = 0.05 // centimeter in millisecond
+    val VEL0CITY_ROTATE: Double = 0.05 // degree in millisecond
+
     fun init() {
         car_engine_init()
     }
@@ -38,12 +41,24 @@ object Engine {
         car_engine_turn_right()
     }
 
-    fun drive(direction: Int) {
+    fun go(direction: Int) {
         when (direction) {
             RouteType.FORWARD.id -> forward()
             RouteType.BACKWARD.id -> backward()
             RouteType.LEFT.id -> left()
             RouteType.RIGHT.id -> right()
         }
+    }
+
+    fun drive(direction: Int, distance: Int) {
+        go(direction)
+        Time.wait((distance.toDouble() / VELOCITY_DRIVE).toInt())
+        stop()
+    }
+
+    fun rotate(direction: Int, degree: Int) {
+        go(direction)
+        Time.wait((degree.toDouble() / VEL0CITY_ROTATE).toInt())
+        stop()
     }
 }

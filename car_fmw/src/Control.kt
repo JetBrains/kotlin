@@ -44,7 +44,7 @@ object Control {
             val time = times[i]
             val direction = directions[i]
 
-            Engine.drive(direction)
+            Engine.go(direction)
             Time.wait(time)
             Engine.stop()
 
