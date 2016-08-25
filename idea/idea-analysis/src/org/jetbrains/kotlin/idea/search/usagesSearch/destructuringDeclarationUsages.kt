@@ -238,6 +238,12 @@ private class Processor(
                                 return true
                             }
 
+                            is KtWhenConditionIsPattern -> {
+                                //TODO: smart cast is possible outside of when or inside other branches!
+                                usePlainSearch(typeRefParent.parent as KtWhenEntry)
+                                return true
+                            }
+
                             is KtBinaryExpressionWithTypeRHS -> {
                                 processSuspiciousExpression(typeRefParent)
                                 return true
