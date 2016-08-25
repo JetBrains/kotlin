@@ -107,6 +107,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("chainOfSafeCalls.kt")
+    public void testChainOfSafeCalls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/chainOfSafeCalls.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conventionComparisons.kt")
     public void testConventionComparisons() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/conventionComparisons.kt");

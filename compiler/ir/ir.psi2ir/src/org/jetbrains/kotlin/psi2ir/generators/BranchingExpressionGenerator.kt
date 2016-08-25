@@ -93,7 +93,7 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
                             generateWhenConditionWithSubject(ktCondition, irSubject)
                         else
                             generateWhenConditionNoSubject(ktCondition)
-                irBranchCondition = irBranchCondition?.let { whenComma(it, irCondition) } ?: irCondition
+                irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
 
             }
 

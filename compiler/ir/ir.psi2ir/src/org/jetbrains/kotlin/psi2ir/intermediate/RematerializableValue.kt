@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 
-class RematerializableValue(val irExpression: IrExpressionWithCopy) : Value {
+class RematerializableValue(val irExpression: IrExpressionWithCopy) : IntermediateValue {
     override val type: KotlinType?
         get() = irExpression.type
 
     override fun load(): IrExpression = irExpression.copy()
 }
 
-fun createRematerializableValue(irExpression: IrExpression): Value? =
+fun createRematerializableValue(irExpression: IrExpression): IntermediateValue? =
         (irExpression as? IrExpressionWithCopy)?.let { RematerializableValue(it) }
 
 inline fun createRematerializableOrTemporary(
@@ -36,7 +36,7 @@ inline fun createRematerializableOrTemporary(
         irExpression: IrExpression,
         nameHint: String? = null,
         addVariable: (IrVariable) -> Unit
-): Value {
+): IntermediateValue {
     val rematerializable = createRematerializableValue(irExpression)
     if (rematerializable != null) {
         return rematerializable
@@ -47,7 +47,7 @@ inline fun createRematerializableOrTemporary(
     return VariableLValue(temporaryVariable)
 }
 
-fun createRematerializableOrTemporary(scope: Scope, irExpression: IrExpression, block: IrBlockImpl, nameHint: String? = null): Value =
+fun createRematerializableOrTemporary(scope: Scope, irExpression: IrExpression, block: IrBlockImpl, nameHint: String? = null): IntermediateValue =
         createRematerializableOrTemporary(scope, irExpression, nameHint) {
             block.addStatement(it)
         }

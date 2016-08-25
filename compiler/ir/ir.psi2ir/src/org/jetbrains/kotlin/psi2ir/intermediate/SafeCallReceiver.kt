@@ -31,14 +31,14 @@ class SafeCallReceiver(
         val startOffset: Int,
         val endOffset: Int,
         val explicitReceiver: IrExpression,
-        val implicitDispatchReceiverValue: Value?
+        val implicitDispatchReceiverValue: IntermediateValue?
 ) : CallReceiver {
-    override fun call(withDispatchAndExtensionReceivers: (Value?, Value?) -> IrExpression): IrExpression {
+    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(explicitReceiver, "safe_receiver")
         val safeReceiverValue = VariableLValue(irTmp)
 
-        val dispatchReceiverValue: Value
-        val extensionReceiverValue: Value?
+        val dispatchReceiverValue: IntermediateValue
+        val extensionReceiverValue: IntermediateValue?
         if (implicitDispatchReceiverValue != null) {
             dispatchReceiverValue = implicitDispatchReceiverValue
             extensionReceiverValue = safeReceiverValue
@@ -56,8 +56,8 @@ class SafeCallReceiver(
         irBlock.addStatement(irTmp)
 
         val irIfThenElse = IrIfThenElseImpl(startOffset, endOffset, resultType,
-                                            generator.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-                                            generator.constNull(startOffset, endOffset),
+                                            generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
+                                            generator.context.constNull(startOffset, endOffset),
                                             irResult,
                                             IrOperator.SAFE_CALL)
         irBlock.addStatement(irIfThenElse)

@@ -64,7 +64,7 @@ class ArrayAccessAssignmentReceiver(
         return callGenerator.generateCall(startOffset, endOffset, indexedSetCall, IrOperator.EQ)
     }
 
-    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: Value, indexValues: List<Value>) {
+    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {
         setExplicitReceiverValue(arrayValue)
         indexValues.forEachIndexed { i, irIndexValue ->
             irValueArgumentsByIndex[i] = irIndexValue.load()

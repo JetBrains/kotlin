@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-interface Value {
+interface IntermediateValue {
     fun load(): IrExpression
     val type: KotlinType?
 }
 
-interface LValue : Value {
+interface LValue : IntermediateValue {
     fun store(irExpression: IrExpression): IrExpression
 }
 
@@ -34,5 +34,5 @@ interface AssignmentReceiver {
 }
 
 interface CallReceiver {
-    fun call(withDispatchAndExtensionReceivers: (Value?, Value?) -> IrExpression): IrExpression
+    fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression
 }

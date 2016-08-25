@@ -121,7 +121,7 @@ class OperatorExpressionGenerator(
         val irArgument0Value = createRematerializableOrTemporary(scope, irArgument0, irBlock, "elvis_lhs")
         irBlock.addStatement(IrIfThenElseImpl(
                 expression.startOffset, expression.endOffset, returnType,
-                equalsNull(expression.startOffset, expression.endOffset, irArgument0Value.load()),
+                context.equalsNull(expression.startOffset, expression.endOffset, irArgument0Value.load()),
                 irArgument1,
                 irArgument0Value.load()
         ))
@@ -133,9 +133,9 @@ class OperatorExpressionGenerator(
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
         return when (irOperator) {
             IrOperator.OROR ->
-                oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
+                context.oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
             IrOperator.ANDAND ->
-                andand(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
+                context.andand(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
             else ->
                 throw AssertionError("Unexpected binary boolean operator $irOperator")
         }

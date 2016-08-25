@@ -29,7 +29,7 @@ class OnceCallValue(
         val statementGenerator: StatementGenerator,
         val call: CallBuilder,
         val operator: IrOperator? = null
-): Value {
+): IntermediateValue {
     private var instantiated = false
 
     override fun load(): IrExpression {
