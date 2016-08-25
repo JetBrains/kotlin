@@ -134,7 +134,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "TRY_CATCH type=${tryCatch.renderType()}"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
-            "DUMMY ${declaration.descriptor.name}"
+            "DUMMY ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.name}"
 
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
             "DUMMY ${expression.description} type=${expression.renderType()}"

@@ -1,0 +1,49 @@
+FILE /classMembers.kt
+  CLASS CLASS C
+    PROPERTY public final val y: kotlin.Int getter=null setter=null
+    PROPERTY public final var z: kotlin.Int getter=null setter=null
+    DUMMY ConstructorDescriptorImpl <init>
+    PROPERTY public final val property: kotlin.Int = 0 getter=null setter=null
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    PROPERTY public final val propertyWithGet: kotlin.Int getter=<get-propertyWithGet> setter=null
+    PROPERTY_GETTER public final fun <get-propertyWithGet>(): kotlin.Int property=propertyWithGet
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CONST Int type=kotlin.Int value='42'
+    PROPERTY public final var propertyWithGetAndSet: kotlin.Int getter=<get-propertyWithGetAndSet> setter=<set-propertyWithGetAndSet>
+    PROPERTY_GETTER public final fun <get-propertyWithGetAndSet>(): kotlin.Int property=propertyWithGetAndSet
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CALL .<get-z> type=kotlin.Int operator=GET_PROPERTY
+            $this: THIS public final class C type=C
+    PROPERTY_SETTER public final fun <set-propertyWithGetAndSet>(/*0*/ value: kotlin.Int): kotlin.Unit property=propertyWithGetAndSet
+      BLOCK_BODY
+        CALL .<set-z> type=kotlin.Unit operator=EQ
+          $this: THIS public final class C type=C
+          <set-?>: GET_VAR value type=kotlin.Int operator=null
+    FUN public final fun function(): kotlin.Unit
+      BLOCK_BODY
+        CALL .println type=kotlin.Unit operator=null
+          message: CONST String type=kotlin.String value='1'
+    FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
+      BLOCK_BODY
+        CALL .println type=kotlin.Unit operator=null
+          message: CONST String type=kotlin.String value='2'
+    CLASS CLASS NestedClass
+      FUN public final fun function(): kotlin.Unit
+        BLOCK_BODY
+          CALL .println type=kotlin.Unit operator=null
+            message: CONST String type=kotlin.String value='3'
+      FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
+        BLOCK_BODY
+          CALL .println type=kotlin.Unit operator=null
+            message: CONST String type=kotlin.String value='4'
+    CLASS INTERFACE NestedInterface
+      FUN public abstract fun foo(): kotlin.Unit
+      FUN public open fun bar(): kotlin.Unit
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing
+            CALL .foo type=kotlin.Unit operator=null
+              $this: THIS public interface NestedInterface type=C.NestedInterface
+    CLASS OBJECT Companion
