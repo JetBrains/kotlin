@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.constNull
 import org.jetbrains.kotlin.psi2ir.generators.equalsNull
 import org.jetbrains.kotlin.psi2ir.intermediate.OnceExpressionValue
+import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableValue
 
 fun inlineSafeCallChains(context: GeneratorContext, element: IrElement) {
     element.accept(InlineSafeCallChains(context), null)
+    element.accept(InlineSafeCallStableReceiverValues(context), null)
 }
 
 class InlineSafeCallChains(val context: GeneratorContext) : IrElementVisitor<Unit, Nothing?> {
@@ -55,29 +57,63 @@ class InlineSafeCallChains(val context: GeneratorContext) : IrElementVisitor<Uni
         outer.root.replaceWith {
             val newBlock = IrBlockImpl(it.startOffset, it.endOffset, it.type, it.hasResult, IrOperator.SAFE_CALL)
             newBlock.addStatement(inner.receiverVariable.detach())
-            outer.nestedCall.acceptChildren(
-                    ReplaceTemporaryVariable(outer.receiverVariable, OnceExpressionValue(inner.nestedCall.detach())),
-                    null)
+
+            val replaceWithValue = OnceExpressionValue(inner.nestedCall.detach())
+            outer.nestedCall.acceptChildren(ReplaceTemporaryVariable(outer.receiverVariable, replaceWithValue), null)
             newBlock.addStatement(IrIfThenElseImpl(
                     it.startOffset, it.endOffset, it.type,
                     context.equalsNull(it.startOffset, it.endOffset, inner.receiverVariable.defaultLoad()),
                     context.constNull(it.startOffset, it.endOffset),
                     outer.nestedCall.detach(),
                     IrOperator.SAFE_CALL))
+
             newBlock
         }
     }
 
-    private class SafeCallInfo(val root: IrBlock, val receiverVariable: IrVariable, val nestedCall: IrExpression) {
-        val receiverValue = receiverVariable.initializer
-    }
 
-    private fun getSafeCallInfo(block: IrBlock): SafeCallInfo? {
-        if (block.operator != IrOperator.SAFE_CALL) return null
-        val receiverVariable = block.statements[0] as? IrVariable ?: return null
-        if (receiverVariable.initializer == null) return null
-        val nestedCall = (block.statements[1] as? IrWhen)?.elseBranch ?: return null
-        return SafeCallInfo(block, receiverVariable, nestedCall)
-    }
 }
 
+internal class SafeCallInfo(val root: IrBlock, val receiverVariable: IrVariable, val ifThenElse: IrWhen, val nestedCall: IrExpression) {
+    val receiverValue = receiverVariable.initializer!!
+}
+
+internal fun getSafeCallInfo(block: IrBlock): SafeCallInfo? {
+    if (block.operator != IrOperator.SAFE_CALL) return null
+    val receiverVariable = block.statements[0] as? IrVariable ?: return null
+    if (receiverVariable.initializer == null) return null
+    val irWhen = (block.statements[1] as? IrWhen) ?: return null
+    val nestedCall = irWhen.elseBranch ?: return null
+    return SafeCallInfo(block, receiverVariable, irWhen, nestedCall)
+}
+
+class InlineSafeCallStableReceiverValues(val context: GeneratorContext) : IrElementVisitor<Unit, Nothing?> {
+    override fun visitElement(element: IrElement, data: Nothing?) {
+        element.acceptChildren(this, data)
+    }
+
+    override fun visitBlock(expression: IrBlock, data: Nothing?) {
+        expression.acceptChildren(this, data)
+
+        if (expression.operator == IrOperator.SAFE_CALL) {
+            val safeCall = getSafeCallInfo(expression) ?: return
+            if (isOkToInlineReceiverValue(safeCall.receiverValue)) {
+                expression.replaceWith {
+                    val replaceWithValue = createRematerializableValue(safeCall.receiverValue) ?: return
+                    safeCall.ifThenElse.acceptChildren(ReplaceTemporaryVariable(safeCall.receiverVariable, replaceWithValue), null)
+                    safeCall.ifThenElse.detach()
+                }
+            }
+        }
+    }
+
+    private fun isOkToInlineReceiverValue(receiverValue: IrExpression): Boolean {
+        return if (receiverValue is IrGetVariable) {
+            !receiverValue.descriptor.isVar
+        }
+        else {
+            // For now, IrExpressionWithCopy has stable instances only.
+            receiverValue is IrExpressionWithCopy
+        }
+    }
+}

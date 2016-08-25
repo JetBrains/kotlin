@@ -28,14 +28,11 @@ IrFile /variableAsFunctionCall.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BLOCK type=kotlin.String? hasResult=true operator=SAFE_CALL
-            VAR val tmp0_safe_receiver: kotlin.String?
-              GET_VAR ns type=kotlin.String? operator=null
-            WHEN type=kotlin.String? operator=SAFE_CALL
-              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
-              else: CALL .invoke type=kotlin.String operator=null
-                $this: CALL .k type=() -> kotlin.String operator=null
-                  $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+          WHEN type=kotlin.String? operator=SAFE_CALL
+            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR ns type=kotlin.String? operator=null
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: CONST Null type=kotlin.Nothing? value='null'
+            else: CALL .invoke type=kotlin.String operator=null
+              $this: CALL .k type=() -> kotlin.String operator=null
+                $this: GET_VAR ns type=kotlin.String? operator=null

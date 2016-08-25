@@ -13,16 +13,13 @@ IrFile /safeCallWithIncrementDecrement.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
-            VAR val tmp0_safe_receiver: kotlin.Int?
-              $RECEIVER of: inc type=kotlin.Int?
-            WHEN type=kotlin.Int? operator=SAFE_CALL
-              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR tmp0_safe_receiver type=kotlin.Int? operator=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
-              else: CALL .inc type=kotlin.Int operator=null
-                $this: GET_VAR tmp0_safe_receiver type=kotlin.Int? operator=null
+          WHEN type=kotlin.Int? operator=SAFE_CALL
+            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+              arg0: $RECEIVER of: inc type=kotlin.Int?
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: CONST Null type=kotlin.Nothing? value='null'
+            else: CALL .inc type=kotlin.Int operator=null
+              $this: $RECEIVER of: inc type=kotlin.Int?
   IrFunction public operator fun kotlin.Int?.get(/*0*/ index: kotlin.Int): kotlin.Int
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -34,38 +31,32 @@ IrFile /safeCallWithIncrementDecrement.kt
   IrFunction public fun testProperty(/*0*/ nc: test.C?): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
-        BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: test.C?
-            GET_VAR nc type=test.C? operator=null
-          WHEN type=kotlin.Int? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CONST Null type=kotlin.Nothing? value='null'
-            else: BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
-              VAR val tmp1: kotlin.Int
-                CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
-                  $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-              CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
-                $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-                value: CALL .inc type=kotlin.Int? operator=POSTFIX_INCR
-                  $receiver: GET_VAR tmp1 type=kotlin.Int operator=null
-              GET_VAR tmp1 type=kotlin.Int operator=null
+        WHEN type=kotlin.Int? operator=SAFE_CALL
+          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+            arg0: GET_VAR nc type=test.C? operator=null
+            arg1: CONST Null type=kotlin.Nothing? value='null'
+          then: CONST Null type=kotlin.Nothing? value='null'
+          else: BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
+            VAR val tmp1: kotlin.Int
+              CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR nc type=test.C? operator=null
+            CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
+              $this: GET_VAR nc type=test.C? operator=null
+              value: CALL .inc type=kotlin.Int? operator=POSTFIX_INCR
+                $receiver: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
   IrFunction public fun testArrayAccess(/*0*/ nc: test.C?): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         BLOCK type=kotlin.Int hasResult=true operator=POSTFIX_INCR
           VAR val tmp3_array: kotlin.Int?
-            BLOCK type=kotlin.Int? hasResult=true operator=SAFE_CALL
-              VAR val tmp0_safe_receiver: test.C?
-                GET_VAR nc type=test.C? operator=null
-              WHEN type=kotlin.Int? operator=SAFE_CALL
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-                  arg1: CONST Null type=kotlin.Nothing? value='null'
-                then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
-                  $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
+            WHEN type=kotlin.Int? operator=SAFE_CALL
+              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                arg0: GET_VAR nc type=test.C? operator=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: CONST Null type=kotlin.Nothing? value='null'
+              else: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+                $this: GET_VAR nc type=test.C? operator=null
           VAR val tmp4: kotlin.Int
             CALL .get type=kotlin.Int operator=POSTFIX_INCR
               $receiver: GET_VAR tmp3_array type=kotlin.Int? operator=null
