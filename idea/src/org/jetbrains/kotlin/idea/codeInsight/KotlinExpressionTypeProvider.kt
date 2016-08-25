@@ -18,11 +18,17 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.actions.ShowExpressionTypeAction
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtStatementExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
@@ -33,9 +39,27 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     }
 
     override fun getInformationHint(element: KtExpression): String {
-        val type = ShowExpressionTypeAction.typeByExpression(element) ?: return "Type is unknown"
-        return ShowExpressionTypeAction.renderTypeHint(type)
+        val type = typeByExpression(element) ?: return "Type is unknown"
+        return renderTypeHint(type)
     }
 
     override fun getErrorHint(): String = "No expression found"
+
+    companion object {
+        fun renderTypeHint(type: KotlinType) = "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>"
+
+        fun typeByExpression(expression: KtExpression): KotlinType? {
+            val bindingContext = expression.analyze()
+
+            if (expression is KtCallableDeclaration) {
+                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
+                if (descriptor != null) {
+                    return descriptor.returnType
+                }
+            }
+
+            return expression.getType(bindingContext)
+        }
+    }
 }
+
