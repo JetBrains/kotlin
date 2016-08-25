@@ -65,8 +65,9 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
                 val lightClass = declaration.toLightClass() ?: return null
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestClass(lightClass)) return null
+                val qualifiedName = lightClass.qualifiedName ?: return null
 
-                "java:suite://${lightClass.qualifiedName!!}" to framework
+                "java:suite://$qualifiedName" to framework
             }
 
             is KtNamedFunction -> {
