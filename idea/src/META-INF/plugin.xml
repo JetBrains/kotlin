@@ -132,6 +132,11 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+    <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
+            text="Check Component Functions Usage Search">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
     <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>

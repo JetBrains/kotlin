@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ClassInheritorsSearch
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.search.unionSafe
+import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch.*
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
@@ -51,6 +53,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.isValidOperator
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
+
+enum class DestructuringDeclarationUsageSearch {
+    ALWAYS_SMART, ALWAYS_PLAIN, PLAIN_WHEN_NEEDED
+}
+
+var destructuringDeclarationUsageSearchMode = if (ApplicationManager.getApplication().isUnitTestMode) ALWAYS_SMART else PLAIN_WHEN_NEEDED
 
 //TODO: compiled code
 //TODO: check if it's too expensive
@@ -72,8 +80,12 @@ fun findDestructuringDeclarationUsages(
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
 ) {
-    // for local scope it's faster to use plain search
-    if (scope is LocalSearchScope) {
+    val usePlainSearch = when (destructuringDeclarationUsageSearchMode) {
+        ALWAYS_SMART -> false
+        ALWAYS_PLAIN -> true
+        PLAIN_WHEN_NEEDED -> scope is LocalSearchScope // for local scope it's faster to use plain search
+    }
+    if (usePlainSearch) {
         doPlainSearch(ktDeclaration, scope, optimizer)
         return
     }
@@ -130,17 +142,18 @@ private class Processor(
         val classesToSearch = listOf(psiClass) + ClassInheritorsSearch.search(parameters).findAll()
 
         for (classToSearch in classesToSearch) {
-            ReferencesSearch.search(classToSearch).forEach(Processor { reference ->
-                if (!processDataClassUsage(reference)) {
-                    //TODO
-                    val element = reference.element
-                    val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
-                    val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
-                    TODO("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
+            ReferencesSearch.search(classToSearch).forEach(Processor processor@ { reference -> //TODO: see KT-13607
+                if (processDataClassUsage(reference)) return@processor true
+
+                if (destructuringDeclarationUsageSearchMode != ALWAYS_SMART) {
+                    plainSearchHandler(searchScope)
+                    return@processor false
                 }
-                else {
-                    true
-                }
+
+                val element = reference.element
+                val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
+                val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
+                error("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
             })
 
             // we must use plain search inside our data class (and inheritors) because implicit 'this' can happen anywhere
