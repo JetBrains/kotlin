@@ -561,6 +561,10 @@ fun main(args: Array<String>) {
             model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
         }
 
+        testClass<AbstractExpressionTypeTest>() {
+            model("codeInsight/expressionType")
+        }
+
         testClass<AbstractBackspaceHandlerTest>() {
             model("editor/backspaceHandler")
         }
