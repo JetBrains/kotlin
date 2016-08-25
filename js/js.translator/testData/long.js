@@ -279,6 +279,10 @@
              this.getLowBitsUnsigned();
     };
 
+    /** @return {number} The 32-bit hashCode of this value. */
+    Kotlin.Long.prototype.hashCode = function() {
+      return this.high_ ^ this.low_;
+    };
 
     /**
      * @param {number=} opt_radix The radix in which the text should be written.
