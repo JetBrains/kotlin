@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
-import org.jetbrains.kotlin.psi2ir.intermediate.PregeneratedCall
+import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.types.KotlinType
 
 class OnceCallValue(
         val statementGenerator: StatementGenerator,
-        val call: PregeneratedCall,
+        val call: CallBuilder,
         val startOffset: Int,
         val endOffset: Int,
         val operator: IrOperator? = null

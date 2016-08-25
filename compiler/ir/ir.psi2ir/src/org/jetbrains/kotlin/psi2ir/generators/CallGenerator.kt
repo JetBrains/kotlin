@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.PregeneratedCall
+import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.psi2ir.intermediate.getValueArgumentsInParameterOrder
 import org.jetbrains.kotlin.psi2ir.intermediate.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
@@ -42,7 +42,7 @@ class CallGenerator(
     fun generateCall(
             startOffset: Int,
             endOffset: Int,
-            call: PregeneratedCall,
+            call: CallBuilder,
             operator: IrOperator? = null
     ): IrExpression {
         val descriptor = call.descriptor
@@ -61,7 +61,7 @@ class CallGenerator(
             descriptor: PropertyDescriptor,
             startOffset: Int,
             endOffset: Int,
-            call: PregeneratedCall
+            call: CallBuilder
     ): IrExpression {
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!,
@@ -76,7 +76,7 @@ class CallGenerator(
             startOffset: Int,
             endOffset: Int,
             operator: IrOperator?,
-            call: PregeneratedCall
+            call: CallBuilder
     ): IrExpression {
         val returnType = descriptor.returnType
 
@@ -105,7 +105,7 @@ class CallGenerator(
             irCall: IrCall,
             startOffset: Int,
             endOffset: Int,
-            call: PregeneratedCall,
+            call: CallBuilder,
             resultType: KotlinType?
     ): IrExpression {
         val resolvedCall = call.original
@@ -141,8 +141,8 @@ class CallGenerator(
     }
 }
 
-fun CallGenerator.generateCall(ktElement: KtElement, call: PregeneratedCall, operator: IrOperator? = null) =
+fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, operator: IrOperator? = null) =
         generateCall(ktElement.startOffset, ktElement.endOffset, call, operator)
 
-fun CallGenerator.generateCall(irExpression: IrExpression, call: PregeneratedCall, operator: IrOperator? = null) =
+fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, operator: IrOperator? = null) =
         generateCall(irExpression.startOffset, irExpression.endOffset, call, operator)

@@ -24,8 +24,8 @@ import java.lang.AssertionError
 class ArrayAccessAssignmentReceiver(
         val irArray: IrExpression,
         val irIndices: List<IrExpression>,
-        val indexedGetCall: PregeneratedCall?,
-        val indexedSetCall: PregeneratedCall?,
+        val indexedGetCall: CallBuilder?,
+        val indexedSetCall: CallBuilder?,
         val callGenerator: CallGenerator,
         val startOffset: Int,
         val endOffset: Int,
@@ -54,7 +54,7 @@ class ArrayAccessAssignmentReceiver(
         return irBlock
     }
 
-    private fun PregeneratedCall.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {
+    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {
         setExplicitReceiverValue(arrayValue)
         indexValues.forEachIndexed { i, irIndexValue ->
             irValueArgumentsByIndex[i] = irIndexValue.load()

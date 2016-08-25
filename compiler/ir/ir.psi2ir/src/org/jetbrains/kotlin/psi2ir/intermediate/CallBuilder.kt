@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
-class PregeneratedCall(val original: ResolvedCall<*>) {
+class CallBuilder(val original: ResolvedCall<*>) {
     val descriptor: CallableDescriptor = original.resultingDescriptor
 
     var superQualifier: ClassDescriptor? = null
@@ -38,34 +38,34 @@ class PregeneratedCall(val original: ResolvedCall<*>) {
             irValueArgumentsByIndex[valueParameterDescriptor.index]
 }
 
-val PregeneratedCall.argumentsCount: Int get() =
+val CallBuilder.argumentsCount: Int get() =
         irValueArgumentsByIndex.size
 
-fun PregeneratedCall.getValueArgumentsInParameterOrder(): List<IrExpression?> =
+fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
         descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
-fun PregeneratedCall.isValueArgumentReorderingRequired() =
+fun CallBuilder.isValueArgumentReorderingRequired() =
         original.isValueArgumentReorderingRequired()
 
-val PregeneratedCall.hasExtensionReceiver: Boolean get() =
+val CallBuilder.hasExtensionReceiver: Boolean get() =
         descriptor.extensionReceiverParameter != null
 
-val PregeneratedCall.hasDispatchReceiver: Boolean get() =
+val CallBuilder.hasDispatchReceiver: Boolean get() =
         descriptor.dispatchReceiverParameter != null
 
-val PregeneratedCall.extensionReceiverType: KotlinType? get() =
+val CallBuilder.extensionReceiverType: KotlinType? get() =
         descriptor.extensionReceiverParameter?.type
 
-val PregeneratedCall.dispatchReceiverType: KotlinType? get() =
+val CallBuilder.dispatchReceiverType: KotlinType? get() =
         descriptor.dispatchReceiverParameter?.type
 
-val PregeneratedCall.explicitReceiverParameter: ReceiverParameterDescriptor? get() =
+val CallBuilder.explicitReceiverParameter: ReceiverParameterDescriptor? get() =
         descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
 
-val PregeneratedCall.explicitReceiverType: KotlinType? get() =
+val CallBuilder.explicitReceiverType: KotlinType? get() =
         explicitReceiverParameter?.type
 
-fun PregeneratedCall.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
+fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
     val previousCallReceiver = callReceiver
     callReceiver = object : CallReceiver {
         override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {

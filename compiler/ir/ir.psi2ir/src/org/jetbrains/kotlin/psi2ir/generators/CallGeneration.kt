@@ -96,7 +96,7 @@ fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgumen
                 TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
         }
 
-fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): PregeneratedCall {
+fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = pregenerateCallReceivers(resolvedCall)
 
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
@@ -106,8 +106,8 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): Pregenera
     return call
 }
 
-fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): PregeneratedCall {
-    val call = PregeneratedCall(resolvedCall)
+fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
+    val call = CallBuilder(resolvedCall)
 
     val ktDefaultCallElement = resolvedCall.call.callElement
     call.callReceiver = generateCallReceiver(ktDefaultCallElement, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.call.isSafeCall())

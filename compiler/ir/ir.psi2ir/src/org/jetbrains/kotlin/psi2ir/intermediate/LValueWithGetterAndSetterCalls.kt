@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
-import org.jetbrains.kotlin.psi2ir.intermediate.PregeneratedCall
+import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.psi2ir.intermediate.argumentsCount
 import org.jetbrains.kotlin.types.KotlinType
 
 class LValueWithGetterAndSetterCalls(
         val callGenerator: CallGenerator,
-        val getterCall: PregeneratedCall?,
-        val setterCall: PregeneratedCall?,
+        val getterCall: CallBuilder?,
+        val setterCall: CallBuilder?,
         val startOffset: Int,
         val endOffset: Int,
         val operator: IrOperator? = null
