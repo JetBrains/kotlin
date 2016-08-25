@@ -207,7 +207,6 @@ class StatementGenerator(
                         }
                     }
                 is PropertyDescriptor -> {
-                    // TODO safe calls
                     CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
                 }
                 is VariableDescriptor ->
@@ -226,9 +225,14 @@ class StatementGenerator(
             TODO("VariableAsFunctionResolvedCall = variable call + invoke call")
         }
 
-        // TODO safe calls
-
         return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
+    }
+
+    override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Nothing?): IrStatement {
+        val indexedGetCall = getOrFail(BindingContext.INDEXED_LVALUE_GET, expression)
+
+        return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset,
+                                                pregenerateCall(indexedGetCall), IrOperator.GET_ARRAY_ELEMENT)
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
@@ -297,6 +301,5 @@ class StatementGenerator(
 
     override fun visitTryExpression(expression: KtTryExpression, data: Nothing?): IrStatement =
             TryCatchExpressionGenerator(this).generateTryCatch(expression)
+
 }
-
-

@@ -53,6 +53,7 @@ interface IrOperator {
     object RANGE : IrOperatorImpl("RANGE")
 
     object INVOKE : IrOperatorImpl("INVOKE")
+    object GET_ARRAY_ELEMENT : IrOperatorImpl("GET_ARRAY_ELEMENT")
 
     object PREFIX_INCR : IrOperatorImpl("PREFIX_INCR")
     object PREFIX_DECR : IrOperatorImpl("PREFIX_DECR")

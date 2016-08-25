@@ -1,0 +1,24 @@
+IrFile /arrayAccess.kt
+  IrProperty public val p: kotlin.Int = 0 getter=null setter=null
+    IrExpressionBody
+      CONST Int type=kotlin.Int value='0'
+  IrFunction public fun foo(): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          CONST Int type=kotlin.Int value='1'
+  IrFunction public fun test(/*0*/ a: kotlin.IntArray): kotlin.Int
+    IrExpressionBody
+      BLOCK type=<no-type> hasResult=false operator=null
+        RETURN type=<no-type>
+          CALL .plus type=kotlin.Int operator=PLUS
+            $this: CALL .plus type=kotlin.Int operator=PLUS
+              $this: CALL .get type=kotlin.Int operator=GET_ARRAY_ELEMENT
+                $this: GET_VAR a type=kotlin.IntArray operator=null
+                index: CONST Int type=kotlin.Int value='0'
+              other: CALL .get type=kotlin.Int operator=GET_ARRAY_ELEMENT
+                $this: GET_VAR a type=kotlin.IntArray operator=null
+                index: CALL .<get-p> type=kotlin.Int operator=GET_PROPERTY
+            other: CALL .get type=kotlin.Int operator=GET_ARRAY_ELEMENT
+              $this: GET_VAR a type=kotlin.IntArray operator=null
+              index: CALL .foo type=kotlin.Int operator=null
