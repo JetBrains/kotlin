@@ -98,6 +98,7 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: Any?) {
         if (msg is DefaultHttpContent) {
+            // TODO: refactor variable names. It's hard as hell to read code with "contentBytes" and "content(!)s(!)Bytes" in lines of code.
             val contentsBytes = msg.content()
             contentBytes = ByteArray(contentsBytes.capacity())
             contentsBytes.readBytes(contentBytes)

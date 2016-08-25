@@ -6,7 +6,30 @@ import io.netty.channel.socket.nio.NioServerSocketChannel
 import kotlin.concurrent.thread
 
 object Server {
+    enum class ServerMode {
+        IDLE,
+        MANUAL_MODE,
+        PERIMETER_BUILDING;
+
+        companion object {
+            fun fromProtoMode(mode: ModeChange.Mode): ServerMode {
+                return when (mode) {
+                    ModeChange.Mode.ManualControl -> MANUAL_MODE
+                    ModeChange.Mode.PerimeterBuilding -> PERIMETER_BUILDING
+                    else -> throw IllegalArgumentException("Illegal argument when parsing ServerMode from Protobuf Mode")
+                }
+            }
+        }
+    }
+
     private val handlerThreadsCount: Int = 10
+    var serverMode = ServerMode.IDLE
+
+    fun changeMode(newMode: ServerMode) {
+        println("Changing mode from ${serverMode.toString()} to ${newMode.toString()}")
+        serverMode = newMode
+    }
+
     fun getWebServerThread(webServerPort: Int): Thread {
         return thread(false, false, null, "webServer", -1, {
             println("web server started")

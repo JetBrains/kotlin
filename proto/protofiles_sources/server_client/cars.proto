@@ -1,8 +1,0 @@
-package carkot;
-
-option java_package = "client";
-option java_out_classname = "Car";
-
-message car {
-    repeated string ids = 1;
-}
