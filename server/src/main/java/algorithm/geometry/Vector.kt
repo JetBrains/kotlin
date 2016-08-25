@@ -1,4 +1,4 @@
-package algorithm
+package algorithm.geometry
 
 class Vector constructor(val x: Double, val y: Double) {
 

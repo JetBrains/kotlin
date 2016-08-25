@@ -11,10 +11,14 @@ import encodeProtoBuf
 import geometry.Line
 import geometry.Vector
 import room.Room
+import kotlin.Pair
 
 class ControllerEmulator : Controller {
-    private val MOVE_VELOCITY = 32.78//sm/s
-    private val ROTATION_VELOCITY = 12.3//degrees/s
+
+    private val MOVE_VELOCITY = 0.05//sm/ms
+    private val ROTATION_VELOCITY = 0.05//degrees/ms
+
+    private val ADD_RANDOM = false
 
     enum class MoveDirection {
         LEFT,
@@ -87,7 +91,7 @@ class ControllerEmulator : Controller {
             if (distance == -1) {
                 distances.add(distance)
             } else {
-                val delta = getRandomIntFrom(IntArray(5, { x -> x - 2 }))//return one of -2 -1 0 1 or 2
+                val delta = if (ADD_RANDOM) getRandomIntFrom(IntArray(5, { x -> x - 2 })) else 0//return one of -2 -1 0 1 or 2
                 distances.add(distance + delta)
             }
         }
@@ -119,14 +123,14 @@ class ControllerEmulator : Controller {
                 continue
             }
             val currentDistance = Math.round(Math.sqrt(Math.pow(xIntersection - xSensor0, 2.0)
-                    + Math.pow(yIntersection - ySensor0, 2.0)))
+                    + Math.pow(yIntersection - ySensor0, 2.0))*100000)
             if (currentDistance < result) {
                 result = currentDistance
             }
         }
-        if (result < 5 || result > 500) {
-            return -1
-        }
+//        if (result < 5 || result > 500) {
+//            return -1
+//        }
         return result
     }
 
@@ -158,13 +162,13 @@ class ControllerEmulator : Controller {
         //refresh car state
         val carInstance = CarState.instance
         val commandTime = currentCommand.second
-        val delta = Math.random() * 0.2 + 0.9// delta in [0.9, 1.1)
+        val delta = if (ADD_RANDOM) Math.random() * 0.2 + 0.9 else 1.0// delta in [0.9, 1.1)
         val commandTimeIncludeRandom = (commandTime * delta).toInt()
         when (currentCommand.first) {
-            MoveDirection.FORWARD -> carInstance.moving((commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
-            MoveDirection.BACKWARD -> carInstance.moving(-(commandTimeIncludeRandom * MOVE_VELOCITY).toInt() / 1000)
-            MoveDirection.RIGHT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
-            MoveDirection.LEFT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt() / 1000)
+            MoveDirection.FORWARD -> carInstance.moving((commandTimeIncludeRandom * MOVE_VELOCITY).toInt())
+            MoveDirection.BACKWARD -> carInstance.moving(-(commandTimeIncludeRandom * MOVE_VELOCITY).toInt())
+            MoveDirection.RIGHT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt())
+            MoveDirection.LEFT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt())
             else -> {
             }
         }

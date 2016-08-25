@@ -21,7 +21,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     protected val LEFT = 2
     protected val RIGHT = 3
 
-    private var prevState = CarState.WALL
+    private var prevState:CarState? = null
 
     private var prevSonarDistances = mapOf<Int, Double>()
 
@@ -33,7 +33,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     protected fun getData(angles: IntArray): DoubleArray {
 
-        val copyElemCount = 5
+        val copyElemCount = 1
         val anglesCoped = IntArray(angles.size * copyElemCount, { angles[it / copyElemCount] })
 
         val message = SonarRequest.BuilderSonarRequest(anglesCoped).build()
@@ -50,7 +50,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             val distances = exchanger.exchange(IntArray(0), 20, TimeUnit.SECONDS)
             val result = DoubleArray(angles.size)
             for (i in 0..result.size - 1) {
-                //todo sonar can send -1!!!
                 val distancesOnCurrentAngle = distances.drop(i * copyElemCount).take(copyElemCount)
                 var sum = 0
                 for (distance in distancesOnCurrentAngle) {
@@ -59,7 +58,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
                     }
                 }
                 if (sum != 0) {
-                    result[i] = sum.toDouble() / copyElemCount
+                    result[i] = (sum.toDouble()) / (100000*copyElemCount)
                 }
             }
             return result
@@ -108,6 +107,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         val state = getCarState(anglesDistances)
 
         val command = getCommand(anglesDistances, state)
+        calculateCarPosition(command, state)
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.times))
 
@@ -117,7 +117,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         moveCar(command)
     }
 
-    protected fun getPrevState(): CarState {
+
+    protected fun getPrevState(): CarState? {
         return prevState
     }
 
@@ -125,6 +126,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         return prevSonarDistances
     }
 
+    protected abstract fun calculateCarPosition(route: RouteRequest, state: CarState)
     protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState
     protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest
     protected abstract fun getAngles(): IntArray

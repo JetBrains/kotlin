@@ -14,6 +14,7 @@ import io.netty.util.AttributeKey
 import objects.Environment
 import setRouteUrl
 import sonarUrl
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -84,8 +85,8 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     }
 
     private fun handlerSonarResponse(message: SonarResponse, angles: IntArray) {
-//        println("request angles: ${Arrays.toString(angles)}")
-//        println("distances from sonar: ${Arrays.toString(message.distances)}")
+        println("request angles: ${Arrays.toString(angles)}")
+        println("distances from sonar: ${Arrays.toString(message.distances)}")
         try {
             DebugClInterface.exchanger.exchange(message.distances, 20, TimeUnit.SECONDS)
         } catch (e: InterruptedException) {

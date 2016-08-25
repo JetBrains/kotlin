@@ -1,6 +1,7 @@
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
+import algorithm.RoomModel
 import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
@@ -10,7 +11,7 @@ import java.util.concurrent.Exchanger
 object DebugClInterface {
 
     val exchanger = Exchanger<IntArray>()
-    var algorithm: AbstractAlgorithm? = null
+    var algorithmImpl: AbstractAlgorithm? = null
 
     private val routeRegex = Regex("route [0-9]{1,10}")
     private val sonarRegex = Regex("sonar [0-9]{1,10}")
@@ -56,13 +57,33 @@ object DebugClInterface {
             "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
-            "alg" -> {
-                if (algorithm == null) {
-                    algorithm = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+            "points" -> println(algorithm.RoomModel.lines)
+            "pos" -> {
+                val tmp = algorithmImpl
+                if (tmp is RoomBypassingAlgorithm) {
+                    println("length: ${tmp.wallLength} angleOX: ${tmp.wallAngleWithOX}")
                 }
-                algorithm!!.iterate()
             }
+            "alg" -> executeAlg(readString)
             else -> printNotSupportedCommand(readString)
+        }
+    }
+
+    private fun executeAlg(readString: String) {
+        val params = readString.split(" ")
+        var count =
+                if (params.size == 2) try {
+                    params[1].toInt()
+                } catch (e: Exception) {
+                    1
+                } else 1
+
+        if (algorithmImpl == null) {
+            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+        }
+        while (count > 0) {
+            count--
+            algorithmImpl!!.iterate()
         }
     }
 

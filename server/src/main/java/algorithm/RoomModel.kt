@@ -1,11 +1,11 @@
 package algorithm
 import Waypoints
-/**
- * Created by user on 8/23/16.
- */
+import algorithm.geometry.Line
+
 object RoomModel {
 
-    val point = arrayListOf<Pair<Int, Int>>()
+    val point = arrayListOf<Pair<Double, Double>>()
+    val lines = arrayListOf<Line>()
 
 
 //  DEBUG BELOW
