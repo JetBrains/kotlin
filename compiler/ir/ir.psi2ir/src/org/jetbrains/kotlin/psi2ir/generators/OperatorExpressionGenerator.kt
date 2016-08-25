@@ -150,7 +150,7 @@ class OperatorExpressionGenerator(
             IrOperator.IN ->
                 irContainsCall
             IrOperator.NOT_IN ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.EXCL, context.irBuiltIns.booleanNot,
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.NOT_IN, context.irBuiltIns.booleanNot,
                                      irContainsCall)
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
@@ -170,7 +170,7 @@ class OperatorExpressionGenerator(
             IrOperator.EQEQEQ ->
                 irIdentityEquals
             IrOperator.EXCLEQEQ ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.EXCL, context.irBuiltIns.booleanNot,
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.EXCLEQEQ, context.irBuiltIns.booleanNot,
                                      irIdentityEquals)
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")

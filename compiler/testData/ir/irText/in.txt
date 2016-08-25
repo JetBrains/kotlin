@@ -10,7 +10,7 @@ IrFile /in.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          CALL .NOT type=kotlin.Boolean operator=EXCL
+          CALL .NOT type=kotlin.Boolean operator=NOT_IN
             arg0: CALL .contains type=kotlin.Boolean operator=NOT_IN
               $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any> operator=null
               element: GET_VAR a type=kotlin.Any operator=null
@@ -25,7 +25,7 @@ IrFile /in.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          CALL .NOT type=kotlin.Boolean operator=EXCL
+          CALL .NOT type=kotlin.Boolean operator=NOT_IN
             arg0: CALL .contains type=kotlin.Boolean operator=NOT_IN
               $this: GET_VAR x type=kotlin.collections.Collection<T> operator=null
               element: GET_VAR a type=T operator=null

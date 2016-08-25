@@ -10,7 +10,7 @@ IrFile /identity.kt
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
         RETURN type=<no-type>
-          CALL .NOT type=kotlin.Boolean operator=EXCL
+          CALL .NOT type=kotlin.Boolean operator=EXCLEQEQ
             arg0: CALL .EQEQEQ type=kotlin.Boolean operator=EXCLEQEQ
               arg0: GET_VAR a type=kotlin.Int operator=null
               arg1: GET_VAR b type=kotlin.Int operator=null
