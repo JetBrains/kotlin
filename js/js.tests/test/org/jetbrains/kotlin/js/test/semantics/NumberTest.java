@@ -81,6 +81,10 @@ public final class NumberTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testLongHashCode() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testLongArray() throws Exception {
        checkFooBoxIsOk();
     }
