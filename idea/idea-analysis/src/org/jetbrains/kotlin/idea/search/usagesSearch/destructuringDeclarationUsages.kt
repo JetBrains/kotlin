@@ -23,6 +23,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -139,6 +140,9 @@ private class Processor(
                     true
                 }
             })
+
+            // we must use plain search inside our data class (and inheritors) because implicit 'this' can happen anywhere
+            (classToSearch as? KtLightClass)?.kotlinOrigin?.let { usePlainSearch(it) }
         }
 
         // we use index instead of iterator because elements are added during iteration
@@ -192,7 +196,8 @@ private class Processor(
                                     }
 
                                     typeRefParent.receiverTypeReference -> {
-                                        //TODO: search usages inside extensions and member functions of our class & derived
+                                        // we must use plain search inside extensions because implicit 'this' can happen anywhere
+                                        usePlainSearch(typeRefParent)
                                         return true
                                     }
                                 }
