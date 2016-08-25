@@ -28,7 +28,7 @@ abstract class AbstractExpressionTypeTest : KotlinLightCodeInsightFixtureTestCas
         myFixture.configureByFile(path)
         val expressionTypeProvider = KotlinExpressionTypeProvider()
         val expressions = expressionTypeProvider.getExpressionsAt(myFixture.elementAtCaret)
-        val types = expressions.map { "${it.text} -> ${expressionTypeProvider.getInformationHint(it)}" }
+        val types = expressions.map { "${it.text.replace('\n', ' ')} -> ${expressionTypeProvider.getInformationHint(it)}" }
         val expectedTypes = InTextDirectivesUtils.findListWithPrefixes(myFixture.file.text, "// TYPE: ")
         UsefulTestCase.assertSameElements(types, expectedTypes)
     }

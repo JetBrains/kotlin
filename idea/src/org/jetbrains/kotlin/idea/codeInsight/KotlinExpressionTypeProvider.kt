@@ -29,10 +29,13 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
-            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filterNot { it.shouldSkip() }.toList()
+            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
 
-    private fun KtExpression.shouldSkip(): Boolean {
-        return this is KtStatementExpression && this !is KtFunction && this !is KtProperty
+    private fun KtExpression.shouldShowType() = when(this) {
+        is KtFunction -> !hasBlockBody() && !hasDeclaredReturnType()
+        is KtProperty -> true
+        is KtStatementExpression -> false
+        else -> true
     }
 
     override fun getInformationHint(element: KtExpression): String {

@@ -35,6 +35,12 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("BlockBodyFunction.kt")
+    public void testBlockBodyFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/BlockBodyFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
