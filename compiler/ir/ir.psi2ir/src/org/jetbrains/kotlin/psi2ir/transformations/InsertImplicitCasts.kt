@@ -115,6 +115,16 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
         }
     }
 
+    override fun visitVararg(expression: IrVararg, data: Nothing?) {
+        expression.acceptChildren(this, data)
+        for (element in expression.elements) {
+            when (element) {
+                is IrSpreadElement -> element.expression.replaceWithCast(expression.type)
+                is IrExpression -> element.replaceWithCast(expression.varargElementType)
+            }
+        }
+    }
+
     private fun IrExpression.replaceWithCast(expectedType: KotlinType?) {
         replaceWith { it.wrapWithImplicitCast(expectedType) }
     }

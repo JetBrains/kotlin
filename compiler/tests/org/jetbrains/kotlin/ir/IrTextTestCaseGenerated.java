@@ -299,6 +299,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("vararg.kt")
+    public void testVararg() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/vararg.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("varargWithImplicitCast.kt")
+    public void testVarargWithImplicitCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/varargWithImplicitCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("variableAsFunctionCall.kt")
     public void testVariableAsFunctionCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/variableAsFunctionCall.kt");

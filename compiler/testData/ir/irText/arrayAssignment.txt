@@ -3,8 +3,10 @@ FILE /arrayAssignment.kt
     BLOCK_BODY
       VAR val x: kotlin.IntArray
         CALL .intArrayOf type=kotlin.IntArray operator=null
-          elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
-            DUMMY vararg type=kotlin.Int
+          elements: VARARG type=IntArray varargElementType=Int
+            CONST Int type=kotlin.Int value='1'
+            CONST Int type=kotlin.Int value='2'
+            CONST Int type=kotlin.Int value='3'
       CALL .set type=kotlin.Unit operator=EQ
         $this: GET_VAR x type=kotlin.IntArray operator=null
         index: CONST Int type=kotlin.Int value='1'
@@ -17,7 +19,9 @@ FILE /arrayAssignment.kt
     BLOCK_BODY
       CALL .set type=kotlin.Unit operator=EQ
         $this: CALL .intArrayOf type=kotlin.IntArray operator=null
-          elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
-            DUMMY vararg type=kotlin.Int
+          elements: VARARG type=IntArray varargElementType=Int
+            CONST Int type=kotlin.Int value='1'
+            CONST Int type=kotlin.Int value='2'
+            CONST Int type=kotlin.Int value='3'
         index: CALL .foo type=kotlin.Int operator=null
         value: CONST Int type=kotlin.Int value='1'

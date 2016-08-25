@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrExpression : IrStatement {
+interface IrExpression : IrStatement, IrVarargElement {
     val type: KotlinType
 }
 

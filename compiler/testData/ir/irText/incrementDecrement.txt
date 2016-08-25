@@ -5,8 +5,10 @@ FILE /incrementDecrement.kt
   PROPERTY public val arr: kotlin.IntArray getter=null setter=null
     EXPRESSION_BODY
       CALL .intArrayOf type=kotlin.IntArray operator=null
-        elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
-          DUMMY vararg type=kotlin.Int
+        elements: VARARG type=IntArray varargElementType=Int
+          CONST Int type=kotlin.Int value='1'
+          CONST Int type=kotlin.Int value='2'
+          CONST Int type=kotlin.Int value='3'
   FUN public fun testVarPrefix(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import java.lang.AssertionError
 
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
         receiver?.let { generateReceiver(ktDefaultElement, receiver) }
@@ -82,14 +84,47 @@ fun StatementGenerator.generateCallReceiver(
     }
 }
 
-fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgument): IrExpression? =
+fun StatementGenerator.generateVarargExpression(varargArgument: VarargValueArgument, valueParameter: ValueParameterDescriptor) : IrExpression? {
+    if (varargArgument.arguments.isEmpty()) {
+        return null
+    }
+
+    val varargStartOffset = varargArgument.arguments.fold(Int.MAX_VALUE) { minStartOffset, argument ->
+        Math.min(minStartOffset, argument.asElement().startOffset)
+    }
+    val varargEndOffset = varargArgument.arguments.fold(Int.MIN_VALUE) { maxEndOffset, argument ->
+        Math.max(maxEndOffset, argument.asElement().endOffset)
+    }
+
+    val varargElementType = valueParameter.varargElementType ?:
+                            throw AssertionError("Vararg argument for non-vararg parameter $valueParameter")
+
+    val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type, varargElementType)
+
+    for (argument in varargArgument.arguments) {
+        val ktArgumentExpression = argument.getArgumentExpression() ?:
+                                   throw AssertionError("No argument expression for vararg element ${argument.asElement().text}")
+        val irVarargElement =
+                if (argument.getSpreadElement() != null)
+                    IrSpreadElementImpl(ktArgumentExpression.startOffset, ktArgumentExpression.endOffset,
+                                        generateExpression(ktArgumentExpression))
+                else
+                    generateExpression(ktArgumentExpression)
+
+        irVararg.addElement(irVarargElement)
+    }
+
+    return irVararg
+}
+
+fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgument, valueParameter: ValueParameterDescriptor): IrExpression? =
         when (valueArgument) {
             is DefaultValueArgument ->
                 null
             is ExpressionValueArgument ->
                 generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
             is VarargValueArgument ->
-                createDummyExpression(valueArgument.arguments[0].getArgumentExpression()!!, "vararg")
+                generateVarargExpression(valueArgument, valueParameter)
             else ->
                 TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
         }
@@ -98,7 +133,8 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
     val call = pregenerateCallReceivers(resolvedCall)
 
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
-        call.irValueArgumentsByIndex[index] = generateValueArgument(valueArgument)
+        val valueParameter = call.descriptor.valueParameters[index]
+        call.irValueArgumentsByIndex[index] = generateValueArgument(valueArgument, valueParameter)
     }
 
     return call

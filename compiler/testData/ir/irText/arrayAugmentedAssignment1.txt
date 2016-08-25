@@ -3,8 +3,10 @@ FILE /arrayAugmentedAssignment1.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing
         CALL .intArrayOf type=kotlin.IntArray operator=null
-          elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
-            DUMMY vararg type=kotlin.Int
+          elements: VARARG type=IntArray varargElementType=Int
+            CONST Int type=kotlin.Int value='1'
+            CONST Int type=kotlin.Int value='2'
+            CONST Int type=kotlin.Int value='3'
   FUN public fun bar(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing

@@ -66,6 +66,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
             "CONST ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
 
+    override fun visitVararg(expression: IrVararg, data: Nothing?): String =
+            "VARARG type=${expression.type} varargElementType=${expression.varargElementType}"
+
+    override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
+            "SPREAD_ELEMENT"
+
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
             "BLOCK type=${expression.renderType()} operator=${expression.operator}"
 
