@@ -12183,6 +12183,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nestedClassInAnonymousObject.kt")
+            public void testNestedClassInAnonymousObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/nestedClassInAnonymousObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("objectInsideFun.kt")
             public void testObjectInsideFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/objectInsideFun.kt");
