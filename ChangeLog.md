@@ -11,6 +11,8 @@
 
 ### IDE
 
+- Re-highlight only single function after local modifications
+
 #### Debugger
 
 - [`KT-7549`](https://youtrack.jetbrains.com/issue/KT-7549) Allow to evaluate kotlin expressions in Java files
