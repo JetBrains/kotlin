@@ -1,11 +1,13 @@
 package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMFunctionType
@@ -19,6 +21,7 @@ class FunctionCodegen(state: TranslationState,
                       variableManager: VariableManager,
                       val function: KtNamedFunction,
                       codeBuilder: LLVMBuilder,
+                      val packageName: String,
                       val parentCodegen: StructCodegen? = null) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
@@ -34,7 +37,7 @@ class FunctionCodegen(state: TranslationState,
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
         args.addAll(descriptor.valueParameters.map {
-            LLVMInstanceOfStandardType(it.name.toString(), it.type, state = state)
+            LLVMInstanceOfStandardType(it?.fqNameSafe?.asString() ?: it.name.toString(), it.type, state = state)
         })
 
         returnType = LLVMInstanceOfStandardType("instance", descriptor.returnType!!, state = state)
@@ -43,14 +46,21 @@ class FunctionCodegen(state: TranslationState,
         }
         external = isExternal()
         name = "${function.fqName}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
+        val pureName = name.substringAfterLast('.')
+        if (pureName == "main") {
+            state.mainFunctions.add(name)
+        }
 
         if (isExtensionDeclaration) {
+            name = "${function.name}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
             val receiverType = descriptor.extensionReceiverParameter!!.type
             val translatorType = LLVMMapStandardType(receiverType, state)
-            functionNamePrefix += translatorType.typename + "."
+            val packageName = (function.containingFile as KtFile).packageFqName.asString()
+            functionNamePrefix += if (packageName.length > 0) "$packageName." else ""
+            functionNamePrefix += translatorType.mangle() + "."
 
             val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
-            extensionFunctionsOfThisType.put(name, this)
+            extensionFunctionsOfThisType.put(functionNamePrefix + name, this)
             state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
         }
 

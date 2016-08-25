@@ -9,14 +9,15 @@ class LLVMReferenceType(val type: String,
                         var prefix: String = "",
                         override var align: Int = TranslationState.pointerAlign,
                         override var size: Int = TranslationState.pointerSize,
-                        var byRef: Boolean = true) : LLVMReferred, LLVMType() {
+                        packageName: String = "",
+                        var byRef: Boolean = true) : LLVMReferred, LLVMType(packageName) {
 
     override val defaultValue: String = "null"
 
     override val typename: String
-        get() = "$prefix${if (prefix.length > 0) "." else ""}${
-        if (location.size > 0) "${location.joinToString(".")}." else ""
-        }$type"
+        get() = "$prefix${if (prefix.length > 0) "." else ""}" +
+                "$type"
+
 
     override fun toString() = "%$typename"
 

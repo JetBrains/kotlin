@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_doubleToByte(value: Double): Byte
 external fun kotlinclib_doubleToChar(value: Double): Char
 external fun kotlinclib_doubleToShort(value: Double): Short

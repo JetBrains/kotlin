@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_get_short(src: Int, index: Int): Short
 external fun kotlinclib_set_short(src: Int, index: Int, value: Short)
 external fun kotlinclib_short_size(): Int
@@ -60,7 +62,7 @@ fun ShortArray.print() {
 
 fun ShortArray.println() {
     this.print()
-    println()
+    //println()
 }
 
 

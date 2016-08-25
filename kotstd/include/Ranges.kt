@@ -1,3 +1,8 @@
+package kotlin.ranges
+
+import kotlin.IntProgression
+import kotlin.collections.IntIterator
+
 public class IntRange(val start: Int, val endInclusive: Int) {
     val progression = IntProgression(start, endInclusive, 1)
     val first: Int

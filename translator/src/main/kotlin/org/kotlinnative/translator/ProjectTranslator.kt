@@ -7,36 +7,47 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
 
     fun generateCode(): String {
         codeBuilder.clean()
-        files.map { addDeclarations(it) }
+        files.map { addClassDeclarations(it) }
+        files.map { addObjectDeclarations(it) }
+        files.map { addFunctionDeclarations(it) }
+        files.map { addPropertyDeclarations(it) }
         generateProjectBody()
         return codeBuilder.toString()
     }
 
-    fun addDeclarations(file: KtFile) {
+    fun addFunctionDeclarations(file: KtFile) {
         val variableManager = VariableManager(state.globalVariableCollection)
-        for (declaration in file.declarations) {
-            when (declaration) {
-                is KtNamedFunction -> {
-                    val function = FunctionCodegen(state, variableManager, declaration, codeBuilder)
-                    if (function.external) {
-                        state.externalFunctions.put(function.fullName, function)
-                    } else {
-                        state.functions.put(function.fullName, function)
-                    }
-                }
-                is KtClass -> {
-                    val codegen = ClassCodegen(state, variableManager, declaration, codeBuilder)
-                    state.classes.put(declaration.name!!, codegen)
-                }
-                is KtProperty -> {
-                    val property = PropertyCodegen(state, variableManager, declaration, codeBuilder)
-                    state.properties.put(declaration.name!!, property)
-                }
-                is KtObjectDeclaration -> {
-                    val property = ObjectCodegen(state, variableManager, declaration, codeBuilder)
-                    state.objects.put(declaration.name!!, property)
-                }
+        for (declaration in file.declarations.filter { it is KtNamedFunction }) {
+            val function = FunctionCodegen(state, variableManager, declaration as KtNamedFunction, codeBuilder, file.packageFqName.asString())
+            if (function.external) {
+                state.externalFunctions.put(function.fullName, function)
+            } else {
+                state.functions.put(function.fullName, function)
             }
+        }
+    }
+
+    fun addClassDeclarations(file: KtFile) {
+        val variableManager = VariableManager(state.globalVariableCollection)
+        for (declaration in file.declarations.filter { it is KtClass }) {
+            val codegen = ClassCodegen(state, variableManager, declaration as KtClass, codeBuilder, file.packageFqName.asString())
+            state.classes.put(codegen.structName, codegen)
+        }
+    }
+
+    fun addPropertyDeclarations(file: KtFile) {
+        val variableManager = VariableManager(state.globalVariableCollection)
+        for (declaration in file.declarations.filter { it is KtProperty }) {
+            val property = PropertyCodegen(state, variableManager, declaration as KtProperty, codeBuilder)
+            state.properties.put(declaration.name!!, property)
+        }
+    }
+
+    fun addObjectDeclarations(file: KtFile) {
+        val variableManager = VariableManager(state.globalVariableCollection)
+        for (declaration in file.declarations.filter { it is KtObjectDeclaration }) {
+            val codegen = ObjectCodegen(state, variableManager, declaration as KtObjectDeclaration, codeBuilder, file.packageFqName.asString())
+            state.objects.put(codegen.structName, codegen)
         }
     }
 
@@ -50,6 +61,10 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
             externalFunctions.values.map { it.generate() }
             functions.values.filter { it.isExtensionDeclaration }.map { it.generate() }
             functions.values.filter { !it.isExtensionDeclaration }.map { it.generate() }
+        }
+
+        if (!state.mainFunctions.contains("main") && state.mainFunctions.isNotEmpty()) {
+            codeBuilder.declareEntryPoint(state.mainFunctions.first())
         }
     }
 

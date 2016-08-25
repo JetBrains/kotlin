@@ -1,27 +1,26 @@
-
-class Main {
+class classfields_2_class {
     var i = 0
 
-    fun main() {
+    fun method() {
         i = 5
     }
 
     fun changeI(): Int {
-        main()
+        method()
         return i
     }
 }
 
 fun test1(): Int {
-    val main = Main()
+    val main = classfields_2_class()
     return main.changeI()
 }
 
 fun test2(): Int {
-    val main = Main()
+    val main = classfields_2_class()
     return main.i
 }
 
 fun test3(): Int {
-    return Main().changeI()
+    return classfields_2_class().changeI()
 }

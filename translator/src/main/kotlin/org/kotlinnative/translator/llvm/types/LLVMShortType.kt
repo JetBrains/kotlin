@@ -3,7 +3,7 @@ package org.kotlinnative.translator.llvm.types
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
-class LLVMShortType() : LLVMType() {
+class LLVMShortType() : LLVMType("kotlin") {
     override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp slt i16 $firstOp, $secondOp")
 

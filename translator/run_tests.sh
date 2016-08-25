@@ -34,9 +34,13 @@ TESTS=$( ls $DIRECTORY/input/* $1) # Note that "ls $DIRECTORY/input $1" is wrong
 if [ "$2" == "--proto" ]; then
 	TESTS=$( ls $DIRECTORY/input/proto* $1)
 fi
+total_scripts=0
+successful_scripts=0
+
 for i in $TESTS; do
 	rm -f $DIRECTORY/linked/*
 	TEST=`basename $i ".txt"`
+	successful=1
 	echo -e "${orange}test: ${TEST}${nc}"
 	echo "#include <stdlib.h>" >> $MAIN
 	echo "#include <stdio.h>" >> $MAIN
@@ -78,22 +82,29 @@ for i in $TESTS; do
 		fi
 	fi
 
-	java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
+        java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Translation error: ${DIRECTORY}/kotlin/${TEST}.kt${nc}"
+		successful=0
 	fi
 
 	llvm-link-3.6 -S $DIRECTORY/linked/*.ll > $DIRECTORY/linked/run.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Error linking with llvm${nc}"
+		successful=0
 	fi
 
 	lli-3.6 $DIRECTORY/linked/run.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${lightRed}Error running test${nc}"
+		successful=0
 	fi
 
 	if [ "$2" == "--once" ]; then
     	exit
 	fi
+	successful_scripts=$((successful_scripts+successful))
+	total_scripts=$((total_scripts+1))
 done
+
+echo -e "Result: ${orange} [${successful_scripts}]/[${total_scripts}]"

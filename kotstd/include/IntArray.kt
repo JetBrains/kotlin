@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_get_int(src: Int, index: Int): Int
 external fun kotlinclib_set_int(src: Int, index: Int, value: Int)
 external fun kotlinclib_int_size(): Int
@@ -61,7 +63,7 @@ fun IntArray.print() {
 
 fun IntArray.println() {
     this.print()
-    println()
+    //println()
 }
 
 fun IntArray.copyOf(newSize: Int): IntArray {

@@ -1,3 +1,5 @@
+package kotlin
+
 external fun malloc_array(size: Int): Int
 external fun kotlinclib_get_byte(src: Int, index: Int): Byte
 external fun kotlinclib_set_byte(src: Int, index: Int, value: Byte)
@@ -62,7 +64,7 @@ fun ByteArray.print() {
 
 fun ByteArray.println() {
     this.print()
-    println()
+    //println()
 }
 
 fun ByteArray.copyOf(newSize: Int): ByteArray {

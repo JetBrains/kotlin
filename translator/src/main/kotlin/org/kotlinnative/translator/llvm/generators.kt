@@ -3,6 +3,7 @@ package org.kotlinnative.translator.llvm
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.kotlinnative.translator.TranslationState
@@ -33,10 +34,17 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
         type.isUnit() -> LLVMVariable("", LLVMVoidType(), name, scope)
         type.isMarkedNullable -> LLVMVariable(name, LLVMReferenceType(typeName, prefix = "class"), name, scope, pointer = pointerMark)
         else -> {
-            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(typeName, align = TranslationState.pointerAlign, prefix = "class")
+            val declarationDescriptor = type.constructor.declarationDescriptor!!
+            val refName = declarationDescriptor.fqNameSafe.asString()
+            val targetPackage = declarationDescriptor.fqNameSafe.parent().asString()
+            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(refName, packageName = targetPackage, align = TranslationState.pointerAlign, prefix = "class")
 
             val result = LLVMVariable(name, refType, name, scope, pointer = 1)
-            refType.location.addAll(type.getSubtypesPredicate().toString().split(".").dropLast(1))
+            var currentPrefix = ""
+            for (currentLocation in type.getSubtypesPredicate().toString().split(".").dropLast(1)) {
+                currentPrefix += (if (currentPrefix.length > 0) "." else "") + currentLocation
+                refType.location.add(currentPrefix)
+            }
             result
         }
     }
@@ -44,3 +52,11 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
 
 fun LLVMMapStandardType(type: KotlinType, state: TranslationState): LLVMType =
         LLVMInstanceOfStandardType("type", type, LLVMRegisterScope(), state).type
+
+fun String.addBeforeIfNotEmpty(add: String): String {
+    return if (this.length > 0) add + this else this
+}
+
+fun String.addAfterIfNotEmpty(add: String): String {
+    return if (this.length > 0) this + add else this
+}

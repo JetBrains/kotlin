@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_get_long(src: Int, index: Int): Long
 external fun kotlinclib_set_long(src: Int, index: Int, value: Long)
 external fun kotlinclib_long_size(): Int
@@ -59,7 +61,7 @@ fun LongArray.print() {
 
 fun LongArray.println() {
     this.print()
-    println()
+    //println()
 }
 
 fun LongArray.copyOf(newSize: Int): LongArray {

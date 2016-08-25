@@ -1,3 +1,5 @@
+package kotlin
+
 // a mod b (in arithmetical sense)
 private fun mod(a: Int, b: Int): Int {
     val mod = a % b

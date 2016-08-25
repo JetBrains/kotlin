@@ -43,6 +43,7 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
+    val mainFunctions = ArrayList<String>()
 
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 

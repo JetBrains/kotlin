@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_floatToByte(value: Float): Byte
 external fun kotlinclib_floatToChar(value: Float): Char
 external fun kotlinclib_floatToShort(value: Float): Short

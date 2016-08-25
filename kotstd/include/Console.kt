@@ -1,7 +1,4 @@
-import ByteArray
-import IntArray
-import LongArray
-import ShortArray
+package kotlin
 
 /*
 * Library for console interaction

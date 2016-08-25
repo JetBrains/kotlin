@@ -294,6 +294,14 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln(code)
     }
 
+    fun declareEntryPoint(name: String) {
+        localCode.appendln("define weak void @main()")
+        addStartExpression()
+        addFunctionCall(LLVMVariable(name, LLVMVoidType(), scope = LLVMVariableScope()), listOf())
+        addAnyReturn(LLVMVoidType())
+        addEndExpression()
+    }
+
     override fun toString() = globalCode.toString() + localCode.toString()
 
 }

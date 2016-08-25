@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_longToByte(value: Long): Byte
 external fun kotlinclib_longToChar(value: Long): Char
 external fun kotlinclib_longToShort(value: Long): Short

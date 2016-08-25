@@ -15,15 +15,16 @@ class ClassCodegen(state: TranslationState,
                    variableManager: VariableManager,
                    val clazz: KtClass,
                    codeBuilder: LLVMBuilder,
+                   packageName: String,
                    parentCodegen: StructCodegen? = null) :
-        StructCodegen(state, variableManager, clazz, codeBuilder, parentCodegen) {
+        StructCodegen(state, variableManager, clazz, codeBuilder, packageName, parentCodegen) {
 
     val annotation: Boolean
     val enum: Boolean
     var companionObjectCodegen: ObjectCodegen? = null
 
     override var size: Int = 0
-    override val structName: String = clazz.name!!
+    override val structName: String = clazz.fqName?.asString()!!
     override val type: LLVMReferenceType
 
     init {
@@ -34,16 +35,10 @@ class ClassCodegen(state: TranslationState,
         }
 
         val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
-        val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
 
         annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
         enum = descriptor.kind == ClassKind.ENUM_CLASS
 
-        indexFields(parameterList)
-        generateInnerFields(clazz.declarations)
-
-        calculateTypeSize()
-        type.size = size
         type.align = TranslationState.pointerAlign
     }
 
@@ -65,6 +60,13 @@ class ClassCodegen(state: TranslationState,
     }
 
     override fun prepareForGenerate() {
+        val parameterList = clazz.getPrimaryConstructorParameterList()?.parameters ?: listOf()
+        indexFields(parameterList)
+        generateInnerFields(clazz.declarations)
+
+        calculateTypeSize()
+        type.size = size
+
         if (annotation) {
             return
         }
@@ -75,7 +77,7 @@ class ClassCodegen(state: TranslationState,
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
         if (companionObjectDescriptor != null) {
             val companionObject = clazz.getCompanionObjects().first()
-            companionObjectCodegen = ObjectCodegen(state, variableManager, companionObject, codeBuilder, this)
+            companionObjectCodegen = ObjectCodegen(state, variableManager, companionObject, codeBuilder, packageName, this)
             companionObjectCodegen!!.prepareForGenerate()
         }
     }

@@ -1,3 +1,5 @@
+package kotlin
+
 external fun kotlinclib_boolean_size(): Int
 
 class BooleanArray(var size: Int) {
@@ -43,7 +45,6 @@ class BooleanArray(var size: Int) {
 
         return newInstance
     }
-
 }
 
 fun BooleanArray.print() {
@@ -62,7 +63,7 @@ fun BooleanArray.print() {
 
 fun BooleanArray.println() {
     this.print()
-    println()
+    //println()
 }
 
 

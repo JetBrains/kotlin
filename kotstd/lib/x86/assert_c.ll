@@ -5,7 +5,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str = private unnamed_addr constant [71 x i8] c"Exception in thread \22main\22 java.lang.AssertionError: Assertion failed\0A\00", align 1
 
 ; Function Attrs: nounwind uwtable
-define weak void @assert_c(i1 %value) #0 {
+define weak void @kotlin.assert_c(i1 %value) #0 {
   %1 = alloca i1, align 4
   store i1 %value, i1* %1, align 4
   %2 = load i1* %1, align 4
