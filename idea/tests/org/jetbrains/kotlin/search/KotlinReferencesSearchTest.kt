@@ -22,6 +22,8 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch
+import org.jetbrains.kotlin.idea.search.usagesSearch.destructuringDeclarationUsageSearchMode
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -65,9 +67,15 @@ class KotlinReferencesSearchTest(): AbstractSearcherTest() {
         val func = myFixtureProxy.elementAtCaret.getParentOfType<T>(false)!!
         val refs = ReferencesSearch.search(func).findAll().sortedBy { it.element.textRange.startOffset }
 
-        // check that local references search gives the same result
-        val localRefs = ReferencesSearch.search(func, LocalSearchScope(psiFile)).findAll()
-        Assert.assertEquals(refs.size, localRefs.size)
+        // check that local reference search gives the same result
+        try {
+            destructuringDeclarationUsageSearchMode = DestructuringDeclarationUsageSearch.PLAIN_WHEN_NEEDED
+            val localRefs = ReferencesSearch.search(func, LocalSearchScope(psiFile)).findAll()
+            Assert.assertEquals(refs.size, localRefs.size)
+        }
+        finally {
+            destructuringDeclarationUsageSearchMode = DestructuringDeclarationUsageSearch.ALWAYS_SMART
+        }
 
         return refs
     }
