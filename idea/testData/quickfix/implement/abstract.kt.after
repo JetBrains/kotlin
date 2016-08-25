@@ -10,7 +10,7 @@ private abstract class Base {
 
 private class BaseImpl : Base() {
     override var x: Int
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
         set(value) {
         }
 

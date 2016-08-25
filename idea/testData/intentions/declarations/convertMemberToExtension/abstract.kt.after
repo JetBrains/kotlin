@@ -3,5 +3,5 @@ abstract class Owner {
 }
 
 fun Owner.f() {
-    <caret><selection>throw UnsupportedOperationException()</selection>
+    <caret><selection>TODO("not implemented")</selection> //To change body of created functions use File | Settings | File Templates.
 }

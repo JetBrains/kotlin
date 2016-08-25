@@ -182,9 +182,9 @@ fun generateUnsupportedOrSuperCall(
         bodyType: OverrideMemberChooserObject.BodyType
 ): String {
     if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
-        if (descriptor !is FunctionDescriptor) return "throw UnsupportedOperationException()"
+        val templateKind = if (descriptor is FunctionDescriptor) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER
         return getFunctionBodyTextFromTemplate(project,
-                                               TemplateKind.FUNCTION,
+                                               templateKind,
                                                descriptor.name.asString(),
                                                descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
                                                null)

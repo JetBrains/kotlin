@@ -28,14 +28,18 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.setReceiverType
+import org.jetbrains.kotlin.idea.core.TemplateKind
+import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.setReceiverType
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
@@ -110,17 +114,25 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
+        val bodyText = getFunctionBodyTextFromTemplate(
+                project,
+                if (extension is KtFunction) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER,
+                extension.name,
+                extension.getReturnTypeReference()?.text ?: "Unit",
+                extension.containingClassOrObject?.fqName
+        )
+
         when (extension) {
             is KtFunction -> {
                 if (!extension.hasBody()) {
                     //TODO: methods in PSI for setBody
-                    extension.add(psiFactory.createBlock(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
+                    extension.add(psiFactory.createBlock(bodyText))
                     selectBody(extension)
                 }
             }
 
             is KtProperty -> {
-                val templateProperty = psiFactory.createDeclaration<KtProperty>("var v: Any\nget()=$THROW_UNSUPPORTED_OPERATION_EXCEPTION\nset(value){$THROW_UNSUPPORTED_OPERATION_EXCEPTION}")
+                val templateProperty = psiFactory.createDeclaration<KtProperty>("var v: Any\nget()=$bodyText\nset(value){\n$bodyText\n}")
                 val templateGetter = templateProperty.getter!!
                 val templateSetter = templateProperty.setter!!
 
@@ -184,9 +196,6 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
     }
-
-    //TODO: reuse TEMPLATE_FROM_USAGE_FUNCTION_BODY
-    private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = "throw UnsupportedOperationException()"
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {
         val classElement = member.parent.parent as KtClass

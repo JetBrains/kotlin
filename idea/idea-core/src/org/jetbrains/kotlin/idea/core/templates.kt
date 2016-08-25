@@ -25,11 +25,15 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 private val FUNCTION_BODY_TEMPLATE = "New Kotlin Function Body.kt"
+private val PROPERTY_INITIALIZER_TEMPLATE = "New Kotlin Property Initializer.kt"
 private val SECONDARY_CONSTRUCTOR_BODY_TEMPLATE = "New Kotlin Secondary Constructor Body.kt"
 private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
+private val ATTRIBUTE_PROPERTY_NAME = "PROPERTY_NAME"
 
 enum class TemplateKind(val templateFileName: String) {
-    FUNCTION(FUNCTION_BODY_TEMPLATE), SECONDARY_CONSTRUCTOR(SECONDARY_CONSTRUCTOR_BODY_TEMPLATE)
+    FUNCTION(FUNCTION_BODY_TEMPLATE),
+    SECONDARY_CONSTRUCTOR(SECONDARY_CONSTRUCTOR_BODY_TEMPLATE),
+    PROPERTY_INITIALIZER(PROPERTY_INITIALIZER_TEMPLATE)
 }
 
 fun getFunctionBodyTextFromTemplate(
@@ -48,7 +52,11 @@ fun getFunctionBodyTextFromTemplate(
         properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, classFqName.shortName().asString())
     }
     if (name != null) {
-        properties.setProperty(ATTRIBUTE_FUNCTION_NAME, name)
+        val attribute = when (kind) {
+            TemplateKind.FUNCTION, TemplateKind.SECONDARY_CONSTRUCTOR -> ATTRIBUTE_FUNCTION_NAME
+            TemplateKind.PROPERTY_INITIALIZER -> ATTRIBUTE_PROPERTY_NAME
+        }
+        properties.setProperty(attribute, name)
     }
 
     return try {

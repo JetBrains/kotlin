@@ -6,13 +6,13 @@ interface T<X> {
 
 class U : T<String> {
     override val foo: String
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
 }
 
 class V : T<Int> {
     override val foo: Int
-        get() = <caret><selection>throw UnsupportedOperationException()</selection>
+        get() = <caret><selection>TODO("not implemented")</selection> //To change initializer of created properties use File | Settings | File Templates.
 
 }
 

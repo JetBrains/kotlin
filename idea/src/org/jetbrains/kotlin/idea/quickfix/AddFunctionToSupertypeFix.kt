@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.TemplateKind
+import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -127,7 +130,14 @@ class AddFunctionToSupertypeFix private constructor(
             if (classDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
                 val returnType = functionDescriptor.returnType
                 if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
-                    sourceCode += "{ throw UnsupportedOperationException() }"
+                    val bodyText = getFunctionBodyTextFromTemplate(
+                            project,
+                            TemplateKind.FUNCTION,
+                            functionDescriptor.name.asString(),
+                            functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
+                            classDescriptor.importableFqName
+                    )
+                    sourceCode += "{ $bodyText }"
                 }
                 else {
                     sourceCode += "{}"

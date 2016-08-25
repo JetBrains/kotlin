@@ -3,13 +3,13 @@
 enum class E {
     A {
         override val foo: Int
-            get() = throw UnsupportedOperationException()
+            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     }, B {
         override val foo: Int
-            get() = throw UnsupportedOperationException()
+            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     }, C {
         override val foo: Int
-            get() = <caret><selection>throw UnsupportedOperationException()</selection>
+            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     };
 
     abstract val foo: Int

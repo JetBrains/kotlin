@@ -10,7 +10,7 @@ class SomeTest : Test {
     }
 
     override val testProp: Int
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
     /**
      * test

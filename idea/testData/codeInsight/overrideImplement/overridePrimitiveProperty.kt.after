@@ -11,19 +11,19 @@ interface T {
 
 class C : T {
     override val a1: Byte
-        get() = <selection><caret>throw UnsupportedOperationException()</selection>
+        get() = <selection><caret>TODO("not implemented")</selection> //To change initializer of created properties use File | Settings | File Templates.
     override val a2: Short
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a3: Int
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a4: Long
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a5: Float
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a6: Double
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a7: Char
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a8: Boolean
-        get() = throw UnsupportedOperationException()
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 }
