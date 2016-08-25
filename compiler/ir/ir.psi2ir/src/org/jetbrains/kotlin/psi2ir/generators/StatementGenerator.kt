@@ -119,7 +119,7 @@ class StatementGenerator(
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
         val irReturnedExpression = expression.returnedExpression?.genExpr()
-        return IrReturnImpl(expression.startOffset, expression.endOffset, returnTarget, irReturnedExpression)
+        return IrReturnImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, returnTarget, irReturnedExpression)
     }
 
     private fun getReturnExpressionTarget(expression: KtReturnExpression): CallableDescriptor =
@@ -142,7 +142,7 @@ class StatementGenerator(
             }
 
     override fun visitThrowExpression(expression: KtThrowExpression, data: Nothing?): IrStatement {
-        return IrThrowImpl(expression.startOffset, expression.endOffset, expression.thrownExpression!!.genExpr())
+        return IrThrowImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, expression.thrownExpression!!.genExpr())
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
@@ -174,10 +174,14 @@ class StatementGenerator(
                     return entry0.genExpr()
                 }
             }
-            entries.size == 0 -> return IrConstImpl.string(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcastsOrFail(expression), "")
+            entries.size == 0 -> {
+                return IrConstImpl.string(expression.startOffset, expression.endOffset,
+                                          getInferredTypeWithSmartcastsOrFail(expression), "")
+            }
         }
 
-        val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression))
+        val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset,
+                                                         getInferredTypeWithSmartcastsOrFail(expression))
         entries.forEach { it.expression!!.let { irStringTemplate.addArgument(it.genExpr()) } }
         return irStringTemplate
     }
@@ -202,17 +206,19 @@ class StatementGenerator(
             when (descriptor) {
                 is FakeCallableDescriptorForObject ->
                     generateExpressionForReferencedDescriptor(descriptor.getReferencedDescriptor(), expression, resolvedCall)
-                is ClassDescriptor ->
+                is ClassDescriptor -> {
+                    val classValueType = descriptor.classValueType!!
                     when {
                         DescriptorUtils.isObject(descriptor) ->
-                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
                         DescriptorUtils.isEnumEntry(descriptor) ->
-                            IrGetEnumValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType, descriptor)
+                            IrGetEnumValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
                         else -> {
-                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, descriptor.classValueType,
+                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType,
                                                  descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
                         }
                     }
+                }
                 is PropertyDescriptor -> {
                     CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
                 }
@@ -220,7 +226,7 @@ class StatementGenerator(
                     IrGetVariableImpl(expression.startOffset, expression.endOffset, descriptor)
                 else ->
                     IrDummyExpression(
-                            expression.startOffset, expression.endOffset, getInferredTypeWithSmartcasts(expression),
+                            expression.startOffset, expression.endOffset, getInferredTypeWithSmartcastsOrFail(expression),
                             expression.text + ": ${descriptor.name} ${descriptor.javaClass.simpleName}"
                     )
             }

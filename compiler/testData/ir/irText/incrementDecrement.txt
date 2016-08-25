@@ -16,7 +16,7 @@ FILE /incrementDecrement.kt
           VAR val tmp0: kotlin.Int
             CALL .inc type=kotlin.Int operator=PREFIX_INCR
               $this: GET_VAR x type=kotlin.Int operator=PREFIX_INCR
-          SET_VAR x type=<no-type> operator=PREFIX_INCR
+          SET_VAR x type=kotlin.Unit operator=PREFIX_INCR
             GET_VAR tmp0 type=kotlin.Int operator=null
           GET_VAR tmp0 type=kotlin.Int operator=null
       VAR val x2: kotlin.Int
@@ -24,7 +24,7 @@ FILE /incrementDecrement.kt
           VAR val tmp1: kotlin.Int
             CALL .dec type=kotlin.Int operator=PREFIX_DECR
               $this: GET_VAR x type=kotlin.Int operator=PREFIX_DECR
-          SET_VAR x type=<no-type> operator=PREFIX_DECR
+          SET_VAR x type=kotlin.Unit operator=PREFIX_DECR
             GET_VAR tmp1 type=kotlin.Int operator=null
           GET_VAR tmp1 type=kotlin.Int operator=null
   FUN public fun testVarPostfix(): kotlin.Unit
@@ -35,7 +35,7 @@ FILE /incrementDecrement.kt
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp0: kotlin.Int
             GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
-          SET_VAR x type=<no-type> operator=POSTFIX_INCR
+          SET_VAR x type=kotlin.Unit operator=POSTFIX_INCR
             CALL .inc type=kotlin.Int operator=POSTFIX_INCR
               $this: GET_VAR tmp0 type=kotlin.Int operator=null
           GET_VAR tmp0 type=kotlin.Int operator=null
@@ -43,7 +43,7 @@ FILE /incrementDecrement.kt
         BLOCK type=kotlin.Int operator=POSTFIX_DECR
           VAR val tmp1: kotlin.Int
             GET_VAR x type=kotlin.Int operator=POSTFIX_DECR
-          SET_VAR x type=<no-type> operator=POSTFIX_DECR
+          SET_VAR x type=kotlin.Unit operator=POSTFIX_DECR
             CALL .dec type=kotlin.Int operator=POSTFIX_DECR
               $this: GET_VAR tmp1 type=kotlin.Int operator=null
           GET_VAR tmp1 type=kotlin.Int operator=null

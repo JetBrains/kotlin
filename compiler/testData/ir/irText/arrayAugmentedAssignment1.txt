@@ -1,13 +1,13 @@
 FILE /arrayAugmentedAssignment1.kt
   FUN public fun foo(): kotlin.IntArray
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CALL .intArrayOf type=kotlin.IntArray operator=null
           elements: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
             DUMMY vararg type=kotlin.Int
   FUN public fun bar(): kotlin.Int
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
   DUMMY C
   FUN public fun testVariable(): kotlin.Unit

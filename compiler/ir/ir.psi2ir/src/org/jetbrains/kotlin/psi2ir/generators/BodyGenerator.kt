@@ -41,7 +41,7 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
         }
         else {
             val irBodyExpression = statementGenerator.generateExpression(ktBody)
-            val irReturn = IrReturnImpl(ktBody.startOffset, ktBody.endOffset, scopeOwner, irBodyExpression)
+            val irReturn = IrReturnImpl(ktBody.startOffset, ktBody.endOffset, context.builtIns.nothingType, scopeOwner, irBodyExpression)
             irBlockBody.addStatement(irReturn)
         }
 

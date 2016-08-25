@@ -4,9 +4,9 @@ FILE /assignments.kt
     BLOCK_BODY
       VAR var x: kotlin.Int
         CONST Int type=kotlin.Int value='0'
-      SET_VAR x type=<no-type> operator=EQ
+      SET_VAR x type=kotlin.Unit operator=EQ
         CONST Int type=kotlin.Int value='1'
-      SET_VAR x type=<no-type> operator=EQ
+      SET_VAR x type=kotlin.Unit operator=EQ
         CALL .plus type=kotlin.Int operator=PLUS
           $this: GET_VAR x type=kotlin.Int operator=null
           other: CONST Int type=kotlin.Int value='1'

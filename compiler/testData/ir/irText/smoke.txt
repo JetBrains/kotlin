@@ -1,7 +1,7 @@
 FILE /smoke.kt
   FUN public fun testFun(): kotlin.String
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST String type=kotlin.String value='OK'
   PROPERTY public val testSimpleVal: kotlin.Int = 1 getter=null setter=null
     EXPRESSION_BODY
@@ -9,7 +9,7 @@ FILE /smoke.kt
   PROPERTY public val testValWithGetter: kotlin.Int getter=<get-testValWithGetter> setter=null
   PROPERTY_GETTER public fun <get-testValWithGetter>(): kotlin.Int property=testValWithGetter
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
   PROPERTY public var testSimpleVar: kotlin.Int getter=null setter=null
     EXPRESSION_BODY
@@ -17,7 +17,7 @@ FILE /smoke.kt
   PROPERTY public var testVarWithAccessors: kotlin.Int getter=<get-testVarWithAccessors> setter=<set-testVarWithAccessors>
   PROPERTY_GETTER public fun <get-testVarWithAccessors>(): kotlin.Int property=testVarWithAccessors
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
   PROPERTY_SETTER public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit property=testVarWithAccessors
     BLOCK_BODY

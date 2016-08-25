@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 
 class RematerializableValue(val irExpression: IrExpressionWithCopy) : IntermediateValue {
-    override val type: KotlinType?
-        get() = irExpression.type
+    override val type: KotlinType get() = irExpression.type
 
     override fun load(): IrExpression = irExpression.copy()
 }

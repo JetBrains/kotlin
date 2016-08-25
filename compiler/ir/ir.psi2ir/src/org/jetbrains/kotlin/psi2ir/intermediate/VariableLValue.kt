@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.expressions.IrSetVariableImpl
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class VariableLValue(
         val startOffset: Int,
@@ -33,13 +34,14 @@ class VariableLValue(
     constructor(irVariable: IrVariable, irOperator: IrOperator? = null) :
     this(irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
 
-    override val type: KotlinType? get() = descriptor.type
+    override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression =
             IrGetVariableImpl(startOffset, endOffset, descriptor, irOperator)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableImpl(startOffset, endOffset, descriptor, irExpression, irOperator)
+            IrSetVariableImpl(startOffset, endOffset, descriptor.type.builtIns.unitType,
+                              descriptor, irExpression, irOperator)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

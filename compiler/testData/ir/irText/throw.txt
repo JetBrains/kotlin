@@ -1,7 +1,7 @@
 FILE /throw.kt
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
-      THROW type=<no-type>
+      THROW type=kotlin.Nothing
         CALL .<init> type=kotlin.Throwable operator=null
   FUN public fun testImplicitCast(/*0*/ a: kotlin.Any): kotlin.Unit
     BLOCK_BODY
@@ -9,6 +9,6 @@ FILE /throw.kt
         if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.Throwable
           GET_VAR a type=kotlin.Any operator=null
         then: BLOCK type=kotlin.Nothing operator=null
-          THROW type=<no-type>
+          THROW type=kotlin.Nothing
             TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Throwable
               GET_VAR a type=kotlin.Any operator=null

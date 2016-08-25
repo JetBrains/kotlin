@@ -1,20 +1,20 @@
 FILE /stringPlus.kt
   FUN public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any): kotlin.String
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         STRING_CONCATENATION type=kotlin.String
           GET_VAR a type=kotlin.String operator=null
           GET_VAR b type=kotlin.Any operator=null
   FUN public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         STRING_CONCATENATION type=kotlin.String
           GET_VAR a type=kotlin.String operator=null
           CONST String type=kotlin.String value='+'
           GET_VAR b type=kotlin.Int operator=null
   FUN public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         STRING_CONCATENATION type=kotlin.String
           GET_VAR a type=kotlin.String operator=null
           CONST String type=kotlin.String value='+'

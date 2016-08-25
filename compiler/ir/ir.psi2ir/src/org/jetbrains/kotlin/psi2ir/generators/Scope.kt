@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.AssertionError
 
 class Scope(val scopeOwner: DeclarationDescriptor) {
     private var lastTemporaryIndex: Int = 0
@@ -42,10 +41,7 @@ class Scope(val scopeOwner: DeclarationDescriptor) {
     fun createTemporaryVariable(irExpression: IrExpression, nameHint: String? = null): IrVariable =
             IrVariableImpl(
                     irExpression.startOffset, irExpression.endOffset, IrDeclarationOriginKind.IR_TEMPORARY_VARIABLE,
-                    createDescriptorForTemporaryVariable(
-                            irExpression.type ?: throw AssertionError("No type for $irExpression"),
-                            nameHint
-                    ),
+                    createDescriptorForTemporaryVariable(irExpression.type, nameHint),
                     irExpression
             )
 }

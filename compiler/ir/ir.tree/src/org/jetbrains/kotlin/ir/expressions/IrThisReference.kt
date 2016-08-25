@@ -28,7 +28,7 @@ interface IrThisReference : IrExpression, IrExpressionWithCopy {
 class IrThisReferenceImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val classDescriptor: ClassDescriptor
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

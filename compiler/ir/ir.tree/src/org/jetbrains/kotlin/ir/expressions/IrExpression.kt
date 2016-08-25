@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrExpression : IrStatement {
-    val type: KotlinType?
+    val type: KotlinType
 }
 
 interface IrExpressionWithCopy : IrExpression {
@@ -34,13 +34,13 @@ interface IrExpressionWithCopy : IrExpression {
 abstract class IrExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        override val type: KotlinType?
+        override val type: KotlinType
 ) : IrElementBase(startOffset, endOffset), IrExpression
 
 abstract class IrTerminalExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?
+        type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type) {
     override fun getChild(slot: Int): IrElement? = null
 

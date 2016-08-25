@@ -37,7 +37,7 @@ val IrTryCatch.catchClauseIndices: IntRange get() = 0 ..catchClausesCount - 1
 class IrTryCatchImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?
+        type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrTryCatch {
     private var tryResultImpl: IrExpression? = null
     override var tryResult: IrExpression

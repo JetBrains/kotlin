@@ -35,5 +35,5 @@ class OnceExpressionValue(val irExpression: IrExpression) : IntermediateValue {
         return irExpression
     }
 
-    override val type: KotlinType? get() = irExpression.type
+    override val type: KotlinType get() = irExpression.type
 }

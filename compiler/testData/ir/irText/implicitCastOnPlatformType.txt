@@ -1,7 +1,7 @@
 FILE /implicitCastOnPlatformType.kt
   FUN public fun test(): kotlin.String
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL .getProperty type=kotlin.String! operator=null
             p0: CONST String type=kotlin.String value='test'

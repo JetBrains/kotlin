@@ -29,7 +29,7 @@ interface IrGetExtensionReceiver : IrDeclarationReference, IrExpressionWithCopy 
 class IrGetExtensionReceiverImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         descriptor: ReceiverParameterDescriptor
 ) : IrTerminalDeclarationReferenceBase<ReceiverParameterDescriptor>(startOffset, endOffset, type, descriptor), IrGetExtensionReceiver {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

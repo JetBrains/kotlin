@@ -6,23 +6,23 @@ FILE /augmentedAssignment1.kt
     BLOCK_BODY
       VAR var x: kotlin.Int
         CONST Int type=kotlin.Int value='0'
-      SET_VAR x type=<no-type> operator=PLUSEQ
+      SET_VAR x type=kotlin.Unit operator=PLUSEQ
         CALL .plus type=kotlin.Int operator=PLUSEQ
           $this: GET_VAR x type=kotlin.Int operator=PLUSEQ
           other: CONST Int type=kotlin.Int value='1'
-      SET_VAR x type=<no-type> operator=MINUSEQ
+      SET_VAR x type=kotlin.Unit operator=MINUSEQ
         CALL .minus type=kotlin.Int operator=MINUSEQ
           $this: GET_VAR x type=kotlin.Int operator=MINUSEQ
           other: CONST Int type=kotlin.Int value='2'
-      SET_VAR x type=<no-type> operator=MULTEQ
+      SET_VAR x type=kotlin.Unit operator=MULTEQ
         CALL .times type=kotlin.Int operator=MULTEQ
           $this: GET_VAR x type=kotlin.Int operator=MULTEQ
           other: CONST Int type=kotlin.Int value='3'
-      SET_VAR x type=<no-type> operator=DIVEQ
+      SET_VAR x type=kotlin.Unit operator=DIVEQ
         CALL .div type=kotlin.Int operator=DIVEQ
           $this: GET_VAR x type=kotlin.Int operator=DIVEQ
           other: CONST Int type=kotlin.Int value='4'
-      SET_VAR x type=<no-type> operator=PERCEQ
+      SET_VAR x type=kotlin.Unit operator=PERCEQ
         CALL .mod type=kotlin.Int operator=PERCEQ
           $this: GET_VAR x type=kotlin.Int operator=PERCEQ
           other: CONST Int type=kotlin.Int value='5'

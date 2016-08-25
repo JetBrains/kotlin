@@ -50,16 +50,18 @@ class IrGetVariableImpl(
 class IrSetVariableImpl(
         startOffset: Int,
         endOffset: Int,
+        type: KotlinType,
         override val descriptor: VariableDescriptor,
         override val operator: IrOperator?
-) : IrExpressionBase(startOffset, endOffset, null), IrSetVariable {
+) : IrExpressionBase(startOffset, endOffset, type), IrSetVariable {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            type: KotlinType,
             descriptor: VariableDescriptor,
             value: IrExpression,
             operator: IrOperator?
-    ) : this(startOffset, endOffset, descriptor, operator) {
+    ) : this(startOffset, endOffset, type, descriptor, operator) {
         this.value = value
     }
 

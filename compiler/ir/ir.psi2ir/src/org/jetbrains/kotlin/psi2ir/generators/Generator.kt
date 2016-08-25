@@ -100,4 +100,4 @@ fun getReturnType(descriptor: CallableDescriptor): KotlinType {
 }
 
 fun Generator.createDummyExpression(ktExpression: KtExpression, description: String): IrDummyExpression =
-        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithSmartcasts(ktExpression), description)
+        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithSmartcastsOrFail(ktExpression), description)

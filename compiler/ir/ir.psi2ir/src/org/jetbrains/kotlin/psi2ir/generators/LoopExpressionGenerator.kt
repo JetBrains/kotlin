@@ -32,10 +32,14 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
     override val context: GeneratorContext get() = statementGenerator.context
 
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression =
-            generateConditionalLoop(ktWhile, IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset, IrOperator.WHILE_LOOP))
+            generateConditionalLoop(ktWhile,
+                                    IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,
+                                                    context.builtIns.unitType, IrOperator.WHILE_LOOP))
 
     fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression =
-            generateConditionalLoop(ktDoWhile, IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset, IrOperator.DO_WHILE_LOOP))
+            generateConditionalLoop(ktDoWhile,
+                                    IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
+                                                      context.builtIns.unitType, IrOperator.DO_WHILE_LOOP))
 
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
         statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
@@ -116,7 +120,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
         val iteratorValue = VariableLValue(irIterator)
         irForBlock.addStatement(irIterator)
 
-        val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, IrOperator.FOR_LOOP_INNER_WHILE)
+        val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP_INNER_WHILE)
         irInnerWhile.label = getLoopLabel(ktFor)
         statementGenerator.bodyGenerator.putLoop(ktFor, irInnerWhile)
         irForBlock.addStatement(irInnerWhile)

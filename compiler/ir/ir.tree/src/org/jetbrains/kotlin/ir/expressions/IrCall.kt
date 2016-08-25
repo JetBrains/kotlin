@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,7 +36,7 @@ interface IrCall : IrMemberAccessExpression {
 class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val descriptor: CallableDescriptor,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
@@ -89,7 +90,7 @@ abstract class IrPropertyAccessorCallBase(
         override val descriptor: CallableDescriptor,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType), IrCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCall(this, data)
     }

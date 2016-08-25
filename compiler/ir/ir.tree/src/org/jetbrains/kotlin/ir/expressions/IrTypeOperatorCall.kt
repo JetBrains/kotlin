@@ -38,14 +38,14 @@ interface IrTypeOperatorCall : IrExpression {
 class IrTypeOperatorCallImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val operator: IrTypeOperator,
         override val typeOperand: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
+            type: KotlinType,
             operator: IrTypeOperator,
             typeOperand: KotlinType,
             argument: IrExpression

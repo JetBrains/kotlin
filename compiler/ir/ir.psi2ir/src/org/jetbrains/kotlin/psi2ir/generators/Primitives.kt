@@ -38,7 +38,7 @@ fun GeneratorContext.equalsNull(startOffset: Int, endOffset: Int, argument: IrEx
 // a || b == if (a) true else b
 fun GeneratorContext.oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                         a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type!!), b,
+                         a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type), b,
                          operator)
 
 fun GeneratorContext.oror(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
@@ -50,7 +50,7 @@ fun GeneratorContext.whenComma(a: IrExpression, b: IrExpression): IrWhen =
 // a && b == if (a) b else false
 fun GeneratorContext.andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                         a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type!!),
+                         a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type),
                          operator)
 
 fun GeneratorContext.andand(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =

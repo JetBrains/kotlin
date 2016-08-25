@@ -11,7 +11,7 @@ FILE /whileDoWhile.kt
         body: BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp0: kotlin.Int
             GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
-          SET_VAR x type=<no-type> operator=POSTFIX_INCR
+          SET_VAR x type=kotlin.Unit operator=POSTFIX_INCR
             CALL .inc type=kotlin.Int operator=POSTFIX_INCR
               $this: GET_VAR tmp0 type=kotlin.Int operator=null
           GET_VAR tmp0 type=kotlin.Int operator=null
@@ -24,7 +24,7 @@ FILE /whileDoWhile.kt
           BLOCK type=kotlin.Int operator=POSTFIX_INCR
             VAR val tmp1: kotlin.Int
               GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
-            SET_VAR x type=<no-type> operator=POSTFIX_INCR
+            SET_VAR x type=kotlin.Unit operator=POSTFIX_INCR
               CALL .inc type=kotlin.Int operator=POSTFIX_INCR
                 $this: GET_VAR tmp1 type=kotlin.Int operator=null
             GET_VAR tmp1 type=kotlin.Int operator=null
@@ -32,7 +32,7 @@ FILE /whileDoWhile.kt
         body: BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp2: kotlin.Int
             GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
-          SET_VAR x type=<no-type> operator=POSTFIX_INCR
+          SET_VAR x type=kotlin.Unit operator=POSTFIX_INCR
             CALL .inc type=kotlin.Int operator=POSTFIX_INCR
               $this: GET_VAR tmp2 type=kotlin.Int operator=null
           GET_VAR tmp2 type=kotlin.Int operator=null
@@ -45,7 +45,7 @@ FILE /whileDoWhile.kt
           BLOCK type=kotlin.Int operator=POSTFIX_INCR
             VAR val tmp3: kotlin.Int
               GET_VAR x type=kotlin.Int operator=POSTFIX_INCR
-            SET_VAR x type=<no-type> operator=POSTFIX_INCR
+            SET_VAR x type=kotlin.Unit operator=POSTFIX_INCR
               CALL .inc type=kotlin.Int operator=POSTFIX_INCR
                 $this: GET_VAR tmp3 type=kotlin.Int operator=null
             GET_VAR tmp3 type=kotlin.Int operator=null

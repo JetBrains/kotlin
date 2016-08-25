@@ -27,7 +27,7 @@ abstract class IrPrimitiveCallBase(
         endOffset: Int,
         override val operator: IrOperator,
         override val descriptor: CallableDescriptor
-) : IrExpressionBase(startOffset, endOffset, descriptor.returnType), IrCall {
+) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override val superQualifier: ClassDescriptor? get() = null
     override var dispatchReceiver: IrExpression?
         get() = null

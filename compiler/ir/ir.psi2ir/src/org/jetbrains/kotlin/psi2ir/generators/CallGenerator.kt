@@ -83,7 +83,7 @@ class CallGenerator(
             operator: IrOperator?,
             call: CallBuilder
     ): IrExpression {
-        val returnType = descriptor.returnType
+        val returnType = descriptor.returnType!!
 
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
@@ -111,7 +111,7 @@ class CallGenerator(
             startOffset: Int,
             endOffset: Int,
             call: CallBuilder,
-            resultType: KotlinType?
+            resultType: KotlinType
     ): IrExpression {
         val resolvedCall = call.original
 

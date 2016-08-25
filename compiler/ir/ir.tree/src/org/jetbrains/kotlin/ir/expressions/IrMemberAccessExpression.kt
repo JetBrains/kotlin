@@ -28,7 +28,7 @@ interface IrMemberAccessExpression : IrDeclarationReference {
 abstract class IrMemberAccessExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?
+        type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null
         set(newReceiver) {

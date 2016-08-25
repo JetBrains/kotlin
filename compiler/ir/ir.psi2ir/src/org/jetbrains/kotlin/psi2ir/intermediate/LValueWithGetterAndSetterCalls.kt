@@ -28,6 +28,7 @@ class LValueWithGetterAndSetterCalls(
         val callGenerator: CallGenerator,
         val getterCall: CallBuilder?,
         val setterCall: CallBuilder?,
+        override val type: KotlinType,
         val startOffset: Int,
         val endOffset: Int,
         val operator: IrOperator? = null
@@ -38,8 +39,6 @@ class LValueWithGetterAndSetterCalls(
 
     private var getterInstantiated = false
     private var setterInstantiated = false
-
-    override val type: KotlinType? get() = descriptor.returnType
 
     override fun load(): IrExpression {
         if (getterCall == null) throw AssertionError("No getter call for $descriptor")

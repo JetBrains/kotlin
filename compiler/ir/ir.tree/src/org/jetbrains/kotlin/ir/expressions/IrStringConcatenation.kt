@@ -29,7 +29,7 @@ interface IrStringConcatenation : IrExpression {
 class IrStringConcatenationImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?
+        type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
     override val arguments: MutableList<IrExpression> = ArrayList()
 

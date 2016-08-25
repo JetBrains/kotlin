@@ -47,7 +47,7 @@ sealed class IrConstKind<out T>(val asString: kotlin.String)  {
 class IrConstImpl<out T> (
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val kind: IrConstKind<T>,
         override val value: T
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrConst<T> {

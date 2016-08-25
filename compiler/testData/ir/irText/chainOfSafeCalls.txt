@@ -2,7 +2,7 @@ FILE /chainOfSafeCalls.kt
   DUMMY C
   FUN public fun test(/*0*/ nc: C?): C?
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         BLOCK type=C? operator=SAFE_CALL
           VAR val tmp2_safe_receiver: C?
             WHEN type=C? operator=SAFE_CALL

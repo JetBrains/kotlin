@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class IrDummyExpression(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         val description: String
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrExpressionWithCopy {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

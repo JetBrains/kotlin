@@ -38,5 +38,5 @@ class OnceCallValue(
         return CallGenerator(statementGenerator).generateCall(startOffset, endOffset, call, operator)
     }
 
-    override val type: KotlinType? get() = call.descriptor.returnType
+    override val type: KotlinType get() = call.descriptor.returnType!!
 }

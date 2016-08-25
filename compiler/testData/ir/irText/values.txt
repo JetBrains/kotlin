@@ -7,17 +7,17 @@ FILE /values.kt
   DUMMY Z
   FUN public fun test1(): Enum
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         GET_ENUM_VALUE A type=Enum
   FUN public fun test2(): A
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         GET_OBJECT A type=A
   FUN public fun test3(): kotlin.Int
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CALL .<get-a> type=kotlin.Int operator=GET_PROPERTY
   FUN public fun test4(): Z.Companion
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         GET_OBJECT Companion type=Z.Companion

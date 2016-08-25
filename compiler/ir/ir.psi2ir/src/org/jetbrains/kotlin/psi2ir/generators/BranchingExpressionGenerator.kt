@@ -25,14 +25,13 @@ import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
-import java.lang.AssertionError
 
 class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) : GeneratorWithScope {
     override val scope: Scope get() = statementGenerator.scope
     override val context: GeneratorContext get() = statementGenerator.context
 
     fun generateIfExpression(expression: KtIfExpression): IrExpression {
-        val resultType = getInferredTypeWithSmartcasts(expression)
+        val resultType = getInferredTypeWithSmartcastsOrFail(expression)
 
         var ktLastIf: KtIfExpression = expression
         val irBranches = SmartList<Pair<IrExpression, IrExpression>>()
@@ -75,7 +74,7 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
             scope.createTemporaryVariable(statementGenerator.generateExpression(it), "subject")
         }
 
-        val resultType = getInferredTypeWithSmartcasts(expression)
+        val resultType = getInferredTypeWithSmartcastsOrFail(expression)
 
         val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrOperator.WHEN)
 

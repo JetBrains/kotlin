@@ -31,8 +31,7 @@ class SimplePropertyLValue(
         val descriptor: PropertyDescriptor,
         val callReceiver: CallReceiver
 ) : LValue, AssignmentReceiver {
-    override val type: KotlinType?
-        get() = descriptor.type
+    override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression {
         val getter = descriptor.getter!!

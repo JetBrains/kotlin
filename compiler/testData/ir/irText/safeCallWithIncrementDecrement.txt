@@ -3,13 +3,13 @@ FILE /safeCallWithIncrementDecrement.kt
   PROPERTY public var test.C?.p: kotlin.Int getter=<get-p> setter=<set-p>
   PROPERTY_GETTER public fun test.C?.<get-p>(): kotlin.Int property=p
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
   PROPERTY_SETTER public fun test.C?.<set-p>(/*0*/ value: kotlin.Int): kotlin.Unit property=p
     BLOCK_BODY
   FUN public operator fun kotlin.Int?.inc(): kotlin.Int?
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         WHEN type=kotlin.Int? operator=SAFE_CALL
           if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
             arg0: $RECEIVER of: inc type=kotlin.Int?
@@ -19,7 +19,7 @@ FILE /safeCallWithIncrementDecrement.kt
             $this: $RECEIVER of: inc type=kotlin.Int?
   FUN public operator fun kotlin.Int?.get(/*0*/ index: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         CONST Int type=kotlin.Int value='42'
   FUN public operator fun kotlin.Int?.set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
     BLOCK_BODY

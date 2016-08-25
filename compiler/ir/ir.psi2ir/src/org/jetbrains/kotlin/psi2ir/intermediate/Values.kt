@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IntermediateValue {
     fun load(): IrExpression
-    val type: KotlinType?
+    val type: KotlinType
 }
 
 interface LValue : IntermediateValue {

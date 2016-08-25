@@ -30,14 +30,16 @@ interface IrReturn : IrExpression {
 class IrReturnImpl(
         startOffset: Int,
         endOffset: Int,
+        type: KotlinType,
         override val returnTarget: CallableDescriptor
-) : IrExpressionBase(startOffset, endOffset, null), IrReturn {
+) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            type: KotlinType,
             returnTarget: CallableDescriptor,
             value: IrExpression?
-    ) : this(startOffset, endOffset, returnTarget) {
+    ) : this(startOffset, endOffset, type, returnTarget) {
         this.value = value
     }
 

@@ -1,7 +1,7 @@
 FILE /ifElseIf.kt
   FUN public fun test(/*0*/ i: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=<no-type>
+      RETURN type=kotlin.Nothing
         WHEN type=kotlin.Int operator=WHEN
           if: CALL .GT0 type=kotlin.Boolean operator=GT
             arg0: CALL .compareTo type=kotlin.Int operator=GT

@@ -35,7 +35,7 @@ fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
 class IrBlockImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val operator: IrOperator? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrBlock {
     override val statements: MutableList<IrStatement> = ArrayList()

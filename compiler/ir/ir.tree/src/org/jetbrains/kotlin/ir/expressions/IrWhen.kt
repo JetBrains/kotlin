@@ -36,7 +36,7 @@ val IrWhen.branchIndices: IntRange get() = 0 ..branchesCount - 1
 class IrWhenImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val operator: IrOperator? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrWhen {
     private val branchParts = ArrayList<IrExpression>()
@@ -97,13 +97,13 @@ class IrWhenImpl(
 class IrIfThenElseImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType?,
+        type: KotlinType,
         override val operator: IrOperator? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrWhen {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType?,
+            type: KotlinType,
             condition: IrExpression,
             thenBranch: IrExpression,
             elseBranch: IrExpression? = null,

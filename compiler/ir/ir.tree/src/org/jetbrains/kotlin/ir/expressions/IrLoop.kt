@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IrLoop : IrExpression {
     val operator: IrOperator?
@@ -33,8 +34,9 @@ interface IrDoWhileLoop : IrLoop
 abstract class IrLoopBase(
         startOffset: Int,
         endOffset: Int,
+        type: KotlinType,
         override val operator: IrOperator?
-) : IrExpressionBase(startOffset, endOffset, null), IrLoop {
+) : IrExpressionBase(startOffset, endOffset, type), IrLoop {
     override var label: String? = null
 
     private var conditionImpl: IrExpression? = null
@@ -75,15 +77,17 @@ abstract class IrLoopBase(
 class IrWhileLoopImpl(
         startOffset: Int,
         endOffset: Int,
+        type: KotlinType,
         operator: IrOperator?
-) : IrLoopBase(startOffset, endOffset, operator), IrWhileLoop {
+) : IrLoopBase(startOffset, endOffset, type, operator), IrWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            type: KotlinType,
             operator: IrOperator?,
             condition: IrExpression,
             body: IrExpression
-    ) : this(startOffset, endOffset, operator) {
+    ) : this(startOffset, endOffset, type, operator) {
         this.condition = condition
         this.body = body
     }
@@ -101,15 +105,17 @@ class IrWhileLoopImpl(
 class IrDoWhileLoopImpl(
         startOffset: Int,
         endOffset: Int,
+        type : KotlinType,
         operator: IrOperator?
-) : IrLoopBase(startOffset, endOffset, operator), IrDoWhileLoop {
+) : IrLoopBase(startOffset, endOffset, type, operator), IrDoWhileLoop {
     constructor(
             startOffset: Int,
             endOffset: Int,
+            type: KotlinType,
             operator: IrOperator?,
             body: IrExpression,
             condition: IrExpression
-    ) : this(startOffset, endOffset, operator) {
+    ) : this(startOffset, endOffset, type, operator) {
         this.condition = condition
         this.body = body
     }

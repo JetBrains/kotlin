@@ -51,7 +51,7 @@ class InlineSafeCallChains(val context: GeneratorContext) : IrElementVisitor<Uni
     }
 
     private fun rewriteSafeCallChain(outer: SafeCallInfo, inner: SafeCallInfo) {
-        val innerNestedCallReturnType = inner.nestedCall.type ?: return
+        val innerNestedCallReturnType = inner.nestedCall.type
         if (innerNestedCallReturnType.containsNull()) return
 
         outer.root.replaceWith {

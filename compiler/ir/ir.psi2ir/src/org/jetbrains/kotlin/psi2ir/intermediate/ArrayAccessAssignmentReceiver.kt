@@ -48,7 +48,7 @@ class ArrayAccessAssignmentReceiver(
 
         indexedGetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
         indexedSetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
-        val irLValue = LValueWithGetterAndSetterCalls(callGenerator, indexedGetCall, indexedSetCall, startOffset, endOffset, operator)
+        val irLValue = LValueWithGetterAndSetterCalls(callGenerator, indexedGetCall, indexedSetCall, type, startOffset, endOffset, operator)
         irBlock.inlineStatement(withLValue(irLValue))
 
         return irBlock
