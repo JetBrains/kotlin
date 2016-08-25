@@ -9,7 +9,8 @@ class TaskRequest private constructor (var type: TaskRequest.Type) {
     DEBUG (0),
     ROUTE (1),
     SONAR (2),
-    Unexpected(3);
+    ROUTE_METRIC (3),
+    Unexpected(4);
 
     companion object {
       fun fromIntToType (ord: Int): Type {
@@ -17,6 +18,7 @@ class TaskRequest private constructor (var type: TaskRequest.Type) {
           0 -> Type.DEBUG
           1 -> Type.ROUTE
           2 -> Type.SONAR
+          3 -> Type.ROUTE_METRIC
           else -> Unexpected
         }
       }

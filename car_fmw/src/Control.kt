@@ -1,4 +1,3 @@
-
 object Control {
     val BLINK_DURATION = 1000
 
@@ -18,6 +17,7 @@ object Control {
         when (task.type.id) {
             TaskRequest.Type.DEBUG.id -> debugTask()
             TaskRequest.Type.ROUTE.id -> routeTask()
+            TaskRequest.Type.ROUTE_METRIC.id -> routeMetricTask()
             TaskRequest.Type.SONAR.id -> sonarTask()
         }
 
@@ -55,6 +55,23 @@ object Control {
         Writer.writeRoute(response)
     }
 
+    private fun routeMetricTask() {
+        val route = Reader.readMetricRoute()
+        val distances = route.distances
+        var i = 0
+
+        while (i < distances.size) {
+            val distance = distances[i]
+            val direction = route.directions[i]
+            Engine.drive(direction, distance)
+
+            i++
+        }
+
+        val response = RouteResponse.BuilderRouteResponse(0).build()
+        Writer.writeRoute(response)
+    }
+
     private fun sonarTask() {
         val request = Reader.readSonar()
         val size = request.angles.size
@@ -65,7 +82,7 @@ object Control {
             distances[i] = Sonar.getDistance(request.angles[i])
             i++
         }
-        
+
         val response = SonarResponse.BuilderSonarResponse(distances).build()
         Writer.writeSonar(response)
     }

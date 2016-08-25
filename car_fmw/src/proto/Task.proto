@@ -9,5 +9,6 @@ message TaskRequest {
         DEBUG = 0;
         ROUTE = 1;
         SONAR = 2;
+        ROUTE_METRIC = 3;
     }
 }

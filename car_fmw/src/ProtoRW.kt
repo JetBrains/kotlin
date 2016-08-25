@@ -4,6 +4,11 @@ object Reader {
         return RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0)).parseFrom(stream).build()
     }
 
+    fun readMetricRoute(): RouteMetricRequest {
+        val stream = getInputStream()
+        return RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0)).parseFrom(stream).build()
+    }
+
     fun readTask(): TaskRequest {
         val stream = getInputStream()
         return TaskRequest.BuilderTaskRequest(TaskRequest.Type.DEBUG).parseFrom(stream).build()

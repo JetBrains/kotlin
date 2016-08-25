@@ -2,7 +2,6 @@ syntax = "proto3";
 package carkot;
 
 message LocationResponse {
-
     LocationData locationResponseData = 1;
     int32 code = 2;
 

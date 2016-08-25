@@ -51,14 +51,16 @@ object Engine {
     }
 
     fun drive(direction: Int, distance: Int) {
-        go(direction)
-        Time.wait((distance.toDouble() / VELOCITY_DRIVE).toInt())
-        stop()
-    }
+        val duration = when (direction) {
+            RouteType.FORWARD.id,
+            RouteType.BACKWARD.id -> (distance.toDouble() / VELOCITY_DRIVE).toInt()
+            RouteType.LEFT.id,
+            RouteType.RIGHT.id -> (distance.toDouble() / VEL0CITY_ROTATE).toInt()
+            else -> 0
+        }
 
-    fun rotate(direction: Int, degree: Int) {
         go(direction)
-        Time.wait((degree.toDouble() / VEL0CITY_ROTATE).toInt())
+        Time.wait(duration)
         stop()
     }
 }

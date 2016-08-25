@@ -12,7 +12,7 @@ object Voyager {
                 distance = Sonar.getSmoothDistance(0)
             }
 
-            Engine.rotate(RouteType.LEFT.id, 45)
+            Engine.drive(RouteType.LEFT.id, 45)
         }
     }
 }

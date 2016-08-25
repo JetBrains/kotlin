@@ -2,7 +2,6 @@ syntax = "proto3";
 package carkot;
 
 message DebugRequest {
-
     Type type = 1;
 
     enum Type {
