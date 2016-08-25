@@ -10,7 +10,7 @@ IrFile /forWithImplicitReceivers.kt
             CALL .iterator type=IntCell operator=FOR_LOOP_ITERATOR
               $this: $RECEIVER of: test type=IReceiver
               $receiver: GET_OBJECT FiveTimes type=FiveTimes
-          WHILE operator=FOR_LOOP_INNER_WHILE
+          WHILE label=null operator=FOR_LOOP_INNER_WHILE
             condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
               $this: $RECEIVER of: test type=IReceiver
               $receiver: GET_VAR tmp0_iterator type=IntCell operator=null

@@ -101,16 +101,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "WHEN type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
-            "WHILE operator=${loop.operator}"
+            "WHILE label=${loop.label} operator=${loop.operator}"
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
-            "DO_WHILE operator=${loop.operator}"
+            "DO_WHILE label=${loop.label} operator=${loop.operator}"
 
     override fun visitBreak(jump: IrBreak, data: Nothing?): String =
-            "BREAK loop.operator=${jump.loop.operator} depth=${jump.getDepth()}"
+            "BREAK label=${jump.label} depth=${jump.getDepth()}"
 
     override fun visitContinue(jump: IrContinue, data: Nothing?): String =
-            "CONTINUE loop.operator=${jump.loop.operator} depth=${jump.getDepth()}"
+            "CONTINUE label=${jump.label} depth=${jump.getDepth()}"
 
     override fun visitThrow(expression: IrThrow, data: Nothing?): String =
             "THROW type=${expression.renderType()}"

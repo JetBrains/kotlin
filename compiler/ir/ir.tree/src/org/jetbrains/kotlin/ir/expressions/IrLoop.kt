@@ -23,6 +23,7 @@ interface IrLoop : IrExpression {
     val operator: IrOperator?
     var body: IrExpression
     var condition: IrExpression
+    val label: String?
 }
 
 interface IrWhileLoop : IrLoop
@@ -34,6 +35,8 @@ abstract class IrLoopBase(
         endOffset: Int,
         override val operator: IrOperator?
 ) : IrExpressionBase(startOffset, endOffset, null), IrLoop {
+    override var label: String? = null
+
     private var conditionImpl: IrExpression? = null
     override var condition: IrExpression
         get() = conditionImpl!!

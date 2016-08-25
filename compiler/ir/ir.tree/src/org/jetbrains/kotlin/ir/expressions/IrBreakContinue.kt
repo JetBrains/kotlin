@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IrBreakContinue : IrExpression {
     var loop: IrLoop
+    val label: String?
 }
 
 interface IrBreak: IrBreakContinue
@@ -51,6 +52,7 @@ abstract class IrBreakContinueBase(
         type: KotlinType,
         override var loop: IrLoop
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrBreakContinue {
+    override var label: String? = null
 }
 
 class IrBreakImpl(

@@ -37,25 +37,33 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
     fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression =
             generateConditionalLoop(ktDoWhile, IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset, IrOperator.DO_WHILE_LOOP))
 
-    private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoop): IrLoop {
+    private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
         statementGenerator.expressionBodyGenerator.putLoop(ktLoop, irLoop)
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
         irLoop.body = statementGenerator.generateExpression(ktLoop.body!!)
+        irLoop.label = getLoopLabel(ktLoop)
         return irLoop
     }
 
     fun generateBreak(ktBreak: KtBreakExpression): IrExpression {
         val parentLoop = findParentLoop(ktBreak)
-        return IrBreakImpl(ktBreak.startOffset, ktBreak.endOffset, context.builtIns.nothingType, parentLoop)
+        return IrBreakImpl(ktBreak.startOffset, ktBreak.endOffset, context.builtIns.nothingType, parentLoop).apply {
+            label = ktBreak.getLabelName()
+        }
     }
 
     fun generateContinue(ktContinue: KtContinueExpression): IrExpression {
         val parentLoop = findParentLoop(ktContinue)
-        return IrContinueImpl(ktContinue.startOffset, ktContinue.endOffset, context.builtIns.nothingType, parentLoop)
+        return IrContinueImpl(ktContinue.startOffset, ktContinue.endOffset, context.builtIns.nothingType, parentLoop).apply {
+            label = ktContinue.getLabelName()
+        }
     }
 
+    private fun getLoopLabel(ktLoop: KtLoopExpression): String? =
+            (ktLoop.parent as? KtLabeledExpression)?.getLabelName()
+
     private fun findParentLoop(ktWithLabel: KtExpressionWithLabel): IrLoop =
-            findParentLoop(ktWithLabel, ktWithLabel.getTargetLabel()?.getReferencedName())
+            findParentLoop(ktWithLabel, ktWithLabel.getLabelName())
 
     private fun findParentLoop(ktExpression: KtExpression, targetLabel: String?): IrLoop {
         var finger: KtExpression? = ktExpression
@@ -109,6 +117,7 @@ class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : Gene
         irForBlock.addStatement(irIterator)
 
         val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, IrOperator.FOR_LOOP_INNER_WHILE)
+        irInnerWhile.label = getLoopLabel(ktFor)
         statementGenerator.expressionBodyGenerator.putLoop(ktFor, irInnerWhile)
         irForBlock.addStatement(irInnerWhile)
 

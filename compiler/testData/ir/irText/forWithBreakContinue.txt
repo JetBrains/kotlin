@@ -6,7 +6,7 @@ IrFile /forWithBreakContinue.kt
           VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
             CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
               $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-          WHILE operator=FOR_LOOP_INNER_WHILE
+          WHILE label=null operator=FOR_LOOP_INNER_WHILE
             condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
               $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -14,7 +14,7 @@ IrFile /forWithBreakContinue.kt
                 CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                   $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
               BLOCK type=<no-type> hasResult=false operator=null
-                BREAK loop.operator=FOR_LOOP_INNER_WHILE depth=0
+                BREAK label=null depth=0
   IrFunction public fun testForBreak2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -22,7 +22,7 @@ IrFile /forWithBreakContinue.kt
           VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
             CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
               $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-          WHILE operator=FOR_LOOP_INNER_WHILE
+          WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
             condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
               $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -34,7 +34,7 @@ IrFile /forWithBreakContinue.kt
                   VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                     CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                       $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-                  WHILE operator=FOR_LOOP_INNER_WHILE
+                  WHILE label=INNER operator=FOR_LOOP_INNER_WHILE
                     condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
                       $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                     body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -42,10 +42,10 @@ IrFile /forWithBreakContinue.kt
                         CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                           $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                       BLOCK type=<no-type> hasResult=false operator=null
-                        BREAK loop.operator=FOR_LOOP_INNER_WHILE depth=1
-                        BREAK loop.operator=FOR_LOOP_INNER_WHILE depth=0
-                        BREAK loop.operator=FOR_LOOP_INNER_WHILE depth=0
-                BREAK loop.operator=FOR_LOOP_INNER_WHILE depth=0
+                        BREAK label=OUTER depth=1
+                        BREAK label=INNER depth=0
+                        BREAK label=null depth=0
+                BREAK label=OUTER depth=0
   IrFunction public fun testForContinue1(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -53,7 +53,7 @@ IrFile /forWithBreakContinue.kt
           VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
             CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
               $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-          WHILE operator=FOR_LOOP_INNER_WHILE
+          WHILE label=null operator=FOR_LOOP_INNER_WHILE
             condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
               $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -61,7 +61,7 @@ IrFile /forWithBreakContinue.kt
                 CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                   $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
               BLOCK type=<no-type> hasResult=false operator=null
-                CONTINUE loop.operator=FOR_LOOP_INNER_WHILE depth=0
+                CONTINUE label=null depth=0
   IrFunction public fun testForContinue2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     IrExpressionBody
       BLOCK type=<no-type> hasResult=false operator=null
@@ -69,7 +69,7 @@ IrFile /forWithBreakContinue.kt
           VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
             CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
               $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-          WHILE operator=FOR_LOOP_INNER_WHILE
+          WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
             condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
               $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -81,7 +81,7 @@ IrFile /forWithBreakContinue.kt
                   VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                     CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                       $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
-                  WHILE operator=FOR_LOOP_INNER_WHILE
+                  WHILE label=INNER operator=FOR_LOOP_INNER_WHILE
                     condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
                       $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                     body: BLOCK type=kotlin.Unit hasResult=false operator=FOR_LOOP_INNER_WHILE
@@ -89,7 +89,7 @@ IrFile /forWithBreakContinue.kt
                         CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                           $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                       BLOCK type=<no-type> hasResult=false operator=null
-                        CONTINUE loop.operator=FOR_LOOP_INNER_WHILE depth=1
-                        CONTINUE loop.operator=FOR_LOOP_INNER_WHILE depth=0
-                        CONTINUE loop.operator=FOR_LOOP_INNER_WHILE depth=0
-                CONTINUE loop.operator=FOR_LOOP_INNER_WHILE depth=0
+                        CONTINUE label=OUTER depth=1
+                        CONTINUE label=INNER depth=0
+                        CONTINUE label=null depth=0
+                CONTINUE label=OUTER depth=0
