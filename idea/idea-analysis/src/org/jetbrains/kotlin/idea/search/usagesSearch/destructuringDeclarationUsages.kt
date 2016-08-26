@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch.*
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
@@ -125,9 +124,14 @@ private class Processor(
         private val plainSearchHandler: (SearchScope) -> Unit
 ) {
     private val project = target.project
-    private val declarationsToSearch = ArrayList<PsiElement>()
-    private val declarationsToSearchSet = HashSet<PsiElement>()
-    private var scopeToUsePlainSearch: SearchScope = LocalSearchScope.EMPTY
+
+    // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
+    //TODO: what about Scala and other JVM-languages?
+    private val declarationUsageScope = GlobalSearchScope.projectScope(project).restrictToKotlinSources() //TODO: search in libraries?
+
+    private val declarationsToProcess = ArrayDeque<PsiElement>()
+    private val declarationsToProcessSet = HashSet<PsiElement>()
+    private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
     fun run() {
         val dataClassDescriptor = dataType.type.constructor.declarationDescriptor ?: return
@@ -160,20 +164,20 @@ private class Processor(
             (classToSearch as? KtLightClass)?.kotlinOrigin?.let { usePlainSearch(it) }
         }
 
-        // we use index instead of iterator because elements are added during iteration
-        var index = 0
-        while (index < declarationsToSearch.size) {
-            val declaration = declarationsToSearch[index++]
-            processDeclarationOfTypeWithDataClass(declaration)
-        }
+        processDeclarations()
 
-        plainSearchHandler(scopeToUsePlainSearch)
+        val scopeElements = scopesToUsePlainSearch.values.flatMap { it }.toTypedArray()
+        plainSearchHandler(LocalSearchScope(scopeElements))
     }
 
     //TODO: check if it's operator (too expensive)
-    private fun addDeclarationToProcess(declaration: PsiElement) {
-        if (declarationsToSearchSet.add(declaration)) {
-            declarationsToSearch.add(declaration)
+    /**
+     * Adds declaration whose type is our data class (or data class used anywhere inside that type)
+     * or which has parameter of functional type with our data class used inside
+     */
+    private fun addCallableDeclarationToProcess(declaration: PsiElement) {
+        if (declarationsToProcessSet.add(declaration)) {
+            declarationsToProcess.push(declaration)
         }
     }
 
@@ -205,7 +209,18 @@ private class Processor(
                             is KtCallableDeclaration -> {
                                 when (typeRef) {
                                     typeRefParent.typeReference -> {
-                                        addDeclarationToProcess(typeRefParent)
+                                        addCallableDeclarationToProcess(typeRefParent)
+
+                                        if (typeRefParent is KtParameter) {
+                                            val usedInsideFunctionalType = parent.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
+                                            if (usedInsideFunctionalType) {
+                                                val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
+                                                if (function != null) {
+                                                    addCallableDeclarationToProcess(function)
+                                                }
+                                            }
+                                        }
+
                                         return true
                                     }
 
@@ -288,7 +303,7 @@ private class Processor(
 
                 is PsiMethod, is PsiField -> {
                     if (!(parent as PsiModifierListOwner).isPrivateOrLocal()) {
-                        addDeclarationToProcess(parent)
+                        addCallableDeclarationToProcess(parent)
                     }
                     break@ParentsLoop
                 }
@@ -298,28 +313,26 @@ private class Processor(
         return true
     }
 
-    /**
-     * Process declaration whose type is our data class (or data class used anywhere inside that type)
-     */
-    private fun processDeclarationOfTypeWithDataClass(declaration: PsiElement) {
-        // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
-        //TODO: what about Scala and other JVM-languages?
-        val declarationUsageScope = GlobalSearchScope.projectScope(declaration.project).restrictToKotlinSources()
-        ReferencesSearch.search(declaration, declarationUsageScope).forEach { reference ->
-            if (reference is KtDestructuringDeclarationReference) { // declaration usage in form of destructuring declaration
-                val entries = reference.element.entries
-                val componentIndex = when (declaration) {
-                    is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
-                    is KtFunction -> declaration.name?.let { getComponentIndex(it) }
+    private fun processDeclarations() {
+        while (declarationsToProcess.isNotEmpty()) {
+            val declaration = declarationsToProcess.pop()
+
+            ReferencesSearch.search(declaration, declarationUsageScope).forEach { reference ->
+                if (reference is KtDestructuringDeclarationReference) { // declaration usage in form of destructuring declaration
+                    val entries = reference.element.entries
+                    val componentIndex = when (declaration) {
+                        is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
+                        is KtFunction -> declaration.name?.let { getComponentIndex(it) }
                     //TODO: java component functions (see KT-13605)
-                    else -> null
+                        else -> null
+                    }
+                    if (componentIndex != null && componentIndex <= entries.size) {
+                        addCallableDeclarationToProcess(entries[componentIndex - 1])
+                    }
                 }
-                if (componentIndex != null && componentIndex <= entries.size) {
-                    processDeclarationOfTypeWithDataClass(entries[componentIndex - 1])
+                else {
+                    (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
                 }
-            }
-            else {
-                (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
             }
         }
     }
@@ -328,11 +341,13 @@ private class Processor(
      * Process expression which may have type of our data class (or data class used anywhere inside that type)
      */
     private fun processSuspiciousExpression(expression: KtExpression) {
+        var affectedScope: PsiElement = expression
         ParentsLoop@
-        for (container in expression.parentsWithSelf) {
-            if (container !is KtExpression) continue
-            val parent = container.parent
+        for (element in expression.parentsWithSelf) {
+            affectedScope = element
+            if (element !is KtExpression) continue
 
+            val parent = element.parent
             when (parent) {
                 is KtDestructuringDeclaration -> {
                     processSuspiciousDeclaration(parent)
@@ -340,10 +355,9 @@ private class Processor(
                 }
 
                 is KtWithExpressionInitializer -> {
-                    if (container != parent.initializer) continue@ParentsLoop
-
-                    processSuspiciousDeclaration(parent)
-
+                    if (element == parent.initializer) {
+                        processSuspiciousDeclaration(parent)
+                    }
                     break@ParentsLoop
                 }
 
@@ -353,8 +367,18 @@ private class Processor(
                         (forExpression.destructuringParameter ?: forExpression.loopParameter as KtDeclaration?)?.let {
                             processSuspiciousDeclaration(it)
                         }
+                        break@ParentsLoop
                     }
                 }
+            }
+
+            if (!element.mayTypeAffectAncestors()) break
+        }
+
+        // use plain search in all lambdas and anonymous functions inside because they parameters or receiver can be implicitly typed with our data class
+        affectedScope.forEachDescendantOfType<KtFunction> {
+            if (it.nameIdentifier == null) {
+                usePlainSearch(it)
             }
         }
     }
@@ -377,15 +401,53 @@ private class Processor(
             val descriptor = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
             val type = descriptor.returnType
             if (type != null && type.containsTypeOrDerivedInside(dataType)) {
-                addDeclarationToProcess(declaration)
+                addCallableDeclarationToProcess(declaration)
             }
         }
     }
 
     private fun usePlainSearch(scopeElement: KtElement) {
-        scopeToUsePlainSearch = LocalSearchScope(scopeElement)
-                .intersectWith(searchScope)
-                .unionSafe(scopeToUsePlainSearch)
+        val file = scopeElement.getContainingKtFile()
+        val restricted = LocalSearchScope(scopeElement).intersectWith(searchScope) as LocalSearchScope
+        ScopeLoop@
+        for (element in restricted.scope) {
+            val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
+            for ((index, prevElement) in prevElements.withIndex()) {
+                if (prevElement.isAncestor(element, strict = false)) continue@ScopeLoop
+                if (element.isAncestor(prevElement)) {
+                    prevElements[index] = element
+                    continue@ScopeLoop
+                }
+            }
+            prevElements.add(element)
+        }
+    }
+
+    //TODO: code is quite similar to PartialBodyResolveFilter.isValueNeeded
+    private fun KtExpression.mayTypeAffectAncestors(): Boolean {
+        val parent = this.parent
+        when (parent) {
+            is KtBlockExpression -> {
+                return this == parent.statements.last() && parent.mayTypeAffectAncestors()
+            }
+
+            is KtDeclarationWithBody -> {
+                if (this == parent.bodyExpression) {
+                    return !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
+                }
+            }
+
+            is KtContainerNode -> {
+                val grandParent = parent.parent
+                return when (parent.node.elementType) {
+                    KtNodeTypes.CONDITION, KtNodeTypes.BODY -> false
+                    KtNodeTypes.THEN, KtNodeTypes.ELSE -> (grandParent as KtExpression).mayTypeAffectAncestors()
+                    KtNodeTypes.LOOP_RANGE, KtNodeTypes.INDICES -> true
+                    else -> true // something else unknown
+                }
+            }
+        }
+        return true // we don't know
     }
 
     private fun PsiModifierListOwner.isPrivateOrLocal(): Boolean {
