@@ -29,8 +29,12 @@ object Sonar {
         var distance = getDistance(start)
         while (i <= stop && distance == -1) {
             distance = getDistance(i)
-
             i += step
+        }
+
+        while (i >= start && distance == -1) {
+            distance = getDistance(i)
+            i -= step
         }
 
         return distance
