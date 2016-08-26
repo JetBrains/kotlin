@@ -53,18 +53,22 @@ object CreateTypeParameterByRefActionFactory : KotlinIntentionActionFactoryWithD
         return ktUserType
     }
 
-    override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): CreateTypeParameterData? {
-        val name = element.referencedName ?: return null
+    fun extractFixData(element: KtTypeElement, newName: String): CreateTypeParameterData? {
         val declaration = element.parents.firstOrNull {
             it is KtProperty || it is KtNamedFunction || it is KtClass
         } as? KtTypeParameterListOwner ?: return null
         val containingDescriptor = declaration.resolveToDescriptor()
-        val fakeTypeParameter = createFakeTypeParameterDescriptor(containingDescriptor, name)
+        val fakeTypeParameter = createFakeTypeParameterDescriptor(containingDescriptor, newName)
         val upperBoundType = getUnsubstitutedTypeConstraintInfo(element)?.let {
             it.performSubstitution(it.typeParameter.typeConstructor to TypeProjectionImpl(fakeTypeParameter.defaultType))?.upperBound
         }
         if (upperBoundType != null && upperBoundType.containsError()) return null
-        return CreateTypeParameterData(name, declaration, upperBoundType, fakeTypeParameter)
+        return CreateTypeParameterData(newName, declaration, upperBoundType, fakeTypeParameter)
+    }
+
+    override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): CreateTypeParameterData? {
+        val name = element.referencedName ?: return null
+        return extractFixData(element, name)
     }
 
     override fun createFixes(

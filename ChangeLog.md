@@ -118,6 +118,10 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Report separate conflicts for each property accessor
 - [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Forbid moving of enum entries
 
+##### New features
+
+- [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
+
 ## 1.0.4
 
 ### Compiler
