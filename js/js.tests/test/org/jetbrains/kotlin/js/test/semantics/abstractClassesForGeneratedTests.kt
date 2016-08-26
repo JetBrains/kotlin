@@ -23,7 +23,7 @@ abstract class JsBasicBoxTest(relativePath: String) : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
 ) {
     init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
     }
 }
 
@@ -32,13 +32,16 @@ abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
 ) {
     init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
     }
 }
 
-abstract class AbstractBridgeTest : BorrowedTest("bridges/")
+abstract class AbstractBoxJsTest() : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/"
+)
 
-abstract class AbstractCallableReferenceTest : JsBasicBoxTest("callableReference/")
+abstract class AbstractBridgeTest : BorrowedTest("bridges/")
 
 abstract class AbstractCompanionObjectTest : JsBasicBoxTest("objectIntrinsics/")
 
@@ -49,8 +52,6 @@ abstract class AbstractFunctionExpressionTest : JsBasicBoxTest("functionExpressi
 abstract class AbstractInlineEvaluationOrderTest : JsBasicBoxTest("inlineEvaluationOrder/")
 
 abstract class AbstractInlineJsStdlibTest : JsBasicBoxTest("inlineStdlib/")
-
-abstract class AbstractInlineJsTest : JsBasicBoxTest("inline/")
 
 abstract class AbstractJsCodeTest : JsBasicBoxTest("jsCode/")
 
@@ -79,3 +80,5 @@ abstract class AbstractRttiTest : JsBasicBoxTest("rtti/")
 abstract class AbstractCastTest : JsBasicBoxTest("expression/cast/")
 
 abstract class AbstractLightReflectionTest : JsBasicBoxTest("reflection/light/")
+
+abstract class AbstractTypeAliasesTests : JsBasicBoxTest("typealiases/")

@@ -43,7 +43,7 @@ public class MultiModuleTestGenerated extends AbstractMultiModuleTest {
 
     @TestMetadata("typealiases.kt")
     public void testTypealiases() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/typealiases/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/typealiases.kt");
         doTest(fileName);
     }
 
