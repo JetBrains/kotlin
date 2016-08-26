@@ -254,8 +254,15 @@ private class Processor(
                             }
 
                             is KtWhenConditionIsPattern -> {
-                                //TODO: smart cast is possible outside of when or inside other branches!
-                                usePlainSearch(typeRefParent.parent as KtWhenEntry)
+                                val whenEntry = typeRefParent.parent as KtWhenEntry
+                                if (typeRefParent.isNegated) {
+                                    val whenExpression = whenEntry.parent as KtWhenExpression
+                                    val entriesAfter = whenExpression.entries.dropWhile { it != whenEntry }.drop(1)
+                                    entriesAfter.forEach { usePlainSearch(it) }
+                                }
+                                else {
+                                    usePlainSearch(whenEntry)
+                                }
                                 return true
                             }
 
