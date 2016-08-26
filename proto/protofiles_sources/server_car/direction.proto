@@ -11,8 +11,5 @@ message DirectionRequest {
     }
     Command command = 1;
     int32 sid = 2;
-}
-
-message DirectionResponse {
-    int32 code = 1;
+    bool stop = 3;
 }
