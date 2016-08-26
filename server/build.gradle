@@ -30,8 +30,14 @@ task getDeps(type: Copy) {
     from sourceSets.main.compileClasspath
     into 'build/libs'
 }
+task compileProto() {
+    exec {
+        executable './../proto/protofiles_sources/compile_proto.sh'
+    }
+}
 
 build.dependsOn getDeps
+build.dependsOn compileProto
 
 jar {
     manifest {

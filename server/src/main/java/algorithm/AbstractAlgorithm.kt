@@ -21,9 +21,11 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     protected val LEFT = 2
     protected val RIGHT = 3
 
-    private var prevState:CarState? = null
+    private var prevState: CarState? = null
 
     private var prevSonarDistances = mapOf<Int, Double>()
+    private val defaultAngles = listOf(0, 60, 90, 120, 180).toIntArray()
+    protected var requiredAngles = defaultAngles
 
     protected enum class CarState {
         WALL,
@@ -104,10 +106,13 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             anglesDistances.put(angles[i], distances[i])
         }
 
-        val state = getCarState(anglesDistances)
+        this.requiredAngles = defaultAngles
 
+        val state = getCarState(anglesDistances)
+        if (state == null) {
+            return
+        }
         val command = getCommand(anglesDistances, state)
-        calculateCarPosition(command, state)
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.times))
 
@@ -126,10 +131,12 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         return prevSonarDistances
     }
 
-    protected abstract fun calculateCarPosition(route: RouteRequest, state: CarState)
-    protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState
+    private fun getAngles(): IntArray {
+        return requiredAngles
+    }
+
+    protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState?
     protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest
-    protected abstract fun getAngles(): IntArray
 
 
     private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {

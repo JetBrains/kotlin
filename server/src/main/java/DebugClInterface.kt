@@ -22,6 +22,8 @@ object DebugClInterface {
             "refloc - refresh all car locations\n" +
             "sonar [car_id] - get sonar data\n" +
             "dbinfo [car_id] [type] - refresh all car locations\n." +
+            "lines - print lines, detected by car\n" +
+            "alg [count] - run algorithm. Make [count] iteration\n" +
             "type is string name of value or int value. available values: MEMORYSTATS - 0\n" +
             "stop - exit from this interface and stop all threads\n"
 
@@ -57,7 +59,7 @@ object DebugClInterface {
             "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
-            "points" -> println(algorithm.RoomModel.lines)
+            "lines" -> println(algorithm.RoomModel.lines)
             "pos" -> {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {

@@ -14,17 +14,17 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
     public var wallAngleWithOX = 0.0//in radian
     public var wallLength = 0.0//sm
-    var xPos = 0.0
-    var yPos = 0.0
-    var carAngle = 0.0
+    var errorCount = 0
+
 
     private var prevPoint = Pair(0.0, 0.0)
 
-    override fun getCarState(anglesDistances: Map<Int, Double>): CarState {
+    override fun getCarState(anglesDistances: Map<Int, Double>): CarState? {
         val dist0 = anglesDistances[0]
         val dist90 = anglesDistances[90]
         if (dist90 == null || dist90 > 85) {
             //best analysis of outer angle is check minimum in values 60,70,80,90,100,...
+            requiredAngles = getIntArray(0, 60, 90, 120, 180)
             return CarState.OUTER
         }
         if (dist90 < 20) {
@@ -40,33 +40,6 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return args
     }
 
-    override fun getAngles(): IntArray {
-        return IntArray(37, { it * 5 })
-//        return IntArray(181, { it * 1 })
-    }
-
-    override fun calculateCarPosition(route: RouteRequest, state: CarState) {
-        //todo for best values make calculate carAngle from right wall
-
-//        for (i in 0..route.directions.size - 1) {
-//            when (route.directions[i]) {
-//                FORWARD -> {
-//                    xPos += route.times[i] * MOVE_VELOCITY * Math.cos(carAngle)
-//                    yPos += route.times[i] * MOVE_VELOCITY * Math.sin(carAngle)
-//                }
-//                LEFT -> {
-//                    carAngle += degreesToRadian((route.times[i] * ROTATION_VELOCITY).toInt())
-//                }
-//                RIGHT -> {
-//                    carAngle -= degreesToRadian((route.times[i] * ROTATION_VELOCITY).toInt())
-//                }
-//            }
-//        }
-//        if (state == CarState.INNER) {
-//            carAngle = wallAngleWithOX
-//        }
-    }
-
     override fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest {
         val dist0 = anglesDistances[0]
         val dist60 = anglesDistances[60]
@@ -76,6 +49,13 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val resultBuilder = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0))
         if (dist120 == null || dist90 == null || dist60 == null) {
             println("null distance!")
+            if (errorCount >= 3) {
+                errorCount = 0
+                resultBuilder.setDirections(getIntArray(BACKWARD))
+                resultBuilder.setTimes(getIntArray((15.0 / MOVE_VELOCITY).toInt()))
+                return resultBuilder.build()
+            }
+            errorCount++
             return resultBuilder.build()
         }
         if (getPrevState() == null) {
@@ -107,7 +87,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 }
 
                 resultBuilder.setDirections(getIntArray(FORWARD))
-                resultBuilder.setTimes(getIntArray((25.0 / MOVE_VELOCITY).toInt()))
+                resultBuilder.setTimes(getIntArray((35.0 / MOVE_VELOCITY).toInt()))
                 return resultBuilder.build()
             }
             CarState.INNER -> {
@@ -126,6 +106,10 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                     if (angleDist.key <= 15) {
                         pointsNextLine.add(sonarAngleDistToPoint(angleDist.toPair()))
                     }
+                }
+                if (pointsNextLine.size < 3) {
+                    requiredAngles = IntArray(37, { it * 5 })
+                    return resultBuilder.build()
                 }
                 val nextLine = approximatePointsByLine(pointsNextLine.toTypedArray())
                 val currentLine = RoomModel.lines.last()
@@ -147,7 +131,9 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 val vectorCurrentLine = Vector(xIntersection, yIntersection, prevPoint.first, prevPoint.second)
 
                 val scalarProduct = vectorCurrentLine.scalarProduct(vectorNextLine)
-                val angle = Math.acos(scalarProduct / (vectorCurrentLine.length() * vectorNextLine.length()))
+//                val angle = Math.acos(scalarProduct / (vectorCurrentLine.length() * vectorNextLine.length()))
+                //todo
+                val angle = Math.PI / 2
                 val wallsAngleInDegrees = radiansToDegrees(angle)
                 wallAngleWithOX += degreesToRadian(180 - wallsAngleInDegrees.toInt())
                 prevPoint = Pair(xIntersection, yIntersection)
@@ -197,6 +183,10 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val sumXY = points.sumByDouble { it.second * it.first }
 
         val pointsCount = points.size
+        val den = pointsCount * sumXQuad - sumX * sumX
+        if (Math.abs(den) < 0.001) {
+            return Line(1.0, 0.0, -points.first().first)
+        }
         val k = (pointsCount * sumXY - sumX * sumY) / (pointsCount * sumXQuad - sumX * sumX)
         val b = (sumY - sumX * k) / pointsCount
 
