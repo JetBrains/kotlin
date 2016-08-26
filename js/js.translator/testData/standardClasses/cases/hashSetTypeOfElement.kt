@@ -53,11 +53,11 @@ fun box(): String {
 
     val charSet = HashSet<Char>()
     charSet.add('A')
-    assertEquals("number", jsTypeOf (charSet.iterator().next()), "charSet")
+    assertEquals("string", jsTypeOf (charSet.iterator().next()), "charSet")
 
     val longSet = HashSet<Long>()
     longSet.add(1L)
-    assertEquals("number", jsTypeOf (longSet.iterator().next()), "longSet")
+    assertEquals("object", jsTypeOf (longSet.iterator().next()), "longSet")
 
     val booleanSet = HashSet<Boolean>()
     booleanSet.add(true)
