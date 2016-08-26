@@ -86,33 +86,35 @@ abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V
 
 // todo KT-9522 Allow invoke convention for synthetic property
 class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+        val scopeTower: ImplicitScopeTower,
         invokeContext: InvokeTowerContext<F, V>,
         explicitReceiver: DetailedReceiver?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
-        createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
+        createVariableAndObjectProcessor(scopeTower, invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
 ) {
 
     // todo filter by operator
     override fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F> {
         val (variableReceiver, invokeContext) = invokeContext.contextForInvoke(variableCandidate, useExplicitReceiver = false)
                                                 ?: return KnownResultProcessor(emptyList())
-        return ExplicitReceiverScopeTowerProcessor(invokeContext, variableReceiver, ScopeTowerLevel::getFunctions)
+        return ExplicitReceiverScopeTowerProcessor(scopeTower, invokeContext, variableReceiver, ScopeTowerLevel::getFunctions)
     }
 }
 
 class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+        val scopeTower: ImplicitScopeTower,
         invokeContext: InvokeTowerContext<F, V>,
         private val explicitReceiver: ReceiverValueWithSmartCastInfo?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
-        createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
+        createVariableAndObjectProcessor(scopeTower, invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
 ) {
 
     override fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F> {
         val (variableReceiver, invokeContext) = invokeContext.contextForInvoke(variableCandidate, useExplicitReceiver = true)
                                                 ?: return KnownResultProcessor(emptyList())
-        val invokeDescriptor = invokeContext.scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
+        val invokeDescriptor = scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
                                ?: return KnownResultProcessor(emptyList())
         return InvokeExtensionScopeTowerProcessor(invokeContext, invokeDescriptor, explicitReceiver)
     }
@@ -153,11 +155,12 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
 
 // case 1.(foo())() or (foo())()
 fun <F : Candidate<FunctionDescriptor>> createCallTowerProcessorForExplicitInvoke(
+        scopeTower: ImplicitScopeTower,
         functionContext: TowerContext<FunctionDescriptor, F>,
         expressionForInvoke: ReceiverValueWithSmartCastInfo,
         explicitReceiver: ReceiverValueWithSmartCastInfo?
 ): ScopeTowerProcessor<F> {
-    val invokeExtensionDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
+    val invokeExtensionDescriptor = scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
     if (explicitReceiver != null) {
         if (invokeExtensionDescriptor == null) {
             // case 1.(foo())(), where foo() isn't extension function
@@ -168,7 +171,7 @@ fun <F : Candidate<FunctionDescriptor>> createCallTowerProcessorForExplicitInvok
         }
     }
     else {
-        val usualInvoke = ExplicitReceiverScopeTowerProcessor(functionContext, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
+        val usualInvoke = ExplicitReceiverScopeTowerProcessor(scopeTower, functionContext, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
 
         if (invokeExtensionDescriptor == null) {
             return usualInvoke

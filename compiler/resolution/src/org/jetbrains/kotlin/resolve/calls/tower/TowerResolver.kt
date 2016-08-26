@@ -40,7 +40,6 @@ interface Candidate<out D : CallableDescriptor> {
 
 interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     val name: Name
-    val scopeTower: ImplicitScopeTower
 
     fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver<D>,
