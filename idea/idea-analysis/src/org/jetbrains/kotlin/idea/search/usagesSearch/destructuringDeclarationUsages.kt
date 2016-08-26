@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProces
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch.*
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -59,7 +60,6 @@ enum class DestructuringDeclarationUsageSearch {
 
 var destructuringDeclarationUsageSearchMode = if (ApplicationManager.getApplication().isUnitTestMode) ALWAYS_SMART else PLAIN_WHEN_NEEDED
 
-//TODO: compiled code
 //TODO: check if it's too expensive
 
 fun findDestructuringDeclarationUsages(
@@ -127,7 +127,7 @@ private class Processor(
 
     // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
     //TODO: what about Scala and other JVM-languages?
-    private val declarationUsageScope = GlobalSearchScope.projectScope(project).restrictToKotlinSources() //TODO: search in libraries?
+    private val declarationUsageScope = GlobalSearchScope.projectScope(project).restrictToKotlinSources()
 
     private val declarationsToProcess = ArrayDeque<PsiElement>()
     private val declarationsToProcessSet = HashSet<PsiElement>()
@@ -140,6 +140,12 @@ private class Processor(
             is PsiClass -> dataClassDeclaration
             is KtClassOrObject -> dataClassDeclaration.toLightClass() ?: return
             else -> return
+        }
+
+        // for data class from library always use plain search because we cannot search usages in compiled code (we could though)
+        if (!ProjectRootsUtil.isInProjectSource(psiClass)) {
+            plainSearchHandler(searchScope)
+            return
         }
 
         val parameters = ClassInheritorsSearch.SearchParameters(psiClass, GlobalSearchScope.allScope(project), true, true, false)
