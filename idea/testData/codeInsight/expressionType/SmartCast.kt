@@ -4,5 +4,5 @@ fun foo(x: Any) {
     }
 }
 
-// TYPE: x -> <html>String (smart cast)</html>
+// TYPE: x -> <html>String (smart cast from Any)</html>
 // TYPE: x.length -> <html>Int</html>

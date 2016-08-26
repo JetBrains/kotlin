@@ -65,6 +65,12 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SoftSmartCastMultipleTypes.kt")
+    public void testSoftSmartCastMultipleTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCastMultipleTypes.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
