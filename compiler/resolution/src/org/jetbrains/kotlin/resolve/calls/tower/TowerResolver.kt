@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
@@ -39,8 +38,6 @@ interface Candidate<out D : CallableDescriptor> {
 }
 
 interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
-    val name: Name
-
     fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver<D>,
             explicitReceiverKind: ExplicitReceiverKind,

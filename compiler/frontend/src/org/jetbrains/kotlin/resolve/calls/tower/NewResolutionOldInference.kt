@@ -78,7 +78,7 @@ class NewResolutionOldInference(
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
                 val functionContext = outer.SimpleContext<FunctionDescriptor>(name, context, tracing)
-                return createFunctionProcessor(scopeTower, functionContext, outer.InvokeContext(functionContext), explicitReceiver)
+                return createFunctionProcessor(scopeTower, name, functionContext, outer.InvokeContext(functionContext), explicitReceiver)
             }
         }
 
@@ -88,7 +88,7 @@ class NewResolutionOldInference(
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<VariableDescriptor>> {
                 val simpleContext = outer.SimpleContext<VariableDescriptor>(name, context, tracing)
-                return createVariableAndObjectProcessor(scopeTower, simpleContext, explicitReceiver)
+                return createVariableAndObjectProcessor(scopeTower, name, simpleContext, explicitReceiver)
             }
         }
 
@@ -100,8 +100,8 @@ class NewResolutionOldInference(
                 val simpleContextF = outer.SimpleContext<FunctionDescriptor>(name, context, tracing)
                 val simpleContextV = outer.SimpleContext<VariableDescriptor>(name, context, tracing)
                 return CompositeScopeTowerProcessor(
-                        createSimpleFunctionProcessor(scopeTower, simpleContextF, explicitReceiver, classValueReceiver = false),
-                        createVariableProcessor(scopeTower, simpleContextV, explicitReceiver, classValueReceiver = false)
+                        createSimpleFunctionProcessor(scopeTower, name, simpleContextF, explicitReceiver, classValueReceiver = false),
+                        createVariableProcessor(scopeTower, name, simpleContextV, explicitReceiver, classValueReceiver = false)
                 )
             }
         }
@@ -274,7 +274,7 @@ class NewResolutionOldInference(
     }
 
     private inner class SimpleContext<D : CallableDescriptor>(
-            override val name: Name,
+            val name: Name,
             val basicCallContext: BasicCallResolutionContext,
             val tracing: TracingStrategy
     ) : TowerContext<D, MyCandidate<D>> {
