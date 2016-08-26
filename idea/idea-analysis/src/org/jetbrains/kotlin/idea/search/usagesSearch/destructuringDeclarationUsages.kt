@@ -217,7 +217,7 @@ private class Processor(
                                     typeRefParent.typeReference -> {
                                         addCallableDeclarationToProcess(typeRefParent)
 
-                                        if (typeRefParent is KtParameter) {
+                                        if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
                                             val usedInsideFunctionalType = parent.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
                                             if (usedInsideFunctionalType) {
                                                 val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
