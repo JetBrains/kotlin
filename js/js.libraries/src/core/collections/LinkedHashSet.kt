@@ -22,16 +22,22 @@ package kotlin.collections
 
 open class LinkedHashSet<E> : HashSet<E> {
 
+    internal constructor(map: LinkedHashMap<E, Any>) : super(map)
+
     constructor() : super(LinkedHashMap<E, Any>())
 
     constructor(c: Collection<E>) : super(LinkedHashMap<E, Any>()) {
         addAll(c)
     }
 
-    constructor(capacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(capacity, loadFactor))
+    constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
 
 //    public override fun clone(): Any {
 //        return LinkedHashSet(this)
 //    }
 
+}
+
+public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> {
+    return LinkedHashSet(linkedStringMapOf<Any>()).apply { addAll(elements) }
 }

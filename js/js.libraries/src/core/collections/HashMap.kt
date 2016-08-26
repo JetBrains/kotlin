@@ -100,26 +100,26 @@ open class HashMap<K, V> : AbstractMap<K, V> {
      */
     private val internalMap: InternalMap<K, V>
 
-    internal val equality: EqualityComparator
+    private val equality: EqualityComparator
 
 //    /**
 //     * A map of Strings onto values.
 //     */
 //    @Transient private var stringMap: InternalStringMap<K, V>? = null
 //
-    internal constructor(internalMapProvider: (HashMap<K, V>) -> InternalMap<K, V>, equality: EqualityComparator = EqualityComparator.HashCode) : super() {
-        this.equality = equality
-        this.internalMap = internalMapProvider(this)
+    internal constructor(internalMap: InternalMap<K, V>) : super() {
+        this.internalMap = internalMap
+        this.equality = internalMap.equality
     }
 
-    constructor() : this( { m -> InternalHashCodeMap(m) })
+    constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
 //    init {
 //        reset()
 //    }
 
-    constructor(capacity: Int, loadFactor: Float = 0f) : this() {
+    constructor(initialCapacity: Int, loadFactor: Float = 0f) : this() {
         // This implementation of HashMap has no need of load factors or capacities.
-        require(capacity >= 0) { "Negative initial capacity" }
+        require(initialCapacity >= 0) { "Negative initial capacity" }
         require(loadFactor >= 0) { "Non-positive load factor" }
     }
 
@@ -273,5 +273,5 @@ open class HashMap<K, V> : AbstractMap<K, V> {
 
 
 public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
-    return HashMap<String, V>({ m -> InternalStringMap(m) }).apply { putAll(pairs) }
+    return HashMap<String, V>(InternalStringMap(EqualityComparator.HashCode)).apply { putAll(pairs) }
 }

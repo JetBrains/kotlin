@@ -24,7 +24,7 @@ import kotlin.collections.MutableMap.MutableEntry
 /**
  * A simple wrapper around JavaScript Map for key type is string.
  */
-internal class InternalStringMap<K, V>(private val host: HashMap<K, V>) : InternalMap<K, V> {
+internal class InternalStringMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
 
     private var backingMap: dynamic = js("Object.create(null)")
     override var size: Int = 0

@@ -162,35 +162,31 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
    * duplicate the key here to eliminate changes to HashMap and minimize the
    * code here, at the expense of additional space.
    */
-    private val map = HashMap<K, ChainEntry>()
+    private val map: HashMap<K, ChainEntry>
 
-    constructor() {
-        resetChainEntries()
+    constructor() : super()  {
+        map = HashMap<K, ChainEntry>()
     }
 
-    constructor(ignored: Int, alsoIgnored: Float = 0f) : super(ignored, alsoIgnored) {
-        resetChainEntries()
+    internal constructor(backingMap: HashMap<K, Any>) : super() {
+        map = backingMap as HashMap<K, ChainEntry>
     }
 
-//    constructor(ignored: Int, alsoIgnored: Float, accessOrder: Boolean) : super(ignored, alsoIgnored) {
-//        this.accessOrder = accessOrder
-//        resetChainEntries()
-//    }
+    constructor(initialCapacity: Int, loadFactor: Float = 0f) : super(initialCapacity, loadFactor) {
+        map = HashMap<K, ChainEntry>()
+    }
 
     constructor(original: Map<out K, V>) {
-        resetChainEntries()
+        map = HashMap<K, ChainEntry>()
         this.putAll(original)
     }
 
     override fun clear() {
         map.clear()
-        resetChainEntries()
-    }
-
-    private fun resetChainEntries() {
         head = null
     }
-//
+
+
 //    override fun clone(): Any {
 //        return LinkedHashMap(this)
 //    }
@@ -264,4 +260,9 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 //            entry.addToEnd()
 //        }
     }
+}
+
+
+public fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> {
+    return LinkedHashMap<String, V>(stringMapOf<Any>()).apply { putAll(pairs) }
 }

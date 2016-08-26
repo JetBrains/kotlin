@@ -72,6 +72,18 @@ class LinkedHashSetJsTest : SetJsTest() {
     }
 }
 
+class LinkedPrimitiveSetJsTest : SetJsTest() {
+    override fun createEmptyMutableSet(): MutableSet<String> = linkedStringSetOf()
+    override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = LinkedHashSet()
+    @Test
+    override fun constructors() {
+        val orderedData = data.toList()
+        val set = linkedStringSetOf(*orderedData.toTypedArray())
+
+        assertEquals(orderedData, set.toList())
+    }
+}
+
 abstract class SetJsTest {
     val data: Set<String> = createTestMutableSet()
     val empty: Set<String> = createEmptyMutableSet()

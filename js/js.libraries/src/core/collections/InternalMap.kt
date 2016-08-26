@@ -17,6 +17,7 @@
 package kotlin.collections
 
 internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K, V>> {
+    val equality: EqualityComparator
     val size: Int
     operator fun contains(key: K): Boolean
     operator fun get(key: K): V?

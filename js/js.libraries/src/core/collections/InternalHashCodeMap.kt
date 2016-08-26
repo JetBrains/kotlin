@@ -35,14 +35,14 @@ import kotlin.collections.AbstractMap.SimpleEntry
  * have the same hash, each value in hashCodeMap is actually an array containing all entries whose
  * keys share the same hash.
  */
-internal class InternalHashCodeMap<K, V>(private val host: HashMap<K, V>) : InternalMap<K, V> {
+internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
 
     private var backingMap: dynamic = js("Object.create(null)")
     override var size: Int = 0
         private set
 
     override fun put(key: K, value: V): V? {
-        val hashCode = host.equality.getHashCode(key)
+        val hashCode = equality.getHashCode(key)
         val chain = getChainOrNull(hashCode)
         if (chain == null) {
             // This is a new chain, put it to the map.
@@ -62,11 +62,11 @@ internal class InternalHashCodeMap<K, V>(private val host: HashMap<K, V>) : Inte
     }
 
     override fun remove(key: K): V? {
-        val hashCode = host.equality.getHashCode(key)
+        val hashCode = equality.getHashCode(key)
         val chain = getChainOrNull(hashCode) ?: return null
         for (index in 0..chain.size-1) {
             val entry = chain[index]
-            if (host.equality.equals(key, entry.key)) {
+            if (equality.equals(key, entry.key)) {
                 if (chain.size == 1) {
                     chain.asDynamic().length = 0
                     // remove the whole array
@@ -94,10 +94,10 @@ internal class InternalHashCodeMap<K, V>(private val host: HashMap<K, V>) : Inte
     override fun get(key: K): V? = getEntry(key)?.value
 
     private fun getEntry(key: K): MutableEntry<K, V>? =
-            getChainOrNull(host.equality.getHashCode(key))?.findEntryInChain(key)
+            getChainOrNull(equality.getHashCode(key))?.findEntryInChain(key)
 
     private fun Array<MutableEntry<K, V>>.findEntryInChain(key: K): MutableEntry<K, V>? =
-            firstOrNull { entry -> host.equality.equals(entry.key, key) }
+            firstOrNull { entry -> equality.equals(entry.key, key) }
 
     override fun iterator(): MutableIterator<MutableEntry<K, V>> {
 

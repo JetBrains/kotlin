@@ -55,7 +55,7 @@ class PrimitiveMapJsTest : MapJsTest() {
     }
 }
 
-class LinkedHashMapTest : MapJsTest() {
+class LinkedHashMapJsTest : MapJsTest() {
     @test override fun constructors() {
         LinkedHashMap<String, Int>()
         LinkedHashMap<String, Int>(3)
@@ -69,6 +69,19 @@ class LinkedHashMapTest : MapJsTest() {
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()
     override fun emptyMutableMap(): MutableMap<String, Int> = LinkedHashMap()
+    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = LinkedHashMap()
+}
+
+class LinkedPrimitiveMapJsTest : MapJsTest() {
+    @test override fun constructors() {
+        val map = createTestMap()
+
+        assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values.toNormalizedList())
+    }
+
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()
+    override fun emptyMutableMap(): MutableMap<String, Int> = linkedStringMapOf()
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = LinkedHashMap()
 }
 
