@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
 val ResolutionCandidateApplicability.isSuccess: Boolean
     get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
@@ -29,10 +29,8 @@ val CallableDescriptor.isSynthesized: Boolean
 val CandidateWithBoundDispatchReceiver<*>.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
 
-fun DataFlowDecorator.getAllPossibleTypes(receiver: ReceiverValue) = getSmartCastTypes(receiver) + receiver.type
-
 internal class CandidateWithBoundDispatchReceiverImpl<out D : CallableDescriptor>(
-        override val dispatchReceiver: ReceiverValue?,
+        override val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
         override val descriptor: D,
         override val diagnostics: List<ResolutionDiagnostic>
 ) : CandidateWithBoundDispatchReceiver<D> {

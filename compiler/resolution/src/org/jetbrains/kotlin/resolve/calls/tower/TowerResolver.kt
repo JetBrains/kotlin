@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -45,7 +45,7 @@ interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver<D>,
             explicitReceiverKind: ExplicitReceiverKind,
-            extensionReceiver: ReceiverValue?
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): C
 }
 
@@ -57,14 +57,14 @@ interface InvokeTowerContext<F : Candidate<FunctionDescriptor>, V : Candidate<Va
 
     // foo() -> ReceiverValue(foo), context for invoke
     // null means that there is no invoke on variable
-    fun contextForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<FunctionDescriptor, F>>?
+    fun contextForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, TowerContext<FunctionDescriptor, F>>?
 }
 
 sealed class TowerData {
     object Empty : TowerData()
-    class OnlyImplicitReceiver(val implicitReceiver: ReceiverValue): TowerData()
+    class OnlyImplicitReceiver(val implicitReceiver: ReceiverValueWithSmartCastInfo): TowerData()
     class TowerLevel(val level: ScopeTowerLevel) : TowerData()
-    class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValue) : TowerData()
+    class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValueWithSmartCastInfo) : TowerData()
 }
 
 interface ScopeTowerProcessor<out C> {
@@ -93,7 +93,7 @@ class TowerResolver {
             if (scope is LexicalScope) {
                 if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
 
-                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
+                getImplicitReceiver(scope)?.let { result.add(ReceiverScopeTowerLevel(this, it)) }
             }
             else {
                 result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
@@ -138,7 +138,7 @@ class TowerResolver {
                     TowerData.TowerLevel(ScopeBasedTowerLevel(this, scope)).process()?.let { return it }
                 }
 
-                val implicitReceiver = scope.implicitReceiver?.value
+                val implicitReceiver = getImplicitReceiver(scope)
                 if (implicitReceiver != null) {
                     // hides members extensions
                     TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }

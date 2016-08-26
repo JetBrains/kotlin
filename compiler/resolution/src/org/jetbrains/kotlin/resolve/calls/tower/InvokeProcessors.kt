@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
@@ -87,7 +87,7 @@ abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V
 // todo KT-9522 Allow invoke convention for synthetic property
 class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
         invokeContext: InvokeTowerContext<F, V>,
-        explicitReceiver: Receiver?
+        explicitReceiver: DetailedReceiver?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
         createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
@@ -103,7 +103,7 @@ class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<Vari
 
 class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
         invokeContext: InvokeTowerContext<F, V>,
-        private val explicitReceiver: ReceiverValue?
+        private val explicitReceiver: ReceiverValueWithSmartCastInfo?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
         createVariableAndObjectProcessor(invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
@@ -121,7 +121,7 @@ class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candi
 private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescriptor>>(
         context: TowerContext<FunctionDescriptor, C>,
         private val invokeCandidateDescriptor: CandidateWithBoundDispatchReceiver<FunctionDescriptor>,
-        private val explicitReceiver: ReceiverValue?
+        private val explicitReceiver: ReceiverValueWithSmartCastInfo?
 ) : AbstractSimpleScopeTowerProcessor<FunctionDescriptor, C>(context) {
 
     override fun simpleProcess(data: TowerData): Collection<C> {
@@ -139,11 +139,12 @@ private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescripto
 
 // todo debug info
 private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
-        extensionFunctionReceiver: ReceiverValue
+        extensionFunctionReceiver: ReceiverValueWithSmartCastInfo
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
-    if (!extensionFunctionReceiver.type.isExtensionFunctionType) return null
+    val type = extensionFunctionReceiver.receiverValue.type
+    if (!type.isExtensionFunctionType) return null // todo: missing smart cast?
 
-    val invokeDescriptor = extensionFunctionReceiver.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
+    val invokeDescriptor = type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
     val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()
 
     // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
@@ -153,8 +154,8 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 // case 1.(foo())() or (foo())()
 fun <F : Candidate<FunctionDescriptor>> createCallTowerProcessorForExplicitInvoke(
         functionContext: TowerContext<FunctionDescriptor, F>,
-        expressionForInvoke: ReceiverValue,
-        explicitReceiver: ReceiverValue?
+        expressionForInvoke: ReceiverValueWithSmartCastInfo,
+        explicitReceiver: ReceiverValueWithSmartCastInfo?
 ): ScopeTowerProcessor<F> {
     val invokeExtensionDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
     if (explicitReceiver != null) {

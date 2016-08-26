@@ -22,18 +22,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 interface ScopeTower {
-    /**
-     * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
-     * Doesn't include receivers with error types
-     */
-    val implicitReceivers: List<ReceiverValue>
-
     val lexicalScope: LexicalScope
+
+    fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?
 
     val dynamicScope: MemberScope
 
@@ -41,33 +36,15 @@ interface ScopeTower {
 
     val location: LookupLocation
 
-    val dataFlowInfo: DataFlowDecorator
-
     val isDebuggerContext: Boolean
 }
 
-abstract class DataFlowDecorator() {
-    private val cache = HashMap<ReceiverValue, SmartCastInfo>()
-
-    fun isStableReceiver(receiver: ReceiverValue): Boolean = getSmartCastInfo(receiver).isStable
-    // doesn't include receiver.type
-    fun getSmartCastTypes(receiver: ReceiverValue): Set<KotlinType> = getSmartCastInfo(receiver).possibleTypes
-
-
-    private fun getSmartCastInfo(receiver: ReceiverValue): SmartCastInfo
-            = cache.getOrPut(receiver) { calculateSmartCastInfo(receiver) }
-
-    protected data class SmartCastInfo(val isStable: Boolean, val possibleTypes: Set<KotlinType>)
-
-    protected abstract fun calculateSmartCastInfo(receiver: ReceiverValue): SmartCastInfo
-}
-
 interface ScopeTowerLevel {
-    fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
 
-    fun getObjects(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
 
-    fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
+    fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
 }
 
 interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
@@ -75,7 +52,7 @@ interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
 
     val diagnostics: List<ResolutionDiagnostic>
 
-    val dispatchReceiver: ReceiverValue?
+    val dispatchReceiver: ReceiverValueWithSmartCastInfo?
 
     fun copy(newDescriptor: @UnsafeVariance D): CandidateWithBoundDispatchReceiver<D>
 }
