@@ -10,7 +10,7 @@ var canvas = $( "#pathCanvas" )[0],
 	carColour = "red",
 	referenceColour = "green",
 	foundColour = "blue",
-	multiplier = 1e6;
+	multiplier = 100;
 
 canvas.style = "border:5px solid #000000;";
 
@@ -41,6 +41,16 @@ function drawLine(line) {
 	var end_x = canvas.width;
 	var end_y = (line.A * (canvas.width - zero.x) + line.C) / line.B + zero.y;
 
+	// check if evaluated y-coordinates are in the canvas. If not, re-evaluate x-coordinates from y, to prevent issues with lines that are close to vertical
+	if (gt(begin_y, canvas.height) || gt(end_y, canvas.height)) {
+		begin_x = (line.B * (0 - zero.y) + line.C) / line.A + zero.x;
+		begin_y = 0;
+
+		end_x = (line.B * (canvas.height - zero.y) + line.C) / line.A + zero.x;
+		end_y = canvas.height;	
+	}
+
+	console.log("Drawing line from (" + begin_x + ", " + begin_y + ") to (" + end_x + ", " + end_y + ")");
 	ctx.beginPath();
 	ctx.moveTo(begin_x, begin_y);
 	ctx.lineTo(end_x, end_y);
@@ -61,6 +71,14 @@ function drawSegment(segment, colour) {
 
 function eq(lhs, rhs) {
 	return Math.abs(lhs - rhs) < eps;
+}
+
+function lt(lhs, rhs) {
+	return lhs - rhs < -eps;
+}
+
+function gt(lhs, rhs) {
+	return lhs - rhs > eps;
 }
 
 function intersectLines(l1, l2) {

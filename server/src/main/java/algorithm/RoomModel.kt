@@ -56,7 +56,7 @@ object RoomModel {
 
         val alg = DebugClInterface.algorithmImpl
         val car = if (alg == null) Car(0, "", 0) else alg.thisCar
-        val mult = 1000000
+        val mult = 100
         linesModel.forEachIndexed { idx, line ->
             aRef[idx] = (line.A * mult).toInt()
             bRef[idx] = (line.B * mult).toInt()
