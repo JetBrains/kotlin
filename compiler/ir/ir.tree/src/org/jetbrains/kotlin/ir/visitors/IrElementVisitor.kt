@@ -58,6 +58,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitSetVariable(expression: IrSetVariable, data: D) = visitDeclarationReference(expression, data)
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: D) = visitDeclarationReference(expression, data)
     fun visitCall(expression: IrCall, data: D) = visitDeclarationReference(expression, data)
+    fun visitCallableReference(expression: IrCallableReference, data: D) = visitDeclarationReference(expression, data)
 
     fun visitTypeOperator(expression: IrTypeOperatorCall, data: D) = visitExpression(expression, data)
 

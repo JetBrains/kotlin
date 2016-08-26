@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
+import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -40,10 +42,11 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import java.lang.AssertionError
 
 class StatementGenerator(
         override val context: GeneratorContext,
-        val scopeOwner: DeclarationDescriptor,
+        val scopeOwner: CallableDescriptor,
         val bodyGenerator: BodyGenerator,
         override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(), GeneratorWithScope {
@@ -316,4 +319,7 @@ class StatementGenerator(
     override fun visitTryExpression(expression: KtTryExpression, data: Nothing?): IrStatement =
             TryCatchExpressionGenerator(this).generateTryCatch(expression)
 
+    override fun visitLambdaExpression(expression: KtLambdaExpression, data: Nothing?): IrStatement =
+            LocalFunctionGenerator(this).generateLambda(expression)
 }
+

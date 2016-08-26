@@ -42,6 +42,7 @@ enum class IrDeclarationKind {
 
 enum class IrDeclarationOrigin {
     DEFINED,
+    LOCAL_FUNCTION_FOR_LAMBDA,
     IR_TEMPORARY_VARIABLE,
 }
 

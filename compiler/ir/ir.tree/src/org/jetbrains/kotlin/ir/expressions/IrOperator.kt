@@ -85,6 +85,9 @@ interface IrOperator {
     object FOR_LOOP_HAS_NEXT : IrOperatorImpl("FOR_LOOP_HAS_NEXT")
     object FOR_LOOP_NEXT : IrOperatorImpl("FOR_LOOP_NEXT")
 
+    object LAMBDA : IrOperatorImpl("LAMBDA")
+
+
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }
@@ -96,8 +99,6 @@ interface IrOperator {
                         COMPONENT_N(index)
         }
     }
-
-
 
 }
 

@@ -352,4 +352,31 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/ir/irText/lambdas")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lambdas extends AbstractIrTextTestCase {
+        public void testAllFilesPresentInLambdas() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("extensionLambda.kt")
+        public void testExtensionLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/extensionLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("justLambda.kt")
+        public void testJustLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/justLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleImplicitReceivers.kt")
+        public void testMultipleImplicitReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/multipleImplicitReceivers.kt");
+            doTest(fileName);
+        }
+    }
 }

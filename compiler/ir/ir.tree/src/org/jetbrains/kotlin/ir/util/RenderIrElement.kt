@@ -67,10 +67,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "BLOCK_BODY"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
-            "? ${expression.javaClass.simpleName} type=${expression.renderType()}"
+            "? ${expression.javaClass.simpleName} type=${expression.type.render()}"
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
-            "CONST ${expression.kind} type=${expression.renderType()} value='${expression.value}'"
+            "CONST ${expression.kind} type=${expression.type.render()} value='${expression.value}'"
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): String =
             "VARARG type=${expression.type} varargElementType=${expression.varargElementType}"
@@ -79,35 +79,35 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SPREAD_ELEMENT"
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-            "BLOCK type=${expression.renderType()} operator=${expression.operator}"
+            "BLOCK type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-            "RETURN type=${expression.renderType()}"
+            "RETURN type=${expression.type.render()}"
 
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?): String =
-            "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name} type=${expression.renderType()}"
+            "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name} type=${expression.type.render()}"
 
     override fun visitThisReference(expression: IrThisReference, data: Nothing?): String =
-            "THIS ${expression.classDescriptor.render()} type=${expression.renderType()}"
+            "THIS ${expression.classDescriptor.render()} type=${expression.type.render()}"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
             "CALL .${expression.descriptor.name} " +
-            "type=${expression.renderType()} operator=${expression.operator}"
+            "type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
-            "GET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
+            "GET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-            "SET_VAR ${expression.descriptor.name} type=${expression.renderType()} operator=${expression.operator}"
+            "SET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-            "GET_OBJECT ${expression.descriptor.name} type=${expression.renderType()}"
+            "GET_OBJECT ${expression.descriptor.name} type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-            "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.renderType()}"
+            "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
-            "STRING_CONCATENATION type=${expression.renderType()}"
+            "STRING_CONCATENATION type=${expression.type.render()}"
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
             "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
@@ -128,16 +128,19 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "CONTINUE label=${jump.label} depth=${jump.getDepth()}"
 
     override fun visitThrow(expression: IrThrow, data: Nothing?): String =
-            "THROW type=${expression.renderType()}"
+            "THROW type=${expression.type.render()}"
+
+    override fun visitCallableReference(expression: IrCallableReference, data: Nothing?): String =
+            "CALLABLE_REFERENCE ${expression.descriptor.render()} type=${expression.type.render()}"
 
     override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): String =
-            "TRY_CATCH type=${tryCatch.renderType()}"
+            "TRY_CATCH type=${tryCatch.type.render()}"
 
     override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
             "DUMMY ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.name}"
 
     override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
-            "DUMMY ${expression.description} type=${expression.renderType()}"
+            "DUMMY ${expression.description} type=${expression.type.render()}"
 
     companion object {
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
@@ -154,9 +157,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
         internal fun DeclarationDescriptor?.render(): String =
                 this?.let { DESCRIPTOR_RENDERER.render(it) } ?: "<none>"
-
-        internal fun IrExpression.renderType(): String =
-                type.render()
 
         internal fun KotlinType?.render(): String =
                 this?.let { DESCRIPTOR_RENDERER.renderType(it) } ?: "<no-type>"

@@ -1,0 +1,1 @@
+val lambda = { 42 }

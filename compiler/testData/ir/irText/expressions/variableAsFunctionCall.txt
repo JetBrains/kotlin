@@ -2,7 +2,12 @@ FILE /variableAsFunctionCall.kt
   FUN public fun kotlin.String.k(): () -> kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing
-        DUMMY KtLambdaExpression type=() -> kotlin.String
+        BLOCK type=() -> kotlin.String operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing
+                $RECEIVER of: k type=kotlin.String
+          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.String type=() -> kotlin.String
   FUN public fun test1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing

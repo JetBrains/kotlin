@@ -1,0 +1,42 @@
+FILE /multipleImplicitReceivers.kt
+  CLASS OBJECT A
+  CLASS OBJECT B
+  CLASS INTERFACE IFoo
+    PROPERTY public open val A.foo: B getter=<get-foo> setter=null
+    PROPERTY_GETTER public open fun A.<get-foo>(): B property=foo
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          GET_OBJECT B type=B
+  CLASS INTERFACE IInvoke
+    FUN public open operator fun B.invoke(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing
+          CONST Int type=kotlin.Int value='42'
+  FUN public fun test(/*0*/ fooImpl: IFoo, /*1*/ invokeImpl: IInvoke): kotlin.Unit
+    BLOCK_BODY
+      CALL .with type=kotlin.Int operator=null
+        receiver: GET_OBJECT A type=A
+        block: BLOCK type=A.() -> kotlin.Int operator=LAMBDA
+          FUN local final fun A.<anonymous>(): kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing
+                CALL .with type=kotlin.Int operator=null
+                  receiver: GET_VAR fooImpl type=IFoo operator=null
+                  block: BLOCK type=IFoo.() -> kotlin.Int operator=LAMBDA
+                    FUN local final fun IFoo.<anonymous>(): kotlin.Int
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing
+                          CALL .with type=kotlin.Int operator=null
+                            receiver: GET_VAR invokeImpl type=IInvoke operator=null
+                            block: BLOCK type=IInvoke.() -> kotlin.Int operator=LAMBDA
+                              FUN local final fun IInvoke.<anonymous>(): kotlin.Int
+                                BLOCK_BODY
+                                  RETURN type=kotlin.Nothing
+                                    CALL .invoke type=kotlin.Int operator=INVOKE
+                                      $this: $RECEIVER of: <anonymous> type=IInvoke
+                                      $receiver: CALL .<get-foo> type=B operator=GET_PROPERTY
+                                        $this: $RECEIVER of: <anonymous> type=IFoo
+                                        $receiver: $RECEIVER of: <anonymous> type=A
+                              CALLABLE_REFERENCE local final fun IInvoke.<anonymous>(): kotlin.Int type=IInvoke.() -> kotlin.Int
+                    CALLABLE_REFERENCE local final fun IFoo.<anonymous>(): kotlin.Int type=IFoo.() -> kotlin.Int
+          CALLABLE_REFERENCE local final fun A.<anonymous>(): kotlin.Int type=A.() -> kotlin.Int
