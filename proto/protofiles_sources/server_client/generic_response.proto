@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 message Result {
-	int32 errorCode = 1;
+	int32 error = 1;
 }
 
 message GenericResponse {
