@@ -16,14 +16,21 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
@@ -65,6 +72,52 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
 
         assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
                      expectedOutOfBlock, oobBeforeType != oobAfterCount);
+
+        boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
+        assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
+                   !isSkipCheckDefined || expectedOutOfBlock);
+
+        if (!isSkipCheckDefined) {
+            checkOOBWithDescriptorsResolve(expectedOutOfBlock);
+        }
+    }
+
+    private void checkOOBWithDescriptorsResolve(boolean expectedOutOfBlock) {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                ((PsiModificationTrackerImpl) PsiManager.getInstance(myFixture.getProject()).getModificationTracker())
+                        .incOutOfCodeBlockModificationCounter();
+            }
+        });
+
+        PsiElement updateElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1);
+        KtExpression ktExpression = PsiTreeUtil.getParentOfType(updateElement, KtExpression.class, false);
+        KtDeclaration ktDeclaration = PsiTreeUtil.getParentOfType(updateElement, KtDeclaration.class, false);
+        KtElement ktElement = ktExpression != null ? ktExpression : ktDeclaration;
+
+        if (ktElement == null) return;
+
+        ResolutionFacade facade = ResolutionUtils.getResolutionFacade(ktElement.getContainingKtFile());
+        ResolveSession session = facade.getFrontendService(ResolveSession.class);
+        session.forceResolveAll();
+
+        BindingContext context = session.getBindingContext();
+
+        if (ktExpression != null && ktExpression != ktDeclaration) {
+            @SuppressWarnings("ConstantConditions")
+            boolean expressionProcessed = context.get(
+                    BindingContext.PROCESSED,
+                    ktExpression instanceof KtFunctionLiteral ? (KtLambdaExpression) ktExpression.getParent() : ktExpression);
+
+            assertEquals("Expected out-of-block should result expression analyzed and vise versa", expectedOutOfBlock,
+                         expressionProcessed);
+        }
+        else {
+            boolean declarationProcessed = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration) != null;
+            assertEquals("Expected out-of-block should result declaration analyzed and vise versa", expectedOutOfBlock,
+                         declarationProcessed);
+        }
     }
 
     private String getStringToType() {

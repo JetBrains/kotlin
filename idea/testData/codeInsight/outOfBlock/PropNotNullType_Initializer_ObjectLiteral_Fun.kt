@@ -8,3 +8,5 @@ val test: Some = object: Some {
         <caret>
     }
 }
+
+// SKIP_ANALYZE_CHECK
