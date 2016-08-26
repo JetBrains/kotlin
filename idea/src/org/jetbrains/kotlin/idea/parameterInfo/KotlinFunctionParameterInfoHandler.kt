@@ -233,6 +233,10 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
     override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
+    private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+        renderUnabbreviatedType = false
+    }
+
     private fun renderParameter(parameter: ValueParameterDescriptor, includeName: Boolean, named: Boolean, project: Project): String {
         return buildString {
             if (named) append("[")
@@ -246,7 +250,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 append(": ")
             }
 
-            append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameterTypeToRender(parameter)))
+            append(RENDERER.renderType(parameterTypeToRender(parameter)))
 
             if (parameter.hasDefaultValue()) {
                 append(" = ")

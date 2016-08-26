@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 internal class DescriptorRendererImpl(
@@ -128,14 +129,24 @@ internal class DescriptorRendererImpl(
             // TODO nullability is lost for abbreviated type?
             renderNormalizedTypeAsIs(abbreviated.abbreviation)
             if (renderUnabbreviatedType) {
-                append(" /* = ")
-                renderNormalizedTypeAsIs(abbreviated.expandedType)
-                append(" */")
+                renderAbbreviatedTypeExpansion(abbreviated)
             }
             return
         }
 
         renderNormalizedTypeAsIs(type)
+    }
+
+    private fun StringBuilder.renderAbbreviatedTypeExpansion(abbreviated: AbbreviatedType) {
+        if (textFormat == RenderingFormat.HTML) {
+            append("<font color=\"808080\"><i>")
+        }
+        append(" /* = ")
+        renderNormalizedTypeAsIs(abbreviated.expandedType)
+        append(" */")
+        if (textFormat == RenderingFormat.HTML) {
+            append("</i></font>")
+        }
     }
 
     private fun StringBuilder.renderNormalizedTypeAsIs(type: KotlinType) {
