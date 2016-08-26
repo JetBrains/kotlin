@@ -305,7 +305,7 @@ private class Processor(
                 is PsiCodeBlock,
                 is PsiExpression,
                 is PsiImportStatement,
-                is PsiParameter ->
+                is PsiParameter -> //TODO: if Java parameter has Kotlin functional type then we should process method usages
                     break@ParentsLoop // ignore local usages, usages in imports and in parameter types
 
                 is PsiMethod, is PsiField -> {
