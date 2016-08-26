@@ -4,7 +4,7 @@ import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 
-class LLVMBooleanType() : LLVMType("kotlin") {
+class LLVMBooleanType() : LLVMType() {
 
     //TODO switch by types: int + double = int
     override fun operatorMinus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =

@@ -5,7 +5,7 @@ import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 
-class LLVMIntType() : LLVMType("kotlin") {
+class LLVMIntType() : LLVMType() {
 
     override fun operatorOr(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMIntType(), "or i32 $firstOp, $secondOp")

@@ -34,7 +34,6 @@ abstract class StructCodegen(val state: TranslationState,
     var methods = HashMap<String, FunctionCodegen>()
     abstract val structName: String
     val fullName: String
-        //get() = "${if (type.location.size > 0) "${type.location.joinToString(".")}." else ""}$structName"
         get() = structName
 
     open fun prepareForGenerate() {
@@ -106,8 +105,6 @@ abstract class StructCodegen(val state: TranslationState,
                     enumFields.put(name, field)
                 }
                 is KtClass -> {
-                    //declaration.fqName?.asString() ?: declaration.name!!
-                    //declaration.fqName!!.asString()
                     nestedClasses.put(declaration.fqName!!.asString(),
                             ClassCodegen(state,
                                     VariableManager(state.globalVariableCollection),
@@ -176,7 +173,6 @@ abstract class StructCodegen(val state: TranslationState,
 
     private fun generatePrimaryConstructor() {
         val argFields = ArrayList<LLVMVariable>()
-
         val classVal = LLVMVariable("classvariable.this", type, pointer = 1)
         variableManager.addVariable("this", classVal, 0)
 
@@ -253,17 +249,10 @@ abstract class StructCodegen(val state: TranslationState,
 
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
-        /*val fieldName = when(field) {
-            is KtParameter->
-            else ->
-        }*/
-
-        //}
         val fieldName = state.bindingContext.get(BindingContext.VALUE_PARAMETER, field as?KtParameter)?.fqNameSafe?.asString()?.replace(".<init>", "")
                 ?: field.fqName?.asString() ?: field.name!!
 
         val result = LLVMInstanceOfStandardType(fieldName, ktType, LLVMRegisterScope(), state = state)
-        //throw RuntimeException("Unknown field " + field.name!!)
 
         if (result.type is LLVMReferenceType) {
             val type = result.type as LLVMReferenceType

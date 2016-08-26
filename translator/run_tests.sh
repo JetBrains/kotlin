@@ -5,15 +5,6 @@ lightRed='\033[1;31m'
 orange='\033[0;33m'
 nc='\033[0m'
 
-if [ ! -d "src/test/kotlin/tests/linked" ]; then
-	mkdir -p "src/test/kotlin/tests/linked"
-fi
-
-if [ $? -ne 0 ]; then
-	echo -e "${red}Error creating folder \"src/test/kotlin/tests/linked\"${nc}"
-	exit 1
-fi
-
 if [ "$3" == "--debug" ]; then
     cd ../kotstd && make clean && make debug
 else
@@ -28,18 +19,18 @@ fi
 cd ../translator
 
 DIRECTORY="src/test/kotlin/tests"
-MAIN="$DIRECTORY/linked/main.c"
-TESTS=$( ls $DIRECTORY/input/* $1) # Note that "ls $DIRECTORY/input $1" is wrong. Why? Because it's bash.
+TESTS=$( ls $DIRECTORY/*/*.txt $1) # Note that "ls $DIRECTORY/input $1" is wrong. Why? Because it's bash.
 
 if [ "$2" == "--proto" ]; then
-	TESTS=$( ls $DIRECTORY/input/proto* $1)
+	TESTS=$( ls $DIRECTORY/*/proto*.txt $1)
 fi
 total_scripts=0
 successful_scripts=0
 
 for i in $TESTS; do
-	rm -f $DIRECTORY/linked/*
-	TEST=`basename $i ".txt"`
+    TEST=`basename $i ".txt"`
+    MAIN="$DIRECTORY/$TEST/linked/main.c"
+	rm -f $DIRECTORY/$TEST/linked/*
 	successful=1
 	echo -e "${orange}test: ${TEST}${nc}"
 	echo "#include <stdlib.h>" >> $MAIN
@@ -61,40 +52,41 @@ for i in $TESTS; do
 		exit 1
 	fi
 
-	clang-3.6 -S -emit-llvm $DIRECTORY/linked/main.c -o $DIRECTORY/linked/main.ll -Wno-implicit-function-declaration
+	clang-3.6 -S -emit-llvm $DIRECTORY/$TEST/linked/main.c -o $DIRECTORY/$TEST/linked/main.ll -Wno-implicit-function-declaration
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Error building main.c${nc}"
 		exit 1
 	fi
 
 
-	cp ../kotstd/build/stdlib_x86.ll $DIRECTORY/linked/
+	cp ../kotstd/build/stdlib_x86.ll $DIRECTORY/$TEST/linked/
 	if [ $? -ne 0 ]; then
-		echo -e "${red}Error copying ../kotstd/build/stdlib_x86.ll to ${DIRECTORY}/linked/${nc}"
+		echo -e "${red}Error copying ../kotstd/build/stdlib_x86.ll to ${DIRECTORY}/${TEST}/linked/${nc}"
 		exit 1
 	fi
 
-	if [ -f "$DIRECTORY/c/$TEST.c" ]
+	if [ -f "$DIRECTORY/$TEST/$TEST.c" ]
 	then
-		clang-3.6 -S -emit-llvm "$DIRECTORY/c/$TEST.c" -o $DIRECTORY/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
+		clang-3.6 -S -emit-llvm "$DIRECTORY/$TEST/$TEST.c" -o $DIRECTORY/$TEST/linked/$TEST"_c.ll" -Wno-implicit-function-declaration
 		if [ $? -ne 0 ]; then
-			echo -e "${red}Error building: ${DIRECTORY}/linked/${TEST}_c.ll${nc}"
+			echo -e "${red}Error building: ${DIRECTORY}/${TEST}/linked/${TEST}_c.ll${nc}"
 		fi
 	fi
 
-        java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/kotlin/$TEST.kt > $DIRECTORY/linked/$TEST.ll
+    java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/$TEST/$TEST.kt > $DIRECTORY/$TEST/linked/$TEST.ll
+
 	if [ $? -ne 0 ]; then
-		echo -e "${red}Translation error: ${DIRECTORY}/kotlin/${TEST}.kt${nc}"
+		echo -e "${red}Translation error: ${DIRECTORY}/$TEST/${TEST}.kt${nc}"
 		successful=0
 	fi
 
-	llvm-link-3.6 -S $DIRECTORY/linked/*.ll > $DIRECTORY/linked/run.ll
+	llvm-link-3.6 -S $DIRECTORY/$TEST/linked/*.ll > $DIRECTORY/$TEST/linked/run.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Error linking with llvm${nc}"
 		successful=0
 	fi
 
-	lli-3.6 $DIRECTORY/linked/run.ll
+	lli-3.6 $DIRECTORY/$TEST/linked/run.ll
 	if [ $? -ne 0 ]; then
 		echo -e "${lightRed}Error running test${nc}"
 		successful=0

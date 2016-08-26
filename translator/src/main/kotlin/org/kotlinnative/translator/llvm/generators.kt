@@ -36,8 +36,7 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
         else -> {
             val declarationDescriptor = type.constructor.declarationDescriptor!!
             val refName = declarationDescriptor.fqNameSafe.asString()
-            val targetPackage = declarationDescriptor.fqNameSafe.parent().asString()
-            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(refName, packageName = targetPackage, align = TranslationState.pointerAlign, prefix = "class")
+            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(refName, align = TranslationState.pointerAlign, prefix = "class")
 
             val result = LLVMVariable(name, refType, name, scope, pointer = 1)
             var currentPrefix = ""

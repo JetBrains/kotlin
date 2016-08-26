@@ -1,6 +1,6 @@
 package org.kotlinnative.translator.llvm.types
 
-class LLVMStringType(override val length: Int, var isLoaded: Boolean = true) : LLVMArray, LLVMType("kotlin") {
+class LLVMStringType(override val length: Int, var isLoaded: Boolean = true) : LLVMArray, LLVMType() {
 
     override var size: Int = 1
     override val align = 8

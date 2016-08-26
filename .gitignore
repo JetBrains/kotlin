@@ -2,7 +2,7 @@
 .idea/shelf
 dependencies
 dist
-translator/src/test/kotlin/tests/linked
+translator/src/test/kotlin/tests/*/linked
 out
 tmp
 workspace.xml
