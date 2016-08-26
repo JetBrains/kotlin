@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message Waypoints {
+	repeated int32 begin_x = 1 [packed = true];
+	repeated int32 begin_y = 2 [packed = true];
+	repeated int32 end_x = 3 [packed = true];
+	repeated int32 end_y = 4 [packed = true];
+	bool stop = 5;
+}

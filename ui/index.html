@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello world</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/style.css">
+  </head>
+  <body>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <div class="jumbotron text-center" id="header_cont">
+        <h1>CarKot control panel</h1>
+        <p>Feel the power of Kotlin<sup>TM</sup> </p>
+    </div>
+
+    <!-- Main container -->
+    <div class="container" id="body-cont">
+      <div class="row">
+        <!-- Canvas -->
+        <div class="col-md-8"> <canvas id="pathCanvas" width="720" height="560"></canvas> </div>
+
+        <!-- Control Pnael -->
+        <div class="col-md-1 center-block">
+            <!-- Note that algoID should coincide with enums id in ModeChange -->
+            <button type="button" class="btn btn-primary center-block btn-block" id="perimeter-btn" onclick="changeMode(1)">Explore Room Perimeter</button>
+            <button type="button" class="btn btn-primary center-block btn-block" id="manual-btn" onclick="changeMode(2)">Debug Room Exploration</button>
+            <button type="button" class="btn btn-primary center-block btn-block" id="manual-btn" onclick="perimeterDebugRequest()">Draw algo state</button>
+            <button type="button" class="btn btn-primary center-block btn-block" id="manual-btn" onclick="changeMode(0)">Manual Control</button>
+
+            <!-- Manual control -->
+            <!--
+            <button type="button" class="btn btn-default control-btn center-block" id="up-control-btn" onclick="sendMoveCommand(1)">Up</button>
+            <button type="button" class="btn btn-default control-btn" id="left-control-btn" onclick="sendMoveCommand(3)">Left</button>
+            <button type="button" class="btn btn-default control-btn" id="down-control-btn" onclick="sendMoveCommand(2)">Down</button>
+            <button type="button" class="btn btn-default control-btn" id="right-control-btn" onclick="sendMoveCommand(4)">Right</button> -->
+        </div>          <!-- Control panel -->
+
+        <div class="col-md-3"> </div>
+      </div>            <!-- Main container first (and last) row -->
+    </div>              <!-- Main container -->
+
+    <!-- Get protobuf -->
+    <script src="scripts/long.js"></script>
+    <script src="scripts/bytebuffer.js"></script>
+    <script src="scripts/protobuf.js"></script>
+
+     <!-- Launch main script -->
+    <script type="text/javascript" src="scripts/index.js"></script>
+
+    <!-- Additional scripts -->
+    <script type="text/javascript" src="scripts/perimeter.js"></script>
+    <script type="text/javascript" src="scripts/drawing.js"></script>
+  </body>
+</html>
