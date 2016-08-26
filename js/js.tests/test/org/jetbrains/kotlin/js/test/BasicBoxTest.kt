@@ -60,6 +60,7 @@ abstract class BasicBoxTest(
         private val pathToTestDir: String,
         private val pathToOutputDir: String
 ) : KotlinTestWithEnvironment() {
+    private val COMMON_FILES_NAME = "_common"
     private val COMMON_FILES_DIR = "_commonFiles/"
     val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
     val additionalCommonFileDirectories = mutableListOf<String>()
@@ -93,9 +94,11 @@ abstract class BasicBoxTest(
             val checker = RhinoFunctionResultChecker(mainModule, testFactory.testPackage, TEST_FUNCTION, "OK")
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
-            val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(file.parent + "/" + COMMON_FILES_DIR, JavaScript.EXTENSION)
+            val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + JavaScript.DOT_EXTENSION
+            val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
+
             val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
-                JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/" + COMMON_FILES_DIR, JavaScript.EXTENSION)
+                JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", JavaScript.EXTENSION)
             }
             val inputJsFiles = inputFiles.map { it.fileName }.filter { it.endsWith(".js") }
 
@@ -103,6 +106,11 @@ abstract class BasicBoxTest(
             if (modules.size > 1) {
                 additionalFiles += MODULE_EMULATION_FILE
             }
+            val additionalJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + JavaScript.DOT_EXTENSION
+            if (File(additionalJsFile).exists()) {
+                additionalFiles += additionalJsFile
+            }
+
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
@@ -134,9 +142,10 @@ abstract class BasicBoxTest(
         val testFiles = module.files.map { it.fileName }.filter { it.endsWith(".kt") }
         val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                 TEST_DATA_DIR_PATH + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
-        val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(directory + "/" + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
+        val localCommonFile = directory + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
+        val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
         val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
-            JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/" + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
+            JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", KotlinFileType.EXTENSION)
         }
         val psiFiles = createPsiFiles(testFiles + globalCommonFiles + localCommonFiles + additionalCommonFiles)
 
