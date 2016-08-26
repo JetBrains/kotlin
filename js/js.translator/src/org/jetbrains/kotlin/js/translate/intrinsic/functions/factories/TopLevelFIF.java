@@ -187,8 +187,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("kotlin.js", "set").isExtensionOf(FQ_NAMES.mutableMap.asString()), NATIVE_MAP_SET);
 
-        add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
-        add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+        //add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
+        //add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
 
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
@@ -245,6 +245,7 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     }
 
+    /*
     private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
         private final boolean isSet;
 
@@ -281,4 +282,5 @@ public final class TopLevelFIF extends CompositeFIF {
             return new JsNew(context.namer().kotlin(collectionClassName), arguments);
         }
     }
+    */
 }
