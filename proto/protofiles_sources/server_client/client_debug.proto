@@ -1,0 +1,15 @@
+syntax = "proto3";
+package carkot;
+
+message Response {
+    repeated int32 A = 1 [packed=true];
+    repeated int32 B = 2 [packed=true];
+    repeated int32 C = 3 [packed=true];
+    int32 carX = 4;
+    int32 carY = 5;
+    int32 carAngle = 6;
+
+    repeated int32 Aref = 7 [packed=true];
+    repeated int32 Bref = 8 [packed=true];
+    repeated int32 Cref = 9 [packed=true];
+}
