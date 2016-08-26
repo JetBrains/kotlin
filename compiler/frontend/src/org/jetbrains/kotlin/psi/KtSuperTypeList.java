@@ -29,8 +29,11 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtSuperTypeList>> {
+    private final AtomicLong modificationStamp = new AtomicLong();
+
     public KtSuperTypeList(@NotNull ASTNode node) {
         super(node);
     }
@@ -65,5 +68,16 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
 
     public List<KtSuperTypeListEntry> getEntries() {
         return Arrays.asList(getStubOrPsiChildren(KtStubElementTypes.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));
+    }
+
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        modificationStamp.getAndIncrement();
+    }
+
+    public long getModificationStamp() {
+        return modificationStamp.get();
     }
 }
