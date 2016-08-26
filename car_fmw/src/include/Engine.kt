@@ -15,7 +15,7 @@ enum class RouteType(val id: Int) {
 
 object Engine {
     val VELOCITY_DRIVE: Double = 0.05 // centimeter in millisecond
-    val VEL0CITY_ROTATE: Double = 0.05 // degree in millisecond
+    val VEL0CITY_ROTATE: Double = 0.05 // angle in millisecond
 
     fun init() {
         car_engine_init()
@@ -23,6 +23,7 @@ object Engine {
 
     fun stop() {
         car_engine_stop()
+        Sonar.calibrate()
     }
 
     fun forward() {

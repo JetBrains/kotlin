@@ -11,18 +11,12 @@ object Control {
 
     private fun executeCommand() {
         val task = Reader.readTask()
-        Leds.blink()
-        Time.wait(BLINK_DURATION)
-
         when (task.type.id) {
             TaskRequest.Type.DEBUG.id -> debugTask()
             TaskRequest.Type.ROUTE.id -> routeTask()
             TaskRequest.Type.ROUTE_METRIC.id -> routeMetricTask()
             TaskRequest.Type.SONAR.id -> sonarTask()
         }
-
-        Leds.blink()
-        Time.wait(BLINK_DURATION)
     }
 
     private fun debugTask() {
@@ -79,7 +73,7 @@ object Control {
 
         var i = 0
         while (i < size) {
-            distances[i] = Sonar.getDistance(request.angles[i])
+            distances[i] = Sonar.getSmoothDistance(request.angles[i])
             i++
         }
 

@@ -1,7 +1,6 @@
 
 object Voyager {
-
-    val MAX_ANGLE: Int = 180 // degree
+    val MAX_ANGLE: Int = 180 // angle
     val SEGMENT_SIZE: Int = 30 // centimeter
 
     fun run() {
