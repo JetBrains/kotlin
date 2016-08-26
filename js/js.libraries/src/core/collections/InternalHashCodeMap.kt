@@ -35,14 +35,14 @@ import kotlin.collections.AbstractMap.SimpleEntry
  * have the same hash, each value in hashCodeMap is actually an array containing all entries whose
  * keys share the same hash.
  */
-internal class InternalHashCodeMap<K, V>(private val host: AbstractHashMap<K, V>) : MutableIterable<MutableEntry<K, V>> {
+internal class InternalHashCodeMap<K, V>(private val host: HashMap<K, V>) : InternalMap<K, V> {
 
-    private val backingMap: dynamic = js("new Object()")
-    var size: Int = 0
+    private var backingMap: dynamic = js("Object.create(null)")
+    override var size: Int = 0
         private set
 
-    fun put(key: K, value: V): V? {
-        val hashCode = host.getHashCode(key)
+    override fun put(key: K, value: V): V? {
+        val hashCode = host.equality.getHashCode(key)
         val chain = getChainOrNull(hashCode)
         if (chain == null) {
             // This is a new chain, put it to the map.
@@ -61,12 +61,12 @@ internal class InternalHashCodeMap<K, V>(private val host: AbstractHashMap<K, V>
         return null
     }
 
-    fun remove(key: K): V? {
-        val hashCode = host.getHashCode(key)
+    override fun remove(key: K): V? {
+        val hashCode = host.equality.getHashCode(key)
         val chain = getChainOrNull(hashCode) ?: return null
         for (index in 0..chain.size-1) {
             val entry = chain[index]
-            if (host.equals(key, entry.key)) {
+            if (host.equality.equals(key, entry.key)) {
                 if (chain.size == 1) {
                     chain.asDynamic().length = 0
                     // remove the whole array
@@ -84,11 +84,20 @@ internal class InternalHashCodeMap<K, V>(private val host: AbstractHashMap<K, V>
         return null
     }
 
-    fun getEntry(key: K): MutableEntry<K, V>? =
-            getChainOrNull(host.getHashCode(key))?.findEntryInChain(key)
+    override fun clear() {
+        backingMap = js("Object.create(null)")
+        size = 0
+    }
+
+    override fun contains(key: K): Boolean = getEntry(key) != null
+
+    override fun get(key: K): V? = getEntry(key)?.value
+
+    private fun getEntry(key: K): MutableEntry<K, V>? =
+            getChainOrNull(host.equality.getHashCode(key))?.findEntryInChain(key)
 
     private fun Array<MutableEntry<K, V>>.findEntryInChain(key: K): MutableEntry<K, V>? =
-            firstOrNull { entry -> host.equals(entry.key, key) }
+            firstOrNull { entry -> host.equality.equals(entry.key, key) }
 
     override fun iterator(): MutableIterator<MutableEntry<K, V>> {
 

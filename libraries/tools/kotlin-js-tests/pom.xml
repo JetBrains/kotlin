@@ -43,6 +43,7 @@
 
 
                                         <!-- exclude JVM tests-->
+                                        <exclude name="**/*JVM.kt"/>
                                         <exclude name="**/*JVMTest.kt"/>
                                         <exclude name="**/*JVMTests.kt"/>
 

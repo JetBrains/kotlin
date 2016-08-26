@@ -41,7 +41,7 @@ class PrimitiveMapJsTest : MapJsTest() {
     }
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.sorted()
-    override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
+    override fun emptyMutableMap(): MutableMap<String, Int> = stringMapOf()
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = HashMap()
 
     @test fun compareBehavior() {

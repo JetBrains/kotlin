@@ -19,106 +19,103 @@
  */
 package kotlin.collections
 
+import kotlin.collections.MutableMap.MutableEntry
+
 /**
  * A simple wrapper around JavaScript Map for key type is string.
  */
-internal class InternalStringMap<K, V>(private val host: AbstractHashMap<K, V>) : Iterable<Entry<K, V>> {
+internal class InternalStringMap<K, V>(private val host: HashMap<K, V>) : InternalMap<K, V> {
 
-    private val backingMap = InternalJsMapFactory.newJsMap()
-    private var size: Int = 0
+    private var backingMap: dynamic = js("Object.create(null)")
+    override var size: Int = 0
+        private set
 
-    /**
-     * A mod count to track 'value' replacements in map to ensure that the 'value' that we have in the
-     * iterator entry is guaranteed to be still correct.
-     * This is to optimize for the common scenario where the values are not modified during
-     * iterations where the entries are never stale.
-     */
-    private var valueMod: Int = 0
+//    /**
+//     * A mod count to track 'value' replacements in map to ensure that the 'value' that we have in the
+//     * iterator entry is guaranteed to be still correct.
+//     * This is to optimize for the common scenario where the values are not modified during
+//     * iterations where the entries are never stale.
+//     */
+//    private var valueMod: Int = 0
 
-    operator fun contains(key: String): Boolean {
-        return !JsUtils.isUndefined(backingMap.get(key))
+    override operator fun contains(key: K): Boolean {
+        if (key !is String) return false
+        return backingMap[key] !== undefined
     }
 
-    operator fun get(key: String): V {
-        return backingMap.get(key)
+    override operator fun get(key: K): V? {
+        if (key !is String) return null
+        val value = backingMap[key]
+        return if (value !== undefined) value as V else null
     }
 
-    fun put(key: String, value: V): V {
-        val oldValue = backingMap.get(key)
-        backingMap.set(key, toNullIfUndefined(value))
 
-        if (JsUtils.isUndefined(oldValue)) {
+    override fun put(key: K, value: V): V? {
+        require(key is String)
+        val oldValue = backingMap[key]
+        backingMap[key] = value
+
+        if (oldValue == undefined) {
             size++
-            structureChanged(host)
+//            structureChanged(host)
+            return null
         }
         else {
-            valueMod++
+//            valueMod++
+            return oldValue as V
         }
-        return oldValue
     }
 
-    fun remove(key: String): V {
-        val value = backingMap.get(key)
-        if (!JsUtils.isUndefined(value)) {
-            backingMap.delete(key)
+    override fun remove(key: K): V? {
+        if (key !is String) return null
+        val value = backingMap[key]
+        if (value !== undefined) {
+            deleteProperty(backingMap, key!!)
             size--
-            structureChanged(host)
+//            structureChanged(host)
+            return value as V
         }
         else {
-            valueMod++
+//            valueMod++
+            return null
         }
-
-        return value
     }
 
-    fun size(): Int {
-        return size
+
+    override fun clear() {
+        backingMap = js("Object.create(null)")
+        size = 0
     }
 
-    override fun iterator(): Iterator<Entry<K, V>> {
-        return object : Iterator<Entry<K, V>> {
-            internal var entries = backingMap.entries()
-            internal var current = entries.next()
-            internal var last: InternalJsMap.IteratorEntry<V>
 
-            override fun hasNext(): Boolean {
-                return !current.done
-            }
+    override fun iterator(): MutableIterator<MutableEntry<K, V>> {
+        return object : MutableIterator<MutableEntry<K, V>> {
+            private val keys: Array<String> = js("Object").keys(backingMap)
+            private val iterator = keys.iterator()
+            private var lastKey: String? = null
 
-            override fun next(): Entry<K, V> {
-                last = current
-                current = entries.next()
-                return newMapEntry(last, valueMod)
+            override fun hasNext(): Boolean = iterator.hasNext()
+
+            override fun next(): MutableEntry<K, V> {
+                val key = iterator.next()
+                lastKey = key
+                return newMapEntry(key as K)
             }
 
             override fun remove() {
-                this@InternalStringMap.remove(last.getKey())
+                this@InternalStringMap.remove(checkNotNull(lastKey) as K)
             }
         }
     }
 
-    private fun newMapEntry(entry: InternalJsMap.IteratorEntry<V>,
-                            lastValueMod: Int): Entry<K, V> {
-        return object : AbstractMapEntry<K, V>() {
-            val key: K
-                @SuppressWarnings("unchecked")
-                get() = entry.getKey()
-            // Let's get a fresh copy as the value may have changed.
-            val value: V
-                get() {
-                    if (valueMod != lastValueMod) {
-                        return get(entry.getKey())
-                    }
-                    return entry.getValue()
-                }
+    private fun newMapEntry(key: K): MutableEntry<K, V> = object : MutableEntry<K, V> {
+        override val key: K get() = key
+        override val value: V get() = this@InternalStringMap[key] as V
 
-            fun setValue(`object`: V): V {
-                return put(entry.getKey(), `object`)
-            }
-        }
-    }
+        override fun setValue(value: V): V = this@InternalStringMap.put(key, value) as V
 
-    private fun <T> toNullIfUndefined(value: T): T? {
-        return if (JsUtils.isUndefined(value)) null else value
+        override fun hashCode(): Int = AbstractMap.entryHashCode(this)
+        override fun toString(): String = AbstractMap.entryToString(this)
+        override fun equals(other: Any?): Boolean = AbstractMap.entryEquals(this, other)
     }
 }

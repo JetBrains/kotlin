@@ -31,7 +31,7 @@ class ComplexSetJsTest : SetJsTest() {
 }
 
 class PrimitiveSetJsTest : SetJsTest() {
-    override fun createEmptyMutableSet(): MutableSet<String> = HashSet()
+    override fun createEmptyMutableSet(): MutableSet<String> = stringSetOf()
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = HashSet()
     @Test
     override fun constructors() {

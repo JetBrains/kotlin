@@ -44,7 +44,7 @@ open class HashSet<E> : AbstractSet<E> {
 
      * @param map underlying map to use.
      */
-    protected constructor(map: HashMap<E, Any>) {
+    internal constructor(map: HashMap<E, Any>) {
         this.map = map
     }
 
@@ -71,4 +71,8 @@ open class HashSet<E> : AbstractSet<E> {
 
     override val size: Int get() = map.size
 
+}
+
+public fun stringSetOf(vararg elements: String): HashSet<String> {
+    return HashSet(stringMapOf<Any>()).apply { addAll(elements) }
 }
