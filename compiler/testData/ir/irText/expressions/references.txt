@@ -8,33 +8,33 @@ FILE /references.kt
   PROPERTY public val ok3: kotlin.String getter=<get-ok3> setter=null
   PROPERTY_GETTER public fun <get-ok3>(): kotlin.String property=ok3
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=<get-ok3>
         CONST String type=kotlin.String value='OK'
   FUN public fun test1(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1
         CALL .<get-ok> type=kotlin.String operator=GET_PROPERTY
   FUN public fun test2(/*0*/ x: kotlin.String): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         GET_VAR x type=kotlin.String operator=null
   FUN public fun test3(): kotlin.String
     BLOCK_BODY
       VAR val x: kotlin.String = "OK"
         CONST String type=kotlin.String value='OK'
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test3
         GET_VAR x type=kotlin.String operator=null
   FUN public fun test4(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test4
         CALL .<get-ok3> type=kotlin.String operator=GET_PROPERTY
   PROPERTY public val kotlin.String.okext: kotlin.String getter=<get-okext> setter=null
   PROPERTY_GETTER public fun kotlin.String.<get-okext>(): kotlin.String property=okext
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=<get-okext>
         CONST String type=kotlin.String value='OK'
   FUN public fun kotlin.String.test5(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test5
         CALL .<get-okext> type=kotlin.String operator=GET_PROPERTY
           $receiver: $RECEIVER of: test5 type=kotlin.String

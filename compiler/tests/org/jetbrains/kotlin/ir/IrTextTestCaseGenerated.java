@@ -402,5 +402,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/multipleImplicitReceivers.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("nonLocalReturn.kt")
+        public void testNonLocalReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/nonLocalReturn.kt");
+            doTest(fileName);
+        }
     }
 }

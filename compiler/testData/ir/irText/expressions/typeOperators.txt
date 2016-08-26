@@ -2,21 +2,21 @@ FILE /typeOperators.kt
   CLASS INTERFACE IThing
   FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1
         TYPE_OP operator=INSTANCEOF typeOperand=IThing
           GET_VAR x type=kotlin.Any operator=null
   FUN public fun test2(/*0*/ x: kotlin.Any): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         TYPE_OP operator=NOT_INSTANCEOF typeOperand=IThing
           GET_VAR x type=kotlin.Any operator=null
   FUN public fun test3(/*0*/ x: kotlin.Any): IThing
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test3
         TYPE_OP operator=CAST typeOperand=IThing
           GET_VAR x type=kotlin.Any operator=null
   FUN public fun test4(/*0*/ x: kotlin.Any): IThing?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test4
         TYPE_OP operator=SAFE_CAST typeOperand=IThing
           GET_VAR x type=kotlin.Any operator=null

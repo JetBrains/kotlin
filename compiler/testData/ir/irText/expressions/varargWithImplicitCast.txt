@@ -4,9 +4,9 @@ FILE /varargWithImplicitCast.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.Int
           GET_VAR a type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=testScalar
           CALL .intArrayOf type=kotlin.IntArray operator=null
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=testScalar
         CALL .intArrayOf type=kotlin.IntArray operator=null
           elements: VARARG type=IntArray varargElementType=Int
             TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
@@ -16,9 +16,9 @@ FILE /varargWithImplicitCast.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.IntArray
           GET_VAR a type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=testSpread
           CALL .intArrayOf type=kotlin.IntArray operator=null
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=testSpread
         CALL .intArrayOf type=kotlin.IntArray operator=null
           elements: VARARG type=IntArray varargElementType=Int
             SPREAD_ELEMENT

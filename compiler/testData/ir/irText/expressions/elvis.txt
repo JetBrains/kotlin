@@ -4,11 +4,11 @@ FILE /elvis.kt
       CONST Null type=kotlin.Nothing? value='null'
   FUN public fun foo(): kotlin.Any?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=foo
         CONST Null type=kotlin.Nothing? value='null'
   FUN public fun test1(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1
         BLOCK type=kotlin.Any operator=ELVIS
           WHEN type=kotlin.Any operator=null
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
@@ -18,7 +18,7 @@ FILE /elvis.kt
             else: GET_VAR a type=kotlin.Any? operator=null
   FUN public fun test2(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         BLOCK type=kotlin.Any operator=ELVIS
           WHEN type=kotlin.Any operator=null
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
@@ -31,14 +31,14 @@ FILE /elvis.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR b type=kotlin.Any? operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=test3
           CONST String type=kotlin.String value=''
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String?
           GET_VAR a type=kotlin.Any? operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=test3
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test3
         BLOCK type=kotlin.String operator=ELVIS
           WHEN type=kotlin.String operator=null
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
@@ -50,7 +50,7 @@ FILE /elvis.kt
               GET_VAR a type=kotlin.Any? operator=null
   FUN public fun test4(/*0*/ x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test4
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
             CALL .<get-p> type=kotlin.Any? operator=GET_PROPERTY
@@ -62,7 +62,7 @@ FILE /elvis.kt
             else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
   FUN public fun test5(/*0*/ x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test5
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
             CALL .foo type=kotlin.Any? operator=null

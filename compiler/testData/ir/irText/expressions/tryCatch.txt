@@ -10,7 +10,7 @@ FILE /tryCatch.kt
           CALL .println type=kotlin.Unit operator=null
   FUN public fun test2(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         TRY_CATCH type=kotlin.Int
           try: BLOCK type=kotlin.Int operator=null
             CALL .println type=kotlin.Unit operator=null

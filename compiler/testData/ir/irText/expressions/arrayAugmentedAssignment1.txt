@@ -1,7 +1,7 @@
 FILE /arrayAugmentedAssignment1.kt
   FUN public fun foo(): kotlin.IntArray
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=foo
         CALL .intArrayOf type=kotlin.IntArray operator=null
           elements: VARARG type=IntArray varargElementType=Int
             CONST Int type=kotlin.Int value='1'
@@ -9,7 +9,7 @@ FILE /arrayAugmentedAssignment1.kt
             CONST Int type=kotlin.Int value='3'
   FUN public fun bar(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=bar
         CONST Int type=kotlin.Int value='42'
   CLASS CLASS C
     FUN public constructor C(/*0*/ x: kotlin.IntArray)

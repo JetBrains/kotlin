@@ -2,7 +2,7 @@ FILE /when.kt
   CLASS OBJECT A
   FUN public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=testWithSubject
         BLOCK type=kotlin.String operator=WHEN
           VAR val tmp0_subject: kotlin.Any?
             GET_VAR x type=kotlin.Any? operator=null
@@ -25,7 +25,7 @@ FILE /when.kt
             else: CONST String type=kotlin.String value='something'
   FUN public fun test(/*0*/ x: kotlin.Any?): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test
         WHEN type=kotlin.String operator=WHEN
           if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
             arg0: GET_VAR x type=kotlin.Any? operator=null
@@ -45,7 +45,7 @@ FILE /when.kt
           else: CONST String type=kotlin.String value='something'
   FUN public fun testComma(/*0*/ x: kotlin.Int): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=testComma
         BLOCK type=kotlin.String operator=WHEN
           VAR val tmp0_subject: kotlin.Int
             GET_VAR x type=kotlin.Int operator=null

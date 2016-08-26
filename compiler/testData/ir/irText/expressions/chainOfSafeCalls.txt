@@ -2,15 +2,15 @@ FILE /chainOfSafeCalls.kt
   CLASS CLASS C
     FUN public final fun foo(): C
       BLOCK_BODY
-        RETURN type=kotlin.Nothing
+        RETURN type=kotlin.Nothing from=foo
           THIS public final class C type=C
     FUN public final fun bar(): C?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing
+        RETURN type=kotlin.Nothing from=bar
           THIS public final class C type=C
   FUN public fun test(/*0*/ nc: C?): C?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test
         BLOCK type=C? operator=SAFE_CALL
           VAR val tmp2_safe_receiver: C?
             WHEN type=C? operator=SAFE_CALL

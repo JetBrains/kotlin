@@ -5,18 +5,18 @@ FILE /smartCasts.kt
     BLOCK_BODY
   FUN public fun overloaded(/*0*/ s: kotlin.String): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=overloaded
         GET_VAR s type=kotlin.String operator=null
   FUN public fun overloaded(/*0*/ x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=overloaded
         GET_VAR x type=kotlin.Any operator=null
   FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=test1
       CALL .println type=kotlin.Unit operator=null
         message: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
           $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
@@ -37,9 +37,9 @@ FILE /smartCasts.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=test2
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         CALL .overloaded type=kotlin.String operator=null
           s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR x type=kotlin.Any operator=null
@@ -48,8 +48,8 @@ FILE /smartCasts.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=test3
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test3
         TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR x type=kotlin.Any operator=null

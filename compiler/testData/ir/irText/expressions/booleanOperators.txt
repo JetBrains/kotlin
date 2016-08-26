@@ -1,27 +1,27 @@
 FILE /booleanOperators.kt
   FUN public fun test1(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1
         WHEN type=kotlin.Boolean operator=ANDAND
           if: GET_VAR a type=kotlin.Boolean operator=null
           then: GET_VAR b type=kotlin.Boolean operator=null
           else: CONST Boolean type=kotlin.Boolean value='false'
   FUN public fun test2(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         WHEN type=kotlin.Boolean operator=OROR
           if: GET_VAR a type=kotlin.Boolean operator=null
           then: CONST Boolean type=kotlin.Boolean value='true'
           else: GET_VAR b type=kotlin.Boolean operator=null
   FUN public fun test1x(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1x
         CALL .and type=kotlin.Boolean operator=null
           $this: GET_VAR a type=kotlin.Boolean operator=null
           other: GET_VAR b type=kotlin.Boolean operator=null
   FUN public fun test2x(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2x
         CALL .or type=kotlin.Boolean operator=null
           $this: GET_VAR a type=kotlin.Boolean operator=null
           other: GET_VAR b type=kotlin.Boolean operator=null

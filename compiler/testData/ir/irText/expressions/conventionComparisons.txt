@@ -4,7 +4,7 @@ FILE /conventionComparisons.kt
     FUN public abstract operator fun IA.compareTo(/*0*/ other: IA): kotlin.Int
   FUN public fun IB.test1(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test1
         CALL .GT0 type=kotlin.Boolean operator=GT
           arg0: CALL .compareTo type=kotlin.Int operator=GT
             $this: $RECEIVER of: test1 type=IB
@@ -12,7 +12,7 @@ FILE /conventionComparisons.kt
             other: GET_VAR a2 type=IA operator=null
   FUN public fun IB.test2(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test2
         CALL .GTEQ0 type=kotlin.Boolean operator=GTEQ
           arg0: CALL .compareTo type=kotlin.Int operator=GTEQ
             $this: $RECEIVER of: test2 type=IB
@@ -20,7 +20,7 @@ FILE /conventionComparisons.kt
             other: GET_VAR a2 type=IA operator=null
   FUN public fun IB.test3(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test3
         CALL .LT0 type=kotlin.Boolean operator=LT
           arg0: CALL .compareTo type=kotlin.Int operator=LT
             $this: $RECEIVER of: test3 type=IB
@@ -28,7 +28,7 @@ FILE /conventionComparisons.kt
             other: GET_VAR a2 type=IA operator=null
   FUN public fun IB.test4(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=test4
         CALL .LTEQ0 type=kotlin.Boolean operator=LTEQ
           arg0: CALL .compareTo type=kotlin.Int operator=LTEQ
             $this: $RECEIVER of: test4 type=IB

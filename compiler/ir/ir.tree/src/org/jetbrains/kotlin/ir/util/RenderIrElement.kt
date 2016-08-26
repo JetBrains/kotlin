@@ -82,7 +82,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "BLOCK type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-            "RETURN type=${expression.type.render()}"
+            "RETURN type=${expression.type.render()} from=${expression.returnTarget.name}"
 
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?): String =
             "\$RECEIVER of: ${expression.descriptor.containingDeclaration.name} type=${expression.type.render()}"

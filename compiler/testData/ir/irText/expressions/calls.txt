@@ -1,17 +1,17 @@
 FILE /calls.kt
   FUN public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=foo
         GET_VAR x type=kotlin.Int operator=null
   FUN public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=bar
         CALL .foo type=kotlin.Int operator=null
           x: GET_VAR x type=kotlin.Int operator=null
           y: CONST Int type=kotlin.Int value='1'
   FUN public fun qux(/*0*/ x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=qux
         CALL .foo type=kotlin.Int operator=null
           x: CALL .foo type=kotlin.Int operator=null
             x: GET_VAR x type=kotlin.Int operator=null
@@ -19,17 +19,17 @@ FILE /calls.kt
           y: GET_VAR x type=kotlin.Int operator=null
   FUN public fun kotlin.Int.ext1(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=ext1
         $RECEIVER of: ext1 type=kotlin.Int
   FUN public fun kotlin.Int.ext2(/*0*/ x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=ext2
         CALL .foo type=kotlin.Int operator=null
           x: $RECEIVER of: ext2 type=kotlin.Int
           y: GET_VAR x type=kotlin.Int operator=null
   FUN public fun kotlin.Int.ext3(/*0*/ x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=ext3
         CALL .foo type=kotlin.Int operator=null
           x: CALL .ext1 type=kotlin.Int operator=null
             $receiver: $RECEIVER of: ext3 type=kotlin.Int

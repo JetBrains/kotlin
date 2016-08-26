@@ -4,7 +4,7 @@ FILE /tryCatchWithImplicitCast.kt
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
           GET_VAR a type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing
+        then: RETURN type=kotlin.Nothing from=testImplicitCast
       VAR val t: kotlin.String
         TRY_CATCH type=kotlin.String
           try: BLOCK type=kotlin.String operator=null

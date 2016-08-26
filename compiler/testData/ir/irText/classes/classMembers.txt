@@ -23,12 +23,12 @@ FILE /classMembers.kt
     PROPERTY public final val propertyWithGet: kotlin.Int getter=<get-propertyWithGet> setter=null
     PROPERTY_GETTER public final fun <get-propertyWithGet>(): kotlin.Int property=propertyWithGet
       BLOCK_BODY
-        RETURN type=kotlin.Nothing
+        RETURN type=kotlin.Nothing from=<get-propertyWithGet>
           CONST Int type=kotlin.Int value='42'
     PROPERTY public final var propertyWithGetAndSet: kotlin.Int getter=<get-propertyWithGetAndSet> setter=<set-propertyWithGetAndSet>
     PROPERTY_GETTER public final fun <get-propertyWithGetAndSet>(): kotlin.Int property=propertyWithGetAndSet
       BLOCK_BODY
-        RETURN type=kotlin.Nothing
+        RETURN type=kotlin.Nothing from=<get-propertyWithGetAndSet>
           CALL .<get-z> type=kotlin.Int operator=GET_PROPERTY
             $this: THIS public final class C type=C
     PROPERTY_SETTER public final fun <set-propertyWithGetAndSet>(/*0*/ value: kotlin.Int): kotlin.Unit property=propertyWithGetAndSet
@@ -57,7 +57,7 @@ FILE /classMembers.kt
       FUN public abstract fun foo(): kotlin.Unit
       FUN public open fun bar(): kotlin.Unit
         BLOCK_BODY
-          RETURN type=kotlin.Nothing
+          RETURN type=kotlin.Nothing from=bar
             CALL .foo type=kotlin.Unit operator=null
               $this: THIS public interface NestedInterface type=C.NestedInterface
     CLASS OBJECT Companion

@@ -1,0 +1,25 @@
+FILE /nonLocalReturn.kt
+  FUN public fun test0(): kotlin.Unit
+    BLOCK_BODY
+      CALL .run type=kotlin.Nothing operator=null
+        block: BLOCK type=() -> kotlin.Nothing operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.Nothing
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from=test0
+          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Nothing type=() -> kotlin.Nothing
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      CALL .run type=kotlin.Unit operator=null
+        block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from=<anonymous>
+          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Unit type=() -> kotlin.Unit
+  FUN public fun test2(): kotlin.Unit
+    BLOCK_BODY
+      CALL .run type=kotlin.Unit operator=null
+        block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from=<anonymous>
+          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Unit type=() -> kotlin.Unit

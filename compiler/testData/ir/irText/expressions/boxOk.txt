@@ -1,5 +1,5 @@
 FILE /boxOk.kt
   FUN public fun box(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing
+      RETURN type=kotlin.Nothing from=box
         CONST String type=kotlin.String value='OK'
