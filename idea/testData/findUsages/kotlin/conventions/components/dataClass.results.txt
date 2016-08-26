@@ -16,3 +16,10 @@
 [dataClass.2.kt] Value read 9 val (x1, y1, z1) = f()
 [dataClass.3.kt] Value read 12 val (x, y, z) = a
 [dataClass.3.kt] Value read 15 val (x1, y1, z1) = a1
+[dataClass.4.kt] Value read 18 p[0] = { val (x, y) = it }
+[dataClass.4.kt] Value read 24 takeExtFun { val (x, y) = this }
+[dataClass.4.kt] Value read 26 takeFun1 { val (x, y) = it }
+[dataClass.4.kt] Value read 27 takeFun2 { a, n -> val (x, y) = a!! }
+[dataClass.4.kt] Value read 28 takeFun3 { val (x, y) = it[0] }
+[dataClass.4.kt] Value read 30 x(p) { val (x, y) = it }
+[dataClass.5.kt] Value read 10 "".v = { val (x, y ) = it }
