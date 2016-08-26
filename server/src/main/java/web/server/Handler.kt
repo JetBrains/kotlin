@@ -8,6 +8,7 @@ import io.netty.util.CharsetUtil
 import GenericResponse
 import CodedOutputStream
 import CodedInputStream
+import algorithm.RoomModel
 import java.util.*
 
 class Handler : SimpleChannelInboundHandler<Any>() {
@@ -85,6 +86,23 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 val msg = RoomModel.getUpdate()
                 val outs = CodedOutputStream(ByteArray(msg.getSizeNoTag()))
                 msg.writeTo(outs)
+                val response = DefaultFullHttpResponse(
+                        HttpVersion.HTTP_1_1,
+                        HttpResponseStatus.OK,
+                        Unpooled.copiedBuffer(Base64.getEncoder().encodeToString(outs.buffer), CharsetUtil.UTF_8)
+                )
+                response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
+                response.headers().add("Access-Control-Allow-Origin", "*");
+                response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
+                ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
+            }
+            Constants.getDebug -> {
+
+                val msg = RoomModel.getDebugInfo()
+                val outs = CodedOutputStream(ByteArray(msg.getSizeNoTag()))
+                msg.writeTo(outs)
+
                 val response = DefaultFullHttpResponse(
                         HttpVersion.HTTP_1_1,
                         HttpResponseStatus.OK,

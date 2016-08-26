@@ -1,7 +1,7 @@
 syntax = "proto3";
 package carkot;
 
-message Response {
+message DebugResponse {
     repeated int32 A = 1 [packed=true];
     repeated int32 B = 2 [packed=true];
     repeated int32 C = 3 [packed=true];
