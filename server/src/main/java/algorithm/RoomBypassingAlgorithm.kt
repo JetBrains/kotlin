@@ -14,12 +14,11 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
     public var wallAngleWithOX = 0.0//in radian
     public var wallLength = 0.0//sm
-//    var xPos = 0.0
-//    var yPos = 0.0
-//    var carAngle = 0.0
+    var xPos = 0.0
+    var yPos = 0.0
+    var carAngle = 0.0
 
     private var prevPoint = Pair(0.0, 0.0)
-
 
     override fun getCarState(anglesDistances: Map<Int, Double>): CarState {
         val dist0 = anglesDistances[0]
@@ -117,7 +116,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 if (Math.abs(dist120 - dist60) > 10) {
                     val rotationDirection = if (dist120 > dist60) LEFT else RIGHT
                     resultBuilder.setDirections(getIntArray(rotationDirection))
-                    resultBuilder.setTimes(getIntArray((3.0 / ROTATION_VELOCITY).toInt()))
+                    resultBuilder.setTimes(getIntArray((4 * 3.0 / ROTATION_VELOCITY).toInt()))//todo calibrate
                     return resultBuilder.build()
                 }
 
