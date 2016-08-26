@@ -155,8 +155,8 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 wallLength = 0.0
                 RoomModel.lines.add(nextLine)
                 resultBuilder.setDirections(getIntArray(LEFT, FORWARD, LEFT))
-                resultBuilder.setTimes(getIntArray((radiansToDegrees(wallAngleWithOX) / (2 * ROTATION_VELOCITY)).toInt(),
-                        (40 / MOVE_VELOCITY).toInt(), (radiansToDegrees(wallAngleWithOX) / (2 * ROTATION_VELOCITY)).toInt()))
+                resultBuilder.setTimes(getIntArray((wallsAngleInDegrees / (2 * ROTATION_VELOCITY)).toInt(),
+                        (40 / MOVE_VELOCITY).toInt(), (wallsAngleInDegrees / (2 * ROTATION_VELOCITY)).toInt()))
                 return resultBuilder.build()
             }
             CarState.OUTER -> {
@@ -186,25 +186,22 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return result
     }
 
-    //returns coef in y=kx+b (first is k, second is b)
     private fun approximatePointsByLine(points: Array<Pair<Double, Double>>): Line {
 
-        val p1 = points.first()
-        val p2 = points[1]
+//        val p1 = points.first()
+//        val p2 = points[1]
+//        return Line(p2.second - p1.second, p1.first - p2.first, -p1.first * p2.second + p1.second * p2.first)
 
-        return Line(p2.second - p1.second, p1.first - p2.first, -p1.first * p2.second + p1.second * p2.first)
+        val sumX = points.sumByDouble { it.first }
+        val sumXQuad = points.sumByDouble { it.first * it.first }
+        val sumY = points.sumByDouble { it.second }
+        val sumXY = points.sumByDouble { it.second * it.first }
 
-//
-//        val sumX = points.sumByDouble { it.first }
-//        val sumXQuad = points.sumByDouble { it.first * it.first }
-//        val sumY = points.sumByDouble { it.second }
-//        val sumXY = points.sumByDouble { it.second * it.first }
-//
-//        val pointsCount = points.size
-//        val k = (pointsCount * sumXY - sumX * sumY) / (pointsCount * sumXQuad - sumX * sumX)
-//        val b = (sumY - sumX * k) / pointsCount
-//
-//        return Line(-k, 1.0, -b)
+        val pointsCount = points.size
+        val k = (pointsCount * sumXY - sumX * sumY) / (pointsCount * sumXQuad - sumX * sumX)
+        val b = (sumY - sumX * k) / pointsCount
+
+        return Line(-k, 1.0, -b)
     }
 
 
