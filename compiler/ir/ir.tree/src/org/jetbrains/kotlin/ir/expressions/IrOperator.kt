@@ -86,7 +86,7 @@ interface IrOperator {
     object FOR_LOOP_NEXT : IrOperatorImpl("FOR_LOOP_NEXT")
 
     object LAMBDA : IrOperatorImpl("LAMBDA")
-
+    object ANONYMOUS_FUNCTION : IrOperatorImpl("ANONYMOUS_FUNCTION")
 
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {

@@ -1,0 +1,1 @@
+val anonymous = fun() { println() }

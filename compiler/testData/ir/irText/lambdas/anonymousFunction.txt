@@ -1,0 +1,8 @@
+FILE /anonymousFunction.kt
+  PROPERTY public val anonymous: () -> kotlin.Unit getter=null setter=null
+    EXPRESSION_BODY
+      BLOCK type=() -> kotlin.Unit operator=ANONYMOUS_FUNCTION
+        FUN local final fun <no name provided>(): kotlin.Unit
+          BLOCK_BODY
+            CALL .println type=kotlin.Unit operator=null
+        CALLABLE_REFERENCE local final fun <no name provided>(): kotlin.Unit type=() -> kotlin.Unit

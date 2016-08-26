@@ -361,6 +361,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("anonymousFunction.kt")
+        public void testAnonymousFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/anonymousFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionLambda.kt")
         public void testExtensionLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/extensionLambda.kt");
@@ -370,6 +376,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("justLambda.kt")
         public void testJustLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/justLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/localFunction.kt");
             doTest(fileName);
         }
 

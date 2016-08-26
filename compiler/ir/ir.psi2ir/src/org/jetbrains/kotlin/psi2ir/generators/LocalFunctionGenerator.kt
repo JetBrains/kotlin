@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -44,6 +46,30 @@ class LocalFunctionGenerator(val statementGenerator: StatementGenerator) : Gener
         irBlock.addStatement(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, lambdaDescriptor))
 
         return irBlock
+    }
+
+    fun generateFunction(ktFun: KtNamedFunction): IrStatement =
+            if (ktFun.name != null) {
+                generateFunctionDeclaration(ktFun)
+            }
+            else {
+                // anonymous function expression
+                val funExpressionType = getInferredTypeWithSmartcastsOrFail(ktFun)
+                val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrOperator.ANONYMOUS_FUNCTION)
+
+                val irFun = generateFunctionDeclaration(ktFun)
+                irBlock.addStatement(irFun)
+
+                irBlock.addStatement(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, irFun.descriptor))
+
+                irBlock
+            }
+
+    private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction {
+        val funDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
+        val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.DEFINED, funDescriptor)
+        irFun.body = BodyGenerator(funDescriptor, statementGenerator.context).generateFunctionBody(ktFun.bodyExpression!!)
+        return irFun
     }
 
 }

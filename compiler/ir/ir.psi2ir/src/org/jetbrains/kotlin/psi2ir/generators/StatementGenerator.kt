@@ -127,7 +127,7 @@ class StatementGenerator(
 
     private fun getReturnExpressionTarget(expression: KtReturnExpression): CallableDescriptor =
             if (!ExpressionTypingUtils.isFunctionLiteral(scopeOwner) && !ExpressionTypingUtils.isFunctionExpression(scopeOwner)) {
-                scopeOwner as? CallableDescriptor ?: throw AssertionError("Return not in a callable: $scopeOwner")
+                scopeOwner ?: throw AssertionError("Return not in a callable: $scopeOwner")
             }
             else {
                 val label = expression.getTargetLabel()
@@ -140,7 +140,7 @@ class StatementGenerator(
                     BindingContextUtils.getContainingFunctionSkipFunctionLiterals(scopeOwner, true).first
                 }
                 else {
-                    scopeOwner as? CallableDescriptor ?: throw AssertionError("Return not in a callable: $scopeOwner")
+                    scopeOwner ?: throw AssertionError("Return not in a callable: $scopeOwner")
                 }
             }
 
@@ -321,5 +321,8 @@ class StatementGenerator(
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, data: Nothing?): IrStatement =
             LocalFunctionGenerator(this).generateLambda(expression)
+
+    override fun visitNamedFunction(function: KtNamedFunction, data: Nothing?): IrStatement =
+            LocalFunctionGenerator(this).generateFunction(function)
 }
 
