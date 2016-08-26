@@ -13,8 +13,8 @@ private fun testCarEmulator() {
         sonarResponse.mergeFrom(CodedInputStream(bytes))
         val dist0 = sonarResponse.distances[0]
         val dist90 = sonarResponse.distances[1]
-        eq(dist0.toDouble(), Math.abs(Room.rightLine.C / Room.rightLine.A), "check angle 0", 2.5)
-        eq(dist90.toDouble(), Room.bottomLine.C / Room.bottomLine.B, "check angle 90", 2.5)
+        eq(dist0.toDouble(), 200.0, "check angle 0", 2.5)
+        eq(dist90.toDouble(), 20.0, "check angle 90", 2.5)
     })
 
     println("--------------------")

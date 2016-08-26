@@ -9,6 +9,7 @@ import net.server.handlers.main.GetSonarData
 import net.server.handlers.main.SetRoute
 import net.server.handlers.main.SetRouteMetric
 import net.server.handlers.rc.Control
+import room.Room
 
 val carServerPort: Int = 8888
 val mainServerPort = 7925
@@ -28,6 +29,9 @@ fun main(args: Array<String>) {
         when (arg) {
             "-t" -> runTests = true
             "-e" -> runAsEmulator = true
+            "-tr1" -> Room.walls = Room.testRoom1()
+            "-tr2" -> Room.walls = Room.testRoom2()
+            "-tr3" -> Room.walls = Room.testRoom3()
         }
     }
     val carController =
