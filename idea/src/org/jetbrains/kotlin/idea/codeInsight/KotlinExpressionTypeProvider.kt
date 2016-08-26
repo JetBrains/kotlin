@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
@@ -38,13 +39,14 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
 
     private fun KtExpression.shouldShowType() = when(this) {
+        is KtFunctionLiteral -> false
         is KtFunction -> !hasBlockBody() && !hasDeclaredReturnType()
         is KtProperty -> typeReference == null
         is KtPropertyAccessor -> false
         is KtDestructuringDeclarationEntry -> true
         is KtStatementExpression, is KtDestructuringDeclaration -> false
         is KtIfExpression, is KtLoopExpression, is KtWhenExpression, is KtTryExpression -> parent !is KtBlockExpression
-        else -> true
+        else -> getQualifiedExpressionForSelector() == null
     }
 
     override fun getInformationHint(element: KtExpression): String {
