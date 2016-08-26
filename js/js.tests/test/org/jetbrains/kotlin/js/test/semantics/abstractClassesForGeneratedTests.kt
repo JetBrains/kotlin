@@ -18,48 +18,64 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
-abstract class AbstractBridgeTest : BasicBoxTest("bridges/")
+abstract class JsBasicBoxTest(relativePath: String) : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "cases/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
+) {
+    init {
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath
+    }
+}
 
-abstract class AbstractFunctionCallableReferenceTest : BasicBoxTest("callableReference/function/")
+abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
+        "compiler/testData/codegen/box/" + relativePath,
+        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
+) {
+    init {
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath
+    }
+}
 
-abstract class AbstractPropertyCallableReferenceTest : BasicBoxTest("callableReference/property/")
+abstract class AbstractBridgeTest : BorrowedTest("bridges/")
 
-abstract class AbstractCompanionObjectTest : BasicBoxTest("objectIntrinsics/")
+abstract class AbstractCallableReferenceTest : JsBasicBoxTest("callableReference/")
 
-abstract class AbstractDynamicTest : BasicBoxTest("dynamic/")
+abstract class AbstractCompanionObjectTest : JsBasicBoxTest("objectIntrinsics/")
 
-abstract class AbstractFunctionExpressionTest : BasicBoxTest("functionExpression/")
+abstract class AbstractDynamicTest : JsBasicBoxTest("dynamic/")
 
-abstract class AbstractInlineEvaluationOrderTest : BasicBoxTest("inlineEvaluationOrder/")
+abstract class AbstractFunctionExpressionTest : JsBasicBoxTest("functionExpression/")
 
-abstract class AbstractInlineJsStdlibTest : BasicBoxTest("inlineStdlib/")
+abstract class AbstractInlineEvaluationOrderTest : JsBasicBoxTest("inlineEvaluationOrder/")
 
-abstract class AbstractInlineJsTest : BasicBoxTest("inline/")
+abstract class AbstractInlineJsStdlibTest : JsBasicBoxTest("inlineStdlib/")
 
-abstract class AbstractJsCodeTest : BasicBoxTest("jsCode/")
+abstract class AbstractInlineJsTest : JsBasicBoxTest("inline/")
 
-abstract class AbstractLabelTest : BasicBoxTest("labels/")
+abstract class AbstractJsCodeTest : JsBasicBoxTest("jsCode/")
 
-abstract class AbstractMultiModuleTest : BasicBoxTest("multiModule/")
+abstract class AbstractLabelTest : JsBasicBoxTest("labels/")
 
-abstract class AbstractInlineMultiModuleTest : BasicBoxTest("inlineMultiModule/")
+abstract class AbstractMultiModuleTest : JsBasicBoxTest("multiModule/")
 
-abstract class AbstractReservedWordTest : BasicBoxTest("reservedWords/")
+abstract class AbstractInlineMultiModuleTest : JsBasicBoxTest("inlineMultiModule/")
 
-abstract class AbstractSecondaryConstructorTest : BasicBoxTest("secondaryConstructors/")
+abstract class AbstractReservedWordTest : JsBasicBoxTest("reservedWords/")
 
-abstract class AbstractInnerNestedTest : BasicBoxTest("innerNested/")
+abstract class AbstractSecondaryConstructorTest : JsBasicBoxTest("secondaryConstructors/")
 
-abstract class AbstractClassesTest : BasicBoxTest("classes/")
+abstract class AbstractInnerNestedTest : JsBasicBoxTest("innerNested/")
 
-abstract class AbstractSuperTest : BasicBoxTest("super/")
+abstract class AbstractClassesTest : JsBasicBoxTest("classes/")
 
-abstract class AbstractLocalClassesTest : BasicBoxTest("localClasses/")
+abstract class AbstractSuperTest : JsBasicBoxTest("super/")
 
-abstract class AbstractNonLocalReturnsTest : BasicBoxTest("inline.generated/nonLocalReturns/")
+abstract class AbstractLocalClassesTest : JsBasicBoxTest("localClasses/")
 
-abstract class AbstractRttiTest : BasicBoxTest("rtti/")
+abstract class AbstractNonLocalReturnsTest : JsBasicBoxTest("inline.generated/nonLocalReturns/")
 
-abstract class AbstractCastTest : BasicBoxTest("expression/cast/")
+abstract class AbstractRttiTest : JsBasicBoxTest("rtti/")
 
-abstract class AbstractLightReflectionTest : BasicBoxTest("reflection/light/")
+abstract class AbstractCastTest : JsBasicBoxTest("expression/cast/")
+
+abstract class AbstractLightReflectionTest : JsBasicBoxTest("reflection/light/")

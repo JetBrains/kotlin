@@ -1141,12 +1141,8 @@ fun main(args: Array<String>) {
             model("reservedWords/cases")
         }
 
-        testClass<AbstractFunctionCallableReferenceTest> {
-            model("callableReference/function/cases")
-        }
-
-        testClass<AbstractPropertyCallableReferenceTest> {
-            model("callableReference/property/cases")
+        testClass<AbstractCallableReferenceTest> {
+            model("callableReference/")
         }
 
         testClass<AbstractDynamicTest>() {
