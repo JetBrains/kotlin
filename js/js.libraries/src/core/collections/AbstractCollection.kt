@@ -22,7 +22,7 @@ public abstract class AbstractCollection<E> protected constructor() : MutableCol
     abstract override val size: Int
     abstract override fun iterator(): MutableIterator<E>
 
-    override fun add(element: E): Boolean = throw UnsupportedOperationException()
+    override fun add(element: E): Boolean = throw UnsupportedOperationException("Add not supported on this collection")
 
     override fun remove(element: E): Boolean {
         val iterator = iterator()
