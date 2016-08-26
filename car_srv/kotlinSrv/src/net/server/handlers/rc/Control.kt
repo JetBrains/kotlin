@@ -1,21 +1,11 @@
 package net.server.handlers.rc
 
-import CodedInputStream
 import DirectionRequest
-import DirectionResponse
-import control.emulator.ControllerEmulator.MoveDirection
-import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
-class Control : AbstractHandler {
+class Control() : AbstractHandler() {
 
-    val fromServerObjectBuilder: DirectionRequest.BuilderDirectionRequest
-    val toServerObjectBuilder: DirectionResponse.BuilderDirectionResponse
-
-    constructor() : super() {
-        this.fromServerObjectBuilder = DirectionRequest.BuilderDirectionRequest(DirectionRequest.Command.fromIntToCommand(0), 0)
-        this.toServerObjectBuilder = DirectionResponse.BuilderDirectionResponse(0)
-    }
+    val request = DirectionRequest.BuilderDirectionRequest(DirectionRequest.Command.fromIntToCommand(0), 0, false)
 
     override fun getBytesResponse(data: ByteArray, callback: (b: ByteArray) -> Unit) {
         //TODO now this handler don't make nothing. need fix:)
@@ -41,8 +31,6 @@ class Control : AbstractHandler {
 //            }
 //            else -> MoveDirection.STOP
 //        }
-        val resultCode: Int = 0
-        val resultMessage = toServerObjectBuilder.setCode(resultCode).build()
-        callback.invoke(encodeProtoBuf(resultMessage))
+        callback.invoke(ByteArray(0))
     }
 }

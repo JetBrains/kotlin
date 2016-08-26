@@ -8,7 +8,7 @@ import control.Controller
 import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
-class GetSonarData(val controller: Controller): AbstractHandler() {
+class GetSonarData(val controller: Controller) : AbstractHandler() {
     val fromServerObjectBuilder = SonarRequest.BuilderSonarRequest(IntArray(0))
     val toServerObjectBuilder = SonarResponse.BuilderSonarResponse(IntArray(0))
 
@@ -18,6 +18,7 @@ class GetSonarData(val controller: Controller): AbstractHandler() {
 
         if (McState.instance.isConnected()) {
             controller.executeRequestSensorData(message, callback)
+            return
         }
 
         println("mc is disconnected!")

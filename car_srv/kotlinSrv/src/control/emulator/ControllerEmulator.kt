@@ -123,7 +123,7 @@ class ControllerEmulator : Controller {
                 continue
             }
             val currentDistance = Math.round(Math.sqrt(Math.pow(xIntersection - xSensor0, 2.0)
-                    + Math.pow(yIntersection - ySensor0, 2.0))*100000)
+                    + Math.pow(yIntersection - ySensor0, 2.0)))
             if (currentDistance < result) {
                 result = currentDistance
             }

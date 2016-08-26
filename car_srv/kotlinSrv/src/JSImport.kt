@@ -33,13 +33,6 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
             protoMessage.writeTo(codedOutput)
         }
 
-        is DirectionResponse -> {
-            val protoSize = protoMessage.getSizeNoTag()
-            routeBytes = ByteArray(protoSize)
-            val codedOutput = CodedOutputStream(routeBytes)
-            protoMessage.writeTo(codedOutput)
-        }
-
         is RouteResponse -> {
             val protoSize = protoMessage.getSizeNoTag()
             routeBytes = ByteArray(protoSize)
