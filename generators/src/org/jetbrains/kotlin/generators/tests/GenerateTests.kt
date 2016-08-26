@@ -1099,10 +1099,6 @@ fun main(args: Array<String>) {
             model("reservedWords/cases")
         }
 
-        testClass<AbstractDynamicTest>() {
-            model("dynamic/cases")
-        }
-
         testClass<AbstractMultiModuleTest>() {
             model("multiModule/cases")
         }
@@ -1137,10 +1133,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractRttiTest>() {
             model("rtti/cases")
-        }
-
-        testClass<AbstractCastTest>() {
-            model("expression/cast/cases")
         }
 
         testClass<AbstractLightReflectionTest>() {
