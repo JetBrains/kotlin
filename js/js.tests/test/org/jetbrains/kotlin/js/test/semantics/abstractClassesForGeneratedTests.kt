@@ -45,8 +45,6 @@ abstract class AbstractBridgeTest : BorrowedTest("bridges/")
 
 abstract class AbstractCompanionObjectTest : JsBasicBoxTest("objectIntrinsics/")
 
-abstract class AbstractDynamicTest : JsBasicBoxTest("dynamic/")
-
 abstract class AbstractFunctionExpressionTest : JsBasicBoxTest("functionExpression/")
 
 abstract class AbstractInlineEvaluationOrderTest : JsBasicBoxTest("inlineEvaluationOrder/")
@@ -76,8 +74,6 @@ abstract class AbstractLocalClassesTest : JsBasicBoxTest("localClasses/")
 abstract class AbstractNonLocalReturnsTest : JsBasicBoxTest("inline.generated/nonLocalReturns/")
 
 abstract class AbstractRttiTest : JsBasicBoxTest("rtti/")
-
-abstract class AbstractCastTest : JsBasicBoxTest("expression/cast/")
 
 abstract class AbstractLightReflectionTest : JsBasicBoxTest("reflection/light/")
 
