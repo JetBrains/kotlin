@@ -11,6 +11,7 @@
 
 ### IDE
 
+- [`KT-13474`](https://youtrack.jetbrains.com/issue/KT-13474) Fix performance of typing super call lambda
 - Re-highlight only single function after local modifications
 
 #### Debugger

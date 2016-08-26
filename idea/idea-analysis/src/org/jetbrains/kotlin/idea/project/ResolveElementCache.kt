@@ -60,12 +60,15 @@ class ResolveElementCache(
 
         private fun modificationStamp(resolveElement: KtElement): Long? {
             val file = resolveElement.containingFile
-            return if (!file.isPhysical) // for non-physical file we don't get OUT_OF_CODE_BLOCK_MODIFICATION_COUNT increased and must reset data on any modification of the file
-                file.modificationStamp
-            else if (resolveElement is KtDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement))
-                resolveElement.getModificationStamp()
-            else
-                null
+            return when {
+                // for non-physical file we don't get OUT_OF_CODE_BLOCK_MODIFICATION_COUNT increased and must reset
+                // data on any modification of the file
+                !file.isPhysical -> file.modificationStamp
+
+                resolveElement is KtDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement) -> resolveElement.getModificationStamp()
+                resolveElement is KtSuperTypeList -> resolveElement.modificationStamp
+                else -> null
+            }
         }
     }
 
