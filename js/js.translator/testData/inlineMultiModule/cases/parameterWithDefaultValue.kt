@@ -1,3 +1,14 @@
+// MODULE: lib
+// FILE: lib.kt
+
+package foo
+
+inline fun bar(x: Int = 0) = x + 10
+
+
+// MODULE: main(lib)
+// FILE: main.kt
+
 package foo
 
 // CHECK_NOT_CALLED: bar

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
-import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
 
 abstract class AbstractBridgeTest : BasicBoxTest("bridges/")
 
@@ -43,7 +42,7 @@ abstract class AbstractLabelTest : BasicBoxTest("labels/")
 
 abstract class AbstractMultiModuleTest : BasicBoxTest("multiModule/")
 
-abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("inlineMultiModule/")
+abstract class AbstractInlineMultiModuleTest : BasicBoxTest("inlineMultiModule/")
 
 abstract class AbstractReservedWordTest : BasicBoxTest("reservedWords/")
 

@@ -1,3 +1,16 @@
+// MODULE: lib
+// FILE: lib.kt
+
+package utils
+
+inline
+public fun sum(x: Int, y: Int): Int =
+        x + y
+
+
+// MODULE: main(lib)
+// FILE: main.kt
+
 import utils.*
 
 // CHECK_CONTAINS_NO_CALLS: test

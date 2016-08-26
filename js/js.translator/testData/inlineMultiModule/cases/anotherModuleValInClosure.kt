@@ -1,3 +1,20 @@
+// MODULE: lib
+// FILE: lib.kt
+
+package utils
+
+public var LOG: String = ""
+
+inline
+public fun log(s: String): String {
+    LOG += s
+    return LOG
+}
+
+
+// MODULE: main(lib)
+// FILE: main.kt
+
 import utils.*
 
 // CHECK_CONTAINS_NO_CALLS: test
