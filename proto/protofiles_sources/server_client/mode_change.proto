@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message ModeChange {
+	enum Mode {
+		ManualControl = 0;
+		PerimeterBuilding = 1;
+	}
+
+	Mode newMode = 1;
+}
