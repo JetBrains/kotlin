@@ -16,6 +16,9 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     public var wallLength = 0.0//sm
     var errorCount = 0
 
+    var carX = 0
+    var carY = 0
+    var carAngle = 0
 
     private var prevPoint = Pair(0.0, 0.0)
 
@@ -38,6 +41,27 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
     private fun getIntArray(vararg args: Int): IntArray {
         return args
+    }
+
+    override fun afterGetCommand(route: RouteRequest) {
+        route.directions.forEachIndexed { idx, direction ->
+            when (direction) {
+                FORWARD -> {
+                    carX += (MOVE_VELOCITY * route.times[idx] * Math.cos(degreesToRadian(carAngle.toInt()))).toInt()
+                    carY += (MOVE_VELOCITY * route.times[idx] * Math.sin(degreesToRadian(carAngle.toInt()))).toInt()
+                }
+                BACKWARD -> {
+                    carX -= (MOVE_VELOCITY * route.times[idx] * Math.cos(degreesToRadian(carAngle.toInt()))).toInt()
+                    carY -= (MOVE_VELOCITY * route.times[idx] * Math.sin(degreesToRadian(carAngle.toInt()))).toInt()
+                }
+                LEFT -> {
+                    carAngle += (ROTATION_VELOCITY * route.times[idx]).toInt()
+                }
+                RIGHT -> {
+                    carAngle -= (ROTATION_VELOCITY * route.times[idx]).toInt()
+                }
+            }
+        }
     }
 
     override fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest {
@@ -74,8 +98,8 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 if (dist90 > 40 || dist90 < 20) {
                     val rotationDirection = if (dist90 > 40) RIGHT else LEFT
                     resultBuilder.setDirections(getIntArray(rotationDirection, FORWARD))
-                    resultBuilder.setTimes(getIntArray((30.0 / ROTATION_VELOCITY).toInt(),
-                            (25.0 / MOVE_VELOCITY).toInt()))
+                    resultBuilder.setTimes(getIntArray((10.0 / ROTATION_VELOCITY).toInt(),
+                            (35.0 / MOVE_VELOCITY).toInt()))
                     return resultBuilder.build()
                 }
 

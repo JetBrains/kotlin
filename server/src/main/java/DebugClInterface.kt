@@ -2,6 +2,7 @@ import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
 import algorithm.RoomModel
+import algorithm.RoomTest
 import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
@@ -64,6 +65,10 @@ object DebugClInterface {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {
                     println("length: ${tmp.wallLength} angleOX: ${tmp.wallAngleWithOX}")
+                    println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
+                } else if (tmp is RoomTest) {
+                    println("points: ${tmp.points}")
+                    println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
                 }
             }
             "alg" -> executeAlg(readString)
@@ -81,7 +86,8 @@ object DebugClInterface {
                 } else 1
 
         if (algorithmImpl == null) {
-            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+            algorithmImpl = RoomTest(environment.map.values.last(), exchanger)
+//            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
         }
         while (count > 0) {
             count--

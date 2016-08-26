@@ -1,8 +1,9 @@
 package algorithm
 
+import DebugClInterface
+import DebugResponse
 import Waypoints
 import algorithm.geometry.Line
-import DebugResponse
 import objects.Car
 
 object RoomModel {
@@ -21,27 +22,37 @@ object RoomModel {
     var currentPosition_x = 0
     var currentPosition_y = 0
     fun getUpdate(): Waypoints {
-        if (iter == 5) {
-            web.server.Server.changeMode(web.server.Server.ServerMode.IDLE)
-            return Waypoints.BuilderWaypoints(IntArray(0), IntArray(0), IntArray(0), IntArray(0), true).build()
+
+        val algorithm = DebugClInterface.algorithmImpl
+        if (algorithm == null || !(algorithm is RoomTest)) {
+            val emptyArr = IntArray(0)
+            return Waypoints.BuilderWaypoints(emptyArr, emptyArr, emptyArr, emptyArr, false).build()
+
         }
+        val begin_x = IntArray(algorithm.points.size)
+        val begin_y = IntArray(algorithm.points.size)
+        val end_x = IntArray(algorithm.points.size)
+        val end_y = IntArray(algorithm.points.size)
 
-        val begin_x = IntArray(10)
-        val begin_y = IntArray(10)
-        val end_x = IntArray(10)
-        val end_y = IntArray(10)
 
-        for (i in 0..9) {
-            begin_x[i] = currentPosition_x
-            begin_y[i] = currentPosition_y
+        for (i in 0..algorithm.points.size - 1) {
+            val curPoint = algorithm.points[i]
+            if (algorithm.points.size - 1 == i) {
+//                val nextPoint = algorithm.points[0]
+//                begin_x[i] = curPoint.first.toInt()
+//                begin_y[i] = curPoint.second.toInt()
+//
+//                end_x[i] = nextPoint.first.toInt()
+//                end_y[i] = nextPoint.second.toInt()
+                continue
+            }
+            val nextPoint = algorithm.points[i + 1]
+            begin_x[i] = curPoint.first.toInt()
+            begin_y[i] = curPoint.second.toInt()
 
-            currentPosition_x += rng.nextInt(3)
-            currentPosition_y += rng.nextInt(3)
-
-            end_x[i] = currentPosition_x
-            end_y[i] = currentPosition_y
+            end_x[i] = nextPoint.first.toInt()
+            end_y[i] = nextPoint.second.toInt()
         }
-        iter++
         return Waypoints.BuilderWaypoints(begin_x, begin_y, end_x, end_y, false).build()
     }
 

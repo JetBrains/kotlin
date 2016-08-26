@@ -49,7 +49,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         }
 
         try {
-            val distances = exchanger.exchange(IntArray(0), 20, TimeUnit.SECONDS)
+            val distances = exchanger.exchange(IntArray(0), 300, TimeUnit.SECONDS)
             val result = DoubleArray(angles.size)
             for (i in 0..result.size - 1) {
                 val distancesOnCurrentAngle = distances.drop(i * copyElemCount).take(copyElemCount)
@@ -60,7 +60,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
                     }
                 }
                 if (sum != 0) {
-                    result[i] = (sum.toDouble()) / (copyElemCount*1000000)
+                    result[i] = (sum.toDouble()) / (copyElemCount)
                 }
             }
             return result
@@ -113,6 +113,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             return
         }
         val command = getCommand(anglesDistances, state)
+        afterGetCommand(command)
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.times))
 
@@ -137,6 +138,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState?
     protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest
+    protected abstract fun afterGetCommand(route:RouteRequest)
 
 
     private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
