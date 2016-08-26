@@ -66,7 +66,9 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
 
     override fun containsValue(value: V): Boolean = entries.any { it.value == value }
 
-    internal fun containsEntry(entry: Map.Entry<*, *>): Boolean {
+    internal fun containsEntry(entry: Map.Entry<*, *>?): Boolean {
+        // since entry comes from @UnsafeVariance parameters it can be virtually anything
+        if (entry !is Map.Entry<*, *>) return false
         val key = entry.key
         val value = entry.value
         val ourValue = get(key)

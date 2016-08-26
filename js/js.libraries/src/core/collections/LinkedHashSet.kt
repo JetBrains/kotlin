@@ -28,7 +28,6 @@ open class LinkedHashSet<E> : HashSet<E> {
         addAll(c)
     }
 
-    constructor(capacity: Int) : super(LinkedHashMap<E, Any>(capacity))
     constructor(capacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(capacity, loadFactor))
 
 //    public override fun clone(): Any {

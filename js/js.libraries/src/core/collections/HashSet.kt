@@ -21,22 +21,9 @@
 package kotlin.collections
 
 
-/**
- * Implements a set in terms of a hash table. [[Sun
-   * docs]](http://java.sun.com/j2se/1.5.0/docs/api/java/util/HashSet.html)
+open class HashSet<E> : AbstractSet<E> {
 
- * @param  element type.
- */
-open class HashSet<E> : AbstractSet<E>, Set<E>, Cloneable, Serializable {
-
-    @Transient private var map: HashMap<E, Any>? = null
-
-    /**
-     * Ensures that RPC will consider type parameter E to be exposed. It will be
-     * pruned by dead code elimination.
-     */
-    @SuppressWarnings("unused")
-    private val exposeElement: E? = null
+    private val map: HashMap<E, Any>
 
     constructor() {
         map = HashMap<E, Any>()
@@ -47,11 +34,7 @@ open class HashSet<E> : AbstractSet<E>, Set<E>, Cloneable, Serializable {
         addAll(c)
     }
 
-    constructor(initialCapacity: Int) {
-        map = HashMap<E, Any>(initialCapacity)
-    }
-
-    constructor(initialCapacity: Int, loadFactor: Float) {
+    constructor(initialCapacity: Int, loadFactor: Float = 0.0f) {
         map = HashMap<E, Any>(initialCapacity, loadFactor)
     }
 
@@ -65,37 +48,27 @@ open class HashSet<E> : AbstractSet<E>, Set<E>, Cloneable, Serializable {
         this.map = map
     }
 
-    override fun add(o: E?): Boolean {
-        val old = map!!.put(o, this)
+    override fun add(element: E): Boolean {
+        val old = map.put(element, this)
         return old == null
     }
 
     override fun clear() {
-        map!!.clear()
+        map.clear()
     }
 
-    public override fun clone(): Any {
-        return HashSet<E>(this)
-    }
+//    public override fun clone(): Any {
+//        return HashSet<E>(this)
+//    }
 
-    override operator fun contains(o: Any?): Boolean {
-        return map!!.containsKey(o)
-    }
+    override operator fun contains(element: E): Boolean = map.containsKey(element)
 
-    override fun isEmpty(): Boolean {
-        return map!!.isEmpty()
-    }
+    override fun isEmpty(): Boolean = map.isEmpty()
 
-    override fun iterator(): Iterator<E> {
-        return map!!.keys.iterator()
-    }
+    override fun iterator(): MutableIterator<E> = map.keys.iterator()
 
-    override fun remove(o: Any?): Boolean {
-        return map!!.remove(o) != null
-    }
+    override fun remove(element: E): Boolean = map.remove(element) != null
 
-    override fun size(): Int {
-        return map!!.size
-    }
+    override val size: Int get() = map.size
 
 }

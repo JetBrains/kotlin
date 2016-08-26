@@ -20,45 +20,18 @@
 
 package kotlin.collections
 
-open class HashMap<K, V> : AbstractHashMap<K, V>, Cloneable, Serializable {
 
-    /**
-     * Ensures that RPC will consider type parameter K to be exposed. It will be
-     * pruned by dead code elimination.
-     */
-    @SuppressWarnings("unused")
-    private val exposeKey: K? = null
+open class HashMap<K, V> : AbstractHashMap<K, V> {
 
-    /**
-     * Ensures that RPC will consider type parameter V to be exposed. It will be
-     * pruned by dead code elimination.
-     */
-    @SuppressWarnings("unused")
-    private val exposeValue: V? = null
+    constructor() : super()
+    constructor(capacity: Int, loadFactor: Float = 0f) : super(capacity, loadFactor)
+    constructor(original: Map<out K, V>) : super(original)
 
-    constructor() {
-    }
+//    public override fun clone(): Any {
+//        return HashMap<K, V>(this)
+//    }
 
-    constructor(ignored: Int) : super(ignored) {
-    }
+    override fun equals(value1: Any?, value2: Any?): Boolean = value1 == value2
 
-    constructor(ignored: Int, alsoIgnored: Float) : super(ignored, alsoIgnored) {
-    }
-
-    constructor(toBeCopied: Map<out K, V>) : super(toBeCopied) {
-    }
-
-    public override fun clone(): Any {
-        return HashMap<K, V>(this)
-    }
-
-    internal fun equals(value1: Any, value2: Any): Boolean {
-        return value1 == value2
-    }
-
-    internal fun getHashCode(key: Any): Int {
-        val hashCode = key.hashCode()
-        // Coerce to int -- our classes all do this, but a user-written class might not.
-        return ensureInt(hashCode)
-    }
+    override fun getHashCode(key: K): Int = key?.hashCode() ?: 0
 }
