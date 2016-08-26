@@ -4,6 +4,6 @@ fun foo(x: Any) {
     }
 }
 
-// TYPE: if (x is String) {         x.length     } -> <html>kotlin.Unit</html>
-// TYPE: x -> <html>kotlin.String (smart cast)</html>
-// TYPE: x.length -> <html>kotlin.Int</html>
+// TYPE: if (x is String) {         x.length     } -> <html>Unit</html>
+// TYPE: x -> <html>String (smart cast)</html>
+// TYPE: x.length -> <html>Int</html>
