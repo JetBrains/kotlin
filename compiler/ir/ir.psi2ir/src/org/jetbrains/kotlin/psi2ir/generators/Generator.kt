@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -54,50 +51,14 @@ fun <K, V : Any> Generator.getOrFail(slice: ReadOnlySlice<K, V>, key: K): V =
 inline fun <K, V : Any> Generator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
         context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
 
-fun Generator.getInferredTypeWithSmartcasts(key: KtExpression): KotlinType? =
+fun Generator.getInferredTypeWithImplicitCasts(key: KtExpression): KotlinType? =
         context.bindingContext.getType(key)
 
-fun Generator.getInferredTypeWithSmartcastsOrFail(key: KtExpression): KotlinType =
-        getInferredTypeWithSmartcasts(key) ?: throw AssertionError("No type for expression: ${key.text}")
+fun Generator.getInferredTypeWithImplicitCastsOrFail(key: KtExpression): KotlinType =
+        getInferredTypeWithImplicitCasts(key) ?: throw AssertionError("No type for expression: ${key.text}")
 
-fun Generator.getResolvedCall(key: KtExpression): ResolvedCall<out CallableDescriptor>? =
+fun Generator.getResolvedCall(key: KtElement): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)
 
-fun Generator.getReturnType(key: KtExpression): KotlinType? {
-    val resolvedCall = getResolvedCall(key)
-    if (resolvedCall != null) {
-        return getReturnType(resolvedCall)
-    }
-
-    return when (key) {
-        is KtBlockExpression ->
-            getReturnType(key.statements.last())
-        is KtConstantExpression ->
-            getInferredTypeWithSmartcasts(key)
-        is KtStringTemplateExpression ->
-            context.builtIns.stringType
-        else ->
-            throw AssertionError("Unexpected expression: $key")
-    }
-
-}
-
-fun getReturnType(resolvedCall: ResolvedCall<*>): KotlinType {
-    val returnType = getReturnType(resolvedCall.resultingDescriptor)
-    return if (resolvedCall.call.isSafeCall()) returnType.makeNullable() else returnType
-}
-
-fun getReturnType(descriptor: CallableDescriptor): KotlinType {
-    return when (descriptor) {
-        is ClassDescriptor ->
-            descriptor.classValueType ?: throw AssertionError("Class descriptor without companion object: $descriptor")
-        is CallableDescriptor -> {
-            descriptor.returnType ?: throw AssertionError("Callable descriptor without return type: $descriptor")
-        }
-        else ->
-            throw AssertionError("Unexpected descriptor in resolved call: $descriptor")
-    }
-}
-
 fun Generator.createDummyExpression(ktExpression: KtExpression, description: String): IrDummyExpression =
-        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithSmartcastsOrFail(ktExpression), description)
+        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithImplicitCastsOrFail(ktExpression), description)

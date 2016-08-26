@@ -31,7 +31,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val irClass = IrClassImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED, descriptor)
 
         generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
-        generateMembersDeclaredInClassbody(irClass, ktClassOrObject)
+        generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
         return irClass
     }
@@ -46,7 +46,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         }
     }
 
-    private fun generateMembersDeclaredInClassbody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generateMembersDeclaredInClassBody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getBody()?.let { ktClassBody ->
             for (ktDeclaration in ktClassBody.declarations) {
                 val irMember = declarationGenerator.generateMemberDeclaration(ktDeclaration)

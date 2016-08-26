@@ -31,7 +31,7 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
     override val context: GeneratorContext get() = statementGenerator.context
 
     fun generateIfExpression(expression: KtIfExpression): IrExpression {
-        val resultType = getInferredTypeWithSmartcastsOrFail(expression)
+        val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
 
         var ktLastIf: KtIfExpression = expression
         val irBranches = SmartList<Pair<IrExpression, IrExpression>>()
@@ -74,7 +74,7 @@ class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) :
             scope.createTemporaryVariable(statementGenerator.generateExpression(it), "subject")
         }
 
-        val resultType = getInferredTypeWithSmartcastsOrFail(expression)
+        val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
 
         val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrOperator.WHEN)
 

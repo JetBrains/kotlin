@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLoopExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
@@ -36,37 +33,18 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
 
         val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
         if (ktBody is KtBlockExpression) {
-            for (ktStatement in ktBody.statements) {
-                irBlockBody.addStatement(statementGenerator.generateStatement(ktStatement))
-            }
+            statementGenerator.generateBlockBodyStatements(irBlockBody, ktBody)
         }
         else {
-            val irBodyExpression = statementGenerator.generateExpression(ktBody)
-            irBlockBody.addStatement(irBodyExpression.wrapWithReturn())
+            statementGenerator.generateReturnExpression(ktBody, irBlockBody)
         }
 
         return irBlockBody
     }
 
-    private fun IrExpression.wrapWithReturn() =
-            if (KotlinBuiltIns.isNothing(type))
-                this
-            else
-                IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, scopeOwner, this)
-
     fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrBody =
             IrExpressionBodyImpl(ktInitializer.startOffset, ktInitializer.endOffset,
                                  createStatementGenerator().generateExpression(ktInitializer))
-
-    private fun createStatementGenerator() =
-            StatementGenerator(context, scopeOwner, this, scope)
-
-    fun putLoop(expression: KtLoopExpression, irLoop: IrLoop) {
-        loopTable[expression] = irLoop
-    }
-
-    fun getLoop(expression: KtExpression): IrLoop? =
-            loopTable[expression]
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
         val statementGenerator = createStatementGenerator()
@@ -78,13 +56,57 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
                 irBlockBody.addStatement(statementGenerator.generateStatement(ktStatement))
             }
             val ktReturnedValue = ktBody.statements.last()
-            irBlockBody.addStatement(statementGenerator.generateExpression(ktReturnedValue).wrapWithReturn())
-        }
-        else {
-            irBlockBody.addStatement(statementGenerator.generateExpression(ktBody).wrapWithReturn())
+            statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
         }
 
         return irBlockBody
     }
+
+    private fun StatementGenerator.generateBlockBodyStatements(irBlockBody: IrBlockBodyImpl, ktBody: KtBlockExpression) {
+        for (ktStatement in ktBody.statements) {
+            irBlockBody.addStatement(generateStatement(ktStatement))
+        }
+    }
+
+    private fun StatementGenerator.generateReturnExpression(ktExpression: KtExpression, irBlockBody: IrBlockBodyImpl) {
+        val irExpression = generateExpression(ktExpression)
+        irBlockBody.addStatement(irExpression.wrapWithReturn())
+    }
+
+    private fun IrExpression.wrapWithReturn() =
+            if (KotlinBuiltIns.isNothing(type))
+                this
+            else
+                IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, scopeOwner, this)
+
+
+    fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
+        val statementGenerator = createStatementGenerator()
+
+        val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffset, ktConstructor.endOffset)
+
+        val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
+        val delegatingConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktDelegatingConstructorCall)!!)
+        val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateCall(
+                ktDelegatingConstructorCall, delegatingConstructorCall, IrOperator.DELEGATING_CONSTRUCTOR_CALL)
+        irBlockBody.addStatement(irDelegatingConstructorCall)
+
+        val ktBody = ktConstructor.bodyExpression
+        if (ktBody != null) {
+            statementGenerator.generateBlockBodyStatements(irBlockBody, ktBody)
+        }
+
+        return irBlockBody
+    }
+
+    private fun createStatementGenerator() =
+            StatementGenerator(context, scopeOwner, this, scope)
+
+    fun putLoop(expression: KtLoopExpression, irLoop: IrLoop) {
+        loopTable[expression] = irLoop
+    }
+
+    fun getLoop(expression: KtExpression): IrLoop? =
+            loopTable[expression]
 }
 

@@ -29,6 +29,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             when (ktDeclaration) {
                 is KtNamedFunction ->
                     generateFunctionDeclaration(ktDeclaration)
+                is KtSecondaryConstructor ->
+                    generateSecondaryConstructor(ktDeclaration)
                 is KtProperty ->
                     generatePropertyDeclaration(ktDeclaration)
                 is KtClassOrObject ->
@@ -54,6 +56,13 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         val body = ktFunction.bodyExpression?.let { generateFunctionBody(functionDescriptor, it) }
         return IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset, IrDeclarationOrigin.DEFINED,
                               functionDescriptor, body)
+    }
+
+    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor) : IrFunction {
+        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
+        val body = BodyGenerator(constructorDescriptor, context).generateSecondaryConstructorBody(ktConstructor)
+        return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
+                              constructorDescriptor, body)
     }
 
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {

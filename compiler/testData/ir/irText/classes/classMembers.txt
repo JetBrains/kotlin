@@ -2,7 +2,12 @@ FILE /classMembers.kt
   CLASS CLASS C
     PROPERTY public final val y: kotlin.Int getter=null setter=null
     PROPERTY public final var z: kotlin.Int getter=null setter=null
-    DUMMY ConstructorDescriptorImpl <init>
+    FUN public constructor C()
+      BLOCK_BODY
+        CALL .<init> type=C operator=DELEGATING_CONSTRUCTOR_CALL
+          x: CONST Int type=kotlin.Int value='0'
+          y: CONST Int type=kotlin.Int value='0'
+          z: CONST Int type=kotlin.Int value='0'
     PROPERTY public final val property: kotlin.Int = 0 getter=null setter=null
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'

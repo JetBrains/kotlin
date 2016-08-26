@@ -35,7 +35,7 @@ class LocalFunctionGenerator(val statementGenerator: StatementGenerator) : Gener
 
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
         val ktFun = ktLambda.functionLiteral
-        val lambdaExpressionType = getInferredTypeWithSmartcastsOrFail(ktLambda)
+        val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda)
         val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
         val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrOperator.LAMBDA)
 
@@ -54,7 +54,7 @@ class LocalFunctionGenerator(val statementGenerator: StatementGenerator) : Gener
             }
             else {
                 // anonymous function expression
-                val funExpressionType = getInferredTypeWithSmartcastsOrFail(ktFun)
+                val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun)
                 val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrOperator.ANONYMOUS_FUNCTION)
 
                 val irFun = generateFunctionDeclaration(ktFun)

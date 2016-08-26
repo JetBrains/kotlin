@@ -109,7 +109,7 @@ class StatementGenerator(
         val isBlockBody = expression.parent is KtDeclarationWithBody && expression.parent !is KtFunctionLiteral
         if (isBlockBody) throw AssertionError("Use IrBlockBody and corresponding body generator to generate blocks as function bodies")
 
-        val returnType = getInferredTypeWithSmartcasts(expression) ?: context.builtIns.unitType
+        val returnType = getInferredTypeWithImplicitCasts(expression) ?: context.builtIns.unitType
         val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType)
 
         expression.statements.forEach {
@@ -151,7 +151,7 @@ class StatementGenerator(
     override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
         val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
                                   ?: error("KtConstantExpression was not evaluated: ${expression.text}")
-        val constantValue = compileTimeConstant.toConstantValue(getInferredTypeWithSmartcastsOrFail(expression))
+        val constantValue = compileTimeConstant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
         val constantType = constantValue.type
 
         return when (constantValue) {
@@ -179,12 +179,12 @@ class StatementGenerator(
             }
             entries.size == 0 -> {
                 return IrConstImpl.string(expression.startOffset, expression.endOffset,
-                                          getInferredTypeWithSmartcastsOrFail(expression), "")
+                                          getInferredTypeWithImplicitCastsOrFail(expression), "")
             }
         }
 
         val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset,
-                                                         getInferredTypeWithSmartcastsOrFail(expression))
+                                                         getInferredTypeWithImplicitCastsOrFail(expression))
         entries.forEach { it.expression!!.let { irStringTemplate.addArgument(it.genExpr()) } }
         return irStringTemplate
     }
@@ -229,7 +229,7 @@ class StatementGenerator(
                     IrGetVariableImpl(expression.startOffset, expression.endOffset, descriptor)
                 else ->
                     IrDummyExpression(
-                            expression.startOffset, expression.endOffset, getInferredTypeWithSmartcastsOrFail(expression),
+                            expression.startOffset, expression.endOffset, getInferredTypeWithImplicitCastsOrFail(expression),
                             expression.text + ": ${descriptor.name} ${descriptor.javaClass.simpleName}"
                     )
             }

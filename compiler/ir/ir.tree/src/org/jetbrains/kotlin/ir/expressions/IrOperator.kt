@@ -88,6 +88,8 @@ interface IrOperator {
     object LAMBDA : IrOperatorImpl("LAMBDA")
     object ANONYMOUS_FUNCTION : IrOperatorImpl("ANONYMOUS_FUNCTION")
 
+    object DELEGATING_CONSTRUCTOR_CALL : IrOperatorImpl("DELEGATING_CONSTRUCTOR_CALL")
+
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }

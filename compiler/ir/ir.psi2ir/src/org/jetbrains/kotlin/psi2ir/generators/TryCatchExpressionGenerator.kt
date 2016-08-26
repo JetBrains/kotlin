@@ -28,7 +28,7 @@ class TryCatchExpressionGenerator(val statementGenerator: StatementGenerator) : 
     override val context: GeneratorContext get() = statementGenerator.context
 
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
-        val resultType = getInferredTypeWithSmartcastsOrFail(ktTry)
+        val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
         val irTryCatch = IrTryCatchImpl(ktTry.startOffset, ktTry.endOffset, resultType)
 
         irTryCatch.tryResult = statementGenerator.generateExpression(ktTry.tryBlock)
