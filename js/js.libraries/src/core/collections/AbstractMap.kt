@@ -32,9 +32,9 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
 
         override val value: V get() = _value
 
-        override fun setValue(value: V): V {
+        override fun setValue(newValue: V): V {
             val oldValue = this._value
-            this._value = value
+            this._value = newValue
             return oldValue
         }
 
@@ -107,7 +107,7 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
                 this@AbstractMap.clear()
             }
 
-            override operator fun contains(key: K): Boolean = containsKey(key)
+            override operator fun contains(element: K): Boolean = containsKey(element)
 
             override operator fun iterator(): MutableIterator<K> {
                 val outerIter = entries.iterator()
@@ -118,9 +118,9 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
                 }
             }
 
-            override fun remove(key: K): Boolean {
-                if (containsKey(key)) {
-                    this@AbstractMap.remove(key)
+            override fun remove(element: K): Boolean {
+                if (containsKey(element)) {
+                    this@AbstractMap.remove(element)
                     return true
                 }
                 return false
@@ -134,8 +134,8 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
         throw UnsupportedOperationException("Put not supported on this map")
     }
 
-    override fun putAll(map: Map<out K, V>) {
-        for ((key, value) in map) {
+    override fun putAll(from: Map<out K, V>) {
+        for ((key, value) in from) {
             put(key, value)
         }
     }
@@ -152,7 +152,7 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
         return object : AbstractCollection<V>() {
             override fun clear() = this@AbstractMap.clear()
 
-            override operator fun contains(value: V): Boolean = containsValue(value)
+            override operator fun contains(element: V): Boolean = containsValue(element)
 
             override operator fun iterator(): MutableIterator<V> {
                 val outerIter = entries.iterator()

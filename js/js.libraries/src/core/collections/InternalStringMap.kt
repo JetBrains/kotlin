@@ -70,7 +70,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
         if (key !is String) return null
         val value = backingMap[key]
         if (value !== undefined) {
-            deleteProperty(backingMap, key!!)
+            deleteProperty(backingMap, key)
             size--
 //            structureChanged(host)
             return value as V
@@ -112,7 +112,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
         override val key: K get() = key
         override val value: V get() = this@InternalStringMap[key] as V
 
-        override fun setValue(value: V): V = this@InternalStringMap.put(key, value) as V
+        override fun setValue(newValue: V): V = this@InternalStringMap.put(key, newValue) as V
 
         override fun hashCode(): Int = AbstractMap.entryHashCode(this)
         override fun toString(): String = AbstractMap.entryToString(this)

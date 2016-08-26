@@ -16,6 +16,9 @@
 
 package kotlin.collections
 
+/**
+ * The common interface of [InternalStringMap] and [InternalHashCodeMap].
+ */
 internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K, V>> {
     val equality: EqualityComparator
     val size: Int
