@@ -32,84 +32,84 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineMultiModuleTestGenerated extends AbstractInlineMultiModuleTest {
     public void testAllFilesPresentInCases() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineMultiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineMultiModule/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("anotherModuleValInClosure")
+    @TestMetadata("anotherModuleValInClosure.kt")
     public void testAnotherModuleValInClosure() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/anotherModuleValInClosure/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/anotherModuleValInClosure.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("callableReference")
+    @TestMetadata("callableReference.kt")
     public void testCallableReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/callableReference/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/callableReference.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("calledByFqName")
+    @TestMetadata("calledByFqName.kt")
     public void testCalledByFqName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/calledByFqName/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/calledByFqName.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("extensionLambda")
+    @TestMetadata("extensionLambda.kt")
     public void testExtensionLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/extensionLambda/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/extensionLambda.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("externalInlineCallDecomposed")
+    @TestMetadata("externalInlineCallDecomposed.kt")
     public void testExternalInlineCallDecomposed() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineCallDecomposed/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineCallDecomposed.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("externalInlineNewDecomposed")
+    @TestMetadata("externalInlineNewDecomposed.kt")
     public void testExternalInlineNewDecomposed() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineNewDecomposed/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/externalInlineNewDecomposed.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("lambda")
+    @TestMetadata("lambda.kt")
     public void testLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambda/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambda.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("lambdaCalledInObjectLiteral")
+    @TestMetadata("lambdaCalledInObjectLiteral.kt")
     public void testLambdaCalledInObjectLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaCalledInObjectLiteral/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaCalledInObjectLiteral.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("lambdaWithClosure")
+    @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaWithClosure/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaWithClosure.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("localNameClash")
+    @TestMetadata("localNameClash.kt")
     public void testLocalNameClash() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/localNameClash/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/localNameClash.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("method")
+    @TestMetadata("method.kt")
     public void testMethod() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/method/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/method.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("parameterWithDefaultValue")
+    @TestMetadata("parameterWithDefaultValue.kt")
     public void testParameterWithDefaultValue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/parameterWithDefaultValue/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/parameterWithDefaultValue.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("simple")
+    @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/simple/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/simple.kt");
         doTest(fileName);
     }
 }
