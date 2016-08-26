@@ -37,7 +37,7 @@ interface Candidate<out D : CallableDescriptor> {
     val status: ResolutionCandidateStatus
 }
 
-interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
+interface CandidateFactory<D : CallableDescriptor, out C: Candidate<D>> {
     fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver<D>,
             explicitReceiverKind: ExplicitReceiverKind,
@@ -45,15 +45,15 @@ interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     ): C
 }
 
-interface InvokeTowerContext<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> {
+interface CandidateFactoryProviderForInvoke<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> {
 
     fun transformCandidate(variable: V, invoke: F): F
 
-    fun contextForVariable(stripExplicitReceiver: Boolean): TowerContext<VariableDescriptor, V>
+    fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<VariableDescriptor, V>
 
     // foo() -> ReceiverValue(foo), context for invoke
     // null means that there is no invoke on variable
-    fun contextForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, TowerContext<FunctionDescriptor, F>>?
+    fun factoryForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<FunctionDescriptor, F>>?
 }
 
 sealed class TowerData {
