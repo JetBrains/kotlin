@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
 
@@ -60,6 +61,7 @@ class OperatorExpressionGenerator(
         return when (irOperator) {
             null -> throw AssertionError("Unexpected postfix operator: $ktOperator")
             in INCREMENT_DECREMENT_OPERATORS -> generatePostfixIncrementDecrementOperator(expression, irOperator)
+            IrOperator.EXCLEXCL -> generateExclExclOperator(expression, irOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
     }
@@ -268,6 +270,28 @@ class OperatorExpressionGenerator(
             // ^ tmp
             irBlock.addStatement(irTmp.defaultLoad())
 
+            irBlock
+        }
+    }
+
+    private fun generateExclExclOperator(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
+        val ktArgument = expression.baseExpression!!
+        val irArgument = statementGenerator.generateExpression(ktArgument)
+        val ktOperator = expression.operationReference
+
+        val resultType = irArgument.type.makeNotNullable()
+        val irBlock = IrBlockImpl(ktOperator.startOffset, ktOperator.endOffset, resultType, irOperator)
+        val argumentValue = createRematerializableOrTemporary(scope, irArgument, irBlock, "notnull")
+        val irIfThenElse = IrIfThenElseImpl(ktOperator.startOffset, ktOperator.endOffset, resultType,
+                                            context.equalsNull(ktOperator.startOffset, ktOperator.endOffset, argumentValue.load()),
+                                            context.throwNpe(ktOperator.startOffset, ktOperator.endOffset, irOperator),
+                                            argumentValue.load())
+
+        return if (irBlock.statements.isEmpty()) {
+            irIfThenElse
+        }
+        else {
+            irBlock.addStatement(irIfThenElse)
             irBlock
         }
     }

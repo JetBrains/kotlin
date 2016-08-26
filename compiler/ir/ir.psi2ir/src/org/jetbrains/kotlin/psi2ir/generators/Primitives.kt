@@ -35,6 +35,9 @@ fun GeneratorContext.equalsNull(startOffset: Int, endOffset: Int, argument: IrEx
         primitiveOp2(startOffset, endOffset, irBuiltIns.eqeq, IrOperator.EQEQ,
                      argument, constNull(startOffset, endOffset))
 
+fun GeneratorContext.throwNpe(startOffset: Int, endOffset: Int, operator: IrOperator): IrExpression =
+        IrNullaryPrimitiveImpl(startOffset, endOffset, operator, irBuiltIns.throwNpe)
+
 // a || b == if (a) true else b
 fun GeneratorContext.oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
