@@ -53,6 +53,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.ir2cfg/ir.ir2cfg.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.ir2cfg/ir.ir2cfg.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
