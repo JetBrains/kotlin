@@ -56,12 +56,13 @@ import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class BasicBoxTest(private val relativePathToTestDir: String) : KotlinTestWithEnvironment() {
-    val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
-
-    private val OUT = "out/"
+abstract class BasicBoxTest(
+        private val pathToTestDir: String,
+        private val pathToOutputDir: String
+) : KotlinTestWithEnvironment() {
     private val COMMON_FILES_DIR = "_commonFiles/"
     val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
+    val additionalCommonFileDirectories = mutableListOf<String>()
 
     val TEST_MODULE = "JS_TESTS"
     val DEFAULT_MODULE = "main"
@@ -69,6 +70,7 @@ abstract class BasicBoxTest(private val relativePathToTestDir: String) : KotlinT
 
     fun doTest(filePath: String) {
         val file = File(filePath)
+        val outputDir = getOutputDir(file)
         val expectedText = KotlinTestUtils.doLoadFile(file)
 
         TestFileFactoryImpl().use { testFactory ->
@@ -80,10 +82,10 @@ abstract class BasicBoxTest(private val relativePathToTestDir: String) : KotlinT
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
             val generatedJsFiles = orderedModules.asReversed().map { module ->
-                val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName + ".meta.js" }
+                val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
-                val outputFileName = module.outputFileName + ".js"
-                generateJavaScriptFile(module, outputFileName, dependencies, modules.size > 1)
+                val outputFileName = module.outputFileName(outputDir) + ".js"
+                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1)
                 outputFileName
             }
             val mainModule = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
@@ -91,33 +93,52 @@ abstract class BasicBoxTest(private val relativePathToTestDir: String) : KotlinT
             val checker = RhinoFunctionResultChecker(mainModule, testFactory.testPackage, TEST_FUNCTION, "OK")
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
-            val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
-                    TEST_DATA_DIR_PATH + relativePathToTestDir + COMMON_FILES_DIR, JavaScript.EXTENSION)
+            val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(file.parent + "/" + COMMON_FILES_DIR, JavaScript.EXTENSION)
+            val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
+                JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/" + COMMON_FILES_DIR, JavaScript.EXTENSION)
+            }
             val inputJsFiles = inputFiles.map { it.fileName }.filter { it.endsWith(".js") }
 
             val additionalFiles = mutableListOf<String>()
             if (modules.size > 1) {
                 additionalFiles += MODULE_EMULATION_FILE
             }
-            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles
+            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
+                             additionalCommonFiles
 
             RhinoUtils.runRhinoTest(allJsFiles, checker)
         }
     }
 
-    private val TestModule.outputFileName: String
-        get() {
-            val outputFileSuffix = if (this.name == TEST_MODULE) "" else "-$name"
-            return "$TEST_DATA_DIR_PATH$relativePathToTestDir$OUT" + getTestName(true) + "${outputFileSuffix}_v5"
-        }
+    private fun getOutputDir(file: File): File {
+        val stopFile = File(pathToTestDir)
+        return generateSequence(file.parentFile) { it.parentFile }
+                .takeWhile { it != stopFile }
+                .map { it.name }
+                .toList().asReversed()
+                .fold(File(pathToOutputDir)) { dir, name -> File(dir, name) }
+    }
 
-    private fun generateJavaScriptFile(module: TestModule, outputFileName: String, dependencies: List<String>, multiModule: Boolean) {
+    private fun TestModule.outputFileName(directory: File): String {
+        val outputFileSuffix = if (this.name == TEST_MODULE) "" else "-$name"
+        return directory.absolutePath + "/" + getTestName(true) + "${outputFileSuffix}_v5"
+    }
+
+    private fun generateJavaScriptFile(
+            directory: String,
+            module: TestModule,
+            outputFileName: String,
+            dependencies: List<String>,
+            multiModule: Boolean
+    ) {
         val testFiles = module.files.map { it.fileName }.filter { it.endsWith(".kt") }
         val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                 TEST_DATA_DIR_PATH + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
-        val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
-                TEST_DATA_DIR_PATH + relativePathToTestDir + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
-        val psiFiles = createPsiFiles(testFiles + globalCommonFiles + localCommonFiles)
+        val localCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(directory + "/" + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
+        val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
+            JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/" + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
+        }
+        val psiFiles = createPsiFiles(testFiles + globalCommonFiles + localCommonFiles + additionalCommonFiles)
 
         val config = createConfig(module, dependencies, multiModule)
         val outputFile = File(outputFileName)
@@ -232,5 +253,9 @@ abstract class BasicBoxTest(private val relativePathToTestDir: String) : KotlinT
 
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    }
+
+    companion object {
+        val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
     }
 }
