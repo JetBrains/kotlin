@@ -17,7 +17,7 @@ class Some() {
 }
 
 // SEARCH_TEXT: test
-// REF: typealias testGlobal = Any
-// REF: typealias testInClass = Any
-// REF: typealias testInClassObject = Any
-// REF: typealias testInTrait = Any
+// REF: (<root>).testGlobal
+// REF: (in Some).testInClass
+// REF: (in Some.Companion).testInClassObject
+// REF: (in SomeTrait).testInTrait

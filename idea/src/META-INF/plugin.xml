@@ -538,6 +538,8 @@
                               forClass="org.jetbrains.kotlin.psi.KtProperty"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtParameter"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtTypeAlias"/>
 
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.KotlinGotoTargetRenderProvider"
                                 order="first"/>
