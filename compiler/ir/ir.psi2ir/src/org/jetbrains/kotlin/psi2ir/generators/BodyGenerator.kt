@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -99,6 +100,10 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
         return irBlockBody
     }
 
+    fun generateAnonymousInitializer(ktInitializer: KtAnonymousInitializer): IrStatement {
+        return createStatementGenerator().generateStatement(ktInitializer.body!!)
+    }
+
     private fun createStatementGenerator() =
             StatementGenerator(context, scopeOwner, this, scope)
 
@@ -108,5 +113,7 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
 
     fun getLoop(expression: KtExpression): IrLoop? =
             loopTable[expression]
+
+
 }
 

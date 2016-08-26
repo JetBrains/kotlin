@@ -1,6 +1,11 @@
 FILE /assignments.kt
   CLASS CLASS Ref
+    FUN public constructor Ref(/*0*/ x: kotlin.Int)
+      BLOCK_BODY
+        INITIALIZE_PROPERTY x
     PROPERTY public final var x: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

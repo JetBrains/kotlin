@@ -72,7 +72,6 @@ interface IrOperator {
     object DESTRUCTURING_DECLARATION : IrOperatorImpl("DESTRUCTURING_DECLARATION")
     
     object GET_PROPERTY : IrOperatorImpl("GET_PROPERTY")
-    object SET_PROPERTY : IrOperatorImpl("SET_PROPERTY")
 
     object IF : IrOperatorImpl("IF")
     object WHEN : IrOperatorImpl("WHEN")
@@ -89,6 +88,8 @@ interface IrOperator {
     object ANONYMOUS_FUNCTION : IrOperatorImpl("ANONYMOUS_FUNCTION")
 
     object DELEGATING_CONSTRUCTOR_CALL : IrOperatorImpl("DELEGATING_CONSTRUCTOR_CALL")
+    object INITIALIZE_PROPERTY_FROM_PARAMETER : IrOperatorImpl("INITIALIZE_PROPERTY_FROM_PARAMETER")
+    object ANONYMOUS_INITIALIZER : IrOperatorImpl("ANONYMOUS_INITIALIZER")
 
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {

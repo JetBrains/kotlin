@@ -1,7 +1,16 @@
 FILE /classMembers.kt
   CLASS CLASS C
+    FUN public constructor C(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int = ...)
+      BLOCK_BODY
+        INITIALIZE_PROPERTY y
+        INITIALIZE_PROPERTY z
+        INITIALIZE_PROPERTY property
     PROPERTY public final val y: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final var z: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR z type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     FUN public constructor C()
       BLOCK_BODY
         CALL .<init> type=C operator=DELEGATING_CONSTRUCTOR_CALL

@@ -106,6 +106,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
             "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.type.render()}"
 
+    override fun visitInitializeProperty(expression: IrInitializeProperty, data: Nothing?): String =
+            "INITIALIZE_PROPERTY ${expression.descriptor.name}"
+
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.type.render()}"
 

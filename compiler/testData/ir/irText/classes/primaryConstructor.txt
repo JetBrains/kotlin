@@ -1,0 +1,34 @@
+FILE /primaryConstructor.kt
+  CLASS CLASS Test1
+    FUN public constructor Test1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+      BLOCK_BODY
+        INITIALIZE_PROPERTY x
+        INITIALIZE_PROPERTY y
+    PROPERTY public final val x: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    PROPERTY public final val y: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+  CLASS CLASS Test2
+    FUN public constructor Test2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+      BLOCK_BODY
+        INITIALIZE_PROPERTY y
+        INITIALIZE_PROPERTY x
+    PROPERTY public final val y: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    PROPERTY public final val x: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR x type=kotlin.Int operator=null
+  CLASS CLASS Test3
+    FUN public constructor Test3(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+      BLOCK_BODY
+        INITIALIZE_PROPERTY y
+        BLOCK type=kotlin.Unit operator=null
+          INITIALIZE_PROPERTY x
+            GET_VAR x type=kotlin.Int operator=null
+    PROPERTY public final val y: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    PROPERTY public final val x: kotlin.Int getter=null setter=null

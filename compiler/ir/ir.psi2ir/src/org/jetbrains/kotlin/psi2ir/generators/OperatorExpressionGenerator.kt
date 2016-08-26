@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
 
@@ -319,15 +322,35 @@ class OperatorExpressionGenerator(
                     TODO("Delegated local variable")
                 else
                     VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, irOperator)
-            is PropertyDescriptor -> {
-                val propertyReceiver = statementGenerator.generateCallReceiver(
-                        ktLeft, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.call.isSafeCall()
-                )
-                SimplePropertyLValue(scope, ktLeft.startOffset, ktLeft.endOffset, irOperator, descriptor, propertyReceiver)
-            }
+            is PropertyDescriptor ->
+                generateAssignmentReceiverForProperty(descriptor, irOperator, ktLeft, resolvedCall)
             else ->
                 TODO("Other cases of LHS")
         }
+    }
+
+    private fun generateAssignmentReceiverForProperty(
+            descriptor: PropertyDescriptor,
+            irOperator: IrOperator,
+            ktLeft: KtExpression,
+            resolvedCall: ResolvedCall<*>
+    ): AssignmentReceiver {
+        if (isPropertyInitializationWithinPrimaryConstructor(descriptor, resolvedCall)) {
+            return PropertyInitializerLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor)
+        }
+
+        val propertyReceiver = statementGenerator.generateCallReceiver(
+                ktLeft, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.call.isSafeCall())
+
+        return SimplePropertyLValue(scope, ktLeft.startOffset, ktLeft.endOffset, irOperator, descriptor, propertyReceiver)
+    }
+
+    private fun isPropertyInitializationWithinPrimaryConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean {
+        val scopeOwner = statementGenerator.scopeOwner
+
+        return scopeOwner is ConstructorDescriptor && scopeOwner.isPrimary &&
+               descriptor.containingDeclaration == scopeOwner.containingDeclaration &&
+               resolvedCall.extensionReceiver == null && resolvedCall.dispatchReceiver is ThisClassReceiver
     }
 
     private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, irOperator: IrOperator): ArrayAccessAssignmentReceiver {
