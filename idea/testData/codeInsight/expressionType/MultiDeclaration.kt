@@ -4,4 +4,4 @@ fun f(x: IntStringPair) {
     val (fir<caret>st, second) = x
 }
 
-// TYPE: first -> <html>kotlin.Int</html>
+// TYPE: first -> <html>Int</html>
