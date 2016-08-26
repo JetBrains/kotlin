@@ -7,3 +7,6 @@ class A {
         }
     }
 }
+
+// TODO
+// SKIP_ANALYZE_CHECK
