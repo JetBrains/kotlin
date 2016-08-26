@@ -4,6 +4,7 @@ message ModeChange {
 	enum Mode {
 		ManualControl = 0;
 		PerimeterBuilding = 1;
+		PerimeterDebug = 2;
 	}
 
 	Mode newMode = 1;

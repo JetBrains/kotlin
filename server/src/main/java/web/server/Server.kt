@@ -9,13 +9,15 @@ object Server {
     enum class ServerMode {
         IDLE,
         MANUAL_MODE,
-        PERIMETER_BUILDING;
+        PERIMETER_BUILDING,
+        PERIMETER_DEBUG;
 
         companion object {
             fun fromProtoMode(mode: ModeChange.Mode): ServerMode {
                 return when (mode) {
                     ModeChange.Mode.ManualControl -> MANUAL_MODE
                     ModeChange.Mode.PerimeterBuilding -> PERIMETER_BUILDING
+                    ModeChange.Mode.PerimeterDebug -> PERIMETER_DEBUG
                     else -> throw IllegalArgumentException("Illegal argument when parsing ServerMode from Protobuf Mode")
                 }
             }

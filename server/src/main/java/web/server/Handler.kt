@@ -98,7 +98,6 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
             }
             Constants.getDebug -> {
-
                 val msg = RoomModel.getDebugInfo()
                 val outs = CodedOutputStream(ByteArray(msg.getSizeNoTag()))
                 msg.writeTo(outs)
