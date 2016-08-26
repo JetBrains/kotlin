@@ -40,7 +40,7 @@ interface Candidate<out D : CallableDescriptor> {
 
 interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     val name: Name
-    val scopeTower: ScopeTower
+    val scopeTower: ImplicitScopeTower
 
     fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver<D>,
@@ -75,18 +75,18 @@ interface ScopeTowerProcessor<out C> {
 
 class TowerResolver {
     fun <C: Candidate<*>> runResolve(
-            scopeTower: ScopeTower,
+            scopeTower: ImplicitScopeTower,
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean
     ): Collection<C> = scopeTower.run(processor, SuccessfulResultCollector { it.status }, useOrder)
 
     fun <C: Candidate<*>> collectAllCandidates(
-            scopeTower: ScopeTower,
+            scopeTower: ImplicitScopeTower,
             processor: ScopeTowerProcessor<C>
     ): Collection<C>
             = scopeTower.run(processor, AllCandidatesCollector { it.status }, false)
 
-    private fun ScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
+    private fun ImplicitScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
         val result = ArrayList<ScopeTowerLevel>()
 
         lexicalScope.parentsWithSelf.forEach { scope ->
@@ -103,7 +103,7 @@ class TowerResolver {
         return result
     }
 
-    private fun <C> ScopeTower.run(
+    private fun <C> ImplicitScopeTower.run(
             processor: ScopeTowerProcessor<C>,
             resultCollector: ResultCollector<C>,
             useOrder: Boolean

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
 
-interface ScopeTower {
+interface ImplicitScopeTower {
     val lexicalScope: LexicalScope
 
     fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?

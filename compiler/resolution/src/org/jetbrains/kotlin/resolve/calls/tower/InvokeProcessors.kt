@@ -138,7 +138,7 @@ private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescripto
 }
 
 // todo debug info
-private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
+private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
         extensionFunctionReceiver: ReceiverValueWithSmartCastInfo
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
     val type = extensionFunctionReceiver.receiverValue.type

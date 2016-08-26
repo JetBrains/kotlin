@@ -67,7 +67,7 @@ class NewResolutionOldInference(
                 outer: NewResolutionOldInference,
                 name: Name,
                 tracing: TracingStrategy,
-                scopeTower: ScopeTower,
+                scopeTower: ImplicitScopeTower,
                 explicitReceiver: DetailedReceiver?,
                 context: BasicCallResolutionContext
         ): ScopeTowerProcessor<MyCandidate<D>>
@@ -75,7 +75,7 @@ class NewResolutionOldInference(
         object Function : ResolutionKind<FunctionDescriptor>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
-                    scopeTower: ScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
+                    scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
                 val functionContext = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
                 return createFunctionProcessor(functionContext, outer.InvokeContext(functionContext), explicitReceiver)
@@ -85,7 +85,7 @@ class NewResolutionOldInference(
         object Variable : ResolutionKind<VariableDescriptor>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
-                    scopeTower: ScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
+                    scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<VariableDescriptor>> {
                 val simpleContext = outer.SimpleContext<VariableDescriptor>(scopeTower, name, context, tracing)
                 return createVariableAndObjectProcessor(simpleContext, explicitReceiver)
@@ -95,7 +95,7 @@ class NewResolutionOldInference(
         object CallableReference : ResolutionKind<CallableDescriptor>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
-                    scopeTower: ScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
+                    scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<CallableDescriptor>> {
                 val simpleContextF = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
                 val simpleContextV = outer.SimpleContext<VariableDescriptor>(scopeTower, name, context, tracing)
@@ -109,7 +109,7 @@ class NewResolutionOldInference(
         object Invoke : ResolutionKind<FunctionDescriptor>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
-                    scopeTower: ScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
+                    scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
                 val functionContext = outer.SimpleContext<FunctionDescriptor>(scopeTower, name, context, tracing)
                 // todo
@@ -126,7 +126,7 @@ class NewResolutionOldInference(
         class GivenCandidates<D : CallableDescriptor> : ResolutionKind<D>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
-                    scopeTower: ScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
+                    scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
             ): ScopeTowerProcessor<MyCandidate<D>> {
                 throw IllegalStateException("Should be not called")
             }
@@ -148,7 +148,7 @@ class NewResolutionOldInference(
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
+        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
 
         val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, detailedReceiver, context)
 
@@ -242,12 +242,12 @@ class NewResolutionOldInference(
         return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls)
     }
 
-    private class ScopeTowerImpl(
+    private class ImplicitScopeTowerImpl(
             val resolutionContext: ResolutionContext<*>,
             override val dynamicScope: MemberScope,
             override val syntheticScopes: SyntheticScopes,
             override val location: LookupLocation
-    ): ScopeTower {
+    ): ImplicitScopeTower {
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? =
@@ -274,7 +274,7 @@ class NewResolutionOldInference(
     }
 
     private inner class SimpleContext<D : CallableDescriptor>(
-            override val scopeTower: ScopeTower,
+            override val scopeTower: ImplicitScopeTower,
             override val name: Name,
             val basicCallContext: BasicCallResolutionContext,
             val tracing: TracingStrategy
