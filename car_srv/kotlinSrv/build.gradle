@@ -26,7 +26,7 @@ sourceSets {
 
 task copyKotlinLib(type: Copy) {
     from "${projectDir}/kotlinJsRequiredFiles/kotlin.js"
-    from "${projectDir}/kotlinJsRequiredFiles/package.json"
+    from "${projectDir}/package.json"
 
     into "${projectDir}/build/js"
 }

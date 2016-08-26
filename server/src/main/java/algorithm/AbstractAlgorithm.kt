@@ -58,7 +58,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
                     }
                 }
                 if (sum != 0) {
-                    result[i] = (sum.toDouble()) / (copyElemCount)
+                    result[i] = (sum.toDouble()) / (copyElemCount*1000000)
                 }
             }
             return result

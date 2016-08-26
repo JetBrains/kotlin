@@ -34,6 +34,21 @@ function drawCar(carPosition) {
 	ctx.fill();
 }
 
+function drawLine(line) {
+	var begin_x = 0;
+	var begin_y = (line.A * (0 - zero.x) + line.C) / line.B  + zero.y;
+
+	var end_x = canvas.width;
+	var end_y = (line.A * (canvas.width - zero.x) + line.C) / line.B + zero.y;
+
+	ctx.beginPath();
+	ctx.moveTo(begin_x, begin_y);
+	ctx.lineTo(end_x, end_y);
+	ctx.strokeStyle = foundColour;
+	ctx.closePath();
+	ctx.stroke();
+}
+
 function drawSegment(segment, colour) {
 	console.log("Drawing segment from (" + segment.begin.x + ", " + segment.begin.y + ") to (" + segment.end.x + ", " + segment.end.y + ")")
 	ctx.beginPath();
@@ -87,6 +102,8 @@ function createLine(A, B, C) {
 }
 
 function drawDebug(data) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 	// Parse protobuf into geometry primitives
 	var foundLines = [];
 	for (var i = 0; i < data.A.length; i++) {
@@ -110,15 +127,7 @@ function drawDebug(data) {
 		y: 0
 	};
 
-	var foundSegments = [];
-	for (var i = 0; i < foundLines.length - 1; ++i) {
-		var curLine = foundLines[i];
-		var nextLine = foundLines[i + 1];
-
-		var intersectionPoint = intersectLines(curLine, nextLine);
-		foundSegments.push(createSegment(lastPoint, intersectionPoint));
-		lastPoint = intersectionPoint;
-	}
+	
 
 	var referenceSegments = [];
 	var corners = [];
@@ -140,13 +149,13 @@ function drawDebug(data) {
 	referenceSegments.push(createSegment(corners[corners.length - 1], corners[0]));
 
 	// draw everything
+	console.log("Drawing car position");
 	drawCar(carPosition);
-		
-	console.log("Drawing foundSegments")
-	for (var i = 0; i < foundSegments.length; ++i) {
-		drawSegment(foundSegments[i], foundColour);
-	}
 
+	console.log("Drawing found Lines");
+	for (var i = 0; i < foundLines.length; ++i) {
+		drawLine(foundLines[i]);
+	}
 	console.log("Drawing referenceSegments")
 	for (var i = 0; i < referenceSegments.length; ++i) {
 		drawSegment(referenceSegments[i], referenceColour);
