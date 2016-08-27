@@ -1,0 +1,11 @@
+Searched inheritors of X
+Searched references to X
+Searched references to Y
+Searched references to Z
+Searched references to f() in Kotlin files
+Searched references to g() in Kotlin files
+Searched references to h() in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:X
+    CLASS:Y
+    CLASS:Z

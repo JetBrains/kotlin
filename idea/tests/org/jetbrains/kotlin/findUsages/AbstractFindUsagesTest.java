@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
+import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsagesKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -69,9 +70,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtureTestCase {
 
@@ -399,7 +398,22 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
     ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         boolean highlightingMode = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// HIGHLIGHTING");
 
-        Collection<UsageInfo> usageInfos = findUsages(caretElement, options, highlightingMode);
+        Collection<UsageInfo> usageInfos;
+        String log = null;
+        try {
+            DestructuringDeclarationUsagesKt.setDestructuringDeclarationUsageSearchLog(new ArrayList<String>());
+
+            usageInfos = findUsages(caretElement, options, highlightingMode);
+        }
+        finally {
+            List<String> logList = DestructuringDeclarationUsagesKt.getDestructuringDeclarationUsageSearchLog();
+            assert logList != null;
+            DestructuringDeclarationUsagesKt.setDestructuringDeclarationUsageSearchLog(null);
+            if (logList.size() > 0) {
+                Collections.sort(logList);
+                log = StringUtil.join(logList, "\n");
+            }
+        }
 
         Collection<UsageFilteringRule> filteringRules = instantiateClasses(mainFileText, "// FILTERING_RULES: ");
         final Collection<UsageGroupingRule> groupingRules = instantiateClasses(mainFileText, "// GROUPING_RULES: ");
@@ -458,6 +472,10 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
 
         Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
         KotlinTestUtils.assertEqualsToFile(new File(rootPath, prefix + "results.txt"), StringUtil.join(finalUsages, "\n"));
+
+        if (log != null) {
+            KotlinTestUtils.assertEqualsToFile(new File(rootPath, prefix + "log"), log);
+        }
     }
 
     protected Collection<UsageInfo> findUsages(

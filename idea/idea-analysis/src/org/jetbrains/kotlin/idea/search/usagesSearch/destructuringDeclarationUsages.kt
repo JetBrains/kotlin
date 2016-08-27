@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
@@ -61,7 +62,9 @@ enum class DestructuringDeclarationUsageSearch {
     ALWAYS_SMART, ALWAYS_PLAIN, PLAIN_WHEN_NEEDED
 }
 
+// for tests
 var destructuringDeclarationUsageSearchMode = if (ApplicationManager.getApplication().isUnitTestMode) ALWAYS_SMART else PLAIN_WHEN_NEEDED
+var destructuringDeclarationUsageSearchLog: MutableList<String>? = null
 
 //TODO: check if it's too expensive
 
@@ -108,7 +111,8 @@ fun findDestructuringDeclarationUsages(
               ktDeclaration,
               scope,
               consumer,
-              plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) }
+              plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) },
+              testLog = destructuringDeclarationUsageSearchLog
     ).run()
 }
 
@@ -124,13 +128,15 @@ private class Processor(
         private val target: KtDeclaration,
         private val searchScope: SearchScope,
         private val consumer: Processor<PsiReference>,
-        private val plainSearchHandler: (SearchScope) -> Unit
+        plainSearchHandler: (SearchScope) -> Unit,
+        private val testLog: MutableList<String>?
 ) {
-    private val project = target.project
+    private val plainSearchHandler: (SearchScope) -> Unit = { scope ->
+        testLog?.add("Used plain search in ${scope.logPresentation()}")
+        plainSearchHandler(scope)
+    }
 
-    // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
-    //TODO: what about Scala and other JVM-languages?
-    private val declarationUsageScope = GlobalSearchScope.projectScope(project).restrictToKotlinSources()
+    private val project = target.project
 
     // note: a Task must define equals & hashCode!
     private interface Task {
@@ -159,8 +165,10 @@ private class Processor(
 
         val parameters = ClassInheritorsSearch.SearchParameters(psiClass, GlobalSearchScope.allScope(project), true, true, false)
         val classesToSearch = listOf(psiClass) + ClassInheritorsSearch.search(parameters).findAll()
+        testLog?.add("Searched inheritors of ${psiClass.logPresentation()}")
 
         for (classToSearch in classesToSearch) {
+            testLog?.add("Searched references to ${classToSearch.logPresentation()}")
             ReferencesSearch.search(classToSearch).forEach(Processor processor@ { reference -> //TODO: see KT-13607
                 if (processDataClassUsage(reference)) return@processor true
 
@@ -211,7 +219,11 @@ private class Processor(
     private fun addCallableDeclarationToProcess(declaration: PsiElement, kind: CallableToProcessKind) {
         data class ProcessCallableUsagesTask(val declaration: PsiElement, val kind: CallableToProcessKind) : Task {
             override fun perform() {
-                ReferencesSearch.search(declaration, declarationUsageScope).forEach { reference ->
+                // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
+                //TODO: what about Scala and other JVM-languages?
+                val scope = GlobalSearchScope.projectScope(project).restrictToKotlinSources()
+                testLog?.add("Searched references to ${declaration.logPresentation()} in Kotlin files")
+                ReferencesSearch.search(declaration, scope).forEach { reference ->
                     when (kind) {
                         CallableToProcessKind.HAS_DATA_CLASS_TYPE -> {
                             if (reference is KtDestructuringDeclarationReference) {
@@ -247,6 +259,7 @@ private class Processor(
             override fun perform() {
                 //TODO: what about other JVM languages?
                 val scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), JavaFileType.INSTANCE)
+                testLog?.add("Searched references to ${psiClass.logPresentation()} in java files")
                 ReferencesSearch.search(psiClass, scope).forEach { reference ->
                     // check if the reference is method parameter type
                     val parameter = ((reference as? PsiJavaCodeReferenceElement)?.parent as? PsiTypeElement)?.parent as? PsiParameter
@@ -562,5 +575,44 @@ private class Processor(
             is KtParameter -> declaration.typeReference == null
             else -> false
         }
+    }
+
+    private fun PsiElement.logPresentation(): String? {
+        val fqName = getKotlinFqName()?.asString()
+                     ?: (this as? KtNamedDeclaration)?.name
+        return when (this) {
+            is PsiMethod, is KtFunction -> fqName + "()"
+            is KtParameter -> "parameter ${this.name} in ${this.ownerFunction?.logPresentation()}"
+            else -> fqName
+        }
+    }
+
+    private fun SearchScope.logPresentation(): String {
+        return when (this) {
+            searchScope -> "whole search scope"
+
+            is LocalSearchScope -> {
+                scope
+                        .map { element ->
+                            "    " + when (element) {
+                                is KtFunctionLiteral -> element.text
+                                is KtWhenEntry -> {
+                                    if (element.isElse)
+                                        "KtWhenEntry \"else\""
+                                    else
+                                        "KtWhenEntry \"" + element.conditions.joinToString(", ") { it.text } + "\""
+                                }
+                                is KtNamedDeclaration -> element.node.elementType.toString() + ":" + element.name
+                                else -> element.toString()
+                            }
+                        }
+                        .toList()
+                        .sorted()
+                        .joinToString("\n", "LocalSearchScope:\n")
+            }
+
+            else -> this.displayName
+        }
+
     }
 }
