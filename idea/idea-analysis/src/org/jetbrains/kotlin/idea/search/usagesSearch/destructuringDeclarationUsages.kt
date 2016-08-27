@@ -198,34 +198,48 @@ private class Processor(
         }
     }
 
+    private enum class CallableToProcessKind {
+        HAS_DATA_CLASS_TYPE,
+        PROCESS_LAMBDAS
+    }
+
     //TODO: check if it's operator (too expensive)
     /**
      * Adds declaration whose type is our data class (or data class used anywhere inside that type)
      * or which has parameter of functional type with our data class used inside
      */
-    private fun addCallableDeclarationToProcess(declaration: PsiElement) {
-        data class ProcessCallableUsagesTask(val declaration: PsiElement) : Task {
+    private fun addCallableDeclarationToProcess(declaration: PsiElement, kind: CallableToProcessKind) {
+        data class ProcessCallableUsagesTask(val declaration: PsiElement, val kind: CallableToProcessKind) : Task {
             override fun perform() {
                 ReferencesSearch.search(declaration, declarationUsageScope).forEach { reference ->
-                    if (reference is KtDestructuringDeclarationReference) { // declaration usage in form of destructuring declaration
-                        val entries = reference.element.entries
-                        val componentIndex = when (declaration) {
-                            is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
-                            is KtFunction -> declaration.name?.let { getComponentIndex(it) }
-                        //TODO: java component functions (see KT-13605)
-                            else -> null
+                    when (kind) {
+                        CallableToProcessKind.HAS_DATA_CLASS_TYPE -> {
+                            if (reference is KtDestructuringDeclarationReference) {
+                                // declaration usage in form of destructuring declaration
+                                val entries = reference.element.entries
+                                val componentIndex = when (declaration) {
+                                    is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
+                                    is KtFunction -> declaration.name?.let { getComponentIndex(it) }
+                                //TODO: java component functions (see KT-13605)
+                                    else -> null
+                                }
+                                if (componentIndex != null && componentIndex <= entries.size) {
+                                    addCallableDeclarationToProcess(entries[componentIndex - 1], CallableToProcessKind.HAS_DATA_CLASS_TYPE)
+                                }
+                            }
+                            else {
+                                (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+                            }
                         }
-                        if (componentIndex != null && componentIndex <= entries.size) {
-                            addCallableDeclarationToProcess(entries[componentIndex - 1])
+
+                        CallableToProcessKind.PROCESS_LAMBDAS -> {
+                            (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
                         }
-                    }
-                    else {
-                        (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
                     }
                 }
             }
         }
-        addTask(ProcessCallableUsagesTask(declaration))
+        addTask(ProcessCallableUsagesTask(declaration, kind))
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {
@@ -238,7 +252,7 @@ private class Processor(
                     val parameter = ((reference as? PsiJavaCodeReferenceElement)?.parent as? PsiTypeElement)?.parent as? PsiParameter
                     val method = parameter?.declarationScope as? PsiMethod
                     if (method != null) {
-                        addCallableDeclarationToProcess(method)
+                        addCallableDeclarationToProcess(method, CallableToProcessKind.PROCESS_LAMBDAS)
                     }
                 }
             }
@@ -274,14 +288,14 @@ private class Processor(
                             is KtCallableDeclaration -> {
                                 when (typeRef) {
                                     typeRefParent.typeReference -> {
-                                        addCallableDeclarationToProcess(typeRefParent)
+                                        addCallableDeclarationToProcess(typeRefParent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
 
                                         if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
                                             val usedInsideFunctionalType = parent.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
                                             if (usedInsideFunctionalType) {
                                                 val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
                                                 if (function != null) {
-                                                    addCallableDeclarationToProcess(function)
+                                                    addCallableDeclarationToProcess(function, CallableToProcessKind.PROCESS_LAMBDAS)
                                                 }
                                             }
                                         }
@@ -392,14 +406,14 @@ private class Processor(
 
                 is PsiMethod -> {
                     if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) {
-                        addCallableDeclarationToProcess(parent)
+                        addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
                     }
                     break@ParentsLoop
                 }
 
                 is PsiField -> {
                     if (prev == parent.typeElement && !parent.isPrivateOrLocal()) {
-                        addCallableDeclarationToProcess(parent)
+                        addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
                     }
                     break@ParentsLoop
                 }
@@ -450,11 +464,12 @@ private class Processor(
         }
 
         // use plain search in all lambdas and anonymous functions inside because they parameters or receiver can be implicitly typed with our data class
-        affectedScope.forEachDescendantOfType<KtFunction> {
-            if (it.nameIdentifier == null) {
-                usePlainSearch(it)
-            }
-        }
+        usePlainSearchInLambdas(affectedScope)
+    }
+
+    private fun processLambdasForCallableReference(expression: KtReferenceExpression) {
+        //TODO: receiver?
+        usePlainSearchInLambdas(expression.parent)
     }
 
     /**
@@ -475,7 +490,15 @@ private class Processor(
             val descriptor = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
             val type = descriptor.returnType
             if (type != null && type.containsTypeOrDerivedInside(dataType)) {
-                addCallableDeclarationToProcess(declaration)
+                addCallableDeclarationToProcess(declaration, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
+            }
+        }
+    }
+
+    private fun usePlainSearchInLambdas(scope: PsiElement) {
+        scope.forEachDescendantOfType<KtFunction> {
+            if (it.nameIdentifier == null) {
+                usePlainSearch(it)
             }
         }
     }
