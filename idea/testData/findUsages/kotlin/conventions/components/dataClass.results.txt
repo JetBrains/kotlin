@@ -24,3 +24,4 @@
 [dataClass.4.kt] Value read 28 takeFun3 { val (x, y) = it[0] }
 [dataClass.4.kt] Value read 30 x(p) { val (x, y) = it }
 [dataClass.5.kt] Value read 10 "".v = { val (x, y ) = it }
+[dataClass.6.kt] Value read 4 javaClass.takeSAM { val (x, y) = it }
