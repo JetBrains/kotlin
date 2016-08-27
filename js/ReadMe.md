@@ -26,4 +26,4 @@ We love contributions! The JavaScript translation could really use your help! If
 
 * check the [contributing section](https://github.com/JetBrains/kotlin/blob/master/ReadMe.md) on general stuff like getting the code etc
 * here's the list of [current excluded standard library unit tests](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-js-tests/pom.xml#L46) from the JavaScript JUnit test run; see if you can fix one of those? (Check the TODO commands and the links to specific issues)
-* try fix one of the pending [JavaScript translation issues](http://youtrack.jetbrains.com/issues/KT?q=Subsystems%3A+%7BBack-end+(JavaScript)%7D+-Resolved+)
+* try fix one of the pending [JavaScript translation issues](https://youtrack.jetbrains.com/issues/KT?q=Subsystems:%20%7BBack-end.%20JavaScript%7D%20-Resolved)
