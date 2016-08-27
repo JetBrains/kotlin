@@ -1,0 +1,7 @@
+Searched inheritors of pack.A
+Searched references to JavaClass.takeSAM() in Kotlin files
+Searched references to JavaSAM in java files
+Searched references to pack.A
+Used plain search in LocalSearchScope:
+    CLASS:A
+    { val (x, y) = it }
