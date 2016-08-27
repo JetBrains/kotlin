@@ -1,0 +1,9 @@
+Searched inheritors of X
+Searched references to X
+Searched references to f() in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:X
+    FUN:component1
+    FUN:component1
+    FUN:component2
+    FUN:component2
