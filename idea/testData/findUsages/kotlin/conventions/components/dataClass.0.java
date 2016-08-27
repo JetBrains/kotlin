@@ -1,4 +1,3 @@
-import kotlin.Unit;
 import pack.A;
 
 import java.util.Collections;
@@ -11,10 +10,4 @@ class JavaClass {
     }
 
     public void takeA(A a){}
-
-    public void takeSAM(JavaSAM sam){}
-}
-
-public interface JavaSAM {
-    void takeA(A a);
 }

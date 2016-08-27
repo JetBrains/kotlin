@@ -2,8 +2,6 @@ Searched inheritors of pack.A
 Searched inheritors of pack.B
 Searched inheritors of pack.C
 Searched references to JavaClass.getA() in Kotlin files
-Searched references to JavaClass.takeSAM() in Kotlin files
-Searched references to JavaSAM in java files
 Searched references to a in Kotlin files
 Searched references to a in Kotlin files
 Searched references to a1 in Kotlin files
@@ -41,7 +39,6 @@ Used plain search in LocalSearchScope:
     KtWhenEntry "is A"
     { a, n -> val (x, y) = a!! }
     { val (x, y ) = it }
-    { val (x, y) = it }
     { val (x, y) = it }
     { val (x, y) = it }
     { val (x, y) = it }
