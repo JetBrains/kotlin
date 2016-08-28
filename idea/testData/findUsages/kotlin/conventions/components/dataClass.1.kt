@@ -1,6 +1,6 @@
 import pack.A
 
-fun test(javaClass: JavaClass, javaClass2: JavaClass2) {
+fun test(javaClass: JavaClass) {
     val a = A(1, "2", Any())
     a.n
     a.component1()
