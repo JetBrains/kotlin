@@ -582,7 +582,10 @@ private class Processor(
                      ?: (this as? KtNamedDeclaration)?.name
         return when (this) {
             is PsiMethod, is KtFunction -> fqName + "()"
-            is KtParameter -> "parameter ${this.name} in ${this.ownerFunction?.logPresentation()}"
+            is KtParameter -> {
+                val owner = this.ownerFunction?.logPresentation() ?: this.parent.toString()
+                "parameter ${this.name} in $owner"
+            }
             else -> fqName
         }
     }
