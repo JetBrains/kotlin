@@ -1,0 +1,16 @@
+Checked type of (a1, b1)
+Checked type of (a2, b2)
+Checked type of (a3, b3)
+Checked type of X.f2()
+Checked type of constructor
+Checked type of fun2
+Checked type of fun3
+Searched inheritors of A
+Searched references to A
+Searched references to X.f2() in Kotlin files
+Searched references to constructor in Kotlin files
+Searched references to f1() in Kotlin files
+Searched references to fun2 in Kotlin files
+Searched references to fun3 in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
