@@ -294,7 +294,9 @@ private class Processor(
             is KtReferenceExpression -> {
                 val parent = element.parent
                 when (parent) {
-                    is KtUserType -> return processDataClassUsageInUserType(parent)
+                    is KtUserType -> {
+                        return processDataClassUsageInUserType(parent)
+                    }
 
                     is KtCallExpression -> {
                         if (element == parent.calleeExpression) {
@@ -444,7 +446,7 @@ private class Processor(
                         if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
                             val psiClass = method.containingClass
                             if (psiClass != null) {
-                                testLog?.add("Resolved to java class to descriptor: ${psiClass.qualifiedName}")
+                                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
 
                                 val classDescriptor = psiClass.resolveToDescriptor(target.getResolutionFacade())
                                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
