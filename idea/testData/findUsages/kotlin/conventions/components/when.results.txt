@@ -1,0 +1,2 @@
+Value read 23 val (x, y) = o
+Value read 9 val (x, y) = o

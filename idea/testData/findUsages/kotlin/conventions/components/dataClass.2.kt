@@ -32,25 +32,3 @@ fun y(o: Any) {
     val list = o as List<A>
     val (x, y) = list[0]
 }
-
-fun when1(o: Any) {
-    when (o) {
-        is A -> {
-            val (x, y) = o
-        }
-
-        is String -> TODO()
-
-        else -> return
-    }
-}
-
-fun when2(o: Any) {
-    when (o) {
-        !is A -> { }
-
-        else -> {
-            val (x, y) = o
-        }
-    }
-}
