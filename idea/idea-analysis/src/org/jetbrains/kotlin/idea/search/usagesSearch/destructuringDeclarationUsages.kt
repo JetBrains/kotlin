@@ -390,6 +390,13 @@ private class Processor(
                 }
             }
 
+            is KtSuperTypeListEntry -> {
+                if (typeRef == typeRefParent.typeReference) {
+                    // usage in super type list - just ignore, inheritors are processed above
+                    return true
+                }
+            }
+
             is KtIsExpression -> {
                 val scopeOfPossibleSmartCast = typeRefParent.getParentOfType<KtDeclarationWithBody>(true)
                 scopeOfPossibleSmartCast?.let { usePlainSearch(it) }

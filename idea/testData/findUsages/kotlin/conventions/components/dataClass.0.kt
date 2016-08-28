@@ -10,6 +10,8 @@ data class A(val <caret>n: Int, val s: String, val o: Any) {
     }
 }
 
+abstract class X : Comparable<A>
+
 fun A.ext1() {
     val (x, y) = getThis()
 }
