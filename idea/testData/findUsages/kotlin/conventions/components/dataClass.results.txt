@@ -15,5 +15,3 @@
 [dataClass.2.kt] Value read 53 val (x, y) = o
 [dataClass.2.kt] Value read 8 val (x, y, z) = a
 [dataClass.2.kt] Value read 9 val (x1, y1, z1) = f()
-[dataClass.3.kt] Value read 12 val (x, y, z) = a
-[dataClass.3.kt] Value read 15 val (x1, y1, z1) = a1

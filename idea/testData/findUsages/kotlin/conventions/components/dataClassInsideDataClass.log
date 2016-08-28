@@ -1,0 +1,18 @@
+Searched inheritors of A
+Searched inheritors of B
+Searched inheritors of C
+Searched references to A
+Searched references to B
+Searched references to C
+Searched references to C.component1() in Kotlin files
+Searched references to a in Kotlin files
+Searched references to a1 in Kotlin files
+Searched references to parameter a in B() in Kotlin files
+Searched references to parameter b in f() in Kotlin files
+Searched references to parameter c in f() in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
+Used plain search in LocalSearchScope:
+    CLASS:B
+Used plain search in LocalSearchScope:
+    CLASS:C
