@@ -6,7 +6,6 @@ Searched references to g() in Kotlin files
 Searched references to h() in Kotlin files
 Searched references to listOfA() in Kotlin files
 Searched references to pack.A
-Searched references to parameter a in null in Kotlin files
 Used plain search in LocalSearchScope:
     CLASS:A
     FUN:ext1
