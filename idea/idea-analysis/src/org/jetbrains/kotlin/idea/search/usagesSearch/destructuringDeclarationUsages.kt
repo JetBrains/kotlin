@@ -377,6 +377,12 @@ private class Processor(
                             return true // this@ClassName - it will be handled anyway because members and extensions are processed with plain search
                         }
                     }
+
+                    is KtQualifiedExpression -> {
+                        if (element == parent.receiverExpression) {
+                            return true // companion object member or static member access - ignore it
+                        }
+                    }
                 }
 
                 if (element.getStrictParentOfType<KtImportDirective>() != null) return true // ignore usage in import

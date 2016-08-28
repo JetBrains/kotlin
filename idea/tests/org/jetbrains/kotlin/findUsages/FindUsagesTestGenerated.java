@@ -170,6 +170,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/conventions/components"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
                 }
 
+                @TestMetadata("companionObjectAccess.0.kt")
+                public void testCompanionObjectAccess() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/companionObjectAccess.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("componentFunForGenericType1.0.kt")
                 public void testComponentFunForGenericType1() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/componentFunForGenericType1.0.kt");
