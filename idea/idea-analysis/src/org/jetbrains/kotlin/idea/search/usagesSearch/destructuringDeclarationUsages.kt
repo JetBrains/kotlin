@@ -327,6 +327,13 @@ private class Processor(
                             }
                         }
                     }
+
+                    is KtClassLiteralExpression -> {
+                        if (element == parent.receiverExpression) { // ClassName::class
+                            processSuspiciousExpression(element)
+                            return true
+                        }
+                    }
                 }
 
                 if (element.getStrictParentOfType<KtImportDirective>() != null) return true // ignore usage in import
