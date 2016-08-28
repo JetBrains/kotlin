@@ -229,6 +229,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/SAM.0.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("when.0.kt")
+                public void testWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/when.0.kt");
+                    doTest(fileName);
+                }
             }
         }
 
