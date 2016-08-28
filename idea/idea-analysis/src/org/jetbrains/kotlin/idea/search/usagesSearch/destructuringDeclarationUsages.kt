@@ -294,76 +294,7 @@ private class Processor(
             is KtReferenceExpression -> {
                 val parent = element.parent
                 when (parent) {
-                    is KtUserType -> {
-                        val typeRef = parent.parents.lastOrNull { it is KtTypeReference }
-                        val typeRefParent = typeRef?.parent
-                        when (typeRefParent) {
-                            is KtCallableDeclaration -> {
-                                when (typeRef) {
-                                    typeRefParent.typeReference -> {
-                                        addCallableDeclarationToProcess(typeRefParent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
-
-                                        if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
-                                            val usedInsideFunctionalType = parent.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
-                                            if (usedInsideFunctionalType) {
-                                                val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
-                                                if (function != null) {
-                                                    addCallableDeclarationToProcess(function, CallableToProcessKind.PROCESS_LAMBDAS)
-                                                }
-                                            }
-                                        }
-
-                                        return true
-                                    }
-
-                                    typeRefParent.receiverTypeReference -> {
-                                        // we must use plain search inside extensions because implicit 'this' can happen anywhere
-                                        usePlainSearch(typeRefParent)
-                                        return true
-                                    }
-                                }
-                            }
-
-                            is KtTypeProjection -> {
-                                val callExpression = (typeRefParent.parent as? KtTypeArgumentList)?.parent as? KtCallExpression
-                                if (callExpression != null) {
-                                    processSuspiciousExpression(callExpression)
-                                    return true
-                                }
-                            }
-
-                            is KtConstructorCalleeExpression -> {
-                                if (typeRefParent.parent is KtSuperTypeCallEntry) {
-                                    // usage in super type list - just ignore, inheritors are processed above
-                                    return true
-                                }
-                            }
-
-                            is KtIsExpression -> {
-                                val scopeOfPossibleSmartCast = typeRefParent.getParentOfType<KtDeclarationWithBody>(true)
-                                scopeOfPossibleSmartCast?.let { usePlainSearch(it) }
-                                return true
-                            }
-
-                            is KtWhenConditionIsPattern -> {
-                                val whenEntry = typeRefParent.parent as KtWhenEntry
-                                if (typeRefParent.isNegated) {
-                                    val whenExpression = whenEntry.parent as KtWhenExpression
-                                    val entriesAfter = whenExpression.entries.dropWhile { it != whenEntry }.drop(1)
-                                    entriesAfter.forEach { usePlainSearch(it) }
-                                }
-                                else {
-                                    usePlainSearch(whenEntry)
-                                }
-                                return true
-                            }
-
-                            is KtBinaryExpressionWithTypeRHS -> {
-                                processSuspiciousExpression(typeRefParent)
-                                return true
-                            }
-                        }
-                    }
+                    is KtUserType -> return processDataClassUsageInUserType(parent)
 
                     is KtCallExpression -> {
                         if (element == parent.calleeExpression) {
@@ -392,6 +323,79 @@ private class Processor(
         }
 
         return false // unsupported type of reference
+    }
+
+    private fun processDataClassUsageInUserType(userType: KtUserType): Boolean {
+        val typeRef = userType.parents.lastOrNull { it is KtTypeReference }
+        val typeRefParent = typeRef?.parent
+        when (typeRefParent) {
+            is KtCallableDeclaration -> {
+                when (typeRef) {
+                    typeRefParent.typeReference -> {
+                        addCallableDeclarationToProcess(typeRefParent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
+
+                        if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
+                            val usedInsideFunctionalType = userType.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
+                            if (usedInsideFunctionalType) {
+                                val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
+                                if (function != null) {
+                                    addCallableDeclarationToProcess(function, CallableToProcessKind.PROCESS_LAMBDAS)
+                                }
+                            }
+                        }
+
+                        return true
+                    }
+
+                    typeRefParent.receiverTypeReference -> {
+                        // we must use plain search inside extensions because implicit 'this' can happen anywhere
+                        usePlainSearch(typeRefParent)
+                        return true
+                    }
+                }
+            }
+
+            is KtTypeProjection -> {
+                val callExpression = (typeRefParent.parent as? KtTypeArgumentList)?.parent as? KtCallExpression
+                if (callExpression != null) {
+                    processSuspiciousExpression(callExpression)
+                    return true
+                }
+            }
+
+            is KtConstructorCalleeExpression -> {
+                if (typeRefParent.parent is KtSuperTypeCallEntry) {
+                    // usage in super type list - just ignore, inheritors are processed above
+                    return true
+                }
+            }
+
+            is KtIsExpression -> {
+                val scopeOfPossibleSmartCast = typeRefParent.getParentOfType<KtDeclarationWithBody>(true)
+                scopeOfPossibleSmartCast?.let { usePlainSearch(it) }
+                return true
+            }
+
+            is KtWhenConditionIsPattern -> {
+                val whenEntry = typeRefParent.parent as KtWhenEntry
+                if (typeRefParent.isNegated) {
+                    val whenExpression = whenEntry.parent as KtWhenExpression
+                    val entriesAfter = whenExpression.entries.dropWhile { it != whenEntry }.drop(1)
+                    entriesAfter.forEach { usePlainSearch(it) }
+                }
+                else {
+                    usePlainSearch(whenEntry)
+                }
+                return true
+            }
+
+            is KtBinaryExpressionWithTypeRHS -> {
+                processSuspiciousExpression(typeRefParent)
+                return true
+            }
+        }
+
+        return false // unsupported case
     }
 
     private fun processJavaDataClassUsage(element: PsiElement): Boolean {
