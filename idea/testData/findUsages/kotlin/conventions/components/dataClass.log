@@ -1,23 +1,13 @@
 Searched inheritors of pack.A
-Searched inheritors of pack.B
-Searched inheritors of pack.C
 Searched references to JavaClass.getA() in Kotlin files
 Searched references to a in Kotlin files
-Searched references to a in Kotlin files
-Searched references to a1 in Kotlin files
 Searched references to f() in Kotlin files
 Searched references to g() in Kotlin files
 Searched references to h() in Kotlin files
 Searched references to list in Kotlin files
 Searched references to listOfA() in Kotlin files
 Searched references to pack.A
-Searched references to pack.B
-Searched references to pack.C
-Searched references to pack.C.component1() in Kotlin files
-Searched references to parameter a in B() in Kotlin files
 Searched references to parameter a in null in Kotlin files
-Searched references to parameter b in pack.f() in Kotlin files
-Searched references to parameter c in pack.f() in Kotlin files
 Used plain search in LocalSearchScope:
     CLASS:A
     FUN:ext1
@@ -25,7 +15,3 @@ Used plain search in LocalSearchScope:
     FUN:x
     KtWhenEntry "else"
     KtWhenEntry "is A"
-Used plain search in LocalSearchScope:
-    CLASS:B
-Used plain search in LocalSearchScope:
-    CLASS:C

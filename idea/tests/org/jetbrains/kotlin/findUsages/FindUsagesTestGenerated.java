@@ -200,6 +200,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("dataClassInsideDataClass.0.kt")
+                public void testDataClassInsideDataClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/dataClassInsideDataClass.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extensionComponentFun.0.kt")
                 public void testExtensionComponentFun() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/extensionComponentFun.0.kt");
