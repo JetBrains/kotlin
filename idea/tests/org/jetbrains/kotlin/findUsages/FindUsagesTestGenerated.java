@@ -212,6 +212,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("isAndAs.0.kt")
+                public void testIsAndAs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/isAndAs.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("lambdas.0.kt")
                 public void testLambdas() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/lambdas.0.kt");

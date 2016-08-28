@@ -1,0 +1,6 @@
+Searched inheritors of A
+Searched references to A
+Searched references to list in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
+    FUN:x
