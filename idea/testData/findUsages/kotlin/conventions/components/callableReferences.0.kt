@@ -21,4 +21,6 @@ fun foo(x: X) {
 
     val constructor = ::A
     val (a3, b3) = constructor(1, 2)
+
+    val (a4, b4) = A::class.java.newInstance()
 }
