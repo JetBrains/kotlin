@@ -12,4 +12,10 @@ class JavaClass {
     }
 
     public void takeA(A a){}
+
+    private A getAPrivate() {
+        return new A(1, "", "");
+    }
+
+    private void takeAPrivate(A a){}
 }

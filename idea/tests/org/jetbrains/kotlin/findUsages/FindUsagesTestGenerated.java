@@ -242,6 +242,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("mayTypeAffectAncestors.0.kt")
+                public void testMayTypeAffectAncestors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/mayTypeAffectAncestors.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("memberComponentFun.0.kt")
                 public void testMemberComponentFun() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/memberComponentFun.0.kt");

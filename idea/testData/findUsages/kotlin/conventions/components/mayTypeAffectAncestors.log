@@ -1,0 +1,12 @@
+Checked type of (x1, y1)
+Checked type of y1()
+Searched inheritors of A
+Searched references to A
+Searched references to parameter a in condition() in Kotlin files
+Searched references to parameter a in x() in Kotlin files
+Searched references to parameter a in y1() in Kotlin files
+Searched references to parameter a in y2() in Kotlin files
+Searched references to parameter a in y3() in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
+    { val (x2, y2) = this }
