@@ -1,3 +1,9 @@
+Checked type of (x, y)
+Checked type of (x1, y1)
+Checked type of (x2, y2)
+Checked type of f()
+Checked type of g()
+Checked type of h()
 Searched inheritors of X
 Searched references to X
 Searched references to Y

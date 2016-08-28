@@ -407,6 +407,8 @@ private class Processor(
                         if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
                             val psiClass = method.containingClass
                             if (psiClass != null) {
+                                testLog?.add("Resolved to java class to descriptor: ${psiClass.qualifiedName}")
+
                                 val classDescriptor = psiClass.resolveToDescriptor(target.getResolutionFacade())
                                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
                                     addSamInterfaceToProcess(psiClass)
@@ -491,6 +493,8 @@ private class Processor(
     private fun processSuspiciousDeclaration(declaration: KtDeclaration) {
         if (declaration is KtDestructuringDeclaration) {
             if (searchScope.contains(declaration)) {
+                testLog?.add("Checked type of ${declaration.logPresentation()}")
+
                 val declarationReference = declaration.references.firstIsInstance<KtDestructuringDeclarationReference>()
                 if (declarationReference.isReferenceTo(target)) {
                     consumer.process(declarationReference)
@@ -499,6 +503,8 @@ private class Processor(
         }
         else {
             if (!isImplicitlyTyped(declaration)) return
+
+            testLog?.add("Checked type of ${declaration.logPresentation()}")
 
             val descriptor = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
             val type = descriptor.returnType
@@ -586,6 +592,7 @@ private class Processor(
                 val owner = this.ownerFunction?.logPresentation() ?: this.parent.toString()
                 "parameter ${this.name} in $owner"
             }
+            is KtDestructuringDeclaration -> entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
             else -> fqName
         }
     }

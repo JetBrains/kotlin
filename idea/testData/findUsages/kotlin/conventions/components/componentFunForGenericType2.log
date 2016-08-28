@@ -1,3 +1,6 @@
+Checked type of (x1, y1)
+Checked type of f()
+Checked type of g()
 Searched inheritors of X
 Searched references to X
 Searched references to f() in Kotlin files
