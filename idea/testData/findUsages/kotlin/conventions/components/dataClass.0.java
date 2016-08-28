@@ -1,3 +1,5 @@
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
+// OPTIONS: usages
 import pack.A;
 
 import java.util.Collections;

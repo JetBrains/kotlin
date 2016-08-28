@@ -1,0 +1,23 @@
+Searched inheritors of A
+Searched references to A
+Searched references to parameter p in foo() in Kotlin files
+Searched references to parameter p in takeExtFun() in Kotlin files
+Searched references to parameter p in takeFun1() in Kotlin files
+Searched references to parameter p in takeFun2() in Kotlin files
+Searched references to parameter p in takeFun3() in Kotlin files
+Searched references to parameter p in takeFuns() in Kotlin files
+Searched references to takeExtFun() in Kotlin files
+Searched references to takeFun1() in Kotlin files
+Searched references to takeFun2() in Kotlin files
+Searched references to takeFun3() in Kotlin files
+Searched references to takeFuns() in Kotlin files
+Searched references to v in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
+    { a, n -> val (x, y) = a!! }
+    { val (x, y ) = it }
+    { val (x, y) = it }
+    { val (x, y) = it }
+    { val (x, y) = it }
+    { val (x, y) = it[0] }
+    { val (x, y) = this }

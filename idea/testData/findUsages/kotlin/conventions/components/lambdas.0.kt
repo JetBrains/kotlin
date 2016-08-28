@@ -1,6 +1,7 @@
-package pack4
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
+// OPTIONS: usages
 
-import pack.A
+data class A(val <caret>a: Int, val b: Int)
 
 fun takeExtFun(p: A.() -> Unit) {
 }
@@ -28,4 +29,12 @@ fun foo(p: A) {
     takeFun3 { val (x, y) = it[0] }
 
     x(p) { val (x, y) = it }
+}
+
+var Any.v: (A) -> Unit
+    get() = TODO()
+    set(value) = TODO()
+
+fun f() {
+    "".v = { val (x, y ) = it }
 }
