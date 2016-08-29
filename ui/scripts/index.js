@@ -130,16 +130,16 @@ function changeMode(modeId) {
 		}
 
 		console.log("Got OK for changing request")
-		switch(modeId) {
-			case 0:
-				enterManualMode();
-			break;
-			case 1:
-				buildPerimeter(/* debug = */ false);
-			break;
-			case 2:
-				buildPerimeter(/* debug = */ true);
-			break;
-		}
+		// switch(modeId) {
+		// 	case 0:
+		// 		enterManualMode();
+		// 	break;
+		// 	case 1:
+		// 		buildPerimeter( debug =  false);
+		// 	break;
+		// 	case 2:
+		// 		buildPerimeter(/* debug = */ true);
+		// 	break;
+		// }
 	});
 }
