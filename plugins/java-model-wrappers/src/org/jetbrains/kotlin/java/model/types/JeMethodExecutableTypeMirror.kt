@@ -55,7 +55,18 @@ class JeMethodExecutableTypeMirror(
         return typeParameters.map { JeTypeVariableType(PsiTypesUtil.getClassType(it), it) }
     }
 
-    override fun toString() = (psi.containingClass?.qualifiedName?.let { it + "." } ?: "") + psi.name
+    override fun toString() = buildString {
+        val typeVariables = this@JeMethodExecutableTypeMirror.typeVariables
+        if (typeVariables.isNotEmpty()) {
+            append('<')
+            typeVariables.joinTo(this, ",")
+            append('>')
+        }
+        append('(')
+        parameterTypes.joinTo(this, ",")
+        append(')')
+        append((this@JeMethodExecutableTypeMirror as ExecutableType).returnType)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

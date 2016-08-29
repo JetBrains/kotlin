@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.annotation.processing.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTypesUtil
-import com.intellij.psi.util.TypeConversionUtil
+import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.elements.JeClassInitializerExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
@@ -104,7 +103,19 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     override fun erasure(t: TypeMirror): TypeMirror {
         if (t.kind == TypeKind.PACKAGE) throw IllegalArgumentException("Invalid type: $t")
         return when (t) {
+            is JeTypeVariableType -> TypeConversionUtil.typeParameterErasure(t.parameter).toJeType(t.psiManager)
             is JePsiType -> TypeConversionUtil.erasure(t.psiType).toJeType(psiManager)
+            is JeMethodExecutableTypeMirror -> {
+                val oldSignature = t.signature
+                val parameterTypes = oldSignature?.parameterTypes?.toList() ?: t.psi.parameterList.parameters.map { it.type }
+                val newSignature = MethodSignatureUtil.createMethodSignature(
+                        oldSignature?.name ?: t.psi.name,
+                        parameterTypes.map { TypeConversionUtil.erasure(it) }.toTypedArray(),
+                        emptyArray(),
+                        PsiSubstitutor.EMPTY,
+                        oldSignature?.isConstructor ?: t.psi.isConstructor)
+                JeMethodExecutableTypeMirror(t.psi, newSignature, TypeConversionUtil.erasure(t.returnType ?: t.psi.returnType))
+            }
             else -> t
         }
     }
