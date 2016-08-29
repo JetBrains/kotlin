@@ -582,33 +582,21 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return result
     }
 
-    private fun parseArgList(expr: KtCallExpression, scopeDepth: Int): List<LLVMSingleValue> {
-        val args = expr.getValueArgumentsInParentheses()
-        return parseValueArguments(args, scopeDepth)
-    }
+    private fun parseArgList(expr: KtCallExpression, scopeDepth: Int): List<LLVMSingleValue> =
+            parseValueArguments(expr.getValueArgumentsInParentheses(), scopeDepth)
 
-    private fun parseValueArguments(args: List<ValueArgument>, scopeDepth: Int): List<LLVMSingleValue> {
-        val result = ArrayList<LLVMSingleValue>()
+    private fun parseValueArguments(args: List<ValueArgument>, scopeDepth: Int): List<LLVMSingleValue> =
+            args.map { parseOneValueArgument(it, scopeDepth) }
 
-        for (arg in args) {
-            result.add(parseOneValueArgument(arg, scopeDepth))
-        }
-
-        return result
-    }
-
-    fun parseOneValueArgument(arg: ValueArgument, scopeDepth: Int): LLVMSingleValue {
-        return evaluateExpression(arg.getArgumentExpression(), scopeDepth) as LLVMSingleValue
-    }
+    fun parseOneValueArgument(arg: ValueArgument, scopeDepth: Int): LLVMSingleValue =
+            evaluateExpression(arg.getArgumentExpression(), scopeDepth) as LLVMSingleValue
 
     private fun parseNamedValueArguments(args: MutableCollection<ResolvedValueArgument>, defaultValues: List<KtExpression?>, scopeDepth: Int): List<LLVMSingleValue> =
             args.mapIndexed(fun(i: Int, value: ResolvedValueArgument): LLVMSingleValue {
                 return when (value) {
                     is DefaultValueArgument -> evaluateExpression(defaultValues[i], scopeDepth)!!
-                    else -> {
-                        val expr = ((value as ExpressionValueArgument).valueArgument as KtValueArgument).getArgumentExpression()!!
-                        evaluateExpression(expr, scopeDepth)!!
-                    }
+                    is ExpressionValueArgument -> evaluateExpression((value.valueArgument as KtValueArgument).getArgumentExpression()!!, scopeDepth)!!
+                    else -> throw UnexpectedException("Wrong parser argument")
                 }
             }).toList()
 
