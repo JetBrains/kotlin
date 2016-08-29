@@ -153,4 +153,12 @@ class ProcessorTests : AbstractProcessorTest() {
         val typeArg = cai.typeArguments.first()
         assertTrue(typeArg is TypeVariable)
     }
+    
+    fun testErasureSimple() = test("ErasureSimple", "*") { set, roundEnv, env -> 
+        val test = env.findClass("Test")
+        val int = test.findMethod("a").returnType
+        val void = test.findMethod("b").returnType
+        assertEquals(int, env.typeUtils.erasure(int))
+        assertEquals(void, env.typeUtils.erasure(void))
+    }
 }

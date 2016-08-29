@@ -102,9 +102,11 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     override fun getPrimitiveType(kind: TypeKind) = kind.toJePrimitiveType()
 
     override fun erasure(t: TypeMirror): TypeMirror {
-        if (t is NoType) throw IllegalArgumentException("Invalid type: $t")
-        t as? JePsiType ?: return t
-        return TypeConversionUtil.erasure(t.psiType).toJeType(psiManager)
+        if (t.kind == TypeKind.PACKAGE) throw IllegalArgumentException("Invalid type: $t")
+        return when (t) {
+            is JePsiType -> TypeConversionUtil.erasure(t.psiType).toJeType(psiManager)
+            else -> t
+        }
     }
 
     override fun directSupertypes(t: TypeMirror): List<TypeMirror> {
