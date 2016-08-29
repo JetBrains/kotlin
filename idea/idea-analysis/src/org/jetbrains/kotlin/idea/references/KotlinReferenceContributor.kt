@@ -40,19 +40,19 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
                 }
             }
 
-            registerProvider(factory = ::KtConstructorDelegationReference)
+            registerProvider<KtConstructorDelegationReferenceExpression>(factory = ::KtConstructorDelegationReference)
 
-            registerProvider(factory = ::KtInvokeFunctionReference)
+            registerProvider<KtCallExpression>(factory = ::KtInvokeFunctionReference)
 
-            registerProvider(factory = ::KtArrayAccessReference)
+            registerProvider<KtArrayAccessExpression>(factory = ::KtArrayAccessReference)
 
-            registerProvider(factory = ::KtForLoopInReference)
+            registerProvider<KtForExpression>(factory = ::KtForLoopInReference)
 
-            registerProvider(factory = ::KtPropertyDelegationMethodsReference)
+            registerProvider<KtPropertyDelegate>(factory = ::KtPropertyDelegationMethodsReference)
 
-            registerProvider(factory = ::KtDestructuringDeclarationReference)
+            registerProvider<KtDestructuringDeclarationEntry>(factory = ::KtDestructuringDeclarationReference)
 
-            registerProvider(factory = ::KDocReference)
+            registerProvider<KDocName>(factory = ::KDocReference)
         }
     }
 }

@@ -23,9 +23,11 @@ import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.ReferenceRange
 import com.intellij.psi.search.RequestResultProcessor
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.isCallableOverrideUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isExtensionOfDeclarationClassUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isUsageInContainingDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 class KotlinRequestResultProcessor(
@@ -37,16 +39,25 @@ class KotlinRequestResultProcessor(
     private val referenceService = PsiReferenceService.getService()
 
     override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
-        return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+        val references = if (element is KtDestructuringDeclaration)
+            element.entries.flatMap { referenceService.getReferences(it, PsiReferenceService.Hints.NO_HINTS) }
+        else
+            referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS)
+        return references.all { ref ->
             ProgressManager.checkCanceled()
 
-            when {
-                !filter(ref) -> true
-                !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
-                !ref.isReferenceToTarget(unwrappedElement) -> true
-                else -> consumer.process(ref)
+            if (filter(ref) && ref.containsOffsetInElement(offsetInElement) && ref.isReferenceToTarget(unwrappedElement)) {
+                consumer.process(ref)
+            }
+            else {
+                true
             }
         }
+    }
+
+    private fun PsiReference.containsOffsetInElement(offsetInElement: Int): Boolean {
+        if (this is KtDestructuringDeclarationReference) return true
+        return ReferenceRange.containsOffsetInElement(this, offsetInElement)
     }
 
     private fun PsiReference.isReferenceToTarget(element: PsiElement): Boolean {

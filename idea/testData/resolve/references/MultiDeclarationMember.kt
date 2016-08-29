@@ -7,9 +7,7 @@ class MyPair {
 
 fun main(args: Array<String>) {
     val p = MyPair()
-    val (a, b<caret>) = p
+    val (a, <caret>b) = p
 }
 
-// MULTIRESOLVE
-// REF: (in a.MyPair).component1()
 // REF: (in a.MyPair).component2()

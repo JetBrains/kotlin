@@ -118,8 +118,16 @@ fun findDestructuringDeclarationUsages(
             classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
         }
 
+        val componentIndex = when (ktDeclaration) {
+            is KtParameter -> ktDeclaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
+            is KtFunction -> ktDeclaration.name?.let { getComponentIndex(it) }
+        //TODO: java component functions (see KT-13605)
+            else -> null
+        } ?: return
+
         Processor(dataType,
                   ktDeclaration,
+                  componentIndex,
                   scope,
                   consumer,
                   plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) },
@@ -141,6 +149,7 @@ private fun doPlainSearch(ktDeclaration: KtDeclaration, scope: SearchScope, opti
 private class Processor(
         private val dataType: FuzzyType,
         private val target: KtDeclaration,
+        private val componentIndex: Int,
         private val searchScope: SearchScope,
         private val consumer: Processor<PsiReference>,
         plainSearchHandler: (SearchScope) -> Unit,
@@ -248,17 +257,8 @@ private class Processor(
                     when (kind) {
                         CallableToProcessKind.HAS_DATA_CLASS_TYPE -> {
                             if (reference is KtDestructuringDeclarationReference) {
-                                // declaration usage in form of destructuring declaration
-                                val entries = reference.element.entries
-                                val componentIndex = when (declaration) {
-                                    is KtParameter -> declaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
-                                    is KtFunction -> declaration.name?.let { getComponentIndex(it) }
-                                //TODO: java component functions (see KT-13605)
-                                    else -> null
-                                }
-                                if (componentIndex != null && componentIndex <= entries.size) {
-                                    addCallableDeclarationToProcess(entries[componentIndex - 1], CallableToProcessKind.HAS_DATA_CLASS_TYPE)
-                                }
+                                // declaration usage in form of destructuring declaration entry
+                                addCallableDeclarationToProcess(reference.element, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
                             }
                             else {
                                 (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
@@ -552,10 +552,10 @@ private class Processor(
      */
     private fun processSuspiciousDeclaration(declaration: KtDeclaration) {
         if (declaration is KtDestructuringDeclaration) {
-            if (searchScope.contains(declaration)) {
+            if (searchScope.contains(declaration) && componentIndex <= declaration.entries.size) {
                 testLog?.add("Checked type of ${declaration.logPresentation()}")
 
-                val declarationReference = declaration.references.firstIsInstance<KtDestructuringDeclarationReference>()
+                val declarationReference = declaration.entries[componentIndex - 1].references.firstIsInstance<KtDestructuringDeclarationReference>()
                 if (declarationReference.isReferenceTo(target)) {
                     consumer.process(declarationReference)
                 }
