@@ -1,9 +1,16 @@
 syntax = "proto3";
-package carkot;
 
 message SonarRequest {
     repeated int32 angles = 1;
+    repeated int32 attempts = 2;
+    int32 threshold = 3;
+    Smoothing smoothing = 4;
 
+    enum Smoothing {
+        NONE = 0;
+        MEDIAN = 1;
+        MEAN = 2;
+    }
 }
 
 message SonarResponse {
