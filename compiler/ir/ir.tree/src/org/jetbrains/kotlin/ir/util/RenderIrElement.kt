@@ -90,12 +90,15 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitThisReference(expression: IrThisReference, data: Nothing?): String =
             "THIS ${expression.classDescriptor.render()} type=${expression.type.render()}"
 
-    override fun visitCall(expression: IrCall, data: Nothing?): String =
+    override fun visitFunCall(expression: IrFunCall, data: Nothing?): String =
             "CALL .${expression.descriptor.name} ${expression.renderSuperQualifier()}" +
             "type=${expression.type.render()} operator=${expression.operator}"
 
-    private fun IrCall.renderSuperQualifier(): String =
+    private fun IrFunCall.renderSuperQualifier(): String =
             superQualifier?.let { "superQualifier=${it.name} " } ?: ""
+
+    override fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: Nothing?): String =
+            "NESTED_INITIALIZERS_CALL"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
@@ -114,9 +117,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
             "GET_ENUM_VALUE ${expression.descriptor.name} type=${expression.type.render()}"
-
-    override fun visitInitializeProperty(expression: IrInitializeProperty, data: Nothing?): String =
-            "INITIALIZE_PROPERTY ${expression.descriptor.name}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.type.render()}"

@@ -87,7 +87,7 @@ class CallGenerator(
         val returnType = descriptor.returnType!!
 
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
+            val irCall = IrFunCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
             irCall.dispatchReceiver = dispatchReceiverValue?.load()
             irCall.extensionReceiver = extensionReceiverValue?.load()
 

@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.assertCast
+import org.jetbrains.kotlin.ir.assertDetached
+import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
-import java.lang.UnsupportedOperationException
 
 interface IrCall : IrMemberAccessExpression {
-    val superQualifier: ClassDescriptor?
     val operator: IrOperator?
     override val descriptor: CallableDescriptor
 
@@ -34,16 +34,15 @@ interface IrCall : IrMemberAccessExpression {
     fun removeArgument(index: Int)
 }
 
-class IrCallImpl(
+abstract class IrCallBase(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val descriptor: CallableDescriptor,
-        override val operator: IrOperator? = null,
-        override val superQualifier: ClassDescriptor? = null
+        numArguments: Int,
+        override val operator: IrOperator? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type), IrCall {
-    private val argumentsByParameterIndex =
-            arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
+    protected val argumentsByParameterIndex =
+            arrayOfNulls<IrExpression>(numArguments)
 
     override fun getArgument(index: Int): IrExpression? =
             argumentsByParameterIndex[index]
@@ -75,9 +74,6 @@ class IrCallImpl(
         else
             super.replaceChild(slot, newChild)
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitCall(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         super.acceptChildren(visitor, data)

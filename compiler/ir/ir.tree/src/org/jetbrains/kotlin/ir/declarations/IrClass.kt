@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -28,6 +29,8 @@ interface IrClass : IrDeclaration {
     override val descriptor: ClassDescriptor
 
     val members: List<IrDeclaration>
+
+    var nestedInitializers: IrBody?
 }
 
 class IrClassImpl(
@@ -44,20 +47,40 @@ class IrClassImpl(
         members.add(member)
     }
 
+    override var nestedInitializers: IrBody? = null
+        set(value) {
+            value?.assertDetached()
+            field?.detach()
+            field = value
+            value?.setTreeLocation(this, NESTED_INITIALIZERS_SLOT)
+        }
+
     override fun getChild(slot: Int): IrElement? =
-            members.getOrNull(slot)
+        when (slot) {
+            NESTED_INITIALIZERS_SLOT -> nestedInitializers
+            else -> members.getOrNull(slot)
+        }
+
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
-        members.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        members[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
+        when (slot) {
+            NESTED_INITIALIZERS_SLOT ->
+                nestedInitializers = newChild.assertCast()
+            else -> {
+                newChild.assertDetached()
+                members.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
+                members[slot] = newChild.assertCast()
+                newChild.setTreeLocation(this, slot)
+            }
+        }
+
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        nestedInitializers?.accept(visitor, data)
         members.forEach { it.accept(visitor, data) }
     }
 

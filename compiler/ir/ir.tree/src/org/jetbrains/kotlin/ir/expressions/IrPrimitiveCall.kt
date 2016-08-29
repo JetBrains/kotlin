@@ -20,14 +20,15 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
+import java.lang.AssertionError
+import java.lang.UnsupportedOperationException
 
 abstract class IrPrimitiveCallBase(
         startOffset: Int,
         endOffset: Int,
         override val operator: IrOperator,
         override val descriptor: CallableDescriptor
-) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
+) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrFunCall {
     override val superQualifier: ClassDescriptor? get() = null
     override var dispatchReceiver: IrExpression?
         get() = null
@@ -48,7 +49,7 @@ abstract class IrPrimitiveCallBase(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitCall(this, data)
+        return visitor.visitFunCall(this, data)
     }
 }
 
@@ -165,9 +166,6 @@ class IrBinaryPrimitiveImpl(
             else -> throwNoSuchSlot(slot)
         }
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitCall(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument0.accept(visitor, data)

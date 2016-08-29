@@ -29,9 +29,9 @@ abstract class IrPropertyAccessorCallBase(
         override val descriptor: CallableDescriptor,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrFunCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitCall(this, data)
+        return visitor.visitFunCall(this, data)
     }
 }
 
@@ -41,7 +41,7 @@ class IrGetterCallImpl(
         descriptor: CallableDescriptor,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrFunCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -72,7 +72,7 @@ class IrSetterCallImpl(
         descriptor: CallableDescriptor,
         operator: IrOperator? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrFunCall {
     constructor(
             startOffset: Int,
             endOffset: Int,
