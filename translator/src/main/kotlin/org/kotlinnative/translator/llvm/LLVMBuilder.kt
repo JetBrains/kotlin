@@ -13,10 +13,8 @@ class LLVMBuilder(val arm: Boolean = false) {
 
     object UniqueGenerator {
         private var unique = 0
-        fun generateUniqueString(): String {
-            unique++
-            return ".unique." + unique
-        }
+        fun generateUniqueString() =
+                ".unique." + unique++
     }
 
     init {

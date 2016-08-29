@@ -2,7 +2,7 @@ import com.intellij.openapi.util.Disposer
 import com.jshmrsn.karg.parseArguments
 import org.kotlinnative.translator.ProjectTranslator
 import org.kotlinnative.translator.parseAndAnalyze
-import java.io.File
+import java.io.*
 import java.util.*
 
 fun main(args: Array<String>) {
@@ -11,8 +11,10 @@ fun main(args: Array<String>) {
     val analyzedFiles = ArrayList<String>()
 
     val stdlib = mutableListOf<String>()
+
     if (arguments.includeDir != null) {
-        stdlib.addAll(File(arguments.includeDir).listFiles().map { it.absolutePath })
+        val libraryFile = File(arguments.includeDir).walk().filter { !it.isDirectory }.map { it.absolutePath }
+        stdlib.addAll(libraryFile)
         analyzedFiles.addAll(stdlib)
     }
 
@@ -24,10 +26,8 @@ fun main(args: Array<String>) {
 
     if (arguments.output == null) {
         println(code)
-        return
+    } else {
+        val output = File(arguments.output)
+        output.writeText(code)
     }
-
-    val output = File(arguments.output)
-    output.writeText(code)
 }
-

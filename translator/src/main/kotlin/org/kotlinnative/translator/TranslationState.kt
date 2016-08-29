@@ -44,7 +44,6 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
     val mainFunctions = ArrayList<String>()
-
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 
 }
@@ -58,12 +57,10 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
         override fun hasErrors(): Boolean = hasError
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-            if (!severity.isError) {
-                return
+            if (severity.isError) {
+                System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
+                hasError = true
             }
-
-            System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
-            hasError = true
         }
     }
 
@@ -73,7 +70,7 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
     configuration.addKotlinSourceRoots(sources)
 
     val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-    val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException()
+    val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException("Can't initialize binding context for project")
 
     return TranslationState(environment, bindingContext, arm)
 }

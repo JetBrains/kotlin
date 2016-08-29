@@ -1,3 +1,3 @@
 package org.kotlinnative.translator.exceptions
 
-class TranslationException : Exception()
+class TranslationException(message: String) : Exception(message)

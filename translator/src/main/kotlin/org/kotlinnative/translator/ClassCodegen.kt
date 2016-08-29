@@ -1,5 +1,6 @@
 package org.kotlinnative.translator
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtParameter
@@ -22,6 +23,7 @@ class ClassCodegen(state: TranslationState,
     val annotation: Boolean
     val enum: Boolean
     var companionObjectCodegen: ObjectCodegen? = null
+    val descriptor: ClassDescriptor
 
     override var size: Int = 0
     override val structName: String = clazz.fqName?.asString()!!
@@ -34,7 +36,7 @@ class ClassCodegen(state: TranslationState,
             type.location.add(parentCodegen.structName)
         }
 
-        val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
+        descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException("Can't receive descriptor of class " + clazz.name)
 
         annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
         enum = descriptor.kind == ClassKind.ENUM_CLASS
@@ -70,10 +72,10 @@ class ClassCodegen(state: TranslationState,
         if (annotation) {
             return
         }
+
         super.prepareForGenerate()
         nestedClasses.forEach { x, classCodegen -> classCodegen.prepareForGenerate() }
 
-        val descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException()
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
         if (companionObjectDescriptor != null) {
             val companionObject = clazz.getCompanionObjects().first()
