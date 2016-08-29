@@ -293,8 +293,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         if (isDataClass) {
             (functionPsi as KtPrimaryConstructor).valueParameters.firstOrNull()?.let {
                 ReferencesSearch.search(it).mapNotNullTo(result) {
-                    val destructuringDeclaration = it.element as? KtDestructuringDeclaration ?: return@mapNotNullTo null
-                    KotlinComponentUsageInDestructuring(destructuringDeclaration)
+                    val destructuringEntry = it.element as? KtDestructuringDeclarationEntry ?: return@mapNotNullTo null
+                    KotlinComponentUsageInDestructuring(destructuringEntry)
                 }
             }
         }

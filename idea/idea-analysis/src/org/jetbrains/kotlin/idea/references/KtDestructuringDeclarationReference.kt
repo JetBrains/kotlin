@@ -22,22 +22,16 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-class KtDestructuringDeclarationReference(element: KtDestructuringDeclaration) : KtMultiReference<KtDestructuringDeclaration>(element) {
+class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEntry) : AbstractKtReference<KtDestructuringDeclarationEntry>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        return expression.entries.mapNotNull { entry ->
-            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.candidateDescriptor
-        }
+        return context[BindingContext.COMPONENT_RESOLVED_CALL, element]?.candidateDescriptor.singletonOrEmptyList()
     }
 
-    override fun getRangeInElement(): TextRange? {
-        val start = expression.lPar
-        val end = expression.rPar
-        if (start == null || end == null) return TextRange.EMPTY_RANGE
-        return TextRange(start.startOffsetInParent, end.startOffsetInParent)
-    }
+    override fun getRangeInElement() = TextRange(0, element.textLength)
 
     override fun canRename(): Boolean {
         val bindingContext = expression.analyze() //TODO: should it use full body resolve?

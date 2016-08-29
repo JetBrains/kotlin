@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.codeInsight.TargetElementEvaluatorEx
+import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.codeInsight.TargetElementUtilExtender
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -28,7 +31,13 @@ import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 class KotlinTargetElementEvaluator : TargetElementEvaluatorEx {
     override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
 
-    override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? = null
+    override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? {
+        // prefer destructing declaration entry to its target if element name is accepted
+        if (ref is KtDestructuringDeclarationReference && flags.and(TargetElementUtil.ELEMENT_NAME_ACCEPTED) != 0) {
+            return ref.element
+        }
+        return null
+    }
 
     override fun isIdentifierPart(file: PsiFile, text: CharSequence?, offset: Int): Boolean {
         // '(' is considered identifier part if it belongs to primary constructor without 'constructor' keyword

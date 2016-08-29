@@ -34,13 +34,12 @@ object UsageTypeUtils {
     fun getUsageType(element: PsiElement?): UsageTypeEnum? {
         when (element) {
             is KtForExpression -> return IMPLICIT_ITERATION
-            is KtDestructuringDeclaration -> return READ
+            is KtDestructuringDeclarationEntry -> return READ
             is KtPropertyDelegate -> return PROPERTY_DELEGATION
             is KtStringTemplateExpression -> return USAGE_IN_STRING_LITERAL
         }
 
-        val refExpr = element?.getNonStrictParentOfType<KtReferenceExpression>()
-        if (refExpr == null) return null
+        val refExpr = element?.getNonStrictParentOfType<KtReferenceExpression>() ?: return null
 
         val context = refExpr.analyze()
 
