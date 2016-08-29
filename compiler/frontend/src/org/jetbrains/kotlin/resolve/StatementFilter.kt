@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
 open class StatementFilter {
-
     open val filter: ((KtExpression) -> Boolean)?
         get() = null
 
     companion object {
-        @JvmField val NONE: StatementFilter = StatementFilter()
+        @JvmField val NONE = object : StatementFilter() {
+            override fun toString() = "NONE"
+        }
     }
 }
 
 fun StatementFilter.filterStatements(block: KtBlockExpression): List<KtExpression> {
-    if (filter == null || block is KtPsiUtil.KtExpressionWrapper) return block.getStatements()
-    return block.getStatements().filter { filter!!(it) }
+    if (filter == null || block is KtPsiUtil.KtExpressionWrapper) return block.statements
+    return block.statements.filter { filter!!(it) }
 }
 
 fun StatementFilter.getLastStatementInABlock(block: KtBlockExpression) = filterStatements(block).lastOrNull()
