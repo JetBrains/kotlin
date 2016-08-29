@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test
 
 import com.google.dart.compiler.backend.js.ast.JsProgram
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -56,6 +57,7 @@ import java.io.Closeable
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
+import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
         private val pathToTestDir: String,
@@ -125,7 +127,7 @@ abstract class BasicBoxTest(
                 .takeWhile { it != stopFile }
                 .map { it.name }
                 .toList().asReversed()
-                .fold(File(pathToOutputDir)) { dir, name -> File(dir, name) }
+                .fold(File(pathToOutputDir), ::File)
     }
 
     private fun TestModule.outputFileName(directory: File): String {
@@ -172,14 +174,21 @@ abstract class BasicBoxTest(
         val outputDir = outputFile.parentFile ?: error("Parent file for output file should not be null, outputFilePath: " + outputFile.path)
         outputFiles.writeAllTo(outputDir)
 
+        if (config.moduleKind == ModuleKind.COMMON_JS) {
+            val content = FileUtil.loadFile(outputFile, true)
+            val wrappedContent = "__beginModule__();\n" +
+                                 "$content\n" +
+                                 "__endModule__(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
+            FileUtil.writeToFile(outputFile, wrappedContent)
+        }
+
         processJsProgram(translationResult.program, psiFiles)
     }
 
     protected fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {
-        for (file in psiFiles) {
-            val text = file.text
-            DirectiveTestUtils.processDirectives(program, text)
-        }
+        psiFiles.asSequence()
+                .map { it.text }
+                .forEach { DirectiveTestUtils.processDirectives(program, it) }
         program.verifyAst()
     }
 
@@ -198,6 +207,7 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
+        configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
         //configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap())
@@ -219,13 +229,13 @@ abstract class BasicBoxTest(
             }
 
             if (module != null) {
-                val moduleKindString = directives["MODULE_KIND"]
-                if (moduleKindString != null) {
-                    module.moduleKind = ModuleKind.valueOf(moduleKindString)
+                val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(text)
+                if (moduleKindMatcher.find()) {
+                    module.moduleKind = ModuleKind.valueOf(moduleKindMatcher.group(1))
                 }
 
-                if ("NO_INLINE" in directives) {
-                    module.inliningDisabled = false
+                if (NO_INLINE_PATTERN.matcher(text).find()) {
+                    module.inliningDisabled = true
                 }
             }
 
@@ -241,7 +251,7 @@ abstract class BasicBoxTest(
         }
 
         override fun close() {
-            FileUtil.delete(tmpDir);
+            FileUtil.delete(tmpDir)
         }
     }
 
@@ -267,5 +277,8 @@ abstract class BasicBoxTest(
 
     companion object {
         val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+
+        private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
+        private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
     }
 }

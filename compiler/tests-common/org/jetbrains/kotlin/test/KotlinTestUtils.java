@@ -109,9 +109,10 @@ public class KotlinTestUtils {
      *
      * Several files may follow one module
      */
-    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile("(?://\\s*MODULE:\\s*(\\w+)(\\(\\w+(?:, \\w+)*\\))?\\s*)?" +
-                                                                         "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
+    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
+            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:, [\\w\\d_\\-]+)*\\))?\\s*)?" +
+            "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
         @NotNull
@@ -631,7 +632,7 @@ public class KotlinTestUtils {
     private static List<String> parseDependencies(@Nullable String dependencies) {
         if (dependencies == null) return Collections.emptyList();
 
-        Matcher matcher = Pattern.compile("\\w+").matcher(dependencies);
+        Matcher matcher = Pattern.compile("[\\w\\d_\\-]+").matcher(dependencies);
         List<String> result = new ArrayList<String>();
         while (matcher.find()) {
             result.add(matcher.group());
