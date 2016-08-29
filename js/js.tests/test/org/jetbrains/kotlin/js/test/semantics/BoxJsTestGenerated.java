@@ -4532,6 +4532,198 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/multiFile")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultiFile extends AbstractBoxJsTest {
+        public void testAllFilesPresentInMultiFile() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiFile"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("classOfTheSameNameInAnotherPackage.kt")
+        public void testClassOfTheSameNameInAnotherPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/classOfTheSameNameInAnotherPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classesInheritedFromOtherFile.kt")
+        public void testClassesInheritedFromOtherFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/classesInheritedFromOtherFile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionsVisibleFromOtherFile.kt")
+        public void testFunctionsVisibleFromOtherFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/functionsVisibleFromOtherFile.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/box/multiModule")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultiModule extends AbstractBoxJsTest {
+        public void testAllFilesPresentInMultiModule() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("moduleAndVariableNameClash.kt")
+        public void testModuleAndVariableNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/moduleAndVariableNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
+        public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/box/multiModuleWrappers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultiModuleWrappers extends AbstractBoxJsTest {
+        public void testAllFilesPresentInMultiModuleWrappers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/amd")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Amd extends AbstractBoxJsTest {
+            public void testAllFilesPresentInAmd() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+            }
+
+            @TestMetadata("moduleWithNonIdentifierName.kt")
+            public void testModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/amd/moduleWithNonIdentifierName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/amd/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Common_js extends AbstractBoxJsTest {
+            public void testAllFilesPresentInCommon_js() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+            }
+
+            @TestMetadata("moduleWithNonIdentifierName.kt")
+            public void testModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js/moduleWithNonIdentifierName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/plain")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Plain extends AbstractBoxJsTest {
+            public void testAllFilesPresentInPlain() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+            }
+
+            @TestMetadata("moduleWithNonIdentifierName.kt")
+            public void testModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/plain/moduleWithNonIdentifierName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/plain/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/umd")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Umd extends AbstractBoxJsTest {
+            public void testAllFilesPresentInUmd() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/umd"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+            }
+
+            @TestMetadata("moduleWithNonIdentifierName.kt")
+            public void testModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/umd/moduleWithNonIdentifierName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/umd/simple.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/box/multideclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Multideclaration extends AbstractBoxJsTest {
+        public void testAllFilesPresentInMultideclaration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multideclaration"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("multiValForArray.kt")
+        public void testMultiValForArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValForArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValForMap.kt")
+        public void testMultiValForMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValForMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValForRange.kt")
+        public void testMultiValForRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValForRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValInFor.kt")
+        public void testMultiValInFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValInFor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValInIntFor.kt")
+        public void testMultiValInIntFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValInIntFor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValInIntRangeFor.kt")
+        public void testMultiValInIntRangeFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValInIntRangeFor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiValOrVar.kt")
+        public void testMultiValOrVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multideclaration/multiValOrVar.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/operatorOverloading")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

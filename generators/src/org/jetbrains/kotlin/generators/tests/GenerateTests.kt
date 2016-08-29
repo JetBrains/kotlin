@@ -1099,10 +1099,6 @@ fun main(args: Array<String>) {
             model("reservedWords/cases")
         }
 
-        testClass<AbstractMultiModuleTest>() {
-            model("multiModule/cases")
-        }
-
         testClass<AbstractReifiedTest>() {
             model("reified/cases")
         }

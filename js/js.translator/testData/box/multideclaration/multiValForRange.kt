@@ -7,16 +7,16 @@ class C(val i: Int) : Comparable<C>, A() {
 
 }
 
-fun ComparableRange<C>.iterator(): Iterator<C> {
+operator fun ClosedRange<C>.iterator(): Iterator<C> {
     var curI: Int = start.i - 1
 
-    return object :Iterator<C> {
+    return object : Iterator<C> {
         public override fun next(): C {
             curI++
             return C(curI)
         }
         public override fun hasNext(): Boolean {
-            return curI < end.i
+            return curI <= endInclusive.i
         }
 
     }
