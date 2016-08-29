@@ -106,9 +106,9 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     private fun getFirstLineOfString(node: ASTNode): String {
-        val targetStringLine = node.text.split("\n").firstOrNull {
-            it.replace("\"\"\"", "").isNotBlank()
-        } ?: return ""
+        val targetStringLine = node.text.split("\n").asSequence().map {
+            it.replace("\"\"\"", "")
+        }.firstOrNull(String::isNotBlank) ?: return ""
         return " ${targetStringLine.replace("\"\"\"", "").trim()} "
     }
 
