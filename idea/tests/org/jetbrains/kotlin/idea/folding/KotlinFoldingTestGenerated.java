@@ -78,6 +78,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/oneImport.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("singleLineString.kt")
+        public void testSingleLineString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/singleLineString.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/folding/checkCollapse")
@@ -115,6 +121,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/imports.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
+        @TestMetadata("multilineStrings.kt")
+        public void testMultilineStrings() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/multilineStrings.kt");
             doSettingsFoldingTest(fileName);
         }
     }

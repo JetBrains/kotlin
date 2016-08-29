@@ -81,7 +81,8 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         val parentType = node.treeParent?.elementType
         return type == KtNodeTypes.FUNCTION_LITERAL ||
                (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
-               type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC
+               type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
+               type == KtNodeTypes.STRING_TEMPLATE
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
@@ -99,8 +100,16 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
         node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
+        node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getFirstLineOfString(node)}...\"\"\""
         node.psi is KtImportList -> "..."
         else ->  "{...}"
+    }
+
+    private fun getFirstLineOfString(node: ASTNode): String {
+        val targetStringLine = node.text.split("\n").asSequence().map {
+            it.replace("\"\"\"", "")
+        }.firstOrNull(String::isNotBlank) ?: return ""
+        return " ${targetStringLine.replace("\"\"\"", "").trim()} "
     }
 
     private fun getFirstLineOfComment(node: ASTNode): String {
