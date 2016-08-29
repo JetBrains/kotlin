@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
+import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.DeclaredType
@@ -160,5 +161,27 @@ class ProcessorTests : AbstractProcessorTest() {
         val void = test.findMethod("b").returnType
         assertEquals(int, env.typeUtils.erasure(int))
         assertEquals(void, env.typeUtils.erasure(void))
+    }
+    
+    fun testErasure2() = test("Erasure2", "*") { set, roundEnv, env ->
+        val test = env.findClass("Test")
+        
+        val erasure = fun (t: JeMethodExecutableTypeMirror) = env.typeUtils.erasure(t)
+        fun check(methodName: String, toString: String, transform: (JeMethodExecutableTypeMirror) -> TypeMirror = { it }) {
+            val method = test.enclosedElements.first { it is JeMethodExecutableElement && it.simpleName.toString() == methodName }
+            assertEquals(toString, transform((method as JeMethodExecutableElement).asType()).toString())
+        }
+        
+        check("a", "()java.lang.String")
+        check("b", "(java.lang.String,java.lang.CharSequence)void")
+        check("c", "()int")
+        
+        check("d", "()T")
+        check("e", "<D>(D)D")
+        check("e", "(java.lang.Object)java.lang.Object", erasure)
+        check("f", "(java.util.List<? extends java.util.Map<java.lang.String,java.lang.Integer>>,int)void")
+        check("f", "(java.util.List,int)void", erasure)
+        check("g", "<D>(D)void")
+        check("g", "(java.lang.String)void", erasure)
     }
 }

@@ -57,5 +57,7 @@ class JeTypeVariableType(
         return psiType == (other as? JeTypeVariableType)?.psiType
     }
 
+    override fun toString() = parameter.name ?: "<none>"
+
     override fun hashCode() = psiType.hashCode()
 }
