@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
 class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): GeneratorWithScope {
@@ -82,26 +84,24 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
 
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
-        val statementGenerator = createStatementGenerator()
-
         val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffset, ktConstructor.endOffset)
 
-        val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
-        val delegatingConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktDelegatingConstructorCall)!!)
-        val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateCall(
-                ktDelegatingConstructorCall, delegatingConstructorCall, IrOperator.DELEGATING_CONSTRUCTOR_CALL)
-        irBlockBody.addStatement(irDelegatingConstructorCall)
+        generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
-        val ktBody = ktConstructor.bodyExpression
-        if (ktBody != null) {
-            statementGenerator.generateBlockBodyStatements(irBlockBody, ktBody)
+        ktConstructor.bodyExpression?.let { ktBody ->
+            createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
         }
 
         return irBlockBody
     }
 
-    fun generateAnonymousInitializer(ktInitializer: KtAnonymousInitializer): IrStatement {
-        return createStatementGenerator().generateStatement(ktInitializer.body!!)
+    private fun generateDelegatingConstructorCall(irBlockBody: IrBlockBodyImpl, ktConstructor: KtSecondaryConstructor) {
+        val statementGenerator = createStatementGenerator()
+        val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
+        val delegatingConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktDelegatingConstructorCall)!!)
+        val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateCall(
+                ktDelegatingConstructorCall, delegatingConstructorCall, IrOperator.DELEGATING_CONSTRUCTOR_CALL)
+        irBlockBody.addStatement(irDelegatingConstructorCall)
     }
 
     private fun createStatementGenerator() =
@@ -114,6 +114,90 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
     fun getLoop(expression: KtExpression): IrLoop? =
             loopTable[expression]
 
+    fun generatePrimaryConstructorBody(ktClassOrObject: KtClassOrObject): IrBody {
+        val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
 
+        generateSuperConstructorCall(irBlockBody, ktClassOrObject)
+        generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody, ktClassOrObject)
+        generateInitializersForClassBody(irBlockBody, ktClassOrObject)
+
+        return irBlockBody
+    }
+
+    fun generateSecondaryConstructorBodyWithClassInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrBody {
+        val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
+
+        generateDelegatingConstructorCall(irBlockBody, ktConstructor)
+        generateInitializersForClassBody(irBlockBody, ktClassOrObject)
+
+        ktConstructor.bodyExpression?.let { ktBody ->
+            createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
+        }
+
+        return irBlockBody
+    }
+
+    private fun generateSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
+        val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return
+        for (ktSuperTypeListEntry in ktSuperTypeList.entries) {
+            if (ktSuperTypeListEntry is KtSuperTypeCallEntry) {
+                val statementGenerator = createStatementGenerator()
+                val superConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperTypeListEntry)!!)
+                val irSuperConstructorCall = CallGenerator(statementGenerator).generateCall(
+                        ktSuperTypeListEntry, superConstructorCall, IrOperator.SUPER_CONSTRUCTOR_CALL)
+                irBlockBody.addStatement(irSuperConstructorCall)
+            }
+        }
+    }
+
+    private fun generateInitializersForClassBody(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
+        ktClassOrObject.getBody()?.let { ktClassBody ->
+            for (ktDeclaration in ktClassBody.declarations) {
+                when (ktDeclaration) {
+                    is KtProperty -> generateInitializerForPropertyDefinedInClassBody(irBlockBody, ktDeclaration)
+                    is KtClassInitializer -> generateAnonymousInitializer(irBlockBody, ktDeclaration)
+                }
+            }
+        }
+    }
+
+    private fun generateAnonymousInitializer(irBlockBody: IrBlockBodyImpl, ktClassInitializer: KtClassInitializer) {
+        if (ktClassInitializer.body == null) return
+        val irInitializer = generateAnonymousInitializer(ktClassInitializer)
+        irBlockBody.addStatement(irInitializer)
+    }
+
+    fun generateAnonymousInitializer(ktInitializer: KtAnonymousInitializer): IrStatement {
+        return createStatementGenerator().generateStatement(ktInitializer.body!!)
+    }
+
+    private fun generateInitializerForPropertyDefinedInClassBody(irBlockBody: IrBlockBodyImpl, ktProperty: KtProperty) {
+        val propertyDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty) as PropertyDescriptor
+        ktProperty.initializer?.let { ktInitializer ->
+            irBlockBody.addStatement(createPropertyInitializationExpression(
+                    ktProperty, propertyDescriptor, createStatementGenerator().generateExpression(ktInitializer)))
+        }
+    }
+
+    private fun generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
+        ktClassOrObject.getPrimaryConstructor()?.let { ktPrimaryConstructor ->
+            for (ktParameter in ktPrimaryConstructor.valueParameters) {
+                if (ktParameter.hasValOrVar()) {
+                    val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
+                    val valueParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
+
+                    irBlockBody.addStatement(
+                            createPropertyInitializationExpression(
+                                    ktParameter, propertyDescriptor,
+                                    IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
+                                                      valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
+                            ))
+                }
+            }
+        }
+    }
+
+    private fun createPropertyInitializationExpression(ktElement: KtElement, propertyDescriptor: PropertyDescriptor, value: IrExpression) =
+            IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor, value)
 }
 

@@ -1,0 +1,62 @@
+FILE /initVar.kt
+  CLASS CLASS TestInitVarFromParameter
+    FUN public constructor TestInitVarFromParameter(/*0*/ x: kotlin.Int)
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    PROPERTY public final var x: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+  CLASS CLASS TestInitVarInClass
+    FUN public constructor TestInitVarInClass()
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          CONST Int type=kotlin.Int value='0'
+    PROPERTY public final var x: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+  CLASS CLASS TestInitVarInInitBlock
+    FUN public constructor TestInitVarInInitBlock()
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit operator=null
+          CALL .<set-x> type=kotlin.Unit operator=EQ
+            $this: THIS public final class TestInitVarInInitBlock type=TestInitVarInInitBlock
+            <set-?>: CONST Int type=kotlin.Int value='0'
+    PROPERTY public final var x: kotlin.Int getter=null setter=null
+  CLASS CLASS TestInitVarWithCustomSetter
+    FUN public constructor TestInitVarWithCustomSetter()
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          CONST Int type=kotlin.Int value='0'
+    PROPERTY public final var x: kotlin.Int getter=null setter=<set-x>
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit property=x
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
+          GET_VAR value type=kotlin.Int operator=null
+  CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
+    PROPERTY public final var x: kotlin.Int getter=null setter=<set-x>
+    PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit property=x
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
+          GET_VAR value type=kotlin.Int operator=null
+    FUN public constructor TestInitVarWithCustomSetterWithExplicitCtor()
+      BLOCK_BODY
+        CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        BLOCK type=kotlin.Unit operator=null
+          CALL .<set-x> type=kotlin.Unit operator=EQ
+            $this: THIS public final class TestInitVarWithCustomSetterWithExplicitCtor type=TestInitVarWithCustomSetterWithExplicitCtor
+            value: CONST Int type=kotlin.Int value='0'
+  CLASS CLASS TestInitVarWithCustomSetterInCtor
+    PROPERTY public final var x: kotlin.Int getter=null setter=<set-x>
+    PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit property=x
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
+          GET_VAR value type=kotlin.Int operator=null
+    FUN public constructor TestInitVarWithCustomSetterInCtor()
+      BLOCK_BODY
+        CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        CALL .<set-x> type=kotlin.Unit operator=EQ
+          $this: THIS public final class TestInitVarWithCustomSetterInCtor type=TestInitVarWithCustomSetterInCtor
+          value: CONST Int type=kotlin.Int value='42'

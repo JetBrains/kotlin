@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -39,10 +42,9 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
         is ImplicitClassReceiver ->
             IrThisReferenceImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.type, receiver.classDescriptor)
         is ThisClassReceiver ->
-            (receiver as? ExpressionReceiver)?.expression?.let { receiverExpression ->
-                IrThisReferenceImpl(receiverExpression.startOffset, receiverExpression.endOffset, receiver.type,
-                                    receiver.classDescriptor)
-            } ?: TODO("Non-implicit ThisClassReceiver should be an expression receiver")
+            generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
+        is SuperCallReceiverValue ->
+            generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
         is ExpressionReceiver ->
             generateExpression(receiver.expression)
         is ClassValueReceiver ->
@@ -59,6 +61,13 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
         RematerializableValue(receiverExpression)
     else
         OnceExpressionValue(receiverExpression)
+}
+
+private fun generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {
+    val expressionReceiver = receiver as? ExpressionReceiver ?:
+                             throw AssertionError("'this' or 'super' receiver should be an expression receiver")
+    val ktReceiver = expressionReceiver.expression
+    return IrThisReferenceImpl(ktReceiver.startOffset, ktReceiver.endOffset, receiver.type, classDescriptor)
 }
 
 fun StatementGenerator.generateCallReceiver(
@@ -129,24 +138,33 @@ fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgumen
                 TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
         }
 
-fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder {
-    val call = pregenerateCallReceivers(resolvedCall)
+fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
+    val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return null
+    return getOrFail(BindingContext.REFERENCE_TARGET, superCallExpression.instanceReference) as ClassDescriptor
+}
 
+fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder {
+    val call = pregenerateCallWithReceivers(resolvedCall)
+    pregenerateValueArguments(call, resolvedCall)
+    return call
+}
+
+private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
         call.irValueArgumentsByIndex[index] = generateValueArgument(valueArgument, valueParameter)
     }
-
-    return call
 }
 
-fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
+fun StatementGenerator.pregenerateCallWithReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = CallBuilder(resolvedCall)
 
     call.callReceiver = generateCallReceiver(resolvedCall.call.callElement,
                                              resolvedCall.dispatchReceiver,
                                              resolvedCall.extensionReceiver,
                                              resolvedCall.call.isSafeCall())
+
+    call.superQualifier = getSuperQualifier(resolvedCall)
 
     return call
 }

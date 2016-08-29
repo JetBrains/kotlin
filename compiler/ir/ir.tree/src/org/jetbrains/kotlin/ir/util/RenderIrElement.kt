@@ -91,14 +91,23 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "THIS ${expression.classDescriptor.render()} type=${expression.type.render()}"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-            "CALL .${expression.descriptor.name} " +
+            "CALL .${expression.descriptor.name} ${expression.renderSuperQualifier()}" +
             "type=${expression.type.render()} operator=${expression.operator}"
+
+    private fun IrCall.renderSuperQualifier(): String =
+            superQualifier?.let { "superQualifier=${it.name} " } ?: ""
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
             "SET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
+
+    override fun visitGetBackingField(expression: IrGetBackingField, data: Nothing?): String =
+            "GET_BACKING_FIELD ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
+
+    override fun visitSetBackingField(expression: IrSetBackingField, data: Nothing?): String =
+            "SET_BACKING_FIELD ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
             "GET_OBJECT ${expression.descriptor.name} type=${expression.type.render()}"

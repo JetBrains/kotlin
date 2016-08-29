@@ -60,7 +60,15 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor) : IrFunction {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
-        val body = BodyGenerator(constructorDescriptor, context).generateSecondaryConstructorBody(ktConstructor)
+        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBody(ktConstructor)
+        return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
+                              constructorDescriptor, body)
+    }
+
+
+    fun generateSecondaryConstructorWithClassInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrDeclaration {
+        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
+        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithClassInitializers(ktConstructor, ktClassOrObject)
         return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
                               constructorDescriptor, body)
     }
@@ -101,8 +109,12 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     }
 
     private fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
-            BodyGenerator(scopeOwner, context).generateFunctionBody(ktBody)
+            createBodyGenerator(scopeOwner).generateFunctionBody(ktBody)
 
     private fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
-            BodyGenerator(scopeOwner, context).generatePropertyInitializerBody(ktBody)
+            createBodyGenerator(scopeOwner).generatePropertyInitializerBody(ktBody)
+
+    private fun createBodyGenerator(descriptor: CallableDescriptor) =
+            BodyGenerator(descriptor, context)
+
 }

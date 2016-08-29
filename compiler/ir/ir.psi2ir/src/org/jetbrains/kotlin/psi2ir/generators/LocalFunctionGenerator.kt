@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class LocalFunctionGenerator(val statementGenerator: StatementGenerator) : GeneratorWithScope {
-    override val scope: Scope get() = statementGenerator.scope
-    override val context: GeneratorContext get() = statementGenerator.context
-
+class LocalFunctionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
         val ktFun = ktLambda.functionLiteral
         val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda)

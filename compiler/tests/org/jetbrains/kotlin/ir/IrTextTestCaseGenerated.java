@@ -49,15 +49,57 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("delegatingConstructorCallsInSecondaryConstructors.kt")
+        public void testDelegatingConstructorCallsInSecondaryConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/delegatingConstructorCallsInSecondaryConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("initVal.kt")
+        public void testInitVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/initVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("initVar.kt")
+        public void testInitVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/initVar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/primaryConstructor.kt");
             doTest(fileName);
         }
 
+        @TestMetadata("primaryConstructorWithSuperConstructorCall.kt")
+        public void testPrimaryConstructorWithSuperConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/primaryConstructorWithSuperConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("qualifiedSuperCalls.kt")
+        public void testQualifiedSuperCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/qualifiedSuperCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithInitializersFromClassBody.kt")
+        public void testSecondaryConstructorWithInitializersFromClassBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/secondaryConstructorWithInitializersFromClassBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("secondaryConstructors.kt")
         public void testSecondaryConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/secondaryConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCalls.kt")
+        public void testSuperCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/superCalls.kt");
             doTest(fileName);
         }
     }
@@ -187,6 +229,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("extensionPropertyGetterCall.kt")
         public void testExtensionPropertyGetterCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/extensionPropertyGetterCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("field.kt")
+        public void testField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/field.kt");
             doTest(fileName);
         }
 

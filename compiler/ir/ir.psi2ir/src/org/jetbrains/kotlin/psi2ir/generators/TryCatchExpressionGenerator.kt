@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class TryCatchExpressionGenerator(val statementGenerator: StatementGenerator) : GeneratorWithScope {
-    override val scope: Scope get() = statementGenerator.scope
-    override val context: GeneratorContext get() = statementGenerator.context
-
+class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
         val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
         val irTryCatch = IrTryCatchImpl(ktTry.startOffset, ktTry.endOffset, resultType)

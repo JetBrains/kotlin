@@ -326,3 +326,7 @@ class StatementGenerator(
             LocalFunctionGenerator(this).generateFunction(function)
 }
 
+abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
+    override val scope: Scope get() = statementGenerator.scope
+    override val context: GeneratorContext get() = statementGenerator.context
+}

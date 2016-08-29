@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,7 +30,8 @@ class SimplePropertyLValue(
         val endOffset: Int,
         val irOperator: IrOperator?,
         val descriptor: PropertyDescriptor,
-        val callReceiver: CallReceiver
+        val callReceiver: CallReceiver,
+        val superQualifier: ClassDescriptor?
 ) : LValue, AssignmentReceiver {
     override val type: KotlinType get() = descriptor.type
 
@@ -39,7 +41,8 @@ class SimplePropertyLValue(
             IrGetterCallImpl(startOffset, endOffset, getter,
                              dispatchReceiverValue?.load(),
                              extensionReceiverValue?.load(),
-                             irOperator)
+                             irOperator,
+                             superQualifier)
         }
     }
 
@@ -49,7 +52,9 @@ class SimplePropertyLValue(
             IrSetterCallImpl(startOffset, endOffset, setter,
                              dispatchReceiverValue?.load(),
                              extensionReceiverValue?.load(),
-                             irExpression, irOperator)
+                             irExpression,
+                             irOperator,
+                             superQualifier)
         }
     }
 
@@ -71,7 +76,8 @@ class SimplePropertyLValue(
 
             val irResultExpression = withLValue(
                     SimplePropertyLValue(scope, startOffset, endOffset, irOperator, descriptor,
-                                         SimpleCallReceiver(tmpDispatchReceiverValue, tmpExtensionReceiverValue))
+                                         SimpleCallReceiver(tmpDispatchReceiverValue, tmpExtensionReceiverValue),
+                                         superQualifier)
             )
 
             if (variablesForReceivers.isEmpty()) {

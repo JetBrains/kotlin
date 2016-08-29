@@ -1,0 +1,21 @@
+FILE /secondaryConstructorWithInitializersFromClassBody.kt
+  CLASS CLASS Base
+    FUN public constructor Base()
+      BLOCK_BODY
+  CLASS CLASS TestProperty
+    PROPERTY public final val x: kotlin.Int = 0 getter=null setter=null
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public constructor TestProperty()
+      BLOCK_BODY
+        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          CONST Int type=kotlin.Int value='0'
+  CLASS CLASS TestInitBlock
+    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    FUN public constructor TestInitBlock()
+      BLOCK_BODY
+        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        BLOCK type=kotlin.Unit operator=null
+          SET_BACKING_FIELD x type=kotlin.Unit operator=null
+            CONST Int type=kotlin.Int value='0'

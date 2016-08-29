@@ -1,6 +1,10 @@
 FILE /multipleImplicitReceivers.kt
   CLASS OBJECT A
+    FUN private constructor A()
+      BLOCK_BODY
   CLASS OBJECT B
+    FUN private constructor B()
+      BLOCK_BODY
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B getter=<get-foo> setter=null
     PROPERTY_GETTER public open fun A.<get-foo>(): B property=foo

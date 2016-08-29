@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class LoopExpressionGenerator(val statementGenerator: StatementGenerator) : GeneratorWithScope {
-    override val scope: Scope get() = statementGenerator.scope
-    override val context: GeneratorContext get() = statementGenerator.context
-
+class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator){
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression =
             generateConditionalLoop(ktWhile,
                                     IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,

@@ -72,7 +72,8 @@ class CallGenerator(
             IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!,
                              dispatchReceiverValue?.load(),
                              extensionReceiverValue?.load(),
-                             IrOperator.GET_PROPERTY)
+                             IrOperator.GET_PROPERTY,
+                             call.superQualifier)
         }
     }
 

@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,13 +44,12 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     }
 
     private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
-        val ktPrimaryConstructor = ktClassOrObject.getPrimaryConstructor() ?: return
+        val primaryConstructorDescriptor = irClass.descriptor.unsubstitutedPrimaryConstructor ?: return
 
-        val primaryConstructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktPrimaryConstructor)
         val irPrimaryConstructor = IrFunctionImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
                                                   primaryConstructorDescriptor)
 
-        irPrimaryConstructor.body = generatePrimaryConstructorBodyFromClass(ktClassOrObject, primaryConstructorDescriptor)
+        irPrimaryConstructor.body = BodyGenerator(primaryConstructorDescriptor, context).generatePrimaryConstructorBody(ktClassOrObject)
 
         irClass.addMember(irPrimaryConstructor)
     }
@@ -66,7 +69,12 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
             for (ktDeclaration in ktClassBody.declarations) {
                 if (ktDeclaration is KtAnonymousInitializer) continue
 
-                val irMember = declarationGenerator.generateMemberDeclaration(ktDeclaration)
+                val irMember =
+                        if (ktDeclaration is KtSecondaryConstructor && isConstructorDelegatingToSuper(ktDeclaration, irClass.descriptor))
+                            declarationGenerator.generateSecondaryConstructorWithClassInitializers(ktDeclaration, ktClassOrObject)
+                        else
+                            declarationGenerator.generateMemberDeclaration(ktDeclaration)
+
                 irClass.addMember(irMember)
                 if (irMember is IrProperty) {
                     irMember.getter?.let { irClass.addMember(it) }
@@ -74,6 +82,12 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                 }
             }
         }
+    }
+
+    private fun isConstructorDelegatingToSuper(ktConstructor: KtSecondaryConstructor, classOwner: ClassDescriptor): Boolean {
+        val delegatingResolvedCall = getResolvedCall(ktConstructor.getDelegationCall())!!
+        val calleeOwner = delegatingResolvedCall.resultingDescriptor.containingDeclaration as ClassDescriptor
+        return calleeOwner != classOwner
     }
 
     private fun generatePropertyForPrimaryConstructorParameter(ktParameter: KtParameter): IrDeclaration {
@@ -86,52 +100,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         return irProperty
     }
 
-    private fun generatePrimaryConstructorBodyFromClass(ktClassOrObject: KtClassOrObject, primaryConstructorDescriptor: ConstructorDescriptor): IrBody {
-        val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
-
-        generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody, ktClassOrObject)
-        generateInitializersForClassBody(irBlockBody, ktClassOrObject, primaryConstructorDescriptor)
-
-        return irBlockBody
-    }
-
-    private fun generateInitializersForClassBody(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject, primaryConstructorDescriptor: ConstructorDescriptor) {
-        ktClassOrObject.getBody()?.let { ktClassBody ->
-            for (ktDeclaration in ktClassBody.declarations) {
-                when (ktDeclaration) {
-                    is KtProperty -> generateInitializerForPropertyDefinedInClassBody(irBlockBody, ktDeclaration)
-                    is KtClassInitializer -> generateAnonymousInitializer(irBlockBody, ktDeclaration, primaryConstructorDescriptor)
-                }
-            }
-        }
-    }
-
-    private fun generateAnonymousInitializer(irBlockBody: IrBlockBodyImpl, ktClassInitializer: KtClassInitializer, primaryConstructorDescriptor: ConstructorDescriptor) {
-        if (ktClassInitializer.body == null) return
-        val irInitializer = BodyGenerator(primaryConstructorDescriptor, context).generateAnonymousInitializer(ktClassInitializer)
-        irBlockBody.addStatement(irInitializer)
-    }
-
-    private fun generateInitializerForPropertyDefinedInClassBody(irBlockBody: IrBlockBodyImpl, ktProperty: KtProperty) {
-        val propertyDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty) as PropertyDescriptor
-        if (ktProperty.initializer != null) {
-            irBlockBody.addStatement(createInitializeProperty(ktProperty, propertyDescriptor))
-        }
-    }
-
-    private fun generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
-        ktClassOrObject.getPrimaryConstructor()?.let { ktPrimaryConstructor ->
-            for (ktParameter in ktPrimaryConstructor.valueParameters) {
-                if (ktParameter.hasValOrVar()) {
-                    val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
-                    irBlockBody.addStatement(createInitializeProperty(ktParameter, propertyDescriptor))
-                }
-            }
-        }
-    }
-
-    private fun createInitializeProperty(ktElement: KtElement, propertyDescriptor: PropertyDescriptor) =
-            IrInitializePropertyImpl(ktElement.startOffset, ktElement.endOffset, context.builtIns.unitType, propertyDescriptor)
 
 
 }

@@ -1,5 +1,7 @@
 FILE /safeCallWithIncrementDecrement.kt
   CLASS CLASS C
+    FUN public constructor C()
+      BLOCK_BODY
   PROPERTY public var test.C?.p: kotlin.Int getter=<get-p> setter=<set-p>
   PROPERTY_GETTER public fun test.C?.<get-p>(): kotlin.Int property=p
     BLOCK_BODY

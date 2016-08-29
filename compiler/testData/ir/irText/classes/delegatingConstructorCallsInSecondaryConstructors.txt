@@ -1,0 +1,14 @@
+FILE /delegatingConstructorCallsInSecondaryConstructors.kt
+  CLASS CLASS Base
+    FUN public constructor Base()
+      BLOCK_BODY
+  CLASS CLASS Test
+    FUN public constructor Test()
+      BLOCK_BODY
+        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+    FUN public constructor Test(/*0*/ xx: kotlin.Int)
+      BLOCK_BODY
+        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+    FUN public constructor Test(/*0*/ xx: kotlin.Short)
+      BLOCK_BODY
+        CALL .<init> type=Test operator=DELEGATING_CONSTRUCTOR_CALL

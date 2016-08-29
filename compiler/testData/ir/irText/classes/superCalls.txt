@@ -1,0 +1,25 @@
+FILE /superCalls.kt
+  CLASS CLASS Base
+    FUN public constructor Base()
+      BLOCK_BODY
+        SET_BACKING_FIELD bar type=kotlin.Unit operator=null
+          CONST String type=kotlin.String value=''
+    FUN public open fun foo(): kotlin.Unit
+      BLOCK_BODY
+    PROPERTY public open val bar: kotlin.String = "" getter=null setter=null
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=''
+  CLASS CLASS Derived
+    FUN public constructor Derived()
+      BLOCK_BODY
+        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+    FUN public open override /*1*/ fun foo(): kotlin.Unit
+      BLOCK_BODY
+        CALL .foo superQualifier=Base type=kotlin.Unit operator=null
+          $this: THIS public final class Derived : Base type=Base
+    PROPERTY public open override /*1*/ val bar: kotlin.String getter=<get-bar> setter=null
+    PROPERTY_GETTER public open override /*1*/ fun <get-bar>(): kotlin.String property=bar
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=<get-bar>
+          CALL .<get-bar> superQualifier=Base type=kotlin.String operator=GET_PROPERTY
+            $this: THIS public final class Derived : Base type=Base

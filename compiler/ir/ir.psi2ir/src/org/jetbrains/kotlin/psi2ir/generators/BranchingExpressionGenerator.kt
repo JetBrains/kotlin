@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
-class BranchingExpressionGenerator(val statementGenerator: StatementGenerator) : GeneratorWithScope {
-    override val scope: Scope get() = statementGenerator.scope
-    override val context: GeneratorContext get() = statementGenerator.context
-
+class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateIfExpression(expression: KtIfExpression): IrExpression {
         val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
 
