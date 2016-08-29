@@ -101,7 +101,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
         if (irSubject == null) {
-            if (irWhen.branchesCount == 0)
+            if (irWhen.branchesCount == 0 && irWhen.elseBranch == null)
                 return IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrOperator.WHEN)
             else
                 return irWhen

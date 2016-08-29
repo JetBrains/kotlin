@@ -18,13 +18,17 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
+import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class SimplePropertyLValue(
+        val context: GeneratorContext,
         val scope: Scope,
         val startOffset: Int,
         val endOffset: Int,
@@ -35,49 +39,45 @@ class SimplePropertyLValue(
 ) : LValue, AssignmentReceiver {
     override val type: KotlinType get() = descriptor.type
 
-    override fun load(): IrExpression {
-        val getter = descriptor.getter ?: throw AssertionError("No getter for $descriptor")
-        return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            IrGetterCallImpl(startOffset, endOffset, getter,
-                             dispatchReceiverValue?.load(),
-                             extensionReceiverValue?.load(),
-                             irOperator,
-                             superQualifier)
-        }
-    }
-
-    override fun store(irExpression: IrExpression): IrExpression {
-        val setter = descriptor.setter ?: throw AssertionError("No setter for $descriptor")
-        return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            IrSetterCallImpl(startOffset, endOffset, setter,
-                             dispatchReceiverValue?.load(),
-                             extensionReceiverValue?.load(),
-                             irExpression,
-                             irOperator,
-                             superQualifier)
-        }
-    }
-
-    override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
-        return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val variablesForReceivers = SmartList<IrVariable>()
-
-            val irResultExpression = withLValue(
-                    SimplePropertyLValue(scope, startOffset, endOffset, irOperator, descriptor,
-                                         SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue),
-                                         superQualifier)
-            )
-
-            if (variablesForReceivers.isEmpty()) {
-                irResultExpression
+    override fun load(): IrExpression =
+            callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+                val getter = descriptor.getter ?: context.syntheticDescriptorsFactory.getOrCreatePropertyGetter(descriptor)
+                IrGetterCallImpl(startOffset, endOffset, getter,
+                                 dispatchReceiverValue?.load(),
+                                 extensionReceiverValue?.load(),
+                                 irOperator,
+                                 superQualifier)
             }
-            else {
-                val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, irOperator)
-                irBlock.addAll(variablesForReceivers)
-                irBlock.addStatement(irResultExpression)
-                irBlock
-            }
-        }
 
-    }
+    override fun store(irExpression: IrExpression) =
+            callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+                val setter = descriptor.setter ?: context.syntheticDescriptorsFactory.getOrCreatePropertySetter(descriptor)
+                IrSetterCallImpl(startOffset, endOffset, setter,
+                                 dispatchReceiverValue?.load(),
+                                 extensionReceiverValue?.load(),
+                                 irExpression,
+                                 irOperator,
+                                 superQualifier)
+            }
+
+    override fun assign(withLValue: (LValue) -> IrExpression) =
+            callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+                val variablesForReceivers = SmartList<IrVariable>()
+
+                val irResultExpression = withLValue(
+                        SimplePropertyLValue(context, scope, startOffset, endOffset, irOperator, descriptor,
+                                             SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue),
+                                             superQualifier)
+                )
+
+                if (variablesForReceivers.isEmpty()) {
+                    irResultExpression
+                }
+                else {
+                    val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, irOperator)
+                    irBlock.addAll(variablesForReceivers)
+                    irBlock.addStatement(irResultExpression)
+                    irBlock
+                }
+            }
 }

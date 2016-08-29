@@ -1,0 +1,47 @@
+FILE /jvmStaticFieldReference.kt
+  FUN public fun testFun(): kotlin.Unit
+    BLOCK_BODY
+      CALL .println type=kotlin.Unit operator=null
+        $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+          CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+        p0: CONST String type=kotlin.String value='testFun'
+  PROPERTY public var testProp: kotlin.Any getter=<get-testProp> setter=<set-testProp>
+  PROPERTY_GETTER public fun <get-testProp>(): kotlin.Any property=testProp
+    BLOCK_BODY
+      CALL .println type=kotlin.Unit operator=null
+        $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+          CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+        p0: CONST String type=kotlin.String value='testProp/get'
+      RETURN type=kotlin.Nothing from=<get-testProp>
+        CONST Int type=kotlin.Int value='42'
+  PROPERTY_SETTER public fun <set-testProp>(/*0*/ value: kotlin.Any): kotlin.Unit property=testProp
+    BLOCK_BODY
+      CALL .println type=kotlin.Unit operator=null
+        $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+          CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+        p0: CONST String type=kotlin.String value='testProp/set'
+  CLASS CLASS TestClass
+    FUN public constructor TestClass()
+      BLOCK_BODY
+        SET_BACKING_FIELD test type=kotlin.Unit operator=null
+          WHEN type=kotlin.Int operator=WHEN
+            else: BLOCK type=kotlin.Int operator=null
+              CALL .println type=kotlin.Unit operator=null
+                $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                  CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+                p0: CONST String type=kotlin.String value='TestClass/test'
+              CONST Int type=kotlin.Int value='42'
+        BLOCK type=kotlin.Unit operator=null
+          CALL .println type=kotlin.Unit operator=null
+            $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+              CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+            p0: CONST String type=kotlin.String value='TestClass/init'
+    PROPERTY public final val test: kotlin.Int getter=null setter=null
+      EXPRESSION_BODY
+        WHEN type=kotlin.Int operator=WHEN
+          else: BLOCK type=kotlin.Int operator=null
+            CALL .println type=kotlin.Unit operator=null
+              $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+              p0: CONST String type=kotlin.String value='TestClass/test'
+            CONST Int type=kotlin.Int value='42'

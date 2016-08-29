@@ -60,7 +60,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
     ): IrExpression {
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val getter = descriptor.getter ?:
-                         throw AssertionError("No getter for property $descriptor")
+                         context.syntheticDescriptorsFactory.getOrCreatePropertyGetter(descriptor)
             IrGetterCallImpl(startOffset, endOffset, getter,
                              dispatchReceiverValue?.load(),
                              extensionReceiverValue?.load(),

@@ -18,17 +18,18 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrModuleImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class GeneratorContext(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext
 ) {
+    val storageManager = LockBasedStorageManager.NO_LOCKS
     val sourceManager = PsiSourceManager()
+    val syntheticDescriptorsFactory by lazy { SyntheticDescriptorsFactory(storageManager) }
 
     val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
     val irBuiltIns = IrBuiltIns(builtIns)
