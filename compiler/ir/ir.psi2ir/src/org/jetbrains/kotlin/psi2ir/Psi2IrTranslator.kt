@@ -21,30 +21,18 @@ import org.jetbrains.kotlin.ir.declarations.IrModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
-import org.jetbrains.kotlin.psi2ir.transformations.foldStringConcatenation
-import org.jetbrains.kotlin.psi2ir.transformations.inlineDesugaredBlocks
-import org.jetbrains.kotlin.psi2ir.transformations.inlineSafeCallChains
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class Psi2IrTranslator(val configuration: Configuration = Configuration()) {
-    class Configuration(
-            val shouldInlineDesugaredBlocks: Boolean = false,
-            val shouldFoldStringConcatenation: Boolean = true,
-            val shouldInlineSafeCallChains: Boolean = true
-    )
-
+class Psi2IrTranslator() {
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModule {
         val context = GeneratorContext(moduleDescriptor, bindingContext)
         val irModule = ModuleGenerator(context).generateModule(ktFiles)
-        postprocess(irModule, context)
+        postprocess(irModule)
         return irModule
     }
 
-    private fun postprocess(irModule: IrModule, context: GeneratorContext) {
-        insertImplicitCasts(irModule.irBuiltins.builtIns, irModule)
-        if (configuration.shouldInlineDesugaredBlocks) inlineDesugaredBlocks(irModule)
-        if (configuration.shouldFoldStringConcatenation) foldStringConcatenation(irModule)
-        if (configuration.shouldInlineSafeCallChains) inlineSafeCallChains(context, irModule)
+    private fun postprocess(irModule: IrModule) {
+        insertImplicitCasts(irModule.descriptor.builtIns, irModule)
     }
 }

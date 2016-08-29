@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
-import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -81,7 +81,7 @@ class StatementGenerator(
         val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
                                   context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
         val ktInitializer = multiDeclaration.initializer!!
-        val containerValue = createRematerializableOrTemporary(scope, ktInitializer.genExpr(), irBlock, "container")
+        val containerValue = scope.createTemporaryVariableInBlock(ktInitializer.genExpr(), irBlock, "container")
 
         declareComponentVariablesInBlock(multiDeclaration, irBlock, containerValue)
 

@@ -24,11 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
-import org.jetbrains.kotlin.psi2ir.intermediate.getValueArgumentsInParameterOrder
-import org.jetbrains.kotlin.psi2ir.intermediate.isValueArgumentReorderingRequired
-import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
-import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -63,7 +59,9 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             call: CallBuilder
     ): IrExpression {
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!,
+            val getter = descriptor.getter ?:
+                         throw AssertionError("No getter for property $descriptor")
+            IrGetterCallImpl(startOffset, endOffset, getter,
                              dispatchReceiverValue?.load(),
                              extensionReceiverValue?.load(),
                              IrOperator.GET_PROPERTY,
@@ -126,7 +124,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
             val irArgument = call.getValueArgument(valueParameter) ?: continue
-            val irArgumentValue = createRematerializableOrTemporary(scope, irArgument, irBlock, valueParameter.name.asString())
+            val irArgumentValue = scope.createTemporaryVariableInBlock(irArgument, irBlock, valueParameter.name.asString())
             irArgumentValues[valueParameter] = irArgumentValue
         }
 

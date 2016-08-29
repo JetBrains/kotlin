@@ -6,12 +6,16 @@ FILE /arrayAugmentedAssignment2.kt
   FUN public fun IB.test(/*0*/ a: IA): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ
+        VAR val tmp0_array: IA
+          GET_VAR a type=IA operator=null
+        VAR val tmp1_index0: kotlin.String
+          CONST String type=kotlin.String value=''
         CALL .set type=kotlin.Unit operator=PLUSEQ
           $this: $RECEIVER of: test type=IB
-          $receiver: GET_VAR a type=IA operator=null
-          index: CONST String type=kotlin.String value=''
+          $receiver: GET_VAR tmp0_array type=IA operator=null
+          index: GET_VAR tmp1_index0 type=kotlin.String operator=null
           value: CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR a type=IA operator=null
-              index: CONST String type=kotlin.String value=''
+              $this: GET_VAR tmp0_array type=IA operator=null
+              index: GET_VAR tmp1_index0 type=kotlin.String operator=null
             other: CONST Int type=kotlin.Int value='42'

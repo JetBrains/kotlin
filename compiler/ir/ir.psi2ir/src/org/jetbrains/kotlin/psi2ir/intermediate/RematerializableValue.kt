@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -27,26 +28,8 @@ class RematerializableValue(val irExpression: IrExpressionWithCopy) : Intermedia
     override fun load(): IrExpression = irExpression.copy()
 }
 
-fun createRematerializableValue(irExpression: IrExpression): IntermediateValue? =
-        (irExpression as? IrExpressionWithCopy)?.let { RematerializableValue(it) }
-
-inline fun createRematerializableOrTemporary(
-        scope: Scope,
-        irExpression: IrExpression,
-        nameHint: String? = null,
-        addVariable: (IrVariable) -> Unit
-): IntermediateValue {
-    val rematerializable = createRematerializableValue(irExpression)
-    if (rematerializable != null) {
-        return rematerializable
-    }
-
-    val temporaryVariable = scope.createTemporaryVariable(irExpression, nameHint)
-    addVariable(temporaryVariable)
+fun Scope.createTemporaryVariableInBlock(irExpression: IrExpression, block: IrBlockImpl, nameHint: String? = null): IntermediateValue {
+    val temporaryVariable = createTemporaryVariable(irExpression, nameHint)
+    block.addStatement(temporaryVariable)
     return VariableLValue(temporaryVariable)
 }
-
-fun createRematerializableOrTemporary(scope: Scope, irExpression: IrExpression, block: IrBlockImpl, nameHint: String? = null): IntermediateValue =
-        createRematerializableOrTemporary(scope, irExpression, nameHint) {
-            block.addStatement(it)
-        }

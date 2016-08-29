@@ -28,11 +28,22 @@ FILE /variableAsFunctionCall.kt
   FUN public fun test4(/*0*/ ns: kotlin.String?): kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test4
-        WHEN type=kotlin.String? operator=SAFE_CALL
-          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-            arg0: GET_VAR ns type=kotlin.String? operator=null
-            arg1: CONST Null type=kotlin.Nothing? value='null'
-          then: CONST Null type=kotlin.Nothing? value='null'
-          else: CALL .invoke type=kotlin.String operator=null
-            $this: CALL .k type=() -> kotlin.String operator=null
-              $this: GET_VAR ns type=kotlin.String? operator=null
+        BLOCK type=kotlin.String? operator=SAFE_CALL
+          VAR val tmp1_safe_receiver: (() -> kotlin.String)?
+            BLOCK type=(() -> kotlin.String)? operator=SAFE_CALL
+              VAR val tmp0_safe_receiver: kotlin.String?
+                GET_VAR ns type=kotlin.String? operator=null
+              WHEN type=(() -> kotlin.String)? operator=SAFE_CALL
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+                  arg1: CONST Null type=kotlin.Nothing? value='null'
+                then: CONST Null type=kotlin.Nothing? value='null'
+                else: CALL .k type=() -> kotlin.String operator=null
+                  $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+          WHEN type=kotlin.String? operator=SAFE_CALL
+            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR tmp1_safe_receiver type=(() -> kotlin.String)? operator=null
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: CONST Null type=kotlin.Nothing? value='null'
+            else: CALL .invoke type=kotlin.String operator=null
+              $this: GET_VAR tmp1_safe_receiver type=(() -> kotlin.String)? operator=null

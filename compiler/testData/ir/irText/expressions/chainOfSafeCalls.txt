@@ -14,20 +14,39 @@ FILE /chainOfSafeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test
         BLOCK type=C? operator=SAFE_CALL
-          VAR val tmp2_safe_receiver: C?
-            WHEN type=C? operator=SAFE_CALL
-              if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                arg0: GET_VAR nc type=C? operator=null
-                arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: CONST Null type=kotlin.Nothing? value='null'
-              else: CALL .bar type=C? operator=null
-                $this: CALL .foo type=C operator=null
-                  $this: GET_VAR nc type=C? operator=null
+          VAR val tmp3_safe_receiver: C?
+            BLOCK type=C? operator=SAFE_CALL
+              VAR val tmp2_safe_receiver: C?
+                BLOCK type=C? operator=SAFE_CALL
+                  VAR val tmp1_safe_receiver: C?
+                    BLOCK type=C? operator=SAFE_CALL
+                      VAR val tmp0_safe_receiver: C?
+                        GET_VAR nc type=C? operator=null
+                      WHEN type=C? operator=SAFE_CALL
+                        if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                          arg0: GET_VAR tmp0_safe_receiver type=C? operator=null
+                          arg1: CONST Null type=kotlin.Nothing? value='null'
+                        then: CONST Null type=kotlin.Nothing? value='null'
+                        else: CALL .foo type=C operator=null
+                          $this: GET_VAR tmp0_safe_receiver type=C? operator=null
+                  WHEN type=C? operator=SAFE_CALL
+                    if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                      arg0: GET_VAR tmp1_safe_receiver type=C? operator=null
+                      arg1: CONST Null type=kotlin.Nothing? value='null'
+                    then: CONST Null type=kotlin.Nothing? value='null'
+                    else: CALL .bar type=C? operator=null
+                      $this: GET_VAR tmp1_safe_receiver type=C? operator=null
+              WHEN type=C? operator=SAFE_CALL
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR tmp2_safe_receiver type=C? operator=null
+                  arg1: CONST Null type=kotlin.Nothing? value='null'
+                then: CONST Null type=kotlin.Nothing? value='null'
+                else: CALL .foo type=C operator=null
+                  $this: GET_VAR tmp2_safe_receiver type=C? operator=null
           WHEN type=C? operator=SAFE_CALL
             if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp2_safe_receiver type=C? operator=null
+              arg0: GET_VAR tmp3_safe_receiver type=C? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
             else: CALL .foo type=C operator=null
-              $this: CALL .foo type=C operator=null
-                $this: GET_VAR tmp2_safe_receiver type=C? operator=null
+              $this: GET_VAR tmp3_safe_receiver type=C? operator=null

@@ -2,23 +2,26 @@ FILE /stringPlus.kt
   FUN public fun test1(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test1
-        STRING_CONCATENATION type=kotlin.String
-          GET_VAR a type=kotlin.String operator=null
-          GET_VAR b type=kotlin.Any operator=null
+        CALL .plus type=kotlin.String operator=PLUS
+          $this: GET_VAR a type=kotlin.String operator=null
+          other: GET_VAR b type=kotlin.Any operator=null
   FUN public fun test2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test2
-        STRING_CONCATENATION type=kotlin.String
-          GET_VAR a type=kotlin.String operator=null
-          CONST String type=kotlin.String value='+'
-          GET_VAR b type=kotlin.Int operator=null
+        CALL .plus type=kotlin.String operator=PLUS
+          $this: CALL .plus type=kotlin.String operator=PLUS
+            $this: GET_VAR a type=kotlin.String operator=null
+            other: CONST String type=kotlin.String value='+'
+          other: GET_VAR b type=kotlin.Int operator=null
   FUN public fun test3(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test3
-        STRING_CONCATENATION type=kotlin.String
-          GET_VAR a type=kotlin.String operator=null
-          CONST String type=kotlin.String value='+'
-          CALL .plus type=kotlin.Int operator=PLUS
-            $this: GET_VAR b type=kotlin.Int operator=null
-            other: CONST Int type=kotlin.Int value='1'
-          GET_VAR a type=kotlin.String operator=null
+        CALL .plus type=kotlin.String operator=PLUS
+          $this: CALL .plus type=kotlin.String operator=PLUS
+            $this: CALL .plus type=kotlin.String operator=PLUS
+              $this: GET_VAR a type=kotlin.String operator=null
+              other: CONST String type=kotlin.String value='+'
+            other: CALL .plus type=kotlin.Int operator=PLUS
+              $this: GET_VAR b type=kotlin.Int operator=null
+              other: CONST Int type=kotlin.Int value='1'
+          other: GET_VAR a type=kotlin.String operator=null

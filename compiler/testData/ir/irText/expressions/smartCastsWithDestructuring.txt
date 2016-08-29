@@ -16,10 +16,12 @@ FILE /smartCastsWithDestructuring.kt
           GET_VAR x type=I1 operator=null
         then: RETURN type=kotlin.Nothing from=test
       BLOCK type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
+        VAR val tmp0_container: I1
+          GET_VAR x type=I1 operator=null
         VAR val c1: kotlin.Int
           CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
-            $receiver: GET_VAR x type=I1 operator=null
+            $receiver: GET_VAR tmp0_container type=I1 operator=null
         VAR val c2: kotlin.String
           CALL .component2 type=kotlin.String operator=COMPONENT_N(index=2)
             $receiver: TYPE_OP operator=IMPLICIT_CAST typeOperand=I2
-              GET_VAR x type=I1 operator=null
+              GET_VAR tmp0_container type=I1 operator=null

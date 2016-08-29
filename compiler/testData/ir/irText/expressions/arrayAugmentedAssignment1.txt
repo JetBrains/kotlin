@@ -24,13 +24,17 @@ FILE /arrayAugmentedAssignment1.kt
       VAR var x: kotlin.IntArray
         CALL .foo type=kotlin.IntArray operator=null
       BLOCK type=kotlin.Unit operator=PLUSEQ
+        VAR val tmp0_array: kotlin.IntArray
+          GET_VAR x type=kotlin.IntArray operator=null
+        VAR val tmp1_index0: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
         CALL .set type=kotlin.Unit operator=PLUSEQ
-          $this: GET_VAR x type=kotlin.IntArray operator=null
-          index: CONST Int type=kotlin.Int value='0'
+          $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+          index: GET_VAR tmp1_index0 type=kotlin.Int operator=null
           value: CALL .plus type=kotlin.Int operator=PLUSEQ
             $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR x type=kotlin.IntArray operator=null
-              index: CONST Int type=kotlin.Int value='0'
+              $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
+              index: GET_VAR tmp1_index0 type=kotlin.Int operator=null
             other: CONST Int type=kotlin.Int value='1'
   FUN public fun testCall(): kotlin.Unit
     BLOCK_BODY
@@ -53,13 +57,15 @@ FILE /arrayAugmentedAssignment1.kt
         VAR val tmp0_array: kotlin.IntArray
           CALL .<get-x> type=kotlin.IntArray operator=GET_PROPERTY
             $this: GET_VAR c type=C operator=null
-        VAR val tmp1: kotlin.Int
+        VAR val tmp1_index0: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        VAR val tmp2: kotlin.Int
           CALL .get type=kotlin.Int operator=POSTFIX_INCR
             $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-            index: CONST Int type=kotlin.Int value='0'
+            index: GET_VAR tmp1_index0 type=kotlin.Int operator=null
         CALL .set type=kotlin.Unit operator=POSTFIX_INCR
           $this: GET_VAR tmp0_array type=kotlin.IntArray operator=null
-          index: CONST Int type=kotlin.Int value='0'
+          index: GET_VAR tmp1_index0 type=kotlin.Int operator=null
           value: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-            $this: GET_VAR tmp1 type=kotlin.Int operator=null
-        GET_VAR tmp1 type=kotlin.Int operator=null
+            $this: GET_VAR tmp2 type=kotlin.Int operator=null
+        GET_VAR tmp2 type=kotlin.Int operator=null

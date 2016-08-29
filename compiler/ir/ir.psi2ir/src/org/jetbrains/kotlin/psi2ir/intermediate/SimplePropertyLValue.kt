@@ -62,21 +62,9 @@ class SimplePropertyLValue(
         return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val variablesForReceivers = SmartList<IrVariable>()
 
-            val tmpDispatchReceiverValue = dispatchReceiverValue?.load()?.let {
-                createRematerializableOrTemporary(scope, it, "this") {
-                    irVar -> variablesForReceivers.add(irVar)
-                }
-            }
-
-            val tmpExtensionReceiverValue = extensionReceiverValue?.load()?.let {
-                createRematerializableOrTemporary(scope, it, "receiver") {
-                    irVar -> variablesForReceivers.add(irVar)
-                }
-            }
-
             val irResultExpression = withLValue(
                     SimplePropertyLValue(scope, startOffset, endOffset, irOperator, descriptor,
-                                         SimpleCallReceiver(tmpDispatchReceiverValue, tmpExtensionReceiverValue),
+                                         SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue),
                                          superQualifier)
             )
 

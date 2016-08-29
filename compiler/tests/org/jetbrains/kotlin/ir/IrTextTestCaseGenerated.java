@@ -286,6 +286,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("jvmStaticFieldReference.kt")
+        public void testJvmStaticFieldReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/jvmStaticFieldReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/literals.kt");

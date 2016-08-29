@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.createRematerializableOrTemporary
+import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -112,7 +112,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
         val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, IrOperator.ELVIS)
-        val irArgument0Value = createRematerializableOrTemporary(scope, irArgument0, irBlock, "elvis_lhs")
+        val irArgument0Value = scope.createTemporaryVariableInBlock(irArgument0, irBlock, "elvis_lhs")
         irBlock.addStatement(IrIfThenElseImpl(
                 expression.startOffset, expression.endOffset, returnType,
                 context.equalsNull(expression.startOffset, expression.endOffset, irArgument0Value.load()),
@@ -222,19 +222,14 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val resultType = irArgument.type.makeNotNullable()
         val irBlock = IrBlockImpl(ktOperator.startOffset, ktOperator.endOffset, resultType, irOperator)
-        val argumentValue = createRematerializableOrTemporary(scope, irArgument, irBlock, "notnull")
+        val argumentValue = scope.createTemporaryVariableInBlock(irArgument, irBlock, "notnull")
         val irIfThenElse = IrIfThenElseImpl(ktOperator.startOffset, ktOperator.endOffset, resultType,
                                             context.equalsNull(ktOperator.startOffset, ktOperator.endOffset, argumentValue.load()),
                                             context.throwNpe(ktOperator.startOffset, ktOperator.endOffset, irOperator),
                                             argumentValue.load())
 
-        return if (irBlock.statements.isEmpty()) {
-            irIfThenElse
-        }
-        else {
-            irBlock.addStatement(irIfThenElse)
-            irBlock
-        }
+        irBlock.addStatement(irIfThenElse)
+        return irBlock
     }
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
