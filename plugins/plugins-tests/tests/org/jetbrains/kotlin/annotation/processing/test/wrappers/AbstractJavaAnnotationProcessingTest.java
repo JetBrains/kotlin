@@ -60,7 +60,7 @@ public abstract class AbstractJavaAnnotationProcessingTest extends KotlinMultiFi
         TestCase.assertTrue("No FqName specified. First line of the form '// f.q.Name' expected", matcher.find());
         String fqName = matcher.group(1);
 
-        getEnvironment().updateClasspath(Collections.singletonList(testDir));
+        getEnvironment().tryUpdateClasspath(Collections.singletonList(testDir));
 
         super.doTest(new File(testDir.getParentFile(), "common.kt").getCanonicalPath());
         
