@@ -47,17 +47,11 @@ abstract class AbstractCompanionObjectTest : JsBasicBoxTest("objectIntrinsics/")
 
 abstract class AbstractFunctionExpressionTest : JsBasicBoxTest("functionExpression/")
 
-abstract class AbstractInlineEvaluationOrderTest : JsBasicBoxTest("inlineEvaluationOrder/")
-
-abstract class AbstractInlineJsStdlibTest : JsBasicBoxTest("inlineStdlib/")
-
 abstract class AbstractJsCodeTest : JsBasicBoxTest("jsCode/")
 
 abstract class AbstractLabelTest : JsBasicBoxTest("labels/")
 
 abstract class AbstractMultiModuleTest : JsBasicBoxTest("multiModule/")
-
-abstract class AbstractInlineMultiModuleTest : JsBasicBoxTest("inlineMultiModule/")
 
 abstract class AbstractReservedWordTest : JsBasicBoxTest("reservedWords/")
 
