@@ -18,7 +18,7 @@ class ControllerEmulator : Controller {
     private val MOVE_VELOCITY = 0.05//sm/ms
     private val ROTATION_VELOCITY = 0.05//degrees/ms
 
-    private val ADD_RANDOM = true
+    private val ADD_RANDOM = false
 
     enum class MoveDirection {
         LEFT,
@@ -32,7 +32,7 @@ class ControllerEmulator : Controller {
         val moveTimes = route.times
         val moveDirections = route.directions
         //list of move direction and time to this move in ms
-        val commands: MutableList<Pair<MoveDirection, Int>> = mutableListOf()
+        val commands: MutableList<Pair<MoveDirection, Double>> = mutableListOf()
 
         moveTimes.forEachIndexed { idx, value ->
             val moveDirection =
@@ -44,13 +44,31 @@ class ControllerEmulator : Controller {
                         else -> MoveDirection.ERROR
                     }
 
-            commands.add(Pair(moveDirection, value))
+            if (moveDirection == MoveDirection.FORWARD || moveDirection == MoveDirection.BACKWARD) {
+                commands.add(Pair(moveDirection, value * MOVE_VELOCITY))
+            } else {
+                commands.add(Pair(moveDirection, value * ROTATION_VELOCITY))
+            }
         }
         executeCommand(commands, 0, callback)
     }
 
     override fun executeMetricRoute(request: RouteMetricRequest, callback: (ByteArray) -> Unit) {
-        throw UnsupportedOperationException()
+        val commands: MutableList<Pair<MoveDirection, Double>> = mutableListOf()
+
+        val moveDistances = request.distances
+        moveDistances.forEachIndexed { idx, value ->
+            val moveDirection =
+                    when (request.directions[idx]) {
+                        0 -> MoveDirection.FORWARD
+                        1 -> MoveDirection.BACKWARD
+                        2 -> MoveDirection.LEFT
+                        3 -> MoveDirection.RIGHT
+                        else -> MoveDirection.ERROR
+                    }
+            commands.add(Pair(moveDirection, value.toDouble()))
+        }
+        executeCommand(commands, 0, callback)
     }
 
     override fun executeRequestSensorData(sonarRequest: SonarRequest, callback: (ByteArray) -> Unit) {
@@ -151,7 +169,7 @@ class ControllerEmulator : Controller {
     }
 
 
-    fun executeCommand(commands: List<Pair<MoveDirection, Int>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
+    fun executeCommand(commands: List<Pair<MoveDirection, Double>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
         if (currentCommandIdx == commands.size) {
             val responseMessage = RouteResponse.BuilderRouteResponse(0).build()
             callBack.invoke(encodeProtoBuf(responseMessage))
@@ -161,14 +179,14 @@ class ControllerEmulator : Controller {
 
         //refresh car state
         val carInstance = CarState.instance
-        val commandTime = currentCommand.second
+        val commandDistance = currentCommand.second
         val delta = if (ADD_RANDOM) Math.random() * 0.2 + 0.9 else 1.0// delta in [0.9, 1.1)
-        val commandTimeIncludeRandom = (commandTime * delta).toInt()
+        val commandDistanceIncludeRandom = (commandDistance * delta).toInt()
         when (currentCommand.first) {
-            MoveDirection.FORWARD -> carInstance.moving((commandTimeIncludeRandom * MOVE_VELOCITY).toInt())
-            MoveDirection.BACKWARD -> carInstance.moving(-(commandTimeIncludeRandom * MOVE_VELOCITY).toInt())
-            MoveDirection.RIGHT -> carInstance.rotate(-(commandTimeIncludeRandom * ROTATION_VELOCITY).toInt())
-            MoveDirection.LEFT -> carInstance.rotate((commandTimeIncludeRandom * ROTATION_VELOCITY).toInt())
+            MoveDirection.FORWARD -> carInstance.moving(commandDistanceIncludeRandom)
+            MoveDirection.BACKWARD -> carInstance.moving(commandDistanceIncludeRandom)
+            MoveDirection.RIGHT -> carInstance.rotate(-commandDistanceIncludeRandom)
+            MoveDirection.LEFT -> carInstance.rotate(commandDistanceIncludeRandom)
             else -> {
             }
         }

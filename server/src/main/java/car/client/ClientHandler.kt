@@ -12,6 +12,7 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.DefaultHttpContent
 import io.netty.util.AttributeKey
 import objects.Environment
+import setRouteMetricUrl
 import setRouteUrl
 import sonarUrl
 import java.util.*
@@ -45,7 +46,7 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
                 val angles = ctx.channel().attr(AttributeKey.valueOf<IntArray>("angles")).get()
                 handlerSonarResponse(response, angles)
             }
-            setRouteUrl -> {
+            setRouteUrl, setRouteMetricUrl -> {
                 try {
                     DebugClInterface.exchanger.exchange(IntArray(0), 20, TimeUnit.SECONDS)
                 } catch (e: InterruptedException) {

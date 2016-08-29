@@ -2,11 +2,12 @@ package algorithm
 
 import CodedOutputStream
 import Exceptions.InactiveCarException
-import RouteRequest
+import RouteMetricRequest
 import SonarRequest
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
+import setRouteMetricUrl
 import setRouteUrl
 import sonarUrl
 import java.util.*
@@ -72,17 +73,21 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         return DoubleArray(0)
     }
 
-    protected fun moveCar(message: RouteRequest) {
+    protected fun moveCar(message: RouteMetricRequest) {
         val requestBytes = ByteArray(message.getSizeNoTag())
         message.writeTo(CodedOutputStream(requestBytes))
-        val request = getDefaultHttpRequest(thisCar.host, setRouteUrl, requestBytes)
+        moveCar(requestBytes)
+    }
+
+    private fun moveCar(messageBytes: ByteArray) {
+        val request = getDefaultHttpRequest(thisCar.host, setRouteMetricUrl, messageBytes)
         try {
             car.client.Client.sendRequest(request, thisCar.host, thisCar.port, mapOf<String, Int>())
         } catch (e: InactiveCarException) {
             println("connection error!")
         }
         try {
-            exchanger.exchange(IntArray(0), 20, TimeUnit.SECONDS)
+            exchanger.exchange(IntArray(0), 60, TimeUnit.SECONDS)
             return
         } catch (e: InterruptedException) {
             println("don't have response from car!")
@@ -115,7 +120,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         val command = getCommand(anglesDistances, state)
         afterGetCommand(command)
         println(Arrays.toString(command.directions))
-        println(Arrays.toString(command.times))
+        println(Arrays.toString(command.distances))
 
         this.prevSonarDistances = anglesDistances
         this.prevState = state
@@ -137,8 +142,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     }
 
     protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState?
-    protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest
-    protected abstract fun afterGetCommand(route:RouteRequest)
+    protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteMetricRequest
+    protected abstract fun afterGetCommand(route: RouteMetricRequest)
 
 
     private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {

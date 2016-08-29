@@ -5,6 +5,7 @@ val carServerPort: Int = 7925
 val webServerPort: Int = 7926
 val getLocationUrl = "/getLocation"
 val setRouteUrl = "/route"
+val setRouteMetricUrl = "/routeMetric"
 val connectUrl = "/connect"
 val debugMemoryUrl = "/debug/memory"
 val sonarUrl = "/sonar"

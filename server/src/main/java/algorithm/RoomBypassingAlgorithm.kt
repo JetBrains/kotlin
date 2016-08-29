@@ -1,15 +1,12 @@
 package algorithm
 
-import RouteRequest
 import algorithm.geometry.Line
 import algorithm.geometry.Vector
 import objects.Car
+import RouteMetricRequest
 import java.util.concurrent.Exchanger
 
 class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : AbstractAlgorithm(thisCar, exchanger) {
-
-    private val MOVE_VELOCITY = 0.05//sm/ms
-    private val ROTATION_VELOCITY = 0.05//degrees/ms
 
     public var wallAngleWithOX = 0.0//in radian
     public var wallLength = 0.0//sm
@@ -41,40 +38,40 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return args
     }
 
-    override fun afterGetCommand(route: RouteRequest) {
+    override fun afterGetCommand(route: RouteMetricRequest) {
         route.directions.forEachIndexed { idx, direction ->
             when (direction) {
                 FORWARD -> {
-                    carX += (MOVE_VELOCITY * route.times[idx] * Math.cos(degreesToRadian(carAngle.toInt()))).toInt()
-                    carY += (MOVE_VELOCITY * route.times[idx] * Math.sin(degreesToRadian(carAngle.toInt()))).toInt()
+                    carX += (Math.cos(degreesToRadian(carAngle.toInt())) * route.distances[idx]).toInt()
+                    carY += (Math.sin(degreesToRadian(carAngle.toInt())) * route.distances[idx]).toInt()
                 }
                 BACKWARD -> {
-                    carX -= (MOVE_VELOCITY * route.times[idx] * Math.cos(degreesToRadian(carAngle.toInt()))).toInt()
-                    carY -= (MOVE_VELOCITY * route.times[idx] * Math.sin(degreesToRadian(carAngle.toInt()))).toInt()
+                    carX -= (Math.cos(degreesToRadian(carAngle.toInt())) * route.distances[idx]).toInt()
+                    carY -= (Math.sin(degreesToRadian(carAngle.toInt())) * route.distances[idx]).toInt()
                 }
                 LEFT -> {
-                    carAngle += (ROTATION_VELOCITY * route.times[idx]).toInt()
+                    carAngle += route.distances[idx]
                 }
                 RIGHT -> {
-                    carAngle -= (ROTATION_VELOCITY * route.times[idx]).toInt()
+                    carAngle -= route.distances[idx]
                 }
             }
         }
     }
 
-    override fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteRequest {
+    override fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteMetricRequest {
         val dist0 = anglesDistances[0]
         val dist60 = anglesDistances[60]
         val dist90 = anglesDistances[90]
         val dist120 = anglesDistances[120]
         val dist180 = anglesDistances[180]
-        val resultBuilder = RouteRequest.BuilderRouteRequest(IntArray(0), IntArray(0))
+        val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         if (dist120 == null || dist90 == null || dist60 == null) {
             println("null distance!")
             if (errorCount >= 3) {
                 errorCount = 0
                 resultBuilder.setDirections(getIntArray(BACKWARD))
-                resultBuilder.setTimes(getIntArray((15.0 / MOVE_VELOCITY).toInt()))
+                resultBuilder.setDistances(getIntArray(15))
                 return resultBuilder.build()
             }
             errorCount++
@@ -96,20 +93,19 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 if (dist90 > 40 || dist90 < 20) {
                     val rotationDirection = if (dist90 > 40) RIGHT else LEFT
                     resultBuilder.setDirections(getIntArray(rotationDirection, FORWARD))
-                    resultBuilder.setTimes(getIntArray((10.0 / ROTATION_VELOCITY).toInt(),
-                            (35.0 / MOVE_VELOCITY).toInt()))
+                    resultBuilder.setDistances(getIntArray(10, 35))
                     return resultBuilder.build()
                 }
 
                 if (Math.abs(dist120 - dist60) > 10) {
                     val rotationDirection = if (dist120 > dist60) LEFT else RIGHT
                     resultBuilder.setDirections(getIntArray(rotationDirection))
-                    resultBuilder.setTimes(getIntArray((15.0 / ROTATION_VELOCITY).toInt()))
+                    resultBuilder.setDistances(getIntArray(15))
                     return resultBuilder.build()
                 }
 
                 resultBuilder.setDirections(getIntArray(FORWARD))
-                resultBuilder.setTimes(getIntArray((35.0 / MOVE_VELOCITY).toInt()))
+                resultBuilder.setDistances(getIntArray(35))
                 return resultBuilder.build()
             }
             CarState.INNER -> {
@@ -118,7 +114,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 if (Math.abs(dist120 - dist60) > 10) {
                     val rotationDirection = if (dist120 > dist60) LEFT else RIGHT
                     resultBuilder.setDirections(getIntArray(rotationDirection))
-                    resultBuilder.setTimes(getIntArray((4 * 3.0 / ROTATION_VELOCITY).toInt()))//todo calibrate
+                    resultBuilder.setDistances(getIntArray(12))
                     return resultBuilder.build()
                 }
 
@@ -162,15 +158,13 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 wallLength = 0.0
                 RoomModel.lines.add(nextLine)
                 resultBuilder.setDirections(getIntArray(LEFT, FORWARD, LEFT))
-                resultBuilder.setTimes(getIntArray((wallsAngleInDegrees / (2 * ROTATION_VELOCITY)).toInt(),
-                        (40 / MOVE_VELOCITY).toInt(), (wallsAngleInDegrees / (2 * ROTATION_VELOCITY)).toInt()))
+                resultBuilder.setDistances(getIntArray((angle / 2).toInt(), 15, (angle / 2).toInt()))
                 return resultBuilder.build()
             }
             CarState.OUTER -> {
                 //todo calculate target
                 resultBuilder.setDirections(getIntArray(RIGHT, FORWARD, RIGHT))
-                resultBuilder.setTimes(getIntArray((45 / ROTATION_VELOCITY).toInt(),
-                        (40 / MOVE_VELOCITY).toInt(), (45 / ROTATION_VELOCITY).toInt()))
+                resultBuilder.setDistances(getIntArray(45, 40, 45))
                 return resultBuilder.build()
             }
         }
