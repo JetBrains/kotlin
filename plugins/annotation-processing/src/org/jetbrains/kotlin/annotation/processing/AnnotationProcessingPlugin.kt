@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.annotation.ClasspathBasedAnnotationProcessingExtension
+import org.jetbrains.kotlin.annotation.processing.diagnostic.DefaultErrorMessagesAnnotationProcessing
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
@@ -109,6 +112,9 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
         
         val verboseOutput = configuration.get(AnnotationProcessingConfigurationKeys.VERBOSE_MODE) == "true"
+
+        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME)
+                .registerExtension(DefaultErrorMessagesAnnotationProcessing())
         
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput)

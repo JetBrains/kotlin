@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.annotation.processing.diagnostic.ErrorsAnnotationProcessing
 import org.jetbrains.kotlin.annotation.processing.impl.*
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 import java.net.URLClassLoader
@@ -66,7 +68,7 @@ abstract class AbstractAnnotationProcessingExtension(
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
-            bindingContext: BindingContext,
+            bindingTrace: BindingTrace,
             files: Collection<KtFile>
     ): AnalysisResult? {
         if (annotationProcessingComplete) {
@@ -150,9 +152,19 @@ abstract class AbstractAnnotationProcessingExtension(
         
         fun Int.count(noun: String) = if (this == 1) "$this $noun" else "$this ${noun}s"
         log { "Annotation processing complete, ${messager.errorCount.count("error")}, ${messager.warningCount.count("warning")}" }
+        
+        if (messager.errorCount != 0) {
+            val reportFile = files.firstOrNull()
+            if (reportFile != null) {
+                bindingTrace.report(ErrorsAnnotationProcessing.ANNOTATION_PROCESSING_ERROR.on(reportFile))
+            }
+            
+            // Do not restart analysis
+            return null
+        }
 
         annotationProcessingComplete = true
-        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedSourcesOutputDir))
+        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingTrace.bindingContext, module, listOf(generatedSourcesOutputDir))
     }
 
     protected abstract fun loadAnnotationProcessors(): List<Processor>
