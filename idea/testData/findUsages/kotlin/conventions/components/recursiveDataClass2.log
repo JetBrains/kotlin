@@ -1,0 +1,15 @@
+Checked type of (a1, s)
+Checked type of (b, n)
+Searched inheritors of A
+Searched inheritors of B
+Searched references to A
+Searched references to B
+Searched references to a1 in Kotlin files
+Searched references to b in Kotlin files
+Searched references to parameter a in B() in Kotlin files
+Searched references to parameter a in f() in Kotlin files
+Searched references to parameter b in A() in Kotlin files
+Used plain search in LocalSearchScope:
+    CLASS:A
+Used plain search in LocalSearchScope:
+    CLASS:B
