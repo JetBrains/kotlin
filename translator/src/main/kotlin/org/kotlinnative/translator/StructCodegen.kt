@@ -146,7 +146,7 @@ abstract class StructCodegen(val state: TranslationState,
         variableManager.addVariable("this", classVal, 0)
 
         val secondaryConstructorArguments = descriptor!!.valueParameters.map {
-            LLVMInstanceOfStandardType(it.fqNameSafe.asString().replace(".<init>", ""), it.type, state = state)
+            LLVMInstanceOfStandardType(it.fqNameSafe.convertToNativeName(), it.type, state = state)
         }
 
         argFields.add(classVal)
@@ -222,7 +222,7 @@ abstract class StructCodegen(val state: TranslationState,
 
         val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
         val receiverThis = LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1)
-        codeBuilder.addComment("field initilizers starts")
+        codeBuilder.addComment("field initializers starts")
         variableManager.addVariable("this", receiverThis, 2)
 
         for ((variable, initializer) in initializedFields) {
@@ -235,7 +235,7 @@ abstract class StructCodegen(val state: TranslationState,
         }
 
         variableManager.pullOneUpwardLevelVariable("this")
-        codeBuilder.addComment("field initilizers ends")
+        codeBuilder.addComment("field initializers ends")
     }
 
     private fun generateReturn(src: LLVMVariable) {
@@ -249,7 +249,7 @@ abstract class StructCodegen(val state: TranslationState,
 
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
-        val fieldName = state.bindingContext.get(BindingContext.VALUE_PARAMETER, field as?KtParameter)?.fqNameSafe?.asString()?.replace(".<init>", "")
+        val fieldName = state.bindingContext.get(BindingContext.VALUE_PARAMETER, field as?KtParameter)?.fqNameSafe?.convertToNativeName()
                 ?: field.fqName?.asString() ?: field.name!!
 
         val result = LLVMInstanceOfStandardType(fieldName, ktType, LLVMRegisterScope(), state = state)

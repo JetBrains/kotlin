@@ -15,9 +15,11 @@ fun bytearray_1_array(): Int {
     }
     val newInstance = z.clone()
     ind = 0
+    var result = true
     while(ind < size){
-        assert(newInstance[ind] == ind.toByte())
+        result = result and (newInstance[ind] == ind.toByte())
         ind += 1
     }
+    assert(result)
     return 1
 }

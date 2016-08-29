@@ -7,11 +7,15 @@ lightRed = '\033[1;31m'
 orange = '\033[0;33m'
 nc = '\033[0m'
 
+stdlib:
+	cd ../kotstd && make clean && make
 
-%.out: %.txt
+%.out: stdlib %.txt
 	@./run_one_test.sh $(@:.out=.txt)
 
-all: $(OBJECTS)
-	@echo "ok"
+tests: stdlib $(OBJECTS)
+	@date
 
-.PHONY: all
+.DEFAULT_GOAL := tests
+
+.PHONY: tests, stdlib

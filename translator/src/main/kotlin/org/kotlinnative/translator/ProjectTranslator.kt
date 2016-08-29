@@ -69,4 +69,3 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
     }
 
 }
-

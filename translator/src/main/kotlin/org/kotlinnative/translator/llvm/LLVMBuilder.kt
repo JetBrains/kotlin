@@ -14,7 +14,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     object UniqueGenerator {
         private var unique = 0
         fun generateUniqueString(): String {
-            unique += 1
+            unique++
             return ".unique." + unique
         }
     }
@@ -66,11 +66,12 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln("}")
     }
 
-    fun receiveNativeValue(firstOp: LLVMSingleValue): LLVMSingleValue = when (firstOp) {
-        is LLVMConstant -> firstOp
-        is LLVMVariable -> if (firstOp.pointer == 0) firstOp else loadAndGetVariable(firstOp)
-        else -> throw UnsupportedOperationException()
-    }
+    fun receiveNativeValue(firstOp: LLVMSingleValue): LLVMSingleValue =
+            when (firstOp) {
+                is LLVMConstant -> firstOp
+                is LLVMVariable -> if (firstOp.pointer == 0) firstOp else loadAndGetVariable(firstOp)
+                else -> throw UnsupportedOperationException()
+            }
 
     fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
             names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
@@ -157,10 +158,6 @@ class LLVMBuilder(val arm: Boolean = false) {
             localCode.appendln("${label.label}:")
     }
 
-    fun addNopInstruction() {
-        localCode.appendln(getNewVariable(LLVMIntType()).toString() + " = add i1 0, 0     ; nop instruction")
-    }
-
     fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
         if ((source.type is LLVMStringType) && (!(source.type as LLVMStringType).isLoaded)) {
             storeString(target as LLVMVariable, source as LLVMVariable, 0)
@@ -220,18 +217,19 @@ class LLVMBuilder(val arm: Boolean = false) {
         localCode.appendln(code)
     }
 
-    fun allocStackVar(target: LLVMVariable, asValue: Boolean = false) {
-        localCode.appendln("$target = alloca ${if (asValue) target.type.toString() else target.getType()}, align ${target.type.align}")
+    fun allocStackVar(target: LLVMVariable, asValue: Boolean = false, pointer: Boolean = false) {
+        val type = if (asValue) target.type.toString() else target.getType()
+        localCode.appendln("$target = alloca ${if (pointer) type.removeSuffix("*") else type}, align ${target.type.align}")
     }
 
-    fun allocStaticVar(target: LLVMVariable, asValue: Boolean = false) {
+    fun allocStaticVar(target: LLVMVariable, asValue: Boolean = false, pointer: Boolean = false) {
         val allocated = getNewVariable(LLVMCharType(), pointer = 1)
 
-        val size = if (target.pointer > 0) TranslationState.pointerSize else target.type.size
+        val size = if ((target.pointer >= 2) || (target.pointer >= 1 && !pointer)) TranslationState.pointerSize else target.type.size
         val alloc = "$allocated = call i8* @malloc_heap(i32 $size)"
         localCode.appendln(alloc)
 
-        val cast = "$target = bitcast ${allocated.getType()} $allocated to ${if (asValue) target.type.toString() else target.getType()}*"
+        val cast = "$target = bitcast ${allocated.getType()} $allocated to ${if (asValue) target.type.toString() else target.getType()}" + if (pointer) "" else "*"
         localCode.appendln(cast)
     }
 

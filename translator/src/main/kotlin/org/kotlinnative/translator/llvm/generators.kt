@@ -3,6 +3,7 @@ package org.kotlinnative.translator.llvm
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -52,10 +53,13 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
 fun LLVMMapStandardType(type: KotlinType, state: TranslationState): LLVMType =
         LLVMInstanceOfStandardType("type", type, LLVMRegisterScope(), state).type
 
-fun String.addBeforeIfNotEmpty(add: String): String {
-    return if (this.length > 0) add + this else this
-}
+fun String.addBeforeIfNotEmpty(add: String): String =
+        if (this.length > 0) add + this else this
 
-fun String.addAfterIfNotEmpty(add: String): String {
-    return if (this.length > 0) this + add else this
-}
+
+fun String.addAfterIfNotEmpty(add: String): String =
+        if (this.length > 0) this + add else this
+
+
+fun FqName.convertToNativeName(): String =
+        this.asString().replace(".<init>", "")
