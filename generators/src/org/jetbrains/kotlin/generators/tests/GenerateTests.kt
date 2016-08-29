@@ -1149,28 +1149,12 @@ fun main(args: Array<String>) {
             model("multiModule/cases")
         }
 
-        testClass<AbstractInlineJsStdlibTest>() {
-            model("inlineStdlib/cases")
-        }
-
-        testClass<AbstractInlineEvaluationOrderTest>() {
-            model("inlineEvaluationOrder/cases")
-        }
-
-        testClass<AbstractInlineMultiModuleTest>() {
-            model("inlineMultiModule/cases")
-        }
-
         testClass<AbstractLabelTest>() {
             model("labels/cases")
         }
 
         testClass<AbstractJsCodeTest>() {
             model("jsCode/cases")
-        }
-
-        testClass<AbstractInlineSizeReductionTest>() {
-            model("inlineSizeReduction/cases")
         }
 
         testClass<AbstractReifiedTest>() {
