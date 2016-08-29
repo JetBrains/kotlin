@@ -9,7 +9,7 @@ import encodeProtoBuf
 import net.server.handlers.AbstractHandler
 
 class GetSonarData(val controller: Controller) : AbstractHandler() {
-    val fromServerObjectBuilder = SonarRequest.BuilderSonarRequest(IntArray(0))
+    val fromServerObjectBuilder = SonarRequest.BuilderSonarRequest(IntArray(0), IntArray(0), 0, SonarRequest.Smoothing.NONE)
     val toServerObjectBuilder = SonarResponse.BuilderSonarResponse(IntArray(0))
 
     override fun getBytesResponse(data: ByteArray, callback: (ByteArray) -> Unit) {

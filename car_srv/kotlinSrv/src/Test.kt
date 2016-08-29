@@ -7,7 +7,7 @@ fun runTests() {
 
 private fun testCarEmulator() {
     val controller = ControllerEmulator()
-    var sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { x -> x * 90 })).build()
+    var sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { x -> x * 90 }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     var sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->
         sonarResponse.mergeFrom(CodedInputStream(bytes))
@@ -18,7 +18,7 @@ private fun testCarEmulator() {
     })
 
     println("--------------------")
-    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { 120 + 60 * it })).build()
+    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { 120 + 60 * it }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->
         sonarResponse.mergeFrom(CodedInputStream(bytes))
@@ -32,7 +32,7 @@ private fun testCarEmulator() {
     CarState.instance.x = 50
     CarState.instance.y = 50
     CarState.instance.angle = 90
-    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(3, { x -> x * 90 })).build()
+    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(3, { x -> x * 90 }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->
         sonarResponse.mergeFrom(CodedInputStream(bytes))
@@ -48,7 +48,7 @@ private fun testCarEmulator() {
     CarState.instance.x = 50
     CarState.instance.y = 50
     CarState.instance.angle = 720 + 45
-    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(1, { x -> 90 })).build()
+    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(1, { x -> 90 }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->
         sonarResponse.mergeFrom(CodedInputStream(bytes))
@@ -60,7 +60,7 @@ private fun testCarEmulator() {
     CarState.instance.x = 150
     CarState.instance.y = 50
     CarState.instance.angle = 0
-    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(7, { it*5 })).build()
+    sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(7, { it * 5 }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->
         sonarResponse.mergeFrom(CodedInputStream(bytes))
