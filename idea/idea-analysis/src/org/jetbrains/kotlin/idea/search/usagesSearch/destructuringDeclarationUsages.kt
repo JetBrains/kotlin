@@ -66,6 +66,10 @@ enum class DestructuringDeclarationUsageSearch {
 var destructuringDeclarationUsageSearchMode = if (ApplicationManager.getApplication().isUnitTestMode) ALWAYS_SMART else PLAIN_WHEN_NEEDED
 var destructuringDeclarationUsageSearchLog: MutableList<String>? = null
 
+private object DestructuringDeclarationSearchesInProgress : ThreadLocal<HashSet<KtDeclaration>>() {
+    override fun initialValue() = HashSet<KtDeclaration>()
+}
+
 //TODO: check if it's too expensive
 
 fun findDestructuringDeclarationUsages(
@@ -85,35 +89,43 @@ fun findDestructuringDeclarationUsages(
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
 ) {
-    val usePlainSearch = when (destructuringDeclarationUsageSearchMode) {
-        ALWAYS_SMART -> false
-        ALWAYS_PLAIN -> true
-        PLAIN_WHEN_NEEDED -> scope is LocalSearchScope // for local scope it's faster to use plain search
-    }
-    if (usePlainSearch) {
-        doPlainSearch(ktDeclaration, scope, optimizer)
-        return
-    }
+    val inProgress = DestructuringDeclarationSearchesInProgress.get()
+    try {
+        if (!inProgress.add(ktDeclaration)) return
 
-    val descriptor = ktDeclaration.resolveToDescriptor() as? CallableDescriptor ?: return
+        val usePlainSearch = when (destructuringDeclarationUsageSearchMode) {
+            ALWAYS_SMART -> false
+            ALWAYS_PLAIN -> true
+            PLAIN_WHEN_NEEDED -> scope is LocalSearchScope // for local scope it's faster to use plain search
+        }
+        if (usePlainSearch) {
+            doPlainSearch(ktDeclaration, scope, optimizer)
+            return
+        }
 
-    if (descriptor is FunctionDescriptor && !descriptor.isValidOperator()) return
+        val descriptor = ktDeclaration.resolveToDescriptor() as? CallableDescriptor ?: return
 
-    val dataType = if (descriptor.isExtension) {
-        descriptor.fuzzyExtensionReceiverType()!!
+        if (descriptor is FunctionDescriptor && !descriptor.isValidOperator()) return
+
+        val dataType = if (descriptor.isExtension) {
+            descriptor.fuzzyExtensionReceiverType()!!
+        }
+        else {
+            val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return
+            classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
+        }
+
+        Processor(dataType,
+                  ktDeclaration,
+                  scope,
+                  consumer,
+                  plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) },
+                  testLog = destructuringDeclarationUsageSearchLog
+        ).run()
     }
-    else {
-        val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return
-        classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
+    finally {
+        inProgress.remove(ktDeclaration)
     }
-
-    Processor(dataType,
-              ktDeclaration,
-              scope,
-              consumer,
-              plainSearchHandler = { searchScope -> doPlainSearch(ktDeclaration, searchScope, optimizer) },
-              testLog = destructuringDeclarationUsageSearchLog
-    ).run()
 }
 
 private fun doPlainSearch(ktDeclaration: KtDeclaration, scope: SearchScope, optimizer: SearchRequestCollector) {
