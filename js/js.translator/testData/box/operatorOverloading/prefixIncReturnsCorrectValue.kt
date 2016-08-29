@@ -10,8 +10,8 @@ class MyInt() {
 }
 
 
-fun box(): Boolean {
+fun box(): String {
     var c = MyInt()
     val d = --c;
-    return (c.b == 1);
+    return if (c.b == 1) "OK" else "fail: ${c.b}"
 }

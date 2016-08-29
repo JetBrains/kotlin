@@ -25,8 +25,10 @@ class A() {
 }
 
 
-fun box(): Boolean {
+fun box(): String {
     val t = A()
-    val d = t.b++;
-    return (t.sc == 1) && (t.gc == 1);
+    val d = t.b++
+    if (t.sc != 1) return "fail1"
+    if (t.gc != 1) return "fail2"
+    return "OK"
 }

@@ -9,9 +9,9 @@ class A() {
 
 }
 
-fun box(): Boolean {
+fun box(): String {
     var c = A()
     c += A()
     c += A()
-    return c.message == "!!"
+    return if (c.message == "!!") return "OK" else "fail"
 }

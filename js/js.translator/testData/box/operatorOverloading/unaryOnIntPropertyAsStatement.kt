@@ -3,13 +3,13 @@ package foo
 class MyInt(i: Int) {
     var b = i
     operator fun inc(): MyInt {
-        b = b++;
+        b++;
         return this;
     }
 }
 
-fun box(): Boolean {
+fun box(): String {
     var t = MyInt(0)
     t++;
-    return (t.b == 0)
+    return if (t.b == 1) "OK" else "fail: ${t.b}"
 }

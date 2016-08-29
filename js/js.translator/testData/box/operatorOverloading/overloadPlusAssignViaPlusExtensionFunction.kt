@@ -9,8 +9,8 @@ operator fun <T> Foo<T>.plus(x: T): Foo<T> = Foo(x)
 operator fun <T> MutableFoo<T>.plus(x: T): MutableFoo<T> = MutableFoo(x)
 
 
-fun box(): Boolean {
+fun box(): String {
     var f = MutableFoo(1)
     f += 2
-    return (f is MutableFoo && f.value == 2)
+    return if (f is MutableFoo && f.value == 2) "OK" else "fail"
 }

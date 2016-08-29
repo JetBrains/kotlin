@@ -7,9 +7,9 @@ class A() {
     }
 }
 
-fun box(): Boolean {
+fun box(): String {
     var c = A()
     val d = c;
     c %= A();
-    return (c != d) && (c.p == "yeah")
+    return if ((c != d) && (c.p == "yeah")) "OK" else "fail"
 }

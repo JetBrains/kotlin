@@ -6,7 +6,7 @@ class myInt(a: Int) {
     operator fun plus(other: myInt): myInt = myInt(value + other.value)
 }
 
-fun box(): Boolean {
+fun box(): String {
 
-    return (myInt(3) + myInt(5)).value == 8
+    return if ((myInt(3) + myInt(5)).value == 8) "OK" else "fail"
 }
