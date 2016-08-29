@@ -33,13 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class CallGenerator(
-        override val context: GeneratorContext,
-        override val scope: Scope
-) : GeneratorWithScope {
-
-    constructor(parent: GeneratorWithScope) : this(parent.context, parent.scope)
-
+class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorExtension(statementGenerator) {
     fun generateCall(
             startOffset: Int,
             endOffset: Int,

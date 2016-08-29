@@ -138,7 +138,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val containsCall = getResolvedCall(expression)!!
 
-        val irContainsCall = CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(containsCall), irOperator)
+        val irContainsCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(containsCall), irOperator)
 
         return when (irOperator) {
             IrOperator.IN ->
@@ -194,7 +194,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
     private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
         val compareToCall = getResolvedCall(expression)!!
 
-        val irCompareToCall = CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), irOperator)
+        val irCompareToCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), irOperator)
 
         val compareToZeroDescriptor = when (irOperator) {
             IrOperator.LT -> context.irBuiltIns.lt0
@@ -210,7 +210,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
-        return CallGenerator(this).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
+        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
     }
 
 
@@ -241,6 +241,4 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val resolvedCall = getResolvedCall(expression)!!
         return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), irOperator)
     }
-
-
 }

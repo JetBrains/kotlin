@@ -52,7 +52,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             val opCall = statementGenerator.pregenerateCall(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
             opCall.irValueArgumentsByIndex[0] = statementGenerator.generateExpression(ktRight)
-            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
+            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
 
             if (isSimpleAssignment) {
                 // Set( Op( Get(), RHS ) )
@@ -76,7 +76,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             // VAR tmp = [lhs].inc()
             val opCall = statementGenerator.pregenerateCall(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
-            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
+            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
             val irTmp = statementGenerator.scope.createTemporaryVariable(irOpCall)
             irBlock.addStatement(irTmp)
 
@@ -105,7 +105,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             // [lhs] = tmp.inc()
             val opCall = statementGenerator.pregenerateCall(opResolvedCall)
             opCall.setExplicitReceiverValue(VariableLValue(irTmp))
-            val irOpCall = CallGenerator(this).generateCall(expression, opCall, irOperator)
+            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
             irBlock.addStatement(irLValue.store(irOpCall))
 
             // ^ tmp
