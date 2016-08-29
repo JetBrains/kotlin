@@ -38,14 +38,14 @@ import javax.annotation.processing.Processor
 import javax.tools.Diagnostic
 
 class ClasspathBasedAnnotationProcessingExtension(
-        val annotationProcessingClasspath: List<String>,
+        val annotationProcessingClasspath: List<File>,
         generatedSourcesOutputDir: File,
         classesOutputDir: File,
         javaSourceRoots: List<File>,
         verboseOutput: Boolean
 ) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots, verboseOutput) {
     override fun loadAnnotationProcessors(): List<Processor> {
-        val classLoader = URLClassLoader(annotationProcessingClasspath.map { File(it).toURI().toURL() }.toTypedArray())
+        val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
     }
 }

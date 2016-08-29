@@ -47,22 +47,22 @@ fun JeAnnotationValue(psi: PsiAnnotationMemberValue): AnnotationValue {
     return annotationValue
 }
 
-internal class JeAnnotationAnnotationValue(val psi: PsiAnnotation) : AnnotationValue {
+class JeAnnotationAnnotationValue(val psi: PsiAnnotation) : AnnotationValue {
     override fun getValue() = JeAnnotationMirror(psi)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitAnnotation(value, p)
 }
 
-internal class JeEnumValueAnnotationValue(val psi: PsiEnumConstant) : AnnotationValue {
+class JeEnumValueAnnotationValue(val psi: PsiEnumConstant) : AnnotationValue {
     override fun getValue() = JeVariableElement(psi)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitEnumConstant(value, p) 
 }
 
-internal class JeTypeAnnotationValue(val psi: PsiClassObjectAccessExpression) : AnnotationValue {
+class JeTypeAnnotationValue(val psi: PsiClassObjectAccessExpression) : AnnotationValue {
     override fun getValue() = psi.operand.type.toJeType(psi.manager)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitType(value, p)
 }
 
-internal abstract class JePrimitiveAnnotationValue : AnnotationValue {
+abstract class JePrimitiveAnnotationValue : AnnotationValue {
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P): R {
         val value = this.value
         return when (value) {
@@ -80,20 +80,20 @@ internal abstract class JePrimitiveAnnotationValue : AnnotationValue {
     }
 }
 
-internal class JeLiteralAnnotationValue(val psi: PsiLiteral) : JePrimitiveAnnotationValue() {
+class JeLiteralAnnotationValue(val psi: PsiLiteral) : JePrimitiveAnnotationValue() {
     override fun getValue() = psi.value
 }
 
-internal class JeExpressionAnnotationValue(val psi: PsiExpression) : JePrimitiveAnnotationValue() {
+class JeExpressionAnnotationValue(val psi: PsiExpression) : JePrimitiveAnnotationValue() {
     override fun getValue() = psi.calcConstantValue()
 }
 
-internal class JeArrayAnnotationValue(val psi: PsiArrayInitializerMemberValue) : AnnotationValue {
+class JeArrayAnnotationValue(val psi: PsiArrayInitializerMemberValue) : AnnotationValue {
     override fun getValue() = psi.initializers.map(::JeAnnotationValue)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
 }
 
-internal class JeErrorAnnotationValue(val psi: PsiElement) : AnnotationValue {
+class JeErrorAnnotationValue(val psi: PsiElement) : AnnotationValue {
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitString(psi.text, p)
     override fun getValue() = null
 }

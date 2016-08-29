@@ -168,7 +168,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
-                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(),
+                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(), 0,
                                                                            JsLiteral.THIS);
                 initializerStatements.add(0, fixedInvocation.makeStmt());
             }

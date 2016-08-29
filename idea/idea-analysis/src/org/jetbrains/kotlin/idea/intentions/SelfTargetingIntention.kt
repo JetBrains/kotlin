@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
+import kotlin.reflect.KClass
 
 abstract class SelfTargetingIntention<TElement : PsiElement>(
         val elementType: Class<TElement>,
@@ -88,14 +89,14 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     }
 
     protected fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
-        val inspection = findInspection(javaClass) ?: return false
+        val inspection = findInspection(this.javaClass.kotlin) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)
         if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) {
             return false
         }
 
-        return inspection.intentions.single { it.intention.javaClass == javaClass }.additionalChecker(target, inspection)
+        return inspection.intentionInfos.single { it.intention == this.javaClass.kotlin }.additionalChecker(target, inspection)
     }
 
     final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
@@ -109,9 +110,9 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     override fun toString(): String = getText()
 
     companion object {
-        private val intentionBasedInspections = HashMap<Class<out SelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
+        private val intentionBasedInspections = HashMap<KClass<out SelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
 
-        fun <TElement : PsiElement> findInspection(intentionClass: Class<out SelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
+        fun <TElement : PsiElement> findInspection(intentionClass: KClass<out SelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
             if (intentionBasedInspections.containsKey(intentionClass)) {
                 @Suppress("UNCHECKED_CAST")
                 return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
@@ -119,7 +120,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
             for (extension in Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION)) {
                 val inspection = extension.instance as? IntentionBasedInspection<*> ?: continue
-                if (inspection.intentions.any { it.intention.javaClass == intentionClass }) {
+                if (inspection.intentionInfos.any { it.intention == intentionClass }) {
                     intentionBasedInspections[intentionClass] = inspection
                     @Suppress("UNCHECKED_CAST")
                     return inspection as IntentionBasedInspection<TElement>

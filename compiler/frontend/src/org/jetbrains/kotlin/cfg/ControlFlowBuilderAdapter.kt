@@ -123,12 +123,16 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.throwException(throwExpression, thrownValue)
     }
 
-    override fun getExitPoint(labelElement: KtElement): Label? {
-        return delegateBuilder.getExitPoint(labelElement)
+    override fun getSubroutineExitPoint(labelElement: KtElement): Label? {
+        return delegateBuilder.getSubroutineExitPoint(labelElement)
     }
 
-    override fun getConditionEntryPoint(labelElement: KtElement): Label {
-        return delegateBuilder.getConditionEntryPoint(labelElement)
+    override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
+        return delegateBuilder.getLoopConditionEntryPoint(loop)
+    }
+
+    override fun getLoopExitPoint(loop: KtLoopExpression): Label? {
+        return delegateBuilder.getLoopExitPoint(loop)
     }
 
     override fun enterLoop(expression: KtLoopExpression): LoopInfo {

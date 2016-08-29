@@ -19,25 +19,27 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceCallWithComparisonInspection(
-        val intention: ReplaceCallWithBinaryOperatorIntention = ReplaceCallWithBinaryOperatorIntention()
-) : IntentionBasedInspection<KtDotQualifiedExpression>(
-        intention,
+class ReplaceCallWithComparisonInspection() : IntentionBasedInspection<KtDotQualifiedExpression>(
+        ReplaceCallWithBinaryOperatorIntention::class,
         { qualifiedExpression ->
             val calleeExpression = qualifiedExpression.callExpression?.calleeExpression as? KtSimpleNameExpression
             val identifier = calleeExpression?.getReferencedNameAsName()
@@ -107,16 +109,20 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
+        val dotQualified = calleeExpression.parent?.parent as? KtDotQualifiedExpression ?: return null
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
-                val prefixExpression = calleeExpression.parent?.parent?.getWrappingPrefixExpressionIfAny()
+                val resolvedCall = dotQualified.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
+                val overriddenDescriptors = resolvedCall.resultingDescriptor.findOriginalTopMostOverriddenDescriptors()
+                if (overriddenDescriptors.none { it.fqNameUnsafe.asString() == "kotlin.Any.equals" }) return null
+
+                val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
                 else KtTokens.EQEQ
             }
             OperatorNameConventions.COMPARE_TO -> {
                 // callee -> call -> DotQualified -> Binary
-                val dotQualified = calleeExpression.parent?.parent
-                val binaryParent = dotQualified?.parent as? KtBinaryExpression ?: return null
+                val binaryParent = dotQualified.parent as? KtBinaryExpression ?: return null
                 val notZero = when {
                     binaryParent.right?.text == "0" -> binaryParent.left
                     binaryParent.left?.text == "0" -> binaryParent.right

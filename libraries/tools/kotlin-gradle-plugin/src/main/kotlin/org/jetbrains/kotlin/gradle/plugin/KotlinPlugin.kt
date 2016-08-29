@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.gradle.internal.Kapt2GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.incremental.android.ArtifactDifferenceRegistryAndroidWrapper
+import org.jetbrains.kotlin.gradle.tasks.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -97,18 +96,15 @@ class Kotlin2JvmSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         tasksProvider: KotlinTasksProvider,
-        kotlinSourceSetProvider: KotlinSourceSetProvider
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        private val kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
 ) : KotlinSourceSetProcessor<KotlinCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         dslExtensionName = KOTLIN_DSL_NAME,
         compileTaskNameSuffix = "kotlin",
         taskDescription = "Compiles the $sourceSet.kotlin."
 ) {
-
-    private companion object {
-        private var cachedKotlinAnnotationProcessingDep: String? = null
-    }
-
     override val defaultKotlinDestinationDir: File
         get() = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
@@ -116,23 +112,16 @@ class Kotlin2JvmSourceSetProcessor(
             tasksProvider.createKotlinJVMTask(project, taskName)
 
     override fun doTargetSpecificProcessing() {
-        val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
-            val projectVersion = loadKotlinVersionFromResource(project.logger)
-            val dep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
-            cachedKotlinAnnotationProcessingDep = dep
-            dep
-        }
-
-        val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep)
+        val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
 
         project.afterEvaluate { project ->
             if (project != null) {
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
 
                 val subpluginEnvironment = loadSubplugins(project)
-                subpluginEnvironment.addSubpluginArguments(project, kotlinTask, 
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask,
                         javaTask as JavaCompile, null, sourceSet)
-                
+
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
                 if (aptConfiguration.dependencies.size > 1 && !Kapt2GradleSubplugin.isEnabled(project)) {
@@ -153,8 +142,27 @@ class Kotlin2JvmSourceSetProcessor(
                 kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
                 configureJavaTask(kotlinTask, javaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+                val artifactFile = project.tryGetSingleArtifact()
+                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                        artifactDifferenceRegistry, artifactFile)
             }
         }
+    }
+
+    private fun Project.tryGetSingleArtifact(): File? {
+        val log = logger
+        log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+        val archives = configurations.findByName("archives")
+        if (archives == null) {
+            log.kotlinDebug { "Could not find 'archives' configuration for project $path" }
+            return null
+        }
+
+        val artifacts = archives.artifacts.files.files
+        log.kotlinDebug { "All artifacts for project $path: [${artifacts.joinToString()}]" }
+
+        return if (artifacts.size == 1) artifacts.first() else null
     }
 }
 
@@ -201,8 +209,8 @@ class Kotlin2JsSourceSetProcessor(
 }
 
 
-abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider) : Plugin<Project> {
-    abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
+abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val kotlinSourceSetProvider: KotlinSourceSetProvider, val kotlinPluginVersion: String) : Plugin<Project> {
+    abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
         val javaBasePlugin = project.plugins.apply(JavaBasePlugin::class.java)
@@ -219,7 +227,7 @@ abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val 
             javaPluginConvention: JavaPluginConvention
     ) {
         javaPluginConvention.sourceSets?.all { sourceSet ->
-            buildSourceSetProcessor(project, javaBasePlugin, sourceSet).run()
+            buildSourceSetProcessor(project, javaBasePlugin, sourceSet, kotlinPluginVersion).run()
         }
     }
 }
@@ -227,10 +235,12 @@ abstract class AbstractKotlinPlugin(val tasksProvider: KotlinTasksProvider, val 
 
 open class KotlinPlugin(
         tasksProvider: KotlinTasksProvider,
-        kotlinSourceSetProvider: KotlinSourceSetProvider
-) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider) {
-    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
-            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
+            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, artifactDifferenceRegistry)
 
     override fun apply(project: Project) {
         project.createKaptExtension()
@@ -241,15 +251,18 @@ open class KotlinPlugin(
 
 open class Kotlin2JsPlugin(
         tasksProvider: KotlinTasksProvider,
-        kotlinSourceSetProvider: KotlinSourceSetProvider
-) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider) {
-    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet) =
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        kotlinPluginVersion: String
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
             Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
 }
 
 open class KotlinAndroidPlugin(
         val tasksProvider: KotlinTasksProvider,
-        private val kotlinSourceSetProvider: KotlinSourceSetProvider
+        private val kotlinSourceSetProvider: KotlinSourceSetProvider,
+        private val kotlinPluginVersion: String,
+        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
 ) : Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
@@ -267,17 +280,13 @@ open class KotlinAndroidPlugin(
 
         val aptConfigurations = hashMapOf<String, Configuration>()
 
-        val projectVersion = loadKotlinVersionFromResource(log)
-        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
-
         ext.sourceSets.all { sourceSet ->
             log.kotlinDebug("Creating KotlinSourceSet for source set $sourceSet")
             val kotlinSourceSet = kotlinSourceSetProvider.create(sourceSet.name)
             kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
-            aptConfigurations.put(sourceSet.name,
-                    project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
+            aptConfigurations.put(sourceSet.name, project.createAptConfiguration(sourceSet.name, kotlinPluginVersion))
         }
 
         val kotlinOptions = K2JVMCompilerArguments()
@@ -374,6 +383,14 @@ open class KotlinAndroidPlugin(
 
             configureJavaTask(kotlinTask, javaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
+
+            if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
+                val jarToAarMapping = AndroidGradleWrapper.getJarToAarMapping(variantData)
+                val artifactFile = project.tryGetSingleArtifact(variantData)
+                val artifactDifferenceRegistryWrapper = ArtifactDifferenceRegistryAndroidWrapper(artifactDifferenceRegistry, jarToAarMapping)
+                configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                        artifactDifferenceRegistryWrapper, artifactFile)
+            }
         }
     }
 
@@ -389,6 +406,19 @@ open class KotlinAndroidPlugin(
             kotlinTask.source(javaSrcDir)
             logger.kotlinDebug("Source directory $javaSrcDir was added to kotlin source for ${kotlinTask.name}")
         }
+    }
+
+    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
+        val log = logger
+        log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+        val outputs = variantData.outputs
+        if (outputs.size != 1) {
+            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString() }" }
+            return null
+        }
+
+        return variantData.outputs.first().outputFile
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
@@ -486,8 +516,8 @@ class SubpluginEnvironment(
 ) {
 
     fun addSubpluginArguments(
-            project: Project, 
-            kotlinTask: KotlinCompile, 
+            project: Project,
+            kotlinTask: KotlinCompile,
             javaTask: AbstractCompile,
             variantData: Any?,
             javaSourceSet: SourceSet?) {
@@ -520,10 +550,11 @@ private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, Fi
     return aptOutputDirForVariant to aptWorkingDirForVariant
 }
 
-private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotationProcessingDep: String): Configuration {
+private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVersion: String): Configuration {
     val aptConfigurationName = Kapt2KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
     val aptConfiguration = configurations.create(aptConfigurationName)
+    val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
     aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
 
     return aptConfiguration

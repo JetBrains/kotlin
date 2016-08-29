@@ -20,19 +20,15 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
-public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator implements AccessTranslator {
     @NotNull
     /*package*/ static CompanionObjectIntrinsicAccessTranslator newInstance(
             @NotNull KtSimpleNameExpression expression,
@@ -60,7 +56,10 @@ public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator
     }
 
     @NotNull
-    private static JsExpression generateReferenceToCompanionObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private static JsExpression generateReferenceToCompanionObject(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor);
         return objectIntrinsic.apply(context);
     }
@@ -79,13 +78,7 @@ public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator
 
     @NotNull
     @Override
-    public CachedAccessTranslator getCached() {
+    public AccessTranslator getCached() {
         return this;
-    }
-
-    @NotNull
-    @Override
-    public List<TemporaryVariable> declaredTemporaries() {
-        return Collections.emptyList();
     }
 }

@@ -266,5 +266,7 @@ private fun assertKindNot(typeMirror: TypeMirror, vararg kinds: TypeKind): Unit 
 }
 
 private fun assertJeType(type: TypeMirror) {
-    illegalArg("Must be a subclass of JePsiType, got ${type.javaClass.name}")
+    if (type !is JeTypeMirror) {
+        illegalArg("Must be a subclass of JePsiType, got ${type.javaClass.name}")
+    }
 }

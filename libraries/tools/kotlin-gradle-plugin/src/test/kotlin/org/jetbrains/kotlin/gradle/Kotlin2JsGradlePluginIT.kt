@@ -62,6 +62,15 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
+    fun testModuleKind() {
+        val project = Project("kotlin2JsModuleKind", "2.10")
+
+        project.build("runRhino") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testNoOutputFileFails() {
         val project = Project("kotlin2JsNoOutputFileProject", "2.10")
         project.build("build") {

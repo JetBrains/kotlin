@@ -20,19 +20,15 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptorKt;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference;
 
-public final class BackingFieldAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public final class BackingFieldAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     @NotNull
     private final PropertyDescriptor descriptor;
@@ -66,13 +62,7 @@ public final class BackingFieldAccessTranslator extends AbstractTranslator imple
 
     @NotNull
     @Override
-    public CachedAccessTranslator getCached() {
+    public AccessTranslator getCached() {
         return this;
-    }
-
-    @NotNull
-    @Override
-    public List<TemporaryVariable> declaredTemporaries() {
-        return Collections.emptyList();
     }
 }

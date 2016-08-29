@@ -39,8 +39,9 @@ interface ControlFlowBuilder {
 
     fun exitBlockScope(block: KtElement)
 
-    fun getExitPoint(labelElement: KtElement): Label?
-    fun getConditionEntryPoint(labelElement: KtElement): Label
+    fun getSubroutineExitPoint(labelElement: KtElement): Label?
+    fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label?
+    fun getLoopExitPoint(loop: KtLoopExpression): Label?
 
     // Declarations
     fun declareParameter(parameter: KtParameter)

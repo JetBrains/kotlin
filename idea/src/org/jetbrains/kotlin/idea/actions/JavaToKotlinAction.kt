@@ -23,15 +23,16 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ex.MessagesEx
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -63,10 +64,16 @@ class JavaToKotlinAction : AnAction() {
         private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
             val result = ArrayList<VirtualFile>()
             for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
-                val virtualFile = psiFile.virtualFile
                 try {
-                    virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
+                    val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
+                    if (document == null) {
+                        MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name).showLater()
+                        continue
+                    }
+                    document.replaceString(0, document.textLength, text)
+                    FileDocumentManager.getInstance().saveDocument(document)
 
+                    val virtualFile = psiFile.virtualFile
                     if (ScratchRootType.getInstance().containsFile(virtualFile)) {
                         val mapping = ScratchFileService.getInstance().scratchesMapping
                         mapping.setMapping(virtualFile, KotlinFileType.INSTANCE.language)

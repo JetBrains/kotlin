@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +36,6 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.isVariableRea
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSimpleName;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
-import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateRightExpression;
 
 public abstract class AssignmentTranslator extends AbstractTranslator {
 
@@ -56,10 +54,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
 
     @NotNull
     protected final KtBinaryExpression expression;
-    protected final AccessTranslator accessTranslator;
     protected final boolean isVariableReassignment;
-    @NotNull
-    protected final JsExpression right;
 
     protected AssignmentTranslator(@NotNull KtBinaryExpression expression,
                                    @NotNull TranslationContext context) {
@@ -68,19 +63,16 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
         KtExpression left = expression.getLeft();
         assert left != null : "No left-hand side: " + expression.getText();
+    }
 
-        JsBlock rightBlock = new JsBlock();
-        this.right = translateRightExpression(context, expression, rightBlock);
-
-        if (isReferenceToBackingFieldFromConstructor(left, context)) {
+    protected final AccessTranslator createAccessTranslator(KtExpression left, boolean forceOrderOfEvaluation) {
+        if (isReferenceToBackingFieldFromConstructor(left, context())) {
             KtSimpleNameExpression simpleName = getSimpleName(left);
             assert simpleName != null;
-            this.accessTranslator = BackingFieldAccessTranslator.newInstance(simpleName, context);
+            return BackingFieldAccessTranslator.newInstance(simpleName, context());
         } else {
-            this.accessTranslator = AccessTranslationUtils.getAccessTranslator(left, context(), !rightBlock.isEmpty());
+            return AccessTranslationUtils.getAccessTranslator(left, context(), forceOrderOfEvaluation);
         }
-
-        context.addStatementsToCurrentBlockFrom(rightBlock);
     }
 
     private static boolean isReferenceToBackingFieldFromConstructor(

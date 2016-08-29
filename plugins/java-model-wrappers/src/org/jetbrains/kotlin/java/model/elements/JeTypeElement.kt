@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.java.model.elements
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.*
@@ -36,12 +37,28 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
 
     override fun getQualifiedName() = JeName(psi.qualifiedName)
 
+    private fun getSuperType(superTypes: Array<PsiClassType>, superClass: PsiClass): PsiClassType {
+        return superTypes.firstOrNull { it is PsiClassReferenceType && it.resolve() == superClass }
+               ?: PsiTypesUtil.getClassType(superClass)
+    }
+    
     override fun getSuperclass(): TypeMirror {
         val superClass = psi.superClass ?: return JeNoneType
-        return PsiTypesUtil.getClassType(superClass).toJeType(psi.manager)
+        val psiType = getSuperType(psi.superTypes, superClass)
+        return psiType.toJeType(psi.manager)
     }
 
-    override fun getInterfaces() = psi.interfaces.map { PsiTypesUtil.getClassType(it).toJeType(psi.manager) }
+    override fun getInterfaces(): List<TypeMirror> {
+        val superTypes = psi.superTypes
+        val interfaces = mutableListOf<TypeMirror>()
+        
+        for (intf in psi.interfaces) {
+            val psiType = getSuperType(superTypes, intf)
+            interfaces += psiType.toJeType(psi.manager)
+        }
+        
+        return interfaces
+    }
 
     override fun getTypeParameters() = psi.typeParameters.map { JeTypeParameterElement(it, this) }
 

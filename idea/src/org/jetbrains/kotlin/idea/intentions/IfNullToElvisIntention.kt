@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
+class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention::class)
 
 class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: KtIfExpression): TextRange? {

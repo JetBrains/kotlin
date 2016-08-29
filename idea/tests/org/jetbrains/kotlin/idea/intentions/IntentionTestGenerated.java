@@ -2807,6 +2807,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsExtensionFunction.kt")
+            public void testEqualsExtensionFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/equalsExtensionFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/extensionFunction.kt");
@@ -6810,6 +6816,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifWithBothBranchesReturn.kt")
+        public void testIfWithBothBranchesReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifWithBothBranchesReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWithBothBranchesSetter.kt")
+        public void testIfWithBothBranchesSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifWithBothBranchesSetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("in.kt")
         public void testIn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/in.kt");
@@ -6825,6 +6843,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/is.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaNonLocalAndLocalReturn.kt")
+        public void testLambdaNonLocalAndLocalReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lambdaNonLocalAndLocalReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaNonLocalReturn.kt")
+        public void testLambdaNonLocalReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lambdaNonLocalReturn.kt");
             doTest(fileName);
         }
 
@@ -6891,6 +6921,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("negatedExpression.kt")
         public void testNegatedExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/negatedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedIfWithReturn.kt")
+        public void testNestedIfWithReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/nestedIfWithReturn.kt");
             doTest(fileName);
         }
 
