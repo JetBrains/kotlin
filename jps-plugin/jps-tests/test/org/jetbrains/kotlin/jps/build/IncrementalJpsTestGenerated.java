@@ -991,6 +991,24 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaFieldNullabilityChanged")
+            public void testJavaFieldNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaFieldNullabilityChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaMethodParamNullabilityChanged")
+            public void testJavaMethodParamNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodParamNullabilityChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaMethodReturnTypeNullabilityChanged")
+            public void testJavaMethodReturnTypeNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodReturnTypeNullabilityChanged/");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodAddedInSuper")
             public void testMethodAddedInSuper() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper/");
