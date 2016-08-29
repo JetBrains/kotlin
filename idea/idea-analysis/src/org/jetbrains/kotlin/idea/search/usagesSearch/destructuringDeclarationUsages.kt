@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -59,7 +60,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 enum class DestructuringDeclarationUsageSearch {
-    ALWAYS_SMART, ALWAYS_PLAIN, PLAIN_WHEN_NEEDED
+    ALWAYS_SMART,
+    ALWAYS_PLAIN,
+    PLAIN_WHEN_NEEDED // use plain search for LocalSearchScope and when unknown type of reference encountered
 }
 
 // for tests
@@ -223,12 +226,18 @@ private class Processor(
         PROCESS_LAMBDAS
     }
 
-    //TODO: check if it's operator (too expensive)
     /**
      * Adds declaration whose type is our data class (or data class used anywhere inside that type)
      * or which has parameter of functional type with our data class used inside
      */
     private fun addCallableDeclarationToProcess(declaration: PsiElement, kind: CallableToProcessKind) {
+        if (declaration.isOperatorExpensiveToSearch()) { // cancel all tasks and use plain search
+            tasks.clear()
+            scopesToUsePlainSearch.clear()
+            plainSearchHandler(searchScope)
+            return
+        }
+
         data class ProcessCallableUsagesTask(val declaration: PsiElement, val kind: CallableToProcessKind) : Task {
             override fun perform() {
                 // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
@@ -619,6 +628,24 @@ private class Processor(
 
     private fun PsiModifierListOwner.isPrivateOrLocal(): Boolean {
         return hasModifierProperty(PsiModifier.PRIVATE) || parents.any { it is PsiCodeBlock }
+    }
+
+    private fun PsiElement.isOperatorExpensiveToSearch(): Boolean {
+        when (this) {
+            is KtFunction -> {
+                if (name?.startsWith("component") == true) return false // component functions are not so expensive to search
+                return  hasModifier(KtTokens.OPERATOR_KEYWORD)
+                        || hasModifier(KtTokens.OVERRIDE_KEYWORD) && (resolveToDescriptorIfAny() as? FunctionDescriptor)?.isOperator == true
+            }
+
+            is KtLightMethod -> {
+                return kotlinOrigin?.isOperatorExpensiveToSearch() == true
+            }
+
+            else -> {
+                return false
+            }
+        }
     }
 
     private fun KotlinType.containsTypeOrDerivedInside(type: FuzzyType): Boolean {
