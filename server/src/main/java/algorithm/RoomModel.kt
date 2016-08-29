@@ -24,7 +24,7 @@ object RoomModel {
     fun getUpdate(): Waypoints {
 
         val algorithm = DebugClInterface.algorithmImpl
-        if (algorithm == null || !(algorithm is RoomTest)) {
+        if (algorithm == null || !(algorithm is RoomBypassingAlgorithm)) {
             val emptyArr = IntArray(0)
             return Waypoints.BuilderWaypoints(emptyArr, emptyArr, emptyArr, emptyArr, false).build()
 

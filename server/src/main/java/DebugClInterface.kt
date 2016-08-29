@@ -6,7 +6,6 @@ import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
 import java.util.concurrent.Exchanger
-import algorithm.RoomTest
 
 object DebugClInterface {
 
@@ -63,9 +62,6 @@ object DebugClInterface {
             "pos" -> {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {
-                    println("length: ${tmp.wallLength} angleOX: ${tmp.wallAngleWithOX}")
-                    println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
-                } else if (tmp is RoomTest) {
                     println("points: ${tmp.points}")
                     println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
                 }
@@ -85,8 +81,7 @@ object DebugClInterface {
                 } else 1
 
         if (algorithmImpl == null) {
-            algorithmImpl = RoomTest(environment.map.values.last(), exchanger)
-//            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
         }
         while (count > 0) {
             count--
