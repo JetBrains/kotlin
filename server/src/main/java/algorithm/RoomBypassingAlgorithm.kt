@@ -4,7 +4,6 @@ import RouteRequest
 import algorithm.geometry.Line
 import algorithm.geometry.Vector
 import objects.Car
-import java.util.*
 import java.util.concurrent.Exchanger
 
 class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : AbstractAlgorithm(thisCar, exchanger) {
@@ -26,7 +25,6 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val dist0 = anglesDistances[0]
         val dist90 = anglesDistances[90]
         if (dist90 == null || dist90 > 85) {
-            //best analysis of outer angle is check minimum in values 60,70,80,90,100,...
             requiredAngles = getIntArray(0, 60, 90, 120, 180)
             return CarState.OUTER
         }
@@ -169,7 +167,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 return resultBuilder.build()
             }
             CarState.OUTER -> {
-                //todo calculate angle
+                //todo calculate target
                 resultBuilder.setDirections(getIntArray(RIGHT, FORWARD, RIGHT))
                 resultBuilder.setTimes(getIntArray((45 / ROTATION_VELOCITY).toInt(),
                         (40 / MOVE_VELOCITY).toInt(), (45 / ROTATION_VELOCITY).toInt()))

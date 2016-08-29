@@ -43,7 +43,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
                 response.headers().add("Access-Control-Allow-Origin", "*");
                 response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
+                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Direction, Content-Length");
                 ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
             }
             Constants.getWaypointsURL -> {
@@ -63,7 +63,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
                 response.headers().add("Access-Control-Allow-Origin", "*");
                 response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
+                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Direction, Content-Length");
                 ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
             }
             Constants.directionOrderURL -> {
@@ -94,7 +94,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
                 response.headers().add("Access-Control-Allow-Origin", "*");
                 response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
+                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Direction, Content-Length");
                 ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
             }
             Constants.getDebug -> {
@@ -110,7 +110,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
                 response.headers().add("Access-Control-Allow-Origin", "*");
                 response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
+                response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Direction, Content-Length");
                 ctx.writeAndFlush(response).addListener(io.netty.channel.ChannelFutureListener.CLOSE)
             }
         }

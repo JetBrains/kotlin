@@ -24,6 +24,6 @@ class Car constructor(uid: Int, host: String, port: Int) {
     }
 
     override fun toString(): String {
-        return "$uid ; x:$x; y:$y; angle:$angle"
+        return "$uid ; x:$x; y:$y; target:$angle"
     }
 }

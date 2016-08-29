@@ -1,13 +1,13 @@
+
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
-import algorithm.RoomModel
-import algorithm.RoomTest
 import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
 import java.util.concurrent.Exchanger
+import algorithm.RoomTest
 
 object DebugClInterface {
 
@@ -268,7 +268,7 @@ object DebugClInterface {
     }
 
     private fun getRouteMessage(): RouteRequest? {
-        println("print way points in polar coordinate als [distance] [rotation angle] in metres and degrees." +
+        println("print way points in polar coordinate als [distance] [rotation target] in metres and degrees." +
                 "after enter all points print \"done\". for reset route print \"reset\"")
         println("e.g. for move from (x,y) to (x+1,y) and back to (x,y) you need enter:" +
                 "1 0[enter] 1 180[enter] done")
@@ -292,7 +292,7 @@ object DebugClInterface {
                         distances.add(distance)
                         angles.add(angle)
                     } catch (e: NumberFormatException) {
-                        println("error in converting angle or distance to int. try again")
+                        println("error in converting target or distance to int. try again")
                     } catch (e: IndexOutOfBoundsException) {
                         println("format error, u must print two number separated by spaces. Try again")
                     }
