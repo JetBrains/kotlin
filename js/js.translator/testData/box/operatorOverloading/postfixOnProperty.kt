@@ -12,7 +12,11 @@ class MyInt() {
 }
 
 
-fun box(): Boolean {
+fun box(): String {
     val d = a++;
-    return (a.b == 1) && (d.b == 1);
+
+    if (a.b != 1) return "fail1: ${a.b}"
+    if (d.b != 1) return "fail2: ${d.b}"
+
+    return "OK"
 }

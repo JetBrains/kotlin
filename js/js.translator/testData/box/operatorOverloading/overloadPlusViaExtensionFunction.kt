@@ -9,12 +9,16 @@ operator fun <T> ArrayList<T>.plus(other: Collection<T>): List<T> {
     return c
 }
 
-fun box(): Boolean {
+fun box(): String {
     var v1 = ArrayList<String>()
     v1.add("foo")
     val v2 = ArrayList<String>()
     v2.add("bar")
     val v = v1 + v2
 
-    return (v.size == 2 && v[0] == "foo" && v[1] == "bar")
+    if (v.size != 2) return "fail1: ${v.size}"
+    if (v[0] != "foo") return "fail2: ${v[0]}"
+    if (v[1] != "bar") return "fail3: ${v[1]}"
+
+    return "OK"
 }

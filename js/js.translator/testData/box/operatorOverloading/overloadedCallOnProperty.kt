@@ -14,8 +14,8 @@ class MyInt() {
 }
 
 
-fun box(): Boolean {
+fun box(): String {
     a++;
     a++;
-    return (a.b == 2);
+    return if (a.b == 2) "OK" else "fail"
 }
