@@ -39,13 +39,9 @@ abstract class StructCodegen(val state: TranslationState,
     open fun prepareForGenerate() {
         generateStruct()
 
-        for (declaration in classOrObject.declarations) {
-            when (declaration) {
-                is KtNamedFunction -> {
-                    val function = FunctionCodegen(state, variableManager, declaration, codeBuilder, packageName, this)
-                    methods.put(function.name, function)
-                }
-            }
+        for (declaration in classOrObject.declarations.filter { it is KtNamedFunction }) {
+            val function = FunctionCodegen(state, variableManager, declaration as KtNamedFunction, codeBuilder, packageName, this)
+            methods.put(function.name, function)
         }
     }
 
@@ -222,20 +218,15 @@ abstract class StructCodegen(val state: TranslationState,
 
         val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
         val receiverThis = LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1)
-        codeBuilder.addComment("field initializers starts")
         variableManager.addVariable("this", receiverThis, 2)
 
         for ((variable, initializer) in initializedFields) {
             val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevel, call = null)!!
-            codeBuilder.addComment("left expression")
             val right = blockCodegen.evaluateExpression(initializer, scopeDepth = blockCodegen.topLevel)!!
-            codeBuilder.addComment("right expression")
             blockCodegen.executeBinaryExpression(KtTokens.EQ, referenceName = null, left = left, right = right)
-            codeBuilder.addComment("next initializer")
         }
 
         variableManager.pullOneUpwardLevelVariable("this")
-        codeBuilder.addComment("field initializers ends")
     }
 
     private fun generateReturn(src: LLVMVariable) {

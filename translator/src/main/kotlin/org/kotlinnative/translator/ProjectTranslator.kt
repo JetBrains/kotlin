@@ -63,8 +63,8 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
             functions.values.filter { !it.isExtensionDeclaration }.map { it.generate() }
         }
 
-        if (!state.mainFunctions.contains("main") && state.mainFunctions.isNotEmpty()) {
-            codeBuilder.declareEntryPoint(state.mainFunctions.first())
+        if (state.mainFunction != "main") {
+            codeBuilder.declareEntryPoint(state.mainFunction)
         }
     }
 

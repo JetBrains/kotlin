@@ -25,7 +25,7 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import java.util.*
 
-class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, arm: Boolean) {
+class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val mainFunction: String, arm: Boolean) {
     companion object {
         var pointerAlign = 4
         var pointerSize = 4
@@ -43,12 +43,11 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
-    val mainFunctions = ArrayList<String>()
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 
 }
 
-fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = false): TranslationState {
+fun parseAndAnalyze(sources: List<String>, disposer: Disposable, mainFunction: String, arm: Boolean = false): TranslationState {
 
     val configuration = CompilerConfiguration()
     val messageCollector = object : MessageCollector {
@@ -72,7 +71,7 @@ fun parseAndAnalyze(sources: List<String>, disposer: Disposable, arm: Boolean = 
     val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException("Can't initialize binding context for project")
 
-    return TranslationState(environment, bindingContext, arm)
+    return TranslationState(environment, bindingContext, mainFunction, arm)
 }
 
 fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {

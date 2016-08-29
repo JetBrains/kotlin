@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 
     analyzedFiles.addAll(arguments.sources)
 
-    val state = parseAndAnalyze(analyzedFiles, disposer, arguments.arm ?: false)
+    val state = parseAndAnalyze(analyzedFiles, disposer, arguments.mainClass, arguments.arm ?: false)
     val files = state.environment.getSourceFiles()
     val code = ProjectTranslator(files, state).generateCode()
 

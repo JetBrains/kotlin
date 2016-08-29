@@ -44,23 +44,18 @@ class FunctionCodegen(state: TranslationState,
         if (returnType!!.type is LLVMReferenceType) {
             returnType!!.pointer = 2
         }
-        external = isExternal()
-        name = "${function.fqName}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
-        val pureName = name.substringAfterLast('.')
-        if (pureName == "main") {
-            state.mainFunctions.add(name)
-        }
+        external = descriptor.isExternal
+        name = "${function.fqName}${if (!external) LLVMType.mangleFunctionArguments(args) else ""}"
 
         if (isExtensionDeclaration) {
             name = "${function.name}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
             val receiverType = descriptor.extensionReceiverParameter!!.type
             val translatorType = LLVMMapStandardType(receiverType, state)
             val packageName = (function.containingFile as KtFile).packageFqName.asString()
-            functionNamePrefix += if (packageName.length > 0) "$packageName." else ""
-            functionNamePrefix += translatorType.mangle() + "."
+            functionNamePrefix = packageName.addAfterIfNotEmpty(".") + translatorType.mangle() + "."
 
             val extensionFunctionsOfThisType = state.extensionFunctions.getOrDefault(translatorType.toString(), HashMap())
-            extensionFunctionsOfThisType.put(functionNamePrefix + name, this)
+            extensionFunctionsOfThisType.put(fullName, this)
             state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
         }
 
@@ -150,7 +145,7 @@ class FunctionCodegen(state: TranslationState,
             }
 
             if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).byRef) {
-                val loadVariable = LLVMVariable("${it.label}", it.type, it.label, LLVMRegisterScope(), pointer = it.pointer)
+                val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = it.pointer)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
                 variableManager.addVariable(it.label, allocVar, topLevel)
             } else {
@@ -159,16 +154,4 @@ class FunctionCodegen(state: TranslationState,
         })
     }
 
-    private fun isExternal(): Boolean {
-        var keyword = function.firstChild
-        while (keyword != null) {
-            if (keyword.text == "external") {
-                return true
-            }
-
-            keyword = keyword.getNextSiblingIgnoringWhitespaceAndComments()
-        }
-
-        return false
-    }
 }
