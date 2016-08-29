@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.resolve.jvm.extensions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 
 interface AnalysisCompletedHandlerExtension {
     companion object : ProjectExtensionDescriptor<AnalysisCompletedHandlerExtension>(
@@ -33,6 +32,6 @@ interface AnalysisCompletedHandlerExtension {
     fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
-            bindingContext: BindingContext,
+            bindingTrace: BindingTrace,
             files: Collection<KtFile>): AnalysisResult?
 }
