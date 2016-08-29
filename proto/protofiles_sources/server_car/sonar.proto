@@ -5,6 +5,7 @@ message SonarRequest {
     repeated int32 attempts = 2;
     int32 threshold = 3;
     Smoothing smoothing = 4;
+    int32 windowSize = 5;
 
     enum Smoothing {
         NONE = 0;

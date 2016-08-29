@@ -68,17 +68,36 @@ object Control {
 
     private fun sonarTask() {
         val request = Reader.readSonar()
-        val size = request.angles.size
+        val angles = request.angles
+        val size = angles.size
+        val attempts = request.attempts
+
         val distances = IntArray(size)
 
-        var i = 0
-        while (i < size) {
-            distances[i] = Sonar.getSmoothDistance(request.angles[i])
-            i++
+        for (i in 0..(size - 1)) {
+            distances[i] = sonarMeasure(request.smoothing, attempts[i], angles[i], request.windowSize)
         }
 
         val response = SonarResponse.BuilderSonarResponse(distances).build()
         Writer.writeSonar(response)
+    }
+
+    private fun sonarMeasure(smoothing: SonarRequest.Smoothing, attempts: Int, angle: Int, windowSize: Int): Int {
+        val data = IntArray(attempts)
+
+        for (i in 0..(attempts - 1)) {
+            data[i] = Sonar.getSmoothDistance(angle, windowSize)
+
+            if (smoothing.id == SonarRequest.Smoothing.NONE.id && data[i] != -1) {
+                return data[i]
+            }
+        }
+
+        return when (smoothing.id) {
+            SonarRequest.Smoothing.MEAN.id -> data.mean()
+            SonarRequest.Smoothing.MEDIAN.id -> data.median()
+            else -> -1
+        }
     }
 
     private fun sendMemoryStats() {

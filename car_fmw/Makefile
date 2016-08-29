@@ -4,6 +4,7 @@ LIB_DIR=$(PWD)/lib
 TRANSLATOR_DIR=$(PWD)/../translator
 KOTSTD_DIR=$(PWD)/../kotstd
 CAR_HW_DIR=$(PWD)/../car_hw
+PROTO_DIR=$(PWD)/../proto/protofiles_sources/out
 
 OS_ARCH=linux-x86_64
 
@@ -22,7 +23,6 @@ KT=$(TRANSLATOR_DIR)/build/libs/translator-1.0.jar
 LD=arm-none-eabi-ld
 OBJ_COPY=arm-none-eabi-objcopy
 GDB=arm-none-eabi-gdb
-PROTOC=$(PWD)/../proto/compiler/build/protoc
 
 LL=llc-3.6
 LLINK=llvm-link-3.6
@@ -69,14 +69,11 @@ $(BIN_DIR)/kotlib.ll: $(LIB_DIR)/app.ll $(LIB_KOTSTD)
 $(LIB_KOTSTD):
 	cd $(KOTSTD_DIR) && make
 
-$(LIB_DIR)/app.ll: $(SRC_DIR)/**/*.kt $(SRC_DIR)/*.kt
+$(LIB_DIR)/app.ll: $(SRC_DIR)/**/*.kt $(SRC_DIR)/*.kt $(PROTO_DIR)/*.kt
 	$(KT_ALL_DEPS)
 
 $(KT):
 	cd $(TRANSLATOR_DIR) && ./gradlew jar
-
-proto:
-	$(PROTOC) -I$(SRC_DIR)/proto --kotlin_out=$(SRC_DIR)/proto_src $(SRC_DIR)/proto/*.proto
 
 flash: $(CAR_FMW_BIN)
 	$(ST_DIR)/st-flash write $(CAR_FMW_BIN) 0x8000000

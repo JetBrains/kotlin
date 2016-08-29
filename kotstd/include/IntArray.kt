@@ -46,7 +46,6 @@ class IntArray(var size: Int) {
 
 }
 
-
 fun IntArray.print() {
     var index = 0
     print('[')
@@ -118,3 +117,45 @@ operator fun IntArray.plus(elements: IntArray): IntArray {
 
     return newInstance
 }
+
+fun IntArray.max(from: Int = 0): Int {
+    var result = from
+    for (i in (from + 1)..(size - 1)) {
+        result = if (get(i) > get(result)) i else result
+    }
+
+    return get(result)
+}
+
+fun IntArray.min(from: Int = 0): Int {
+    var result = from
+    for (i in 1..(size - 1)) {
+        result = if (this.get(i) < this.get(result)) i else result
+    }
+
+    return this.get(result)
+}
+
+fun IntArray.sum(): Int {
+    var result = 0
+    for (i in 0..(size - 1)) {
+        result += this.get(i)
+    }
+
+    return result
+}
+
+fun IntArray.sort(): IntArray {
+    val result = this.clone()
+    for (i in 0..(size - 1)) {
+        result[i] = this.max(i)
+    }
+
+    return result
+}
+
+fun IntArray.mean(): Int =
+        this.sum() / this.size
+
+fun IntArray.median(): Int =
+    this.sort()[this.size / 2]
