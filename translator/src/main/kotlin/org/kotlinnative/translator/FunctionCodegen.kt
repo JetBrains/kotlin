@@ -48,7 +48,7 @@ class FunctionCodegen(state: TranslationState,
         name = "${function.fqName}${if (!external) LLVMType.mangleFunctionArguments(args) else ""}"
 
         if (isExtensionDeclaration) {
-            name = "${function.name}${if (args.size > 0 && !external) LLVMType.mangleFunctionArguments(args) else ""}"
+            name = "${function.name}${if (!external) LLVMType.mangleFunctionArguments(args) else ""}"
             val receiverType = descriptor.extensionReceiverParameter!!.type
             val translatorType = LLVMMapStandardType(receiverType, state)
             val packageName = (function.containingFile as KtFile).packageFqName.asString()
