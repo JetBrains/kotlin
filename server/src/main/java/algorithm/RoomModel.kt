@@ -35,23 +35,14 @@ object RoomModel {
         val end_y = IntArray(algorithm.points.size)
 
 
-        for (i in 0..algorithm.points.size - 1) {
+        for (i in 0..algorithm.points.size - 2) {
             val curPoint = algorithm.points[i]
-            if (algorithm.points.size - 1 == i) {
-//                val nextPoint = algorithm.points[0]
-//                begin_x[i] = curPoint.first.toInt()
-//                begin_y[i] = curPoint.second.toInt()
-//
-//                end_x[i] = nextPoint.first.toInt()
-//                end_y[i] = nextPoint.second.toInt()
-                continue
-            }
             val nextPoint = algorithm.points[i + 1]
-            begin_x[i] = curPoint.first.toInt()
-            begin_y[i] = curPoint.second.toInt()
+            begin_x[i] = (curPoint.x + 0.5).toInt()
+            begin_y[i] = (curPoint.y + 0.5).toInt()
 
-            end_x[i] = nextPoint.first.toInt()
-            end_y[i] = nextPoint.second.toInt()
+            end_x[i] = (nextPoint.x + 0.5).toInt()
+            end_y[i] = (nextPoint.y + 0.5).toInt()
         }
         return Waypoints.BuilderWaypoints(begin_x, begin_y, end_x, end_y, false).build()
     }

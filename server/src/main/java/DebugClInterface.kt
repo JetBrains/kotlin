@@ -1,4 +1,3 @@
-
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
@@ -189,7 +188,7 @@ object DebugClInterface {
             when (command) {
                 "reset" -> return null
                 "done" -> {
-                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray())
+                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray(), IntArray(angles.size, {1}), 0, SonarRequest.Smoothing.NONE)
                     return sonarBuilder.build()
                 }
                 else -> {

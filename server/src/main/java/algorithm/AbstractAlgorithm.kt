@@ -4,6 +4,7 @@ import CodedOutputStream
 import Exceptions.InactiveCarException
 import RouteMetricRequest
 import SonarRequest
+import algorithm.geometry.AngleData
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
@@ -24,7 +25,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     private var prevState: CarState? = null
 
-    private var prevSonarDistances = mapOf<Int, Double>()
+    private var prevSonarDistances = mapOf<Int, AngleData>()
     private val defaultAngles = listOf(0, 60, 90, 120, 180).toIntArray()
     protected var requiredAngles = defaultAngles
 
@@ -34,43 +35,36 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         OUTER
     }
 
-    protected fun getData(angles: IntArray): DoubleArray {
+    protected fun getData(angles: IntArray): IntArray {
 
-        val copyElemCount = 1
-        val anglesCoped = IntArray(angles.size * copyElemCount, { angles[it / copyElemCount] })
+        val attempts = 1
+        val threshold = 0
+        val smoothing = SonarRequest.Smoothing.NONE
 
-        val message = SonarRequest.BuilderSonarRequest(anglesCoped).build()
+        val message = SonarRequest.BuilderSonarRequest(
+                angles = angles,
+                attempts = IntArray(angles.size, { attempts }),
+                threshold = threshold,
+                smoothing = smoothing)
+                .build()
         val requestBytes = ByteArray(message.getSizeNoTag())
         message.writeTo(CodedOutputStream(requestBytes))
         val request = getDefaultHttpRequest(thisCar.host, sonarUrl, requestBytes)
         try {
-            car.client.Client.sendRequest(request, thisCar.host, thisCar.port, mapOf(Pair("angles", anglesCoped)))
+            car.client.Client.sendRequest(request, thisCar.host, thisCar.port, mapOf(Pair("angles", angles)))
         } catch (e: InactiveCarException) {
             println("connection error!")
         }
 
         try {
             val distances = exchanger.exchange(IntArray(0), 300, TimeUnit.SECONDS)
-            val result = DoubleArray(angles.size)
-            for (i in 0..result.size - 1) {
-                val distancesOnCurrentAngle = distances.drop(i * copyElemCount).take(copyElemCount)
-                var sum = 0
-                for (distance in distancesOnCurrentAngle) {
-                    if (distance != -1) {
-                        sum += distance
-                    }
-                }
-                if (sum != 0) {
-                    result[i] = (sum.toDouble()) / (copyElemCount)
-                }
-            }
-            return result
+            return distances
         } catch (e: InterruptedException) {
             println("don't have response from car!")
         } catch (e: TimeoutException) {
             println("don't have response from car. Timeout!")
         }
-        return DoubleArray(0)
+        return IntArray(0)
     }
 
     protected fun moveCar(message: RouteMetricRequest) {
@@ -103,12 +97,12 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         if (distances.size != angles.size) {
             throw RuntimeException("error! angles and distances have various sizes")
         }
-        val anglesDistances = mutableMapOf<Int, Double>()
+        val anglesDistances = mutableMapOf<Int, AngleData>()
         for (i in 0..angles.size - 1) {
             if (Math.abs(distances[i]) < 0.01) {
                 continue
             }
-            anglesDistances.put(angles[i], distances[i])
+            anglesDistances.put(angles[i], AngleData(angles[i], distances[i]))
         }
 
         this.requiredAngles = defaultAngles
@@ -133,7 +127,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         return prevState
     }
 
-    protected fun getPrevSonarDistances(): Map<Int, Double> {
+    protected fun getPrevSonarDistances(): Map<Int, AngleData> {
         return prevSonarDistances
     }
 
@@ -141,8 +135,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         return requiredAngles
     }
 
-    protected abstract fun getCarState(anglesDistances: Map<Int, Double>): CarState?
-    protected abstract fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteMetricRequest
+    protected abstract fun getCarState(anglesDistances: Map<Int, AngleData>): CarState?
+    protected abstract fun getCommand(anglesDistances: Map<Int, AngleData>, state: CarState): RouteMetricRequest
     protected abstract fun afterGetCommand(route: RouteMetricRequest)
 
 

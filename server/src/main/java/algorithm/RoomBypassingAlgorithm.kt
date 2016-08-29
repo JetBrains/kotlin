@@ -1,15 +1,14 @@
 package algorithm
 
-import algorithm.geometry.Line
-import algorithm.geometry.Vector
 import objects.Car
 import RouteMetricRequest
+import algorithm.geometry.*
 import java.util.concurrent.Exchanger
 
 class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : AbstractAlgorithm(thisCar, exchanger) {
 
-    public var wallAngleWithOX = 0.0//in radian
-    public var wallLength = 0.0//sm
+    var wallAngleWithOX = 0.0//in radian
+    var wallLength = 0.0//sm
     var errorCount = 0
 
     var carX = 0
@@ -18,17 +17,18 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
     private var prevPoint = Pair(0.0, 0.0)
 
-    override fun getCarState(anglesDistances: Map<Int, Double>): CarState? {
-        val dist0 = anglesDistances[0]
-        val dist90 = anglesDistances[90]
-        if (dist90 == null || dist90 > 85) {
+    override fun getCarState(anglesDistances: Map<Int, AngleData>): CarState? {
+        val angleData0 = anglesDistances[0]
+        val angleData90 = anglesDistances[90]
+        if (angleData90 == null || angleData90.distance > 85) {
             requiredAngles = getIntArray(0, 60, 90, 120, 180)
             return CarState.OUTER
         }
+        val dist90 = angleData90.distance
         if (dist90 < 20) {
             return CarState.WALL
         }
-        if (dist0 == null || dist0 > 70) {
+        if (angleData0 == null || angleData0.distance > 70) {
             return CarState.WALL
         }
         return CarState.INNER
@@ -59,14 +59,14 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         }
     }
 
-    override fun getCommand(anglesDistances: Map<Int, Double>, state: CarState): RouteMetricRequest {
-        val dist0 = anglesDistances[0]
-        val dist60 = anglesDistances[60]
-        val dist90 = anglesDistances[90]
-        val dist120 = anglesDistances[120]
-        val dist180 = anglesDistances[180]
+    override fun getCommand(anglesDistances: Map<Int, AngleData>, state: CarState): RouteMetricRequest {
+        val angleData0 = anglesDistances[0]
+        val angleData60 = anglesDistances[60]
+        val angleData90 = anglesDistances[90]
+        val angleData120 = anglesDistances[120]
+        val angleData180 = anglesDistances[180]
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
-        if (dist120 == null || dist90 == null || dist60 == null) {
+        if (angleData120 == null || angleData90 == null || angleData60 == null) {
             println("null distance!")
             if (errorCount >= 3) {
                 errorCount = 0
@@ -79,26 +79,26 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         }
         if (getPrevState() == null) {
             //its first run, save right wall
-            RoomModel.lines.add(Line(0.0, 1.0, dist90))
-            prevPoint = Pair(0.0, -dist90)
-            if (dist0 != null) {
-                wallLength = dist0
+            RoomModel.lines.add(Line(0.0, 1.0, angleData90.distance.toDouble()))
+            prevPoint = Pair(0.0, -angleData90.distance.toDouble())
+            if (angleData0 != null) {
+                wallLength = angleData0.distance.toDouble()
             }
         }
         when (state) {
             CarState.WALL -> {
-                if (wallLength.toInt() == 0 && (dist0 != null && dist180 != null)) {
-                    wallLength = dist0 + dist180
+                if (wallLength.toInt() == 0 && (angleData0 != null && angleData180 != null)) {
+                    wallLength = angleData0.distance.toDouble() + angleData180.distance.toDouble()
                 }
-                if (dist90 > 40 || dist90 < 20) {
-                    val rotationDirection = if (dist90 > 40) RIGHT else LEFT
+                if (angleData90.distance > 40 || angleData90.distance < 20) {
+                    val rotationDirection = if (angleData90.distance > 40) RIGHT else LEFT
                     resultBuilder.setDirections(getIntArray(rotationDirection, FORWARD))
                     resultBuilder.setDistances(getIntArray(10, 35))
                     return resultBuilder.build()
                 }
 
-                if (Math.abs(dist120 - dist60) > 10) {
-                    val rotationDirection = if (dist120 > dist60) LEFT else RIGHT
+                if (Math.abs(angleData120.distance - angleData60.distance) > 10) {
+                    val rotationDirection = if (angleData120.distance > angleData60.distance) LEFT else RIGHT
                     resultBuilder.setDirections(getIntArray(rotationDirection))
                     resultBuilder.setDistances(getIntArray(15))
                     return resultBuilder.build()
@@ -111,18 +111,18 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             CarState.INNER -> {
 
                 //в угле первое действие - встать максимально паралельно стене.
-                if (Math.abs(dist120 - dist60) > 10) {
-                    val rotationDirection = if (dist120 > dist60) LEFT else RIGHT
+                if (Math.abs(angleData120.distance - angleData60.distance) > 10) {
+                    val rotationDirection = if (angleData120.distance > angleData60.distance) LEFT else RIGHT
                     resultBuilder.setDirections(getIntArray(rotationDirection))
                     resultBuilder.setDistances(getIntArray(12))
                     return resultBuilder.build()
                 }
 
                 //если стоим паралельно - можно мерить угол
-                val pointsNextLine = arrayListOf<Pair<Double, Double>>()
-                for (angleDist in anglesDistances) {
-                    if (angleDist.key <= 15) {
-                        pointsNextLine.add(sonarAngleDistToPoint(angleDist.toPair()))
+                val pointsNextLine = arrayListOf<Point>()
+                for (angleData in anglesDistances.values) {
+                    if (angleData.angle <= 15) {
+                        pointsNextLine.add(angleData.toPoint(Util.radianToDegrees(wallAngleWithOX)))
                     }
                 }
                 if (pointsNextLine.size < 3) {
@@ -178,30 +178,22 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return angle * 180 / Math.PI
     }
 
-    private fun sonarAngleDistToPoint(angleDist: Pair<Int, Double>): Pair<Double, Double> {
 
-        val angle = wallAngleWithOX - degreesToRadian(angleDist.first)
-        val dist = angleDist.second
-
-        val result = Pair(Math.cos(angle) * dist, Math.sin(angle) * dist)
-        return result
-    }
-
-    private fun approximatePointsByLine(points: Array<Pair<Double, Double>>): Line {
+    private fun approximatePointsByLine(points: Array<Point>): Line {
 
 //        val p1 = points.first()
 //        val p2 = points[1]
 //        return Line(p2.second - p1.second, p1.first - p2.first, -p1.first * p2.second + p1.second * p2.first)
 
-        val sumX = points.sumByDouble { it.first }
-        val sumXQuad = points.sumByDouble { it.first * it.first }
-        val sumY = points.sumByDouble { it.second }
-        val sumXY = points.sumByDouble { it.second * it.first }
+        val sumX = points.sumByDouble { it.x }
+        val sumXQuad = points.sumByDouble { it.x * it.x }
+        val sumY = points.sumByDouble { it.y }
+        val sumXY = points.sumByDouble { it.y * it.x }
 
         val pointsCount = points.size
         val den = pointsCount * sumXQuad - sumX * sumX
         if (Math.abs(den) < 0.001) {
-            return Line(1.0, 0.0, -points.first().first)
+            return Line(1.0, 0.0, -points.first().x)
         }
         val k = (pointsCount * sumXY - sumX * sumY) / (pointsCount * sumXQuad - sumX * sumX)
         val b = (sumY - sumX * k) / pointsCount
