@@ -4,11 +4,16 @@ import DebugClInterface
 import DebugResponse
 import Waypoints
 import algorithm.geometry.Line
+import algorithm.geometry.Point
+import algorithm.geometry.Wall
 import objects.Car
+import java.util.*
 
 object RoomModel {
 
     val lines = arrayListOf<Line>()
+    val walls = arrayListOf<Wall>(Wall())
+    var finished = false
 
     val linesModel = listOf(Line(0.0, 1.0, -300.0),
             Line(1.0, 0.0, 150.0),
@@ -23,21 +28,17 @@ object RoomModel {
     var currentPosition_y = 0
     fun getUpdate(): Waypoints {
 
-        val algorithm = DebugClInterface.algorithmImpl
-        if (algorithm == null || algorithm !is RoomBypassingAlgorithm) {
-            val emptyArr = IntArray(0)
-            return Waypoints.BuilderWaypoints(emptyArr, emptyArr, emptyArr, emptyArr, false).build()
+        val points = getWallsPoints()
 
-        }
-        val begin_x = IntArray(algorithm.points.size)
-        val begin_y = IntArray(algorithm.points.size)
-        val end_x = IntArray(algorithm.points.size)
-        val end_y = IntArray(algorithm.points.size)
+        val begin_x = IntArray(points.size)
+        val begin_y = IntArray(points.size)
+        val end_x = IntArray(points.size)
+        val end_y = IntArray(points.size)
 
 
-        for (i in 0..algorithm.points.size - 2) {
-            val curPoint = algorithm.points[i]
-            val nextPoint = algorithm.points[i + 1]
+        for (i in 0..points.size - 2) {
+            val curPoint = points[i]
+            val nextPoint = points[i + 1]
             begin_x[i] = (curPoint.x + 0.5).toInt()
             begin_y[i] = (curPoint.y + 0.5).toInt()
 
@@ -45,6 +46,22 @@ object RoomModel {
             end_y[i] = (nextPoint.y + 0.5).toInt()
         }
         return Waypoints.BuilderWaypoints(begin_x, begin_y, end_x, end_y, false).build()
+    }
+
+    private fun getWallsPoints(): Array<Point> {
+        return walls.flatMap({ it.points }).toTypedArray()
+    }
+
+    fun updateWalls() {
+        if (walls.size < 2) {
+            // no walls to intersect
+            return
+        }
+        val line1 = walls.last().line
+        val line2 = walls[walls.size - 2].line
+
+        val intersection: Point = line1.intersect(line2)
+        walls[walls.size - 2].addPoint(intersection)
     }
 
     fun getDebugInfo(): DebugResponse {
