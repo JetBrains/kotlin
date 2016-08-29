@@ -31,6 +31,7 @@ for i in $TESTS; do
     TEST=`basename $i ".txt"`
     MAIN="$DIRECTORY/$TEST/linked/main.c"
 	rm -f $DIRECTORY/$TEST/linked/*
+	mkdir -p $DIRECTORY/$TEST/linked
 	successful=1
 	echo -e "${orange}test: ${TEST}${nc}"
 	echo "#include <stdlib.h>" >> $MAIN

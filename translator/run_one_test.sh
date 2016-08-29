@@ -11,6 +11,7 @@ TEST=`basename $i ".txt"`
 DIRECTORY="src/test/kotlin/tests"
 MAIN="$DIRECTORY/$TEST/linked/main.c"
 rm -f $DIRECTORY/$TEST/linked/*
+mkdir -p $DIRECTORY/$TEST/linked
 
 echo "#include <stdlib.h>" >> $MAIN
 echo "#include <stdio.h>" >> $MAIN
