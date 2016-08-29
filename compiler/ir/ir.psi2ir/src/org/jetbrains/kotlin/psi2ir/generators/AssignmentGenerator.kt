@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -158,7 +159,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
     private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =
             !descriptor.isVar &&
-            statementGenerator.scopeOwner is ConstructorDescriptor &&
+            statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
             resolvedCall.dispatchReceiver is ThisClassReceiver
 
     private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, irOperator: IrOperator): ArrayAccessAssignmentReceiver {

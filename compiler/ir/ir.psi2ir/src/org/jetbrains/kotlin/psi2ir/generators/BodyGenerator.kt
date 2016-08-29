@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: GeneratorContext): GeneratorWithScope {
+class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext): GeneratorWithScope {
     override val scope = Scope(scopeOwner)
     private val loopTable = HashMap<KtLoopExpression, IrLoop>()
 
@@ -79,8 +80,12 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
     private fun IrExpression.wrapWithReturn() =
             if (KotlinBuiltIns.isNothing(type))
                 this
-            else
-                IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, scopeOwner, this)
+            else {
+                val returnTarget = (scopeOwner as? CallableDescriptor) ?:
+                                   throw AssertionError("'return' in a non-callable: $scopeOwner")
+                IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType,
+                             returnTarget, this)
+            }
 
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
@@ -124,11 +129,13 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
         return irBlockBody
     }
 
-    fun generateSecondaryConstructorBodyWithClassInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrBody {
+    fun generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrBody {
         val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
-        generateInitializersForClassBody(irBlockBody, ktClassOrObject)
+
+        irBlockBody.addStatement(IrNestedInitializersCallImpl(ktConstructor.startOffset, ktConstructor.endOffset,
+                                                              getOrFail(BindingContext.CLASS, ktClassOrObject)))
 
         ktConstructor.bodyExpression?.let { ktBody ->
             createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
@@ -148,6 +155,12 @@ class BodyGenerator(val scopeOwner: CallableDescriptor, override val context: Ge
                 irBlockBody.addStatement(irSuperConstructorCall)
             }
         }
+    }
+
+    fun generateNestedInitializersBody(ktClassOrObject: KtClassOrObject): IrBody {
+        val irBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
+        generateInitializersForClassBody(irBody, ktClassOrObject)
+        return irBody
     }
 
     private fun generateInitializersForClassBody(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {

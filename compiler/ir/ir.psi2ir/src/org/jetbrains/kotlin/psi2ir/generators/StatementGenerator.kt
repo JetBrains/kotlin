@@ -46,7 +46,7 @@ import java.lang.AssertionError
 
 class StatementGenerator(
         override val context: GeneratorContext,
-        val scopeOwner: CallableDescriptor,
+        val scopeOwner: DeclarationDescriptor,
         val bodyGenerator: BodyGenerator,
         override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(), GeneratorWithScope {
@@ -125,9 +125,12 @@ class StatementGenerator(
         return IrReturnImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, returnTarget, irReturnedExpression)
     }
 
+    private fun scopeOwnerAsCallable() =
+            (scopeOwner as? CallableDescriptor) ?: throw AssertionError("'return' in a non-callable: $scopeOwner")
+
     private fun getReturnExpressionTarget(expression: KtReturnExpression): CallableDescriptor =
             if (!ExpressionTypingUtils.isFunctionLiteral(scopeOwner) && !ExpressionTypingUtils.isFunctionExpression(scopeOwner)) {
-                scopeOwner ?: throw AssertionError("Return not in a callable: $scopeOwner")
+                scopeOwnerAsCallable()
             }
             else {
                 val label = expression.getTargetLabel()
@@ -140,7 +143,7 @@ class StatementGenerator(
                     BindingContextUtils.getContainingFunctionSkipFunctionLiterals(scopeOwner, true).first
                 }
                 else {
-                    scopeOwner ?: throw AssertionError("Return not in a callable: $scopeOwner")
+                    scopeOwnerAsCallable()
                 }
             }
 

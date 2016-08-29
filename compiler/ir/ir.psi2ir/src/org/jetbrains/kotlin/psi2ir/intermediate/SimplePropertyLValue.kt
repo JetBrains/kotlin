@@ -36,7 +36,7 @@ class SimplePropertyLValue(
     override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression {
-        val getter = descriptor.getter!!
+        val getter = descriptor.getter ?: throw AssertionError("No getter for $descriptor")
         return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             IrGetterCallImpl(startOffset, endOffset, getter,
                              dispatchReceiverValue?.load(),
@@ -47,7 +47,7 @@ class SimplePropertyLValue(
     }
 
     override fun store(irExpression: IrExpression): IrExpression {
-        val setter = descriptor.setter!!
+        val setter = descriptor.setter ?: throw AssertionError("No setter for $descriptor")
         return callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             IrSetterCallImpl(startOffset, endOffset, setter,
                              dispatchReceiverValue?.load(),

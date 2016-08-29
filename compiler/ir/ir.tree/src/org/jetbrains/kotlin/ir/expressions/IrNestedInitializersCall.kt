@@ -16,16 +16,19 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-interface IrNestedInitializersCall : IrExpression
+interface IrNestedInitializersCall : IrExpression {
+    val classDescriptor: ClassDescriptor
+}
 
 class IrNestedInitializersCallImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrNestedInitializersCall {
+        override val classDescriptor: ClassDescriptor
+) : IrTerminalExpressionBase(startOffset, endOffset, classDescriptor.builtIns.unitType), IrNestedInitializersCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitNestedInitializersCall(this, data)
     }

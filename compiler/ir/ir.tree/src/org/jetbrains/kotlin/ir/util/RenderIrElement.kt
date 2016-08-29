@@ -98,7 +98,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             superQualifier?.let { "superQualifier=${it.name} " } ?: ""
 
     override fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: Nothing?): String =
-            "NESTED_INITIALIZERS_CALL"
+            "NESTED_INITIALIZERS_CALL classDescriptor=${expression.classDescriptor.name}"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"

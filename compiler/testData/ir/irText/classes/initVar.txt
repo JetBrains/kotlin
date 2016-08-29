@@ -36,6 +36,11 @@ FILE /initVar.kt
         SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
           GET_VAR value type=kotlin.Int operator=null
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
+    nestedInitializers: BLOCK_BODY
+      BLOCK type=kotlin.Unit operator=null
+        CALL .<set-x> type=kotlin.Unit operator=EQ
+          $this: THIS public final class TestInitVarWithCustomSetterWithExplicitCtor type=TestInitVarWithCustomSetterWithExplicitCtor
+          value: CONST Int type=kotlin.Int value='0'
     PROPERTY public final var x: kotlin.Int getter=null setter=<set-x>
     PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit property=x
       BLOCK_BODY
@@ -44,11 +49,9 @@ FILE /initVar.kt
     FUN public constructor TestInitVarWithCustomSetterWithExplicitCtor()
       BLOCK_BODY
         CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
-        BLOCK type=kotlin.Unit operator=null
-          CALL .<set-x> type=kotlin.Unit operator=EQ
-            $this: THIS public final class TestInitVarWithCustomSetterWithExplicitCtor type=TestInitVarWithCustomSetterWithExplicitCtor
-            value: CONST Int type=kotlin.Int value='0'
+        NESTED_INITIALIZERS_CALL classDescriptor=TestInitVarWithCustomSetterWithExplicitCtor
   CLASS CLASS TestInitVarWithCustomSetterInCtor
+    nestedInitializers: BLOCK_BODY
     PROPERTY public final var x: kotlin.Int getter=null setter=<set-x>
     PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit property=x
       BLOCK_BODY
@@ -57,6 +60,7 @@ FILE /initVar.kt
     FUN public constructor TestInitVarWithCustomSetterInCtor()
       BLOCK_BODY
         CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        NESTED_INITIALIZERS_CALL classDescriptor=TestInitVarWithCustomSetterInCtor
         CALL .<set-x> type=kotlin.Unit operator=EQ
           $this: THIS public final class TestInitVarWithCustomSetterInCtor type=TestInitVarWithCustomSetterInCtor
           value: CONST Int type=kotlin.Int value='42'

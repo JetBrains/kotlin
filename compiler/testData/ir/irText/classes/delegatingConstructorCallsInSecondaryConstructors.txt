@@ -3,12 +3,15 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
     FUN public constructor Base()
       BLOCK_BODY
   CLASS CLASS Test
+    nestedInitializers: BLOCK_BODY
     FUN public constructor Test()
       BLOCK_BODY
         CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        NESTED_INITIALIZERS_CALL classDescriptor=Test
     FUN public constructor Test(/*0*/ xx: kotlin.Int)
       BLOCK_BODY
         CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        NESTED_INITIALIZERS_CALL classDescriptor=Test
     FUN public constructor Test(/*0*/ xx: kotlin.Short)
       BLOCK_BODY
         CALL .<init> type=Test operator=DELEGATING_CONSTRUCTOR_CALL

@@ -66,9 +66,9 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     }
 
 
-    fun generateSecondaryConstructorWithClassInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrDeclaration {
+    fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrDeclaration {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
-        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithClassInitializers(ktConstructor, ktClassOrObject)
+        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor, ktClassOrObject)
         return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
                               constructorDescriptor, body)
     }

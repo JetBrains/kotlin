@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -41,6 +42,15 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledSubTree(data)
+    }
+
+    override fun visitClass(declaration: IrClass, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.nestedInitializers?.accept(this, "nestedInitializers")
+            declaration.members.forEach {
+                it.accept(this, "")
+            }
+        }
     }
 
     override fun visitCall(expression: IrCall, data: String) {
