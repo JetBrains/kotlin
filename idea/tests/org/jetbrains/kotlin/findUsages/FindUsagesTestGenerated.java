@@ -254,6 +254,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("operators.0.kt")
+                public void testOperators() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/operators.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("recursiveDataClass1.0.kt")
                 public void testRecursiveDataClass1() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/recursiveDataClass1.0.kt");
