@@ -1,16 +1,17 @@
 package RoomScanner
 
-class RoomScanner(val controller: CarController): Thread() {
+class RoomScanner(val controller: CarController) : Thread() {
     private val points = mutableListOf<Pair<Double, Double>>()
 
     override fun run() {
+        println("Car connected ${controller.car.host}")
         while (true) {
             scan()
-            println("[${points.joinToString { "[${it.first}, ${it.second}]" }}}]")
+            println(plot(points))
         }
     }
 
-    fun scan() {
+    private fun scan() {
         val horizon = IntArray(180 / 5, { it * 5 })
         val iterationPoints = mutableListOf<Pair<Double, Double>>()
 
@@ -27,4 +28,6 @@ class RoomScanner(val controller: CarController): Thread() {
         controller.moveTo(target)
     }
 
+    private fun plot(points: MutableList<Pair<Double, Double>>) =
+            "x <- c(${points.joinToString { it.first.toInt().toString() }}) \n y <- c(${points.joinToString { it.second.toInt().toString() }})"
 }

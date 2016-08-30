@@ -24,12 +24,12 @@ class CarController(var car: Car) {
     private var angle = 0.0
 
     fun moveTo(to: Pair<Double, Double>) {
-        val oldAngle = angle
-        rotateOn(estimateAngle(position, to))
+        var driveAngle = (Math.toDegrees(Math.atan2(to.first, to.second)) + 360) % 360
+        rotateOn(angleDistance(angle, driveAngle))
         drive(Direction.FORWARD, Math.max(0.0, distance(position, to)).toInt() - WALL_DISTANCE)
-        rotateOn(oldAngle)
-    }
 
+        position = to
+    }
 
     fun rotateOn(target: Double) {
         val rotateAngle = angleDistance(angle, target)
@@ -46,7 +46,7 @@ class CarController(var car: Car) {
     }
 
     fun scan(angles: IntArray): List<Pair<Double, Double>> {
-        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 5 }), 0, SonarRequest.Smoothing.MEDIAN).build()
+        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 10, SonarRequest.Smoothing.MEDIAN).build()
         val data = serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
         val response = CarClient.sendRequest(car, CarClient.Request.SONAR, data).get().responseBodyAsBytes
 

@@ -73,7 +73,6 @@ object Control {
         val attempts = request.attempts
         val distances = IntArray(size)
 
-
         var i = 0
         while (i < size) {
             distances[i] = sonarMeasure(request.smoothing, attempts[i], angles[i], request.windowSize)
@@ -89,11 +88,9 @@ object Control {
         var i = 0
         while (i < attempts) {
             data[i] = Sonar.getSmoothDistance(angle, windowSize)
-
             if (smoothing.id == SonarRequest.Smoothing.NONE.id && data[i] != -1) {
                 return data[i]
             }
-
             i++
         }
 

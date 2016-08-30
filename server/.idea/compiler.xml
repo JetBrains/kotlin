@@ -18,5 +18,9 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="server_main" target="1.5" />
+      <module name="server_test" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>

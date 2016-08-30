@@ -13,9 +13,10 @@ import java.net.ConnectException
 import java.rmi.UnexpectedException
 
 object Client {
-    val group = NioEventLoopGroup()
-    val bootstrap = makeBootstrap()
-    val client = DefaultAsyncHttpClient()
+    private val group = NioEventLoopGroup()
+    private val bootstrap = makeBootstrap()
+    private val client = DefaultAsyncHttpClient()
+    private val timeout = 5 * 60 * 60 * 1000
 
     fun shutDownClient() {
         group.shutdownGracefully()
@@ -38,7 +39,7 @@ object Client {
     }
 
     fun makeRequest(request: String, data: ByteArray): ListenableFuture<Response> =
-            client.preparePost(request).setBody(data).execute() ?: throw UnexpectedException(request)
+            client.preparePost(request).setBody(data).setRequestTimeout(timeout).execute() ?: throw UnexpectedException(request)
 
     private fun makeBootstrap(): Bootstrap {
         val b = Bootstrap()
