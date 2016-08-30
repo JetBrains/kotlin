@@ -32,8 +32,8 @@ class JeArrayType(override val psiType: PsiArrayType, override val psiManager: P
     override fun equals(other: Any?): Boolean{
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return psiType == (other as? JeArrayType)?.psiType
+        return componentType == (other as? JeArrayType)?.componentType
     }
 
-    override fun hashCode() = psiType.hashCode()
+    override fun hashCode() = componentType.hashCode()
 }
