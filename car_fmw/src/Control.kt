@@ -107,9 +107,14 @@ object Control {
             i++
         }
 
+        val distances = data.filter(::positive)
+        if (distances.size == 0) {
+            return -1
+        }
+
         return when (smoothing.id) {
-            SonarRequest.Smoothing.MEAN.id -> data.filter(::positive).mean()
-            SonarRequest.Smoothing.MEDIAN.id -> data.filter(::positive).median()
+            SonarRequest.Smoothing.MEAN.id -> distances.mean()
+            SonarRequest.Smoothing.MEDIAN.id -> distances.median()
             else -> -1
         }
     }
