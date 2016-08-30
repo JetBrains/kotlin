@@ -1,0 +1,39 @@
+// FILE: bar/Foo.before.java
+// "Static import method 'foo.Bar.getValue'" "true"
+// ERROR: Unresolved reference: getValue
+// ACTION: Create method 'foobar'
+// WITH_RUNTIME
+package bar;
+
+public class Foo {
+    public void main()
+    {
+        getValue<caret>();
+    }
+}
+
+
+// FILE: foo/Bar.dependency.kt
+package foo
+
+object Bar {
+    @JvmStatic val value = "foobar";
+}
+
+// FILE: bar/Foo.after.java
+// "Static import method 'foo.Bar.getValue'" "true"
+// ERROR: Unresolved reference: getValue
+// ACTION: Create method 'foobar'
+// WITH_RUNTIME
+package bar;
+
+import static foo.Bar.getValue;
+
+public class Foo {
+    public void main()
+    {
+        getValue<caret>();
+    }
+}
+
+
