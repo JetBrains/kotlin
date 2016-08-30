@@ -35,3 +35,6 @@ FILE /literals.kt
   PROPERTY public val test12: kotlin.Float = -1.0.toFloat() getter=null setter=null
     EXPRESSION_BODY
       CONST Float type=kotlin.Float value='-1.0'
+  PROPERTY public val test13: kotlin.Char = \u0061 ('a') getter=null setter=null
+    EXPRESSION_BODY
+      CONST Char type=kotlin.Char value='a'

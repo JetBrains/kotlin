@@ -172,6 +172,8 @@ class StatementGenerator(
                 IrConstImpl.double(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is FloatValue ->
                 IrConstImpl.float(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is CharValue ->
+                IrConstImpl.char(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
@@ -179,27 +181,28 @@ class StatementGenerator(
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
         val entries = expression.entries
-        when {
-            entries.size == 1 -> {
-                val entry0 = entries[0]
-                if (entry0 is KtLiteralStringTemplateEntry) {
-                    return entry0.genExpr()
-                }
-            }
-            entries.size == 0 -> {
-                return IrConstImpl.string(expression.startOffset, expression.endOffset,
-                                          getInferredTypeWithImplicitCastsOrFail(expression), "")
-            }
+        when (entries.size) {
+            1 -> return entries[0].genExpr()
+            0 -> return IrConstImpl.string(expression.startOffset, expression.endOffset,
+                                           getInferredTypeWithImplicitCastsOrFail(expression), "")
         }
 
         val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset,
                                                          getInferredTypeWithImplicitCastsOrFail(expression))
-        entries.forEach { it.expression!!.let { irStringTemplate.addArgument(it.genExpr()) } }
+        entries.forEach {
+            irStringTemplate.addArgument(it.genExpr())
+        }
         return irStringTemplate
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrStatement =
             IrConstImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.text)
+
+    override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry, data: Nothing?): IrStatement =
+            IrConstImpl.string(entry.startOffset, entry.endOffset, context.builtIns.stringType, entry.unescapedValue)
+
+    override fun visitStringTemplateEntryWithExpression(entry: KtStringTemplateEntryWithExpression, data: Nothing?): IrStatement =
+            entry.expression!!.genExpr()
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
         val resolvedCall = getResolvedCall(expression) ?: throw AssertionError("No resolved call for ${expression.text}")

@@ -19,22 +19,21 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrConst<out T> : IrExpression, IrExpressionWithCopy {
+interface IrConst<T> : IrExpression, IrExpressionWithCopy {
     val kind: IrConstKind<T>
     val value: T
 
     override fun copy(): IrConst<T>
 }
 
-sealed class IrConstKind<out T>(val asString: kotlin.String)  {
+sealed class IrConstKind<T>(val asString: kotlin.String)  {
     @Suppress("UNCHECKED_CAST")
     fun valueOf(aConst: IrConst<*>) =
             (aConst as IrConst<T>).value
 
     object Null : IrConstKind<Nothing?>("Null")
     object Boolean : IrConstKind<kotlin.Boolean>("Boolean")
-    object Byte : IrConstKind<kotlin.Byte>("Byte")
-    object Short : IrConstKind<kotlin.Short>("Short")
+    object Char : IrConstKind<kotlin.Char>("Char")
     object Int : IrConstKind<kotlin.Int>("Int")
     object Long : IrConstKind<kotlin.Long>("Long")
     object String : IrConstKind<kotlin.String>("String")
@@ -44,7 +43,7 @@ sealed class IrConstKind<out T>(val asString: kotlin.String)  {
     override fun toString() = asString
 }
 
-class IrConstImpl<out T> (
+class IrConstImpl<T> (
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
@@ -84,6 +83,9 @@ class IrConstImpl<out T> (
 
         fun double(startOffset: Int, endOffset: Int, type: KotlinType, value: Double): IrExpression =
                 IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
+
+        fun char(startOffset: Int, endOffset: Int, type: KotlinType, value: Char): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
     }
 }
 

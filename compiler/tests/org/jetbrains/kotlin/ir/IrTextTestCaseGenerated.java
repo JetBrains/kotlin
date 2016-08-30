@@ -382,6 +382,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("stringTemplates.kt")
+        public void testStringTemplates() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/stringTemplates.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("throw.kt")
         public void testThrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/throw.kt");
