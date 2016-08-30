@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.search.*
@@ -305,6 +306,8 @@ private class Processor(
             KotlinLanguage.INSTANCE -> processKotlinDataClassUsage(element)
 
             JavaLanguage.INSTANCE -> processJavaDataClassUsage(element)
+
+            XMLLanguage.INSTANCE -> true // ignore usages in XML - they don't affect us
 
             else -> false // we don't know anything about usages in other languages - so we downgrade to slow algorithm in this case
         }
