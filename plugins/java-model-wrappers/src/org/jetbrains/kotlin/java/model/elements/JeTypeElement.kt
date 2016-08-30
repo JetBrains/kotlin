@@ -21,6 +21,7 @@ import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.*
+import org.jetbrains.kotlin.java.model.internal.DefaultConstructorPsiMethod
 import org.jetbrains.kotlin.java.model.types.JeNoneType
 import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.*
@@ -75,8 +76,34 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
         psi.fields.forEach { declarations += JeVariableElement(it) }
         psi.methods.forEach { declarations += JeMethodExecutableElement(it) }
         psi.innerClasses.forEach { declarations += JeTypeElement(it) }
+        
+        // Add default constructor if possible
+        if (!psi.isInterface && !psi.isAnnotationType && psi.constructors.isEmpty()) {
+            val superClass = psi.superClass
+            val canHaveDefaultConstructor = superClass == null || run {
+                val constructors = superClass.constructors
+                constructors.isEmpty() || constructors.any {
+                    (it.hasModifierProperty(PsiModifier.PUBLIC) || it.hasModifierProperty(PsiModifier.PROTECTED) || run {
+                        it.hasModifierProperty(PsiModifier.PACKAGE_LOCAL) && psi.packageName == superClass.packageName
+                    }) && it.parameterList.parametersCount == 0 
+                }
+            }
+            
+            if (canHaveDefaultConstructor) {
+                declarations += JeMethodExecutableElement(DefaultConstructorPsiMethod(psi, psi.language).apply {
+                    val containingClass = psi.containingClass
+                    if (containingClass != null && !psi.hasModifierProperty(PsiModifier.STATIC)) {
+                        addParameter("\$instance", PsiTypesUtil.getClassType(containingClass))
+                    }
+                })
+            }
+        }
+        
         return declarations
     }
+    
+    private val PsiClass.packageName: String
+        get() = (containingFile as? PsiJavaFile)?.packageName ?: ""
     
     fun getAllMembers(): List<Element> {
         val declarations = mutableListOf<Element>()

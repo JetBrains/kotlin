@@ -48,6 +48,8 @@ public final class MyClass {
     
         public static final class DefaultImpls {
             public static int innerInterfaceFunWithImpl(MyClass.InnerInterface $this)
+        
+            public void <init>()
         }
     }
 }
