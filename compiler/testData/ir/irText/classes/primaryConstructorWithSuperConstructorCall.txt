@@ -26,6 +26,6 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     FUN public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int)
       BLOCK_BODY
-        CALL .<init> type=TestWithDelegatingConstructor operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL TestWithDelegatingConstructor
           x: GET_VAR x type=kotlin.Int operator=null
           y: CONST Int type=kotlin.Int value='0'

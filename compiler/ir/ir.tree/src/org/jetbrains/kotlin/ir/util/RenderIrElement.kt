@@ -90,12 +90,15 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitThisReference(expression: IrThisReference, data: Nothing?): String =
             "THIS ${expression.classDescriptor.render()} type=${expression.type.render()}"
 
-    override fun visitFunCall(expression: IrFunCall, data: Nothing?): String =
+    override fun visitCall(expression: IrCall, data: Nothing?): String =
             "CALL .${expression.descriptor.name} ${expression.renderSuperQualifier()}" +
             "type=${expression.type.render()} operator=${expression.operator}"
 
-    private fun IrFunCall.renderSuperQualifier(): String =
+    private fun IrCall.renderSuperQualifier(): String =
             superQualifier?.let { "superQualifier=${it.name} " } ?: ""
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
+            "DELEGATING_CONSTRUCTOR_CALL ${expression.descriptor.containingDeclaration.name}"
 
     override fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: Nothing?): String =
             "NESTED_INITIALIZERS_CALL classDescriptor=${expression.classDescriptor.name}"

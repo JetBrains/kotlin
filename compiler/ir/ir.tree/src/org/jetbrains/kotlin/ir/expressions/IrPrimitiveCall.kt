@@ -28,7 +28,7 @@ abstract class IrPrimitiveCallBase(
         endOffset: Int,
         override val operator: IrOperator,
         override val descriptor: CallableDescriptor
-) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrFunCall {
+) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override val superQualifier: ClassDescriptor? get() = null
     override var dispatchReceiver: IrExpression?
         get() = null
@@ -49,7 +49,7 @@ abstract class IrPrimitiveCallBase(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitFunCall(this, data)
+        return visitor.visitCall(this, data)
     }
 }
 

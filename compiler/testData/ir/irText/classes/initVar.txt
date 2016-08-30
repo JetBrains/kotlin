@@ -48,7 +48,7 @@ FILE /initVar.kt
           GET_VAR value type=kotlin.Int operator=null
     FUN public constructor TestInitVarWithCustomSetterWithExplicitCtor()
       BLOCK_BODY
-        CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Any
         NESTED_INITIALIZERS_CALL classDescriptor=TestInitVarWithCustomSetterWithExplicitCtor
   CLASS CLASS TestInitVarWithCustomSetterInCtor
     nestedInitializers: BLOCK_BODY
@@ -59,7 +59,7 @@ FILE /initVar.kt
           GET_VAR value type=kotlin.Int operator=null
     FUN public constructor TestInitVarWithCustomSetterInCtor()
       BLOCK_BODY
-        CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Any
         NESTED_INITIALIZERS_CALL classDescriptor=TestInitVarWithCustomSetterInCtor
         CALL .<set-x> type=kotlin.Unit operator=EQ
           $this: THIS public final class TestInitVarWithCustomSetterInCtor type=TestInitVarWithCustomSetterInCtor

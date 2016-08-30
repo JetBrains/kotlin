@@ -11,7 +11,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
         CONST Int type=kotlin.Int value='0'
     FUN public constructor TestProperty()
       BLOCK_BODY
-        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         NESTED_INITIALIZERS_CALL classDescriptor=TestProperty
   CLASS CLASS TestInitBlock
     nestedInitializers: BLOCK_BODY
@@ -21,5 +21,5 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     PROPERTY public final val x: kotlin.Int getter=null setter=null
     FUN public constructor TestInitBlock()
       BLOCK_BODY
-        CALL .<init> type=Base operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         NESTED_INITIALIZERS_CALL classDescriptor=TestInitBlock

@@ -16,7 +16,7 @@ FILE /classMembers.kt
         GET_VAR z type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     FUN public constructor C()
       BLOCK_BODY
-        CALL .<init> type=C operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL C
           x: CONST Int type=kotlin.Int value='0'
           y: CONST Int type=kotlin.Int value='0'
           z: CONST Int type=kotlin.Int value='0'

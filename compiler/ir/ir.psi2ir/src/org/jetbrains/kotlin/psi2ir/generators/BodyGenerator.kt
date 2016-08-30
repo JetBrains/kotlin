@@ -104,8 +104,9 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         val statementGenerator = createStatementGenerator()
         val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
         val delegatingConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktDelegatingConstructorCall)!!)
-        val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateCall(
-                ktDelegatingConstructorCall, delegatingConstructorCall, IrOperator.DELEGATING_CONSTRUCTOR_CALL)
+        val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateDelegatingConstructorCall(
+                ktDelegatingConstructorCall.startOffset, ktDelegatingConstructorCall.endOffset,
+                delegatingConstructorCall)
         irBlockBody.addStatement(irDelegatingConstructorCall)
     }
 

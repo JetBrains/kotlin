@@ -59,9 +59,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetBackingField(expression: IrGetBackingField, data: D) = visitDeclarationReference(expression, data)
     fun visitSetBackingField(expression: IrSetBackingField, data: D) = visitDeclarationReference(expression, data)
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: D) = visitDeclarationReference(expression, data)
-    fun visitCall(expression: IrCall, data: D) = visitDeclarationReference(expression, data)
-    fun visitFunCall(expression: IrFunCall, data: D) = visitCall(expression, data)
-    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitCall(expression, data)
+    fun visitGeneralCall(expression: IrGeneralCall, data: D) = visitDeclarationReference(expression, data)
+    fun visitCall(expression: IrCall, data: D) = visitGeneralCall(expression, data)
+    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitGeneralCall(expression, data)
     fun visitCallableReference(expression: IrCallableReference, data: D) = visitDeclarationReference(expression, data)
 
     fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: D) = visitExpression(expression, data)

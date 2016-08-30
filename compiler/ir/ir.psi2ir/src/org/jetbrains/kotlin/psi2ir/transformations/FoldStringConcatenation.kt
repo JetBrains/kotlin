@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationImpl
@@ -38,7 +38,7 @@ class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
         element.acceptChildren(this, data)
     }
 
-    override fun visitCall(expression: IrCall, data: Nothing?) {
+    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?) {
         if (!isStringPlus(expression.descriptor)) {
             visitElement(expression, data)
             return
@@ -54,7 +54,7 @@ class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
 
     private fun collectStringConcatenationArguments(expression: IrExpression, arguments: ArrayList<IrExpression>) {
         when {
-            expression is IrCall && isStringPlus(expression.descriptor)-> {
+            expression is IrGeneralCall && isStringPlus(expression.descriptor)-> {
                 collectStringConcatenationArguments(expression.dispatchReceiver!!, arguments)
                 collectStringConcatenationArguments(expression.getArgument(0)!!, arguments)
             }

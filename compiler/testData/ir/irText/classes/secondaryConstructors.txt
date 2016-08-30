@@ -3,9 +3,9 @@ FILE /secondaryConstructors.kt
     nestedInitializers: BLOCK_BODY
     FUN public constructor C()
       BLOCK_BODY
-        CALL .<init> type=C operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL C
           x: CONST Int type=kotlin.Int value='0'
     FUN public constructor C(/*0*/ x: kotlin.Int)
       BLOCK_BODY
-        CALL .<init> type=kotlin.Any operator=DELEGATING_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Any
         NESTED_INITIALIZERS_CALL classDescriptor=C

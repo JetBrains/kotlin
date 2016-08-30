@@ -17,66 +17,22 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.assertDetached
-import org.jetbrains.kotlin.ir.detach
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.AssertionError
 
-interface IrCall : IrMemberAccessExpression {
-    val operator: IrOperator?
-    override val descriptor: CallableDescriptor
-
-    fun getArgument(index: Int): IrExpression?
-    fun putArgument(index: Int, valueArgument: IrExpression?)
-    fun removeArgument(index: Int)
+interface IrCall : IrGeneralCall {
+    val superQualifier: ClassDescriptor?
 }
 
-abstract class IrCallBase(
+class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        numArguments: Int,
-        override val operator: IrOperator? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type), IrCall {
-    protected val argumentsByParameterIndex =
-            arrayOfNulls<IrExpression>(numArguments)
-
-    override fun getArgument(index: Int): IrExpression? =
-            argumentsByParameterIndex[index]
-
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
-        if (index >= argumentsByParameterIndex.size) {
-            throw AssertionError("$this: No such argument slot: $index")
-        }
-        valueArgument?.assertDetached()
-        argumentsByParameterIndex[index]?.detach()
-        argumentsByParameterIndex[index] = valueArgument
-        valueArgument?.setTreeLocation(this, index)
-    }
-
-    override fun removeArgument(index: Int) {
-        argumentsByParameterIndex[index]?.detach()
-        argumentsByParameterIndex[index] = null
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            if (0 <= slot)
-                argumentsByParameterIndex.getOrNull(slot)
-            else
-                super.getChild(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (0 <= slot)
-            putArgument(slot, newChild.assertCast())
-        else
-            super.replaceChild(slot, newChild)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        super.acceptChildren(visitor, data)
-        argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
-    }
+        override val descriptor: CallableDescriptor,
+        override val operator: IrOperator? = null,
+        override val superQualifier: ClassDescriptor? = null
+) : IrGeneralCallBase(startOffset, endOffset, type, descriptor.valueParameters.size), IrCall {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitCall(this, data)
 }

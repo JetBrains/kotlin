@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -52,6 +49,23 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         }
     }
 
+    fun generateDelegatingConstructorCall(
+            startOffset: Int,
+            endOffset: Int,
+            call: CallBuilder
+    ) : IrExpression {
+        val descriptor = call.descriptor
+        if (descriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $descriptor")
+
+        return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
+            if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
+            if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
+            val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor)
+
+            addParametersToCall(startOffset, endOffset, call, irCall, descriptor.returnType)
+        }
+    }
+
     private fun generatePropertyGetterCall(
             descriptor: PropertyDescriptor,
             startOffset: Int,
@@ -79,28 +93,28 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         val returnType = descriptor.returnType!!
 
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val irCall = IrFunCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
+            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
             irCall.dispatchReceiver = dispatchReceiverValue?.load()
             irCall.extensionReceiver = extensionReceiverValue?.load()
 
-            val irCallWithReordering =
-                    if (call.isValueArgumentReorderingRequired()) {
-                        generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, returnType)
-                    }
-                    else {
-                        val valueArguments = call.getValueArgumentsInParameterOrder()
-                        for ((index, valueArgument) in valueArguments.withIndex()) {
-                            irCall.putArgument(index, valueArgument)
-                        }
-                        irCall
-                    }
-
-            irCallWithReordering
+            addParametersToCall(startOffset, endOffset, call, irCall, returnType)
         }
     }
 
+    private fun addParametersToCall(startOffset: Int, endOffset: Int, call: CallBuilder, irCall: IrGeneralCallBase, returnType: KotlinType): IrExpression =
+            if (call.isValueArgumentReorderingRequired()) {
+                generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, returnType)
+            }
+            else {
+                val valueArguments = call.getValueArgumentsInParameterOrder()
+                for ((index, valueArgument) in valueArguments.withIndex()) {
+                    irCall.putArgument(index, valueArgument)
+                }
+                irCall
+            }
+
     private fun generateCallWithArgumentReordering(
-            irCall: IrCall,
+            irCall: IrGeneralCall,
             startOffset: Int,
             endOffset: Int,
             call: CallBuilder,

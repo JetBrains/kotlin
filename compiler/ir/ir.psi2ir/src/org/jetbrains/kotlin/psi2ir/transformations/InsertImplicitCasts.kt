@@ -39,7 +39,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitor<Unit, 
         element.acceptChildren(this, null)
     }
 
-    override fun visitCall(expression: IrCall, data: Nothing?) {
+    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?) {
         expression.acceptChildren(this, null)
 
         with(expression) {

@@ -43,6 +43,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("argumentReorderingInDelegatingConstructorCall.kt")
+        public void testArgumentReorderingInDelegatingConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/argumentReorderingInDelegatingConstructorCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classMembers.kt")
         public void testClassMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/classMembers.kt");
