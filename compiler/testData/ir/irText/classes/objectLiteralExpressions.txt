@@ -1,0 +1,55 @@
+FILE /objectLiteralExpressions.kt
+  CLASS INTERFACE IFoo
+    FUN public abstract fun foo(): kotlin.Unit
+  PROPERTY public val test1: kotlin.Any getter=null setter=null
+    EXPRESSION_BODY
+      BLOCK type=test1.<no name provided> operator=OBJECT_LITERAL
+        CLASS CLASS <no name provided>
+          FUN public constructor <no name provided>()
+            BLOCK_BODY
+        CALL .<init> type=test1.<no name provided> operator=OBJECT_LITERAL
+  PROPERTY public val test2: IFoo getter=null setter=null
+    EXPRESSION_BODY
+      BLOCK type=test2.<no name provided> operator=OBJECT_LITERAL
+        CLASS CLASS <no name provided>
+          FUN public constructor <no name provided>()
+            BLOCK_BODY
+          FUN public open override /*1*/ fun foo(): kotlin.Unit
+            BLOCK_BODY
+              CALL .println type=kotlin.Unit operator=null
+                message: CONST String type=kotlin.String value='foo'
+        CALL .<init> type=test2.<no name provided> operator=OBJECT_LITERAL
+  CLASS CLASS Outer
+    FUN public constructor Outer()
+      BLOCK_BODY
+    CLASS CLASS Inner
+      FUN public constructor Inner()
+        BLOCK_BODY
+    FUN public final fun test3(): Outer.Inner
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=test3
+          BLOCK type=Outer.test3.<no name provided> operator=OBJECT_LITERAL
+            CLASS CLASS <no name provided>
+              FUN public constructor <no name provided>()
+                BLOCK_BODY
+                  CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
+                    $this: THIS public final class Outer type=Outer
+              FUN public open override /*1*/ fun foo(): kotlin.Unit
+                BLOCK_BODY
+                  CALL .println type=kotlin.Unit operator=null
+                    message: CONST String type=kotlin.String value='foo'
+            CALL .<init> type=Outer.test3.<no name provided> operator=OBJECT_LITERAL
+  FUN public fun Outer.test4(): Outer.Inner
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from=test4
+        BLOCK type=test4.<no name provided> operator=OBJECT_LITERAL
+          CLASS CLASS <no name provided>
+            FUN public constructor <no name provided>()
+              BLOCK_BODY
+                CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
+                  $this: $RECEIVER of: test4 type=Outer
+            FUN public open override /*1*/ fun foo(): kotlin.Unit
+              BLOCK_BODY
+                CALL .println type=kotlin.Unit operator=null
+                  message: CONST String type=kotlin.String value='foo'
+          CALL .<init> type=test4.<no name provided> operator=OBJECT_LITERAL
