@@ -5,6 +5,7 @@ import RouteMetricRequest
 import RouteRequest
 import RouteResponse
 import SonarRequest
+import SonarExploreAngleRequest
 import SonarResponse
 import control.Controller
 import encodeProtoBuf
@@ -14,7 +15,6 @@ import room.Room
 import kotlin.Pair
 
 class ControllerEmulator : Controller {
-
     private val MOVE_VELOCITY = 0.05//sm/ms
     private val ROTATION_VELOCITY = 0.05//degrees/ms
 
@@ -69,6 +69,10 @@ class ControllerEmulator : Controller {
             commands.add(Pair(moveDirection, value.toDouble()))
         }
         executeCommand(commands, 0, callback)
+    }
+
+    override fun executeRequestSensorExploreData(request: SonarExploreAngleRequest, callback: (ByteArray) -> Unit) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun executeRequestSensorData(sonarRequest: SonarRequest, callback: (ByteArray) -> Unit) {
