@@ -5,10 +5,10 @@ var canvas = $( "#pathCanvas" )[0],
 	eps = 1e-5,
 	zero = {
 		x: canvas.width / 2,
-		y: canvas.height / 4 * 3
+		y: canvas.height / 2
 	},
 	carColour = "red",
-	referenceColour = "green",
+	referenceColour = "blue",
 	foundColour = "blue",
 	multiplier = 100;
 
@@ -27,11 +27,7 @@ function drawPath(waypoints) {
 }
 
 function drawCar(carPosition) {
-	ctx.beginPath();
-	ctx.arc(carPosition.x + zero.x, carPosition.y + zero.y, 10, 0, 2 * Math.PI, false);
-	ctx.fillStyle = carColour;
-	ctx.closePath();	
-	ctx.fill();
+	drawPoint(carPosition, carColour, 10);
 }
 
 function drawLine(line) {
@@ -119,63 +115,52 @@ function createLine(A, B, C) {
 	return line
 }
 
+function createPoint(x_, y_) {
+    var point = {
+	x: x_,
+	y: y_
+    };
+    return point;
+}
+
+function drawPoint(point, colour, radius) {
+	ctx.beginPath();
+	ctx.arc(point.x + zero.x, point.y + zero.y, radius, 0, 2 * Math.PI, false);
+	ctx.fillStyle = colour;
+	ctx.closePath();
+	ctx.fill();
+}
+
 function drawDebug(data) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Parse protobuf into geometry primitives
-	var foundLines = [];
-	for (var i = 0; i < data.A.length; i++) {
-		foundLines.push(createLine(data.A[i] / multiplier, data.B[i] / multiplier, data.C[i] / multiplier));
+	var segments = [];
+	for (var i = 0; i < data.begin_x.length; i++) {
+		var begin = createPoint(data.begin_x[i], data.begin_y[i]);
+		var end = createPoint(data.end_x[i], data.end_y[i]);
+		var seg = createSegment(begin, end);
+		segments.push(seg);
 	}
 
-	var refLines = [];
-	for (var i = 0; i < data.Aref.length; i++) {
-		refLines.push(createLine(data.Aref[i] / multiplier, data.Bref[i] / multiplier, data.Cref[i] / multiplier));
+	var points = [];
+	for (var i = 0; i < data.x.length; i++) {
+		var pt = createPoint(data.x[i], data.y[i])
+		points.push(pt);
 	}
-
-	var carPosition = {
-		x: data.carX,
-		y: data.carY, 
-		angle: data.carAngle 
-	};
-
-	// Build sequence of segments from lines 
-	var lastPoint = {
-		x: 0,
-		y: 0
-	};
-
 	
-
-	var referenceSegments = [];
-	var corners = [];
-	for (var i = 0; i < refLines.length - 1; ++i) {
-		var curLine = refLines[i];
-		var nextLine = refLines[i + 1];
-
-		var intersectionPoint = intersectLines(curLine, nextLine);
-		corners.push(intersectionPoint);
-	}
-
-	corners.push(intersectLines(refLines[refLines.length - 1], refLines[0]));
-	for (var i = 0; i < corners.length - 1; ++i) {
-		var curCorner = corners[i];
-		var nextCorner = corners[i + 1];
-
-		referenceSegments.push(createSegment(curCorner, nextCorner));
-	}
-	referenceSegments.push(createSegment(corners[corners.length - 1], corners[0]));
+	var carPosition = createPoint(data.carX, data.carY);
 
 	// draw everything
 	console.log("Drawing car position");
 	drawCar(carPosition);
 
-	console.log("Drawing found Lines");
-	for (var i = 0; i < foundLines.length; ++i) {
-		drawLine(foundLines[i]);
+	console.log("Drawing segments")
+	for (var i = 0; i < segments.length; ++i) {
+		drawSegment(segments[i], referenceColour);
 	}
-	console.log("Drawing referenceSegments")
-	for (var i = 0; i < referenceSegments.length; ++i) {
-		drawSegment(referenceSegments[i], referenceColour);
+
+	console.log("Drawing points")
+	for (var i = 0; i < points.length; i++) {
+		drawPoint(points[i], "green", 2);
 	}
 }

@@ -14,7 +14,7 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 	ModeChange = modeChangeBuilder.build("ModeChange"),
 	GenericResponse = genericResponseBuilder.build("GenericResponse"),
 	Result = genericResponseBuilder.build("Result"),
-	DebugResponse = debugBuilder.build("carkot.DebugResponse"),
+	DebugResponse = debugBuilder.build("DebugResponse"),
 
 	// serverAddress = "http://localhost:8000";
 	serverAddress = "http://localhost:7926",
