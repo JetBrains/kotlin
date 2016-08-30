@@ -20,7 +20,7 @@ import javax.lang.model.element.Name
 
 fun JeName(name: String?) = name?.let { JeName(it) } ?: JeName.EMPTY
 
-class JeName(val name: String) : Name, CharSequence by name {
+data class JeName(val name: String) : Name, CharSequence by name {
     override fun contentEquals(cs: CharSequence?) = cs?.toString() == name
     
     override fun toString() = name
