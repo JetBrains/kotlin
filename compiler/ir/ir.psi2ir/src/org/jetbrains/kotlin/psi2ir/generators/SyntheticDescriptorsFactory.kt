@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.ir.descriptors.IrSyntheticStaticPropertyGetterDescriptorImpl
-import org.jetbrains.kotlin.ir.descriptors.IrSyntheticStaticPropertySetterDescriptorImpl
+import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertyAccessorDescriptor.Kind.STATIC_PROPERTY
+import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertySetterDescriptorImpl
 import org.jetbrains.kotlin.storage.StorageManager
+import java.lang.AssertionError
 
 
 class SyntheticDescriptorsFactory(storageManager: StorageManager) {
@@ -30,7 +32,7 @@ class SyntheticDescriptorsFactory(storageManager: StorageManager) {
         property ->
         when {
             isStaticPropertyInClass(property) ->
-                IrSyntheticStaticPropertyGetterDescriptorImpl(property)
+                IrSyntheticPropertyGetterDescriptorImpl(property, STATIC_PROPERTY)
             else ->
                 throw AssertionError("Don't know how to create synthetic getter for $property")
         }
@@ -40,7 +42,7 @@ class SyntheticDescriptorsFactory(storageManager: StorageManager) {
         property ->
         when {
             isStaticPropertyInClass(property) ->
-                IrSyntheticStaticPropertySetterDescriptorImpl(property)
+                IrSyntheticPropertySetterDescriptorImpl(property, STATIC_PROPERTY)
             else ->
                 throw AssertionError("Don't know how to create synthetic setter for $property")
         }

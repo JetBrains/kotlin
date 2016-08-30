@@ -25,14 +25,21 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 
 
-interface IrSyntheticStaticPropertyAccessorDescriptor : PropertyAccessorDescriptor
+interface IrSyntheticPropertyAccessorDescriptor : PropertyAccessorDescriptor {
+    enum class Kind {
+        STATIC_PROPERTY
+    }
 
-interface IrSyntheticStaticPropertyGetterDescriptor : IrSyntheticStaticPropertyAccessorDescriptor
+    val kind: Kind
+}
 
-interface IrSyntheticStaticPropertySetterDescriptor : IrSyntheticStaticPropertyAccessorDescriptor
+interface IrSyntheticPropertyGetterDescriptor : IrSyntheticPropertyAccessorDescriptor
 
-class IrSyntheticStaticPropertyGetterDescriptorImpl(
-        correspondingProperty: PropertyDescriptor
+interface IrSyntheticPropertySetterDescriptor : IrSyntheticPropertyAccessorDescriptor
+
+class IrSyntheticPropertyGetterDescriptorImpl(
+        correspondingProperty: PropertyDescriptor,
+        override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
 ) : PropertyGetterDescriptorImpl(
         correspondingProperty,
         Annotations.EMPTY,
@@ -44,14 +51,15 @@ class IrSyntheticStaticPropertyGetterDescriptorImpl(
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         null,
         correspondingProperty.source
-), IrSyntheticStaticPropertyGetterDescriptor {
+), IrSyntheticPropertyGetterDescriptor {
     init {
         initialize(correspondingProperty.type)
     }
 }
 
-class IrSyntheticStaticPropertySetterDescriptorImpl(
-        correspondingProperty: PropertyDescriptor
+class IrSyntheticPropertySetterDescriptorImpl(
+        correspondingProperty: PropertyDescriptor,
+        override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
 ) : PropertySetterDescriptorImpl(
         correspondingProperty,
         Annotations.EMPTY,
@@ -63,7 +71,7 @@ class IrSyntheticStaticPropertySetterDescriptorImpl(
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         null,
         correspondingProperty.source
-), IrSyntheticStaticPropertySetterDescriptor {
+), IrSyntheticPropertySetterDescriptor {
     init {
         initializeDefault()
     }
