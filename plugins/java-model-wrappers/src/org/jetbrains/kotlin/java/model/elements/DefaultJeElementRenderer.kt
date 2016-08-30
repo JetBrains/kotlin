@@ -90,15 +90,16 @@ class DefaultJeElementRenderer : JeElementRenderer {
                 .joinToString(prefix = "(", postfix = ")")
     }
     
-    private fun renderAnnotationValue(value: AnnotationValue): String {
-        return when (value) {
-            is JeAnnotationAnnotationValue -> renderAnnotation(value.value)
-            is JeArrayAnnotationValue -> value.value.joinToString(prefix = "{ ", postfix = " }") { renderAnnotationValue(it) }
-            is JeEnumValueAnnotationValue -> value.value.simpleName.toString()
+    private fun renderAnnotationValue(av: AnnotationValue): String {
+        return when (av) {
+            is JeAnnotationAnnotationValue -> renderAnnotation(av.value)
+            is JeArrayAnnotationValue -> av.value.joinToString(prefix = "{ ", postfix = " }") { renderAnnotationValue(it) }
+            is JeSingletonArrayAnnotationValue -> av.value.joinToString(prefix = "{ ", postfix = " }") { renderAnnotationValue(it) }
+            is JeEnumValueAnnotationValue -> av.value.simpleName.toString()
             is JeErrorAnnotationValue -> "<ERROR>"
-            is JeExpressionAnnotationValue, is JeLiteralAnnotationValue -> value.value?.let { renderConstantValue(it) } ?: "null"
-            is JeTypeAnnotationValue -> renderType(value.value) + ".class"
-            else -> throw IllegalArgumentException("Unsupported annotation value: $value")
+            is JeExpressionAnnotationValue, is JeLiteralAnnotationValue -> av.value?.let { renderConstantValue(it) } ?: "null"
+            is JeTypeAnnotationValue -> renderType(av.value) + ".class"
+            else -> throw IllegalArgumentException("Unsupported annotation value: $av")
         }
     }
     
