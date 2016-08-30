@@ -18,8 +18,6 @@ class ControllerEmulator : Controller {
     private val MOVE_VELOCITY = 0.05//sm/ms
     private val ROTATION_VELOCITY = 0.05//degrees/ms
 
-    private val ADD_RANDOM = false
-
     enum class MoveDirection {
         LEFT,
         RIGHT,
@@ -113,7 +111,7 @@ class ControllerEmulator : Controller {
             if (distance == -1) {
                 distances.add(distance)
             } else {
-                val delta = if (ADD_RANDOM) getRandomIntFrom(IntArray(5, { x -> x - 2 })) else 0//return one of -2 -1 0 1 or 2
+                val delta = if (Room.ADD_RANDOM) Rng.nextInt(-2, 2) else 0//return one of -2 -1 0 1 or 2
                 distances.add(distance + delta)
             }
         }
@@ -184,8 +182,8 @@ class ControllerEmulator : Controller {
         //refresh car state
         val carInstance = CarState.instance
         val commandDistance = currentCommand.second
-        val delta = if (ADD_RANDOM) Math.random() * 0.2 + 0.9 else 1.0// delta in [0.9, 1.1)
-        val commandDistanceIncludeRandom = (commandDistance * delta).toInt()
+        val coef = if (Room.ADD_RANDOM) Rng.nextInt(900, 1100).toDouble() / 1000.0 else 1.0
+        val commandDistanceIncludeRandom = (commandDistance * coef).toInt()
         when (currentCommand.first) {
             MoveDirection.FORWARD -> carInstance.moving(commandDistanceIncludeRandom)
             MoveDirection.BACKWARD -> carInstance.moving(commandDistanceIncludeRandom)

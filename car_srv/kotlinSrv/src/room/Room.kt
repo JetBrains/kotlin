@@ -6,6 +6,7 @@ object Room {
 
 
     var walls = testRoom1()
+    var ADD_RANDOM = false
 
     /*
     _________
@@ -14,6 +15,10 @@ object Room {
     |________|
 
      */
+
+    fun randomOn() {
+        ADD_RANDOM = true
+    }
 
     fun testRoom1(): List<Wall> {
         val upLine = Line(0.0, 1.0, -300.0)

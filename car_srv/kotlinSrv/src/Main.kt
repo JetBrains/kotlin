@@ -1,5 +1,6 @@
 import control.car.ControllerToUsb
 import control.emulator.ControllerEmulator
+import control.emulator.Rng
 import net.Client
 import net.server.handlers.AbstractHandler
 import net.server.handlers.debug.Memory
@@ -22,13 +23,21 @@ fun main(args: Array<String>) {
     val clArgs = js("process.argv")
     var runAsEmulator = false
     var runTests = false
+    var nextSeed = false
     for (arg in clArgs) {
+        if (nextSeed) {
+            Rng.SEED = parseInt(arg, 10).toLong()
+            Rng.curState = Rng.SEED.toLong()
+            nextSeed = false
+        }
         when (arg) {
             "-t" -> runTests = true
             "-e" -> runAsEmulator = true
             "-tr1" -> Room.walls = Room.testRoom1()
             "-tr2" -> Room.walls = Room.testRoom2()
             "-tr3" -> Room.walls = Room.testRoom3()
+            "-r" -> Room.randomOn()
+            "-s" -> nextSeed = true
         }
     }
     val carController =
