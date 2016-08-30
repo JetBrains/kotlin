@@ -26,7 +26,7 @@ object Reader {
 
     fun readSonarExplore(): SonarExploreAngleRequest {
         val stream = getInputStream()
-        return SonarExploreAngleRequest.BuilderSonarExploreAngleRequest(0, 0, 0).parseFrom(stream).build()
+        return SonarExploreAngleRequest.BuilderSonarExploreAngleRequest(0, 0).parseFrom(stream).build()
     }
 
     private fun getInputStream(): CodedInputStream {
