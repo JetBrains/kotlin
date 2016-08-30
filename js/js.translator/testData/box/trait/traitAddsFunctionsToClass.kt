@@ -18,4 +18,4 @@ class A() : Test {
     }
 }
 
-fun box() = A().value() == "TESTFOOBAR"
+fun box() = if (A().value() == "TESTFOOBAR") "OK" else "fail"

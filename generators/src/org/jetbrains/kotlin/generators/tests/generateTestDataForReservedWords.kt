@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
     generateTestDataForReservedWords()
 }
 
-val TEST_DATA_DIR_FOR_RESERVED_WORDS = "js/js.translator/testData/reservedWords/cases"
+val TEST_DATA_DIR_FOR_RESERVED_WORDS = "js/js.translator/testData/box/reservedWords"
 
 fun generateTestDataForReservedWords() {
     generate(TEST_DATA_DIR_FOR_RESERVED_WORDS) {

@@ -1,25 +1,21 @@
 package foo
 
-interface A {
+interface Test {
     fun addFoo(s: String): String {
         return s + "FOO"
     }
 }
 
-interface B {
+interface ExtendedTest : Test {
     fun hooray(): String {
         return "hooray"
     }
 }
 
-interface AD : A, B {
-
-}
-
-class Test() : AD {
+class A() : ExtendedTest {
     fun eval(): String {
         return addFoo(hooray());
     }
 }
 
-fun box() = (Test().eval() == "hoorayFOO")
+fun box() = if (A().eval() == "hoorayFOO") "OK" else "fail"

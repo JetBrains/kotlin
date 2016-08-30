@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.utils
 
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 /**

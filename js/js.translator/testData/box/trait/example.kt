@@ -7,7 +7,7 @@ interface AL {
 class SmartArrayList() : AL {
 }
 
-fun box(): Boolean {
+fun box(): String {
     val c = SmartArrayList()
-    return (null == c.get(0))
+    return if (null == c.get(0)) return "OK" else "fail"
 }

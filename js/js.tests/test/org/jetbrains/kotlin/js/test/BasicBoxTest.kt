@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
@@ -200,20 +198,14 @@ abstract class BasicBoxTest(
     }
 
     private fun createConfig(module: TestModule, dependencies: List<String>, multiModule: Boolean): JsConfig {
-        val configuration = environment.configuration.copy()
+        val configBuilder = LibrarySourcesConfig.Builder(project, module.name, LibrarySourcesConfig.JS_STDLIB + dependencies)
+                .ecmaVersion(EcmaVersion.v5)
+                .sourceMap(false)
+                .inlineEnabled(!module.inliningDisabled)
+                .moduleKind(module.moduleKind)
+                .metaInfo(multiModule)
 
-        configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
-
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + dependencies)
-
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
-        configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
-        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
-
-        //configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap())
-        configuration.put(JSConfigurationKeys.META_INFO, multiModule)
-
-        return LibrarySourcesConfig(project, configuration)
+        return configBuilder.build()
     }
 
     private inner class TestFileFactoryImpl() : TestFileFactory<TestModule, TestFile>, Closeable {
