@@ -2,10 +2,10 @@ import java.util.*
 import java.io.*
 
 class World() {
-    public val items: ArrayList<Item> = ArrayList<Item>
+    public val items: ArrayList<Item> = ArrayList<Item>()
 
-    class Item() {
-        {
+    inner class Item() {
+        init {
             items.add(this)
         }
     }
@@ -13,7 +13,7 @@ class World() {
     val foo = Item()
 }
 
-fun box(): String {
+fun box() : String {
     val w = World()
     if (w.items.size != 1) return "fail"
     return "OK"

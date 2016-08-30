@@ -63,7 +63,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTestByPaths(ecmaVersions, Collections.singletonList(kotlinFilePath), packageName, functionName, expectedResult);
     }
 
-    protected void runFunctionOutputTestByPaths(
+    private void runFunctionOutputTestByPaths(
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull List<String> kotlinFilePaths,
             @NotNull String packageName,
@@ -76,22 +76,6 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runRhinoTests(testName, ecmaVersions, checker);
     }
 
-    private void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
-        runFunctionOutputTest(ecmaVersions, filename, TEST_PACKAGE, TEST_FUNCTION, true);
-    }
-
-    protected void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
-        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, filename, TEST_PACKAGE, TEST_FUNCTION, true);
-    }
-
-    protected void fooBoxTest() throws Exception {
-        checkFooBoxIsTrue(getTestName(true) + ".kt", DEFAULT_ECMA_VERSIONS);
-    }
-
-    protected void checkFooBoxIsOk() throws Exception {
-        checkFooBoxIsOk(getTestName(true) + ".kt");
-    }
-
     protected void checkFooBoxIsOk(@NotNull String filename) throws Exception {
         checkFooBoxIsOkByPath(getInputFilePath(filename));
     }
@@ -99,10 +83,6 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     @Override
     protected void checkFooBoxIsOkByPath(@NotNull String filePath) throws Exception {
         runFunctionOutputTestByPath(DEFAULT_ECMA_VERSIONS, filePath, TEST_PACKAGE, TEST_FUNCTION, "OK");
-    }
-
-    protected void checkBlackBoxIsOkByPath(@NotNull String filePath) throws Exception {
-        runFunctionOutputTestByPath(DEFAULT_ECMA_VERSIONS, filePath, getPackageName(filePath), TEST_FUNCTION, "OK");
     }
 
     protected void checkOutput(@NotNull String kotlinFilename,

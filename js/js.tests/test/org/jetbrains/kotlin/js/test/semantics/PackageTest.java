@@ -42,4 +42,8 @@ public final class PackageTest extends SingleFileTranslationTest {
     public void testInitializersOfNestedPackagesExecute() throws Exception {
         runFunctionOutputTest("initializersOfNestedPackagesExecute.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", TEST_FUNCTION, true);
     }
+
+    public void testMainFunInNestedPackage() throws Exception {
+        checkOutput("mainFunInNestedPackage.kt", "ayee");
+    }
 }

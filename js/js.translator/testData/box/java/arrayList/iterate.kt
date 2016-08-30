@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList;
 
-fun box(): Boolean {
+fun box(): String {
     var i = 0
     val arr = ArrayList<Int>();
     while (i++ < 10) {
@@ -12,5 +12,8 @@ fun box(): Boolean {
     for (a in arr) {
         sum += a;
     }
-    return (sum == 55) && (arr.size == 10)
+    if (sum != 55) return "fail1: $sum"
+    if (arr.size != 10) return "fail2: ${arr.size}"
+
+    return "OK"
 }

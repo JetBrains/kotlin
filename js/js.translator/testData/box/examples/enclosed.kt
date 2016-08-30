@@ -18,7 +18,7 @@ open class N() : M(), K {
 
     override var y = 200
 
-    open class C() : K {
+    inner open class C() : K {
         fun test1() = x()
         fun test2() = super<M>@N.x()
         fun test3() = super<K>@N.x()
