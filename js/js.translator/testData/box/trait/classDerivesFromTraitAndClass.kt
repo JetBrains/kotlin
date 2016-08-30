@@ -2,20 +2,20 @@ package foo
 
 
 open class A() {
-    val value = "BAR"
+    val value = "O"
 }
 
 interface Test {
     fun addFoo(s: String): String {
-        return s + "FOO"
+        return s + "K"
     }
 }
 
 
-class B() : A(), Test {
+class B() : Test, A() {
     fun eval(): String {
         return addFoo(value);
     }
 }
 
-fun box() = B().eval() == "BARFOO"
+fun box() = B().eval()

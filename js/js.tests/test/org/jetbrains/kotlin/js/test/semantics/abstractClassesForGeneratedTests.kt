@@ -18,15 +18,6 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
-abstract class JsBasicBoxTest(relativePath: String) : BasicBoxTest(
-        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "cases/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
-) {
-    init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
-
 abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
         "compiler/testData/codegen/box/" + relativePath,
         BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
@@ -43,20 +34,20 @@ abstract class AbstractBoxJsTest() : BasicBoxTest(
 
 abstract class AbstractBridgeTest : BorrowedTest("bridges/")
 
-abstract class AbstractCompanionObjectTest : JsBasicBoxTest("objectIntrinsics/")
+abstract class AbstractCompanionObjectTest : BorrowedTest("objectIntrinsics/")
 
-abstract class AbstractFunctionExpressionTest : JsBasicBoxTest("functionExpression/")
+abstract class AbstractFunctionExpressionTest : BorrowedTest("functionExpression/")
 
-abstract class AbstractReservedWordTest : JsBasicBoxTest("reservedWords/")
+abstract class AbstractSecondaryConstructorTest : BorrowedTest("secondaryConstructors/")
 
-abstract class AbstractSecondaryConstructorTest : JsBasicBoxTest("secondaryConstructors/")
+abstract class AbstractInnerNestedTest : BorrowedTest("innerNested/")
 
-abstract class AbstractInnerNestedTest : JsBasicBoxTest("innerNested/")
+abstract class AbstractClassesTest : BorrowedTest("classes/")
 
-abstract class AbstractClassesTest : JsBasicBoxTest("classes/")
+abstract class AbstractSuperTest : BorrowedTest("super/")
 
-abstract class AbstractSuperTest : JsBasicBoxTest("super/")
+abstract class AbstractLocalClassesTest : BorrowedTest("localClasses/")
 
-abstract class AbstractLocalClassesTest : JsBasicBoxTest("localClasses/")
+abstract class AbstractNonLocalReturnsTest : BorrowedTest("inline.generated/nonLocalReturns/")
 
-abstract class AbstractNonLocalReturnsTest : JsBasicBoxTest("inline.generated/nonLocalReturns/")
+abstract class AbstractTypeAliasesTests : BorrowedTest("typealias/")

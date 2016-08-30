@@ -43,6 +43,12 @@ interface L
 interface H : L
 interface Dummy
 
-fun box(): Boolean {
-    return (C().order == "ABC") && (D().order == "ABD") && (E().order == "AE") && (C().bar() == "F") && (A().bar() == "F")
+fun box(): String {
+    if (C().order != "ABC") return "fail1"
+    if (D().order != "ABD") return "fail2"
+    if (E().order != "AE") return "fail3"
+    if (C().bar() != "F") return "fail4"
+    if (A().bar() != "F") return "fail5"
+
+    return "OK"
 }
