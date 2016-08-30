@@ -52,11 +52,12 @@ data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = 
                                          val acceptOverloads: Boolean = false,
                                          val acceptExtensionsOfDeclarationClass: Boolean = false,
                                          val acceptCompanionObjectMembers: Boolean = false,
-                                         val searchForComponentConventions: Boolean = true) {
+                                         val searchForComponentConventions: Boolean = true,
+                                         val searchNamedArguments: Boolean = true) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
     companion object {
-        val Empty = KotlinReferencesSearchOptions(false, false, false)
+        val Empty = KotlinReferencesSearchOptions()
     }
 }
 
@@ -111,7 +112,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                                                  resultProcessor)
         }
 
-        if (unwrappedElement is KtParameter) {
+        if (unwrappedElement is KtParameter && kotlinOptions.searchNamedArguments) {
             runReadAction { searchNamedArguments(unwrappedElement, queryParameters) }
         }
 
