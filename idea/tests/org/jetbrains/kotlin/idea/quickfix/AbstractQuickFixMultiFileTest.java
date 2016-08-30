@@ -230,6 +230,11 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     protected void doMultiFileTest(final String beforeFileName) throws Exception {
         String multifileText = FileUtil.loadFile(new File(beforeFileName), true);
 
+        boolean withRuntime = InTextDirectivesUtils.isDirectiveDefined(multifileText, "// WITH_RUNTIME");
+        if (withRuntime) {
+            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk());
+        }
+
         final List<TestFile> subFiles = KotlinTestUtils.createTestFiles(
                 "single.kt",
                 multifileText,
