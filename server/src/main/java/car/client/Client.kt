@@ -6,21 +6,16 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.http.HttpRequest
 import io.netty.util.AttributeKey
+import org.asynchttpclient.DefaultAsyncHttpClient
+import org.asynchttpclient.ListenableFuture
+import org.asynchttpclient.Response
 import java.net.ConnectException
+import java.rmi.UnexpectedException
 
 object Client {
-
-    val group: NioEventLoopGroup = NioEventLoopGroup()
-    val bootstrap: Bootstrap = makeBootstrap()
-
-    private fun makeBootstrap(): Bootstrap {
-        val b = Bootstrap()
-        b.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
-                .attr(AttributeKey.newInstance<String>("url"), "")
-                .attr(AttributeKey.newInstance<Int>("uid"), 0)
-                .attr(AttributeKey.newInstance<IntArray>("angles"), IntArray(0))
-        return b
-    }
+    val group = NioEventLoopGroup()
+    val bootstrap = makeBootstrap()
+    val client = DefaultAsyncHttpClient()
 
     fun shutDownClient() {
         group.shutdownGracefully()
@@ -40,5 +35,17 @@ object Client {
         } catch (e: ConnectException) {
             throw InactiveCarException()
         }
+    }
+
+    fun makeRequest(request: String, data: ByteArray): ListenableFuture<Response> =
+            client.preparePost(request).setBody(data).execute() ?: throw UnexpectedException(request)
+
+    private fun makeBootstrap(): Bootstrap {
+        val b = Bootstrap()
+        b.group(group).channel(NioSocketChannel().javaClass).handler(ClientInitializer())
+                .attr(AttributeKey.newInstance<String>("url"), "")
+                .attr(AttributeKey.newInstance<Int>("uid"), 0)
+                .attr(AttributeKey.newInstance<IntArray>("angles"), IntArray(0))
+        return b
     }
 }

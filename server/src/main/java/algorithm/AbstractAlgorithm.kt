@@ -9,7 +9,6 @@ import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
 import setRouteMetricUrl
-import setRouteUrl
 import sonarUrl
 import java.util.*
 import java.util.concurrent.Exchanger
@@ -44,7 +43,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         val message = SonarRequest.BuilderSonarRequest(
                 angles = angles,
                 attempts = IntArray(angles.size, { attempts }),
-                threshold = threshold,
+                windowSize = 0,
                 smoothing = smoothing)
                 .build()
         val requestBytes = ByteArray(message.getSizeNoTag())
@@ -107,10 +106,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
         this.requiredAngles = defaultAngles
 
-        val state = getCarState(anglesDistances)
-        if (state == null) {
-            return
-        }
+        val state = getCarState(anglesDistances) ?: return
         val command = getCommand(anglesDistances, state)
         afterGetCommand(command)
         println(Arrays.toString(command.directions))
@@ -122,14 +118,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         moveCar(command)
     }
 
-
-    protected fun getPrevState(): CarState? {
-        return prevState
-    }
-
-    protected fun getPrevSonarDistances(): Map<Int, AngleData> {
-        return prevSonarDistances
-    }
 
     private fun getAngles(): IntArray {
         return requiredAngles

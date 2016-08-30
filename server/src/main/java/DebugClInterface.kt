@@ -5,6 +5,7 @@ import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
+import objects.Environment
 import java.util.concurrent.Exchanger
 
 object DebugClInterface {
@@ -14,7 +15,6 @@ object DebugClInterface {
 
     private val routeRegex = Regex("route [0-9]{1,10}")
     private val sonarRegex = Regex("sonar [0-9]{1,10}")
-    private val environment = objects.Environment.instance
     private val helpString = "available commands:\n" +
             "cars - get list of connected cars\n" +
             "route [car_id] - setting a route for car with car id.\n" +
@@ -50,8 +50,8 @@ object DebugClInterface {
         val commandType = readString.split(" ")[0].toLowerCase()
         when (commandType) {
             "cars" -> {
-                synchronized(environment, {
-                    println(environment.map.values)
+                synchronized(Environment, {
+                    println(Environment.map.values)
                 })
             }
             "route" -> executeRouteCommand(readString)
@@ -81,7 +81,7 @@ object DebugClInterface {
                 } else 1
 
         if (algorithmImpl == null) {
-            algorithmImpl = RoomBypassingAlgorithm(environment.map.values.last(), exchanger)
+            algorithmImpl = RoomBypassingAlgorithm(Environment.map.values.last(), exchanger)
         }
         while (count > 0) {
             count--
@@ -106,8 +106,8 @@ object DebugClInterface {
             return
         }
         val car: Car? =
-                synchronized(environment, {
-                    environment.map[id]
+                synchronized(Environment, {
+                    Environment.map[id]
                 })
         if (car == null) {
             println("car with id=$id not found")
@@ -154,10 +154,9 @@ object DebugClInterface {
             println(helpString)
             return
         }
-        val car: Car? =
-                synchronized(environment, {
-                    environment.map[id]
-                })
+        val car: Car? = synchronized(Environment, {
+            Environment.map[id]
+        })
         if (car == null) {
             println("car with id=$id not found")
             return
@@ -169,8 +168,8 @@ object DebugClInterface {
         try {
             Client.sendRequest(request, car.host, car.port, mapOf(Pair("angles", requestMessage.angles)))
         } catch (e: InactiveCarException) {
-            synchronized(environment, {
-                environment.map.remove(id)
+            synchronized(Environment, {
+                Environment.map.remove(id)
             })
         }
     }
@@ -183,7 +182,7 @@ object DebugClInterface {
             when (command) {
                 "reset" -> return null
                 "done" -> {
-                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray(), IntArray(angles.size, {1}), 0, SonarRequest.Smoothing.NONE)
+                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray(), IntArray(angles.size, { 1 }), 0, SonarRequest.Smoothing.NONE)
                     return sonarBuilder.build()
                 }
                 else -> {
@@ -207,7 +206,7 @@ object DebugClInterface {
     }
 
     private fun executeRefreshLocationCommand() {
-        val cars = synchronized(environment, { environment.map.values })
+        val cars = synchronized(Environment, { Environment.map.values })
         val inactiveCars = mutableListOf<Int>()
         for (car in cars) {
             val request = getDefaultHttpRequest(car.host, getLocationUrl, ByteArray(0))
@@ -218,9 +217,9 @@ object DebugClInterface {
             }
             println("ref loc done")
         }
-        synchronized(environment, {
+        synchronized(Environment, {
             for (id in inactiveCars) {
-                environment.map.remove(id)
+                Environment.map.remove(id)
             }
         })
     }
@@ -241,8 +240,8 @@ object DebugClInterface {
             return
         }
         val car: Car? =
-                synchronized(environment, {
-                    environment.map[id]
+                synchronized(Environment, {
+                    Environment.map[id]
                 })
         if (car == null) {
             println("car with id=$id not found")
@@ -255,8 +254,8 @@ object DebugClInterface {
         try {
             Client.sendRequest(request, car.host, car.port, mapOf(Pair("uid", id)))
         } catch (e: InactiveCarException) {
-            synchronized(environment, {
-                environment.map.remove(id)
+            synchronized(Environment, {
+                Environment.map.remove(id)
             })
         }
     }
@@ -294,7 +293,6 @@ object DebugClInterface {
             }
         }
     }
-
 
     private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
         val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, url, Unpooled.copiedBuffer(bytes))

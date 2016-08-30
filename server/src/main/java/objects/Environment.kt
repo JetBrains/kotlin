@@ -1,22 +1,21 @@
 package objects
 
-class Environment private constructor() {
-
-    val map: MutableMap<Int, Car>
+object Environment {
     private var uid = 0
-
-    companion object {
-        val instance = Environment()
-    }
-
-    init {
-        map = mutableMapOf()
-    }
+    private val onConnect = mutableListOf<(Car) -> Unit>()
+    val map = mutableMapOf<Int, Car>()
 
     @Synchronized
     fun connectCar(host: String, port: Int): Int {
         uid++
-        map.put(uid, Car(uid, host, port))
+        val car = Car(uid, host, port)
+        onConnect.forEach { it(car) }
+        map.put(uid, car)
         return uid
+    }
+
+    @Synchronized
+    fun onCarConnect(callback: (Car) -> Unit) {
+        onConnect.add(callback)
     }
 }

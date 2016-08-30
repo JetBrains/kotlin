@@ -120,8 +120,10 @@ operator fun IntArray.plus(elements: IntArray): IntArray {
 
 fun IntArray.max(from: Int = 0): Int {
     var result = from
-    for (i in (from + 1)..(size - 1)) {
+    var i = from
+    while (i < size - 1) {
         result = if (get(i) > get(result)) i else result
+        i++
     }
 
     return get(result)
@@ -129,8 +131,10 @@ fun IntArray.max(from: Int = 0): Int {
 
 fun IntArray.min(from: Int = 0): Int {
     var result = from
-    for (i in 1..(size - 1)) {
+    var i = from
+    while (i < size - 1) {
         result = if (this.get(i) < this.get(result)) i else result
+        i++
     }
 
     return this.get(result)
@@ -138,8 +142,10 @@ fun IntArray.min(from: Int = 0): Int {
 
 fun IntArray.sum(): Int {
     var result = 0
-    for (i in 0..(size - 1)) {
+    var i = 0
+    while (i < size - 1) {
         result += this.get(i)
+        i++
     }
 
     return result
@@ -147,8 +153,10 @@ fun IntArray.sum(): Int {
 
 fun IntArray.sort(): IntArray {
     val result = this.clone()
-    for (i in 0..(size - 1)) {
+    var i = 0
+    while (i < size - 1) {
         result[i] = this.max(i)
+        i++
     }
 
     return result
@@ -159,3 +167,29 @@ fun IntArray.mean(): Int =
 
 fun IntArray.median(): Int =
     this.sort()[this.size / 2]
+
+fun IntArray.filter(predicate: (Int) -> Boolean): IntArray {
+    var resultSize = 0
+    var i = 0
+    while (i < size - 1) {
+        if (predicate(get(i))) {
+            resultSize++
+        }
+
+        i++
+    }
+
+    val result = IntArray(resultSize)
+    var j = 0
+    i = 0
+    while (i < size - 1) {
+        if (predicate(get(i))) {
+            result[j] = get(i)
+            j++
+        }
+
+        i++
+    }
+
+    return result
+}

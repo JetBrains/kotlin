@@ -13,13 +13,10 @@ import io.netty.handler.codec.http.*
 import objects.Environment
 
 class Handler : SimpleChannelInboundHandler<Any>() {
-
     var url: String = ""
     var contentBytes: ByteArray = ByteArray(0)
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
-
-        val environment = Environment.instance
         var success = true
         var answer = ByteArray(0)
         when (url) {
@@ -27,7 +24,7 @@ class Handler : SimpleChannelInboundHandler<Any>() {
                 val data = ConnectionRequest.BuilderConnectionRequest(IntArray(0), 0).build()
                 data.mergeFrom(CodedInputStream(contentBytes))
                 val ipStr = data.ipValues.map { elem -> elem.toString() }.reduce { elem1, elem2 -> elem1 + "." + elem2 }
-                val uid = environment.connectCar(ipStr, data.port)
+                val uid = Environment.connectCar(ipStr, data.port)
                 val responseObject = ConnectionResponse.BuilderConnectionResponse(uid, 0).build()
                 answer = ByteArray(responseObject.getSizeNoTag())
                 responseObject.writeTo(CodedOutputStream(answer))

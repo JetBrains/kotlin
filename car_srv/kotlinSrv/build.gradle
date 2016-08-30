@@ -17,11 +17,13 @@ repositories {
 }
 
 apply plugin: "kotlin2js"
+apply plugin: 'kotlin'
 
 sourceSets {
     main.kotlin.srcDirs += 'src'
     main.kotlin.srcDirs += '../../proto/compiler/build/sources'
     main.kotlin.srcDirs += '../../proto/protofiles_sources/out'
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
 task copyKotlinLib(type: Copy) {
@@ -38,4 +40,5 @@ compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/kotlinJsRequiredFil
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

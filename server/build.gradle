@@ -51,6 +51,9 @@ jar {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "io.netty:netty-all:4.1.2.Final"
+    compile group: 'org.asynchttpclient', name: 'async-http-client', version: '2.0.0-RC9'
+
     compile files ("../proto/compiler/build/protokot-runtime.jar")
 }

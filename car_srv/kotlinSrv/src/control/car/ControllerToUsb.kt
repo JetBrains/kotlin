@@ -8,7 +8,7 @@ import mcTransport
 
 class ControllerToUsb : Controller {
     override fun executeRoute(route: RouteRequest, callback: (ByteArray) -> Unit) {
-        println("Execute Route:")
+        println("Execute route:")
 
         mcTransport.setCallBack { bytes ->
             callback.invoke(bytes)
@@ -18,7 +18,7 @@ class ControllerToUsb : Controller {
     }
 
     override fun executeMetricRoute(request: RouteMetricRequest, callback: (ByteArray) -> Unit) {
-        println("Execute Route:")
+        println("Execute metric route:")
 
         mcTransport.setCallBack { bytes ->
             callback.invoke(bytes)

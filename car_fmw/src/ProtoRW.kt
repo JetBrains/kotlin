@@ -21,7 +21,7 @@ object Reader {
 
     fun readSonar(): SonarRequest {
         val stream = getInputStream()
-        return SonarRequest.BuilderSonarRequest(IntArray(0), IntArray(0), 0, SonarRequest.Smoothing.NONE, 0).parseFrom(stream).build()
+        return SonarRequest.BuilderSonarRequest(IntArray(0), IntArray(0), 0, SonarRequest.Smoothing.NONE).parseFrom(stream).build()
     }
 
     private fun getInputStream(): CodedInputStream {

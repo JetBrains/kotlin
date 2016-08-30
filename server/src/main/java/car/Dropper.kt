@@ -20,16 +20,15 @@ object Dropper {
         return {
             var stopped = false
             while (!stopped) {
-                val environment = Environment.instance
-                synchronized(environment, {
+                synchronized(Environment, {
                     val currentTime = System.currentTimeMillis()
                     val keysToRemove = mutableListOf<Int>()
-                    for ((key, value) in environment.map) {
+                    for ((key, value) in Environment.map) {
                         if ((value.lastAction + timeDeltaToDrop) < currentTime) {
                             keysToRemove.add(key)
                         }
                     }
-                    dropInactiveCar(keysToRemove, environment)
+                    dropInactiveCar(keysToRemove, Environment)
                 })
                 try {
                     Thread.sleep(60000)

@@ -19,9 +19,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-class ClientHandler : SimpleChannelInboundHandler<Any> {
-
-    constructor()
+class ClientHandler : SimpleChannelInboundHandler<Any>() {
 
     var contentBytes: ByteArray = ByteArray(0)
 
@@ -64,11 +62,10 @@ class ClientHandler : SimpleChannelInboundHandler<Any> {
     }
 
     private fun handlerGetLocationResponse(message: LocationResponse, carUid: Int) {
-        val environment = Environment.instance
         if (message.code == 0) {
             val data = message.locationResponseData
-            synchronized(environment, {
-                val car = environment.map[carUid]
+            synchronized(Environment, {
+                val car = Environment.map[carUid]
                 if (car != null) {
                     car.x = data.x
                     car.y = data.y
