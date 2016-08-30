@@ -24,10 +24,17 @@ import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
 
-class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Filer {
+class KotlinFiler(
+        val generatedSourceDir: File, 
+        val classesOutputDir: File,
+        internal var onFileCreatedHandler: (File) -> Unit = {}
+) : Filer {
     private companion object {
         val PACKAGE_INFO_SUFFIX = ".packageInfo"
     }
+    
+    internal var wasAnythingGenerated: Boolean = false
+        private set
     
     private fun getGeneratedFile(nameCharSequence: CharSequence, extension: String): File {
         val name = nameCharSequence.toString()
@@ -47,8 +54,13 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
         return File(packageDir, fileName)
     }
     
+    private fun File.notifyCreated() = apply {
+        wasAnythingGenerated = true
+        onFileCreatedHandler(this)
+    }
+    
     override fun createSourceFile(name: CharSequence, vararg originatingElements: Element?): JavaFileObject {
-        return KotlinJavaFileObject(getGeneratedFile(name, ".java"))
+        return KotlinJavaFileObject(getGeneratedFile(name, ".java").notifyCreated())
     }
 
     override fun getResource(location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence): FileObject? {
@@ -63,7 +75,7 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
     ): FileObject? {
         val resourceFile = getResourceFile(location, pkg, relativeName)
         resourceFile.parentFile.mkdirs()
-        return KotlinFileObject(resourceFile)
+        return KotlinFileObject(resourceFile.notifyCreated())
     }
     
     private fun getResourceFile(location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence): File {
@@ -80,6 +92,6 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
     }
 
     override fun createClassFile(name: CharSequence, vararg originatingElements: Element?): JavaFileObject {
-        return KotlinJavaFileObject(getGeneratedFile(name, ".class"))
+        return KotlinJavaFileObject(getGeneratedFile(name, ".class").notifyCreated())
     }
 }
