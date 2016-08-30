@@ -208,6 +208,12 @@ private class Processor(
         }
     }
 
+    private fun downShiftToPlainSearch() {
+        tasks.clear()
+        scopesToUsePlainSearch.clear()
+        plainSearchHandler(searchScope)
+    }
+
     private fun addClassToProcess(classToSearch: PsiClass) {
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
@@ -216,7 +222,7 @@ private class Processor(
                     if (processDataClassUsage(reference)) return@processor true
 
                     if (destructuringDeclarationUsageSearchMode != ALWAYS_SMART) {
-                        plainSearchHandler(searchScope)
+                        downShiftToPlainSearch()
                         return@processor false
                     }
 
@@ -244,9 +250,7 @@ private class Processor(
      */
     private fun addCallableDeclarationToProcess(declaration: PsiElement, kind: CallableToProcessKind) {
         if (declaration.isOperatorExpensiveToSearch()) { // cancel all tasks and use plain search
-            tasks.clear()
-            scopesToUsePlainSearch.clear()
-            plainSearchHandler(searchScope)
+            downShiftToPlainSearch()
             return
         }
 
