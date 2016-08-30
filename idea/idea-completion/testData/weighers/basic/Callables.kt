@@ -17,7 +17,9 @@ class Derived : Base() {
         fun aaLocalFun(){}
 
         with (y) {
-            aa<caret>
+            if (this is Z1 && this is Z2) {
+                aa<caret>
+            }
         }
     }
 }
@@ -25,8 +27,19 @@ class Derived : Base() {
 interface X {
     fun aaX()
 }
+
 interface Y : X {
     fun aaY()
+}
+
+interface Z1 {
+    fun aaaZ1()
+    fun aabZ1()
+}
+
+interface Z2 {
+    fun aaaZ2()
+    fun aabZ2()
 }
 
 fun Any.aaAnyExtensionFun(){}
@@ -43,6 +56,10 @@ fun Y.aaYExt(){}
 // ORDER: aaLocalVal
 // ORDER: aaLocalFun
 // ORDER: aaY
+// ORDER: aaaZ1
+// ORDER: aaaZ2
+// ORDER: aabZ1
+// ORDER: aabZ2
 // ORDER: aaX
 // ORDER: aaYExt
 // ORDER: aaXExt

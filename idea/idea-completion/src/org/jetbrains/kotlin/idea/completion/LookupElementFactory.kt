@@ -30,15 +30,16 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.ReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
-import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -62,7 +63,7 @@ interface AbstractLookupElementFactory {
 data /* we need copy() */
 class LookupElementFactory(
         val basicFactory: BasicLookupElementFactory,
-        private val receiverTypes: Collection<KotlinType>?,
+        private val receiverTypes: Collection<ReceiverType>?,
         private val callType: CallType<*>,
         private val inDescriptor: DeclarationDescriptor,
         private val contextVariablesProvider: ContextVariablesProvider,
@@ -324,7 +325,7 @@ class LookupElementFactory(
         return callableWeightBasic(descriptor, receiverTypes)
     }
 
-    private fun callableWeightBasic(descriptor: CallableDescriptor, receiverTypes: Collection<KotlinType>): CallableWeight? {
+    private fun callableWeightBasic(descriptor: CallableDescriptor, receiverTypes: Collection<ReceiverType>): CallableWeight? {
         descriptor.callableWeightBasedOnReceiver(receiverTypes, CallableWeight.receiverCastRequired)?.let { return it }
 
         return when (descriptor.containingDeclaration) {
@@ -334,21 +335,33 @@ class LookupElementFactory(
     }
 
     private fun CallableDescriptor.callableWeightBasedOnReceiver(
-            receiverTypes: Collection<KotlinType>,
+            receiverTypes: Collection<ReceiverType>,
             onReceiverTypeMismatch: CallableWeight?
     ): CallableWeight? {
         val receiverParameter = extensionReceiverParameter
                                 ?: dispatchReceiverParameter
                                 ?: return null
 
-        for ((receiverIndex, receiverType) in receiverTypes.withIndex()) {
-            val weight = callableWeightForReceiverType(receiverType, receiverParameter.type)
+        for (receiverType in receiverTypes) {
+            val weight = callableWeightForReceiverType(receiverType.type, receiverParameter.type)
             if (weight != null) {
-                // if descriptor is matching all receivers then use null as receiverIndex - otherwise e.g. all members of Any would have too high priority
-                val receiverIndexToUse = if (receiverIndex == 0 && receiverTypes.drop(1).all { callableWeightForReceiverType(it, receiverParameter.type) != null })
-                    null
-                else
-                    receiverIndex
+                val receiverIndex = receiverType.receiverIndex
+
+                var receiverIndexToUse: Int? = receiverIndex
+                if (receiverIndex == 0) {
+                    val maxReceiverIndex = receiverTypes.map { it.receiverIndex }.max()!!
+                    if (maxReceiverIndex > 0) {
+                        val matchesAllReceivers = receiverTypes
+                                .filter { it.receiverIndex != 0 && callableWeightForReceiverType(it.type, receiverParameter.type) != null }
+                                .map { it.receiverIndex }
+                                .toSet()
+                                .containsAll((1..maxReceiverIndex).toList())
+                        if (matchesAllReceivers) { // if descriptor is matching all receivers then use null as receiverIndex - otherwise e.g. all members of Any would have too high priority
+                            receiverIndexToUse = null
+                        }
+                    }
+                }
+
                 return CallableWeight(weight, receiverIndexToUse)
             }
         }
