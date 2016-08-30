@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.java.model.elements
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiAnnotationMethod
-import com.intellij.psi.PsiClass
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.types.JeDeclaredErrorType
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
@@ -43,10 +41,19 @@ class JeAnnotationMirror(val psi: PsiAnnotation) : AnnotationMirror {
         return mutableMapOf<ExecutableElement, AnnotationValue>().apply {
             for (method in annotationClass.methods) {
                 method as? PsiAnnotationMethod ?: continue
+                val returnType = method.returnType ?: continue
+                
                 val attributeValue = psi.findDeclaredAttributeValue(method.name) 
                                      ?: (if (withDefaults) method.defaultValue else null)
                                      ?: continue
-                put(JeMethodExecutableElement(method), JeAnnotationValue(attributeValue))
+                
+                val annotationValue = when {
+                    returnType is PsiArrayType && attributeValue !is PsiArrayInitializerMemberValue -> 
+                        JeSingletonArrayAnnotationValue(attributeValue)
+                    else -> JeAnnotationValue(attributeValue) 
+                }
+                
+                put(JeMethodExecutableElement(method), annotationValue)
             }
         }
     }
