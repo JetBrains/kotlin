@@ -7,8 +7,7 @@ FILE /simpleUnaryOperators.kt
   FUN public fun test2(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test2
-        CALL .unaryMinus type=kotlin.Int operator=UMINUS
-          $this: CONST Int type=kotlin.Int value='42'
+        CONST Int type=kotlin.Int value='-42'
   FUN public fun test3(/*0*/ x: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test3
@@ -17,8 +16,7 @@ FILE /simpleUnaryOperators.kt
   FUN public fun test4(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test4
-        CALL .unaryPlus type=kotlin.Int operator=UPLUS
-          $this: CONST Int type=kotlin.Int value='42'
+        CONST Int type=kotlin.Int value='42'
   FUN public fun test5(/*0*/ x: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test5
@@ -27,5 +25,4 @@ FILE /simpleUnaryOperators.kt
   FUN public fun test6(): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test6
-        CALL .not type=kotlin.Boolean operator=EXCL
-          $this: CONST Boolean type=kotlin.Boolean value='true'
+        CONST Boolean type=kotlin.Boolean value='false'

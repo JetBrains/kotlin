@@ -12,6 +12,5 @@ FILE /ifElseIf.kt
             arg0: CALL .compareTo type=kotlin.Int operator=LT
               $this: GET_VAR i type=kotlin.Int operator=null
               other: CONST Int type=kotlin.Int value='0'
-          then: CALL .unaryMinus type=kotlin.Int operator=UMINUS
-            $this: CONST Int type=kotlin.Int value='1'
+          then: CONST Int type=kotlin.Int value='-1'
           else: CONST Int type=kotlin.Int value='0'

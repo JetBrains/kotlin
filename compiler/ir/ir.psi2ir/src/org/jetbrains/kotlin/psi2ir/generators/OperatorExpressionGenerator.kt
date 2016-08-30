@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
@@ -234,6 +236,16 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
+
+        if (expression.baseExpression is KtConstantExpression) {
+            ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)?.let { constant ->
+                val receiverType = resolvedCall.dispatchReceiver?.type
+                if (receiverType != null && KotlinBuiltIns.isPrimitiveType(receiverType)) {
+                    return statementGenerator.generateConstantExpression(expression, constant)
+                }
+            }
+        }
+
         return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), irOperator)
     }
 }

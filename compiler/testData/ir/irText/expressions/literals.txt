@@ -4,8 +4,7 @@ FILE /literals.kt
       CONST Int type=kotlin.Int value='1'
   PROPERTY public val test2: kotlin.Int = -1 getter=null setter=null
     EXPRESSION_BODY
-      CALL .unaryMinus type=kotlin.Int operator=UMINUS
-        $this: CONST Int type=kotlin.Int value='1'
+      CONST Int type=kotlin.Int value='-1'
   PROPERTY public val test3: kotlin.Boolean = true getter=null setter=null
     EXPRESSION_BODY
       CONST Boolean type=kotlin.Boolean value='true'
@@ -18,3 +17,21 @@ FILE /literals.kt
   PROPERTY public val test6: kotlin.Nothing? = null getter=null setter=null
     EXPRESSION_BODY
       CONST Null type=kotlin.Nothing? value='null'
+  PROPERTY public val test7: kotlin.Long = 1.toLong() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Long type=kotlin.Long value='1'
+  PROPERTY public val test8: kotlin.Long = -1.toLong() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Long type=kotlin.Long value='-1'
+  PROPERTY public val test9: kotlin.Double = 1.0.toDouble() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Double type=kotlin.Double value='1.0'
+  PROPERTY public val test10: kotlin.Double = -1.0.toDouble() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Double type=kotlin.Double value='-1.0'
+  PROPERTY public val test11: kotlin.Float = 1.0.toFloat() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Float type=kotlin.Float value='1.0'
+  PROPERTY public val test12: kotlin.Float = -1.0.toFloat() getter=null setter=null
+    EXPRESSION_BODY
+      CONST Float type=kotlin.Float value='-1.0'

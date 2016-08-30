@@ -75,6 +75,15 @@ class IrConstImpl<out T> (
 
         fun constFalse(startOffset: Int, endOffset: Int, type: KotlinType): IrConstImpl<Boolean> =
                 boolean(startOffset, endOffset, type, false)
+
+        fun long(startOffset: Int, endOffset: Int, type: KotlinType, value: Long): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
+
+        fun float(startOffset: Int, endOffset: Int, type: KotlinType, value: Float): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
+
+        fun double(startOffset: Int, endOffset: Int, type: KotlinType, value: Double): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
     }
 }
 

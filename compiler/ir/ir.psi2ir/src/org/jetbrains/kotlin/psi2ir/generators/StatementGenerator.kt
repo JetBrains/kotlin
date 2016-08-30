@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.constants.BooleanValue
-import org.jetbrains.kotlin.resolve.constants.IntValue
-import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -151,10 +148,13 @@ class StatementGenerator(
         return IrThrowImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, expression.thrownExpression!!.genExpr())
     }
 
-    override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression {
-        val compileTimeConstant = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
-                                  ?: error("KtConstantExpression was not evaluated: ${expression.text}")
-        val constantValue = compileTimeConstant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
+    override fun visitConstantExpression(expression: KtConstantExpression, data: Nothing?): IrExpression =
+            generateConstantExpression(expression,
+                                       ConstantExpressionEvaluator.getConstant(expression, context.bindingContext) ?:
+                                       error("KtConstantExpression was not evaluated: ${expression.text}"))
+
+    fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression {
+        val constantValue = constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
         val constantType = constantValue.type
 
         return when (constantValue) {
@@ -166,6 +166,12 @@ class StatementGenerator(
                 IrConstImpl.constNull(expression.startOffset, expression.endOffset, constantType)
             is BooleanValue ->
                 IrConstImpl.boolean(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is LongValue ->
+                IrConstImpl.long(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is DoubleValue ->
+                IrConstImpl.double(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is FloatValue ->
+                IrConstImpl.float(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
