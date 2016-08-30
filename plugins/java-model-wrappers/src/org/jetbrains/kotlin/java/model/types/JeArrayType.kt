@@ -25,6 +25,7 @@ import javax.lang.model.type.TypeVisitor
 class JeArrayType(override val psiType: PsiArrayType, override val psiManager: PsiManager) : JePsiType(), JeTypeWithManager, ArrayType {
     override fun getKind() = TypeKind.ARRAY
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitArray(this, p)
+    
     override fun getComponentType() = psiType.componentType.toJeType(psiManager)
     
     override fun toString() = psiType.getCanonicalText(false)
@@ -32,7 +33,7 @@ class JeArrayType(override val psiType: PsiArrayType, override val psiManager: P
     override fun equals(other: Any?): Boolean{
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return psiType == (other as? JeArrayType)?.psiType
+        return componentType == (other as? JeArrayType)?.componentType
     }
 
     override fun hashCode() = psiType.hashCode()

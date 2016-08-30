@@ -45,7 +45,13 @@ class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitialize
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return initializer == (other as JeClassInitializerExecutableTypeMirror).initializer
+        other as? JeClassInitializerExecutableTypeMirror ?: return false
+        
+        return receiverType == other.receiverType
+               && returnType == other.returnType
+               && thrownTypes == other.thrownTypes 
+               && parameterTypes == other.parameterTypes
+               && typeVariables == other.typeVariables
     }
 
     override fun hashCode() = initializer.hashCode()
