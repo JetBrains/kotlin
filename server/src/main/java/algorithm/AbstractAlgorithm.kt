@@ -19,8 +19,8 @@ import java.util.concurrent.TimeoutException
 abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntArray>) {
 
     open val ATTEMPTS = 1
-    open val THRESHOLD = 0
     open val SMOOTHING = SonarRequest.Smoothing.NONE
+    open val WINDOW_SIZE = 0
 
     protected val FORWARD = 0
     protected val BACKWARD = 1
@@ -30,7 +30,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     private var prevState: CarState? = null
 
     private var prevSonarDistances = mapOf<Angle, AngleData>()
-    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(90), Angle(120), Angle(180))
+    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
     protected var requiredAngles = defaultAngles
 
     protected enum class CarState {
@@ -45,8 +45,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         val message = SonarRequest.BuilderSonarRequest(
                 angles = anglesIntArray,
                 attempts = IntArray(angles.size, { ATTEMPTS }),
-                threshold = THRESHOLD,
-                smoothing = SMOOTHING)
+                smoothing = SMOOTHING,
+                windowSize = WINDOW_SIZE)
                 .build()
         val requestBytes = ByteArray(message.getSizeNoTag())
         message.writeTo(CodedOutputStream(requestBytes))
@@ -103,9 +103,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         }
         val anglesDistances = mutableMapOf<Angle, AngleData>()
         for (i in 0..angles.size - 1) {
-            if (Math.abs(distances[i]) < 0.01) {
-                continue
-            }
             anglesDistances.put(angles[i], AngleData(angles[i], distances[i]))
         }
 

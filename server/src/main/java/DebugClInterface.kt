@@ -64,7 +64,7 @@ object DebugClInterface {
             "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
-            "lines" -> println(algorithm.RoomModel.lines)
+            "lines" -> algorithm.RoomModel.walls.forEach { println(it.line) }
             "pos" -> {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {
@@ -207,7 +207,7 @@ object DebugClInterface {
             when (command) {
                 "reset" -> return null
                 "done" -> {
-                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray(), IntArray(angles.size, { 1 }), 0, SonarRequest.Smoothing.NONE)
+                    val sonarBuilder = SonarRequest.BuilderSonarRequest(angles.toIntArray(), IntArray(angles.size, { 5 }), 3, SonarRequest.Smoothing.MEDIAN)
                     return sonarBuilder.build()
                 }
                 else -> {

@@ -1,7 +1,7 @@
 package algorithm.geometry
 
 class Line(var A: Double, var B: Double, var C: Double) {
-    val COMPARISON_THRESHOLD = 0.5
+    val COMPARISON_THRESHOLD = 20
 
     init {
         normalize()
@@ -55,4 +55,9 @@ class Line(var A: Double, var B: Double, var C: Double) {
 
         return metricDist(other) < COMPARISON_THRESHOLD
     }
+
+    fun getDirectionVector(): Vector {
+        return Vector (A, -B)
+    }
+
 }

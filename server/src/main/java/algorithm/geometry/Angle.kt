@@ -16,6 +16,10 @@ data class Angle(private val degrees: Int) {
         return Angle(degrees - other.degrees)
     }
 
+    operator fun unaryMinus(): Angle {
+        return Angle(-degrees)
+    }
+
     operator fun plus(other: Angle): Angle {
         return Angle(degrees + other.degrees)
     }

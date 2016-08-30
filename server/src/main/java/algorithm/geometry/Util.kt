@@ -2,5 +2,5 @@ package algorithm.geometry
 
 object Util {
 
-    val eps = 1e-2
+    val eps = 0.1
 }
