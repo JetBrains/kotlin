@@ -55,6 +55,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("classes.kt")
+        public void testClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/classes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObject.kt")
+        public void testCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/companionObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegatingConstructorCallsInSecondaryConstructors.kt")
         public void testDelegatingConstructorCallsInSecondaryConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/delegatingConstructorCallsInSecondaryConstructors.kt");

@@ -1,0 +1,14 @@
+FILE /classes.kt
+  CLASS CLASS TestClass
+    FUN public constructor TestClass()
+      BLOCK_BODY
+  CLASS INTERFACE TestInterface
+  CLASS OBJECT TestObject
+    FUN private constructor TestObject()
+      BLOCK_BODY
+  CLASS ANNOTATION_CLASS TestAnnotationClass
+    FUN public constructor TestAnnotationClass()
+      BLOCK_BODY
+  CLASS ENUM_CLASS TestEnumClass
+    FUN private constructor TestEnumClass()
+      BLOCK_BODY
