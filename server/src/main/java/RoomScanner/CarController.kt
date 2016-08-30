@@ -16,15 +16,14 @@ class CarController(var car: Car) {
         RIGHT(3);
     }
 
-    val WALL_DISTANCE = 50
-
     var position = Pair(0.0, 0.0)
         private set
 
+    private val WALL_DISTANCE = 50
     private var angle = 0.0
 
     fun moveTo(to: Pair<Double, Double>) {
-        var driveAngle = (Math.toDegrees(Math.atan2(to.first, to.second)) + 360) % 360
+        val driveAngle = (Math.toDegrees(Math.atan2(to.first, to.second)) + 360) % 360
         rotateOn(angleDistance(angle, driveAngle))
         drive(Direction.FORWARD, Math.max(0.0, distance(position, to)).toInt() - WALL_DISTANCE)
 
@@ -39,12 +38,6 @@ class CarController(var car: Car) {
         angle = target
     }
 
-    private fun drive(direction: Direction, distance: Int) {
-        val request = RouteMetricRequest.BuilderRouteMetricRequest(intArrayOf(distance), intArrayOf(direction.id)).build()
-        val data = serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
-        CarClient.sendRequest(car, CarClient.Request.ROUTE_METRIC, data).get()
-    }
-
     fun scan(angles: IntArray): List<Pair<Double, Double>> {
         val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 10, SonarRequest.Smoothing.MEDIAN).build()
         val data = serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
@@ -55,7 +48,13 @@ class CarController(var car: Car) {
         return distances.mapIndexed { i: Int, distance: Int -> convertToPoint(angles[i].toDouble(), distance.toDouble()) }
     }
 
-    fun convertToPoint(angle: Double, distance: Double): Pair<Double, Double> {
+    private fun drive(direction: Direction, distance: Int) {
+        val request = RouteMetricRequest.BuilderRouteMetricRequest(intArrayOf(distance), intArrayOf(direction.id)).build()
+        val data = serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
+        CarClient.sendRequest(car, CarClient.Request.ROUTE_METRIC, data).get()
+    }
+
+    private fun convertToPoint(angle: Double, distance: Double): Pair<Double, Double> {
         if (distance <= 0) {
             return Pair(0.0, 0.0)
         }
@@ -64,7 +63,7 @@ class CarController(var car: Car) {
         return Pair(Math.cos(realAngle) * distance + position.first, Math.sin(realAngle) * distance + position.second)
     }
 
-    inline fun serialize(size: Int, writeTo: (CodedOutputStream) -> Unit): ByteArray {
+    private inline fun serialize(size: Int, writeTo: (CodedOutputStream) -> Unit): ByteArray {
         val bytes = ByteArray(size)
         writeTo(CodedOutputStream(bytes))
 

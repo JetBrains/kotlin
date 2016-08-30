@@ -2,6 +2,7 @@ package RoomScanner
 
 class RoomScanner(val controller: CarController) : Thread() {
     private val points = mutableListOf<Pair<Double, Double>>()
+    private val MAX_VALID_DISTANCE = 100
 
     override fun run() {
         println("Car connected ${controller.car.host}")
@@ -20,7 +21,7 @@ class RoomScanner(val controller: CarController) : Thread() {
         controller.rotateOn(180.0)
         iterationPoints.addAll(controller.scan(horizon))
 
-        points.addAll(iterationPoints)
+        points.addAll(iterationPoints.filter { it.first > 0 && it.second > 0 && distance(controller.position, it) <= MAX_VALID_DISTANCE })
 
         val target = iterationPoints.filter { it.first > 0 && it.second > 0 }.maxBy { distance(controller.position, it) }
         target ?: return

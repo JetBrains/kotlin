@@ -6,10 +6,10 @@ object Voyager {
 
     fun run() {
         while (true) {
-            var distance = Sonar.getSmoothDistance(0, DEFAULT_WINDOW)
+            var distance = Sonar.getSmoothDistance(0, DEFAULT_WINDOW, SonarRequest.Smoothing.NONE)
             while (distance == -1 || distance > 4 * SEGMENT_SIZE) {
                 Engine.drive(RouteType.FORWARD.id, SEGMENT_SIZE)
-                distance = Sonar.getSmoothDistance(0, DEFAULT_WINDOW)
+                distance = Sonar.getSmoothDistance(0, DEFAULT_WINDOW, SonarRequest.Smoothing.NONE)
             }
 
             Engine.drive(RouteType.LEFT.id, 45)

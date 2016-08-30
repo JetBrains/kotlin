@@ -87,7 +87,8 @@ object Control {
         val data = IntArray(attempts)
         var i = 0
         while (i < attempts) {
-            data[i] = Sonar.getSmoothDistance(angle, windowSize)
+            data[i] = Sonar.getSmoothDistance(angle, windowSize, smoothing)
+
             if (smoothing.id == SonarRequest.Smoothing.NONE.id && data[i] != -1) {
                 return data[i]
             }
@@ -95,8 +96,8 @@ object Control {
         }
 
         return when (smoothing.id) {
-            SonarRequest.Smoothing.MEAN.id -> data.mean()
-            SonarRequest.Smoothing.MEDIAN.id -> data.median()
+            SonarRequest.Smoothing.MEAN.id -> data.filter(::positive).mean()
+            SonarRequest.Smoothing.MEDIAN.id -> data.filter(::positive).median()
             else -> -1
         }
     }
