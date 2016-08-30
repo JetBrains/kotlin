@@ -1144,18 +1144,6 @@ fun main(args: Array<String>) {
         testClass<AbstractReservedWordTest>() {
             model("reservedWords/cases")
         }
-
-        testClass<AbstractReifiedTest>() {
-            model("reified/cases")
-        }
-
-        testClass<AbstractRttiTest>() {
-            model("rtti/cases")
-        }
-
-        testClass<AbstractLightReflectionTest>() {
-            model("reflection/light/cases")
-        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
