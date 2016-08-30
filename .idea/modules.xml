@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/ant/ant.iml" filepath="$PROJECT_DIR$/ant/ant.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/compiler/backend/backend.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend-common/backend-common.iml" filepath="$PROJECT_DIR$/compiler/backend-common/backend-common.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/backend.jvm/backend.jvm.iml" filepath="$PROJECT_DIR$/compiler/ir/backend.jvm/backend.jvm.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/build-common/build-common.iml" filepath="$PROJECT_DIR$/build-common/build-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/builtins/builtins.iml" filepath="$PROJECT_DIR$/core/builtins/builtins.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" filepath="$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" group="compiler/cli" />
@@ -51,7 +52,6 @@
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.backend.jvm/ir.backend.jvm.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.backend.jvm/ir.backend.jvm.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.psi2ir/ir.psi2ir.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tests/ir.tests.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tests/ir.tests.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" group="compiler/ir" />
