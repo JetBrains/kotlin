@@ -233,10 +233,10 @@ abstract class BasicBoxTest(
                 if (moduleKindMatcher.find()) {
                     module.moduleKind = ModuleKind.valueOf(moduleKindMatcher.group(1))
                 }
+            }
 
-                if (NO_INLINE_PATTERN.matcher(text).find()) {
-                    module.inliningDisabled = true
-                }
+            if (NO_INLINE_PATTERN.matcher(text).find()) {
+                (module ?: defaultModule).inliningDisabled = true
             }
 
             val temporaryFile = File(tmpDir, fileName)
