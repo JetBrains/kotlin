@@ -187,9 +187,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("kotlin.js", "set").isExtensionOf(FQ_NAMES.mutableMap.asString()), NATIVE_MAP_SET);
 
-        //add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
-        //add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
-
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
 
@@ -245,42 +242,4 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     }
 
-    /*
-    private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
-        private final boolean isSet;
-
-        private MapSelectImplementationIntrinsic(boolean isSet) {
-            this.isSet = isSet;
-        }
-
-        @NotNull
-        @Override
-        public JsExpression apply(
-                @NotNull CallInfo callInfo,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
-        ) {
-            KotlinType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
-            Name keyTypeName = DescriptorUtilsKt.getNameIfStandardType(keyType);
-            String collectionClassName = null;
-            if (keyTypeName != null) {
-                if (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName)) {
-                    collectionClassName = isSet ? "PrimitiveNumberHashSet" : "PrimitiveNumberHashMap";
-                }
-                else if (PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName)) {
-                    collectionClassName = isSet ? "PrimitiveBooleanHashSet" : "PrimitiveBooleanHashMap";
-                }
-                else if (keyTypeName.asString().equals("String")) {
-                    collectionClassName = isSet ? "DefaultPrimitiveHashSet" : "DefaultPrimitiveHashMap";
-                }
-            }
-
-            if (collectionClassName == null ) {
-                collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
-            }
-
-            return new JsNew(context.namer().kotlin(collectionClassName), arguments);
-        }
-    }
-    */
 }

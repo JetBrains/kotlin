@@ -801,7 +801,6 @@
         array.sort(Kotlin.primitiveCompareTo)
     };
 
-    // TODO: Find out whether is it referenced
     Kotlin.copyToArray = function (collection) {
         if (typeof collection.toArray !== "undefined") return collection.toArray();
         return Kotlin.copyToArrayImpl(collection);
