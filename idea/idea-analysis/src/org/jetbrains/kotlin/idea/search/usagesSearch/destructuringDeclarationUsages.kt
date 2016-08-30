@@ -21,7 +21,6 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.search.*
-import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
@@ -187,29 +186,7 @@ private class Processor(
             return
         }
 
-        val parameters = ClassInheritorsSearch.SearchParameters(psiClass, GlobalSearchScope.allScope(project), true, true, false)
-        val classesToSearch = listOf(psiClass) + ClassInheritorsSearch.search(parameters).findAll()
-        testLog?.add("Searched inheritors of ${psiClass.logPresentation()}")
-
-        for (classToSearch in classesToSearch) {
-            testLog?.add("Searched references to ${classToSearch.logPresentation()}")
-            ReferencesSearch.search(classToSearch).forEach(Processor processor@ { reference -> //TODO: see KT-13607
-                if (processDataClassUsage(reference)) return@processor true
-
-                if (destructuringDeclarationUsageSearchMode != ALWAYS_SMART) {
-                    plainSearchHandler(searchScope)
-                    return@processor false
-                }
-
-                val element = reference.element
-                val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
-                val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
-                error("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
-            })
-
-            // we must use plain search inside our data class (and inheritors) because implicit 'this' can happen anywhere
-            (classToSearch as? KtLightClass)?.kotlinOrigin?.let { usePlainSearch(it) }
-        }
+        addClassToProcess(psiClass)
 
         processTasks()
 
@@ -228,6 +205,31 @@ private class Processor(
         while (tasks.isNotEmpty()) {
             tasks.pop().perform()
         }
+    }
+
+    private fun addClassToProcess(classToSearch: PsiClass) {
+        data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
+            override fun perform() {
+                testLog?.add("Searched references to ${classToSearch.logPresentation()}")
+                ReferencesSearch.search(classToSearch).forEach(Processor processor@ { reference -> //TODO: see KT-13607
+                    if (processDataClassUsage(reference)) return@processor true
+
+                    if (destructuringDeclarationUsageSearchMode != ALWAYS_SMART) {
+                        plainSearchHandler(searchScope)
+                        return@processor false
+                    }
+
+                    val element = reference.element
+                    val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
+                    val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
+                    error("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
+                })
+
+                // we must use plain search inside our data class (and inheritors) because implicit 'this' can happen anywhere
+                (classToSearch as? KtLightClass)?.kotlinOrigin?.let { usePlainSearch(it) }
+            }
+        }
+        addTask(ProcessClassUsagesTask(classToSearch))
     }
 
     private enum class CallableToProcessKind {
@@ -407,15 +409,20 @@ private class Processor(
             }
 
             is KtConstructorCalleeExpression -> {
-                if (typeRefParent.parent is KtSuperTypeCallEntry) {
-                    // usage in super type list - just ignore, inheritors are processed above
+                val parent = typeRefParent.parent
+                if (parent is KtSuperTypeCallEntry) {
+                    val classOrObject = (parent.parent as KtSuperTypeList).parent as KtClassOrObject
+                    val psiClass = classOrObject.toLightClass()
+                    psiClass?.let { addClassToProcess(it) }
                     return true
                 }
             }
 
             is KtSuperTypeListEntry -> {
                 if (typeRef == typeRefParent.typeReference) {
-                    // usage in super type list - just ignore, inheritors are processed above
+                    val classOrObject = (typeRefParent.parent as KtSuperTypeList).parent as KtClassOrObject
+                    val psiClass = classOrObject.toLightClass()
+                    psiClass?.let { addClassToProcess(it) }
                     return true
                 }
             }
@@ -489,6 +496,16 @@ private class Processor(
                 is PsiField -> {
                     if (prev == parent.typeElement && !parent.isPrivateOrLocal()) {
                         addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_DATA_CLASS_TYPE)
+                    }
+                    break@ParentsLoop
+                }
+
+                is PsiReferenceList -> {
+                    if (parent.role == PsiReferenceList.Role.EXTENDS_LIST || parent.role == PsiReferenceList.Role.IMPLEMENTS_LIST) {
+                        val psiClass = parent.parent as PsiClass
+                        if (!psiClass.isPrivateOrLocal()) {
+                            addClassToProcess(psiClass)
+                        }
                     }
                     break@ParentsLoop
                 }

@@ -1,7 +1,6 @@
 Checked type of (x, y)
 Checked type of (x, y, z)
 Checked type of parameter a in FOR
-Searched inheritors of A
 Searched references to A
 Searched references to parameter a in FOR in Kotlin files
 Used plain search in LocalSearchScope:

@@ -1,5 +1,7 @@
 Checked type of (x, y, z)
+Checked type of (x1, y1)
 Checked type of (x1, y1, z1)
+Checked type of (x2, y2)
 Checked type of (x2, y2, z2)
 Checked type of (x3, y3, z3)
 Checked type of (x4, y4, z4)
@@ -9,15 +11,20 @@ Checked type of g()
 Checked type of h()
 Checked type of listOfA()
 Checked type of listOfA()
-Searched inheritors of pack.A
 Searched references to JavaClass.getA() in Kotlin files
+Searched references to JavaClass2
+Searched references to JavaClass3
 Searched references to a in Kotlin files
 Searched references to f() in Kotlin files
 Searched references to g() in Kotlin files
 Searched references to h() in Kotlin files
 Searched references to listOfA() in Kotlin files
 Searched references to pack.A
+Searched references to pack.X
+Searched references to parameter p1 in test2() in Kotlin files
+Searched references to parameter p2 in test2() in Kotlin files
 Used plain search in LocalSearchScope:
     CLASS:A
+    CLASS:X
     FUN:ext1
     FUN:ext1

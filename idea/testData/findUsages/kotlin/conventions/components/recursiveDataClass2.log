@@ -1,7 +1,5 @@
 Checked type of (a1, s)
 Checked type of (b, n)
-Searched inheritors of A
-Searched inheritors of B
 Searched references to A
 Searched references to B
 Searched references to a1 in Kotlin files

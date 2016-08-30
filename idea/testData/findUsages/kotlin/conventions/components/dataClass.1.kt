@@ -20,3 +20,8 @@ fun g() = A()
 fun h() = g()
 
 fun listOfA() = listOf<A>(A(1, "", ""))
+
+fun test2(p1: JavaClass2, p2: JavaClass3) {
+    val (x1, y1) = p1[0]
+    val (x2, y2) = p2[0]
+}
