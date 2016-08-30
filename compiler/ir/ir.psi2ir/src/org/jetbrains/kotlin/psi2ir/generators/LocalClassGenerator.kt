@@ -20,16 +20,17 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGeneratorExtension(statementGenerator) {
-    fun generateObjectLiteral(expression: KtObjectLiteralExpression): IrStatement {
-        val objectLiteralType = getInferredTypeWithImplicitCastsOrFail(expression)
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, objectLiteralType, IrOperator.OBJECT_LITERAL)
+    fun generateObjectLiteral(ktObjectLiteral: KtObjectLiteralExpression): IrStatement {
+        val objectLiteralType = getInferredTypeWithImplicitCastsOrFail(ktObjectLiteral)
+        val irBlock = IrBlockImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType, IrOperator.OBJECT_LITERAL)
 
-        val irClass = DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(expression.objectDeclaration)
+        val irClass = DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktObjectLiteral.objectDeclaration)
         irBlock.addStatement(irClass)
 
         val objectConstructor = irClass.descriptor.unsubstitutedPrimaryConstructor ?:
@@ -44,10 +45,13 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
             "Object literal constructor should have no value parameters: $objectConstructor"
         }
 
-        irBlock.addStatement(IrCallImpl(expression.startOffset, expression.endOffset, objectLiteralType,
+        irBlock.addStatement(IrCallImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
                                         objectConstructor, IrOperator.OBJECT_LITERAL))
 
         return irBlock
     }
+
+    fun generateLocalClass(ktClassOrObject: KtClassOrObject): IrStatement =
+            DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktClassOrObject)
 
 }

@@ -339,6 +339,9 @@ class StatementGenerator(
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Nothing?): IrStatement =
             LocalClassGenerator(this).generateObjectLiteral(expression)
+
+    override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Nothing?): IrStatement =
+            LocalClassGenerator(this).generateLocalClass(classOrObject)
 }
 
 abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {

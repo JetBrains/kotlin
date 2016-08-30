@@ -85,6 +85,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("localClasses.kt")
+        public void testLocalClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/localClasses.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectLiteralExpressions.kt")
         public void testObjectLiteralExpressions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/objectLiteralExpressions.kt");
