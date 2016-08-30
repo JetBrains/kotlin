@@ -504,18 +504,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun resolveContainingClass(expr: KtElement): StructCodegen? {
         val name = expr.getResolvedCallWithAssert(state.bindingContext).dispatchReceiver?.type?.constructor?.declarationDescriptor?.fqNameSafe?.asString() ?: return null
-
-        var currentResolvedClassName = ""
-        var codegen: StructCodegen? = null
-        for (classPart in name.split(".")) {
-            currentResolvedClassName += (if (currentResolvedClassName.length > 0) "." else "") + classPart
-            codegen = (codegen?.nestedClasses ?: state.classes)[currentResolvedClassName]
-                    ?: (if ((codegen as? ClassCodegen)?.companionObjectCodegen?.structName == currentResolvedClassName) (codegen as? ClassCodegen)?.companionObjectCodegen else null)
-                    ?: state.objects[currentResolvedClassName]
-                    ?: codegen
-        }
-
-        return codegen
+        return resolveCodegenByName(name)
     }
 
     private fun evaluateFunctionCallExpression(function: LLVMVariable, names: List<LLVMSingleValue>): LLVMSingleValue? {
