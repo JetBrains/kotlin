@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -81,5 +85,12 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
     @Nullable
     public KtTypeReference getExtendsBound() {
         return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        KtTypeParameterListOwner owner = PsiTreeUtil.getParentOfType(this, KtTypeParameterListOwner.class);
+        return owner != null ? new LocalSearchScope(owner) : GlobalSearchScope.EMPTY_SCOPE;
     }
 }
