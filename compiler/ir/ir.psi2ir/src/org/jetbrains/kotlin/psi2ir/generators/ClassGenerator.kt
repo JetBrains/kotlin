@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
@@ -40,13 +40,19 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
 
         generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
 
-        val shouldGenerateNestedInitializers = generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
+        generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
-        if (shouldGenerateNestedInitializers) {
+        if (shouldGenerateNestedInitializers(ktClassOrObject)) {
             irClass.nestedInitializers = BodyGenerator(descriptor, context).generateNestedInitializersBody(ktClassOrObject)
         }
 
         return irClass
+    }
+
+    private fun shouldGenerateNestedInitializers(ktClassOrObject: KtClassOrObject): Boolean {
+        val ktClassBody = ktClassOrObject.getBody() ?: return false
+
+        return ktClassBody.declarations.any { it is KtSecondaryConstructor && it.isConstructorDelegatingToSuper(context.bindingContext) }
     }
 
     private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
@@ -70,20 +76,12 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         }
     }
 
-    private fun generateMembersDeclaredInClassBody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject): Boolean {
-        var hasConstructorsWithNestedInitializersCall = false
-
+    private fun generateMembersDeclaredInClassBody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getBody()?.let { ktClassBody ->
             for (ktDeclaration in ktClassBody.declarations) {
                 if (ktDeclaration is KtAnonymousInitializer) continue
 
-                val irMember =
-                        if (ktDeclaration is KtSecondaryConstructor && isConstructorDelegatingToSuper(ktDeclaration, irClass.descriptor)) {
-                            hasConstructorsWithNestedInitializersCall = true
-                            declarationGenerator.generateSecondaryConstructorWithNestedInitializers(ktDeclaration, ktClassOrObject)
-                        }
-                        else
-                            declarationGenerator.generateMemberDeclaration(ktDeclaration)
+                val irMember = declarationGenerator.generateMemberDeclaration(ktDeclaration)
 
                 irClass.addMember(irMember)
                 if (irMember is IrProperty) {
@@ -92,14 +90,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                 }
             }
         }
-
-        return hasConstructorsWithNestedInitializersCall
-    }
-
-    private fun isConstructorDelegatingToSuper(ktConstructor: KtSecondaryConstructor, classOwner: ClassDescriptor): Boolean {
-        val delegatingResolvedCall = getResolvedCall(ktConstructor.getDelegationCall())!!
-        val calleeOwner = delegatingResolvedCall.resultingDescriptor.containingDeclaration as ClassDescriptor
-        return calleeOwner != classOwner
     }
 
     private fun generatePropertyForPrimaryConstructorParameter(ktParameter: KtParameter): IrDeclaration {

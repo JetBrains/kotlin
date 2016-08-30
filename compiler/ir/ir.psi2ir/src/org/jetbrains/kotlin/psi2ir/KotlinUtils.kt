@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi2ir.generators.getResolvedCall
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,3 +60,10 @@ fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
     return false
 }
 
+fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: BindingContext): Boolean {
+    val delegatingResolvedCall = getDelegationCall().getResolvedCall(bindingContext) ?: return false
+    val constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, this) ?: return false
+    val ownerClassDescriptor = constructorDescriptor.containingDeclaration
+    val targetClassDescriptor = delegatingResolvedCall.resultingDescriptor.containingDeclaration
+    return targetClassDescriptor != ownerClassDescriptor
+}

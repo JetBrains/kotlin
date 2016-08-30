@@ -130,13 +130,13 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         return irBlockBody
     }
 
-    fun generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtClassOrObject): IrBody {
-        val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
+    fun generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrBody {
+        val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffset, ktConstructor.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
-        irBlockBody.addStatement(IrNestedInitializersCallImpl(ktConstructor.startOffset, ktConstructor.endOffset,
-                                                              getOrFail(BindingContext.CLASS, ktClassOrObject)))
+        val classDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor).containingDeclaration
+        irBlockBody.addStatement(IrNestedInitializersCallImpl(ktConstructor.startOffset, ktConstructor.endOffset, classDescriptor))
 
         ktConstructor.bodyExpression?.let { ktBody ->
             createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
