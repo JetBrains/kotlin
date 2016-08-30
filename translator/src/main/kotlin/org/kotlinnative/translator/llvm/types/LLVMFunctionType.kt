@@ -26,7 +26,7 @@ class LLVMFunctionType(type: KotlinType, state: TranslationState) : LLVMType() {
     fun mangleArgs() = LLVMType.mangleFunctionArguments(arguments)
 
     override fun toString() =
-            "${returnType.type} (${arguments.map { it.getType() }.joinToString()})"
+            "${returnType.type} (${arguments.map { it.pointedType }.joinToString()})"
 
     override fun equals(other: Any?) =
             (other is LLVMFunctionType) && (mangle == other.mangle)

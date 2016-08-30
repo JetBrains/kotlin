@@ -1,7 +1,6 @@
 package org.kotlinnative.translator.llvm
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
-import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -14,7 +13,7 @@ import org.kotlinnative.translator.llvm.types.*
 fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnType: LLVMType, declare: Boolean = false) =
         "${if (declare) "declare" else "define weak"} $returnType @$name(${
         argTypes?.mapIndexed { i: Int, s: LLVMVariable ->
-            "${s.getType()} ${if (s.type is LLVMReferenceType && !(s.type as LLVMReferenceType).byRef) "byval" else ""} %${s.label}"
+            "${s.pointedType} ${if (s.type is LLVMReferenceType && !s.type.byRef) "byval" else ""} %${s.label}"
         }?.joinToString()}) #0"
 
 fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope(), state: TranslationState): LLVMVariable {
@@ -57,7 +56,6 @@ fun String.indexOfOrLast(str: Char, startIndex: Int = 0): Int {
     val pos = this.indexOf(str, startIndex)
     return if (pos < 0) this.length else pos
 }
-
 
 fun FqName.convertToNativeName(): String =
         this.asString().replace(".<init>", "")

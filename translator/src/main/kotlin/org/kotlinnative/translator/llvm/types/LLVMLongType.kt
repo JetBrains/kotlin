@@ -15,7 +15,7 @@ class LLVMLongType() : LLVMType() {
     override val isPrimitive = true
 
     override fun convertFrom(source: LLVMSingleValue) =
-            when (source.type!!) {
+            when (source.type) {
                 is LLVMBooleanType,
                 is LLVMByteType,
                 is LLVMCharType,

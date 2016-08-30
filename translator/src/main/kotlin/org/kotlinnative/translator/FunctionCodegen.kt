@@ -137,12 +137,12 @@ class FunctionCodegen(state: TranslationState,
 
     private fun generateLoadArguments() {
         args.forEach(fun(it: LLVMVariable) {
-            if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && (it.type as LLVMReferenceType).byRef)) {
+            if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && it.type.byRef)) {
                 variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 1), topLevel)
                 return
             }
 
-            if (it.type !is LLVMReferenceType || (it.type as LLVMReferenceType).byRef) {
+            if (it.type !is LLVMReferenceType || it.type.byRef) {
                 val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = it.pointer)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
                 variableManager.addVariable(it.label, allocVar, topLevel)

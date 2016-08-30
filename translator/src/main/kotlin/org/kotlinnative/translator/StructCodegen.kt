@@ -243,7 +243,7 @@ abstract class StructCodegen(val state: TranslationState,
         val result = LLVMInstanceOfStandardType(fieldName, ktType, LLVMRegisterScope(), state = state)
 
         if (result.type is LLVMReferenceType) {
-            val type = result.type as LLVMReferenceType
+            val type = result.type
             type.prefix = "class"
             type.byRef = true
         }

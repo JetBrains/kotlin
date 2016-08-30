@@ -47,7 +47,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                         codeBuilder.addReturnOperator(result)
                     }
                 }
-                else -> codeBuilder.addAnyReturn(result.type!!, result.toString())
+                else -> codeBuilder.addAnyReturn(result.type, result.toString())
             }
 
             wasReturnOnTopLevel = true
@@ -155,7 +155,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val result = codeBuilder.getNewVariable(expectedType, pointer = 2)
         codeBuilder.allocStaticVar(result, pointer = true)
 
-        val condition = left.type!!.operatorEq(loadedLeft, LLVMVariable("", LLVMNullType()))
+        val condition = left.type.operatorEq(loadedLeft, LLVMVariable("", LLVMNullType()))
         val thenLabel = codeBuilder.getNewLabel(prefix = "safe.access")
         val elseLabel = codeBuilder.getNewLabel(prefix = "safe.access")
         val endLabel = codeBuilder.getNewLabel(prefix = "safe.access")
@@ -351,7 +351,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
                         val names = parseValueArguments(callMaker.valueArguments, scope)
                         val methodName = "$targetClassName.$arrayActionType${LLVMType.mangleFunctionArguments(names)}"
-                        val type = receiver.type as LLVMReferenceType
+                        val type = receiver.type
                         val clazz = resolveClassOrObjectLocation(type) ?: throw UnexpectedException(type.toString())
 
                         val method = clazz.methods[methodName] ?: throw UnexpectedException(expr.text)
@@ -720,36 +720,36 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
         return when (operator) {
             "||",
-            "or" -> firstNativeOp.type!!.operatorOr(firstNativeOp, secondNativeOp)
-            "xor" -> firstNativeOp.type!!.operatorXor(firstNativeOp, secondNativeOp)
+            "or" -> firstNativeOp.type.operatorOr(firstNativeOp, secondNativeOp)
+            "xor" -> firstNativeOp.type.operatorXor(firstNativeOp, secondNativeOp)
             "&&",
-            "and" -> firstNativeOp.type!!.operatorAnd(firstNativeOp, secondNativeOp)
-            "%" -> firstNativeOp.type!!.operatorMod(firstNativeOp, secondNativeOp)
-            "shl" -> firstNativeOp.type!!.operatorShl(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type!!))
-            "shr" -> firstNativeOp.type!!.operatorShr(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type!!))
-            "ushr" -> firstNativeOp.type!!.operatorUshr(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type!!))
+            "and" -> firstNativeOp.type.operatorAnd(firstNativeOp, secondNativeOp)
+            "%" -> firstNativeOp.type.operatorMod(firstNativeOp, secondNativeOp)
+            "shl" -> firstNativeOp.type.operatorShl(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type))
+            "shr" -> firstNativeOp.type.operatorShr(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type))
+            "ushr" -> firstNativeOp.type.operatorUshr(firstNativeOp, codeBuilder.convertVariableToType(secondNativeOp, firstNativeOp.type))
             "+=" -> {
-                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type!!.operatorPlus(firstNativeOp, secondNativeOp))
-                return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
+                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type.operatorPlus(firstNativeOp, secondNativeOp))
+                return LLVMExpression(resultOp.type, "load ${firstOp.pointedType} $firstOp, align ${firstOp.type.align}")
             }
             "-=" -> {
-                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type!!.operatorMinus(firstNativeOp, secondNativeOp))
-                return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
+                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type.operatorMinus(firstNativeOp, secondNativeOp))
+                return LLVMExpression(resultOp.type, "load ${firstOp.pointedType} $firstOp, align ${firstOp.type.align}")
             }
             "*=" -> {
-                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type!!.operatorTimes(firstNativeOp, secondNativeOp))
-                return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
+                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type.operatorTimes(firstNativeOp, secondNativeOp))
+                return LLVMExpression(resultOp.type, "load ${firstOp.pointedType} $firstOp, align ${firstOp.type.align}")
             }
             "%=" -> {
-                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type!!.operatorMod(firstNativeOp, secondNativeOp))
-                return LLVMExpression(resultOp.type, "load ${firstOp.getType()} $firstOp, align ${firstOp.type!!.align}")
+                val resultOp = codeBuilder.storeExpression(firstOp, firstNativeOp.type.operatorMod(firstNativeOp, secondNativeOp))
+                return LLVMExpression(resultOp.type, "load ${firstOp.pointedType} $firstOp, align ${firstOp.type.align}")
             }
             ".." -> {
                 val descriptor = state.classes["kotlin.ranges.IntRange"]
                 val arguments = listOf(firstOp, secondNativeOp)
-                val detectedConstructor = LLVMType.mangleFunctionTypes(arguments.map { it.type!! })
+                val detectedConstructor = LLVMType.mangleFunctionTypes(arguments.map { it.type })
                 val result = evaluateConstructorCallExpression(LLVMVariable(descriptor!!.fullName + detectedConstructor, descriptor.type, scope = LLVMVariableScope()), arguments)
-                return LLVMExpression(result!!.type!!, "load ${descriptor.type}** $result, align ${descriptor.type.align}", pointer = 1)
+                return LLVMExpression(result!!.type, "load ${descriptor.type}** $result, align ${descriptor.type.align}", pointer = 1)
             }
             else -> throw UnsupportedOperationException("Unknown binary operator: $operator(${firstNativeOp.type}, ${secondNativeOp.type})")
         }
@@ -760,38 +760,38 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         val secondNativeOp = codeBuilder.receiveNativeValue(secondOp)
 
         val llvmExpression = when (operator) {
-            KtTokens.PLUS -> firstOp.type!!.operatorPlus(firstNativeOp, secondNativeOp)
-            KtTokens.MINUS -> firstOp.type!!.operatorMinus(firstNativeOp, secondNativeOp)
-            KtTokens.MUL -> firstOp.type!!.operatorTimes(firstNativeOp, secondNativeOp)
-            KtTokens.DIV -> firstOp.type!!.operatorDiv(firstNativeOp, secondNativeOp)
-            KtTokens.LT -> firstOp.type!!.operatorLt(firstNativeOp, secondNativeOp)
-            KtTokens.GT -> firstOp.type!!.operatorGt(firstNativeOp, secondNativeOp)
-            KtTokens.LTEQ -> firstOp.type!!.operatorLeq(firstNativeOp, secondNativeOp)
-            KtTokens.GTEQ -> firstOp.type!!.operatorGeq(firstNativeOp, secondNativeOp)
+            KtTokens.PLUS -> firstOp.type.operatorPlus(firstNativeOp, secondNativeOp)
+            KtTokens.MINUS -> firstOp.type.operatorMinus(firstNativeOp, secondNativeOp)
+            KtTokens.MUL -> firstOp.type.operatorTimes(firstNativeOp, secondNativeOp)
+            KtTokens.DIV -> firstOp.type.operatorDiv(firstNativeOp, secondNativeOp)
+            KtTokens.LT -> firstOp.type.operatorLt(firstNativeOp, secondNativeOp)
+            KtTokens.GT -> firstOp.type.operatorGt(firstNativeOp, secondNativeOp)
+            KtTokens.LTEQ -> firstOp.type.operatorLeq(firstNativeOp, secondNativeOp)
+            KtTokens.GTEQ -> firstOp.type.operatorGeq(firstNativeOp, secondNativeOp)
             KtTokens.EQEQ ->
                 if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
                     val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
                     val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                    firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
+                    firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
                 } else
-                    firstOp.type!!.operatorEq(firstNativeOp, secondNativeOp)
+                    firstOp.type.operatorEq(firstNativeOp, secondNativeOp)
             KtTokens.EQEQEQ -> {
                 val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
                 val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                firstOp.type!!.operatorEq(firstPointedArgument, secondPointedArgument)
+                firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
             }
             KtTokens.EXCLEQ -> {
                 if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
                     val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
                     val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                    firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)
+                    firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
                 } else
-                    firstOp.type!!.operatorNeq(firstNativeOp, secondNativeOp)
+                    firstOp.type.operatorNeq(firstNativeOp, secondNativeOp)
             }
             KtTokens.EXCLEQEQEQ -> {
                 val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
                 val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                firstOp.type!!.operatorNeq(firstPointedArgument, secondPointedArgument)
+                firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
             }
             KtTokens.EQ -> {
                 if (secondOp.type is LLVMNullType) {
@@ -801,8 +801,8 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
                 val result = firstOp as LLVMVariable
                 val sourceArgument: LLVMSingleValue
-                if ((firstOp.pointer == 2) && secondOp.type!!.isPrimitive && (secondOp.pointer == 0)) {
-                    sourceArgument = codeBuilder.getNewVariable(secondOp.type!!, 1)
+                if ((firstOp.pointer == 2) && secondOp.type.isPrimitive && (secondOp.pointer == 0)) {
+                    sourceArgument = codeBuilder.getNewVariable(secondOp.type, 1)
                     codeBuilder.allocStaticVar(sourceArgument, asValue = true)
                     codeBuilder.storeVariable(sourceArgument, secondOp)
                 } else {
