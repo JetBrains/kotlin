@@ -13,4 +13,6 @@ public abstract class Simple {
     abstract void voidMethod()
 
     protected java.lang.String strMethod(int param)
+
+    public void <init>()
 }
