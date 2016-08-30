@@ -1,12 +1,19 @@
 Checked type of (x, y)
+Checked type of (x1, y1)
+Checked type of (x2, y2)
 Checked type of f()
-Searched inheritors of X
 Searched references to X
 Searched references to Y
+Searched references to Z1
+Searched references to Z2
 Searched references to f() in Kotlin files
+Searched references to parameter z1 in g() in Kotlin files
+Searched references to parameter z2 in g() in Kotlin files
 Used plain search in LocalSearchScope:
     CLASS:X
     CLASS:Y
+    CLASS:Z1
+    CLASS:Z2
     FUN:component1
     FUN:component2
     FUN:ext
