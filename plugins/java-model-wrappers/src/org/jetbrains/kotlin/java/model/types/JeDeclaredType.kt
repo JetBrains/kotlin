@@ -50,6 +50,7 @@ class JeDeclaredType(
 
     override fun getTypeArguments(): List<TypeMirror> {
         return when (psiType) {
+            is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
             is PsiClassType -> {
                 val substitutor = psiType.resolveGenerics().substitutor
                 val psiClass = psiType.resolve() ?: return psiType.parameters.map { it.toJeType(psiManager) }
