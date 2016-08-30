@@ -16,3 +16,12 @@ message SonarRequest {
 message SonarResponse {
     repeated int32 distances = 1;
 }
+
+message SonarExploreAngleRequest {
+    int32 angle = 1;
+    int32 windowSize = 2;
+}
+
+message SonarExploreAngleResponse {
+    repeated int32 distances = 1;
+}

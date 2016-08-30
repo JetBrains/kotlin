@@ -42,6 +42,17 @@ object Sonar {
         return -1
     }
 
+    fun getRange(start: Int, stop: Int): IntArray {
+        val result = IntArray(stop - start + 1)
+        var i = 0
+        while (i < stop - start + 1) {
+            result[i] = getDistance(start + i)
+            i++
+        }
+
+        return result
+    }
+
     private fun getOneOfRange(start: Int, stop: Int): Int {
         var i = start
         var distance = getDistance(start)
@@ -57,18 +68,6 @@ object Sonar {
 
         return distance
     }
-
-    private fun getRange(start: Int, stop: Int): IntArray {
-        val result = IntArray(stop - start + 1)
-        var i = 0
-        while (i < stop - start + 1) {
-            result[i] = getDistance(start + i)
-            i++
-        }
-
-        return result
-    }
-
 
     fun calibrate() {
         getDistance(180)

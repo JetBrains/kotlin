@@ -16,6 +16,7 @@ object Control {
             TaskRequest.Type.ROUTE.id -> routeTask()
             TaskRequest.Type.ROUTE_METRIC.id -> routeMetricTask()
             TaskRequest.Type.SONAR.id -> sonarTask()
+            TaskRequest.Type.SONAR_EXPLORE.id -> sonarExploreTask()
         }
     }
 
@@ -81,6 +82,17 @@ object Control {
 
         val response = SonarResponse.BuilderSonarResponse(distances).build()
         Writer.writeSonar(response)
+    }
+
+    private fun sonarExploreTask() {
+        val request = Reader.readSonarExplore()
+
+        val angle = request.angle
+        val window = request.windowSize
+        val result = Sonar.getRange(max(angle - window, 0), min(angle + window, 360))
+
+        val response = SonarExploreAngleResponse.BuilderSonarExploreAngleResponse(result).build()
+        Writer.writeSonarExplore(response)
     }
 
     private fun sonarMeasure(smoothing: SonarRequest.Smoothing, attempts: Int, angle: Int, windowSize: Int): Int {

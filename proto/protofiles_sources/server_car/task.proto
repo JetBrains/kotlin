@@ -10,5 +10,6 @@ message TaskRequest {
         ROUTE = 1;
         SONAR = 2;
         ROUTE_METRIC = 3;
+        SONAR_EXPLORE = 4;
     }
 }

@@ -24,6 +24,11 @@ object Reader {
         return SonarRequest.BuilderSonarRequest(IntArray(0), IntArray(0), 0, SonarRequest.Smoothing.NONE).parseFrom(stream).build()
     }
 
+    fun readSonarExplore(): SonarExploreAngleRequest {
+        val stream = getInputStream()
+        return SonarExploreAngleRequest.BuilderSonarExploreAngleRequest(0, 0, 0).parseFrom(stream).build()
+    }
+
     private fun getInputStream(): CodedInputStream {
         val buffer = Connection.receiveByteArray()
         return CodedInputStream(buffer)
@@ -44,6 +49,12 @@ object Writer {
     }
 
     fun writeSonar(response: SonarResponse) {
+        val stream = getOutputStream(response.getSizeNoTag())
+        response.writeTo(stream)
+        Connection.sendByteArray(stream.buffer)
+    }
+
+    fun writeSonarExplore(response: SonarExploreAngleResponse) {
         val stream = getOutputStream(response.getSizeNoTag())
         response.writeTo(stream)
         Connection.sendByteArray(stream.buffer)
