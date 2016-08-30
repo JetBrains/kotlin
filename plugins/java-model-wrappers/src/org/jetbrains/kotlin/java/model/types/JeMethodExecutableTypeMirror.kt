@@ -71,7 +71,7 @@ class JeMethodExecutableTypeMirror(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return psi == (other as JeMethodExecutableTypeMirror).psi
+        return psi == (other as? JeMethodExecutableTypeMirror)?.psi
     }
 
     override fun hashCode() = psi.hashCode()
