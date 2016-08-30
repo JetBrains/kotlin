@@ -80,7 +80,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
     private static final String COMMON_FILES_DIR = "_commonFiles/";
-    public static final String MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js";
 
     public static final String TEST_MODULE = "JS_TESTS";
     public static final String TEST_PACKAGE = "foo";
@@ -103,16 +102,9 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES);
     }
 
-    protected boolean shouldCreateOut() {
-        return true;
-    }
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        if (!shouldCreateOut()) {
-            return;
-        }
         File outDir = new File(getOutputPath());
 
         KotlinTestUtils.mkdirs(outDir);
@@ -122,8 +114,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        //noinspection ConstantConditions,PointlessBooleanExpression
-        if (!shouldCreateOut() || !DELETE_OUT) {
+        if (!DELETE_OUT) {
             return;
         }
         File outDir = new File(getOutputPath());
@@ -158,7 +149,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         generateJavaScriptFiles(files, testName, mainCallParameters, ecmaVersions, TEST_MODULE, null);
     }
 
-    protected void generateJavaScriptFiles(
+    private void generateJavaScriptFiles(
             @NotNull List<String> files,
             @NotNull String testName,
             @NotNull MainCallParameters mainCallParameters,
@@ -171,7 +162,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         }
     }
 
-    protected void generateJavaScriptFiles(
+    private void generateJavaScriptFiles(
             @NotNull List<String> files,
             @NotNull String testName,
             @NotNull MainCallParameters mainCallParameters,
@@ -190,11 +181,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         translateFiles(jetFiles, outputFile, mainCallParameters, config);
     }
 
-    protected String getModuleDirectoryName(String dirName, String moduleName) {
-        return dirName + File.separator + moduleName;
-    }
-
-    protected void translateFiles(
+    private void translateFiles(
             @NotNull List<KtFile> jetFiles,
             @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
@@ -241,11 +228,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    protected boolean shouldGenerateMetaInfo() {
-        return false;
-    }
-
-    protected void processJsProgram(@NotNull JsProgram program, @NotNull List<KtFile> jetFiles) throws Exception {
+    private static void processJsProgram(@NotNull JsProgram program, @NotNull List<KtFile> jetFiles) throws Exception {
         for (KtFile file : jetFiles) {
             String text = file.getText();
             DirectiveTestUtils.processDirectives(program, text);
@@ -304,7 +287,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     // helpers
 
     @NotNull
-    protected final String pathToTestDir() {
+    private String pathToTestDir() {
         return TEST_DATA_DIR_PATH + relativePathToTestDir;
     }
 
@@ -350,7 +333,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
                 .sourceMap(shouldGenerateSourceMap())
                 .inlineEnabled(isInlineEnabled)
                 .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
-                .metaInfo(shouldGenerateMetaInfo());
+                .metaInfo(false);
 
         setupConfig(configBuilder);
 
@@ -362,12 +345,12 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    protected String getOutputPath() {
+    private String getOutputPath() {
         return pathToTestDir() + OUT;
     }
 
     @NotNull
-    protected String getInputPath() {
+    private String getInputPath() {
         return pathToTestDir() + CASES;
     }
 
@@ -412,7 +395,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     protected String getPackageName(@NotNull String filename) throws IOException {
         String content = FileUtil.loadFile(new File(filename), true);
         KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        KtFile jetFile = psiFactory.createFile(content);
         KtFile ktFile = psiFactory.createFile(content);
         return getPackageName(ktFile);
     }

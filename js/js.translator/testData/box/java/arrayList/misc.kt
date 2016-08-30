@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList
 
-fun box(): Boolean {
+fun box(): String {
     var i = 0
     val list = ArrayList<Int>()
     while (i++ < 3) {
@@ -15,7 +15,7 @@ fun box(): Boolean {
     list.add(1, 500)
     // test contains, addAll
     if (!list.contains(500) || list.contains(600) || list.addAll(ArrayList<Int>())) {
-        return false;
+        return "fail1"
     }
 
     val a = ArrayList<Int>()
@@ -25,11 +25,11 @@ fun box(): Boolean {
     b.add(4)
     a.addAll(b)
     if (a[0] != 3 || a[1] != 4) {
-        return false
+        return "fail2"
     }
 
     if (a.isEmpty() || !ArrayList<Int>().isEmpty()) {
-        return false
+        return "fail2"
     }
 
     assertNotEquals(a, b, "a != b")
@@ -45,5 +45,6 @@ fun box(): Boolean {
     assertArrayEquals(arrayOf(1, 500, 2, 3), list.toTypedArray(), "list.toTypedArray()")
     assertEquals("[1,500,2,3]", JSON.stringify(list), "JSON.stringify(list)")
     assertEquals("[1, 500, 2, 3]", list.toString(), "list.toString()")
-    return true;
+
+    return "OK"
 }

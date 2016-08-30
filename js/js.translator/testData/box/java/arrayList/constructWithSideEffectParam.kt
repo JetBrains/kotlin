@@ -8,7 +8,10 @@ fun withSideEffect(v: Int): Int {
     return v
 }
 
-fun box(): Boolean {
+fun box(): String {
     val al = ArrayList<Int>(withSideEffect(2))
-    return al.size == 0 && baz == 2
+    if (al.size != 0) return "fail1: ${al.size}"
+    if (baz != 2) return "fail2: $baz"
+
+    return "OK"
 }

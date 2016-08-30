@@ -19,8 +19,17 @@ package org.jetbrains.kotlin.js.test.semantics
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
 abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
-        "compiler/testData/codegen/box/" + relativePath,
-        BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "out/"
+        "compiler/testData/codegen/box/$relativePath",
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/box/$relativePath/"
+) {
+    init {
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
+    }
+}
+
+abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
+        "compiler/testData/codegen/boxInline/$relativePath",
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/boxInline/$relativePath/"
 ) {
     init {
         additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
@@ -29,14 +38,14 @@ abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
 
 abstract class AbstractBoxJsTest() : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/"
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
 )
 
 abstract class AbstractBridgeTest : BorrowedTest("bridges/")
 
 abstract class AbstractCompanionObjectTest : BorrowedTest("objectIntrinsics/")
 
-abstract class AbstractFunctionExpressionTest : BorrowedTest("functionExpression/")
+abstract class AbstractFunctionExpressionTest : BorrowedTest("functions/functionExpression/")
 
 abstract class AbstractSecondaryConstructorTest : BorrowedTest("secondaryConstructors/")
 
@@ -48,6 +57,6 @@ abstract class AbstractSuperTest : BorrowedTest("super/")
 
 abstract class AbstractLocalClassesTest : BorrowedTest("localClasses/")
 
-abstract class AbstractNonLocalReturnsTest : BorrowedTest("inline.generated/nonLocalReturns/")
+abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
 
 abstract class AbstractTypeAliasesTests : BorrowedTest("typealias/")

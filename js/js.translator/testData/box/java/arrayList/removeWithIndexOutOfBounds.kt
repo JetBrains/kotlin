@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList
 
-fun box(): Boolean {
+fun box(): String {
     var threwForEmptyList = false
 
     val arr = ArrayList<Int>()
@@ -26,5 +26,5 @@ fun box(): Boolean {
         threwForFilled = true
     }
 
-    return threwForEmptyList && threwForFilled
+    return if (threwForEmptyList && threwForFilled) "OK" else "fail"
 }
