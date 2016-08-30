@@ -19,6 +19,7 @@ object Client {
     private val timeout = 5 * 60 * 60 * 1000
 
     fun shutDownClient() {
+        client.close()
         group.shutdownGracefully()
     }
 

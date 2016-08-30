@@ -43,7 +43,7 @@ jar {
     manifest {
         attributes("Implementation-Title": "Gradle",
                 "Implementation-Version": version,
-                "Class-Path": "kotlin-runtime-1.0.3.jar kotlin-stdlib-1.0.3.jar netty-all-4.1.2.Final.jar protokot-runtime.jar",
+                "Class-Path": "kotlin-runtime-1.0.3.jar kotlin-stdlib-1.0.3.jar netty-all-4.1.2.Final.jar protokot-runtime.jar async-http-client-2.0.0-RC9.jar",
                 "Main-Class": "ServerMainKt")
     }
 

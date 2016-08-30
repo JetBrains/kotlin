@@ -1,6 +1,7 @@
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
+import algorithm.RoomModel
 import car.client.CarClient
 import car.client.Client
 import io.netty.buffer.Unpooled
@@ -68,7 +69,7 @@ object DebugClInterface {
             "pos" -> {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {
-                    println("points: ${tmp.points}")
+                    println("walls: ${RoomModel.walls}")
                     println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
                 }
             }
