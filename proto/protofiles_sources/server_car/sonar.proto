@@ -14,7 +14,7 @@ message SonarRequest {
 }
 
 message SonarResponse {
-    repeated int32 distances = 1;
+   repeated int32 distances = 1;
 }
 
 message SonarExploreAngleRequest {
