@@ -18,8 +18,6 @@ class LLVMReferenceType(val type: String,
 
     override fun toString() = "%$typename"
 
-    val location = ArrayList<String>()
-
     override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp eq ${firstOp.getType()} $firstOp, ${if (secondOp.type is LLVMNullType) "null" else "$secondOp"}")
 

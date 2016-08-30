@@ -30,10 +30,6 @@ class ClassCodegen(state: TranslationState,
 
     init {
         type = LLVMReferenceType(structName, "class", align = TranslationState.pointerAlign, size = TranslationState.pointerSize, byRef = true)
-        if (parentCodegen != null) {
-            type.location.addAll(parentCodegen.type.location)
-            type.location.add(parentCodegen.structName)
-        }
 
         descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException("Can't receive descriptor of class " + clazz.name)
 

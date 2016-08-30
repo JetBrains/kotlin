@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -195,7 +194,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             is KtPostfixExpression,
             is KtBinaryExpression -> evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             is KtDotQualifiedExpression -> {
-                val codegen = resolveCodegenByName(receiverName, receiverName.split("."))
+                val codegen = resolveCodegenByName(receiverName)
                 if (codegen != null) null else evaluateExpression(receiverExpr, scopeDepth) as LLVMVariable
             }
             is KtNameReferenceExpression -> {
@@ -307,22 +306,32 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
     }
 
     private fun resolveClassOrObjectLocation(type: LLVMReferenceType): StructCodegen? {
-        if (type.location.size == 0) {
-            return state.classes[type.type] ?: state.objects[type.type]
-        }
+        val typeLocations = type.type.split('.')
+        val currentLocation = StringBuilder()
+        var codegen: ClassCodegen? = null
+        var currentIndex = 0
 
-        var codegen = state.classes[type.location[0]]
-        var i = 1
-        while (i < type.location.size) {
-            codegen = codegen?.nestedClasses?.get(type.location[i])
-            i++
+        do {
+            currentLocation.append((if (currentIndex > 0) "." else "") + typeLocations[currentIndex])
+            if (state.classes.containsKey(currentLocation.toString())) {
+                codegen = state.classes[currentLocation.toString()]
+            } else if (state.objects.containsKey(currentLocation.toString())) {
+                return state.objects[currentLocation.toString()]
+            }
+            currentIndex++
+        } while ((currentIndex < typeLocations.size) && (codegen == null))
+
+        while (currentIndex < typeLocations.size - 1) {
+            currentLocation.append('.' + typeLocations[currentIndex])
+            currentIndex++
+            codegen = codegen?.nestedClasses?.get(currentLocation.toString())
         }
 
         if (codegen?.companionObjectCodegen != null && type.type == codegen?.companionObjectCodegen?.structName) {
             return codegen?.companionObjectCodegen!!
         }
 
-        return codegen?.nestedClasses?.get(type.type)
+        return if (codegen?.structName == type.type) codegen else codegen?.nestedClasses?.get(type.type)
     }
 
     fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
@@ -407,26 +416,14 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 ?: expr.getType(state.bindingContext)
                 ?: expr.getQualifiedExpressionForReceiver()?.getType(state.bindingContext)
 
-        val location = type?.getSubtypesPredicate()?.toString()?.split(".")
-                ?: state.bindingContext.get(BindingContext.REFERENCE_TARGET, expr as KtReferenceExpression)?.fqNameSafe?.toString()?.split(".")
-                ?: return null
-
         val name = type?.constructor?.declarationDescriptor?.fqNameSafe?.asString() ?: throw UnexpectedException(expr.text)
 
-        return resolveCodegenByName(name, location)
-
+        return resolveCodegenByName(name)
     }
 
-    private fun resolveCodegenByName(name: String, location: List<String>): StructCodegen? {
-        val classType = LLVMReferenceType(name, prefix = "class")
-        var locationPrefix = ""
-        for (currentLocation in location.dropLast(1)) {
-            locationPrefix += (if (locationPrefix.length > 0) "." else "") + currentLocation
-            classType.location.add(locationPrefix)
-        }
+    private fun resolveCodegenByName(name: String): StructCodegen? =
+            resolveClassOrObjectLocation(LLVMReferenceType(name, prefix = "class"))
 
-        return resolveClassOrObjectLocation(classType)
-    }
 
     private fun evaluateCallExpression(expr: KtCallExpression, scopeDepth: Int, classScope: StructCodegen? = null, caller: LLVMVariable? = null): LLVMSingleValue? {
         var names = parseArgList(expr, scopeDepth)
