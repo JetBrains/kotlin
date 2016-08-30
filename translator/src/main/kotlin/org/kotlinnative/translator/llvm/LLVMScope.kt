@@ -9,4 +9,3 @@ class LLVMVariableScope : LLVMScope() {
 class LLVMRegisterScope : LLVMScope() {
     override fun toString() = "%"
 }
-
