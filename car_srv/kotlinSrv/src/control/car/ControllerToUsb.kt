@@ -3,6 +3,7 @@ package control.car
 import RouteMetricRequest
 import RouteRequest
 import SonarRequest
+import SonarExploreAngleRequest
 import control.Controller
 import mcTransport
 
@@ -33,5 +34,14 @@ class ControllerToUsb : Controller {
             callback.invoke(bytes)
         }
         mcTransport.sendProtoBuf(sonarRequest)
+    }
+
+    override fun executeRequestSensorExploreData(request: SonarExploreAngleRequest, callback: (ByteArray) -> Unit) {
+        println("SonarExplore data")
+        mcTransport.setCallBack { bytes ->
+            callback.invoke(bytes)
+        }
+
+        mcTransport.sendProtoBuf(request)
     }
 }

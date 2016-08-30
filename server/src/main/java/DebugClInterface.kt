@@ -1,6 +1,7 @@
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
 import algorithm.RoomBypassingAlgorithm
+import car.client.CarClient
 import car.client.Client
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
@@ -37,7 +38,12 @@ object DebugClInterface {
             if (readString.equals("")) {
                 continue
             }
-            executeCommand(readString)
+
+            try {
+                executeCommand(readString)
+            } catch (exception: Exception) {
+                println("Fail to execute command[$readString]: $exception")
+            }
         }
     }
 
@@ -67,8 +73,27 @@ object DebugClInterface {
                 }
             }
             "alg" -> executeAlg(readString)
+            "explore" -> executeExplore(readString)
             else -> printNotSupportedCommand(readString)
         }
+    }
+
+    private fun executeExplore(readString: String) {
+        val params = readString.split(" ")
+        val car = Environment.map[params[1].toInt()]!!
+        val angle = params[2].toInt()
+        val window = params[3].toInt()
+
+        val request = SonarExploreAngleRequest.BuilderSonarExploreAngleRequest(angle, window).build()
+        val responseData = CarClient.sendRequest(
+                car,
+                CarClient.Request.EXPLORE_ANGLE,
+                CarClient.serialize(request.getSizeNoTag(), { request.writeTo(it) })
+        ).get().responseBodyAsBytes
+
+        val distances = SonarExploreAngleResponse.BuilderSonarExploreAngleResponse(IntArray(0)).parseFrom(CodedInputStream(responseData)).distances
+
+        println("Received distances: [${distances.joinToString()}]")
     }
 
     private fun executeAlg(readString: String) {

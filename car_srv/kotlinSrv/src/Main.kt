@@ -4,10 +4,7 @@ import net.Client
 import net.server.handlers.AbstractHandler
 import net.server.handlers.debug.Memory
 import net.server.handlers.flash.LoadBin
-import net.server.handlers.main.GetLocation
-import net.server.handlers.main.GetSonarData
-import net.server.handlers.main.SetRoute
-import net.server.handlers.main.SetRouteMetric
+import net.server.handlers.main.*
 import net.server.handlers.rc.Control
 import room.Room
 
@@ -50,6 +47,7 @@ fun main(args: Array<String>) {
     handlers.put("/rc/control", Control())
     handlers.put("/loadBin", LoadBin())
     handlers.put("/sonar", GetSonarData(carController))
+    handlers.put("/sonarExplore", SonarExplore(carController))
     handlers.put("/route", SetRoute(carController))
     handlers.put("/routeMetric", SetRouteMetric(carController))
     handlers.put("/getLocation", GetLocation())

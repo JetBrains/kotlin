@@ -80,6 +80,12 @@ fun <T> encodeProtoBuf(protoMessage: T): ByteArray {
             val codedOutput = CodedOutputStream(routeBytes)
             protoMessage.writeTo(codedOutput)
         }
+        is SonarExploreAngleRequest -> {
+            val protoSize = protoMessage.getSizeNoTag()
+            routeBytes = ByteArray(protoSize)
+            val codedOutput = CodedOutputStream(routeBytes)
+            protoMessage.writeTo(codedOutput)
+        }
 
         else -> {
             println("PROTO MESSAGE DON'T ENCODE!")
