@@ -3,6 +3,8 @@ class WithNested {
 
     static class NestedClass {
         void nestedClassFun()
+    
+        void <init>()
     }
 
     class InnerClass {
@@ -10,10 +12,16 @@ class WithNested {
     
         class InnerInnerClass {
             void innerInnerClassFun()
+        
+            void <init>(WithNested.InnerClass $instance)
         }
+    
+        void <init>(WithNested $instance)
     }
 
     static abstract interface NestedInterface {
         public abstract void nestedInterfaceFun()
     }
+
+    void <init>()
 }
