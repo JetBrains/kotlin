@@ -183,3 +183,7 @@ fun accessorNameByPropertyName(name: String, accessor: KtLightMethod): String? {
         else -> null
     }
 }
+
+fun getAccessorNamesCandidatesByPropertyName(name: String): List<String> {
+    return listOf(JvmAbi.setterName(name), JvmAbi.getterName(name))
+}
