@@ -13,6 +13,7 @@ message DebugResponse {
 
     repeated int32 x = 8 [packed = true];
     repeated int32 y = 9 [packed = true];
+    repeated int32 wall_distances = 10 [packed = true];
 
 }
 

@@ -96,13 +96,21 @@ object RoomModel {
             end_x[i] = (nextPoint.x + 0.5).toInt()
             end_y[i] = (nextPoint.y + 0.5).toInt()
         }
+
+        val wallDistances = walls.filter { it.isFinished }.map {
+            val firstPoint = it.points.first()
+            val lastPoint = it.points.last()
+            val vector = algorithm.geometry.Vector(firstPoint, lastPoint)
+            vector.length().toInt()
+        }.toIntArray()
+
         val alg = DebugClInterface.algorithmImpl
         if (alg is RoomBypassingAlgorithm) {
             return DebugResponse.BuilderDebugResponse(begin_x, begin_y, end_x, end_y, alg.carX,
-                    alg.carY, alg.carAngle, pointsX, pointsY).build()
+                    alg.carY, alg.carAngle, pointsX, pointsY, wallDistances).build()
         }
         return DebugResponse.BuilderDebugResponse(begin_x, begin_y, end_x, end_y, 0,
-                0, 0, pointsX, pointsY).build()
+                0, 0, pointsX, pointsY, wallDistances).build()
 
     }
 }
