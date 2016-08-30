@@ -4,6 +4,7 @@ import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 class LLVMShortType() : LLVMType() {
+
     override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMBooleanType(), "icmp slt i16 $firstOp, $secondOp")
 
@@ -28,17 +29,17 @@ class LLVMShortType() : LLVMType() {
     override fun operatorDiv(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMShortType(), "sdiv i16 $firstOp, $secondOp")
 
-    override fun equals(other: Any?): Boolean {
-        return other is LLVMShortType
-    }
-
     override var size: Int = 2
     override val align = 2
     override val defaultValue = "0"
+    override val typename = "i16"
 
     override fun mangle() = "Short"
-    override val typename = "i16"
     override fun isPrimitive() = true
+
+    override fun equals(other: Any?) =
+            other is LLVMShortType
+
     override fun hashCode() =
             mangle().hashCode()
 

@@ -36,6 +36,8 @@ class IntIterator(first: Int, last: Int, val step: Int) {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
+    final fun next() = nextInt  ()
+
     fun hasNext(): Boolean = hasNext
 
     fun nextInt(): Int {

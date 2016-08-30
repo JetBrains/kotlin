@@ -149,7 +149,7 @@ abstract class StructCodegen(val state: TranslationState,
         argFields.addAll(secondaryConstructorArguments)
         val currentConstructorIndex = LLVMType.mangleFunctionArguments(secondaryConstructorArguments)
         constructorFields.put(currentConstructorIndex, argFields)
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + currentConstructorIndex, argFields, LLVMVoidType()))
+        codeBuilder.addLLVMCodeToLocalPlace(LLVMFunctionDescriptor(fullName + currentConstructorIndex, argFields, LLVMVoidType()))
 
         codeBuilder.addStartExpression()
 
@@ -175,7 +175,7 @@ abstract class StructCodegen(val state: TranslationState,
         argFields.add(classVal)
         argFields.addAll(constructorFields[primaryConstructorIndex]!!)
 
-        codeBuilder.addLLVMCode(LLVMFunctionDescriptor(fullName + primaryConstructorIndex, argFields, LLVMVoidType()))
+        codeBuilder.addLLVMCodeToLocalPlace(LLVMFunctionDescriptor(fullName + primaryConstructorIndex, argFields, LLVMVoidType()))
 
         codeBuilder.addStartExpression()
         generateLoadArguments(classVal)
@@ -207,8 +207,7 @@ abstract class StructCodegen(val state: TranslationState,
                     codeBuilder.storeVariable(classField, it)
                 }
                 else -> {
-                    val argument = codeBuilder.getNewVariable(it.type, it.pointer)
-                    codeBuilder.loadVariable(argument, LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = it.pointer + 1))
+                    val argument = codeBuilder.loadVariable(LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = it.pointer + 1))
                     val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
                     codeBuilder.loadClassField(classField, LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
                     codeBuilder.storeVariable(classField, argument)

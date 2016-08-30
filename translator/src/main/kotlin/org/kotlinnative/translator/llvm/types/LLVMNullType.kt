@@ -1,22 +1,19 @@
 package org.kotlinnative.translator.llvm.types
 
-class LLVMNullType(var basetype: LLVMType? = null) : LLVMReferred, LLVMType() {
-    override val align: Int = 1
-    override var size: Int = 0
-    override val defaultValue: String = "null"
+class LLVMNullType(var baseType: LLVMType? = null) : LLVMType() {
+    override val align = 1
+    override var size = 0
+    override val defaultValue = "null"
+    override val typename = baseType?.typename ?: ""
 
     override fun mangle() = ""
-
-    override val typename = basetype?.typename ?: ""
-
-    override fun equals(other: Any?): Boolean {
-        return other is LLVMNullType
-    }
-
     override fun parseArg(inputArg: String) = "null"
+    override fun toString() = baseType?.toString() ?: ""
+
+    override fun equals(other: Any?): Boolean =
+            other is LLVMNullType
 
     override fun hashCode() =
             "null".hashCode()
 
-    override fun toString() = basetype?.toString() ?: ""
 }
