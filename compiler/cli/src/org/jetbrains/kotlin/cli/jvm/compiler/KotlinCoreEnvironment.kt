@@ -96,8 +96,8 @@ import java.io.File
 import java.util.*
 
 class KotlinCoreEnvironment private constructor(
-        parentDisposable: Disposable, 
-        applicationEnvironment: JavaCoreApplicationEnvironment, 
+        parentDisposable: Disposable,
+        applicationEnvironment: JavaCoreApplicationEnvironment,
         configuration: CompilerConfiguration
 ) {
 
@@ -143,7 +143,7 @@ class KotlinCoreEnvironment private constructor(
                                         configs.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) }
                                     }
                                 else null
-                                ?: emptyList()
+                                     ?: emptyList()
                             })
 
             KotlinScriptExternalImportsProvider.getInstance(project)?.run {
@@ -154,7 +154,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
-        
+
         // REPL and kapt2 update classpath dynamically
         val indexFactory = JvmUpdatableDependenciesIndexFactory()
 
@@ -162,7 +162,7 @@ class KotlinCoreEnvironment private constructor(
         updateClasspathFromRootsIndex(rootsIndex)
 
         (ServiceManager.getService(project, CoreJavaFileManager::class.java)
-            as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
+                as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
 
         project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(rootsIndex))
 
@@ -196,8 +196,8 @@ class KotlinCoreEnvironment private constructor(
             }
 
     private fun Iterable<ContentRoot>.classpathRoots(): List<JavaRoot> =
-        filterIsInstance(JvmContentRoot::class.java).mapNotNull {
-            javaRoot -> contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
+            filterIsInstance(JvmContentRoot::class.java).mapNotNull {
+                javaRoot -> contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
 
                 val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
                     if (isValidJavaFqName(it)) {
@@ -217,14 +217,22 @@ class KotlinCoreEnvironment private constructor(
 
                 JavaRoot(virtualFile, rootType, prefixPackageFqName)
             }
-        }
+            }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
             projectEnvironment.addSourcesToClasspath(it.file)
         }
     }
-    
+
+    val appendJavaSourceRootsHandler = fun(roots: List<File>) {
+        updateClasspath(roots.map { JavaSourceRoot(it, null) })
+    }
+
+    init {
+        project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, appendJavaSourceRootsHandler)
+    }
+
     fun updateClasspath(roots: List<ContentRoot>): List<File>? {
         return rootsIndex.addNewIndexForRoots(roots.classpathRoots())?.let {
             updateClasspathFromRootsIndex(it)

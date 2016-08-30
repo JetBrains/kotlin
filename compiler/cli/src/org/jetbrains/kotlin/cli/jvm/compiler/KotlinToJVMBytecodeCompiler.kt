@@ -136,8 +136,10 @@ object KotlinToJVMBytecodeCompiler {
             projectConfiguration.addJavaSourceRoots(result.additionalJavaRoots)
             projectConfiguration.isReadOnly = oldReadOnlyValue
 
-            environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
- 
+            if (result.addToEnvironment) {
+                environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+            }
+
             // Clear package caches (see KotlinJavaPsiFacade)
             (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
             

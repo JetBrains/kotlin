@@ -63,7 +63,8 @@ open class AnalysisResult protected constructor(
     class RetryWithAdditionalJavaRoots(
             bindingContext: BindingContext, 
             moduleDescriptor: ModuleDescriptor, 
-            val additionalJavaRoots: List<File>
+            val additionalJavaRoots: List<File>,
+            val addToEnvironment: Boolean = true
     ) : AnalysisResult(bindingContext, moduleDescriptor)
 
     companion object {
