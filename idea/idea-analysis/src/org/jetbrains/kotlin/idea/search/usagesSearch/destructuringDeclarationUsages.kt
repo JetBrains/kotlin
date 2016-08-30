@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch.*
@@ -260,7 +262,9 @@ private class Processor(
                 //TODO: what about Scala and other JVM-languages?
                 val scope = GlobalSearchScope.projectScope(project).restrictToKotlinSources()
                 testLog?.add("Searched references to ${declaration.logPresentation()} in Kotlin files")
-                ReferencesSearch.search(declaration, scope).forEach { reference ->
+                val searchParameters = KotlinReferencesSearchParameters(
+                        declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
+                ReferencesSearch.search(searchParameters).forEach { reference ->
                     when (kind) {
                         CallableToProcessKind.HAS_DATA_CLASS_TYPE -> {
                             if (reference is KtDestructuringDeclarationReference) {
