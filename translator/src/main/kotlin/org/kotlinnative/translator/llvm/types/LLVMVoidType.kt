@@ -6,8 +6,7 @@ class LLVMVoidType() : LLVMType() {
     override var size = 0
     override val defaultValue = ""
     override val typename = "void"
-
-    override fun mangle() = ""
+    override val mangle = ""
 
     override fun equals(other: Any?) =
             other is LLVMVoidType

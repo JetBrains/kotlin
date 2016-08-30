@@ -16,9 +16,8 @@ class ClassCodegen(state: TranslationState,
                    variableManager: VariableManager,
                    val clazz: KtClass,
                    codeBuilder: LLVMBuilder,
-                   packageName: String,
                    parentCodegen: StructCodegen? = null) :
-        StructCodegen(state, variableManager, clazz, codeBuilder, packageName, parentCodegen) {
+        StructCodegen(state, variableManager, clazz, codeBuilder, parentCodegen) {
 
     val annotation: Boolean
     val enum: Boolean
@@ -79,7 +78,7 @@ class ClassCodegen(state: TranslationState,
         val companionObjectDescriptor = descriptor.companionObjectDescriptor
         if (companionObjectDescriptor != null) {
             val companionObject = clazz.getCompanionObjects().first()
-            companionObjectCodegen = ObjectCodegen(state, variableManager, companionObject, codeBuilder, packageName, this)
+            companionObjectCodegen = ObjectCodegen(state, variableManager, companionObject, codeBuilder, this)
             companionObjectCodegen!!.prepareForGenerate()
         }
     }

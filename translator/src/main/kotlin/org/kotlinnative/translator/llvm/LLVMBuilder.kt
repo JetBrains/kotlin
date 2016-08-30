@@ -16,7 +16,6 @@ class LLVMBuilder(val arm: Boolean = false) {
         private var unique = 0
         fun generateUniqueString() =
                 ".unique." + unique++
-
     }
 
     init {
@@ -132,7 +131,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     }
 
     fun addStringConstant(variable: LLVMVariable, value: String) =
-            addLLVMCodeToGlobalPlace("$variable = private unnamed_addr constant  ${(variable.type as LLVMStringType).fullType()} c\"${value.replace("\"", "\\\"")}\\00\", align 1")
+            addLLVMCodeToGlobalPlace("$variable = private unnamed_addr constant  ${(variable.type as LLVMStringType).fullArrayType} c\"${value.replace("\"", "\\\"")}\\00\", align 1")
 
 
     fun convertVariableToType(variable: LLVMSingleValue, targetType: LLVMType): LLVMSingleValue {
@@ -154,7 +153,7 @@ class LLVMBuilder(val arm: Boolean = false) {
 
     fun storeString(target: LLVMVariable, source: LLVMVariable, offset: Int) {
         val code = "store ${target.type} getelementptr inbounds (" +
-                "${(source.type as LLVMStringType).fullType()}* $source, i32 0, i32 $offset), ${target.getType()} $target, align ${source.type.align}"
+                "${(source.type as LLVMStringType).fullArrayType}* $source, i32 0, i32 $offset), ${target.getType()} $target, align ${source.type.align}"
         (target.type as LLVMStringType).isLoaded = true
         localCode.appendln(code)
     }
@@ -167,12 +166,13 @@ class LLVMBuilder(val arm: Boolean = false) {
             addLLVMCodeToLocalPlace("${label.label}:")
     }
 
-    fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) =
-            if ((source.type is LLVMStringType) && (!(source.type as LLVMStringType).isLoaded)) {
-                storeString(target as LLVMVariable, source as LLVMVariable, 0)
-            } else {
-                addLLVMCodeToLocalPlace("store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}")
-            }
+    fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
+        if ((source.type is LLVMStringType) && (!(source.type as LLVMStringType).isLoaded)) {
+            storeString(target as LLVMVariable, source as LLVMVariable, 0)
+        } else {
+            addLLVMCodeToLocalPlace("store ${source.getType()} $source, ${target.getType()} $target, align ${source.type?.align!!}")
+        }
+    }
 
 
     fun storeExpression(target: LLVMSingleValue, expression: LLVMExpression): LLVMVariable {
@@ -283,7 +283,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun addExceptionCall(exceptionName: String) {
         val exception = exceptions[exceptionName]
         val printResult = getNewVariable(LLVMIntType(), pointer = 0)
-        addLLVMCodeToLocalPlace("$printResult = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds (${(exception!!.type as LLVMStringType).fullType()}* $exception, i32 0, i32 0))")
+        addLLVMCodeToLocalPlace("$printResult = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds (${(exception!!.type as LLVMStringType).fullArrayType}* $exception, i32 0, i32 0))")
         addFunctionCall(LLVMVariable("abort", LLVMVoidType(), scope = LLVMVariableScope()), emptyList())
     }
 

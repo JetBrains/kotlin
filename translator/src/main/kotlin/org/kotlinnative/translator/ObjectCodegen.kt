@@ -12,9 +12,8 @@ class ObjectCodegen(state: TranslationState,
                     variableManager: VariableManager,
                     val objectDeclaration: KtObjectDeclaration,
                     codeBuilder: LLVMBuilder,
-                    packageName: String,
                     parentCodegen: StructCodegen? = null) :
-        StructCodegen(state, variableManager, objectDeclaration, codeBuilder, packageName, parentCodegen) {
+        StructCodegen(state, variableManager, objectDeclaration, codeBuilder, parentCodegen) {
     override var size: Int = 0
     override val structName: String = objectDeclaration.fqName?.asString()!!
     override val type: LLVMReferenceType

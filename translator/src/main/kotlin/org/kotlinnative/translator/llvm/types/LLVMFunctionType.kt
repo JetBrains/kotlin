@@ -10,6 +10,8 @@ class LLVMFunctionType(type: KotlinType, state: TranslationState) : LLVMType() {
     override val defaultValue = ""
     override val align: Int = 4
     override var size: Int = 4
+    override val mangle: String
+    override val typename = "FunctionType"
 
     val arguments: List<LLVMVariable>
     val returnType: LLVMVariable
@@ -18,24 +20,18 @@ class LLVMFunctionType(type: KotlinType, state: TranslationState) : LLVMType() {
         val types = type.arguments.map { LLVMInstanceOfStandardType("", it.type, state = state) }.toList()
         returnType = types.last()
         arguments = types.dropLast(1)
+        mangle = "F.${LLVMType.mangleFunctionArguments(arguments)}.EF"
     }
 
-    override fun mangle() =
-            "F.${LLVMType.mangleFunctionArguments(arguments)}.EF"
+    fun mangleArgs() = LLVMType.mangleFunctionArguments(arguments)
 
-    fun mangleArgs(): String =
-            if (arguments.size > 0) LLVMType.mangleFunctionArguments(arguments) else ""
-
-    override fun toString(): String =
+    override fun toString() =
             "${returnType.type} (${arguments.map { it.getType() }.joinToString()})"
 
-    override val typename = "FunctionType"
+    override fun equals(other: Any?) =
+            (other is LLVMFunctionType) && (mangle == other.mangle)
 
     override fun hashCode() =
-            mangle().hashCode()
-
-    override fun equals(other: Any?): Boolean {
-        return (other is LLVMFunctionType) && (mangle() == other.mangle())
-    }
+            mangle.hashCode()
 
 }

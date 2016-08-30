@@ -6,15 +6,19 @@ import org.kotlinnative.translator.llvm.LLVMSingleValue
 
 class LLVMFloatType() : LLVMType() {
 
-    //TODO switch by types: int + double = int
+    override val align = 4
+    override var size: Int = 4
+    override val mangle = "Float"
+    override val typename = "float"
+    override val defaultValue = "0.0"
+    override val isPrimitive = true
+
     override fun operatorMinus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMFloatType(), "fsub float $firstOp, $secondOp")
 
-    //TODO switch by types: int + double = int
     override fun operatorTimes(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMFloatType(), "fmul float $firstOp, $secondOp")
 
-    //TODO switch by types: int + double = int
     override fun operatorPlus(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMFloatType(), "fadd float $firstOp, $secondOp")
 
@@ -48,17 +52,9 @@ class LLVMFloatType() : LLVMType() {
     override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
             LLVMExpression(LLVMFloatType(), "frem float $firstOp, $secondOp")
 
-    override fun equals(other: Any?): Boolean {
-        return other is LLVMFloatType
-    }
+    override fun equals(other: Any?) =
+            other is LLVMFloatType
 
-    override val align = 4
-    override var size: Int = 4
-
-    override fun mangle() = "Float"
-    override val typename = "float"
-    override val defaultValue = "0.0"
-    override fun isPrimitive() = true
     override fun hashCode() =
             typename.hashCode()
 
