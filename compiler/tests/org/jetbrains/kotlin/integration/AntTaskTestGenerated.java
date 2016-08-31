@@ -131,6 +131,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("valWithInvoke")
+    public void testValWithInvoke() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/valWithInvoke/");
+        doTest(fileName);
+    }
+
     @TestMetadata("verbose")
     public void testVerbose() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/verbose/");
